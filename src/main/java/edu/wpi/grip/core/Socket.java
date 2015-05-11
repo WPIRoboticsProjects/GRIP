@@ -16,6 +16,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
  */
 public class Socket<T> {
     private EventBus eventBus;
+    private Step step;
     private SocketHint<T> socketHint;
     private Optional<T> value;
 
@@ -80,6 +81,20 @@ public class Socket<T> {
         } else {
             return socketHint.getDefaultValue();
         }
+    }
+
+    /**
+     * @param step The step that this socket is part of.
+     */
+    public void setStep(Step step) {
+        this.step = step;
+    }
+
+    /**
+     * @return The step that this socket is part of, or <code>null</code> if it has not been set.
+     */
+    public Step getStep() {
+        return step;
     }
 
     @Override
