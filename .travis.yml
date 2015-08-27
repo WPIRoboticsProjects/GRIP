@@ -5,6 +5,7 @@ jdk:
 install: ./gradlew assemble --stacktrace
 
 after_success:
+  - ./gradlew javadoc
   - .utility/initiate-publish.sh
 
 
