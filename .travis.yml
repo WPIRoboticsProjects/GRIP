@@ -6,7 +6,7 @@ install: ./gradlew assemble --stacktrace
 
 after_success:
   - ./gradlew javadoc
-  - .utility/initiate-publish.sh
+  - .utility/push-javadoc-to-gh-pages.sh
 
 
 notifications:
