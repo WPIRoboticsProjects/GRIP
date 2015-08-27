@@ -67,7 +67,7 @@ public class Socket<T> {
      */
     public void setValue(T value) {
         if (!this.value.isPresent() || !this.value.get().equals(value)) {
-            this.value = Optional.of(value);
+            this.value = Optional.of(this.getSocketHint().getType().cast(value));
             eventBus.post(new SocketChangedEvent(this));
         }
     }

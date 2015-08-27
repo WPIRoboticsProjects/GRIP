@@ -73,4 +73,13 @@ public class SocketTest {
         SocketHint<Double> sh = new SocketHint<>("foo", Double.class, SocketHint.View.SLIDER);
         new Socket<Double>(null, sh);
     }
+
+    @Test(expected = ClassCastException.class)
+    @SuppressWarnings("unchecked")
+    public void testSocketValueWrongType() throws Exception {
+        SocketHint<Double> sh = new SocketHint<>("foo", Double.class);
+        Socket socket = new Socket<>(eventBus, sh);
+
+        socket.setValue("I am not a Double");
+    }
 }
