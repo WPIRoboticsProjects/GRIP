@@ -1,5 +1,8 @@
 language: java
 
+install: ./gradlew assemble --stacktrace
+
+
 notifications:
   webhooks:
     urls:
