@@ -1,0 +1,35 @@
+{
+  "name": "grip",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.html",
+  "dependencies": {},
+  "devDependencies": {
+    "grunt": "^0.4.5",
+    "grunt-contrib-connect": "^0.9.0",
+    "grunt-contrib-watch": "^0.6.1",
+    "grunt-wiredep": "^2.0.0",
+    "jshint-stylish": "^2.0.1",
+    "load-grunt-tasks": "^3.2.0",
+    "time-grunt": "^1.0.0"
+  },
+  "scripts": {
+    "test": "grunt test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/WPIRoboticsProjects/grip.git"
+  },
+  "keywords": [
+    "Java",
+    "JavaDocs",
+    "OpenCV"
+  ],
+  "engines": {
+    "node": ">=0.10.0"
+  },
+  "bugs": {
+    "url": "https://github.com/WPIRoboticsProjects/grip/issues"
+  },
+  "homepage": "https://github.com/WPIRoboticsProjects/grip#readme"
+}
