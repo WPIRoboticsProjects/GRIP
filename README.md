@@ -18,3 +18,8 @@ To run, use the included Gradle wrapper script.
 
 ## Docs
 Javadocs for the project can be found [here](http://WPIRoboticsProjects.github.io/GRIP)
+
+## Common Problems
+### UnsatisfiedLinkError
+The opencv library for linux requires version 4.8 or higher of gcc in order for `GOMP_4.0` to be present.
+Check the version of gcc you have installed using `gcc -v` and update if necessary.
