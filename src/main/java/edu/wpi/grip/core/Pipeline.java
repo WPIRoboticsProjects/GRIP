@@ -34,7 +34,7 @@ public class Pipeline {
         eventBus.register(this);
     }
 
-    /**f
+    /**
      * @return The list of steps in the computer vision algorithm
      */
     public List<Step> getSteps() {
