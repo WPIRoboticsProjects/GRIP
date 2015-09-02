@@ -12,13 +12,9 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * A class that implements Operation using Jython.  This enables users to write plugins for the application as Python
- * scripts.
- * <p>
- * Python script plugins should have global lists of SocketHints called "inputs" and "outputs" that declare what
- * parameters the script accepts and what outputs in produces.
- * <p>
- * For example,
+ * A class that implements an operation using Jython.  This enables users to write plugins for the application as
+ * Python scripts.  Python script plugins should have global lists of SocketHints called "inputs" and "outputs" that
+ * declare what parameters the script accepts and what outputs in produces. For example,
  *
  * <pre>{@code
  *    import edu.wpi.grip.core as grip
@@ -32,6 +28,15 @@ import java.util.List;
  *    outputs = [
  *        grip.SocketHint("c", java.lang.Integer),
  *    ]
+ * }</pre>
+ *
+ * The script should also define a function "perform", which takes the same numper of parameters as there are inputs
+ * and returns the values for the outputs.  It can return a single value if there's one output, or a sequence type for
+ * any number of values.
+ *
+ * <pre>{@code
+ * def perform(a, b):
+ * return a + b
  * }</pre>
  */
 public class PythonScriptOperation implements Operation {
@@ -88,6 +93,20 @@ public class PythonScriptOperation implements Operation {
         return sockets;
     }
 
+    /**
+     * Perform the operation by calling a function in the Python script.
+     * <p>
+     * This method adapts each of the inputs into Python objects, calls the Python function, and then converts the
+     * outputs of the function back into Java objects and assigns them to the outputs array.
+     * <p>
+     * The Python function should return a tuple, list, or other sequence containing the outputs.  If there is only
+     * one output, it can just return a value.  Either way, the number of inputs and outputs should match up with the
+     * number of parameters and return values of the function.
+     *
+     * @param inputs  An array obtained from {@link #createInputSockets(EventBus)}. The caller can set the value of
+     *                each socket to an actual parameter for the operation.
+     * @param outputs An array obtained from {@link #createOutputSockets(EventBus)}. The outputs of the operation will
+     */
     @Override
     public void perform(Socket[] inputs, Socket[] outputs) {
         PyObject[] pyInputs = new PyObject[inputs.length];
