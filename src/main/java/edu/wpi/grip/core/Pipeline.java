@@ -1,12 +1,12 @@
 package edu.wpi.grip.core;
 
-import com.google.common.collect.ImmutableList;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import edu.wpi.grip.core.events.ConnectionAddedEvent;
 import edu.wpi.grip.core.events.ConnectionRemovedEvent;
 import edu.wpi.grip.core.events.StepAddedEvent;
 import edu.wpi.grip.core.events.StepRemovedEvent;
+import org.bytedeco.javacpp.opencv_core;
 
 import java.util.*;
 
@@ -46,12 +46,7 @@ public class Pipeline {
 
     @Subscribe
     public void onStepAdded(StepAddedEvent event) {
-        if (event.getIndex().isPresent()) {
-            this.steps.add(event.getIndex().get(), event.getStep());
-        } else {
-            this.steps.add(this.steps.size(), event.getStep());
-        }
-
+        this.steps.add(event.getIndex().or(this.steps.size()), event.getStep());
         this.eventBus.register(event.getStep());
     }
 
