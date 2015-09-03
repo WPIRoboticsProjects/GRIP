@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import java.net.URL?>
+<VBox fx:controller="edu.wpi.grip.ui.Controller" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"
+      minWidth="-Infinity" xmlns="http://javafx.com/javafx/8.0.40"
+      xmlns:fx="http://javafx.com/fxml/1">
+    <children>
+        <MenuBar VBox.vgrow="NEVER">
+            <menus>
+                <Menu mnemonicParsing="false" text="File">
+                    <items>
+                        <MenuItem mnemonicParsing="false" text="New"/>
+                        <MenuItem mnemonicParsing="false" text="Open…"/>
+                        <Menu mnemonicParsing="false" text="Open Recent"/>
+                        <SeparatorMenuItem mnemonicParsing="false"/>
+                        <MenuItem mnemonicParsing="false" text="Close"/>
+                        <MenuItem mnemonicParsing="false" text="Save"/>
+                        <MenuItem mnemonicParsing="false" text="Save As…"/>
+                        <MenuItem mnemonicParsing="false" text="Revert"/>
+                        <SeparatorMenuItem mnemonicParsing="false"/>
+                        <MenuItem mnemonicParsing="false" text="Preferences…"/>
+                        <SeparatorMenuItem mnemonicParsing="false"/>
+                        <MenuItem mnemonicParsing="false" text="Quit"/>
+                    </items>
+                </Menu>
+                <Menu mnemonicParsing="false" text="Edit">
+                    <items>
+                        <MenuItem mnemonicParsing="false" text="Undo"/>
+                        <MenuItem mnemonicParsing="false" text="Redo"/>
+                        <SeparatorMenuItem mnemonicParsing="false"/>
+                        <MenuItem mnemonicParsing="false" text="Cut"/>
+                        <MenuItem mnemonicParsing="false" text="Copy"/>
+                        <MenuItem mnemonicParsing="false" text="Paste"/>
+                        <MenuItem mnemonicParsing="false" text="Delete"/>
+                        <SeparatorMenuItem mnemonicParsing="false"/>
+                        <MenuItem mnemonicParsing="false" text="Select All"/>
+                        <MenuItem mnemonicParsing="false" text="Unselect All"/>
+                    </items>
+                </Menu>
+                <Menu mnemonicParsing="false" text="Help">
+                    <items>
+                        <MenuItem mnemonicParsing="false" text="About GRIP"/>
+                    </items>
+                </Menu>
+            </menus>
+        </MenuBar>
+        <SplitPane dividerPositions="0.5" orientation="VERTICAL" VBox.vgrow="ALWAYS">
+            <items>
+                <SplitPane dividerPositions="0.6" orientation="HORIZONTAL">
+                    <FlowPane styleClass="placeholder">
+                        <children>
+                            <Label alignment="CENTER" prefWidth="-1.0" styleClass="placeholder"
+                                   text="Preview" textAlignment="CENTER" wrapText="false"/>
+                        </children>
+                    </FlowPane>
+                    <FlowPane styleClass="placeholder">
+                        <children>
+                            <Label alignment="CENTER" styleClass="placeholder"
+                                   text="Operation Palette" textAlignment="CENTER" wrapText="false"/>
+                        </children>
+                    </FlowPane>
+                </SplitPane>
+                <FlowPane styleClass="placeholder">
+                    <children>
+                        <Label alignment="CENTER"  styleClass="placeholder"
+                               text="Pipeline" textAlignment="CENTER" wrapText="false"/>
+                    </children>
+                </FlowPane>
+            </items>
+        </SplitPane>
+        <HBox id="HBox" alignment="CENTER_LEFT" VBox.vgrow="NEVER">
+            <children>
+                <Label maxHeight="-1.0" maxWidth="-1.0" styleClass="status" text="Left status" HBox.hgrow="ALWAYS"/>
+                <Pane HBox.hgrow="ALWAYS"/>
+                <Label maxHeight="-1.0" maxWidth="-1.0" styleClass="status" text="Right status" HBox.hgrow="ALWAYS"/>
+            </children>
+        </HBox>
+    </children>
+    <stylesheets>
+        <URL value="@roboto/Roboto.css"/>
+        <URL value="@MainWindow.css"/>
+    </stylesheets>
+</VBox>

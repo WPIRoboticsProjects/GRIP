@@ -1,0 +1,16 @@
+.root {
+    -fx-font-family: "Roboto";
+    -fx-pref-width: 100.0em;
+    -fx-pref-height: 70.0em;
+}
+
+Label.status {
+    -fx-text-fill: #999999;
+    -fx-padding: 0.5em 1.0em;
+}
+
+Label.placeholder {
+    -fx-text-fill: #555555;
+    -fx-font-weight: bold;
+    -fx-padding: 1.0em 2.0em;
+}
