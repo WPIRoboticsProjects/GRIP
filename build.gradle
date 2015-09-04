@@ -1,6 +1,8 @@
 apply plugin: 'java'
 apply plugin: 'application'
 apply plugin: 'jacoco'
+apply from: 'javafx.plugin'
+
 
 repositories {
     mavenCentral()
