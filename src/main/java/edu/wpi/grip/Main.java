@@ -22,7 +22,7 @@ public class Main extends Application {
         // this means the GUI will be the same physical size on high DPI displays as it is on normal displays.
         final double fontSizePoints = 9.0;
         final double fontSizePixels = Screen.getPrimary().getDpi() * fontSizePoints / 72.0;
-        root.setStyle("-fx-font-size: " + fontSizePixels/2 + "px");
+        root.setStyle("-fx-font-size: " + fontSizePixels + "px");
 
         Scene scene = new Scene(root);
 
