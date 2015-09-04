@@ -1,6 +1,8 @@
 apply plugin: 'java'
 apply plugin: 'application'
 apply plugin: 'jacoco'
+apply plugin: 'pmd'
+apply plugin: 'findbugs'
 
 repositories {
     mavenCentral()
@@ -26,6 +28,33 @@ jacocoTestReport {
     }
 }
 check.dependsOn jacocoTestReport
+
+findbugs {
+    ignoreFailures = true
+    toolVersion = "3.0.1"
+    sourceSets = [sourceSets.main]
+    reportsDir = file("$project.buildDir/reports/findbugs")
+    effort = "max"
+}
+tasks.withType(FindBugs) {
+    reports {
+        xml.enabled = false
+        html.enabled = true
+    }
+}
+
+pmd {
+    toolVersion = '5.3.3'
+    // This will be supported in gradle 2.7
+    //rulePriority = 3
+    ignoreFailures = false
+    consoleOutput = true
+    sourceSets = [sourceSets.main, sourceSets.test]
+    reportsDir = file("$project.buildDir/reports/pmd")
+    ruleSetFiles = files("config/pmd/RuleSet.xml")
+    ruleSets = [] //http://sourceforge.net/p/pmd/discussion/188193/thread/6e9c6017/
+}
+
 
 allprojects {
     tasks.withType(Javadoc) {
