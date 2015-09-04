@@ -1,5 +1,8 @@
 package edu.wpi.grip;
 
-public class Main {
-    public static void main(String[] args) {}
+public final class Main {
+    private Main(){/* Intentionally empty */}
+    public static void main(String[] args) {
+        //This is intentionally empty
+    }
 }

@@ -10,8 +10,8 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * A connection is a rule that causes one socket to update to always the value of another socket.
  */
 public class Connection<T> {
-    private Socket<? extends T> outputSocket;
-    private Socket<T> inputSocket;
+    final private Socket<? extends T> outputSocket;
+    final private Socket<T> inputSocket;
 
     /**
      * @param eventBus     The Guava {@link EventBus} used by the application.
@@ -26,7 +26,7 @@ public class Connection<T> {
         checkNotNull(outputSocket);
         checkNotNull(eventBus);
 
-        if (inputSocket == outputSocket) {
+        if (inputSocket.equals(outputSocket)) {
             throw new IllegalArgumentException("inputSocket cannot be the same as outputSocket");
         }
 
@@ -34,8 +34,8 @@ public class Connection<T> {
     }
 
     @Subscribe
-    public void onOutputChanged(SocketChangedEvent e) {
-        if (e.getSocket() == outputSocket) {
+    public void onOutputChanged(SocketChangedEvent event) {
+        if (event.getSocket() == outputSocket) {
             inputSocket.setValue(outputSocket.getValue());
         }
     }

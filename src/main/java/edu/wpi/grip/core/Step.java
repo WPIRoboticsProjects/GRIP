@@ -11,9 +11,9 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * runs the operation whenever one of the input sockets changes.
  */
 public class Step {
-    private Operation operation;
-    private Socket<?>[] inputSockets;
-    private Socket<?>[] outputSockets;
+    final private Operation operation;
+    final private Socket<?>[] inputSockets;
+    final private Socket<?>[] outputSockets;
 
     /**
      * @param eventBus  The Guava {@link EventBus} used by the application.
@@ -54,9 +54,9 @@ public class Step {
     }
 
     @Subscribe
-    public void onInputSocketChanged(SocketChangedEvent e) {
+    public void onInputSocketChanged(SocketChangedEvent event) {
         // If this socket that changed is one of the inputs to this step, run the operation with the new value.
-        if (e.getSocket().getStep() == this) {
+        if (event.getSocket().getStep() == this) {
             operation.perform(inputSockets, outputSockets);
         }
     }
