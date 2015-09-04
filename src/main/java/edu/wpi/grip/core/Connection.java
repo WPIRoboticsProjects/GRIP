@@ -30,6 +30,8 @@ public class Connection<T> {
             throw new IllegalArgumentException("inputSocket cannot be the same as outputSocket");
         }
 
+        inputSocket.setValue(outputSocket.getValue());
+
         eventBus.register(this);
     }
 
