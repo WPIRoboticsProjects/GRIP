@@ -22,13 +22,13 @@ public class StepTest {
     @Test
     public void testStep() {
         Step step = new Step(eventBus, addition);
-        Socket<Double> a = (Socket<Double>) step.getInputSockets()[0];
-        Socket<Double> b = (Socket<Double>) step.getInputSockets()[1];
-        Socket<Double> c = (Socket<Double>) step.getOutputSockets()[0];
+        Socket<Double> term1 = (Socket<Double>) step.getInputSockets()[0];
+        Socket<Double> term2 = (Socket<Double>) step.getInputSockets()[1];
+        Socket<Double> expectedSum = (Socket<Double>) step.getOutputSockets()[0];
 
-        a.setValue(1234.0);
-        b.setValue(5678.0);
-        assertEquals((Double) (1234.0 + 5678.0), c.getValue());
+        term1.setValue(1234.0);
+        term2.setValue(5678.0);
+        assertEquals((Double) (1234.0 + 5678.0), expectedSum.getValue());
 
         eventBus.unregister(step);
     }

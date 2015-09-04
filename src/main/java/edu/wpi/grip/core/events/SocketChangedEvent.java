@@ -8,7 +8,7 @@ import edu.wpi.grip.core.Socket;
  * operation completing, or as a response to user input.
  */
 public class SocketChangedEvent {
-    private Socket socket;
+    final private Socket socket;
 
     /**
      * @param socket The socket that changed, with its new value.

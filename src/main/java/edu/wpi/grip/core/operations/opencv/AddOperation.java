@@ -12,7 +12,7 @@ import org.bytedeco.javacpp.opencv_core.*;
  * Performs the opencv add operation
  */
 public class AddOperation implements Operation {
-    private SocketHint<Mat>
+    final private SocketHint<Mat>
             aHint = new SocketHint<>("a", Mat.class),
             bHint = new SocketHint<>("b", Mat.class),
             sumHint = new SocketHint<>("sum", Mat.class);
@@ -29,7 +29,7 @@ public class AddOperation implements Operation {
 
     @Override
     public void perform(Socket[] inputs, Socket[] outputs) {
-        Socket<Mat> a = inputs[0], b = inputs[1], sum = outputs[0];
-        opencv_core.add(a.getValue(), b.getValue(), sum.getValue());
+        Socket<Mat> term1 = inputs[0], term2 = inputs[1], sum = outputs[0];
+        opencv_core.add(term1.getValue(), term2.getValue(), sum.getValue());
     }
 }

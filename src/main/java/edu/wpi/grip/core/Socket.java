@@ -15,9 +15,9 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * results in are referred to as "output sockets".
  */
 public class Socket<T> {
-    private EventBus eventBus;
+    private final EventBus eventBus;
     private Step step;
-    private SocketHint<T> socketHint;
+    private final SocketHint<T> socketHint;
     private Optional<T> value;
 
     /**

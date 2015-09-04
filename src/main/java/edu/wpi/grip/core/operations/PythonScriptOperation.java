@@ -8,7 +8,6 @@ import org.python.core.*;
 import org.python.util.PythonInterpreter;
 
 import java.io.InputStream;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -111,9 +110,6 @@ public class PythonScriptOperation implements Operation {
     public void perform(Socket[] inputs, Socket[] outputs) {
         PyObject[] pyInputs = new PyObject[inputs.length];
         for (int i = 0; i < inputs.length; i++) {
-            Class<?> a = inputs[i].getSocketHint().getType();
-            Class<?> b = inputs[i].getValue().getClass();
-
             pyInputs[i] = Py.java2py(inputs[i].getValue());
         }
 

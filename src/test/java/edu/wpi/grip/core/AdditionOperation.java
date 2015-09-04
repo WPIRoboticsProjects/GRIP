@@ -3,10 +3,10 @@ package edu.wpi.grip.core;
 import com.google.common.eventbus.EventBus;
 
 public class AdditionOperation implements Operation {
-    private SocketHint<Double>
+    final private SocketHint<Double>
             aHint = new SocketHint<>("a", Double.class),
             bHint = new SocketHint<>("b", Double.class),
-            cHint = new SocketHint<>("b", Double.class);
+            cHint = new SocketHint<>("sum", Double.class);
 
     @Override
     public Socket[] createInputSockets(EventBus eventBus) {
@@ -20,8 +20,8 @@ public class AdditionOperation implements Operation {
 
     @Override
     public void perform(Socket[] inputs, Socket[] outputs) {
-        Socket<Double> a = inputs[0], b = inputs[1], c = outputs[0];
+        Socket<Double> term1 = inputs[0], term2 = inputs[1], sum = outputs[0];
 
-        c.setValue(a.getValue() + b.getValue());
+        sum.setValue(term1.getValue() + term2.getValue());
     }
 }

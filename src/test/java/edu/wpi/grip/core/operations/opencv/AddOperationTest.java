@@ -40,8 +40,8 @@ public class AddOperationTest {
         }
         Mat diff = new Mat();
         opencv_core.compare(mat1, mat2, diff, opencv_core.CMP_NE);
-        int nz = opencv_core.countNonZero(diff);
-        return nz == 0;
+        int nonZeroCount = opencv_core.countNonZero(diff);
+        return nonZeroCount == 0;
     }
 
     @Test
@@ -49,19 +49,19 @@ public class AddOperationTest {
         // Given
         Socket[] inputs = addition.createInputSockets(eventBus);
         Socket[] outputs = addition.createOutputSockets(eventBus);
-        Socket<Mat> a = inputs[0], b = inputs[1];
-        Socket<Mat> c = outputs[0];
+        Socket<Mat> term1 = inputs[0], term2 = inputs[1];
+        Socket<Mat> sum = outputs[0];
 
-        int sz[] = {100, 100, 100};
+        int dimentions[] = {100, 100, 100};
 
-        a.setValue(new Mat(3, sz, opencv_core.CV_8U, Scalar.all(1)));
-        b.setValue(new Mat(3, sz, opencv_core.CV_8U, Scalar.all(2)));
+        term1.setValue(new Mat(3, dimentions, opencv_core.CV_8U, Scalar.all(1)));
+        term2.setValue(new Mat(3, dimentions, opencv_core.CV_8U, Scalar.all(2)));
 
         //When
         addition.perform(inputs, outputs);
 
         //Then
-        Mat expectedResult = new Mat(3, sz, opencv_core.CV_8U, Scalar.all(3));
-        assertTrue(isMatEqual(c.getValue(), expectedResult));
+        Mat expectedResult = new Mat(3, dimentions, opencv_core.CV_8U, Scalar.all(3));
+        assertTrue(isMatEqual(sum.getValue(), expectedResult));
     }
 }

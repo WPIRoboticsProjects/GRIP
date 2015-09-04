@@ -12,10 +12,10 @@ import java.util.Arrays;
 public class SocketHint<T> {
     public enum View {NONE, SPINNER, SLIDER, RANGE, SELECT}
 
-    private String identifier;
-    private Class<T> type;
-    private View view;
-    private T[] domain;
+    final private String identifier;
+    final private Class<T> type;
+    final private View view;
+    final private T[] domain;
 
     /**
      * The default value that the socket will hold if no other is specified.
