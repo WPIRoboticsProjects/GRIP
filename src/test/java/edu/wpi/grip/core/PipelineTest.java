@@ -29,6 +29,19 @@ public class PipelineTest {
 
     @Test
     @SuppressWarnings("unchecked")
+    public void testAddStepAtIndex() {
+        Pipeline pipeline = new Pipeline(eventBus);
+        Step step1 = new Step(eventBus, addition);
+        Step step2 = new Step(eventBus, addition);
+
+        eventBus.post(new StepAddedEvent(step1));
+        eventBus.post(new StepAddedEvent(step2, 0));
+
+        assertEquals(Arrays.asList(step2, step1), pipeline.getSteps());
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
     public void testRemoveFirstStep() {
         Pipeline pipeline = new Pipeline(eventBus);
         Step step1 = new Step(eventBus, addition);

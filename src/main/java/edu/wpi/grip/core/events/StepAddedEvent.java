@@ -11,6 +11,7 @@ import edu.wpi.grip.core.Step;
 public class StepAddedEvent {
     private Step step;
     private int index;
+    private boolean addAtEnd;
 
     /**
      * @param step  The step being added
@@ -18,13 +19,16 @@ public class StepAddedEvent {
      */
     public StepAddedEvent(Step step, int index) {
         this.step = step;
+        this.addAtEnd = false;
         this.index = index;
     }
+
     /**
      * @param step The step being added to the end of the pipeline
      */
     public StepAddedEvent(Step step) {
-        this(step, -1);
+        this.step = step;
+        this.addAtEnd = true;
     }
 
     /**
@@ -35,7 +39,15 @@ public class StepAddedEvent {
     }
 
     /**
-     * @return The index that the step should be added at, or -1 to append it to the end of the pipeline.
+     * @return <code>true</code> if the step should be added at the end of the pipeline.  Otherwise, {@link #getIndex()}
+     * returns the index it should be added at.
+     */
+    public boolean getAddAtEnd() {
+        return this.addAtEnd;
+    }
+
+    /**
+     * @return The index that the step should be added at, assuming {@link #getAddAtEnd()} is <code>true</code>
      */
     public int getIndex() {
         return this.index;

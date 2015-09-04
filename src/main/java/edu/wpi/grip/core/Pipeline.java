@@ -50,7 +50,7 @@ public class Pipeline {
 
     @Subscribe
     public void onStepAdded(StepAddedEvent event) {
-        if (event.getIndex() == -1) {
+        if (event.getAddAtEnd()) {
             this.steps.add(this.steps.size(), event.getStep());
         } else {
             this.steps.add(event.getIndex(), event.getStep());
