@@ -1,7 +1,9 @@
-package edu.wpi.grip.core;
+package edu.wpi.grip.core.operations;
 
 import com.google.common.eventbus.EventBus;
-import edu.wpi.grip.core.operations.PythonScriptOperation;
+import edu.wpi.grip.core.Operation;
+import edu.wpi.grip.core.Socket;
+import edu.wpi.grip.core.Step;
 import org.junit.Test;
 import org.junit.BeforeClass;
 import org.python.core.PySystemState;
@@ -11,7 +13,7 @@ import java.util.Properties;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
-public class PythonTest {
+public class PythonScriptOperationTest {
     static final int TERM1 = 1234, TERM2 = 5678;
 
     EventBus eventBus = new EventBus();
