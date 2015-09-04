@@ -33,6 +33,10 @@ allprojects {
     }
 }
 
+task wrapper(type: Wrapper) {
+    gradleVersion = '2.6'
+}
+
 sourceCompatibility = 1.8
 version = '0.1'
 mainClassName = "edu.wpi.grip.Main"
