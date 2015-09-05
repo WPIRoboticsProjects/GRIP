@@ -8,7 +8,7 @@ import edu.wpi.grip.core.Step;
  * from the GUI.
  */
 public class StepRemovedEvent {
-    private Step step;
+    private final Step step;
 
     /**
      * @param step The step being deleted

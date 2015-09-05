@@ -6,9 +6,7 @@ import edu.wpi.grip.core.events.ConnectionAddedEvent;
 import edu.wpi.grip.core.events.ConnectionRemovedEvent;
 import edu.wpi.grip.core.events.StepAddedEvent;
 import edu.wpi.grip.core.events.StepRemovedEvent;
-import org.bytedeco.javacpp.opencv_core;
 
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -50,10 +48,10 @@ public class Pipeline {
 
     @Subscribe
     public void onStepAdded(StepAddedEvent event) {
-        if (event.getAddAtEnd()) {
-            this.steps.add(this.steps.size(), event.getStep());
+        if (event.getIndex().isPresent()) {
+            this.steps.add(event.getIndex().get(), event.getStep());
         } else {
-            this.steps.add(event.getIndex(), event.getStep());
+            this.steps.add(this.steps.size(), event.getStep());
         }
 
         this.eventBus.register(event.getStep());
