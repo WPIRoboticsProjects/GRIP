@@ -8,7 +8,7 @@ import edu.wpi.grip.core.Connection;
  * connection with the GUI.
  */
 public class ConnectionRemovedEvent {
-    private Connection connection;
+    private final Connection connection;
 
     /**
      * @param connection The connection being deleted

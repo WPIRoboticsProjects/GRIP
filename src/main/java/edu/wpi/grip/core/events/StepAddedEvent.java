@@ -1,26 +1,26 @@
 package edu.wpi.grip.core.events;
 
 import com.google.common.base.MoreObjects;
+import com.google.common.base.Optional;
 import edu.wpi.grip.core.Socket;
 import edu.wpi.grip.core.Step;
+
 
 /**
  * An event that occurs when a new step is added to the pipeline.  This is triggered by the user adding a step with the
  * GUI.
  */
 public class StepAddedEvent {
-    private Step step;
-    private int index;
-    private boolean addAtEnd;
+    private final Step step;
+    private final Optional<Integer> index;
 
     /**
      * @param step  The step being added
-     * @param index The index that the step should be added at
+     * @param index The index that the step should be added at.
      */
     public StepAddedEvent(Step step, int index) {
         this.step = step;
-        this.addAtEnd = false;
-        this.index = index;
+        this.index = Optional.of(index);
     }
 
     /**
@@ -28,7 +28,7 @@ public class StepAddedEvent {
      */
     public StepAddedEvent(Step step) {
         this.step = step;
-        this.addAtEnd = true;
+        this.index = Optional.absent();
     }
 
     /**
@@ -39,17 +39,9 @@ public class StepAddedEvent {
     }
 
     /**
-     * @return <code>true</code> if the step should be added at the end of the pipeline.  Otherwise, {@link #getIndex()}
-     * returns the index it should be added at.
+     * @return The index that the step should be added at, unless the step should be added at the end.
      */
-    public boolean getAddAtEnd() {
-        return this.addAtEnd;
-    }
-
-    /**
-     * @return The index that the step should be added at, assuming {@link #getAddAtEnd()} is <code>true</code>
-     */
-    public int getIndex() {
+    public Optional<Integer> getIndex() {
         return this.index;
     }
 

@@ -9,7 +9,7 @@ import edu.wpi.grip.core.Step;
  * connection with the GUI.
  */
 public class ConnectionAddedEvent {
-    private Connection connection;
+    private final Connection connection;
 
     /**
      * @param connection The connection being added
