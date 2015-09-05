@@ -1,5 +1,6 @@
 package edu.wpi.grip.core;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import edu.wpi.grip.core.events.ConnectionAddedEvent;
@@ -7,15 +8,12 @@ import edu.wpi.grip.core.events.ConnectionRemovedEvent;
 import edu.wpi.grip.core.events.StepAddedEvent;
 import edu.wpi.grip.core.events.StepRemovedEvent;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Pipeline has the list of steps in a computer vision algorithm, as well as the set of connections between the inputs
  * and outputs of different steps.
- *
+ * <p>
  * The pipeline class is responsible for listening for other components of the application (such as the GUI) adding
  * or removing steps and connections, and for registering and unregistering them from the event bus when appropriate.
  */
@@ -33,17 +31,17 @@ public class Pipeline {
     }
 
     /**
-     * @return The list of steps in the computer vision algorithm
+     * @return The unmodifiable list of steps in the computer vision algorithm
      */
     public List<Step> getSteps() {
-        return this.steps;
+        return Collections.unmodifiableList(this.steps);
     }
 
     /**
-     * @return The list of connections between inputs and outputs of steps in the algorithm
+     * @return The unmodifiable set of connections between inputs and outputs of steps in the algorithm
      */
     public Set<Connection> getConnections() {
-        return this.connections;
+        return Collections.unmodifiableSet(this.connections);
     }
 
     @Subscribe
