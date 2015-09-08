@@ -69,13 +69,19 @@ public class Socket<T> {
     }
 
     /**
-     * @return The value currently stored in this socket.
+     * @return The value currently stored in this socket. If the value in this socket is not yet set it will
+     * set the default value to the value and return it. If unset and no default it will return null.
      */
     public T getValue() {
         if (value.isPresent()) {
-            return value.get();
+            return this.value.get();
+        }
+        T defaultValue = socketHint.getDefaultValue();
+        if(defaultValue == null){
+            return null;
         } else {
-            return socketHint.getDefaultValue();
+            this.setValue(defaultValue);
+            return this.value.get();
         }
     }
 

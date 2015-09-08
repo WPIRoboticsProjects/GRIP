@@ -1,6 +1,7 @@
 package edu.wpi.grip.core;
 
 import com.google.common.base.MoreObjects;
+import com.rits.cloning.Cloner;
 
 import java.util.Arrays;
 
@@ -69,7 +70,9 @@ public class SocketHint<T> {
     }
 
     public T getDefaultValue() {
-        return defaultValue;
+        Cloner cloner = new Cloner();
+        //If defaultValue is null library will return null
+        return cloner.deepClone(defaultValue);
     }
 
     @Override
