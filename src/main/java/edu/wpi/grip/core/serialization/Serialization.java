@@ -22,6 +22,9 @@ public class Serialization {
         // Python operations are serialized by the URL or source code that the Python script came from, rather than
         // the raw PythonScriptOperation class data.
         this.xstream.registerConverter(new PythonScriptOperationConverter(), XStream.PRIORITY_VERY_HIGH);
+
+        // Mats, which are used to store images in native memory, are similarly not directly serialized.
+        this.xstream.registerConverter(new MatConverter());
     }
 
     /**
