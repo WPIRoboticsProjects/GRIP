@@ -1,6 +1,5 @@
 package edu.wpi.grip.core;
 
-import com.google.common.collect.ImmutableList;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import edu.wpi.grip.core.events.ConnectionAddedEvent;
@@ -29,6 +28,15 @@ public class Pipeline {
         this.connections = new HashSet<>();
 
         eventBus.register(this);
+    }
+
+    /**
+     * Register all steps and connections on the event bus.  This should be called if steps or connections were added
+     * other than through events, i.e. by deserializing a pipeline from a file.
+     */
+    public void register() {
+        this.steps.forEach(this.eventBus::register);
+        this.connections.forEach(this.eventBus::register);
     }
 
     /**
