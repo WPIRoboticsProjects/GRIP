@@ -33,8 +33,6 @@ public class Socket<T> {
         checkNotNull(eventBus);
         checkNotNull(socketHint);
         checkNotNull(value);
-
-        eventBus.register(this);
     }
 
     /**
@@ -48,8 +46,6 @@ public class Socket<T> {
 
         checkNotNull(eventBus);
         checkNotNull(socketHint);
-
-        eventBus.register(this);
     }
 
     /**
