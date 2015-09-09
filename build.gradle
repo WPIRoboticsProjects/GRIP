@@ -12,6 +12,7 @@ dependencies {
     compile group: 'com.google.guava', name: 'guava', version: '18.0'
     compile group: 'com.google.inject', name: 'guice', version: '4.0'
     compile group: 'org.python', name: 'jython', version: '2.7.0'
+    compile group: 'com.thoughtworks.xstream', name: 'xstream', version: '1.4.8'
     compile group: 'org.bytedeco.javacpp-presets', name: 'opencv', version: '3.0.0-1.0'
     compile group: 'org.bytedeco.javacpp-presets', name: 'opencv', version: '3.0.0-1.0', classifier: "linux-x86"
     compile group: 'org.bytedeco.javacpp-presets', name: 'opencv', version: '3.0.0-1.0', classifier: "linux-x86_64"

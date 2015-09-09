@@ -1,5 +1,6 @@
 package edu.wpi.grip.core.operations;
 
+import com.google.common.base.Optional;
 import com.google.common.eventbus.EventBus;
 import edu.wpi.grip.core.Operation;
 import edu.wpi.grip.core.Socket;
@@ -7,8 +8,8 @@ import edu.wpi.grip.core.SocketHint;
 import org.python.core.*;
 import org.python.util.PythonInterpreter;
 
-import java.io.InputStream;
-import java.util.Arrays;
+import java.io.IOException;
+import java.net.URL;
 import java.util.List;
 
 /**
@@ -41,18 +42,28 @@ import java.util.List;
  */
 public class PythonScriptOperation implements Operation {
 
+    // Either a URL or a String of literal source code is stored in this field.  This allows a PythonScriptOperation to
+    // be serialized as a reference to some code rather than trying to save a bunch of Jython internal structures to a
+    // file, which is what would automatically happen otherwise.
+    private final Optional<URL> sourceURL;
+    private final Optional<String> sourceCode;
+
     private final PythonInterpreter interpreter = new PythonInterpreter();
 
     private List<SocketHint<PyObject>> inputSocketHints;
     private List<SocketHint<PyObject>> outputSocketHints;
     private PyFunction performFunction;
 
-    public PythonScriptOperation(InputStream code) throws PyException {
-        this.interpreter.execfile(code);
+    public PythonScriptOperation(URL url) throws PyException, IOException {
+        this.sourceURL = Optional.of(url);
+        this.sourceCode = Optional.absent();
+        this.interpreter.execfile(url.openStream());
         this.getPythonVariables();
     }
 
     public PythonScriptOperation(String code) throws PyException {
+        this.sourceURL = Optional.absent();
+        this.sourceCode = Optional.of(code);
         this.interpreter.exec(code);
         this.getPythonVariables();
     }
@@ -61,6 +72,14 @@ public class PythonScriptOperation implements Operation {
         this.inputSocketHints = this.interpreter.get("inputs", List.class);
         this.outputSocketHints = this.interpreter.get("outputs", List.class);
         this.performFunction = this.interpreter.get("perform", PyFunction.class);
+    }
+
+    public Optional<URL> getSourceURL() {
+        return this.sourceURL;
+    }
+
+    public Optional<String> getSourceCode() {
+        return this.sourceCode;
     }
 
     /**
