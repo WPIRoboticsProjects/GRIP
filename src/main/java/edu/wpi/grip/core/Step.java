@@ -36,6 +36,8 @@ public class Step {
             socket.setStep(this);
         }
 
+        operation.perform(inputSockets, outputSockets);
+
         eventBus.register(this);
     }
 
