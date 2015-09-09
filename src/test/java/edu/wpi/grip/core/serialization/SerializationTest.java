@@ -5,6 +5,8 @@ import edu.wpi.grip.core.*;
 import edu.wpi.grip.core.events.ConnectionAddedEvent;
 import edu.wpi.grip.core.events.StepAddedEvent;
 import edu.wpi.grip.core.operations.PythonScriptOperation;
+import edu.wpi.grip.core.operations.opencv.AddOperation;
+import static org.bytedeco.javacpp.opencv_core.*;
 import org.junit.Test;
 
 import java.io.Reader;
@@ -167,5 +169,27 @@ public class SerializationTest {
         b2.setValue(789);
 
         assertEquals((Integer) (123 + 456 + 789), sum2.getValue());
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    public void testPerformSerializedPipelineWithMats() throws Exception {
+        Pipeline pipeline1 = new Pipeline(eventBus);
+        eventBus.post(new StepAddedEvent(new Step(eventBus, new AddOperation())));
+        Pipeline pipeline2 = serializeAndDeserialize(pipeline1);
+
+        Step step1 = pipeline2.getSteps().get(0);
+        Socket<Mat> a = (Socket<Mat>) step1.getInputSockets()[0];
+        Socket<Mat> b = (Socket<Mat>) step1.getInputSockets()[1];
+        Socket<Mat> sum = (Socket<Mat>) step1.getOutputSockets()[0];
+
+        a.setValue(new Mat(1, 1, CV_32F, new Scalar(1234.5)));
+        b.setValue(new Mat(1, 1, CV_32F, new Scalar(6789.0)));
+
+        Mat diff = new Mat();
+        Mat expected = new Mat(1, 1, CV_32F, new Scalar(1234.5 + 6789.0));
+        compare(expected, sum.getValue(), diff, CMP_NE);
+        assertEquals("Deserialized pipeline with Mat operations did not produce the expected sum.",
+                0, countNonZero(diff));
     }
 }
