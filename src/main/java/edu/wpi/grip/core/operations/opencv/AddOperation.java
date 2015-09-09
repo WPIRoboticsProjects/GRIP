@@ -19,7 +19,7 @@ public class AddOperation implements Operation {
 
     @Override
     public Socket<Mat>[] createInputSockets(EventBus eventBus) {
-        return new Socket[]{new Socket<>(eventBus, aHint), new Socket<>(eventBus, bHint)};
+        return new Socket[]{new Socket<>(eventBus, aHint, new Mat()), new Socket<>(eventBus, bHint, new Mat())};
     }
 
     @Override
