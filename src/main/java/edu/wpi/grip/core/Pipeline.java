@@ -2,11 +2,7 @@ package edu.wpi.grip.core;
 
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
-import edu.wpi.grip.core.events.ConnectionAddedEvent;
-import edu.wpi.grip.core.events.ConnectionRemovedEvent;
-import edu.wpi.grip.core.events.StepAddedEvent;
-import edu.wpi.grip.core.events.StepRemovedEvent;
-import org.bytedeco.javacpp.opencv_core;
+import edu.wpi.grip.core.events.*;
 
 import java.util.*;
 
@@ -21,22 +17,25 @@ public class Pipeline {
     private final EventBus eventBus;
     private final List<Step> steps;
     private final Set<Connection> connections;
+    private Optional<Sink> sink;
 
     public Pipeline(EventBus eventBus) {
         this.eventBus = eventBus;
         this.steps = new ArrayList<>();
         this.connections = new HashSet<>();
+        this.sink = Optional.empty();
 
         eventBus.register(this);
     }
 
     /**
-     * Register all steps and connections on the event bus.  This should be called if steps or connections were added
-     * other than through events, i.e. by deserializing a pipeline from a file.
+     * Register all of the objects composing the pipeline on the event bus.  This should be called if steps,
+     * connections, etc. were added other than through events, i.e. by deserializing a pipeline from a file.
      */
     public void register() {
         this.steps.forEach(this.eventBus::register);
         this.connections.forEach(this.eventBus::register);
+        this.sink.ifPresent(this.eventBus::register);
     }
 
     /**
@@ -51,6 +50,13 @@ public class Pipeline {
      */
     public Set<Connection> getConnections() {
         return Collections.unmodifiableSet(this.connections);
+    }
+
+    /**
+     * @return The sink where published sockets are sent.
+     */
+    public Optional<Sink> getSink() {
+        return this.sink;
     }
 
     @Subscribe
@@ -75,5 +81,14 @@ public class Pipeline {
     public void onConnectionRemoved(ConnectionRemovedEvent event) {
         this.connections.remove(event.getConnection());
         this.eventBus.unregister(event.getConnection());
+    }
+
+    @Subscribe
+    public void onSetSinkEvent(SetSinkEvent event) {
+        // If there was previously a sink assigned, make sure to unregister it so it won't receive any more events
+        // and mistakenly keep publishing values.
+        this.sink.ifPresent(this.eventBus::unregister);
+        this.sink = Optional.of(event.getSink());
+        this.eventBus.register(event.getSink());
     }
 }
