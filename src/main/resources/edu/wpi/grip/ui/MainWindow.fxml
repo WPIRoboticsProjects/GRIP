@@ -3,8 +3,8 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import java.net.URL?>
-<VBox fx:controller="edu.wpi.grip.ui.Controller" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"
-      minWidth="-Infinity" xmlns="http://javafx.com/javafx/8.0.40"
+<VBox fx:controller="edu.wpi.grip.ui.controllers.MainWindowController" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"
+      minWidth="-Infinity" styleClass="main-window" xmlns="http://javafx.com/javafx/8.0.40"
       xmlns:fx="http://javafx.com/fxml/1">
     <children>
         <MenuBar VBox.vgrow="NEVER">
@@ -80,6 +80,6 @@
     </children>
     <stylesheets>
         <URL value="@roboto/Roboto.css"/>
-        <URL value="@MainWindow.css"/>
+        <URL value="@GRIP.css"/>
     </stylesheets>
 </VBox>

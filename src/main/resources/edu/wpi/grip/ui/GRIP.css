@@ -1,0 +1,36 @@
+.root {
+    -fx-font-family: "Roboto";
+}
+
+.main-window {
+    -fx-pref-width: 100.0em;
+    -fx-pref-height: 70.0em;
+}
+
+.main-window Label.status {
+    -fx-text-fill: #999999;
+    -fx-padding: 0.5em 1.0em;
+}
+
+.main-window Label.placeholder {
+    -fx-text-fill: #555555;
+    -fx-font-weight: bold;
+    -fx-padding: 1.0em 2.0em;
+}
+
+.sink-window {
+    -fx-pref-width: 60.0em;
+    -fx-pref-height: 40.0em;
+}
+
+.sink-window .table-column#identifierColumn{
+    -fx-pref-width: 10em;
+}
+
+.sink-window .table-column#typeColumn{
+    -fx-pref-width: 10em;
+}
+
+.sink-window .table-column#valueColumn {
+    -fx-pref-width: 40em;
+}
