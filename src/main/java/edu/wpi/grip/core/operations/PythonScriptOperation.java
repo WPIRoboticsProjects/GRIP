@@ -11,6 +11,7 @@ import org.python.util.PythonInterpreter;
 import java.io.IOException;
 import java.net.URL;
 import java.util.List;
+import java.util.Properties;
 
 /**
  * A class that implements an operation using Jython.  This enables users to write plugins for the application as
@@ -41,6 +42,13 @@ import java.util.List;
  * }</pre>
  */
 public class PythonScriptOperation implements Operation {
+
+    static {
+        Properties pythonProperties = new Properties();
+        pythonProperties.setProperty("python.import.site", "false");
+        PySystemState.initialize(pythonProperties, null);
+    }
+
 
     // Either a URL or a String of literal source code is stored in this field.  This allows a PythonScriptOperation to
     // be serialized as a reference to some code rather than trying to save a bunch of Jython internal structures to a

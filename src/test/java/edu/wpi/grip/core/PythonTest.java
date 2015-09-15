@@ -3,10 +3,6 @@ package edu.wpi.grip.core;
 import com.google.common.eventbus.EventBus;
 import edu.wpi.grip.core.operations.PythonScriptOperation;
 import org.junit.Test;
-import org.junit.BeforeClass;
-import org.python.core.PySystemState;
-
-import java.util.Properties;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
@@ -15,13 +11,6 @@ public class PythonTest {
     static final int a = 1234, b = 5678;
 
     EventBus eventBus = new EventBus();
-
-    @BeforeClass
-    public static void setupPythonProperties() {
-        Properties pythonProperties = new Properties();
-        pythonProperties.setProperty("python.import.site", "false");
-        PySystemState.initialize(pythonProperties, null);
-    }
 
     @Test
     public void testPython() throws Exception {
