@@ -8,8 +8,8 @@ import com.github.javaparser.ast.comments.Comment;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -26,25 +26,24 @@ public class FileParser {
         return null;
     }
 
-    public static void testRead(){
+    public static Map<String, CompilationUnit> testRead(){
         URL INPUT_URL = FileParser.class.getResource("/org/bytedeco/javacpp/opencv_core.txt");
         CompilationUnit compilationUnit = readFile(INPUT_URL);
-
-        CompilationUnit newCompilationUnit = new CompilationUnit();
 
         if (compilationUnit != null) {
             for(TypeDeclaration type : compilationUnit.getTypes()){
                 if(type.getName().equals("opencv_core")){
-                    parseOpenCVCore(compilationUnit);
+                    return parseOpenCVCore(compilationUnit);
                 }
             }
         } else {
             System.err.print("Invalid File input");
         }
+        return null;
     }
 
-    public static List<CompilationUnit> parseOpenCVCore(CompilationUnit coreDeclaration){
-        List<CompilationUnit> compilationUnits = new ArrayList<>();
+    public static Map<String, CompilationUnit> parseOpenCVCore(CompilationUnit coreDeclaration){
+        Map<String, CompilationUnit> compilationUnits = new HashMap<>();
         Pattern enumRegex = Pattern.compile(".*enum cv::([a-zA-Z_]*)");
         for(Comment comment : coreDeclaration.getAllContainedComments()){
             Matcher matcher = enumRegex.matcher(comment.getContent());
@@ -60,8 +59,8 @@ public class FileParser {
             }
         }
 
-        new OpenCVVisitor().visit(coreDeclaration, compilationUnits);
-        return null;
+        new OpenCVEnumVisitor().visit(coreDeclaration, compilationUnits);
+        return compilationUnits;
     }
 
     public static void main(String ... args) {

@@ -77,3 +77,6 @@ hs_err_pid*
 #ghpages files
 node_modules
 bower_components
+
+#Generated files while being tested.
+src/generated

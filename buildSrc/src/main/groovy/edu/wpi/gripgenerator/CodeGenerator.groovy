@@ -6,19 +6,45 @@
 // work inside a class, we are protected against a category of easy
 // coding errors.  It doesn't matter if the class name collides with
 // other classes defined in other rules.
+
+import com.github.javaparser.ast.CompilationUnit
 import edu.wpi.gripgenerator.FileParser
 import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.TaskAction
 
-
 class CodeGenerator extends DefaultTask {
     def text
+    def dest
+    def removeExisting
 
     @TaskAction
     def runAction(){
         println "I'm running! Woot!!!"
         println text
-        FileParser.testRead()
+        println dest
+
+        //Get the target directory
+        LinkedHashSet destSet = dest;
+        String targetDirectoryString = destSet.getAt(0).toString()
+
+        //Generate all of the output units
+        Map<String, CompilationUnit> files = FileParser.testRead();
+
+
+        File targetDirectory = new File(targetDirectoryString);
+
+        if(removeExisting) targetDirectory.deleteDir();
+
+        for(String fileName : files.keySet()){
+            CompilationUnit fileUnit = files.get(fileName);
+            File packageDir = new File(targetDirectory, "/" + fileUnit.package.getName().toString().replace('.', '/').replace(' ', '').replace(';', ''));
+            if(packageDir.exists()){
+                println "The file " + fileName + " already exists";
+            } else {
+                packageDir.mkdirs();
+            }
+            new File(packageDir, fileName + ".java").write(fileUnit.toString());
+        }
     }
 
 //    public generate( project, String packageName, String className ) {

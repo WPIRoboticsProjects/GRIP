@@ -3,6 +3,15 @@ apply plugin: 'application'
 apply plugin: 'jacoco'
 apply from: 'javafx.plugin'
 
+sourceSets{
+    generated{
+        java{
+            /* Note: When referencing this it becomes `srcDirs` */
+            srcDir 'src/generated/java'
+        }
+    }
+}
+
 
 repositories {
     mavenCentral()
@@ -26,6 +35,8 @@ dependencies {
 
 task testCodeGenerator( type: CodeGenerator ){
     text "A bunch of text"
+    dest sourceSets.generated.java.srcDirs
+    removeExisting true
 }
 
 jacocoTestReport {
