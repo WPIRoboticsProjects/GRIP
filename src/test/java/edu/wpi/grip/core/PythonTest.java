@@ -87,4 +87,28 @@ public class PythonTest {
 
         assertNull(sumSocket.getValue());
     }
+
+    @Test
+    public void testDefaultName() throws Exception {
+        Operation addition = new PythonScriptOperation(PythonTest.class.getResource("/edu/wpi/grip/scripts/addition.py"));
+        assertEquals("addition.py", addition.getName());
+    }
+
+    @Test
+    public void testDefaultDescription() throws Exception {
+        Operation addition = new PythonScriptOperation(PythonTest.class.getResource("/edu/wpi/grip/scripts/addition.py"));
+        assertEquals("", addition.getDescription());
+    }
+
+    @Test
+    public void testName() throws Exception {
+        Operation addition = new PythonScriptOperation(PythonTest.class.getResource("/edu/wpi/grip/scripts/addition-with-name-and-description.py"));
+        assertEquals("Add", addition.getName());
+    }
+
+    @Test
+    public void testDescription() throws Exception {
+        Operation addition = new PythonScriptOperation(PythonTest.class.getResource("/edu/wpi/grip/scripts/addition-with-name-and-description.py"));
+        assertEquals("Compute the sum of two integers", addition.getDescription());
+    }
 }

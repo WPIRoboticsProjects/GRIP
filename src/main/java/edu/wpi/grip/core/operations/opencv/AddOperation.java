@@ -18,6 +18,16 @@ public class AddOperation implements Operation {
             sumHint = new SocketHint<>("sum", Mat.class);
 
     @Override
+    public String getName() {
+        return "Add";
+    }
+
+    @Override
+    public String getDescription() {
+        return "Compute the per-pixel sum of two images";
+    }
+
+    @Override
     public Socket<Mat>[] createInputSockets(EventBus eventBus) {
         return new Socket[]{new Socket<>(eventBus, aHint, new Mat()), new Socket<>(eventBus, bHint, new Mat())};
     }

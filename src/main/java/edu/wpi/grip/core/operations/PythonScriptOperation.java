@@ -32,7 +32,7 @@ import java.util.Properties;
  *    ]
  * }</pre>
  *
- * The script should also define a function "perform", which takes the same numper of parameters as there are inputs
+ * The script should also define a function "perform", which takes the same number of parameters as there are inputs
  * and returns the values for the outputs.  It can return a single value if there's one output, or a sequence type for
  * any number of values.
  *
@@ -40,6 +40,9 @@ import java.util.Properties;
  * def perform(a, b):
  * return a + b
  * }</pre>
+ *
+ * Lastly, the script can optionally have global "name" and "description" strings to provide the user with more
+ * information about what the operation does.
  */
 public class PythonScriptOperation implements Operation {
 
@@ -48,6 +51,9 @@ public class PythonScriptOperation implements Operation {
         pythonProperties.setProperty("python.import.site", "false");
         PySystemState.initialize(pythonProperties, null);
     }
+
+    private static final String DEFAULT_NAME = "Python Operation";
+    private static final String DEFAULT_DESCRIPTION = "";
 
 
     // Either a URL or a String of literal source code is stored in this field.  This allows a PythonScriptOperation to
@@ -61,12 +67,24 @@ public class PythonScriptOperation implements Operation {
     private List<SocketHint<PyObject>> inputSocketHints;
     private List<SocketHint<PyObject>> outputSocketHints;
     private PyFunction performFunction;
+    private PyString name;
+    private PyString description;
 
     public PythonScriptOperation(URL url) throws PyException, IOException {
         this.sourceURL = Optional.of(url);
         this.sourceCode = Optional.absent();
         this.interpreter.execfile(url.openStream());
         this.getPythonVariables();
+
+        if (this.name == null) {
+            // If a name of the operation wasn't specified in the script, use the basename of the URL
+            final String path = url.getPath();
+            this.name = new PyString(path.substring(1 + Math.max(path.lastIndexOf("/"), path.lastIndexOf("\\"))));
+        }
+
+        if (this.description == null) {
+            this.description = new PyString(DEFAULT_DESCRIPTION);
+        }
     }
 
     public PythonScriptOperation(String code) throws PyException {
@@ -74,12 +92,22 @@ public class PythonScriptOperation implements Operation {
         this.sourceCode = Optional.of(code);
         this.interpreter.exec(code);
         this.getPythonVariables();
+
+        if (this.name == null) {
+            this.name = new PyString(DEFAULT_NAME);
+        }
+
+        if (this.description == null) {
+            this.description = new PyString(DEFAULT_DESCRIPTION);
+        }
     }
 
     private void getPythonVariables() throws PyException {
         this.inputSocketHints = this.interpreter.get("inputs", List.class);
         this.outputSocketHints = this.interpreter.get("outputs", List.class);
         this.performFunction = this.interpreter.get("perform", PyFunction.class);
+        this.name = this.interpreter.get("name", PyString.class);
+        this.description = this.interpreter.get("description", PyString.class);
     }
 
     public Optional<URL> getSourceURL() {
@@ -88,6 +116,16 @@ public class PythonScriptOperation implements Operation {
 
     public Optional<String> getSourceCode() {
         return this.sourceCode;
+    }
+
+    @Override
+    public String getName() {
+        return this.name.getString();
+    }
+
+    @Override
+    public String getDescription() {
+        return this.description.getString();
     }
 
     /**

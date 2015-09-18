@@ -9,6 +9,16 @@ public class AdditionOperation implements Operation {
             cHint = new SocketHint<>("b", Double.class, SocketHint.View.NONE, null, 0.0);
 
     @Override
+    public String getName() {
+        return "Add";
+    }
+
+    @Override
+    public String getDescription() {
+        return "Compute the sum of two doubles";
+    }
+
+    @Override
     public Socket[] createInputSockets(EventBus eventBus) {
         return new Socket[]{new Socket<>(eventBus, aHint), new Socket<>(eventBus, bHint)};
     }
