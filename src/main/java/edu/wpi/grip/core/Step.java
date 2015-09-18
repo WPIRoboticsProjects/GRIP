@@ -42,6 +42,13 @@ public class Step {
     }
 
     /**
+     * @return The underlying <code>Operation</code> that this step performs
+     */
+    public Operation getOperation() {
+        return this.operation;
+    }
+
+    /**
      * @return An array of <code>Socket</code>s that hold the inputs to this step
      */
     public Socket<?>[] getInputSockets() {
