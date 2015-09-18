@@ -32,4 +32,11 @@ public class StepTest {
 
         eventBus.unregister(step);
     }
+
+    @Test
+    public void testGetOperation() {
+        Step step = new Step(eventBus, addition);
+
+        assertEquals(addition, step.getOperation());
+    }
 }
