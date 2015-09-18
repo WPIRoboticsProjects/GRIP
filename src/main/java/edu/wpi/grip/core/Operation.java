@@ -7,6 +7,18 @@ import com.google.common.eventbus.EventBus;
  * instance of any class that implements <code>Operation</code>, which is called whenever that operation is used.
  */
 public interface Operation {
+
+    /**
+     * @return The user-facing name of the operation, such as "Gaussian Blur"
+     */
+    String getName();
+
+
+    /**
+     * @return A description of the operation.
+     */
+    String getDescription();
+
     /**
      * @param eventBus The Guava {@link EventBus} used by the application.
      * @return An array of sockets for the inputs that the operation expects.
