@@ -3,7 +3,8 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import java.net.URL?>
-<VBox fx:controller="edu.wpi.grip.ui.controllers.MainWindowController" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"
+<VBox fx:controller="edu.wpi.grip.ui.controllers.MainWindowController" maxHeight="-Infinity" maxWidth="-Infinity"
+      minHeight="-Infinity"
       minWidth="-Infinity" styleClass="main-window" xmlns="http://javafx.com/javafx/8.0.40"
       xmlns:fx="http://javafx.com/fxml/1">
     <children>
@@ -62,12 +63,7 @@
                         </children>
                     </FlowPane>
                 </SplitPane>
-                <FlowPane styleClass="placeholder">
-                    <children>
-                        <Label alignment="CENTER"  styleClass="placeholder"
-                               text="Pipeline" textAlignment="CENTER" wrapText="false"/>
-                    </children>
-                </FlowPane>
+                <ScrollPane fx:id="pipelineContainer"/>
             </items>
         </SplitPane>
         <HBox id="HBox" alignment="CENTER_LEFT" VBox.vgrow="NEVER">

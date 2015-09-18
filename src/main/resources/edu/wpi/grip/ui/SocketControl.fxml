@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.net.*?>
+<?import java.lang.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import java.net.URL?>
+
+<?import javafx.scene.Parent?>
+<fx:root styleClass="socket" type="javafx.scene.layout.AnchorPane" xmlns="http://javafx.com/javafx/null"
+         xmlns:fx="http://javafx.com/fxml/1">
+    <children>
+        <VBox prefHeight="0" fillWidth="true">
+            <children>
+                <Label fx:id="identifier" styleClass="socket-identifier"/>
+                <StackPane fx:id="controlPane" styleClass="socket-control"/>
+            </children>
+        </VBox>
+    </children>
+    <stylesheets>
+        <URL value="@roboto/Roboto.css"/>
+        <URL value="@GRIP.css"/>
+    </stylesheets>
+</fx:root>

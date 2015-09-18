@@ -16,6 +16,7 @@ public class ConnectionAddedEvent {
      */
     public ConnectionAddedEvent(Connection connection) {
         this.connection = connection;
+        this.connection.getInputSocket().setConnected(true);
     }
 
     /**

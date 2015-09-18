@@ -15,6 +15,7 @@ public class ConnectionRemovedEvent {
      */
     public ConnectionRemovedEvent(Connection connection) {
         this.connection = connection;
+        this.connection.getInputSocket().setConnected(false);
     }
 
     /**
