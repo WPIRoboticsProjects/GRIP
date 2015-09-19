@@ -17,10 +17,14 @@ body {
   padding-right: 15px;
 }
 
+.navbar-transparent {
+  background-color: rgba(248, 248, 248, .95);
+}
+
 /* Custom page header */
 .header {
-  border-bottom: 1px solid #e5e5e5;
-  margin-bottom: 10px;
+  /*border-bottom: 1px solid #e5e5e5;*/
+  /*margin-bottom: 10px;*/
 }
 /* Make the masthead heading the same height as the navigation */
 .header h3 {
@@ -35,6 +39,12 @@ body {
   padding-top: 19px;
   color: #777;
   border-top: 1px solid #e5e5e5;
+  background-color: rgba(248, 248, 248, .80);
+  width:100%;
+  height:60px;
+  position:absolute;
+  bottom:0;
+  left:0;
 }
 
 .container-narrow > hr {
@@ -80,4 +90,55 @@ body {
   .jumbotron {
     border-bottom: 0;
   }
+}
+
+.time-to {
+  text-align: center;
+  font-family: Bangers;
+  font-size: 40px;
+  letter-spacing: 2px;
+}
+
+.time-to .time-to-header{
+  text-align:center;
+  -moz-box-shadow: 0 0 2px black;
+  -webkit-box-shadow: 0 0 2px black;
+  box-shadow: 0 0 1px black;
+  border-radius: 20px;
+  -moz-border-radius: 20px;
+  -webkit-box-shadow: 20px;
+  background-color: rgba(238, 238, 238, .6);
+}
+
+/* centered columns styles */
+.row-centered {
+    text-align:center;
+}
+.col-centered {
+    display:inline-block;
+    /*XXX: Quick fix to get the elements to line up correctly */
+    float:none;
+    /* reset the text-align */
+    text-align:left;
+    /* inline-block space fix */
+    margin-right:-4px;
+}
+
+.date-values {
+  text-align:center;
+  -moz-box-shadow: 0 0 2px black;
+  -webkit-box-shadow: 0 0 2px black;
+  box-shadow: 0 0 1px black;
+  border-radius: 20px;
+  -moz-border-radius: 20px;
+  -webkit-box-shadow: 20px;
+  background-color: rgba(238, 238, 238, .65);
+}
+
+.date-values span {
+  display: block;
+}
+
+.date-values .key {
+  font-size: 15px;
 }

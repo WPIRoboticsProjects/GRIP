@@ -15,7 +15,8 @@ angular
     'ngCookies',
     'ngResource',
     'ngRoute',
-    'ngTouch'
+    'ngTouch',
+    'CountdownDirective'
   ])
   .config(function ($routeProvider) {
     $routeProvider

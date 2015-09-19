@@ -15,6 +15,15 @@ module.exports = function (grunt) {
   };
 
   grunt.initConfig({
+    jshint: {
+      options: {
+        jshintrc: '.jshint',
+        reporter: require('jshint-stylish')
+      },
+      all: {
+        src: 'scripts/{,*/}*.js'
+      }
+    },
     watch: {
       bower: {
         files: ['bower.json'],
@@ -22,7 +31,7 @@ module.exports = function (grunt) {
       },
       js: {
         files: ['scripts/{,*/}*.js'],
-        tasks: ['newer:jshint:all'],
+        tasks: ['newer:jshint:all', 'wiredep'],
         options: {
           livereload: '<%= connect.options.livereload %>'
         }
@@ -36,7 +45,7 @@ module.exports = function (grunt) {
         },
         files: [
           '{,*/}*.html',
-          '.tmp/styles/{,*/}*.css',
+          'styles/{,*/}*.css',
           'images/{,*/}*.{png,jpg,jpeg,gif,webp,svg}'
         ]
       }
