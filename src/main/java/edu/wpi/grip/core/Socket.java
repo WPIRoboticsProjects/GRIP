@@ -125,14 +125,14 @@ public class Socket<T> {
     }
 
     /**
-     * @param connected If true, this socket is automatically set by a connection
+     * @param connected If true, this socket is automatically set by a {@link Connection}
      */
     public void setConnected(boolean connected) {
         this.connected = connected;
     }
 
     /**
-     * @return Weather or not this socket is automatically set
+     * @return True if this socket is automatically set by a {@link Connection}
      */
     public boolean isConnected() {
         return this.connected;

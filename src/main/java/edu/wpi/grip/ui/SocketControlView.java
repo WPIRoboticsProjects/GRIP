@@ -1,6 +1,5 @@
 package edu.wpi.grip.ui;
 
-import com.google.common.base.Optional;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import edu.wpi.grip.core.Socket;
@@ -13,9 +12,11 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.control.*;
+import javafx.scene.control.Label;
+import javafx.scene.control.Slider;
+import javafx.scene.control.Spinner;
+import javafx.scene.control.SpinnerValueFactory;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import org.controlsfx.control.RangeSlider;
 
@@ -85,9 +86,9 @@ public class SocketControlView extends AnchorPane implements Initializable {
                 // To use a spinner, the socket should be able to hold a number
                 checkArgument(Number.class.isAssignableFrom(socketHint.getType()));
 
-                SpinnerValueFactory spinnerValueFactory;
                 Number initialValue = (Number) socket.getValue();
 
+                StringBuilder stringBuilder = new StringBuilder();
                 Number min = Double.MIN_VALUE, max = Double.MAX_VALUE;
                 if (domain != null && domain.length == 2) {
                     // A spinner can have a min and max, if the domain holds two values.
@@ -95,7 +96,7 @@ public class SocketControlView extends AnchorPane implements Initializable {
                     max = (Number) domain[1];
                 }
 
-                spinnerValueFactory = new SpinnerValueFactory.DoubleSpinnerValueFactory(
+                SpinnerValueFactory spinnerValueFactory = new SpinnerValueFactory.DoubleSpinnerValueFactory(
                         min.doubleValue(), max.doubleValue(), initialValue.doubleValue());
 
                 Spinner<Double> spinner = new Spinner<>(spinnerValueFactory);
@@ -127,13 +128,18 @@ public class SocketControlView extends AnchorPane implements Initializable {
                 checkArgument(socketHint.getType().isArray());
                 checkArgument(Number.class.isAssignableFrom(socketHint.getType().getComponentType()));
 
-                // Same
+                // A ranged slider also needs a min and max, so the domain should hold two values.
                 checkArgument(domain != null && domain.length == 2);
                 double min = ((Number) domain[0]).doubleValue(),
-                        max = ((Number) domain[1]).doubleValue(),
-                        initialValue = ((Number) socket.getValue()).doubleValue();
+                        max = ((Number) domain[1]).doubleValue();
 
-                RangeSlider rangeSlider = new RangeSlider(min, max, initialValue, initialValue + 10);
+                // The initial value should also hold two values, for the low and high points
+                Number[] initialValue = (Number[]) socket.getValue();
+                checkArgument(initialValue.length == 2);
+                double initialLow = initialValue[0].doubleValue(),
+                        initialHigh = initialValue[1].doubleValue();
+
+                RangeSlider rangeSlider = new RangeSlider(min, max, initialLow, initialHigh);
                 this.controlPane.getChildren().add(rangeSlider);
                 this.valueProperty.bindBidirectional(rangeSlider.lowValueProperty());
 
@@ -142,6 +148,11 @@ public class SocketControlView extends AnchorPane implements Initializable {
             case SELECT:
                 // TODO: implement a select control once we have some operations that have enum inputs
                 break;
+
+            default:
+                // This shouldn't ever happen, but it's probably a good idea to crash instead of silently doing nothing
+                // and wondering why no control is showing up.
+                throw new RuntimeException("Unexpected socket view hint");
         }
 
         this.controlPane.disableProperty().set(this.socket.isConnected());
@@ -159,14 +170,16 @@ public class SocketControlView extends AnchorPane implements Initializable {
     @Subscribe
     public void onConnectionAdded(ConnectionAddedEvent event) {
         // Disable the control for the socket if its value is set by a connection anyway
-        if (event.getConnection().getInputSocket() == this.socket)
+        if (event.getConnection().getInputSocket() == this.socket) {
             this.controlPane.disableProperty().set(this.socket.isConnected());
+        }
     }
 
     @Subscribe
     public void onConnectionRemoved(ConnectionRemovedEvent event) {
         // Enable the control for the socket if the connection influencing its value was removed
-        if (event.getConnection().getInputSocket() == this.socket)
+        if (event.getConnection().getInputSocket() == this.socket) {
             this.controlPane.disableProperty().set(this.socket.isConnected());
+        }
     }
 }
