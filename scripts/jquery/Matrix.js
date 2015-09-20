@@ -146,6 +146,6 @@
 
   var matrix = false;
   $(function () {
-       matrix = new Matrix({count:750,auto:1,font:{link:'fonts/mCode15.ttf',format:'truetype',family:'mCode15',size:'7px'}});
+       matrix = new Matrix({count:750,auto:1});
   });
 })();
