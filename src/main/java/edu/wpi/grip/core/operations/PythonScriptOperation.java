@@ -130,8 +130,8 @@ public class PythonScriptOperation implements Operation {
     }
 
     @Override
-    public java.util.Optional<InputStream> getIcon() {
-        return java.util.Optional.of(getClass().getResourceAsStream("/edu/wpi/grip/ui/icons/python.png"));
+    public Optional<InputStream> getIcon() {
+        return Optional.of(getClass().getResourceAsStream("/edu/wpi/grip/ui/icons/python.png"));
     }
 
     /**

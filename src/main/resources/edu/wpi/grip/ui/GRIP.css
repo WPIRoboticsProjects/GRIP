@@ -18,6 +18,42 @@
     -fx-padding: 1.0em 2.0em;
 }
 
+Label.pane-title {
+    -fx-text-fill: #555555;
+    -fx-font-weight: bold;
+    -fx-padding: 1.0em 2.0em;
+}
+
+.palette {
+    -fx-min-width: 20em;
+}
+
+.operation {
+    -fx-cursor: hand;
+    -fx-hgap: 1em;
+    -fx-vgap: 0em;
+    -fx-padding: 1em;
+
+    -fx-background-color:
+        linear-gradient(to bottom, derive(-fx-color,-15%) 95%, derive(-fx-color,-25%) 100%),
+        -fx-inner-border,
+        -fx-body-color;
+    -fx-background-insets: 0, 1, 2;
+}
+
+Label.operation-name {
+    -fx-font-weight: bold;
+}
+
+Label.operation-description {
+    -fx-wrap-text: true;
+    -fx-alignment: top-left;
+}
+
+ImageView.operation-icon {
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.25), 32, 0, 4, 4);
+}
+
 .sink-window {
     -fx-pref-width: 60.0em;
     -fx-pref-height: 40.0em;
