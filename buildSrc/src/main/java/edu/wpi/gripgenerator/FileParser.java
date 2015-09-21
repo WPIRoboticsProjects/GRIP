@@ -7,11 +7,9 @@ import com.github.javaparser.ast.body.TypeDeclaration;
 import com.github.javaparser.ast.comments.Comment;
 import edu.wpi.gripgenerator.settings.DefinedMethod;
 import edu.wpi.gripgenerator.settings.DefinedMethodCollection;
-import edu.wpi.gripgenerator.templates.SocketHintDeclaration;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -33,17 +31,38 @@ public class FileParser {
     public static Map<String, CompilationUnit> testRead(){
         URL INPUT_URL = FileParser.class.getResource("/org/bytedeco/javacpp/opencv_core.txt");
         CompilationUnit compilationUnit = readFile(INPUT_URL);
+        Map<String, CompilationUnit> returnMap = new HashMap<>();
 
         if (compilationUnit != null) {
             for(TypeDeclaration type : compilationUnit.getTypes()){
                 if(type.getName().equals("opencv_core")){
-                    return parseOpenCVCore(compilationUnit);
+                    returnMap.putAll( parseOpenCVCore(compilationUnit) );
                 }
             }
         } else {
             System.err.print("Invalid File input");
         }
-        return null;
+        URL INPUT_URL2 = FileParser.class.getResource("/org/bytedeco/javacpp/opencv_imgproc.txt");
+        compilationUnit = readFile(INPUT_URL2);
+        if(compilationUnit != null){
+            returnMap.putAll(parseOpenImgprc(compilationUnit));
+        }
+        return returnMap;
+    }
+
+    public static Map<String, CompilationUnit> parseOpenImgprc(CompilationUnit imgprocDeclaration){
+        Map<String, CompilationUnit> compilationUnits = new HashMap<>();
+        DefinedMethodCollection collection = new DefinedMethodCollection("opencv_imgproc",
+                new DefinedMethod("Sobel", false, "Mat", "Mat"),
+                new DefinedMethod("accumulateSquare", false, "Mat", "Mat"),
+                new DefinedMethod("medianBlur", false, "Mat", "Mat"),
+                new DefinedMethod("GaussianBlur", false, "Mat", "Mat"),
+                new DefinedMethod("Laplacian", "Mat", "Mat"),
+                new DefinedMethod("dilate", false, "Mat", "Mat")
+                ).setOutputDefaults("dst");
+        new OpenCVMethodVisitor(collection).visit(imgprocDeclaration, compilationUnits);
+        collection.generateCompilationUnits(compilationUnits);
+        return compilationUnits;
     }
 
     public static Map<String, CompilationUnit> parseOpenCVCore(CompilationUnit coreDeclaration){
@@ -91,8 +110,6 @@ public class FileParser {
 
         collection.generateCompilationUnits(compilationUnits);
 
-        SocketHintDeclaration testDeclaration = new SocketHintDeclaration("Mat", Arrays.asList("src1", "src2"), true);
-        System.out.println(testDeclaration.getDeclaration());
 
         return compilationUnits;
     }

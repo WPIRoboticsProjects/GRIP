@@ -3,7 +3,7 @@ package edu.wpi.gripgenerator.settings;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.body.Parameter;
 import com.github.javaparser.ast.type.Type;
-import edu.wpi.gripgenerator.templates.SocketHintDeclaration;
+import edu.wpi.gripgenerator.templates.SocketHintDeclarationCollection;
 
 import java.util.*;
 
@@ -117,9 +117,8 @@ public class DefinedMethod {
         }
     }
 
-    public List<SocketHintDeclaration> getSocketHints(){
+    public SocketHintDeclarationCollection getSocketHintsCollection(){
         if(!this.finalizeParamTypes()){ return null; }
-        List<SocketHintDeclaration> socketHintDeclarations = new ArrayList<>();
         Map<Type, List<DefinedParamType>> inputHintsMap = new HashMap<>();
         Map<Type, List<DefinedParamType>> outputHintsMap = new HashMap<>();
 
@@ -131,14 +130,7 @@ public class DefinedMethod {
             assignmentMap.get(type.getType()).add(type);
         }
 
-        for(Type type : inputHintsMap.keySet()){
-            socketHintDeclarations.add(new SocketHintDeclaration(type, inputHintsMap.get(type)));
-        }
-        for(Type type : outputHintsMap.keySet()){
-            socketHintDeclarations.add(new SocketHintDeclaration(type, outputHintsMap.get(type)));
-        }
-
-        return socketHintDeclarations;
+        return new SocketHintDeclarationCollection(inputHintsMap, outputHintsMap);
     }
 
     public String toSimpleString(){
