@@ -39,7 +39,7 @@ class CodeGenerator extends DefaultTask {
             CompilationUnit fileUnit = files.get(fileName);
             File packageDir = new File(targetDirectory, "/" + fileUnit.package.getName().toString().replace('.', '/').replace(' ', '').replace(';', ''));
             if(packageDir.exists()){
-                println "The file " + fileName + " already exists";
+                //println "The file " + fileName + " already exists";
             } else {
                 packageDir.mkdirs();
             }

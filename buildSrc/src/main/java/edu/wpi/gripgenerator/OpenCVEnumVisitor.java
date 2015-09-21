@@ -42,10 +42,9 @@ public class OpenCVEnumVisitor extends VoidVisitorAdapter<Map<String, Compilatio
         // Create the constant
         EnumConstantDeclaration enumConstant = new EnumConstantDeclaration(var.getId().getName());
         List<Expression> expressionList = new ArrayList<>();
-        enumConstant.setArgs(expressionList);
-
         FieldAccessExpr field = new FieldAccessExpr(parentAccessor, var.getId().getName());
         expressionList.add(field);
+        enumConstant.setArgs(expressionList);
 
         // Add the javadoc comment
         if(var.hasComment()) enumConstant.setJavaDoc(new JavadocComment(var.getComment().getContent()));
@@ -74,7 +73,7 @@ public class OpenCVEnumVisitor extends VoidVisitorAdapter<Map<String, Compilatio
         EnumDeclaration newEnum = new EnumDeclaration(ModifierSet.PUBLIC, name);
 
         VariableDeclarator valueDeclaration = new VariableDeclarator(new VariableDeclaratorId(valueString));
-        FieldDeclaration valueField = new FieldDeclaration(ModifierSet.addModifier(ModifierSet.FINAL, ModifierSet.PUBLIC), null, ASTHelper.INT_TYPE, Collections.singletonList(valueDeclaration));
+        FieldDeclaration valueField = new FieldDeclaration(ModifierSet.addModifier(ModifierSet.FINAL, ModifierSet.PUBLIC), ASTHelper.INT_TYPE, Collections.singletonList(valueDeclaration));
         ASTHelper.addMember(newEnum, valueField);
 
         // Add a constructor
@@ -92,6 +91,7 @@ public class OpenCVEnumVisitor extends VoidVisitorAdapter<Map<String, Compilatio
         return newEnumCu;
     }
 
+    @Override
     public void visit(final FieldDeclaration declaration, final Map<String, CompilationUnit> arg){
         super.visit(declaration, arg);
 
