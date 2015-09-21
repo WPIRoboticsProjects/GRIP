@@ -35,6 +35,14 @@ public class Connection<T> {
         eventBus.register(this);
     }
 
+    public Socket<? extends T> getOutputSocket() {
+        return this.outputSocket;
+    }
+
+    public Socket<T> getInputSocket() {
+        return this.inputSocket;
+    }
+
     @Subscribe
     public void onOutputChanged(SocketChangedEvent e) {
         if (e.getSocket() == outputSocket) {

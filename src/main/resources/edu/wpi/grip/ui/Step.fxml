@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TitledPane?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.VBox?>
+<?import java.net.URL?>
+
+<fx:root type="javafx.scene.layout.AnchorPane" xmlns="http://javafx.com/javafx/null"
+         xmlns:fx="http://javafx.com/fxml/1">
+    <children>
+        <TitledPane fx:id="stepPane" alignment="CENTER" animated="false" collapsible="false" maxHeight="-Infinity"
+                    maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="step">
+            <content>
+                <VBox styleClass="sockets">
+                    <children>
+                        <VBox fx:id="inputs"/>
+                        <Separator orientation="HORIZONTAL"/>
+                        <VBox fx:id="outputs"/>
+                    </children>
+                </VBox>
+            </content>
+        </TitledPane>
+    </children>
+    <stylesheets>
+        <URL value="@roboto/Roboto.css"/>
+        <URL value="@GRIP.css"/>
+    </stylesheets>
+</fx:root>

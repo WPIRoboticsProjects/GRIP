@@ -21,6 +21,7 @@ public class Socket<T> {
     private SocketHint<T> socketHint;
     private Optional<T> value;
     private boolean published = false;
+    private boolean connected = false;
 
     /**
      * @param eventBus   The Guava {@link EventBus} used by the application.
@@ -123,12 +124,27 @@ public class Socket<T> {
         return this.published;
     }
 
+    /**
+     * @param connected If true, this socket is automatically set by a {@link Connection}
+     */
+    public void setConnected(boolean connected) {
+        this.connected = connected;
+    }
+
+    /**
+     * @return True if this socket is automatically set by a {@link Connection}
+     */
+    public boolean isConnected() {
+        return this.connected;
+    }
+
     @Override
     public String toString() {
         return MoreObjects.toStringHelper(this)
                 .add("socketHint", getSocketHint())
                 .add("value", getValue())
                 .add("published", isPublished())
+                .add("connected", isConnected())
                 .toString();
     }
 }
