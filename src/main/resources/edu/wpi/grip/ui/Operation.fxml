@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.net.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+<?import java.net.URL?>
+
+<?import javafx.scene.image.ImageView?>
+<fx:root maxHeight="-Infinity" maxWidth="Infinity" minHeight="-Infinity" minWidth="NaN" styleClass="operation"
+         type="javafx.scene.layout.GridPane" xmlns="http://javafx.com/javafx/null" xmlns:fx="http://javafx.com/fxml/1">
+    <children>
+        <ImageView fx:id="icon" styleClass="operation-icon" GridPane.columnIndex="0" GridPane.rowSpan="2" fitHeight="0" fitWidth="0"/>
+        <Label fx:id="name" styleClass="operation-name" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+        <Label fx:id="description" styleClass="operation-description" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+    </children>
+    <stylesheets>
+        <URL value="@roboto/Roboto.css"/>
+        <URL value="@GRIP.css"/>
+    </stylesheets>
+    <columnConstraints>
+        <ColumnConstraints/>
+    </columnConstraints>
+    <rowConstraints>
+        <RowConstraints/>
+    </rowConstraints>
+</fx:root>

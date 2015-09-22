@@ -1,6 +1,5 @@
 package edu.wpi.grip.core.operations;
 
-import com.google.common.base.Optional;
 import com.google.common.eventbus.EventBus;
 import edu.wpi.grip.core.Operation;
 import edu.wpi.grip.core.Socket;
@@ -9,7 +8,9 @@ import org.python.core.*;
 import org.python.util.PythonInterpreter;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
+import java.util.Optional;
 import java.util.List;
 import java.util.Properties;
 
@@ -72,7 +73,7 @@ public class PythonScriptOperation implements Operation {
 
     public PythonScriptOperation(URL url) throws PyException, IOException {
         this.sourceURL = Optional.of(url);
-        this.sourceCode = Optional.absent();
+        this.sourceCode = Optional.empty();
         this.interpreter.execfile(url.openStream());
         this.getPythonVariables();
 
@@ -88,7 +89,7 @@ public class PythonScriptOperation implements Operation {
     }
 
     public PythonScriptOperation(String code) throws PyException {
-        this.sourceURL = Optional.absent();
+        this.sourceURL = Optional.empty();
         this.sourceCode = Optional.of(code);
         this.interpreter.exec(code);
         this.getPythonVariables();
@@ -126,6 +127,11 @@ public class PythonScriptOperation implements Operation {
     @Override
     public String getDescription() {
         return this.description.getString();
+    }
+
+    @Override
+    public Optional<InputStream> getIcon() {
+        return Optional.of(getClass().getResourceAsStream("/edu/wpi/grip/ui/icons/python.png"));
     }
 
     /**
