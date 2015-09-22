@@ -46,9 +46,9 @@
                 </Menu>
             </menus>
         </MenuBar>
-        <SplitPane dividerPositions="0.5" orientation="VERTICAL" VBox.vgrow="ALWAYS">
+        <SplitPane dividerPositions="0.6" orientation="VERTICAL" VBox.vgrow="ALWAYS">
             <items>
-                <SplitPane dividerPositions="0.6" orientation="HORIZONTAL" fx:id="topPane">
+                <SplitPane dividerPositions="1.0" orientation="HORIZONTAL" fx:id="topPane">
                     <FlowPane styleClass="placeholder">
                         <children>
                             <Label alignment="CENTER" prefWidth="-1.0" styleClass="placeholder"
@@ -56,7 +56,7 @@
                         </children>
                     </FlowPane>
                 </SplitPane>
-                <ScrollPane fx:id="pipelineContainer"/>
+                <ScrollPane fx:id="bottomPane"/>
             </items>
         </SplitPane>
         <HBox id="HBox" alignment="CENTER_LEFT" VBox.vgrow="NEVER">
