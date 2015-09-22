@@ -1,8 +1,11 @@
 package edu.wpi.grip.ui;
 
 import com.google.common.eventbus.EventBus;
+import com.google.common.eventbus.Subscribe;
 import edu.wpi.grip.core.Pipeline;
 import edu.wpi.grip.core.Step;
+import edu.wpi.grip.core.events.StepAddedEvent;
+import edu.wpi.grip.core.events.StepRemovedEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -48,6 +51,22 @@ public class PipelineView extends HBox implements Initializable {
         for (Step step : pipeline.getSteps()) {
             steps.getChildren().add(new StepView(this.eventBus, step));
         }
+    }
+
+    public Pipeline getPipeline() {
+        return this.pipeline;
+    }
+
+    @Subscribe
+    public void onStepAdded(StepAddedEvent event) {
+        int index = event.getIndex().or(this.steps.getChildren().size());
+
+        this.steps.getChildren().add(index, new StepView(this.eventBus, event.getStep()));
+    }
+
+    @Subscribe
+    public void onStepRemoved(StepRemovedEvent event) {
+        this.steps.getChildren().removeIf(node -> ((StepView) node).getStep() == event.getStep());
     }
 }
 

@@ -77,4 +77,8 @@ public class StepView extends AnchorPane implements Initializable {
             this.outputs.getChildren().add(new SocketControlView(this.eventBus, outputSocket));
         }
     }
+
+    public Step getStep() {
+        return this.step;
+    }
 }

@@ -158,6 +158,10 @@ public class SocketControlView extends AnchorPane implements Initializable {
         this.controlPane.disableProperty().set(this.socket.isConnected());
     }
 
+    public Socket getSocket() {
+        return this.socket;
+    }
+
     @Subscribe
     public void onSocketChanged(SocketChangedEvent event) {
         if (event.getSocket() == this.socket) {
