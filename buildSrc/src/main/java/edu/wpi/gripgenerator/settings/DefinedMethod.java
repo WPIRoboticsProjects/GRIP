@@ -2,10 +2,11 @@ package edu.wpi.gripgenerator.settings;
 
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.body.Parameter;
-import com.github.javaparser.ast.type.Type;
-import edu.wpi.gripgenerator.templates.SocketHintDeclarationCollection;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
 
 public class DefinedMethod {
     private final String methodName;
@@ -27,7 +28,7 @@ public class DefinedMethod {
     }
 
     public DefinedMethod(String methodName){
-        this(methodName, false, new ArrayList());
+        this(methodName, false, new ArrayList<String>());
     }
 
     public DefinedMethod(String methodName, boolean isCompleteList, String ...paramTypes){
@@ -51,6 +52,10 @@ public class DefinedMethod {
     public DefinedMethod addDescription(String description){
         this.description = Optional.of(description);
         return this;
+    }
+
+    public String getParentObjectName(){
+        return collectionOf.getClassName();
     }
 
     /**
@@ -95,7 +100,7 @@ public class DefinedMethod {
             // Iterate over the chosen methods parameters
             for(int i = 0; i < declaration.getParameters().size(); i++){
                 Parameter param = declaration.getParameters().get(i);
-                DefinedParamType definedParamType = null;
+                DefinedParamType definedParamType;
                 assert i < paramTypes.size() : "The size of the params list was less than than the index. Invalid state";
                 if (i == paramTypes.size()) {
                     definedParamType = new DefinedParamType(param.getType().toString());
@@ -113,24 +118,13 @@ public class DefinedMethod {
             //TODO: Throw an error?
             System.err.println("No method was found that matched this method definition " + toSimpleString());
             this.finalized = false;
-            return this.finalized;
+            return false;
         }
     }
 
-    public SocketHintDeclarationCollection getSocketHintsCollection(){
+    public List<DefinedParamType> getFinalizedParamTypes(){
         if(!this.finalizeParamTypes()){ return null; }
-        Map<Type, List<DefinedParamType>> inputHintsMap = new HashMap<>();
-        Map<Type, List<DefinedParamType>> outputHintsMap = new HashMap<>();
-
-        // Figure out which hint map to put this defined param type into
-        for(DefinedParamType type : paramTypes){
-            Map<Type, List<DefinedParamType>> assignmentMap;
-            assignmentMap = type.isOutput() ? outputHintsMap : inputHintsMap;
-            assignmentMap.putIfAbsent(type.getType(), new ArrayList<>()); // Will return null if new
-            assignmentMap.get(type.getType()).add(type);
-        }
-
-        return new SocketHintDeclarationCollection(inputHintsMap, outputHintsMap);
+        return this.paramTypes;
     }
 
     public String toSimpleString(){

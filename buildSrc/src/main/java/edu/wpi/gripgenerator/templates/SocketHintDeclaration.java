@@ -55,13 +55,12 @@ public class SocketHintDeclaration {
     public SocketHintDeclaration(Type genericType, List<DefinedParamType> hintNameTypes){
         /* Convert this to the 'boxed' type if this is a PrimitiveType */
         this.genericType = genericType instanceof PrimitiveType ? ((PrimitiveType) genericType).toBoxedType() : genericType;
-        this.hintNames = new ArrayList<>();
+        this.hintNames = new ArrayList();
         this.isOutput = hintNameTypes.get(0).isOutput();
         for(DefinedParamType type : hintNameTypes){
             assert this.isOutput == type.isOutput(): "Mixed input/output defined param types were passed";
             this.hintNames.add(type.getName());
         }
-
     }
 
     public boolean isOutput(){
@@ -81,7 +80,9 @@ public class SocketHintDeclaration {
 
         final List<VariableDeclarator> variableDeclarations = new ArrayList<>();
         for(String hintName : hintNames){
+            // The variableId
             final String fullHintName = hintName+HINT_POSTFIX;
+            // The name hint of the socket hint
             final StringLiteralExpr stringLiteralExpr = new StringLiteralExpr(hintName);
             final ClassExpr classExpr = new ClassExpr(genericType);
 

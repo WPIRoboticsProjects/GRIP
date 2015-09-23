@@ -38,6 +38,10 @@ public class DefinedMethodCollection {
         return false;
     }
 
+    public String getClassName(){
+        return className;
+    }
+
     public boolean isOutputDefault(String check){
         return outputDefaults.contains(check);
     }

@@ -1,5 +1,6 @@
-package edu.wpi.gripgenerator.templates;
+package templates;
 
+import edu.wpi.gripgenerator.templates.SocketHintDeclaration;
 import org.junit.Before;
 import org.junit.Test;
 

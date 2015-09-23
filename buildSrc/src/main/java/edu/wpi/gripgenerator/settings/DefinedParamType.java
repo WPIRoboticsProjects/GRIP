@@ -66,4 +66,5 @@ public class DefinedParamType {
     void setOutput(){
         state = DefinedParamState.OUTPUT;
     }
+
 }

@@ -8,14 +8,16 @@ import com.github.javaparser.ast.body.*;
 import com.github.javaparser.ast.comments.BlockComment;
 import com.github.javaparser.ast.comments.JavadocComment;
 import com.github.javaparser.ast.expr.*;
-import com.github.javaparser.ast.stmt.AssertStmt;
 import com.github.javaparser.ast.stmt.BlockStmt;
+import com.github.javaparser.ast.stmt.ExpressionStmt;
 import com.github.javaparser.ast.stmt.ReturnStmt;
-import com.github.javaparser.ast.type.*;
+import com.github.javaparser.ast.stmt.Statement;
+import com.github.javaparser.ast.type.ClassOrInterfaceType;
+import com.github.javaparser.ast.type.VoidType;
+import com.google.common.collect.Sets;
 import edu.wpi.gripgenerator.settings.DefinedMethod;
 
-import java.util.Arrays;
-import java.util.Collections;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.github.javaparser.ASTHelper.createReferenceType;
@@ -29,12 +31,18 @@ public class Operation {
     private static final AnnotationExpr OVERRIDE_ANNOTATION = new MarkerAnnotationExpr(new NameExpr("Override"));
     private final DefinedMethod definedMethod;
     private final PackageDeclaration packageDec;
+    private final SocketHintDeclarationCollection socketHintDeclarationCollection;
     private final JavadocComment javadocComment;
 
     public Operation(DefinedMethod definedMethod, String className){
         this.definedMethod = definedMethod;
         this.packageDec = new PackageDeclaration(new NameExpr("edu.wpi.grip.generated." + className));
-        this.javadocComment = new JavadocComment("Operaion to call the " + className + " method " + definedMethod.getMethodName());
+        this.socketHintDeclarationCollection = new SocketHintDeclarationCollection(this.definedMethod.getFinalizedParamTypes());
+        this.javadocComment = new JavadocComment("Operation to call the " + className + " method " + definedMethod.getMethodName());
+    }
+
+    private List<ImportDeclaration> getAdditionalImports(){
+        return Collections.singletonList(new ImportDeclaration(new NameExpr("org.bytedeco.javacpp." + definedMethod.getParentObjectName()), false, false));
     }
 
     private MethodDeclaration getNameMethod(){
@@ -87,7 +95,7 @@ public class Operation {
                 ),
                 0,
                 null,
-                definedMethod.getSocketHintsCollection().getInputSocketBody()
+                socketHintDeclarationCollection.getInputSocketBody()
         );
         return createInputSockets;
     }
@@ -104,16 +112,29 @@ public class Operation {
                 ),
                 0,
                 null,
-                null
+                socketHintDeclarationCollection.getOutputSocketBody()
         );
-        BlockStmt methodBody = new BlockStmt(
-                Collections.singletonList(new ReturnStmt(new NullLiteralExpr()))
-        );
-        createOutputSockets.setBody(methodBody);
         return createOutputSockets;
     }
 
+
+    private Expression getFunctionCallExpression(){
+        return new MethodCallExpr(
+                new NameExpr(definedMethod.getParentObjectName()),
+                definedMethod.getMethodName(),
+                definedMethod.getFinalizedParamTypes().stream().map(t -> new NameExpr(t.getName())).collect(Collectors.toList())
+        );
+    }
+
+    private List<Statement> getPerformExpressionList(String inputParamId, String outputParamId){
+        List<Expression> expressionList = socketHintDeclarationCollection.getSocketAssignments(inputParamId, outputParamId);
+        expressionList.add(getFunctionCallExpression());
+        return expressionList.stream().map(a -> new ExpressionStmt(a)).collect(Collectors.toList());
+    }
+
     private MethodDeclaration getPerformMethod(){
+        String inputParamId = "inputs";
+        String outputParamId = "outputs";
         MethodDeclaration perform = new MethodDeclaration(
                 ModifierSet.PUBLIC,
                 Arrays.asList(OVERRIDE_ANNOTATION),
@@ -121,13 +142,13 @@ public class Operation {
                 new VoidType(),
                 "perform",
                 Arrays.asList(
-                        new Parameter(SocketHintDeclarationCollection.getSocketReturnParam(), new VariableDeclaratorId("inputs")),
-                        new Parameter(SocketHintDeclarationCollection.getSocketReturnParam(), new VariableDeclaratorId("outputs"))
+                        new Parameter(SocketHintDeclarationCollection.getSocketReturnParam(), new VariableDeclaratorId(inputParamId)),
+                        new Parameter(SocketHintDeclarationCollection.getSocketReturnParam(), new VariableDeclaratorId(outputParamId))
                 ),
                 0,
                 null,
                 new BlockStmt(
-                        Arrays.asList(new AssertStmt(new BooleanLiteralExpr(false), new StringLiteralExpr("This function has not been implemented yet")))
+                        getPerformExpressionList(inputParamId, outputParamId)
                 )
         );
         return perform;
@@ -138,7 +159,7 @@ public class Operation {
         operation.setImplements(Arrays.asList(iOperation));
         operation.setJavaDoc(javadocComment);
         operation.setComment(new BlockComment("===== THIS CODE HAS BEEN DYNAMICALLY GENERATED! DO NOT MODIFY! ===="));
-        operation.setMembers(definedMethod.getSocketHintsCollection().getAllSocketHints().stream().map(d -> d.getDeclaration()).collect(Collectors.toList()));
+        operation.setMembers(socketHintDeclarationCollection.getAllSocketHints().stream().map(d -> d.getDeclaration()).collect(Collectors.toList()));
         ASTHelper.addMember(operation, getNameMethod());
         ASTHelper.addMember(operation, getDescriptionMethod());
         ASTHelper.addMember(operation, getCreateInputSocketsMethod());
@@ -148,17 +169,20 @@ public class Operation {
     }
 
     public CompilationUnit getDeclaration(){
+        Set<ImportDeclaration> importList = Sets.newHashSet(
+                SocketHintDeclaration.SOCKET_IMPORT,
+                OPERATION_IMPORT,
+                CV_CORE_IMPORT,
+                SOCKET_IMPORT,
+                EVENT_BUS_IMPORT
+        );
+        importList.addAll(getAdditionalImports());
         CompilationUnit unit = new CompilationUnit(
                 packageDec,
-                Arrays.asList(
-                        SocketHintDeclaration.SOCKET_IMPORT,
-                        OPERATION_IMPORT,
-                        CV_CORE_IMPORT,
-                        SOCKET_IMPORT,
-                        EVENT_BUS_IMPORT
-                ),
+                new ArrayList<>(importList)
+                ,
                 Arrays.asList(getClassDeclaration())
-                );
+        );
         return unit;
     }
 }
