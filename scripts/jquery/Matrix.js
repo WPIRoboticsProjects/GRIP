@@ -77,7 +77,8 @@
            return string;
   };
   Matrix.prototype.randletter = function () {
-           return String.fromCharCode(97+Math.round(Math.random()*25));
+           return String.fromCharCode(47+Math.round(Math.random()*13));
+           //String.fromCharCode(94+Math.round(Math.random()*25));
   };
   Matrix.prototype.stop = function () {
            if (this.interval) {
