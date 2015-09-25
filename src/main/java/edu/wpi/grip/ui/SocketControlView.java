@@ -7,16 +7,19 @@ import edu.wpi.grip.core.SocketHint;
 import edu.wpi.grip.core.events.ConnectionAddedEvent;
 import edu.wpi.grip.core.events.ConnectionRemovedEvent;
 import edu.wpi.grip.core.events.SocketChangedEvent;
+import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.Property;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.adapter.JavaBeanBooleanProperty;
+import javafx.beans.property.adapter.JavaBeanBooleanPropertyBuilder;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Label;
-import javafx.scene.control.Slider;
-import javafx.scene.control.Spinner;
-import javafx.scene.control.SpinnerValueFactory;
+import javafx.scene.Node;
+import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import org.controlsfx.control.RangeSlider;
 
@@ -34,24 +37,32 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * This class both subscribes to and sends {@link SocketChangedEvent}s on the event bus, and acts as an intermediary
  * between EventBus events and a JavaFX property.
  */
-public class SocketControlView extends AnchorPane implements Initializable {
+public class SocketControlView extends GridPane implements Initializable {
     @FXML
     private Label identifier;
 
     @FXML
     private StackPane controlPane;
 
+    // The "handle" is a simple radio button next ot the socket identifier that shows weather or not there is a
+    // connection going to or from the socket.  If there is such a connection, the ConnectionView is rendered as a
+    // curve going from one handle to another.
+    @FXML
+    private RadioButton handle;
+
     private final EventBus eventBus;
     private final Socket socket;
     private final Property valueProperty;
+    private final boolean inputSocket;
 
-    public SocketControlView(EventBus eventBus, Socket<?> socket) {
+    public SocketControlView(EventBus eventBus, Socket<?> socket, boolean inputSocket) {
         checkNotNull(eventBus);
         checkNotNull(socket);
 
         this.eventBus = eventBus;
         this.socket = socket;
         this.valueProperty = new SimpleObjectProperty();
+        this.inputSocket = inputSocket;
 
         try {
             FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("SocketControl.fxml"));
@@ -61,6 +72,10 @@ public class SocketControlView extends AnchorPane implements Initializable {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+
+        // Move the handle to the left side of the grid pane if this is an input socket, or the right side if it's an
+        // output socket.
+        GridPane.setColumnIndex(this.getHandle(), this.isInputSocket() ? 0 : 2);
 
         // Always set the socket to the value of valueProperty, which may be bound to a GUI property.
         this.valueProperty.addListener((observableValue, o, t1) -> this.socket.setValue(observableValue.getValue()));
@@ -160,6 +175,18 @@ public class SocketControlView extends AnchorPane implements Initializable {
 
     public Socket getSocket() {
         return this.socket;
+    }
+
+    public RadioButton getHandle() {
+        return this.handle;
+    }
+
+    /**
+     * @return <code>true</code> if this control represents the input to a step.  Otherwise, it represents the output
+     * of a step.
+     */
+    public boolean isInputSocket() {
+        return inputSocket;
     }
 
     @Subscribe

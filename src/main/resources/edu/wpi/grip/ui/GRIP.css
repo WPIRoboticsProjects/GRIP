@@ -80,8 +80,17 @@ ImageView.operation-icon {
     -fx-pref-width: 15em;
 }
 
+.step VBox {
+    -fx-spacing: 2em;
+}
+
 .step .title {
     -fx-font-weight: bold;
+}
+
+.socket {
+    -fx-hgap: 0.5em;
+    -fx-vgap: 0.5em;
 }
 
 .socket .socket-control {

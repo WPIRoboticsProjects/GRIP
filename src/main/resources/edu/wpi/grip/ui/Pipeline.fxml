@@ -1,13 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
-
+<?import javafx.scene.Group?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
 <?import java.net.URL?>
-<fx:root type="javafx.scene.layout.HBox" xmlns:fx="http://javafx.com/fxml">
+<fx:root type="javafx.scene.layout.StackPane" maxWidth="Infinity" maxHeight="Infinity" xmlns:fx="http://javafx.com/fxml"
+         styleClass="pipeline">
     <children>
         <HBox fx:id="steps" styleClass="steps"/>
+        <Group fx:id="connections">
+            <StackPane.alignment>TOP_LEFT</StackPane.alignment>
+        </Group>
     </children>
     <stylesheets>
         <URL value="@roboto/Roboto.css"/>

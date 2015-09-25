@@ -4,6 +4,7 @@ import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import edu.wpi.grip.core.Socket;
 import edu.wpi.grip.core.Step;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -70,12 +71,28 @@ public class StepView extends AnchorPane implements Initializable {
 
         // Add a SocketControlView for each input socket and output socket
         for (Socket<?> inputSocket : this.step.getInputSockets()) {
-            this.inputs.getChildren().add(new SocketControlView(this.eventBus, inputSocket));
+            this.inputs.getChildren().add(new SocketControlView(this.eventBus, inputSocket, true));
         }
 
-        for (Socket<?> outputSocket: this.step.getOutputSockets()) {
-            this.outputs.getChildren().add(new SocketControlView(this.eventBus, outputSocket));
+        for (Socket<?> outputSocket : this.step.getOutputSockets()) {
+            this.outputs.getChildren().add(new SocketControlView(this.eventBus, outputSocket, false ));
         }
+    }
+
+    /**
+     * @return An unmodifiable list of {@link SocketControlView}s corresponding to the input sockets of this step
+     */
+    @SuppressWarnings("unchecked")
+    public ObservableList<SocketControlView> getInputSockets() {
+        return (ObservableList) this.inputs.getChildrenUnmodifiable();
+    }
+
+    /**
+     * @return An unmodifiable list of {@link SocketControlView}s corresponding to the output sockets of this step
+     */
+    @SuppressWarnings("unchecked")
+    public ObservableList<SocketControlView> getOutputSockets() {
+        return (ObservableList) this.outputs.getChildrenUnmodifiable();
     }
 
     public Step getStep() {
