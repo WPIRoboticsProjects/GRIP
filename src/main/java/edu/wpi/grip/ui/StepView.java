@@ -4,16 +4,20 @@ import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import edu.wpi.grip.core.Socket;
 import edu.wpi.grip.core.Step;
+import edu.wpi.grip.core.events.StepRemovedEvent;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
+import javafx.scene.control.Button;
 import javafx.scene.control.ContentDisplay;
+import javafx.scene.control.Label;
 import javafx.scene.control.TitledPane;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.Screen;
@@ -31,6 +35,12 @@ import static com.google.common.base.Preconditions.checkNotNull;
 public class StepView extends AnchorPane implements Initializable {
     @FXML
     private TitledPane stepPane;
+
+    @FXML
+    private ImageView icon;
+
+    @FXML
+    private Button deleteButton;
 
     @FXML
     private VBox inputs;
@@ -61,12 +71,13 @@ public class StepView extends AnchorPane implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         this.stepPane.setText(this.step.getOperation().getName());
-        this.stepPane.setContentDisplay(ContentDisplay.TOP);
+        this.stepPane.setAlignment(Pos.TOP_LEFT);
+        this.stepPane.setContentDisplay(ContentDisplay.LEFT);
+
         this.step.getOperation().getIcon().ifPresent(icon -> {
-            ImageView graphic = new ImageView(new Image(icon));
-            graphic.setFitWidth(Screen.getPrimary().getDpi() * 0.25);
-            graphic.setFitHeight(Screen.getPrimary().getDpi() * 0.25);
-            this.stepPane.setGraphic(graphic);
+            this.icon.setImage(new Image(icon));
+            this.icon.setFitWidth(Screen.getPrimary().getDpi() * 0.25);
+            this.icon.setFitHeight(Screen.getPrimary().getDpi() * 0.25);
         });
 
         // Add a SocketControlView for each input socket and output socket
@@ -75,8 +86,11 @@ public class StepView extends AnchorPane implements Initializable {
         }
 
         for (Socket<?> outputSocket : this.step.getOutputSockets()) {
-            this.outputs.getChildren().add(new SocketControlView(this.eventBus, outputSocket, false ));
+            this.outputs.getChildren().add(new SocketControlView(this.eventBus, outputSocket, false));
         }
+
+        // When the delete button is pressed, remove this step.
+        this.deleteButton.setOnMouseClicked(mouseEvent -> this.eventBus.post(new StepRemovedEvent(this.step)));
     }
 
     /**
