@@ -4,12 +4,19 @@ import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import edu.wpi.grip.core.Socket;
 import edu.wpi.grip.core.Step;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.geometry.Pos;
+import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.TitledPane;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.TextAlignment;
+import javafx.stage.Screen;
 
 import java.io.IOException;
 import java.net.URL;
@@ -54,14 +61,41 @@ public class StepView extends AnchorPane implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         this.stepPane.setText(this.step.getOperation().getName());
+        this.stepPane.setContentDisplay(ContentDisplay.TOP);
+        this.step.getOperation().getIcon().ifPresent(icon -> {
+            ImageView graphic = new ImageView(new Image(icon));
+            graphic.setFitWidth(Screen.getPrimary().getDpi() * 0.25);
+            graphic.setFitHeight(Screen.getPrimary().getDpi() * 0.25);
+            this.stepPane.setGraphic(graphic);
+        });
 
         // Add a SocketControlView for each input socket and output socket
         for (Socket<?> inputSocket : this.step.getInputSockets()) {
-            this.inputs.getChildren().add(new SocketControlView(this.eventBus, inputSocket));
+            this.inputs.getChildren().add(new SocketControlView(this.eventBus, inputSocket, true));
         }
 
-        for (Socket<?> outputSocket: this.step.getOutputSockets()) {
-            this.outputs.getChildren().add(new SocketControlView(this.eventBus, outputSocket));
+        for (Socket<?> outputSocket : this.step.getOutputSockets()) {
+            this.outputs.getChildren().add(new SocketControlView(this.eventBus, outputSocket, false ));
         }
+    }
+
+    /**
+     * @return An unmodifiable list of {@link SocketControlView}s corresponding to the input sockets of this step
+     */
+    @SuppressWarnings("unchecked")
+    public ObservableList<SocketControlView> getInputSockets() {
+        return (ObservableList) this.inputs.getChildrenUnmodifiable();
+    }
+
+    /**
+     * @return An unmodifiable list of {@link SocketControlView}s corresponding to the output sockets of this step
+     */
+    @SuppressWarnings("unchecked")
+    public ObservableList<SocketControlView> getOutputSockets() {
+        return (ObservableList) this.outputs.getChildrenUnmodifiable();
+    }
+
+    public Step getStep() {
+        return this.step;
     }
 }

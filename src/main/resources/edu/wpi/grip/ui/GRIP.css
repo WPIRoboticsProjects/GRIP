@@ -80,20 +80,24 @@ ImageView.operation-icon {
     -fx-pref-width: 15em;
 }
 
+.step VBox {
+    -fx-spacing: 2em;
+}
+
+.step .title {
+    -fx-font-weight: bold;
+}
+
+.socket {
+    -fx-hgap: 0.5em;
+    -fx-vgap: 0.5em;
+}
+
 .socket .socket-control {
-/*    -fx-border-color: red;
-    -fx-border-width: 2px;*/
     -fx-pref-width: 10em;
 }
 
-.socket .socket-control * {
-/*    -fx-border-color: green;
-    -fx-border-width: 2px;*/
-}
-
 .socket VBox {
-  /*  -fx-border-color: blue;
-    -fx-border-width: 2px;*/
     -fx-pref-height: 0em;
     -fx-pref-width: 13em;
     -fx-padding: 1em;
