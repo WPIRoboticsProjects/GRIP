@@ -88,6 +88,17 @@ ImageView.operation-icon {
     -fx-pref-width: 15em;
 }
 
+.step HBox.icons {
+    -fx-spacing: 1em;
+}
+
+.step HBox.icons .button {
+    -fx-padding: 0.2em 0.8em;
+    -fx-font-weight: bold;
+    -fx-font-color: -fx-dark-color;
+    -fx-font-size: 1.5em;
+}
+
 .step VBox {
     -fx-spacing: 2em;
 }
