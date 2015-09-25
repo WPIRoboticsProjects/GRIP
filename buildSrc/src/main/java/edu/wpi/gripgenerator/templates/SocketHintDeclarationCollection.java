@@ -70,20 +70,14 @@ public class SocketHintDeclarationCollection {
                             Arrays.asList(
                                     new VariableDeclarator(
                                             new VariableDeclaratorId(paramType.getName()),
-                                            new MethodCallExpr(
+                                            new CastExpr(
+                                                    paramType.getType(),
                                                     new MethodCallExpr(
-                                                            new NameExpr(paramType.getName() + "Hint"),
-                                                            "getType"
-                                                    ),
-                                                    "cast",
-                                                    Arrays.asList(
-                                                            new MethodCallExpr(
-                                                                    new ArrayAccessExpr(
-                                                                            new NameExpr(paramId),
-                                                                            new IntegerLiteralExpr(String.valueOf(index))
-                                                                    ),
-                                                                    "getValue"
-                                                            )
+                                                            new ArrayAccessExpr(
+                                                                    new NameExpr(paramId),
+                                                                    new IntegerLiteralExpr(String.valueOf(index))
+                                                            ),
+                                                            "getValue"
                                                     )
                                             )
 

@@ -10,10 +10,13 @@ import com.github.javaparser.ast.comments.JavadocComment;
 import com.github.javaparser.ast.expr.*;
 import com.github.javaparser.ast.stmt.BlockStmt;
 import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
+import edu.wpi.gripgenerator.collectors.DefaultValueCollector;
+import edu.wpi.gripgenerator.collectors.EnumDefaultValue;
 
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 
 public class OpenCVEnumVisitor extends VoidVisitorAdapter<Map<String, CompilationUnit>> {
@@ -25,6 +28,11 @@ public class OpenCVEnumVisitor extends VoidVisitorAdapter<Map<String, Compilatio
      * */
     private static final Pattern ENUM_REGEX = Pattern.compile(".*enum cv::([a-zA-Z_]*)?:?:?\\s?([a-zA-Z_]*)");
     private static final String BASE_CLASS_NAME = "opencv_core";
+    private final DefaultValueCollector collector;
+
+    public OpenCVEnumVisitor(DefaultValueCollector collector){
+        this.collector = collector;
+    }
 
     /**
      * Generates the contents of the constructor.
@@ -114,9 +122,11 @@ public class OpenCVEnumVisitor extends VoidVisitorAdapter<Map<String, Compilatio
                     if(!arg.containsKey(name)) {
                         // This is where the enum is generated
                         arg.put(name, generateFromDeclaration(declaration, name, subClass));
+                        collector.add(new EnumDefaultValue(name, declaration.getVariables().stream().map(e -> e.getId().getName()).collect(Collectors.toSet())));
                     } else {
                         CompilationUnit existingEnum = arg.get(name);
                         addEnumConstants((EnumDeclaration) existingEnum.getTypes().get(0), declaration, subClass);
+                        collector.addToEnum(collector.getEnum(name), declaration.getVariables().stream().map(e -> e.getId().getName()).collect(Collectors.toList()));
                     }
                 } else {
                     throw new Error("Parent of Enum declaration was not a ClassOrInterfaceDeclaration");

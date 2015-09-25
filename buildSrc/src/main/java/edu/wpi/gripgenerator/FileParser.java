@@ -5,8 +5,10 @@ import com.github.javaparser.ParseException;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.body.TypeDeclaration;
 import com.github.javaparser.ast.comments.Comment;
+import edu.wpi.gripgenerator.collectors.DefaultValueCollector;
 import edu.wpi.gripgenerator.settings.DefinedMethod;
 import edu.wpi.gripgenerator.settings.DefinedMethodCollection;
+import edu.wpi.gripgenerator.settings.DefinedParamType;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -38,11 +40,12 @@ public class FileParser {
     /**
      * There is a bug in the JavaParser that will incorrectly associate comments after a parameter but
      * before a comma will incorrectly associate that comment with the next param in the method's params.
-     *
+     * @see <a href="https://github.com/javaparser/javaparser/issues/199">Javaparser Issue:199</a>
      * @param stream The original input file.
      * @return The processed output stream.
      */
     private static InputStream preProcessStream(InputStream stream){
+        //FIXME: This is a hack around. This should be removed once the above noted issue is resolved.
         java.util.Scanner s = new java.util.Scanner(stream).useDelimiter("\\A");
         String input = s.hasNext() ? s.next() : "";
         input = input.replaceAll(methodReorderPattern, methodNewOrder);
@@ -65,11 +68,12 @@ public class FileParser {
         URL INPUT_URL = FileParser.class.getResource("/org/bytedeco/javacpp/opencv_core.txt");
         CompilationUnit compilationUnit = readFile(INPUT_URL);
         Map<String, CompilationUnit> returnMap = new HashMap<>();
+        DefaultValueCollector collector = new DefaultValueCollector();
 
         if (compilationUnit != null) {
             for(TypeDeclaration type : compilationUnit.getTypes()){
                 if(type.getName().equals("opencv_core")){
-                    returnMap.putAll( parseOpenCVCore(compilationUnit) );
+                    returnMap.putAll( parseOpenCVCore(compilationUnit, collector) );
                 }
             }
         } else {
@@ -78,12 +82,12 @@ public class FileParser {
         URL INPUT_URL2 = FileParser.class.getResource("/org/bytedeco/javacpp/opencv_imgproc.txt");
         compilationUnit = readFile(INPUT_URL2);
         if(compilationUnit != null){
-            returnMap.putAll(parseOpenImgprc(compilationUnit));
+            returnMap.putAll(parseOpenImgprc(compilationUnit, collector));
         }
         return returnMap;
     }
 
-    public static Map<String, CompilationUnit> parseOpenImgprc(CompilationUnit imgprocDeclaration){
+    public static Map<String, CompilationUnit> parseOpenImgprc(CompilationUnit imgprocDeclaration, DefaultValueCollector collector){
         Map<String, CompilationUnit> compilationUnits = new HashMap<>();
         DefinedMethodCollection collection = new DefinedMethodCollection("opencv_imgproc",
                 new DefinedMethod("Sobel", false, "Mat", "Mat"),
@@ -91,14 +95,18 @@ public class FileParser {
                 new DefinedMethod("medianBlur", false, "Mat", "Mat"),
                 new DefinedMethod("GaussianBlur", false, "Mat", "Mat"),
                 new DefinedMethod("Laplacian", "Mat", "Mat"),
-                new DefinedMethod("dilate", false, "Mat", "Mat")
+                new DefinedMethod("dilate", false, "Mat", "Mat"),
+                new DefinedMethod("Canny", false, new DefinedParamType("Mat"), new DefinedParamType("Mat", DefinedParamType.DefinedParamState.OUTPUT)),
+                new DefinedMethod("cornerMinEigenVal", false, "Mat", "Mat"),
+                new DefinedMethod("cornerHarris", false, "Mat", "Mat"),
+                new DefinedMethod("cornerEigenValsAndVecs", false, "Mat", "Mat")
                 ).setOutputDefaults("dst");
         new OpenCVMethodVisitor(collection).visit(imgprocDeclaration, compilationUnits);
         collection.generateCompilationUnits(compilationUnits);
         return compilationUnits;
     }
 
-    public static Map<String, CompilationUnit> parseOpenCVCore(CompilationUnit coreDeclaration){
+    public static Map<String, CompilationUnit> parseOpenCVCore(CompilationUnit coreDeclaration, DefaultValueCollector collector){
         Map<String, CompilationUnit> compilationUnits = new HashMap<>();
         Pattern enumRegex = Pattern.compile(".*enum cv::([a-zA-Z_]*)");
         for(Comment comment : coreDeclaration.getAllContainedComments()){
@@ -115,7 +123,7 @@ public class FileParser {
             }
         }
 
-        new OpenCVEnumVisitor().visit(coreDeclaration, compilationUnits);
+        new OpenCVEnumVisitor(collector).visit(coreDeclaration, compilationUnits);
 
         DefinedMethodCollection collection = new DefinedMethodCollection("opencv_core",
                 new DefinedMethod("add", false, "Mat", "Mat", "Mat"),

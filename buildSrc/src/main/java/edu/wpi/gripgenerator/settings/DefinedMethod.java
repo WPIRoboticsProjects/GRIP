@@ -3,10 +3,8 @@ package edu.wpi.gripgenerator.settings;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.body.Parameter;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class DefinedMethod {
     private final String methodName;
@@ -28,7 +26,11 @@ public class DefinedMethod {
     }
 
     public DefinedMethod(String methodName){
-        this(methodName, false, new ArrayList<String>());
+        this(methodName, false, new ArrayList());
+    }
+
+    public DefinedMethod(String methodName, boolean isCompleteList){
+        this(methodName, isCompleteList, new ArrayList());
     }
 
     public DefinedMethod(String methodName, boolean isCompleteList, String ...paramTypes){
@@ -37,7 +39,13 @@ public class DefinedMethod {
 
     public DefinedMethod(String methodName, boolean isCompleteList, List<String> paramTypes){
         this.methodName = methodName;
-        this.paramTypes = DefinedParamType.fromStrings(paramTypes);
+        this.paramTypes = paramTypes.stream().map(DefinedParamType::new).collect(Collectors.toList());
+        this.isCompleteList = isCompleteList;
+    }
+
+    public DefinedMethod(String methodName, boolean isCompleteList, DefinedParamType ...paramTypes){
+        this.methodName = methodName;
+        this.paramTypes = new ArrayList(Arrays.asList(paramTypes));
         this.isCompleteList = isCompleteList;
     }
 
@@ -135,5 +143,9 @@ public class DefinedMethod {
                 ", collectionOf=" + collectionOf +
                 ", description=" + description +
                 '}';
+    }
+
+    public String methodToString() {
+        return this.bestMatchMethod.get().toString();
     }
 }

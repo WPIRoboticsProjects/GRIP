@@ -11,7 +11,7 @@ import java.util.function.Supplier;
  * interface to learn how to talk to <code>Algorithm</code>s.
  */
 public class SocketHint<T> {
-    public enum View {NONE, SPINNER, SLIDER, RANGE, SELECT}
+    public enum View {NONE, SPINNER, SLIDER, RANGE, SELECT, CHECKBOX}
 
     private final String identifier;
     private final Class<T> type;

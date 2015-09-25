@@ -155,6 +155,8 @@ public class Operation {
     }
 
     public ClassOrInterfaceDeclaration getClassDeclaration(){
+        System.out.println("Generating: " + definedMethod.getMethodName());
+        System.out.println(definedMethod.methodToString());
         ClassOrInterfaceDeclaration operation = new ClassOrInterfaceDeclaration(ModifierSet.PUBLIC, false, definedMethod.getMethodName());
         operation.setImplements(Arrays.asList(iOperation));
         operation.setJavaDoc(javadocComment);

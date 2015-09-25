@@ -1,10 +1,7 @@
 package edu.wpi.gripgenerator.templates;
 
 import com.github.javaparser.ast.ImportDeclaration;
-import com.github.javaparser.ast.body.FieldDeclaration;
-import com.github.javaparser.ast.body.ModifierSet;
-import com.github.javaparser.ast.body.VariableDeclarator;
-import com.github.javaparser.ast.body.VariableDeclaratorId;
+import com.github.javaparser.ast.body.*;
 import com.github.javaparser.ast.expr.*;
 import com.github.javaparser.ast.type.ClassOrInterfaceType;
 import com.github.javaparser.ast.type.PrimitiveType;
@@ -15,6 +12,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.github.javaparser.ASTHelper.createReferenceType;
 
@@ -38,29 +36,34 @@ public class SocketHintDeclaration {
     //End Statics
 
     private final Type genericType;
-    private final List<String> hintNames;
+    private final List<DefinedParamType> paramTypes;
     private final boolean isOutput;
 
     public SocketHintDeclaration(String genericTypeName, List<String> hintNames, boolean isOutput){
         this(createReferenceType(genericTypeName, 0), hintNames, isOutput);
     }
 
+    /**
+     * USED ONLY IN TESTING!
+     * @param genericType
+     * @param hintNames
+     * @param isOutput
+     */
     public SocketHintDeclaration(Type genericType, List<String> hintNames, boolean isOutput){
         this.genericType = genericType;
-        this.hintNames = hintNames;
+        this.paramTypes = hintNames.stream().map(n -> new DefinedParamType(
+                genericType.toStringWithoutComments(),
+                new Parameter(genericType, new VariableDeclaratorId(n)))
+        ).collect(Collectors.toList());
         this.isOutput = isOutput;
     }
 
 
-    public SocketHintDeclaration(Type genericType, List<DefinedParamType> hintNameTypes){
+    public SocketHintDeclaration(Type genericType, List<DefinedParamType> paramTypes){
         /* Convert this to the 'boxed' type if this is a PrimitiveType */
         this.genericType = genericType instanceof PrimitiveType ? ((PrimitiveType) genericType).toBoxedType() : genericType;
-        this.hintNames = new ArrayList();
-        this.isOutput = hintNameTypes.get(0).isOutput();
-        for(DefinedParamType type : hintNameTypes){
-            assert this.isOutput == type.isOutput(): "Mixed input/output defined param types were passed";
-            this.hintNames.add(type.getName());
-        }
+        this.paramTypes = paramTypes;
+        this.isOutput = paramTypes.get(0).isOutput();
     }
 
     public boolean isOutput(){
@@ -69,17 +72,17 @@ public class SocketHintDeclaration {
 
     /**
      * Creates a socket hint declaration from the constructor.
-     * @param additionalParams Any additional params that should be passed to the constructor of the socket hint
      * @return The field declaration
      */
-    public FieldDeclaration getDeclaration(List<Expression> additionalParams){;
+    public FieldDeclaration getDeclaration(){
         final int modifiers = ModifierSet.addModifier(ModifierSet.FINAL, ModifierSet.PRIVATE);
 
         final ClassOrInterfaceType socketHintType = new ClassOrInterfaceType(SOCKET_HINT_CLASS_NAME);
         socketHintType.setTypeArgs(Collections.singletonList(genericType));
 
         final List<VariableDeclarator> variableDeclarations = new ArrayList<>();
-        for(String hintName : hintNames){
+        for(DefinedParamType paramType : paramTypes){
+            String hintName = paramType.getName();
             // The variableId
             final String fullHintName = hintName+HINT_POSTFIX;
             // The name hint of the socket hint
@@ -87,7 +90,7 @@ public class SocketHintDeclaration {
             final ClassExpr classExpr = new ClassExpr(genericType);
 
             //Add the additional params to the list for this param set.
-            final List<Expression> paramSet = new ArrayList<>(additionalParams);
+            final List<Expression> paramSet = new ArrayList<>(paramType.getSocketHintAdditionalParams());
             paramSet.addAll(0, Arrays.asList(stringLiteralExpr, classExpr));
             variableDeclarations.add(
                     new VariableDeclarator(
@@ -96,9 +99,5 @@ public class SocketHintDeclaration {
                             new ObjectCreationExpr(null, socketHintType, paramSet)));
         }
         return new FieldDeclaration(modifiers, socketHintType, variableDeclarations);
-    }
-
-    public FieldDeclaration getDeclaration(){
-        return getDeclaration(Collections.emptyList());
     }
 }
