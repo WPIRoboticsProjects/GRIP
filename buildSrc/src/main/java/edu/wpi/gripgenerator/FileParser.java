@@ -8,18 +8,51 @@ import com.github.javaparser.ast.comments.Comment;
 import edu.wpi.gripgenerator.settings.DefinedMethod;
 import edu.wpi.gripgenerator.settings.DefinedMethodCollection;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class FileParser {
+    /**
+     * Regex splits the parameter into three distinct capture groups.
+     * <ol>
+     *     <li>The type and the param with optional varargs.</li>
+     *     <li>The comment that is after the parameter.</li>
+     *     <li>The various ways that the parameter can end.</li>
+     * </ol>
+     */
+    protected static final String methodReorderPattern = "([A-Za-z1-9]+ (?:\\.\\.\\.)?[a-z][A-Za-z0-9]*)(/\\*=[^ ]*\\*/)((?:,)|(?: \\)))";
+
+    /**
+     * Reorders the {@link FileParser#methodReorderPattern} capture groups so the JavaParser can correctly
+     * associate the params with their respective comments.
+     */
+    protected static final String methodNewOrder = "$2$1$3";
+
+    /**
+     * There is a bug in the JavaParser that will incorrectly associate comments after a parameter but
+     * before a comma will incorrectly associate that comment with the next param in the method's params.
+     *
+     * @param stream The original input file.
+     * @return The processed output stream.
+     */
+    private static InputStream preProcessStream(InputStream stream){
+        java.util.Scanner s = new java.util.Scanner(stream).useDelimiter("\\A");
+        String input = s.hasNext() ? s.next() : "";
+        input = input.replaceAll(methodReorderPattern, methodNewOrder);
+        return new ByteArrayInputStream(input.getBytes(StandardCharsets.UTF_8));
+    }
 
     public static CompilationUnit readFile(URL url){
+
         try {
-            return JavaParser.parse(url.openStream());
+            return JavaParser.parse(preProcessStream(url.openStream()));
         } catch (IOException e) {
             e.printStackTrace();
         } catch (ParseException e) {
