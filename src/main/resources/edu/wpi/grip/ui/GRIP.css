@@ -41,6 +41,14 @@ Label.pane-title {
     -fx-background-insets: 0, 1, 2;
 }
 
+.operation:hover {
+    -fx-color: -fx-hover-base;
+}
+
+.operation:pressed {
+    -fx-color: -fx-pressed-base;
+}
+
 Label.operation-name {
     -fx-font-weight: bold;
 }

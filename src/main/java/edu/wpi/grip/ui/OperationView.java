@@ -2,6 +2,8 @@ package edu.wpi.grip.ui;
 
 import com.google.common.eventbus.EventBus;
 import edu.wpi.grip.core.Operation;
+import edu.wpi.grip.core.Step;
+import edu.wpi.grip.core.events.StepAddedEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -66,5 +68,12 @@ public class OperationView extends GridPane implements Initializable {
         // set dynamically based on DPI.
         this.icon.setFitWidth(ICON_SIZE_INCHES * Screen.getPrimary().getDpi());
         this.icon.setFitHeight(ICON_SIZE_INCHES * Screen.getPrimary().getDpi());
+
+
+        // When the user clicks the operation, add a new step.
+        this.setOnMouseClicked(mouseEvent -> {
+            Step step = new Step(this.eventBus, this.operation);
+            this.eventBus.post(new StepAddedEvent(step));
+        });
     }
 }
