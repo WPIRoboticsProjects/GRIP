@@ -52,9 +52,11 @@ public class SocketControlView extends GridPane implements Initializable {
     @FXML
     private StackPane controlPane;
 
-    // The "handle" is a simple shape next ot the socket identifier that shows weather or not there is a connection
-    // going to or from the socket.  If there is such a connection, the ConnectionView is rendered as a curve going
-    // from one handle to another.
+    /**
+     * The "handle" is a simple shape next ot the socket identifier that shows weather or not there is a connection
+     * going to or from the socket.  If there is such a connection, the ConnectionView is rendered as a curve going
+     * from one handle to another.
+     */
     private SocketHandleView handle;
 
     private final EventBus eventBus;

@@ -1,11 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.RadioButton?>
 <?import javafx.scene.layout.*?>
 <?import java.net.URL?>
-<?import javafx.scene.shape.Circle?>
-<?import javafx.scene.control.Button?>
 <fx:root styleClass="socket" type="javafx.scene.layout.GridPane" xmlns="http://javafx.com/javafx/null"
          xmlns:fx="http://javafx.com/fxml/1">
     <children>

@@ -15,7 +15,10 @@ import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
 
 import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -51,6 +54,17 @@ public class SocketHandleView extends Button {
 
         this.connectedProperty.addListener((observableValue, oldValue, isConnected) ->
                 this.pseudoClassStateChanged(CONNECTED_PSEUDO_CLASS, isConnected));
+
+        // When the user clicks on a socket, remove any connections associated with that socket.
+        this.setOnMouseClicked(mouseEvent -> {
+            Set<Connection> connections = this.controlView.getSocket().getConnections();
+
+            // Post a new ConnectionRemovedEvent for each connection
+            connections.stream()
+                    .map(ConnectionRemovedEvent::new)
+                    .collect(Collectors.toList())
+                    .forEach(this.eventBus::post);
+        });
 
         // When the user starts dragging a socket handle, start forming a connection.  This involves keeping a
         // reference to the SocketView that the drag started at.
