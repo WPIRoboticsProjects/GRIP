@@ -18,9 +18,11 @@ import javafx.fxml.Initializable;
 import javafx.geometry.Bounds;
 import javafx.geometry.Point2D;
 import javafx.scene.Group;
+import javafx.scene.Node;
 import javafx.scene.control.RadioButton;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
+import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 
 import java.io.IOException;
@@ -153,11 +155,8 @@ public class PipelineView extends StackPane implements Initializable {
                 throw new RuntimeException("Connection added for socket that does not exist in the pipeline");
             }
 
-            final RadioButton outputHandle = outputSocketView.getHandle();
-            final RadioButton inputHandle = inputSocketView.getHandle();
-
-            outputHandle.setSelected(true);
-            inputHandle.setSelected(true);
+            final Node outputHandle = outputSocketView.getHandle();
+            final Node inputHandle = inputSocketView.getHandle();
 
             final ConnectionView connectionView = new ConnectionView(this.eventBus, connection);
 
@@ -217,19 +216,6 @@ public class PipelineView extends StackPane implements Initializable {
             if (connectionView != null) {
                 this.connections.getChildren().remove(connectionView);
                 this.eventBus.unregister(connectionView);
-
-                // Un-select the handles to show that they are no longer connected.  TODO: keep track of connections
-                // or at least connection counts from sockets to better handle sockets with multiple connections.
-                final SocketControlView outputSocketView = findSocketView(event.getConnection().getOutputSocket());
-                final SocketControlView inputSocketView = findSocketView(event.getConnection().getInputSocket());
-
-                if (inputSocketView != null) {
-                    inputSocketView.getHandle().setSelected(false);
-                }
-
-                if (outputSocketView != null) {
-                    outputSocketView.getHandle().setSelected(false);
-                }
             }
         });
     }

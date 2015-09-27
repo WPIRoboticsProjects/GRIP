@@ -4,10 +4,11 @@
 <?import javafx.scene.control.RadioButton?>
 <?import javafx.scene.layout.*?>
 <?import java.net.URL?>
+<?import javafx.scene.shape.Circle?>
+<?import javafx.scene.control.Button?>
 <fx:root styleClass="socket" type="javafx.scene.layout.GridPane" xmlns="http://javafx.com/javafx/null"
          xmlns:fx="http://javafx.com/fxml/1">
     <children>
-        <RadioButton fx:id="handle" GridPane.rowIndex="0"/>
         <Label fx:id="identifier" styleClass="socket-identifier" GridPane.rowIndex="0"
                GridPane.columnIndex="1"/>
         <StackPane fx:id="controlPane" styleClass="socket-control" GridPane.rowIndex="1"
