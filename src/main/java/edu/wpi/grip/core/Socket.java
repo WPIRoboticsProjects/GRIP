@@ -2,9 +2,13 @@ package edu.wpi.grip.core;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Optional;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.eventbus.EventBus;
-import edu.wpi.grip.core.events.SocketChangedEvent;
-import edu.wpi.grip.core.events.SocketPublishedEvent;
+import com.google.common.eventbus.Subscribe;
+import edu.wpi.grip.core.events.*;
+
+import java.util.HashSet;
+import java.util.Set;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -16,12 +20,12 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * results in are referred to as "output sockets".
  */
 public class Socket<T> {
-    private EventBus eventBus;
+    private final EventBus eventBus;
     private Step step;
-    private SocketHint<T> socketHint;
+    private final Set<Connection> connections = new HashSet<>();
+    private final SocketHint<T> socketHint;
     private Optional<T> value;
     private boolean published = false;
-    private boolean connected = false;
 
     /**
      * @param eventBus   The Guava {@link EventBus} used by the application.
@@ -36,6 +40,8 @@ public class Socket<T> {
         checkNotNull(eventBus);
         checkNotNull(socketHint);
         checkNotNull(value);
+
+        this.eventBus.register(this);
     }
 
     /**
@@ -49,6 +55,8 @@ public class Socket<T> {
 
         checkNotNull(eventBus);
         checkNotNull(socketHint);
+
+        this.eventBus.register(this);
     }
 
     /**
@@ -103,6 +111,13 @@ public class Socket<T> {
     }
 
     /**
+     * @return The set of connections that have this socket as an input or output
+     */
+    public Set<Connection> getConnections() {
+        return ImmutableSet.copyOf(this.connections);
+    }
+
+    /**
      * @param published If <code>true</code>, this socket will be published by any sink that is currently active.  For
      *                  example, it may be set as a NetworkTables value.
      */
@@ -124,18 +139,26 @@ public class Socket<T> {
         return this.published;
     }
 
-    /**
-     * @param connected If true, this socket is automatically set by a {@link Connection}
-     */
-    public void setConnected(boolean connected) {
-        this.connected = connected;
+    @Subscribe
+    public void onConnectionAdded(ConnectionAddedEvent event) {
+        if (event.getConnection().getInputSocket() == this || event.getConnection().getOutputSocket() == this) {
+            this.connections.add(event.getConnection());
+
+            if (this.connections.size() == 1) {
+                this.eventBus.post(new SocketConnectedChangedEvent(this));
+            }
+        }
     }
 
-    /**
-     * @return True if this socket is automatically set by a {@link Connection}
-     */
-    public boolean isConnected() {
-        return this.connected;
+    @Subscribe
+    public void onConnectionRemoved(ConnectionRemovedEvent event) {
+        if (event.getConnection().getInputSocket() == this || event.getConnection().getOutputSocket() == this) {
+            this.connections.remove(event.getConnection());
+
+            if (this.connections.isEmpty()) {
+                this.eventBus.post(new SocketConnectedChangedEvent(this));
+            }
+        }
     }
 
     @Override
@@ -144,7 +167,7 @@ public class Socket<T> {
                 .add("socketHint", getSocketHint())
                 .add("value", getValue())
                 .add("published", isPublished())
-                .add("connected", isConnected())
+                .add("connections", getConnections())
                 .toString();
     }
 }
