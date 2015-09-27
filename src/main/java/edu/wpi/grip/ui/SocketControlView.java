@@ -46,14 +46,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
  */
 public class SocketControlView extends GridPane implements Initializable {
 
-    /**
-     * These are present after the user has started adding a connection but before it is complete.  Since adding a
-     * connection involves selecting two different sockets, it's necessary to store some state about what sockets
-     * have been selected so far.
-     */
-    private static Optional<SocketControlView> connectionStart = Optional.empty();
-    private static Optional<SocketControlView> connectionEnd = Optional.empty();
-
     @FXML
     private Label identifier;
 
@@ -106,44 +98,6 @@ public class SocketControlView extends GridPane implements Initializable {
 
         // Set the label on the control based on the identifier from the socket hint
         this.identifier.setText(socketHint.getIdentifier());
-
-
-        // Listen for mouse clicks on the handle.  When the user clicks an input socket and an output socket, a
-        // connection is made between the two sockets.  In the mean time, when only one socket has been clicked, that
-        // socket is set as "connecting", which causes it to render a visual cue that shows which socket was chosen.
-        this.handle.setOnMouseClicked(mouseEvent -> {
-            synchronized (SocketControlView.class) {
-                if (this.isInputSocket()) {
-                    connectionEnd.ifPresent(controlView -> controlView.getHandle().connectingProperty().set(false));
-                    connectionEnd = Optional.of(this);
-                    this.handle.connectingProperty().set(true);
-                } else {
-                    connectionStart.ifPresent(controlView -> controlView.getHandle().connectingProperty().set(false));
-                    connectionStart = Optional.of(this);
-                    this.handle.connectingProperty().set(true);
-                }
-
-                connectionStart.ifPresent(outputSocket ->
-                        connectionEnd.ifPresent(inputSocket -> {
-                            // Don't let the user add more than one connection to an input socket
-                            inputSocket.getSocket().getConnections().forEach(connection ->
-                                    this.eventBus.post(new ConnectionRemovedEvent((Connection) connection)));
-
-                            // Add the new connection
-                            Connection connection = new Connection(this.eventBus, outputSocket.getSocket(),
-                                    inputSocket.getSocket());
-
-                            this.eventBus.post(new ConnectionAddedEvent(connection));
-
-                            outputSocket.getHandle().connectingProperty().set(false);
-                            inputSocket.getHandle().connectingProperty().set(false);
-
-                            connectionStart = Optional.empty();
-                            connectionEnd = Optional.empty();
-                        }));
-            }
-        });
-
 
         // Set an input control of some sort based on the "view" field of the socket hint
         switch (socketHint.getView()) {
