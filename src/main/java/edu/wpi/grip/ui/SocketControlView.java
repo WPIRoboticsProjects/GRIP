@@ -2,6 +2,7 @@ package edu.wpi.grip.ui;
 
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
+import com.sun.javafx.collections.ObservableListWrapper;
 import edu.wpi.grip.core.Connection;
 import edu.wpi.grip.core.Socket;
 import edu.wpi.grip.core.SocketHint;
@@ -31,6 +32,7 @@ import org.controlsfx.control.RangeSlider;
 import javax.swing.text.html.Option;
 import java.io.IOException;
 import java.net.URL;
+import java.util.Arrays;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
@@ -94,6 +96,7 @@ public class SocketControlView extends GridPane implements Initializable {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public void initialize(URL url, ResourceBundle resourceBundle) {
         SocketHint<?> socketHint = this.socket.getSocketHint();
         Object[] domain = socketHint.getDomain();
@@ -170,10 +173,17 @@ public class SocketControlView extends GridPane implements Initializable {
 
                 break;
             }
-            case SELECT:
-                // TODO: implement a select control once we have some operations that have enum inputs
-                break;
+            case SELECT: {
+                checkNotNull(domain);
 
+                ChoiceBox choiceBox = new ChoiceBox(new ObservableListWrapper(Arrays.asList(domain)));
+                choiceBox.setValue(this.socket.getValue());
+
+                this.controlPane.getChildren().add(choiceBox);
+                this.valueProperty.bindBidirectional(choiceBox.valueProperty());
+
+                break;
+            }
             default:
                 // This shouldn't ever happen, but it's probably a good idea to crash instead of silently doing nothing
                 // and wondering why no control is showing up.
