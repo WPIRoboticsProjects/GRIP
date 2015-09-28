@@ -6,10 +6,8 @@ import com.github.javaparser.ast.body.VariableDeclaratorId;
 import com.github.javaparser.ast.expr.*;
 import com.github.javaparser.ast.stmt.BlockStmt;
 import com.github.javaparser.ast.stmt.ReturnStmt;
-import com.github.javaparser.ast.type.ClassOrInterfaceType;
-import com.github.javaparser.ast.type.ReferenceType;
-import com.github.javaparser.ast.type.Type;
-import com.github.javaparser.ast.type.WildcardType;
+import com.github.javaparser.ast.type.*;
+import edu.wpi.gripgenerator.collectors.DefaultValueCollector;
 import edu.wpi.gripgenerator.settings.DefinedParamType;
 
 import java.util.*;
@@ -23,14 +21,16 @@ public class SocketHintDeclarationCollection {
     private final List<DefinedParamType> inputParamTypes = new ArrayList<>();
     //Defines the order of the output params
     private final List<DefinedParamType> outputParamTypes = new ArrayList<>();
+    private final DefaultValueCollector collector;
 
 
     /**
      *
      * @param paramTypes
      */
-    public SocketHintDeclarationCollection(List<DefinedParamType> paramTypes){
+    public SocketHintDeclarationCollection(DefaultValueCollector collector, List<DefinedParamType> paramTypes){
         this.paramTypes = paramTypes;
+        this.collector = collector;
 
         // Figure out which hint map to put this defined param type into
         for(DefinedParamType type : paramTypes){
@@ -71,7 +71,7 @@ public class SocketHintDeclarationCollection {
                                     new VariableDeclarator(
                                             new VariableDeclaratorId(paramType.getName()),
                                             new CastExpr(
-                                                    paramType.getType(),
+                                                    paramType.getTypeBoxedIfPossible(),
                                                     new MethodCallExpr(
                                                             new ArrayAccessExpr(
                                                                     new NameExpr(paramId),
@@ -90,10 +90,15 @@ public class SocketHintDeclarationCollection {
     }
 
     public ObjectCreationExpr getSocketListParam(DefinedParamType definedParamType, ClassOrInterfaceType socketType){
-        return new ObjectCreationExpr(null, socketType, Arrays.asList(
+        SocketHintAdditionalParams hintParams = definedParamType.getSocketHintAdditionalParams();
+        List<Expression> constructorExpressions = new ArrayList(Arrays.asList(
                 new NameExpr("eventBus"),
-                new NameExpr(definedParamType.getName() + "Hint")
+                new NameExpr(definedParamType.getName() + SocketHintDeclaration.HINT_POSTFIX)
         ));
+        if(hintParams != null){
+            constructorExpressions.addAll(hintParams.getAdditionalParams());
+        }
+        return new ObjectCreationExpr(null, socketType, constructorExpressions);
     }
 
     private BlockStmt getInputOrOutputSocketBody(List<DefinedParamType> paramTypes){
@@ -121,10 +126,10 @@ public class SocketHintDeclarationCollection {
     public List<SocketHintDeclaration> getAllSocketHints(){
         List<SocketHintDeclaration> socketHintDeclarations = new ArrayList<>();
         for(Type type : inputHintsMap.keySet()){
-            socketHintDeclarations.add(new SocketHintDeclaration(type, inputHintsMap.get(type)));
+            socketHintDeclarations.add(new SocketHintDeclaration(collector, type, inputHintsMap.get(type)));
         }
         for(Type type : outputHintsMap.keySet()){
-            socketHintDeclarations.add(new SocketHintDeclaration(type, outputHintsMap.get(type)));
+            socketHintDeclarations.add(new SocketHintDeclaration(collector, type, outputHintsMap.get(type)));
         }
         return socketHintDeclarations;
     }

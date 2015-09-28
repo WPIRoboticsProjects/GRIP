@@ -1,7 +1,9 @@
 package edu.wpi.gripgenerator.settings;
 
+import com.github.javaparser.ast.ImportDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.body.Parameter;
+import edu.wpi.gripgenerator.collectors.DefaultValueCollector;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -99,7 +101,7 @@ public class DefinedMethod {
         return true;
     }
 
-    protected boolean finalizeParamTypes(){
+    protected boolean finalizeParamTypes(DefaultValueCollector collector){
         if(finalized) return true;
         this.finalized = true;
         if(bestMatchMethod.isPresent()){
@@ -117,6 +119,10 @@ public class DefinedMethod {
                     definedParamType = paramTypes.get(i);
                 }
                 definedParamType.setParamAs(param);
+                String defaultValue = definedParamType.getAssignedDefaultValue();
+                if(defaultValue != null && collector.hasDefaultValueFor(defaultValue)){
+                    definedParamType.setDefaultValue(collector.getDefaultValueFor(defaultValue));
+                }
                 if(collectionOf.isOutputDefault(param.getId().getName())){
                     definedParamType.setOutput();
                 }
@@ -130,8 +136,12 @@ public class DefinedMethod {
         }
     }
 
-    public List<DefinedParamType> getFinalizedParamTypes(){
-        if(!this.finalizeParamTypes()){ return null; }
+    public List<ImportDeclaration> getImports(){
+        return paramTypes.stream().map(p -> p.getImport()).filter( i -> i != null).collect(Collectors.toList());
+    }
+
+    public List<DefinedParamType> getFinalizedParamTypes(DefaultValueCollector collector){
+        if(!this.finalizeParamTypes(collector)){ return null; }
         return this.paramTypes;
     }
 

@@ -2,7 +2,7 @@ package edu.wpi.gripgenerator.templates;
 
 import com.github.javaparser.ast.expr.*;
 import com.github.javaparser.ast.type.PrimitiveType;
-import edu.wpi.gripgenerator.collectors.EnumDefaultValue;
+import edu.wpi.gripgenerator.collectors.DefaultValue;
 
 import java.util.Arrays;
 import java.util.List;
@@ -70,17 +70,17 @@ public class SocketHintAdditionalParams {
         }
     }
 
-    public SocketHintAdditionalParams(EnumDefaultValue enumDefaultValue, String defaultValue){
-        this.viewValue = getViewEnumElement("SELECT");
-        this.domainValue = enumDefaultValue.getDomainValue();
-        this.defaultValue = enumDefaultValue.getDefaultValue(defaultValue);
+    public SocketHintAdditionalParams(DefaultValue defaultValue, String defaultValueString){
+        this.viewValue = getViewEnumElement(defaultValue.getViewType());
+        this.domainValue = defaultValue.getDomainValue();
+        this.defaultValue = defaultValue.getDefaultValue(defaultValueString);
     }
 
     private FieldAccessExpr getViewEnumElement(String value){
         return new FieldAccessExpr(
-                new NameExpr("View"),
-                value
-        );
+                    new NameExpr("SocketHint.View"),
+                    value
+                );
     }
 
     private Expression createDomainValueExpression(Expression ...expressions){
@@ -91,11 +91,14 @@ public class SocketHintAdditionalParams {
         );
     }
 
-    public List<Expression> getAdditionalParams(){
+    public List<Expression> getHintAdditionalParams(){
         return Arrays.asList(
                 viewValue,
-                domainValue,
-                defaultValue
+                domainValue
         );
+    }
+
+    public List<Expression> getAdditionalParams(){
+        return Arrays.asList(defaultValue);
     }
 }

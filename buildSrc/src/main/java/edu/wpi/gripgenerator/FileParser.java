@@ -102,7 +102,7 @@ public class FileParser {
                 new DefinedMethod("cornerEigenValsAndVecs", false, "Mat", "Mat")
                 ).setOutputDefaults("dst");
         new OpenCVMethodVisitor(collection).visit(imgprocDeclaration, compilationUnits);
-        collection.generateCompilationUnits(compilationUnits);
+        collection.generateCompilationUnits(collector, compilationUnits);
         return compilationUnits;
     }
 
@@ -149,7 +149,7 @@ public class FileParser {
         ).setOutputDefaults("dst");
         new OpenCVMethodVisitor(collection).visit(coreDeclaration, compilationUnits);
 
-        collection.generateCompilationUnits(compilationUnits);
+        collection.generateCompilationUnits(collector, compilationUnits);
 
 
         return compilationUnits;

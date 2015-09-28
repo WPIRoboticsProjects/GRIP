@@ -2,13 +2,15 @@ package edu.wpi.gripgenerator.collectors;
 
 import com.github.javaparser.ast.expr.Expression;
 import com.github.javaparser.ast.expr.NullLiteralExpr;
+import com.github.javaparser.ast.type.Type;
 
+import java.util.Optional;
 import java.util.Set;
 
 public class MethodDefaultValue extends DefaultValue {
 
-    public MethodDefaultValue(String name){
-        super(name);
+    public MethodDefaultValue(String packageName, String name){
+        super(packageName, name);
     }
 
     @Override
@@ -24,5 +26,15 @@ public class MethodDefaultValue extends DefaultValue {
     @Override
     public Expression getDomainValue() {
         return new NullLiteralExpr();
+    }
+
+    @Override
+    public String getViewType() {
+        return "NONE";
+    }
+
+    @Override
+    public Optional<Type> getType() {
+        return Optional.empty();
     }
 }

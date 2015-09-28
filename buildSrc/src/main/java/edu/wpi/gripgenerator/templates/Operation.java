@@ -15,7 +15,9 @@ import com.github.javaparser.ast.stmt.Statement;
 import com.github.javaparser.ast.type.ClassOrInterfaceType;
 import com.github.javaparser.ast.type.VoidType;
 import com.google.common.collect.Sets;
+import edu.wpi.gripgenerator.collectors.DefaultValueCollector;
 import edu.wpi.gripgenerator.settings.DefinedMethod;
+import edu.wpi.gripgenerator.settings.DefinedParamType;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -33,16 +35,20 @@ public class Operation {
     private final PackageDeclaration packageDec;
     private final SocketHintDeclarationCollection socketHintDeclarationCollection;
     private final JavadocComment javadocComment;
+    private final List<DefinedParamType> operationParams;
 
-    public Operation(DefinedMethod definedMethod, String className){
+    public Operation(DefaultValueCollector collector, DefinedMethod definedMethod, String className){
         this.definedMethod = definedMethod;
         this.packageDec = new PackageDeclaration(new NameExpr("edu.wpi.grip.generated." + className));
-        this.socketHintDeclarationCollection = new SocketHintDeclarationCollection(this.definedMethod.getFinalizedParamTypes());
+        this.operationParams = this.definedMethod.getFinalizedParamTypes(collector);
+        this.socketHintDeclarationCollection = new SocketHintDeclarationCollection(collector, this.operationParams);
         this.javadocComment = new JavadocComment("Operation to call the " + className + " method " + definedMethod.getMethodName());
     }
 
     private List<ImportDeclaration> getAdditionalImports(){
-        return Collections.singletonList(new ImportDeclaration(new NameExpr("org.bytedeco.javacpp." + definedMethod.getParentObjectName()), false, false));
+        List<ImportDeclaration> imports = new ArrayList(Arrays.asList(new ImportDeclaration(new NameExpr("org.bytedeco.javacpp." + definedMethod.getParentObjectName()), false, false)));
+        imports.addAll(this.definedMethod.getImports());
+        return imports;
     }
 
     private MethodDeclaration getNameMethod(){
@@ -122,7 +128,7 @@ public class Operation {
         return new MethodCallExpr(
                 new NameExpr(definedMethod.getParentObjectName()),
                 definedMethod.getMethodName(),
-                definedMethod.getFinalizedParamTypes().stream().map(t -> new NameExpr(t.getName())).collect(Collectors.toList())
+                operationParams.stream().map(t -> t.getLiteralExpression()).collect(Collectors.toList())
         );
     }
 

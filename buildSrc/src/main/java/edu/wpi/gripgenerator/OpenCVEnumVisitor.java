@@ -122,7 +122,7 @@ public class OpenCVEnumVisitor extends VoidVisitorAdapter<Map<String, Compilatio
                     if(!arg.containsKey(name)) {
                         // This is where the enum is generated
                         arg.put(name, generateFromDeclaration(declaration, name, subClass));
-                        collector.add(new EnumDefaultValue(name, declaration.getVariables().stream().map(e -> e.getId().getName()).collect(Collectors.toSet())));
+                        collector.add(new EnumDefaultValue(PACKAGE_EXPRESSION, name, declaration.getVariables().stream().map(e -> e.getId().getName()).collect(Collectors.toSet())));
                     } else {
                         CompilationUnit existingEnum = arg.get(name);
                         addEnumConstants((EnumDeclaration) existingEnum.getTypes().get(0), declaration, subClass);

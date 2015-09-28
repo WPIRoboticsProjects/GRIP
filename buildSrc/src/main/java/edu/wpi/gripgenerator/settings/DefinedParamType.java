@@ -1,22 +1,26 @@
 package edu.wpi.gripgenerator.settings;
 
 
+import com.github.javaparser.ast.ImportDeclaration;
 import com.github.javaparser.ast.body.Parameter;
 import com.github.javaparser.ast.expr.Expression;
+import com.github.javaparser.ast.expr.FieldAccessExpr;
 import com.github.javaparser.ast.expr.MemberValuePair;
 import com.github.javaparser.ast.expr.NormalAnnotationExpr;
 import com.github.javaparser.ast.type.PrimitiveType;
 import com.github.javaparser.ast.type.Type;
+import edu.wpi.gripgenerator.collectors.DefaultValue;
+import edu.wpi.gripgenerator.collectors.EnumDefaultValue;
 import edu.wpi.gripgenerator.templates.SocketHintAdditionalParams;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import static com.github.javaparser.ASTHelper.createNameExpr;
 import static com.github.javaparser.ASTHelper.createReferenceType;
 
 public class DefinedParamType {
@@ -28,6 +32,7 @@ public class DefinedParamType {
     private final String type;
     private DefinedParamState state;
     private Optional<Parameter> parameter = Optional.empty();
+    private Optional<DefaultValue> defaultValue = Optional.empty();
 
     /**
      * Defines a Param type that a method must match.
@@ -56,6 +61,14 @@ public class DefinedParamType {
         return paramStates;
     }
 
+    public void setDefaultValue(DefaultValue defaultValue){
+        this.defaultValue = Optional.of(defaultValue);
+    }
+
+    public Optional<DefaultValue> getDefaultValue(){
+        return defaultValue;
+    }
+
     void setParamAs(Parameter param){
         this.parameter = Optional.of(param);
     }
@@ -64,9 +77,20 @@ public class DefinedParamType {
         return type.equals(param.getType().toString());
     }
 
-    public Type getType(){
+    private Type getRealType(){
         if(parameter.isPresent()) return parameter.get().getType();
         return createReferenceType(type, 0);
+    }
+
+    public Type getType(){
+        if(defaultValue.isPresent()){
+            return defaultValue.get().getType().orElse(getRealType());
+        }
+        return getRealType();
+    }
+
+    public Type getTypeBoxedIfPossible(){
+        return getType() instanceof PrimitiveType ? ((PrimitiveType) getType()).toBoxedType() : getType();
     }
 
     private List<NormalAnnotationExpr> getAnnotationsMatchingIfPresent(){
@@ -75,13 +99,13 @@ public class DefinedParamType {
             return param.getAnnotations().stream()
                     .filter(a -> (a.getName().getName().equals("ByVal") || a.getName().getName().equals("ByRef")))
                     .filter(a -> a instanceof NormalAnnotationExpr)
-                    .map(a-> (NormalAnnotationExpr)a)
+                    .map(a -> (NormalAnnotationExpr) a)
                     .collect(Collectors.toList());
         }
         return null;
     }
 
-    public List<Expression> getSocketHintAdditionalParams(){
+    public String getAssignedDefaultValue(){
         Pattern constructorCallExpression = Pattern.compile(".*cv?:?:([A-Z][a-zA-Z_]*)\\(.*\\)");
         Pattern methodCallExpression = Pattern.compile(".*cv?:?:([a-z][a-zA-Z_]*)\\(.*\\)");
         if(parameter.isPresent()){
@@ -92,14 +116,21 @@ public class DefinedParamType {
             System.out.println("Comment: " + param.getComment());
             System.out.println("Orphan Comments: " + param.getOrphanComments());
             Pattern defaultPrimitive = Pattern.compile(".*=([\\-a-zA-Z0-9_\\.]*)");
+            Pattern defaultEnumPrimitive = Pattern.compile(".*=(?:cv::)([\\-a-zA-Z0-9_\\.]*)");
 
             if(param.getComment()!= null && param.getType() instanceof PrimitiveType){
                 System.out.println("Checking match");
                 Matcher matchesPrimitive = defaultPrimitive.matcher(param.getComment().getContent());
-                if(matchesPrimitive.find()) System.out.println(matchesPrimitive.group());
+                Matcher matchesEnumPrimitive = defaultEnumPrimitive.matcher(param.getComment().getContent());
+                if(matchesPrimitive.find()) System.out.println("Primitive Matcher: " + matchesPrimitive.group());
+                if(matchesEnumPrimitive.find()) System.out.println("Enum Matcher: " + matchesEnumPrimitive.group(1));
                 if(matchesPrimitive.matches()) {
                     System.out.println("Matching: " + matchesPrimitive.group(1));
-                    return new SocketHintAdditionalParams((PrimitiveType) param.getType(), matchesPrimitive.group(1)).getAdditionalParams();
+                    return matchesPrimitive.group(1);
+                }
+                if(matchesEnumPrimitive.matches()){
+                    System.out.println("Matching: " + matchesEnumPrimitive.group(1));
+                    return matchesEnumPrimitive.group(1);
                 }
             }
         }
@@ -115,7 +146,25 @@ public class DefinedParamType {
         if(parameter.isPresent()){
             System.out.println();
         }
-        return Collections.emptyList();
+        return null;
+    }
+
+    public ImportDeclaration getImport(){
+        if(defaultValue.isPresent()){
+            return defaultValue.get().getImportDeclaration();
+        } else {
+            return null;
+        }
+    }
+
+    public SocketHintAdditionalParams getSocketHintAdditionalParams(){
+        String defaultValue =  getAssignedDefaultValue();
+        if (defaultValue != null && this.getType() instanceof PrimitiveType){
+            return new SocketHintAdditionalParams((PrimitiveType)getType(), defaultValue);
+        } else if (getDefaultValue().isPresent()){
+            return new SocketHintAdditionalParams(getDefaultValue().get(), defaultValue);
+        }
+        return null;
     }
 
     public List<Expression> getSocketAdditionalParams(){
@@ -128,6 +177,14 @@ public class DefinedParamType {
 
     public String getName(){
         return parameter.get().getId().getName();
+    }
+
+    public Expression getLiteralExpression(){
+        if (defaultValue.isPresent() && defaultValue.get() instanceof EnumDefaultValue){
+            return new FieldAccessExpr(createNameExpr(getName()), "value");
+        } else {
+            return createNameExpr(getName());
+        }
     }
 
     void setOutput(){
