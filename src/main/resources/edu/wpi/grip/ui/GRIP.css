@@ -116,6 +116,34 @@ ImageView.operation-icon {
     -fx-pref-width: 10em;
 }
 
+.socket-handle {
+    -fx-background-radius: 1em;
+    -fx-min-width: 1em;
+    -fx-min-height: 1em;
+    -fx-max-width: 1em;
+    -fx-max-height: 1em;
+}
+
+.socket-handle:connecting {
+    -fx-background-color:
+    -fx-shadow-highlight-color,
+        linear-gradient(to bottom, derive(-fx-outer-border, -20%), -fx-outer-border),
+        linear-gradient(to bottom,
+        derive(-fx-color, -22%) 0%,
+        derive(-fx-color, -13%) 20%,
+        derive(-fx-color, -11%) 50%);
+    -fx-background-insets: 0 0 -1 0, 0, 1;
+}
+
+.socket-handle:connected {
+    -fx-background-color: -fx-shadow-highlight-color, -fx-outer-border, -fx-inner-border, #575757;
+}
+
+.socket-handle:connected:focused {
+    -fx-background-color: -fx-focus-color, -fx-inner-border, -fx-body-color, -fx-faint-focus-color, -fx-text-base-color;
+    -fx-background-insets: -0.2, 1, 2, -1.4, 2.6;
+    -fx-background-radius: 1em;
+}
 .socket VBox {
     -fx-pref-height: 0em;
     -fx-pref-width: 13em;

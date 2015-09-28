@@ -11,6 +11,8 @@ import edu.wpi.grip.core.events.ConnectionRemovedEvent;
 import edu.wpi.grip.core.events.StepAddedEvent;
 import edu.wpi.grip.core.events.StepRemovedEvent;
 import javafx.application.Platform;
+import javafx.beans.InvalidationListener;
+import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -18,9 +20,11 @@ import javafx.fxml.Initializable;
 import javafx.geometry.Bounds;
 import javafx.geometry.Point2D;
 import javafx.scene.Group;
+import javafx.scene.Node;
 import javafx.scene.control.RadioButton;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
+import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 
 import java.io.IOException;
@@ -153,24 +157,32 @@ public class PipelineView extends StackPane implements Initializable {
                 throw new RuntimeException("Connection added for socket that does not exist in the pipeline");
             }
 
-            final RadioButton outputHandle = outputSocketView.getHandle();
-            final RadioButton inputHandle = inputSocketView.getHandle();
-
-            outputHandle.setSelected(true);
-            inputHandle.setSelected(true);
-
             final ConnectionView connectionView = new ConnectionView(this.eventBus, connection);
 
-            // The start and end points of the connection are the centers of the two handles
-            final Bounds outputSocketBounds = this.sceneToLocal(outputHandle.localToScene(outputHandle.getLayoutBounds()));
-            final Bounds inputSocketBounds = this.sceneToLocal(inputHandle.localToScene(inputHandle.getLayoutBounds()));
-            final double x1 = outputSocketBounds.getMinX() + outputSocketBounds.getWidth() / 2.0;
-            final double y1 = outputSocketBounds.getMinY() + outputSocketBounds.getHeight() / 2.0;
-            final double x2 = inputSocketBounds.getMinX() + inputSocketBounds.getWidth() / 2.0;
-            final double y2 = inputSocketBounds.getMinY() + inputSocketBounds.getHeight() / 2.0;
+            // Re-position the start and end points of the connection whenever one of the handles is moved.  This
+            // happens, for example, when a step in the pipeline is deleted, so all of the steps after it shift left.
+            final InvalidationListener handleListener = observable -> {
+                synchronized (this) {
+                    final Node outputHandle = outputSocketView.getHandle();
+                    final Node inputHandle = inputSocketView.getHandle();
+                    final Bounds outputSocketBounds = this.sceneToLocal(outputHandle.localToScene(outputHandle.getLayoutBounds()));
+                    final Bounds inputSocketBounds = this.sceneToLocal(inputHandle.localToScene(inputHandle.getLayoutBounds()));
+                    final double x1 = outputSocketBounds.getMinX() + outputSocketBounds.getWidth() / 2.0;
+                    final double y1 = outputSocketBounds.getMinY() + outputSocketBounds.getHeight() / 2.0;
+                    final double x2 = inputSocketBounds.getMinX() + inputSocketBounds.getWidth() / 2.0;
+                    final double y2 = inputSocketBounds.getMinY() + inputSocketBounds.getHeight() / 2.0;
 
-            connectionView.inputHandleProperty().setValue(new Point2D(x1, y1));
-            connectionView.outputHandleProperty().setValue(new Point2D(x2, y2));
+                    Platform.runLater(() -> {
+                        connectionView.inputHandleProperty().setValue(new Point2D(x1, y1));
+                        connectionView.outputHandleProperty().setValue(new Point2D(x2, y2));
+                        ((ReadOnlyObjectProperty) observable).get();
+                    });
+                }
+            };
+
+            inputSocketView.localToSceneTransformProperty().addListener(handleListener);
+            outputSocketView.localToSceneTransformProperty().addListener(handleListener);
+            handleListener.invalidated(inputSocketView.localToSceneTransformProperty());
 
             this.connections.getChildren().add(connectionView);
         });
@@ -217,19 +229,6 @@ public class PipelineView extends StackPane implements Initializable {
             if (connectionView != null) {
                 this.connections.getChildren().remove(connectionView);
                 this.eventBus.unregister(connectionView);
-
-                // Un-select the handles to show that they are no longer connected.  TODO: keep track of connections
-                // or at least connection counts from sockets to better handle sockets with multiple connections.
-                final SocketControlView outputSocketView = findSocketView(event.getConnection().getOutputSocket());
-                final SocketControlView inputSocketView = findSocketView(event.getConnection().getInputSocket());
-
-                if (inputSocketView != null) {
-                    inputSocketView.getHandle().setSelected(false);
-                }
-
-                if (outputSocketView != null) {
-                    outputSocketView.getHandle().setSelected(false);
-                }
             }
         });
     }

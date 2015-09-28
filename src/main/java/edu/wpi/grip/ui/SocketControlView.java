@@ -2,17 +2,21 @@ package edu.wpi.grip.ui;
 
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
+import edu.wpi.grip.core.Connection;
 import edu.wpi.grip.core.Socket;
 import edu.wpi.grip.core.SocketHint;
 import edu.wpi.grip.core.events.ConnectionAddedEvent;
 import edu.wpi.grip.core.events.ConnectionRemovedEvent;
 import edu.wpi.grip.core.events.SocketChangedEvent;
+import edu.wpi.grip.core.events.SocketConnectedChangedEvent;
+import javafx.application.Platform;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.Property;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.adapter.JavaBeanBooleanProperty;
 import javafx.beans.property.adapter.JavaBeanBooleanPropertyBuilder;
+import javafx.css.PseudoClass;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -21,10 +25,13 @@ import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
+import javafx.scene.shape.Circle;
 import org.controlsfx.control.RangeSlider;
 
+import javax.swing.text.html.Option;
 import java.io.IOException;
 import java.net.URL;
+import java.util.Optional;
 import java.util.ResourceBundle;
 
 import static com.google.common.base.Preconditions.checkArgument;
@@ -38,17 +45,19 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * between EventBus events and a JavaFX property.
  */
 public class SocketControlView extends GridPane implements Initializable {
+
     @FXML
     private Label identifier;
 
     @FXML
     private StackPane controlPane;
 
-    // The "handle" is a simple radio button next ot the socket identifier that shows weather or not there is a
-    // connection going to or from the socket.  If there is such a connection, the ConnectionView is rendered as a
-    // curve going from one handle to another.
-    @FXML
-    private RadioButton handle;
+    /**
+     * The "handle" is a simple shape next ot the socket identifier that shows weather or not there is a connection
+     * going to or from the socket.  If there is such a connection, the ConnectionView is rendered as a curve going
+     * from one handle to another.
+     */
+    private SocketHandleView handle;
 
     private final EventBus eventBus;
     private final Socket socket;
@@ -63,6 +72,7 @@ public class SocketControlView extends GridPane implements Initializable {
         this.socket = socket;
         this.valueProperty = new SimpleObjectProperty();
         this.inputSocket = inputSocket;
+        this.handle = new SocketHandleView(this.eventBus, this);
 
         try {
             FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("SocketControl.fxml"));
@@ -73,9 +83,9 @@ public class SocketControlView extends GridPane implements Initializable {
             throw new RuntimeException(e);
         }
 
-        // Move the handle to the left side of the grid pane if this is an input socket, or the right side if it's an
+        // Add the handle to the left side of the grid pane if this is an input socket, or the right side if it's an
         // output socket.
-        GridPane.setColumnIndex(this.getHandle(), this.isInputSocket() ? 0 : 2);
+        this.add(this.handle, this.isInputSocket() ? 0 : 2, 0);
 
         // Always set the socket to the value of valueProperty, which may be bound to a GUI property.
         this.valueProperty.addListener((observableValue, o, t1) -> this.socket.setValue(observableValue.getValue()));
@@ -170,14 +180,15 @@ public class SocketControlView extends GridPane implements Initializable {
                 throw new RuntimeException("Unexpected socket view hint");
         }
 
-        this.controlPane.disableProperty().set(this.socket.isConnected());
+        // Always disable the control if there's a connection to the socket.
+        this.controlPane.disableProperty().bind(this.handle.connectedProperty());
     }
 
     public Socket getSocket() {
         return this.socket;
     }
 
-    public RadioButton getHandle() {
+    public SocketHandleView getHandle() {
         return this.handle;
     }
 
@@ -199,18 +210,10 @@ public class SocketControlView extends GridPane implements Initializable {
     }
 
     @Subscribe
-    public void onConnectionAdded(ConnectionAddedEvent event) {
-        // Disable the control for the socket if its value is set by a connection anyway
-        if (event.getConnection().getInputSocket() == this.socket) {
-            this.controlPane.disableProperty().set(this.socket.isConnected());
-        }
-    }
-
-    @Subscribe
-    public void onConnectionRemoved(ConnectionRemovedEvent event) {
-        // Enable the control for the socket if the connection influencing its value was removed
-        if (event.getConnection().getInputSocket() == this.socket) {
-            this.controlPane.disableProperty().set(this.socket.isConnected());
+    public void onSocketConnectedChanged(SocketConnectedChangedEvent event) {
+        if (event.getSocket() == this.socket) {
+            // Set the handle as "selected" whenever there is at least one connection connected to it
+            this.getHandle().connectedProperty().set(!this.getSocket().getConnections().isEmpty());
         }
     }
 }
