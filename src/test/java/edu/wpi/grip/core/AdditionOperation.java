@@ -4,9 +4,9 @@ import com.google.common.eventbus.EventBus;
 
 public class AdditionOperation implements Operation {
     private SocketHint<Double>
-            aHint = new SocketHint<>("a", Double.class, SocketHint.View.NONE, null, 0.0),
-            bHint = new SocketHint<>("b", Double.class, SocketHint.View.NONE, null, 0.0),
-            cHint = new SocketHint<>("b", Double.class, SocketHint.View.NONE, null, 0.0);
+            aHint = new SocketHint<>("a", Double.class, 0.0),
+            bHint = new SocketHint<>("b", Double.class, 0.0),
+            cHint = new SocketHint<>("b", Double.class, 0.0);
 
     @Override
     public String getName() {

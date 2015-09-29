@@ -29,10 +29,9 @@ public class PythonTest {
     @Test
     public void testPythonAdditionFromString() throws Exception {
         Operation additionFromString = new PythonScriptOperation("import edu.wpi.grip.core as grip\nimport java" +
-                ".lang.Integer\n\ninputs = [\n    grip.SocketHint(\"a\", java.lang.Integer, grip.SocketHint.View.NON" +
-                "E, None, 0),\n    grip.SocketHint(\"b\", java.lang.Integer, grip.SocketHint.View.NONE, None, 0),\n]" +
-                "\n\noutputs = [\n    grip.SocketHint(\"c\", java.lang.Integer),\n]\n\ndef perform(a, b):\n    retur" +
-                "n a + b\n");
+                ".lang.Integer\n\ninputs = [\n    grip.SocketHint(\"a\", java.lang.Integer, 0),\n    grip.SocketHint(" +
+                "\"b\", java.lang.Integer, 0),\n]\n\noutputs = [\n    grip.SocketHint(\"sum\", java.lang.Integer, 0)," +
+                "\n]\n\ndef perform(a, b):\n    return a + b\n");
         Step step = new Step(eventBus, additionFromString);
         Socket aSocket = step.getInputSockets()[0];
         Socket bSocket = step.getInputSockets()[1];
@@ -71,7 +70,7 @@ public class PythonTest {
         aSocket.setValue(a);
         bSocket.setValue(b);
 
-        assertNull(sumSocket.getValue());
+        assertEquals(0, sumSocket.getValue());
     }
 
     @Test
@@ -85,7 +84,7 @@ public class PythonTest {
         aSocket.setValue(a);
         bSocket.setValue(b);
 
-        assertNull(sumSocket.getValue());
+        assertEquals(0, sumSocket.getValue());
     }
 
     @Test

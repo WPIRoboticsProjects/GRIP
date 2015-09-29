@@ -40,12 +40,12 @@ public class MainWindowController implements Initializable {
             "description = 'Compute the sum of two numbers using Python'\n" +
 
             "inputs = [\n" +
-            "    grip.SocketHint('a', java.lang.Number, grip.SocketHint.View.SLIDER, [0, 1], 0.1),\n" +
-            "    grip.SocketHint('b', java.lang.Number, grip.SocketHint.View.SLIDER, [0, 1], 0.4),\n" +
+            "    grip.SocketHint('a', java.lang.Number, 0.1, grip.SocketHint.View.SLIDER, [0, 1]),\n" +
+            "    grip.SocketHint('b', java.lang.Number, 0.4, grip.SocketHint.View.SLIDER, [0, 1]),\n" +
             "]\n" +
 
             "outputs = [\n" +
-            "    grip.SocketHint('sum', java.lang.Number),\n" +
+            "    grip.SocketHint('sum', java.lang.Number, 0.0),\n" +
             "]\n" +
 
             "def perform(a, b):\n" +
@@ -60,12 +60,12 @@ public class MainWindowController implements Initializable {
             "description = 'Compute the product of two numbers using Python'\n" +
 
             "inputs = [\n" +
-            "    grip.SocketHint('a', java.lang.Number, grip.SocketHint.View.SLIDER, [0, 1], 0.5),\n" +
-            "    grip.SocketHint('b', java.lang.Number, grip.SocketHint.View.SLIDER, [0, 1], 0.5),\n" +
+            "    grip.SocketHint('a', java.lang.Number, 0.5, grip.SocketHint.View.SLIDER, [0, 1]),\n" +
+            "    grip.SocketHint('b', java.lang.Number, 0.5, grip.SocketHint.View.SLIDER, [0, 1]),\n" +
             "]\n" +
 
             "outputs = [\n" +
-            "    grip.SocketHint('product', java.lang.Number),\n" +
+            "    grip.SocketHint('product', java.lang.Number, 0.0),\n" +
             "]\n" +
 
             "def perform(a, b):\n" +

@@ -13,9 +13,9 @@ import org.bytedeco.javacpp.opencv_core.*;
  */
 public class AddOperation implements Operation {
     private SocketHint<Mat>
-            aHint = new SocketHint<>("a", Mat.class),
-            bHint = new SocketHint<>("b", Mat.class),
-            sumHint = new SocketHint<>("sum", Mat.class);
+            aHint = new SocketHint<Mat>("a", Mat.class, Mat::new),
+            bHint = new SocketHint<Mat>("b", Mat.class, Mat::new),
+            sumHint = new SocketHint<Mat>("sum", Mat.class, Mat::new);
 
     @Override
     public String getName() {
@@ -28,13 +28,18 @@ public class AddOperation implements Operation {
     }
 
     @Override
-    public Socket<Mat>[] createInputSockets(EventBus eventBus) {
-        return new Socket[]{new Socket<>(eventBus, aHint, new Mat()), new Socket<>(eventBus, bHint, new Mat())};
+    public Socket[] createInputSockets(EventBus eventBus) {
+        return new Socket[]{
+                new Socket<Mat>(eventBus, aHint),
+                new Socket<Mat>(eventBus, bHint)
+        };
     }
 
     @Override
-    public Socket<Mat>[] createOutputSockets(EventBus eventBus) {
-        return new Socket[]{new Socket<>(eventBus, sumHint, new Mat())};
+    public Socket[] createOutputSockets(EventBus eventBus) {
+        return new Socket[]{
+                new Socket<Mat>(eventBus, sumHint)
+        };
     }
 
     @Override

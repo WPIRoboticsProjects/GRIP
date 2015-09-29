@@ -45,13 +45,13 @@ public class ImageFileSourceTest {
     public void testReadInTextFile(){
         fileSource.loadImage(textUrl);
         Socket<Mat> outputSocket = fileSource.getOutputSockets()[0];
-        assertNull("No matrix should have been returned.", outputSocket.getValue());
+        assertTrue("No matrix should have been returned.", outputSocket.getValue().empty());
     }
 
     @Test
     public void testReadInFileWithoutExtention() throws MalformedURLException {
         fileSource.loadImage(new URL("file://temp/fdkajdl3eaf"));
         Socket<Mat> outputSocket = fileSource.getOutputSockets()[0];
-        assertNull("No matrix should have been returned.", outputSocket.getValue());
+        assertTrue("No matrix should have been returned.", outputSocket.getValue().empty());
     }
 }

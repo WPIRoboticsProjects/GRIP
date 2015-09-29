@@ -6,12 +6,12 @@ name = "Add"
 description = "Compute the sum of two integers"
 
 inputs = [
-    grip.SocketHint("a", java.lang.Integer, grip.SocketHint.View.NONE, None, 0),
-    grip.SocketHint("b", java.lang.Integer, grip.SocketHint.View.NONE, None, 0),
+    grip.SocketHint("a", java.lang.Integer, 0),
+    grip.SocketHint("b", java.lang.Integer, 0),
 ]
 
 outputs = [
-    grip.SocketHint("sum", java.lang.Integer),
+    grip.SocketHint("sum", java.lang.Integer, 0),
 ]
 
 def perform(a, b):

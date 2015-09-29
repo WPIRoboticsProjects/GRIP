@@ -24,7 +24,7 @@ public class Socket<T> {
     private Step step;
     private final Set<Connection> connections = new HashSet<>();
     private final SocketHint<T> socketHint;
-    private Optional<T> value;
+    private T value;
     private boolean published = false;
 
     /**
@@ -35,7 +35,7 @@ public class Socket<T> {
     public Socket(EventBus eventBus, SocketHint<T> socketHint, T value) {
         this.eventBus = eventBus;
         this.socketHint = socketHint;
-        this.value = Optional.of(value);
+        this.value = value;
 
         checkNotNull(eventBus);
         checkNotNull(socketHint);
@@ -51,7 +51,7 @@ public class Socket<T> {
     public Socket(EventBus eventBus, SocketHint<T> socketHint) {
         this.eventBus = eventBus;
         this.socketHint = socketHint;
-        this.value = Optional.absent();
+        this.value = socketHint.createInitialValue();
 
         checkNotNull(eventBus);
         checkNotNull(socketHint);
@@ -73,8 +73,8 @@ public class Socket<T> {
      * @param value The value to store in this socket.
      */
     public void setValue(T value) {
-        if (!this.value.isPresent() || !this.value.get().equals(value)) {
-            this.value = Optional.of(this.getSocketHint().getType().cast(value));
+        if (!this.value.equals(value)) {
+            this.value = this.getSocketHint().getType().cast(value);
             eventBus.post(new SocketChangedEvent(this));
 
             // If the socket's value is set to be published, also send a SocketPublishedEvent to notify any sinks that
@@ -89,11 +89,7 @@ public class Socket<T> {
      * @return The value currently stored in this socket.
      */
     public T getValue() {
-        if (value.isPresent()) {
-            return value.get();
-        } else {
-            return socketHint.getDefaultValue();
-        }
+        return this.value;
     }
 
     /**

@@ -27,11 +27,10 @@ public class SerializationTest {
         additionOperation = new AdditionOperation();
         pythonAdditionOperationFromURL = new PythonScriptOperation(
                 SerializationTest.class.getResource("/edu/wpi/grip/scripts/addition.py"));
-        pythonAdditionOperationFromSource = new PythonScriptOperation("import edu.wpi.grip.core as grip\nimport java" +
-                ".lang.Integer\n\ninputs = [\n    grip.SocketHint(\"a\", java.lang.Integer, grip.SocketHint.View.NON" +
-                "E, None, 0),\n    grip.SocketHint(\"b\", java.lang.Integer, grip.SocketHint.View.NONE, None, 0),\n]" +
-                "\n\noutputs = [\n    grip.SocketHint(\"c\", java.lang.Integer),\n]\n\ndef perform(a, b):\n    retur" +
-                "n a + b\n");
+        pythonAdditionOperationFromSource =  new PythonScriptOperation("import edu.wpi.grip.core as grip\nimport java" +
+                ".lang.Integer\n\ninputs = [\n    grip.SocketHint(\"a\", java.lang.Integer, 0),\n    grip.SocketHint(" +
+                "\"b\", java.lang.Integer, 0),\n]\n\noutputs = [\n    grip.SocketHint(\"sum\", java.lang.Integer, 0)," +
+                "\n]\n\ndef perform(a, b):\n    return a + b\n");
     }
 
     private Pipeline serializeAndDeserialize(Pipeline pipeline) {

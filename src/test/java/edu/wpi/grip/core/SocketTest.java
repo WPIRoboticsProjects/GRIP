@@ -14,7 +14,7 @@ public class SocketTest {
 
     @Test
     public void testGetSocketHint() throws Exception {
-        SocketHint<Double> sh = new SocketHint<>("foo", Double.class, SocketHint.View.SLIDER);
+        SocketHint<Double> sh = new SocketHint<>("foo", Double.class, 0.0, SocketHint.View.SLIDER);
         Socket<Double> socket = new Socket<Double>(eventBus, sh);
 
         assertEquals("foo", socket.getSocketHint().getIdentifier());
@@ -24,7 +24,7 @@ public class SocketTest {
 
     @Test
     public void testSetValue() throws Exception {
-        SocketHint<Double> sh = new SocketHint<>("foo", Double.class, SocketHint.View.SLIDER);
+        SocketHint<Double> sh = new SocketHint<>("foo", Double.class, 0.0, SocketHint.View.SLIDER);
         Socket<Double> socket = new Socket<Double>(eventBus, sh);
 
         socket.setValue(testValue);
@@ -33,7 +33,7 @@ public class SocketTest {
 
     @Test
     public void testDefaultValue() throws Exception {
-        SocketHint<Double> sh = new SocketHint<>("foo", Double.class, SocketHint.View.SLIDER, new Double[0], testValue);
+        SocketHint<Double> sh = new SocketHint<>("foo", Double.class, testValue, SocketHint.View.SLIDER, new Double[0]);
         Socket<Double> socket = new Socket<Double>(eventBus, sh);
 
         assertEquals(testValue, socket.getValue());
@@ -42,7 +42,7 @@ public class SocketTest {
 
     @Test
     public void testSocketChangedEvent() throws Exception {
-        SocketHint<Double> sh = new SocketHint<>("foo", Double.class, SocketHint.View.SLIDER);
+        SocketHint<Double> sh = new SocketHint<>("foo", Double.class, 0.0, SocketHint.View.SLIDER);
         Socket<Double> socket = new Socket<Double>(eventBus, sh);
 
         final boolean[] handled = new boolean[]{false};
@@ -70,14 +70,14 @@ public class SocketTest {
 
     @Test(expected = NullPointerException.class)
     public void testSocketEventBusNotNull() throws Exception {
-        SocketHint<Double> sh = new SocketHint<>("foo", Double.class, SocketHint.View.SLIDER);
+        SocketHint<Double> sh = new SocketHint<>("foo", Double.class, 0.0, SocketHint.View.SLIDER);
         new Socket<Double>(null, sh);
     }
 
     @Test(expected = ClassCastException.class)
     @SuppressWarnings("unchecked")
     public void testSocketValueWrongType() throws Exception {
-        SocketHint<Double> sh = new SocketHint<>("foo", Double.class);
+        SocketHint<Double> sh = new SocketHint<>("foo", Double.class, 0.0);
         Socket socket = new Socket<>(eventBus, sh);
 
         socket.setValue("I am not a Double");
