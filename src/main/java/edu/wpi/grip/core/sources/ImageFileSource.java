@@ -26,6 +26,7 @@ public class ImageFileSource implements Source {
     public ImageFileSource(EventBus eventBus){
         checkNotNull(eventBus, "Event Bus was null.");
         this.outputSocket = new Socket<>(eventBus, imageOutputHint);
+        this.outputSocket.setDirection(Socket.Direction.OUTPUT);
     }
 
     @Override

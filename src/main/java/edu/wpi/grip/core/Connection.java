@@ -6,6 +6,7 @@ import edu.wpi.grip.core.events.ConnectionRemovedEvent;
 import edu.wpi.grip.core.events.SocketChangedEvent;
 import edu.wpi.grip.core.events.StepRemovedEvent;
 
+import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
@@ -29,6 +30,10 @@ public class Connection<T> {
         checkNotNull(inputSocket);
         checkNotNull(outputSocket);
         checkNotNull(eventBus);
+        checkArgument(!Socket.Direction.INPUT.equals(outputSocket.getDirection()),
+                "outputSocket cannot be an input socket");
+        checkArgument(!Socket.Direction.OUTPUT.equals(inputSocket.getDirection()),
+                "inputSocket cannot be an output socket");
 
         if (inputSocket == outputSocket) {
             throw new IllegalArgumentException("inputSocket cannot be the same as outputSocket");
