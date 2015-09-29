@@ -13,6 +13,7 @@ import edu.wpi.grip.core.operations.PythonScriptOperation;
 import edu.wpi.grip.core.sinks.DummySink;
 import edu.wpi.grip.core.sources.ImageFileSource;
 import edu.wpi.grip.core.sources.WebcamSource;
+import edu.wpi.grip.generated.CVOperations;
 import edu.wpi.grip.ui.PaletteView;
 import edu.wpi.grip.ui.pipeline.PipelineView;
 import edu.wpi.grip.ui.preview.PreviewsView;
@@ -140,6 +141,10 @@ public class MainWindowController implements Initializable {
         eventBus.register(this.webcam);
 
         paletteView.operationsProperty().addAll(this.webcam, this.add, this.multiply, this.gompeiOperation, this.sampleFilter);
+
+        paletteView.operationsProperty().addAll(
+                CVOperations.OPERATIONS
+        );
 
         PipelineView pipelineView = new PipelineView(eventBus, new Pipeline(this.eventBus));
 
