@@ -1,24 +1,17 @@
 package edu.wpi.grip.ui.controllers;
 
 import com.google.common.eventbus.EventBus;
-import edu.wpi.grip.core.*;
-import edu.wpi.grip.core.events.ConnectionAddedEvent;
-import edu.wpi.grip.core.events.ConnectionRemovedEvent;
-import edu.wpi.grip.core.events.StepAddedEvent;
-import edu.wpi.grip.core.events.StepRemovedEvent;
+import edu.wpi.grip.core.Operation;
+import edu.wpi.grip.core.Pipeline;
+import edu.wpi.grip.core.events.SetSinkEvent;
 import edu.wpi.grip.core.operations.PythonScriptOperation;
+import edu.wpi.grip.core.sinks.DummySink;
 import edu.wpi.grip.ui.PaletteView;
 import edu.wpi.grip.ui.PipelineView;
-import javafx.application.Application;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.SplitPane;
-import javafx.stage.Screen;
-import javafx.stage.Stage;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -87,50 +80,6 @@ public class MainWindowController implements Initializable {
 
         PipelineView pipelineView = new PipelineView(eventBus, new Pipeline(this.eventBus));
         this.bottomPane.setContent(pipelineView);
-
-        /* Add and remove some steps and connections */
-        new Thread(() -> {
-            try {
-                Thread.sleep(1000);
-
-                Step step1 = new Step(eventBus, add);
-                eventBus.post(new StepAddedEvent(step1));
-
-                Thread.sleep(1000);
-
-                Step step2 = new Step(eventBus, multiply);
-                eventBus.post(new StepAddedEvent(step2));
-
-                Thread.sleep(1000);
-
-                Step step3 = new Step(eventBus, add);
-                eventBus.post(new StepAddedEvent(step3));
-
-                Thread.sleep(1000);
-
-                @SuppressWarnings("unchecked")
-                Connection<Number> connection1 = new Connection<>(eventBus, (Socket<Number>) step1.getOutputSockets()[0],
-                        (Socket<Number>) step2.getInputSockets()[0]);
-                eventBus.post(new ConnectionAddedEvent(connection1));
-
-                Thread.sleep(1000);
-
-                @SuppressWarnings("unchecked")
-                Connection<Number> connection2 = new Connection<>(eventBus, (Socket<Number>) step2.getOutputSockets()[0],
-                        (Socket<Number>) step3.getInputSockets()[1]);
-                eventBus.post(new ConnectionAddedEvent(connection2));
-
-                Thread.sleep(1000);
-
-                eventBus.post(new ConnectionRemovedEvent(connection1));
-
-                Thread.sleep(1000);
-
-                eventBus.post(new StepRemovedEvent(step3));
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }).start();
     }
 }
 
