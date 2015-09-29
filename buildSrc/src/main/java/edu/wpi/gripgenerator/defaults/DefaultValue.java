@@ -1,4 +1,4 @@
-package edu.wpi.gripgenerator.collectors;
+package edu.wpi.gripgenerator.defaults;
 
 
 import com.github.javaparser.ast.ImportDeclaration;

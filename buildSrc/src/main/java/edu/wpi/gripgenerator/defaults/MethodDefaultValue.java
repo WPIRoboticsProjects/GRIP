@@ -1,4 +1,4 @@
-package edu.wpi.gripgenerator.collectors;
+package edu.wpi.gripgenerator.defaults;
 
 import com.github.javaparser.ast.expr.Expression;
 import com.github.javaparser.ast.expr.NullLiteralExpr;

@@ -10,8 +10,8 @@ import com.github.javaparser.ast.comments.JavadocComment;
 import com.github.javaparser.ast.expr.*;
 import com.github.javaparser.ast.stmt.BlockStmt;
 import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
-import edu.wpi.gripgenerator.collectors.DefaultValueCollector;
-import edu.wpi.gripgenerator.collectors.EnumDefaultValue;
+import edu.wpi.gripgenerator.defaults.DefaultValueCollector;
+import edu.wpi.gripgenerator.defaults.EnumDefaultValue;
 
 import java.util.*;
 import java.util.regex.Matcher;

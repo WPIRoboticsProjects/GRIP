@@ -4,8 +4,9 @@ import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
-import edu.wpi.gripgenerator.collectors.DefaultValueCollector;
+import edu.wpi.gripgenerator.defaults.DefaultValueCollector;
 import edu.wpi.gripgenerator.templates.Operation;
+import edu.wpi.gripgenerator.templates.OperationList;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -62,9 +63,10 @@ public class DefinedMethodCollection {
         }
     }
 
-    public void generateCompilationUnits(DefaultValueCollector collector, Map<String, CompilationUnit> compilationUnits) {
+    public void generateCompilationUnits(DefaultValueCollector collector, Map<String, CompilationUnit> compilationUnits, OperationList operations) {
         for(DefinedMethod method : definedMethodMap.values()){
             Operation thisOperation = new Operation(collector, method, className);
+            operations.addOperation(thisOperation);
             CompilationUnit cu = thisOperation.getDeclaration();
             System.out.println(cu);
             compilationUnits.put(method.getMethodName(), cu);

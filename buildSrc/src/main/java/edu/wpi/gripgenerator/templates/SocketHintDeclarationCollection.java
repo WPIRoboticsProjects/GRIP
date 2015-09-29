@@ -7,7 +7,7 @@ import com.github.javaparser.ast.expr.*;
 import com.github.javaparser.ast.stmt.BlockStmt;
 import com.github.javaparser.ast.stmt.ReturnStmt;
 import com.github.javaparser.ast.type.*;
-import edu.wpi.gripgenerator.collectors.DefaultValueCollector;
+import edu.wpi.gripgenerator.defaults.DefaultValueCollector;
 import edu.wpi.gripgenerator.settings.DefinedParamType;
 
 import java.util.*;
@@ -90,15 +90,14 @@ public class SocketHintDeclarationCollection {
     }
 
     public ObjectCreationExpr getSocketListParam(DefinedParamType definedParamType, ClassOrInterfaceType socketType){
-        SocketHintAdditionalParams hintParams = definedParamType.getSocketHintAdditionalParams();
-        List<Expression> constructorExpressions = new ArrayList(Arrays.asList(
+        System.out.println("Generating for default " + (definedParamType.getDefaultValue().isPresent() ? definedParamType.getDefaultValue().get().getName().toString() : "null"));
+        return new ObjectCreationExpr(null, socketType, Arrays.asList(
                 new NameExpr("eventBus"),
-                new NameExpr(definedParamType.getName() + SocketHintDeclaration.HINT_POSTFIX)
+                new NameExpr(definedParamType.getName() + SocketHintDeclaration.HINT_POSTFIX),
+                definedParamType.getDefaultValue().isPresent() ?
+                        definedParamType.getDefaultValue().get().getDefaultValue(definedParamType.getLiteralDefaultValue()) :
+                        new NullLiteralExpr()
         ));
-        if(hintParams != null){
-            constructorExpressions.addAll(hintParams.getAdditionalParams());
-        }
-        return new ObjectCreationExpr(null, socketType, constructorExpressions);
     }
 
     private BlockStmt getInputOrOutputSocketBody(List<DefinedParamType> paramTypes){

@@ -6,10 +6,14 @@ import com.github.javaparser.ast.expr.*;
 import com.github.javaparser.ast.type.ClassOrInterfaceType;
 import com.github.javaparser.ast.type.PrimitiveType;
 import com.github.javaparser.ast.type.Type;
-import edu.wpi.gripgenerator.collectors.DefaultValueCollector;
+import edu.wpi.gripgenerator.defaults.DefaultValue;
+import edu.wpi.gripgenerator.defaults.DefaultValueCollector;
 import edu.wpi.gripgenerator.settings.DefinedParamType;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import static com.github.javaparser.ASTHelper.createReferenceType;
@@ -71,10 +75,21 @@ public class SocketHintDeclaration {
         return this.isOutput;
     }
 
+    private FieldAccessExpr getViewEnumElement(String value){
+        return new FieldAccessExpr(
+                new NameExpr("SocketHint.View"),
+                value
+        );
+    }
+
     private List<Expression> getSocketHintAdditionalParams(DefinedParamType paramType){
-        SocketHintAdditionalParams hintParams = paramType.getSocketHintAdditionalParams();
-        if(hintParams!= null){
-            return hintParams.getHintAdditionalParams();
+        if(paramType.getDefaultValue().isPresent()){
+            DefaultValue defaultValue = paramType.getDefaultValue().get();
+            return Arrays.asList(
+                    getViewEnumElement(defaultValue.getViewType()),
+                    defaultValue.getDomainValue()
+            );
+
         }
         return Collections.emptyList();
     }
@@ -93,7 +108,7 @@ public class SocketHintDeclaration {
         for(DefinedParamType paramType : paramTypes){
             String hintName = paramType.getName();
             // The variableId
-            final String fullHintName = hintName+HINT_POSTFIX;
+            final String fullHintName = hintName + HINT_POSTFIX;
             // The name hint of the socket hint
             final StringLiteralExpr stringLiteralExpr = new StringLiteralExpr(hintName);
             final ClassExpr classExpr = new ClassExpr(genericType);

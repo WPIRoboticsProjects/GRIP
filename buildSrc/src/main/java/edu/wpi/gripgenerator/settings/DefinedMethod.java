@@ -3,7 +3,7 @@ package edu.wpi.gripgenerator.settings;
 import com.github.javaparser.ast.ImportDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.body.Parameter;
-import edu.wpi.gripgenerator.collectors.DefaultValueCollector;
+import edu.wpi.gripgenerator.defaults.DefaultValueCollector;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -64,6 +64,14 @@ public class DefinedMethod {
         return this;
     }
 
+    public String getDescription(){
+        if (this.description.isPresent()){
+            return this.description.get();
+        } else {
+            return "No Description Yet";
+        }
+    }
+
     public String getParentObjectName(){
         return collectionOf.getClassName();
     }
@@ -119,7 +127,7 @@ public class DefinedMethod {
                     definedParamType = paramTypes.get(i);
                 }
                 definedParamType.setParamAs(param);
-                String defaultValue = definedParamType.getAssignedDefaultValue();
+                String defaultValue = definedParamType.getLiteralDefaultValue();
                 if(defaultValue != null && collector.hasDefaultValueFor(defaultValue)){
                     definedParamType.setDefaultValue(collector.getDefaultValueFor(defaultValue));
                 }
@@ -137,7 +145,7 @@ public class DefinedMethod {
     }
 
     public List<ImportDeclaration> getImports(){
-        return paramTypes.stream().map(p -> p.getImport()).filter( i -> i != null).collect(Collectors.toList());
+        return paramTypes.stream().map(p -> p.getImport()).filter(i -> i != null).collect(Collectors.toList());
     }
 
     public List<DefinedParamType> getFinalizedParamTypes(DefaultValueCollector collector){

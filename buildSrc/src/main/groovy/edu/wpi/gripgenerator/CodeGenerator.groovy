@@ -19,7 +19,7 @@ class CodeGenerator extends DefaultTask {
 
     @TaskAction
     def runAction(){
-        println "I'm running! Woot!!!"
+        println "GENERATING CODE FROM OPENCV SOURCE"
         println text
         println dest
 
