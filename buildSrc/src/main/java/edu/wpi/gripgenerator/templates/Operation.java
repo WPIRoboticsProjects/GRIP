@@ -25,11 +25,11 @@ import java.util.stream.Collectors;
 import static com.github.javaparser.ASTHelper.createReferenceType;
 
 public class Operation {
-    private static final ImportDeclaration OPERATION_IMPORT = new ImportDeclaration(new NameExpr("edu.wpi.grip.core.Operation"), false, false);
+    private static final ImportDeclaration OPERATION_IMPORT = new ImportDeclaration(new NameExpr("edu.wpi.grip.core.operations.opencv.CVOperation"), false, false);
     private static final ImportDeclaration SOCKET_IMPORT = new ImportDeclaration(new NameExpr("edu.wpi.grip.core.Socket"), false, false);
     private static final ImportDeclaration EVENT_BUS_IMPORT = new ImportDeclaration(new NameExpr("com.google.common.eventbus.EventBus"), false, false);
     private static final ImportDeclaration CV_CORE_IMPORT = new ImportDeclaration(new NameExpr("org.bytedeco.javacpp.opencv_core"), true, true);
-    private static final ClassOrInterfaceType iOperation = new ClassOrInterfaceType("Operation");
+    private static final ClassOrInterfaceType iOperation = new ClassOrInterfaceType("CVOperation");
     private static final AnnotationExpr OVERRIDE_ANNOTATION = new MarkerAnnotationExpr(new NameExpr("Override"));
     private static final AnnotationExpr SUPPRESS_ANNOTATION = new SingleMemberAnnotationExpr(new NameExpr("SuppressWarnings"), new StringLiteralExpr("unchecked"));
     private final DefinedMethod definedMethod;
