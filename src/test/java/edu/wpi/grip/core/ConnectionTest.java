@@ -7,8 +7,8 @@ import static org.junit.Assert.assertEquals;
 
 public class ConnectionTest {
     EventBus eventBus = new EventBus();
-    SocketHint<Double> fooHint = new SocketHint<>("foo", Double.class, SocketHint.View.NONE, null, 0.0);
-    SocketHint<Double> barHint = new SocketHint<>("bar", Double.class, SocketHint.View.NONE, null, 0.0);
+    SocketHint<Double> fooHint = new SocketHint<>("foo", Double.class, 0.0);
+    SocketHint<Double> barHint = new SocketHint<>("bar", Double.class, 0.0);
     Double testValue = 12345.6789;
 
     @Test

@@ -66,6 +66,6 @@ class PythonScriptOperationConverter implements Converter {
      */
     @Override
     public boolean canConvert(Class type) {
-        return type.equals(PythonScriptOperation.class);
+        return PythonScriptOperation.class.equals(type);
     }
 }

@@ -16,7 +16,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * Provides a way to generate a {@link Mat} from an image on the filesystem.
  */
 public class ImageFileSource implements Source {
-    private final SocketHint imageOutputHint = new SocketHint("Image", Mat.class);
+    private final SocketHint<Mat> imageOutputHint = new SocketHint<Mat>("Image", Mat.class, Mat::new);
     private final Socket<Mat> outputSocket;
 
     /**
@@ -25,7 +25,7 @@ public class ImageFileSource implements Source {
      */
     public ImageFileSource(EventBus eventBus){
         checkNotNull(eventBus, "Event Bus was null.");
-        this.outputSocket = new Socket(eventBus, imageOutputHint);
+        this.outputSocket = new Socket<>(eventBus, imageOutputHint);
     }
 
     @Override

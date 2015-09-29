@@ -139,7 +139,7 @@ public class PythonScriptOperation implements Operation {
      * @return An array of Sockets, based on the global "inputs" list in the Python script
      */
     @Override
-    public Socket<?>[] createInputSockets(EventBus eventBus) {
+    public Socket[] createInputSockets(EventBus eventBus) {
         Socket[] sockets = new Socket[this.inputSocketHints.size()];
 
         for (int i = 0; i < sockets.length; i++) {
