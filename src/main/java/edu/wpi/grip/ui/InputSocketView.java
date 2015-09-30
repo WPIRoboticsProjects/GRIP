@@ -40,13 +40,11 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
- * A JavaFX control that renders a {@link Socket}.  This control shows a label with the socket's identifier, as well as
- * an optional control such as a slider or a number spinner that lets the user interact with the value in the socket.
- * <p>
- * This class both subscribes to and sends {@link SocketChangedEvent}s on the event bus, and acts as an intermediary
- * between EventBus events and a JavaFX property.
+ * A JavaFX control that renders a {@link Socket} that is an input to a step.  This includes an identifier, a handle
+ * for connections, and an optional control (if a view is specified in the socket hint) that lets the user manually
+ * change the parameters of a step.
  */
-public class SocketControlView extends GridPane implements Initializable {
+public class InputSocketView extends GridPane implements Initializable {
 
     @FXML
     private Label identifier;
@@ -64,20 +62,18 @@ public class SocketControlView extends GridPane implements Initializable {
     private final EventBus eventBus;
     private final Socket socket;
     private final Property valueProperty;
-    private final boolean inputSocket;
 
-    public SocketControlView(EventBus eventBus, Socket<?> socket, boolean inputSocket) {
+    public InputSocketView(EventBus eventBus, Socket<?> socket) {
         checkNotNull(eventBus);
         checkNotNull(socket);
 
         this.eventBus = eventBus;
         this.socket = socket;
         this.valueProperty = new SimpleObjectProperty();
-        this.inputSocket = inputSocket;
-        this.handle = new SocketHandleView(this.eventBus, this);
+        this.handle = new SocketHandleView(this.eventBus, this.socket);
 
         try {
-            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("SocketControl.fxml"));
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("InputSocket.fxml"));
             fxmlLoader.setRoot(this);
             fxmlLoader.setController(this);
             fxmlLoader.load();
@@ -85,9 +81,7 @@ public class SocketControlView extends GridPane implements Initializable {
             throw new RuntimeException(e);
         }
 
-        // Add the handle to the left side of the grid pane if this is an input socket, or the right side if it's an
-        // output socket.
-        this.add(this.handle, this.isInputSocket() ? 0 : 2, 0);
+        this.add(this.handle, 0, 0);
 
         // Always set the socket to the value of valueProperty, which may be bound to a GUI property.
         this.valueProperty.addListener((observableValue, o, t1) -> this.socket.setValue(observableValue.getValue()));
@@ -116,7 +110,7 @@ public class SocketControlView extends GridPane implements Initializable {
 
                 Number initialValue = (Number) socket.getValue();
 
-                StringBuilder stringBuilder = new StringBuilder();
+                StringBuilder stringsBuilder = new StringBuilder();
                 Number min = Double.MIN_VALUE, max = Double.MAX_VALUE;
                 if (domain != null && domain.length == 2) {
                     // A spinner can have a min and max, if the domain holds two values.
@@ -202,28 +196,12 @@ public class SocketControlView extends GridPane implements Initializable {
         return this.handle;
     }
 
-    /**
-     * @return <code>true</code> if this control represents the input to a step.  Otherwise, it represents the output
-     * of a step.
-     */
-    public boolean isInputSocket() {
-        return inputSocket;
-    }
-
     @Subscribe
     public void onSocketChanged(SocketChangedEvent event) {
         if (event.getSocket() == this.socket) {
             // When the socket changes value, update valueProperty.  valueProperty may be bound to a GUI control that
             // will change appearance when the socket's value changes, such as a slider.
             this.valueProperty.setValue(this.socket.getValue());
-        }
-    }
-
-    @Subscribe
-    public void onSocketConnectedChanged(SocketConnectedChangedEvent event) {
-        if (event.getSocket() == this.socket) {
-            // Set the handle as "selected" whenever there is at least one connection connected to it
-            this.getHandle().connectedProperty().set(!this.getSocket().getConnections().isEmpty());
         }
     }
 }

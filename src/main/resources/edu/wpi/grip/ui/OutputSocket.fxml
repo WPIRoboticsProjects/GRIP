@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ToggleButton?>
+<?import javafx.scene.control.Tooltip?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.*?>
+<fx:root styleClass="socket" type="javafx.scene.layout.HBox" xmlns="http://javafx.com/javafx/null"
+         xmlns:fx="http://javafx.com/fxml/1" alignment="CENTER_RIGHT">
+    <children>
+        <ToggleButton fx:id="publish">
+            <graphic>
+                <ImageView>
+                    <Image url="@icons/publish.png" requestedWidth="32" requestedHeight="32"/>
+                </ImageView>
+            </graphic>
+            <tooltip>
+                <Tooltip text="Publish Socket"/>
+            </tooltip>
+        </ToggleButton>
+        <Label fx:id="identifier" styleClass="socket-identifier"/>
+        <StackPane fx:id="handlePane"/>
+    </children>
+</fx:root>

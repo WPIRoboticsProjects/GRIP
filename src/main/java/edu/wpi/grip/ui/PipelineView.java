@@ -21,10 +21,8 @@ import javafx.geometry.Bounds;
 import javafx.geometry.Point2D;
 import javafx.scene.Group;
 import javafx.scene.Node;
-import javafx.scene.control.RadioButton;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
-import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 
 import java.io.IOException;
@@ -96,17 +94,26 @@ public class PipelineView extends StackPane implements Initializable {
     }
 
     /**
-     * @return The {@link SocketControlView} that corresponds with the given socket
+     * @return The {@link InputSocketView} that corresponds with the given socket
      */
-    private SocketControlView findSocketView(Socket socket) {
+    private InputSocketView findInputSocketView(Socket socket) {
         for (StepView stepView : this.getSteps()) {
-            for (SocketControlView socketView : stepView.getInputSockets()) {
+            for (InputSocketView socketView : stepView.getInputSockets()) {
                 if (socketView.getSocket() == socket) {
                     return socketView;
                 }
             }
+        }
 
-            for (SocketControlView socketView : stepView.getOutputSockets()) {
+        return null;
+    }
+
+    /**
+     * @return The {@link OutputSocketView} that corresponds with the given socket
+     */
+    private OutputSocketView findOutputSocketView(Socket socket) {
+        for (StepView stepView : this.getSteps()) {
+            for (OutputSocketView socketView : stepView.getOutputSockets()) {
                 if (socketView.getSocket() == socket) {
                     return socketView;
                 }
@@ -150,8 +157,8 @@ public class PipelineView extends StackPane implements Initializable {
         Platform.runLater(() -> {
             // Before adding a connection control, we have to look up the controls for both sockets in the connection so
             // we know where to position it.
-            final SocketControlView outputSocketView = findSocketView(connection.getOutputSocket());
-            final SocketControlView inputSocketView = findSocketView(connection.getInputSocket());
+            final OutputSocketView outputSocketView = findOutputSocketView(connection.getOutputSocket());
+            final InputSocketView inputSocketView = findInputSocketView(connection.getInputSocket());
 
             if (inputSocketView == null || outputSocketView == null) {
                 throw new RuntimeException("Connection added for socket that does not exist in the pipeline");
