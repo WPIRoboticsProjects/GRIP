@@ -1,43 +1,20 @@
 package edu.wpi.grip.ui;
 
 import com.google.common.eventbus.EventBus;
-import com.google.common.eventbus.Subscribe;
-import com.sun.javafx.collections.ObservableListWrapper;
-import edu.wpi.grip.core.Connection;
 import edu.wpi.grip.core.Socket;
 import edu.wpi.grip.core.SocketHint;
-import edu.wpi.grip.core.events.ConnectionAddedEvent;
-import edu.wpi.grip.core.events.ConnectionRemovedEvent;
-import edu.wpi.grip.core.events.SocketChangedEvent;
-import edu.wpi.grip.core.events.SocketConnectedChangedEvent;
-import javafx.application.Platform;
-import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.Property;
-import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.property.SimpleObjectProperty;
-import javafx.beans.property.adapter.JavaBeanBooleanProperty;
-import javafx.beans.property.adapter.JavaBeanBooleanPropertyBuilder;
-import javafx.css.PseudoClass;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.Node;
-import javafx.scene.control.*;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.GridPane;
+import javafx.scene.control.Label;
+import javafx.scene.control.ToggleButton;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
-import javafx.scene.shape.Circle;
-import org.controlsfx.control.RangeSlider;
 
-import javax.swing.text.html.Option;
 import java.io.IOException;
 import java.net.URL;
-import java.util.Arrays;
-import java.util.Optional;
 import java.util.ResourceBundle;
 
-import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
