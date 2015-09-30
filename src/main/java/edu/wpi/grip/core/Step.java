@@ -29,13 +29,11 @@ public class Step {
         inputSockets = operation.createInputSockets(eventBus);
         for (Socket<?> socket : inputSockets) {
             socket.setStep(this);
-            socket.setDirection(Socket.Direction.INPUT);
         }
 
         outputSockets = operation.createOutputSockets(eventBus);
         for (Socket<?> socket : outputSockets) {
             socket.setStep(this);
-            socket.setDirection(Socket.Direction.OUTPUT);
         }
 
         operation.perform(inputSockets, outputSockets);
