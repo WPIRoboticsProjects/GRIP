@@ -15,16 +15,13 @@ import static com.google.common.base.Preconditions.checkNotNull;
 /**
  * A socket is a wrapper for a value that can be updated and passed around operations.  Sockets contain a set of hints
  * about the data they contain, as well as an actual value.
- * <p>
+ * <p/>
  * Sockets that are given to operations are referred to as "input sockets", and sockets that operations store their
  * results in are referred to as "output sockets".
  */
 public class Socket<T> {
-    public enum Direction {INPUT, OUTPUT}
-
     private final EventBus eventBus;
     private Step step;
-    private Direction direction;
     private final Set<Connection> connections = new HashSet<>();
     private final SocketHint<T> socketHint;
     private T value;
@@ -39,7 +36,6 @@ public class Socket<T> {
         this.eventBus = eventBus;
         this.socketHint = socketHint;
         this.value = value;
-        this.direction = Direction.INPUT;
 
         checkNotNull(eventBus);
         checkNotNull(socketHint);
@@ -56,7 +52,6 @@ public class Socket<T> {
         this.eventBus = eventBus;
         this.socketHint = socketHint;
         this.value = socketHint.createInitialValue();
-        this.direction = Direction.INPUT;
 
         checkNotNull(eventBus);
         checkNotNull(socketHint);
@@ -109,24 +104,6 @@ public class Socket<T> {
      */
     public Step getStep() {
         return step;
-    }
-
-
-    /**
-     * @param direction <code>INPUT</code> if this is the input to a step or sink, <code>OUTPUT</code> if this is the
-     *                  output of a step or source
-     */
-    public void setDirection(Direction direction) {
-        checkNotNull(direction);
-        this.direction = direction;
-    }
-
-    /**
-     * @return <code>INPUT</code> if this is the input to a step or sink, <code>OUTPUT</code> if this is the output of
-     * a step or source
-     */
-    public Direction getDirection() {
-        return this.direction;
     }
 
     /**
