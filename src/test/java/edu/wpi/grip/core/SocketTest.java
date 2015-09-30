@@ -3,6 +3,7 @@ package edu.wpi.grip.core;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import edu.wpi.grip.core.events.SocketChangedEvent;
+import edu.wpi.grip.core.events.SocketPreviewChangedEvent;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -61,6 +62,27 @@ public class SocketTest {
 
         assertTrue(handled[0]);
         assertEquals(testValue, value[0]);
+    }
+
+    @Test
+    public void testSocketPreview() {
+        SocketHint<Double> sh = new SocketHint<>("foo", Double.class, 0.0);
+        Socket<Double> socket = new Socket<Double>(eventBus, sh);
+
+        final boolean[] handled = new boolean[]{false};
+        Object eventHandler = new Object() {
+            @Subscribe
+            public void onSocketPreviewed(SocketPreviewChangedEvent e) {
+                handled[0] = true;
+                assertTrue(e.getSocket().isPreviewed());
+            }
+        };
+
+        eventBus.register(eventHandler);
+        socket.setPreviewed(true);
+        eventBus.unregister(eventHandler);
+
+        assertTrue("SocketPreviewChangedEvent was not received", handled[0]);
     }
 
     @Test(expected = NullPointerException.class)

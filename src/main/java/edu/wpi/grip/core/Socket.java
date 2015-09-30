@@ -29,6 +29,7 @@ public class Socket<T> {
     private final SocketHint<T> socketHint;
     private T value;
     private boolean published = false;
+    private boolean previewed = false;
 
     /**
      * @param eventBus   The Guava {@link EventBus} used by the application.
@@ -158,6 +159,27 @@ public class Socket<T> {
         return this.published;
     }
 
+    /**
+     * @param published If <code>true</code>, this socket will be shown in a preview in the GUI.
+     */
+    public void setPreviewed(boolean previewed) {
+        boolean changed = previewed != this.previewed;
+        this.previewed = previewed;
+
+        // Only send an event if the field was actually changed
+        if (changed) {
+            eventBus.post(new SocketPreviewChangedEvent(this));
+        }
+    }
+
+    /**
+     * @return Whether or not this socket is shown in a preview in the GUI
+     * @see #setPreviewed(boolean) d(boolean)
+     */
+    public boolean isPreviewed() {
+        return this.previewed;
+    }
+
     @Subscribe
     public void onConnectionAdded(ConnectionAddedEvent event) {
         if (event.getConnection().getInputSocket() == this || event.getConnection().getOutputSocket() == this) {
@@ -186,6 +208,7 @@ public class Socket<T> {
                 .add("socketHint", getSocketHint())
                 .add("value", getValue())
                 .add("published", isPublished())
+                .add("previewed", isPreviewed())
                 .add("connections", getConnections())
                 .toString();
     }
