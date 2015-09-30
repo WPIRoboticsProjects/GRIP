@@ -12,8 +12,8 @@ import static com.google.common.base.Preconditions.checkNotNull;
  */
 public class Step {
     private Operation operation;
-    private Socket<?>[] inputSockets;
-    private Socket<?>[] outputSockets;
+    private InputSocket<?>[] inputSockets;
+    private OutputSocket<?>[] outputSockets;
 
     /**
      * @param eventBus  The Guava {@link EventBus} used by the application.
@@ -29,13 +29,11 @@ public class Step {
         inputSockets = operation.createInputSockets(eventBus);
         for (Socket<?> socket : inputSockets) {
             socket.setStep(this);
-            socket.setDirection(Socket.Direction.INPUT);
         }
 
         outputSockets = operation.createOutputSockets(eventBus);
         for (Socket<?> socket : outputSockets) {
             socket.setStep(this);
-            socket.setDirection(Socket.Direction.OUTPUT);
         }
 
         operation.perform(inputSockets, outputSockets);
@@ -53,14 +51,14 @@ public class Step {
     /**
      * @return An array of <code>Socket</code>s that hold the inputs to this step
      */
-    public Socket<?>[] getInputSockets() {
+    public InputSocket<?>[] getInputSockets() {
         return inputSockets;
     }
 
     /**
      * @return An array of <code>Socket</code>s that hold the outputs of this step
      */
-    public Socket<?>[] getOutputSockets() {
+    public OutputSocket<?>[] getOutputSockets() {
         return outputSockets;
     }
 

@@ -1,9 +1,7 @@
 package edu.wpi.grip.core.operations.opencv;
 
 import com.google.common.eventbus.EventBus;
-import edu.wpi.grip.core.Operation;
-import edu.wpi.grip.core.Socket;
-import edu.wpi.grip.core.SocketHint;
+import edu.wpi.grip.core.*;
 import org.bytedeco.javacpp.opencv_core;
 import org.bytedeco.javacpp.opencv_core.*;
 
@@ -28,22 +26,22 @@ public class AddOperation implements Operation {
     }
 
     @Override
-    public Socket[] createInputSockets(EventBus eventBus) {
-        return new Socket[]{
-                new Socket<Mat>(eventBus, aHint),
-                new Socket<Mat>(eventBus, bHint)
+    public InputSocket[] createInputSockets(EventBus eventBus) {
+        return new InputSocket[]{
+                new InputSocket<Mat>(eventBus, aHint),
+                new InputSocket<Mat>(eventBus, bHint)
         };
     }
 
     @Override
-    public Socket[] createOutputSockets(EventBus eventBus) {
-        return new Socket[]{
-                new Socket<Mat>(eventBus, sumHint)
+    public OutputSocket[] createOutputSockets(EventBus eventBus) {
+        return new OutputSocket[]{
+                new OutputSocket<Mat>(eventBus, sumHint)
         };
     }
 
     @Override
-    public void perform(Socket[] inputs, Socket[] outputs) {
+    public void perform(InputSocket[] inputs, OutputSocket[] outputs) {
         Socket<Mat> a = inputs[0], b = inputs[1], sum = outputs[0];
         opencv_core.add(a.getValue(), b.getValue(), sum.getValue());
     }

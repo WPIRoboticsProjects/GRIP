@@ -1,7 +1,7 @@
 package edu.wpi.grip.core.sources;
 
 import com.google.common.eventbus.EventBus;
-import edu.wpi.grip.core.Socket;
+import edu.wpi.grip.core.OutputSocket;
 import edu.wpi.grip.core.SocketHint;
 import edu.wpi.grip.core.Source;
 import org.bytedeco.javacpp.opencv_core.Mat;
@@ -17,7 +17,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
  */
 public class ImageFileSource implements Source {
     private final SocketHint<Mat> imageOutputHint = new SocketHint<Mat>("Image", Mat.class, Mat::new);
-    private final Socket<Mat> outputSocket;
+    private final OutputSocket<Mat> outputSocket;
 
     /**
      *
@@ -25,13 +25,12 @@ public class ImageFileSource implements Source {
      */
     public ImageFileSource(EventBus eventBus){
         checkNotNull(eventBus, "Event Bus was null.");
-        this.outputSocket = new Socket<>(eventBus, imageOutputHint);
-        this.outputSocket.setDirection(Socket.Direction.OUTPUT);
+        this.outputSocket = new OutputSocket<Mat>(eventBus, imageOutputHint);
     }
 
     @Override
-    public Socket<Mat>[] getOutputSockets() {
-        return new Socket[]{this.outputSocket};
+    public OutputSocket<Mat>[] getOutputSockets() {
+        return new OutputSocket[]{this.outputSocket};
     }
 
     /**

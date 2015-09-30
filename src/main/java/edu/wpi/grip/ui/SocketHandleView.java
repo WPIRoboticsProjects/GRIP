@@ -3,6 +3,8 @@ package edu.wpi.grip.ui;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import edu.wpi.grip.core.Connection;
+import edu.wpi.grip.core.InputSocket;
+import edu.wpi.grip.core.OutputSocket;
 import edu.wpi.grip.core.Socket;
 import edu.wpi.grip.core.events.ConnectionAddedEvent;
 import edu.wpi.grip.core.events.ConnectionRemovedEvent;
@@ -90,21 +92,26 @@ public class SocketHandleView extends Button {
         // When the user drops the connection onto another socket, add a new connection.
         this.setOnDragDropped(dragEvent -> {
             draggingSocket.ifPresent(other -> {
-                Socket inputSocket, outputSocket;
+                InputSocket inputSocket;
+                OutputSocket outputSocket;
 
                 // Check which socket was the input and which was the output.  The user can create a connection by
                 // dragging either into the other.
-                if (other.getDirection() == Socket.Direction.INPUT) {
-                    inputSocket = other;
-                    outputSocket = this.socket;
-                } else {
-                    inputSocket = this.socket;
-                    outputSocket = other;
+                switch (other.getDirection()) {
+                    case INPUT:
+                        inputSocket = (InputSocket)other;
+                        assert this.socket.getDirection().equals(Socket.Direction.OUTPUT) : "The socket was not an Output";
+                        outputSocket = (OutputSocket)this.socket;
+                        break;
+                    case OUTPUT:
+                        assert this.socket.getDirection().equals(Socket.Direction.INPUT) : "The socket was not an Input";
+                        inputSocket = (InputSocket)this.socket;
+                        outputSocket = (OutputSocket)other;
+                        break;
+                    default:
+                        throw new IllegalStateException("The Socket was a type that wasn't expected " + other.getDirection());
                 }
-
-                // Add a new connection for the two sockets
-                @SuppressWarnings("unchecked")
-                Connection connection = new Connection(this.eventBus, outputSocket, inputSocket);
+                final Connection connection = new Connection(eventBus, outputSocket, inputSocket);
                 eventBus.post(new ConnectionAddedEvent(connection));
             });
         });

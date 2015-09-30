@@ -1,7 +1,7 @@
 package edu.wpi.grip.core.sources;
 
 import com.google.common.eventbus.EventBus;
-import edu.wpi.grip.core.Socket;
+import edu.wpi.grip.core.OutputSocket;
 import org.bytedeco.javacpp.opencv_core.Mat;
 import org.junit.Before;
 import org.junit.Test;
@@ -31,7 +31,7 @@ public class ImageFileSourceTest {
         // Given above setup
         // When
         fileSource.loadImage(imageUrl);
-        Socket<Mat> outputSocket = fileSource.getOutputSockets()[0];
+        OutputSocket<Mat> outputSocket = fileSource.getOutputSockets()[0];
 
         // Then
         assertNotNull("The output socket's value was null.", outputSocket.getValue());
@@ -44,14 +44,14 @@ public class ImageFileSourceTest {
     @Test
     public void testReadInTextFile(){
         fileSource.loadImage(textUrl);
-        Socket<Mat> outputSocket = fileSource.getOutputSockets()[0];
+        OutputSocket<Mat> outputSocket = fileSource.getOutputSockets()[0];
         assertTrue("No matrix should have been returned.", outputSocket.getValue().empty());
     }
 
     @Test
     public void testReadInFileWithoutExtention() throws MalformedURLException {
         fileSource.loadImage(new URL("file://temp/fdkajdl3eaf"));
-        Socket<Mat> outputSocket = fileSource.getOutputSockets()[0];
+        OutputSocket<Mat> outputSocket = fileSource.getOutputSockets()[0];
         assertTrue("No matrix should have been returned.", outputSocket.getValue().empty());
     }
 }

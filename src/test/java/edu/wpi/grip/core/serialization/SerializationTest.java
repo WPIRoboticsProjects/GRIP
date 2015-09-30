@@ -6,7 +6,6 @@ import edu.wpi.grip.core.events.ConnectionAddedEvent;
 import edu.wpi.grip.core.events.StepAddedEvent;
 import edu.wpi.grip.core.operations.PythonScriptOperation;
 import edu.wpi.grip.core.operations.opencv.AddOperation;
-import static org.bytedeco.javacpp.opencv_core.*;
 import org.junit.Test;
 
 import java.io.Reader;
@@ -14,8 +13,8 @@ import java.io.StringReader;
 import java.io.StringWriter;
 import java.io.Writer;
 
+import static org.bytedeco.javacpp.opencv_core.*;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 public class SerializationTest {
     private final EventBus eventBus = new EventBus();
@@ -74,14 +73,14 @@ public class SerializationTest {
         Pipeline pipeline1 = new Pipeline(eventBus);
 
         Step step1 = new Step(eventBus, pythonAdditionOperationFromSource);
-        Socket<Integer> a1 = (Socket<Integer>) step1.getInputSockets()[0];
-        Socket<Integer> b1 = (Socket<Integer>) step1.getInputSockets()[1];
-        Socket<Integer> sum1 = (Socket<Integer>) step1.getOutputSockets()[0];
+        InputSocket<Integer> a1 = (InputSocket<Integer>) step1.getInputSockets()[0];
+        InputSocket<Integer> b1 = (InputSocket<Integer>) step1.getInputSockets()[1];
+        OutputSocket<Integer> sum1 = (OutputSocket<Integer>) step1.getOutputSockets()[0];
 
         Step step2 = new Step(eventBus, pythonAdditionOperationFromURL);
-        Socket<Integer> a2 = (Socket<Integer>) step2.getInputSockets()[0];
-        Socket<Integer> b2 = (Socket<Integer>) step2.getInputSockets()[1];
-        Socket<Integer> sum2 = (Socket<Integer>) step2.getOutputSockets()[0];
+        InputSocket<Integer> a2 = (InputSocket<Integer>) step2.getInputSockets()[0];
+        InputSocket<Integer> b2 = (InputSocket<Integer>) step2.getInputSockets()[1];
+        OutputSocket<Integer> sum2 = (OutputSocket<Integer>) step2.getOutputSockets()[0];
 
         a1.setValue(12);
         b1.setValue(34);
@@ -106,9 +105,9 @@ public class SerializationTest {
         eventBus.post(new StepAddedEvent(new Step(eventBus, additionOperation)));
         Pipeline pipeline2 = serializeAndDeserialize(pipeline1);
 
-        Socket<Double> a = (Socket<Double>) pipeline2.getSteps().get(0).getInputSockets()[0];
-        Socket<Double> b = (Socket<Double>) pipeline2.getSteps().get(0).getInputSockets()[1];
-        Socket<Double> sum = (Socket<Double>) pipeline2.getSteps().get(0).getOutputSockets()[0];
+        InputSocket<Double> a = (InputSocket<Double>) pipeline2.getSteps().get(0).getInputSockets()[0];
+        InputSocket<Double> b = (InputSocket<Double>) pipeline2.getSteps().get(0).getInputSockets()[1];
+        OutputSocket<Double> sum = (OutputSocket<Double>) pipeline2.getSteps().get(0).getOutputSockets()[0];
         a.setValue(123.4);
         b.setValue(567.8);
 
@@ -122,9 +121,9 @@ public class SerializationTest {
         eventBus.post(new StepAddedEvent(new Step(eventBus, pythonAdditionOperationFromURL)));
         Pipeline pipeline2 = serializeAndDeserialize(pipeline1);
 
-        Socket<Integer> a = (Socket<Integer>) pipeline2.getSteps().get(0).getInputSockets()[0];
-        Socket<Integer> b = (Socket<Integer>) pipeline2.getSteps().get(0).getInputSockets()[1];
-        Socket<Integer> sum = (Socket<Integer>) pipeline2.getSteps().get(0).getOutputSockets()[0];
+        InputSocket<Integer> a = (InputSocket<Integer>) pipeline2.getSteps().get(0).getInputSockets()[0];
+        InputSocket<Integer> b = (InputSocket<Integer>) pipeline2.getSteps().get(0).getInputSockets()[1];
+        OutputSocket<Integer> sum = (OutputSocket<Integer>) pipeline2.getSteps().get(0).getOutputSockets()[0];
         a.setValue(1234);
         b.setValue(5678);
 
@@ -138,9 +137,9 @@ public class SerializationTest {
         eventBus.post(new StepAddedEvent(new Step(eventBus, pythonAdditionOperationFromSource)));
         Pipeline pipeline2 = serializeAndDeserialize(pipeline1);
 
-        Socket<Integer> a = (Socket<Integer>) pipeline2.getSteps().get(0).getInputSockets()[0];
-        Socket<Integer> b = (Socket<Integer>) pipeline2.getSteps().get(0).getInputSockets()[1];
-        Socket<Integer> sum = (Socket<Integer>) pipeline2.getSteps().get(0).getOutputSockets()[0];
+        InputSocket<Integer> a = (InputSocket<Integer>) pipeline2.getSteps().get(0).getInputSockets()[0];
+        InputSocket<Integer> b = (InputSocket<Integer>) pipeline2.getSteps().get(0).getInputSockets()[1];
+        OutputSocket<Integer> sum = (OutputSocket<Integer>) pipeline2.getSteps().get(0).getOutputSockets()[0];
         a.setValue(1234);
         b.setValue(5678);
 
@@ -159,10 +158,10 @@ public class SerializationTest {
                 step2.getInputSockets()[0])));
         Pipeline pipeline2 = serializeAndDeserialize(pipeline1);
 
-        Socket<Integer> a1 = (Socket<Integer>) pipeline2.getSteps().get(0).getInputSockets()[0];
-        Socket<Integer> b1 = (Socket<Integer>) pipeline2.getSteps().get(0).getInputSockets()[1];
-        Socket<Integer> b2 = (Socket<Integer>) pipeline2.getSteps().get(1).getInputSockets()[1];
-        Socket<Integer> sum2 = (Socket<Integer>) pipeline2.getSteps().get(1).getOutputSockets()[0];
+        InputSocket<Integer> a1 = (InputSocket<Integer>) pipeline2.getSteps().get(0).getInputSockets()[0];
+        InputSocket<Integer> b1 = (InputSocket<Integer>) pipeline2.getSteps().get(0).getInputSockets()[1];
+        InputSocket<Integer> b2 = (InputSocket<Integer>) pipeline2.getSteps().get(1).getInputSockets()[1];
+        OutputSocket<Integer> sum2 = (OutputSocket<Integer>) pipeline2.getSteps().get(1).getOutputSockets()[0];
         a1.setValue(123);
         b1.setValue(456);
         b2.setValue(789);
@@ -178,9 +177,9 @@ public class SerializationTest {
         Pipeline pipeline2 = serializeAndDeserialize(pipeline1);
 
         Step step1 = pipeline2.getSteps().get(0);
-        Socket<Mat> a = (Socket<Mat>) step1.getInputSockets()[0];
-        Socket<Mat> b = (Socket<Mat>) step1.getInputSockets()[1];
-        Socket<Mat> sum = (Socket<Mat>) step1.getOutputSockets()[0];
+        InputSocket<Mat> a = (InputSocket<Mat>) step1.getInputSockets()[0];
+        InputSocket<Mat> b = (InputSocket<Mat>) step1.getInputSockets()[1];
+        OutputSocket<Mat> sum = (OutputSocket<Mat>) step1.getOutputSockets()[0];
 
         a.setValue(new Mat(1, 1, CV_32F, new Scalar(1234.5)));
         b.setValue(new Mat(1, 1, CV_32F, new Scalar(6789.0)));
