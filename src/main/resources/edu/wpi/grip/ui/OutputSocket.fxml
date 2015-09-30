@@ -9,6 +9,16 @@
 <fx:root styleClass="socket" type="javafx.scene.layout.HBox" xmlns="http://javafx.com/javafx/null"
          xmlns:fx="http://javafx.com/fxml/1" alignment="CENTER_RIGHT">
     <children>
+        <ToggleButton fx:id="preview">
+            <graphic>
+                <ImageView>
+                    <Image url="@icons/preview.png" requestedWidth="32" requestedHeight="32"/>
+                </ImageView>
+            </graphic>
+            <tooltip>
+                <Tooltip text="Preview Socket"/>
+            </tooltip>
+        </ToggleButton>
         <ToggleButton fx:id="publish">
             <graphic>
                 <ImageView>
