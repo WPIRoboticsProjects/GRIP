@@ -1,4 +1,5 @@
 exclude: [node_modules]
 keep_files: [bower_components, javadoc]
+baseurl: /GRIP
 # Dependencies
 highlighter: pygments
