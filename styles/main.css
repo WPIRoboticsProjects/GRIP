@@ -160,3 +160,12 @@ body {
 .date-values .key {
   font-size: 15px;
 }
+
+.rounded-container {
+  border-radius: 20px;
+  margin: 20px 20px 20px 20px;
+  background-color: rgb(238, 238, 238);
+  border-radius: 20px;
+  -moz-border-radius: 20px;
+  -webkit-box-shadow: 20px;
+}

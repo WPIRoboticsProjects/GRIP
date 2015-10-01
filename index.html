@@ -1,3 +1,5 @@
+---
+---
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html class="no-js" xmlns="http://www.w3.org/1999/xhtml" lang="en-US" xml:lang="en-US">
   <head>
@@ -5,6 +7,20 @@
     <title>GRIP</title>
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width">
+
+    <script>
+      /* Inspired by this post: http://benhowdle.im/creating-a-dynamic-search-page-for-your-jekyll-blog.html */
+      var JEKYLL_POSTS = [];
+        {% for post in site.posts %}
+          JEKYLL_POSTS.push({
+            title: "{{ post.title }}",
+            link: "{{ post.url | prepend: site.baseurl }}",
+            simpleLink: "{{ post.url | prepend: site.baseurl }}".replace(/\.html/, ''),
+            content: "{{ post.content | strip_html | newline_to_br | strip_newlines }}".replace(/\<br \/\>/g, " "),
+            contentStripped: "{{ post.content | strip_newlines | strip_html }}"
+          });
+        {% endfor %}
+    </script>
 
     <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.min.css">
     <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
@@ -41,7 +57,7 @@
 
             <ul class="nav navbar-nav">
               <li class="active"><a href="#/">Home</a></li>
-              <li><a ng-href="#/about">About</a></li>
+              <li><a ng-href="#/posts">Blog Posts</a></li>
               <li><a href="javadoc">JavaDocs</a></li>
               <li><a ng-href="https://github.com/WPIRoboticsProjects/GRIP">GitHub Project</a></li>
             </ul>
@@ -62,7 +78,7 @@
     </footer>
 
     <!-- Google Analytics: change UA-XXXXX-X to be your site's ID -->
-     <script>
+    <script>
        !function(A,n,g,u,l,a,r){A.GoogleAnalyticsObject=l,A[l]=A[l]||function(){
        (A[l].q=A[l].q||[]).push(arguments)},A[l].l=+new Date,a=n.createElement(g),
        r=n.getElementsByTagName(g)[0],a.src=u,r.parentNode.insertBefore(a,r)
@@ -91,7 +107,7 @@
     <!-- build:js({.}) scripts/scripts.js -->
     <script src="scripts/app.js"></script>
     <script src="scripts/controllers/main.js"></script>
-    <script src="scripts/controllers/about.js"></script>
+    <script src="scripts/controllers/posts.js"></script>
     <script src="scripts/directives/countdown.js"></script>
     <script src="scripts/jquery/Matrix.js"></script>
     <!-- endbuild -->

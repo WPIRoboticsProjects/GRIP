@@ -1,0 +1,13 @@
+<div class="rounded-container">
+  <div class="container-fluid">
+    <div class="row row-centered">
+      <h1 class="col col-centered">Blog Posts</h1>
+    </div>
+    <div ng-repeat="post in blogPosts" class="row">
+      <div class="col col-xs-12">
+        <h2><a ng-href="#/posts{{post.simpleLink}}">{{post.title}}</a></h2>
+        <p>{{post.content | cut:true:300:' ...'}}</p>
+      </div>
+    </div>
+  </div>
+</div>

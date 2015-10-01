@@ -1,0 +1,4 @@
+exclude: [node_modules]
+keep_files: [bower_components, javadoc]
+# Dependencies
+highlighter: pygments
