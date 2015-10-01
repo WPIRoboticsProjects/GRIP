@@ -147,6 +147,6 @@
 
   var matrix = false;
   $(function () {
-       matrix = new Matrix({count:750,auto:1});
+       matrix = new Matrix({count:(screen.width/2),auto:1});
   });
 })();
