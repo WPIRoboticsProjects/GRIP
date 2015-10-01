@@ -80,6 +80,8 @@ public class MainWindowController implements Initializable {
 
         PipelineView pipelineView = new PipelineView(eventBus, new Pipeline(this.eventBus));
         this.bottomPane.setContent(pipelineView);
+
+        this.eventBus.post(new SetSinkEvent(new DummySink()));
     }
 }
 

@@ -15,17 +15,21 @@ import static com.google.common.base.Preconditions.checkNotNull;
 /**
  * A socket is a wrapper for a value that can be updated and passed around operations.  Sockets contain a set of hints
  * about the data they contain, as well as an actual value.
- * <p/>
+ * <p>
  * Sockets that are given to operations are referred to as "input sockets", and sockets that operations store their
  * results in are referred to as "output sockets".
  */
 public class Socket<T> {
+    public enum Direction {INPUT, OUTPUT}
+
     private final EventBus eventBus;
     private Step step;
+    private Direction direction;
     private final Set<Connection> connections = new HashSet<>();
     private final SocketHint<T> socketHint;
     private T value;
     private boolean published = false;
+    private boolean previewed = false;
 
     /**
      * @param eventBus   The Guava {@link EventBus} used by the application.
@@ -36,6 +40,7 @@ public class Socket<T> {
         this.eventBus = eventBus;
         this.socketHint = socketHint;
         this.value = value;
+        this.direction = Direction.INPUT;
 
         checkNotNull(eventBus);
         checkNotNull(socketHint);
@@ -52,6 +57,7 @@ public class Socket<T> {
         this.eventBus = eventBus;
         this.socketHint = socketHint;
         this.value = socketHint.createInitialValue();
+        this.direction = Direction.INPUT;
 
         checkNotNull(eventBus);
         checkNotNull(socketHint);
@@ -106,6 +112,24 @@ public class Socket<T> {
         return step;
     }
 
+
+    /**
+     * @param direction <code>INPUT</code> if this is the input to a step or sink, <code>OUTPUT</code> if this is the
+     *                  output of a step or source
+     */
+    public void setDirection(Direction direction) {
+        checkNotNull(direction);
+        this.direction = direction;
+    }
+
+    /**
+     * @return <code>INPUT</code> if this is the input to a step or sink, <code>OUTPUT</code> if this is the output of
+     * a step or source
+     */
+    public Direction getDirection() {
+        return this.direction;
+    }
+
     /**
      * @return The set of connections that have this socket as an input or output
      */
@@ -133,6 +157,27 @@ public class Socket<T> {
      */
     public boolean isPublished() {
         return this.published;
+    }
+
+    /**
+     * @param published If <code>true</code>, this socket will be shown in a preview in the GUI.
+     */
+    public void setPreviewed(boolean previewed) {
+        boolean changed = previewed != this.previewed;
+        this.previewed = previewed;
+
+        // Only send an event if the field was actually changed
+        if (changed) {
+            eventBus.post(new SocketPreviewChangedEvent(this));
+        }
+    }
+
+    /**
+     * @return Whether or not this socket is shown in a preview in the GUI
+     * @see #setPreviewed(boolean) d(boolean)
+     */
+    public boolean isPreviewed() {
+        return this.previewed;
     }
 
     @Subscribe
@@ -163,6 +208,7 @@ public class Socket<T> {
                 .add("socketHint", getSocketHint())
                 .add("value", getValue())
                 .add("published", isPublished())
+                .add("previewed", isPreviewed())
                 .add("connections", getConnections())
                 .toString();
     }

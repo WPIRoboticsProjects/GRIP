@@ -14,7 +14,11 @@ public class ConnectionTest {
     @Test
     public void testInputSocketChanges() {
         Socket<Double> foo = new Socket<>(eventBus, fooHint);
+        foo.setDirection(Socket.Direction.OUTPUT);
+
         Socket<Double> bar = new Socket<>(eventBus, barHint);
+        bar.setDirection(Socket.Direction.INPUT);
+
         Connection<Double> connection = new Connection<>(eventBus, foo, bar);
 
         foo.setValue(testValue);
@@ -46,5 +50,16 @@ public class ConnectionTest {
     public void testInputSocketNotNull() {
         Socket<Double> foo = new Socket<>(eventBus, fooHint);
         Connection<Double> connection = new Connection<>(eventBus, foo, null);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testBackwardsConnection() {
+        Socket<Double> output = new Socket<>(eventBus, fooHint);
+        output.setDirection(Socket.Direction.OUTPUT);
+
+        Socket<Double> input= new Socket<>(eventBus, fooHint);
+        input.setDirection(Socket.Direction.INPUT);
+
+        new Connection<Double>(eventBus, input, output);
     }
 }

@@ -1,7 +1,6 @@
 package edu.wpi.grip.ui;
 
 import com.google.common.eventbus.EventBus;
-import com.google.common.eventbus.Subscribe;
 import edu.wpi.grip.core.Socket;
 import edu.wpi.grip.core.Step;
 import edu.wpi.grip.core.events.StepRemovedEvent;
@@ -12,14 +11,11 @@ import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.ContentDisplay;
-import javafx.scene.control.Label;
 import javafx.scene.control.TitledPane;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.scene.text.TextAlignment;
 import javafx.stage.Screen;
 
 import java.io.IOException;
@@ -80,13 +76,13 @@ public class StepView extends AnchorPane implements Initializable {
             this.icon.setFitHeight(Screen.getPrimary().getDpi() * 0.25);
         });
 
-        // Add a SocketControlView for each input socket and output socket
+        // Add a view for each input socket and output socket
         for (Socket<?> inputSocket : this.step.getInputSockets()) {
-            this.inputs.getChildren().add(new SocketControlView(this.eventBus, inputSocket, true));
+            this.inputs.getChildren().add(new InputSocketView(this.eventBus, inputSocket));
         }
 
         for (Socket<?> outputSocket : this.step.getOutputSockets()) {
-            this.outputs.getChildren().add(new SocketControlView(this.eventBus, outputSocket, false));
+            this.outputs.getChildren().add(new OutputSocketView(this.eventBus, outputSocket));
         }
 
         // When the delete button is pressed, remove this step.
@@ -94,18 +90,18 @@ public class StepView extends AnchorPane implements Initializable {
     }
 
     /**
-     * @return An unmodifiable list of {@link SocketControlView}s corresponding to the input sockets of this step
+     * @return An unmodifiable list of {@link InputSocketView}s corresponding to the input sockets of this step
      */
     @SuppressWarnings("unchecked")
-    public ObservableList<SocketControlView> getInputSockets() {
+    public ObservableList<InputSocketView> getInputSockets() {
         return (ObservableList) this.inputs.getChildrenUnmodifiable();
     }
 
     /**
-     * @return An unmodifiable list of {@link SocketControlView}s corresponding to the output sockets of this step
+     * @return An unmodifiable list of {@link InputSocketView}s corresponding to the output sockets of this step
      */
     @SuppressWarnings("unchecked")
-    public ObservableList<SocketControlView> getOutputSockets() {
+    public ObservableList<OutputSocketView> getOutputSockets() {
         return (ObservableList) this.outputs.getChildrenUnmodifiable();
     }
 

@@ -110,6 +110,7 @@ ImageView.operation-icon {
 .socket {
     -fx-hgap: 0.5em;
     -fx-vgap: 0.5em;
+    -fx-spacing: 0.5em;
 }
 
 .socket .socket-control {
