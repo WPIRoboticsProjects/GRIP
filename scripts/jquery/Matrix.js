@@ -12,10 +12,10 @@
      opts.font = opts.font||{};
      this.cid = opts.cid||'matrix';
      this.font = {};
-     this.font.link = opts.font.link||'fonts/mCode15.ttf';
-     this.font.format = opts.font.format||'truetype';
+     this.font.link = opts.font.link||'fonts/mCode15.woff';
+     this.font.format = opts.font.format||'woff';
      this.font.family = opts.font.family||'matrix';
-     this.font.size = opts.font.size||'7px';
+     this.font.size = opts.font.size||'4px';
      this.genStyle(this.cid,this.font);
      this.preload();
      if ($mat(this.cid)) {
@@ -77,8 +77,11 @@
            return string;
   };
   Matrix.prototype.randletter = function () {
-           return String.fromCharCode(47+Math.round(Math.random()*13));
-           //String.fromCharCode(94+Math.round(Math.random()*25));
+           return Math.random() >= 0.2 ?
+                  // Random Character
+                  String.fromCharCode(94+Math.round(Math.random()*25)) :
+                  // Random Number
+                  String.fromCharCode(47+Math.round(Math.random()*13));
   };
   Matrix.prototype.stop = function () {
            if (this.interval) {
@@ -115,7 +118,7 @@
           var style = $mat('style',1);
           style.type = "text/css";
           document.getElementsByTagName('head')[0].appendChild(style);
-          var cont = '\n@font-face{font-family:"'+font.family+'";src:url("'+font.link+'") format("'+font.format+'");}\n';
+          var cont = '\n@font-face{font-family:"'+font.family+'";src:local(\'☺\'), url('+font.link+') format("'+font.format+'");}\n';
           if (cid !== 'matrix') {
              cont += '#'+cid+'{position:fixed;top:0px;left:0px;z-index:-1;}\n';
           }
@@ -146,7 +149,7 @@
   }
 
   var matrix = false;
-  $(function () {
-       matrix = new Matrix({count:(screen.width/2),auto:1});
-  });
+  window.onload = function () {
+       matrix = new Matrix({count:(screen.width/5),auto:1});
+  };
 })();
