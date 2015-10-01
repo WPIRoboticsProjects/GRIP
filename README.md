@@ -22,7 +22,18 @@ title: [Title]
 
 <b>NOTE:</b> Do not use the internal jekyll linking system.
 The blog post pages are all using angular for the underlying
-navigation system. This will break using jekyll's link variables. 
+navigation system. This will break using jekyll's link variables.
+
+## Angular vs Jekyll
+### Which `{{...}}` is for which templating language?
+Any document that begins with something like
+```
+---
+---
+```
+is parsed by Jekyll and the variables inside of the `{{...}}` is a Jekyll variable call.
+Anything else is angular's two way bindings.
+In the future this may change. Angular allows you to [change the interpolation symbols](https://docs.angularjs.org/api/ng/provider/$interpolateProvider) so this may be done in the future.
 
 ## Developing
 
@@ -35,8 +46,9 @@ navigation system. This will break using jekyll's link variables.
 
 ### Running Locally
 
-Simply run `bundle exec jekyll serve` and you'll have a local server with the site running.
-Your changes will automatically trigger a page reload so your browser will always have the current code.
+Simply run `bundle exec jekyll serve --baseurl ''` and you'll have a local server with the site running at
+`localhost:4000`.
+Your changes will automatically rebuild the project so whenever you reload the page.
 
 ### Adding Dependencies
 
