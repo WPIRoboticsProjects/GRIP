@@ -1,14 +1,16 @@
 package edu.wpi.grip.core.operations.opencv;
 
 import com.google.common.eventbus.EventBus;
+import edu.wpi.grip.core.InputSocket;
 import edu.wpi.grip.core.Operation;
-import edu.wpi.grip.core.Socket;
-import org.bytedeco.javacpp.opencv_core.*;
+import edu.wpi.grip.core.OutputSocket;
 import org.bytedeco.javacpp.opencv_core;
+import org.bytedeco.javacpp.opencv_core.Mat;
+import org.bytedeco.javacpp.opencv_core.Scalar;
 import org.junit.Before;
 import org.junit.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertTrue;
 
 public class AddOperationTest {
 
@@ -47,10 +49,10 @@ public class AddOperationTest {
     @Test
     public void testAddMatrixOfOnesToMatrixOfTwosEqualsMatrixOfThrees() {
         // Given
-        Socket[] inputs = addition.createInputSockets(eventBus);
-        Socket[] outputs = addition.createOutputSockets(eventBus);
-        Socket<Mat> a = inputs[0], b = inputs[1];
-        Socket<Mat> c = outputs[0];
+        InputSocket[] inputs = addition.createInputSockets(eventBus);
+        OutputSocket[] outputs = addition.createOutputSockets(eventBus);
+        InputSocket<Mat> a = inputs[0], b = inputs[1];
+        OutputSocket<Mat> c = outputs[0];
 
         int sz[] = {100, 100, 100};
 

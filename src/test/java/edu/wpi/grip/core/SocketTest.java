@@ -4,20 +4,26 @@ import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import edu.wpi.grip.core.events.SocketChangedEvent;
 import edu.wpi.grip.core.events.SocketPreviewChangedEvent;
+import org.junit.Before;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 public class SocketTest {
-    EventBus eventBus = new EventBus();
-    Double testValue = 12345.6789;
+    private final EventBus eventBus = new EventBus();
+    private final Double testValue = 12345.6789;
+    private SocketHint<Double> sh;
+    private OutputSocket<Double> socket;
+
+    @Before
+    public void initialize(){
+        sh = new SocketHint<>("foo", Double.class, 0.0, SocketHint.View.SLIDER);
+        socket = new OutputSocket<Double>(eventBus, sh);
+    }
 
     @Test
     public void testGetSocketHint() throws Exception {
-        SocketHint<Double> sh = new SocketHint<>("foo", Double.class, 0.0, SocketHint.View.SLIDER);
-        Socket<Double> socket = new Socket<Double>(eventBus, sh);
-
         assertEquals("foo", socket.getSocketHint().getIdentifier());
         assertEquals(Double.class, socket.getSocketHint().getType());
         assertEquals(SocketHint.View.SLIDER, socket.getSocketHint().getView());
@@ -25,27 +31,20 @@ public class SocketTest {
 
     @Test
     public void testSetValue() throws Exception {
-        SocketHint<Double> sh = new SocketHint<>("foo", Double.class, 0.0, SocketHint.View.SLIDER);
-        Socket<Double> socket = new Socket<Double>(eventBus, sh);
-
         socket.setValue(testValue);
         assertEquals(testValue, socket.getValue());
     }
 
     @Test
     public void testDefaultValue() throws Exception {
-        SocketHint<Double> sh = new SocketHint<>("foo", Double.class, testValue, SocketHint.View.SLIDER, new Double[0]);
-        Socket<Double> socket = new Socket<Double>(eventBus, sh);
-
+        sh = new SocketHint<>("foo", Double.class, testValue, SocketHint.View.SLIDER);
+        socket = new OutputSocket<Double>(eventBus, sh);
         assertEquals(testValue, socket.getValue());
 
     }
 
     @Test
     public void testSocketChangedEvent() throws Exception {
-        SocketHint<Double> sh = new SocketHint<>("foo", Double.class, 0.0, SocketHint.View.SLIDER);
-        Socket<Double> socket = new Socket<Double>(eventBus, sh);
-
         final boolean[] handled = new boolean[]{false};
         final Double[] value = new Double[]{0.0};
         Object eventHandler = new Object() {
@@ -67,14 +66,15 @@ public class SocketTest {
     @Test
     public void testSocketPreview() {
         SocketHint<Double> sh = new SocketHint<>("foo", Double.class, 0.0);
-        Socket<Double> socket = new Socket<Double>(eventBus, sh);
+        OutputSocket<Double> socket = new OutputSocket<Double>(eventBus, sh);
 
         final boolean[] handled = new boolean[]{false};
         Object eventHandler = new Object() {
             @Subscribe
             public void onSocketPreviewed(SocketPreviewChangedEvent e) {
                 handled[0] = true;
-                assertTrue(e.getSocket().isPreviewed());
+                assertTrue("A preview event fired for a socket but the socket was not labeled as able to be previewed",
+                        e.getSocket().isPreviewed());
             }
         };
 
@@ -86,21 +86,29 @@ public class SocketTest {
     }
 
     @Test(expected = NullPointerException.class)
-    public void testSocketHintNotNull() throws Exception {
-        new Socket<Double>(eventBus, null);
+    public void testSocketHintNotNullInput() throws Exception {
+        new InputSocket<Double>(eventBus, null);
     }
 
     @Test(expected = NullPointerException.class)
-    public void testSocketEventBusNotNull() throws Exception {
-        SocketHint<Double> sh = new SocketHint<>("foo", Double.class, 0.0, SocketHint.View.SLIDER);
-        new Socket<Double>(null, sh);
+    public void testSocketHintNotNullOutput() throws Exception {
+        new OutputSocket<Double>(eventBus, null);
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void testSocketEventBusNotNullInput() throws Exception {
+        new InputSocket<Double>(null, sh);
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void testSocketEventBusNotNullOutput() throws Exception {
+        new OutputSocket<Double>(null, sh);
     }
 
     @Test(expected = ClassCastException.class)
     @SuppressWarnings("unchecked")
     public void testSocketValueWrongType() throws Exception {
-        SocketHint<Double> sh = new SocketHint<>("foo", Double.class, 0.0);
-        Socket socket = new Socket<>(eventBus, sh);
+        InputSocket socket = new InputSocket(eventBus, sh);
 
         socket.setValue("I am not a Double");
     }

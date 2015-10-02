@@ -11,9 +11,10 @@ public class OperationTest {
 
     @Test
     public void testOperation() throws Exception {
-        Socket[] inputs = addition.createInputSockets(eventBus);
-        Socket[] outputs = addition.createOutputSockets(eventBus);
-        Socket<Double> a = inputs[0], b = inputs[1], c = outputs[0];
+        InputSocket[] inputs = addition.createInputSockets(eventBus);
+        OutputSocket[] outputs = addition.createOutputSockets(eventBus);
+        InputSocket<Double> a = inputs[0], b = inputs[1];
+        OutputSocket c = outputs[0];
 
         a.setValue(1234.0);
         b.setValue(5678.0);

@@ -1,6 +1,7 @@
 package edu.wpi.grip.ui;
 
 import com.google.common.eventbus.EventBus;
+import edu.wpi.grip.core.OutputSocket;
 import edu.wpi.grip.core.Socket;
 import edu.wpi.grip.core.SocketHint;
 import javafx.fxml.FXML;
@@ -18,7 +19,7 @@ import java.util.ResourceBundle;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
- * A JavaFX control that renders a {@link Socket} that is the output of a step.  It shows a label with the identifier
+ * A JavaFX control that renders an {@link OutputSocket} that is the output of a step.  It shows a label with the identifier
  * of the output, as well as a handle for connections to other sockets, and some buttons to configure what do to with
  * the output.
  */
@@ -37,16 +38,16 @@ public class OutputSocketView extends HBox implements Initializable {
     private StackPane handlePane;
 
     /**
-     * The "handle" is a simple shape next ot the socket identifier that shows weather or not there is a connection
+     * The "handle" is a simple shape next ot the socket identifier that shows whether or not there is a connection
      * going to or from the socket.  If there is such a connection, the ConnectionView is rendered as a curve going
      * from one handle to another.
      */
     private SocketHandleView handle;
 
     private final EventBus eventBus;
-    private final Socket socket;
+    private final OutputSocket socket;
 
-    public OutputSocketView(EventBus eventBus, Socket<?> socket) {
+    public OutputSocketView(EventBus eventBus, OutputSocket<?> socket) {
         checkNotNull(eventBus);
         checkNotNull(socket);
 

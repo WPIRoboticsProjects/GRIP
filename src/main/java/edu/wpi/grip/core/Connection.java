@@ -6,7 +6,6 @@ import edu.wpi.grip.core.events.ConnectionRemovedEvent;
 import edu.wpi.grip.core.events.SocketChangedEvent;
 import edu.wpi.grip.core.events.StepRemovedEvent;
 
-import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
@@ -14,15 +13,15 @@ import static com.google.common.base.Preconditions.checkNotNull;
  */
 public class Connection<T> {
     private final EventBus eventBus;
-    private final Socket<? extends T> outputSocket;
-    private final Socket<T> inputSocket;
+    private final OutputSocket<? extends T> outputSocket;
+    private final InputSocket<T> inputSocket;
 
     /**
      * @param eventBus     The Guava {@link EventBus} used by the application.
      * @param outputSocket The socket to listen for changes in.
      * @param inputSocket  A different socket to update when a change occurs in the first.
      */
-    public Connection(EventBus eventBus, Socket<? extends T> outputSocket, Socket<T> inputSocket) {
+    public Connection(EventBus eventBus, OutputSocket<? extends T> outputSocket, InputSocket<T> inputSocket) {
         this.eventBus = eventBus;
         this.outputSocket = outputSocket;
         this.inputSocket = inputSocket;
@@ -30,25 +29,17 @@ public class Connection<T> {
         checkNotNull(inputSocket);
         checkNotNull(outputSocket);
         checkNotNull(eventBus);
-        checkArgument(!Socket.Direction.INPUT.equals(outputSocket.getDirection()),
-                "outputSocket cannot be an input socket");
-        checkArgument(!Socket.Direction.OUTPUT.equals(inputSocket.getDirection()),
-                "inputSocket cannot be an output socket");
-
-        if (inputSocket == outputSocket) {
-            throw new IllegalArgumentException("inputSocket cannot be the same as outputSocket");
-        }
 
         inputSocket.setValue(outputSocket.getValue());
 
         eventBus.register(this);
     }
 
-    public Socket<? extends T> getOutputSocket() {
+    public OutputSocket<? extends T> getOutputSocket() {
         return this.outputSocket;
     }
 
-    public Socket<T> getInputSocket() {
+    public InputSocket<T> getInputSocket() {
         return this.inputSocket;
     }
 

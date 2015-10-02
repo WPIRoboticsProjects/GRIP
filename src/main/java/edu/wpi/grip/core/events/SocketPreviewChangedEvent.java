@@ -1,26 +1,26 @@
 package edu.wpi.grip.core.events;
 
 import com.google.common.base.MoreObjects;
-import edu.wpi.grip.core.Socket;
+import edu.wpi.grip.core.OutputSocket;
 
 /**
- * An event that occurs when a socket is set to be either previewed or not previewed.  The GUI listens for these events
+ * An event that occurs when a {@link OutputSocket} is set to be either previewed or not previewed.  The GUI listens for these events
  * so it knows which sockets to show previews for.
  */
 public class SocketPreviewChangedEvent {
-    private Socket socket;
+    private OutputSocket socket;
 
     /**
      * @param socket The socket being previewed
      */
-    public SocketPreviewChangedEvent(Socket socket) {
+    public SocketPreviewChangedEvent(OutputSocket socket) {
         this.socket = socket;
     }
 
     /**
      * @return The socket being previewed
      */
-    public Socket getSocket() {
+    public OutputSocket getSocket() {
         return this.socket;
     }
 

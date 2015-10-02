@@ -1,9 +1,7 @@
 package edu.wpi.grip.core.operations;
 
 import com.google.common.eventbus.EventBus;
-import edu.wpi.grip.core.Operation;
-import edu.wpi.grip.core.Socket;
-import edu.wpi.grip.core.SocketHint;
+import edu.wpi.grip.core.*;
 import org.python.core.*;
 import org.python.util.PythonInterpreter;
 
@@ -139,11 +137,11 @@ public class PythonScriptOperation implements Operation {
      * @return An array of Sockets, based on the global "inputs" list in the Python script
      */
     @Override
-    public Socket[] createInputSockets(EventBus eventBus) {
-        Socket[] sockets = new Socket[this.inputSocketHints.size()];
+    public InputSocket[] createInputSockets(EventBus eventBus) {
+        InputSocket[] sockets = new InputSocket[this.inputSocketHints.size()];
 
         for (int i = 0; i < sockets.length; i++) {
-            sockets[i] = new Socket<>(eventBus, this.inputSocketHints.get(i));
+            sockets[i] = new InputSocket<>(eventBus, this.inputSocketHints.get(i));
         }
 
         return sockets;
@@ -154,11 +152,11 @@ public class PythonScriptOperation implements Operation {
      * @return An array of Sockets, based on the global "outputs" list in the Python script
      */
     @Override
-    public Socket<?>[] createOutputSockets(EventBus eventBus) {
-        Socket[] sockets = new Socket[this.outputSocketHints.size()];
+    public OutputSocket<?>[] createOutputSockets(EventBus eventBus) {
+        OutputSocket[] sockets = new OutputSocket[this.outputSocketHints.size()];
 
         for (int i = 0; i < sockets.length; i++) {
-            sockets[i] = new Socket<>(eventBus, this.outputSocketHints.get(i));
+            sockets[i] = new OutputSocket<>(eventBus, this.outputSocketHints.get(i));
         }
 
         return sockets;
@@ -179,7 +177,7 @@ public class PythonScriptOperation implements Operation {
      * @param outputs An array obtained from {@link #createOutputSockets(EventBus)}. The outputs of the operation will
      */
     @Override
-    public void perform(Socket[] inputs, Socket[] outputs) {
+    public void perform(InputSocket[] inputs, OutputSocket[] outputs) {
         PyObject[] pyInputs = new PyObject[inputs.length];
         for (int i = 0; i < inputs.length; i++) {
             Class<?> a = inputs[i].getSocketHint().getType();

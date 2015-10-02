@@ -103,12 +103,12 @@ public class PipelineTest {
         Pipeline pipeline = new Pipeline(eventBus);
         Step step1 = new Step(eventBus, addition);
         Step step2 = new Step(eventBus, addition);
-        Socket<Double> a1 = (Socket<Double>) step1.getInputSockets()[0];
-        Socket<Double> b1 = (Socket<Double>) step1.getInputSockets()[1];
-        Socket<Double> sum1 = (Socket<Double>) step1.getOutputSockets()[0];
-        Socket<Double> a2 = (Socket<Double>) step2.getInputSockets()[0];
-        Socket<Double> b2 = (Socket<Double>) step2.getInputSockets()[1];
-        Socket<Double> sum2 = (Socket<Double>) step2.getOutputSockets()[0];
+        InputSocket<Double> a1 = (InputSocket<Double>) step1.getInputSockets()[0];
+        InputSocket<Double> b1 = (InputSocket<Double>) step1.getInputSockets()[1];
+        OutputSocket<Double> sum1 = (OutputSocket<Double>) step1.getOutputSockets()[0];
+        InputSocket<Double> a2 = (InputSocket<Double>) step2.getInputSockets()[0];
+        InputSocket<Double> b2 = (InputSocket<Double>) step2.getInputSockets()[1];
+        OutputSocket<Double> sum2 = (OutputSocket<Double>) step2.getOutputSockets()[0];
         Connection connection = new Connection(eventBus, sum1, a2);
 
         // The result of this is the following equalities:
@@ -133,12 +133,12 @@ public class PipelineTest {
         Pipeline pipeline = new Pipeline(eventBus);
         Step step1 = new Step(eventBus, addition);
         Step step2 = new Step(eventBus, addition);
-        Socket<Double> a1 = (Socket<Double>) step1.getInputSockets()[0];
-        Socket<Double> b1 = (Socket<Double>) step1.getInputSockets()[1];
-        Socket<Double> sum1 = (Socket<Double>) step1.getOutputSockets()[0];
-        Socket<Double> a2 = (Socket<Double>) step2.getInputSockets()[0];
-        Socket<Double> b2 = (Socket<Double>) step2.getInputSockets()[1];
-        Socket<Double> sum2 = (Socket<Double>) step2.getOutputSockets()[0];
+        InputSocket<Double> a1 = (InputSocket<Double>) step1.getInputSockets()[0];
+        InputSocket<Double> b1 = (InputSocket<Double>) step1.getInputSockets()[1];
+        OutputSocket<Double> sum1 = (OutputSocket<Double>) step1.getOutputSockets()[0];
+        InputSocket<Double> a2 = (InputSocket<Double>) step2.getInputSockets()[0];
+        InputSocket<Double> b2 = (InputSocket<Double>) step2.getInputSockets()[1];
+        OutputSocket<Double> sum2 = (OutputSocket<Double>) step2.getOutputSockets()[0];
         Connection connection = new Connection(eventBus, sum1, a2);
 
         a2.setValue(0.0);

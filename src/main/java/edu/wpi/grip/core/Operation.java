@@ -33,13 +33,13 @@ public interface Operation {
      * @param eventBus The Guava {@link EventBus} used by the application.
      * @return An array of sockets for the inputs that the operation expects.
      */
-    Socket<?>[] createInputSockets(EventBus eventBus);
+    InputSocket<?>[] createInputSockets(EventBus eventBus);
 
     /**
      * @param eventBus The Guava {@link EventBus} used by the application.
      * @return An array of sockets for the outputs that the operation produces.
      */
-    Socket<?>[] createOutputSockets(EventBus eventBus);
+    OutputSocket<?>[] createOutputSockets(EventBus eventBus);
 
     /**
      * Perform the operation on the specified inputs, storing the results in the specified outputs.
@@ -49,5 +49,5 @@ public interface Operation {
      * @param outputs An array obtained from {@link #createOutputSockets(EventBus)}. The outputs of the operation will
      *                be stored in these sockets.
      */
-    void perform(Socket<?>[] inputs, Socket<?>[] outputs);
+    void perform(InputSocket<?>[] inputs, OutputSocket<?>[] outputs);
 }

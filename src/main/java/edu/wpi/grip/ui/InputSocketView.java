@@ -3,6 +3,7 @@ package edu.wpi.grip.ui;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import com.sun.javafx.collections.ObservableListWrapper;
+import edu.wpi.grip.core.InputSocket;
 import edu.wpi.grip.core.Socket;
 import edu.wpi.grip.core.SocketHint;
 import edu.wpi.grip.core.events.SocketChangedEvent;
@@ -25,7 +26,7 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
- * A JavaFX control that renders a {@link Socket} that is an input to a step.  This includes an identifier, a handle
+ * A JavaFX control that renders an {@link InputSocket} that is an input to a step.  This includes an identifier, a handle
  * for connections, and an optional control (if a view is specified in the socket hint) that lets the user manually
  * change the parameters of a step.
  */
@@ -45,10 +46,10 @@ public class InputSocketView extends GridPane implements Initializable {
     private SocketHandleView handle;
 
     private final EventBus eventBus;
-    private final Socket socket;
+    private final InputSocket socket;
     private final Property valueProperty;
 
-    public InputSocketView(EventBus eventBus, Socket<?> socket) {
+    public InputSocketView(EventBus eventBus, InputSocket<?> socket) {
         checkNotNull(eventBus);
         checkNotNull(socket);
 

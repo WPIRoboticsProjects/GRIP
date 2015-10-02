@@ -23,7 +23,8 @@ public class SinkTest {
     }
 
     private EventBus eventBus = new EventBus();
-    private Socket<Integer> a, b, sum;
+    private InputSocket<Integer> a, b;
+    private OutputSocket<Integer> sum;
 
     @Before
     @SuppressWarnings("unchecked")
@@ -37,9 +38,9 @@ public class SinkTest {
 
         this.eventBus.post(new StepAddedEvent(step));
 
-        this.a = (Socket<Integer>) step.getInputSockets()[0];
-        this.b = (Socket<Integer>) step.getInputSockets()[1];
-        this.sum = (Socket<Integer>) step.getOutputSockets()[0];
+        this.a = (InputSocket<Integer>) step.getInputSockets()[0];
+        this.b = (InputSocket<Integer>) step.getInputSockets()[1];
+        this.sum = (OutputSocket<Integer>) step.getOutputSockets()[0];
     }
 
     @Test
