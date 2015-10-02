@@ -69,6 +69,12 @@ public class Pipeline {
     public void onStepRemoved(StepRemovedEvent event) {
         this.steps.remove(event.getStep());
         this.eventBus.unregister(event.getStep());
+
+        // Sockets of deleted steps should not be published or previewed
+        for (OutputSocket<?> socket : event.getStep().getOutputSockets()) {
+            socket.setPublished(false);
+            socket.setPreviewed(false);
+        }
     }
 
     @Subscribe
