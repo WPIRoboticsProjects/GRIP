@@ -35,11 +35,13 @@ dependencies {
 
 compileJava.source sourceSets.generated.java, sourceSets.main.java
 
-task testCodeGenerator( type: CodeGenerator ){
-    text "A bunch of text"
+task generateCodeFromSource( type: CodeGenerator ){
+    description 'Generates the Operation Wrappers for the OpenCV methods.\n To skip run with parm `-PskipGenerate`'
     dest sourceSets.generated.java.srcDirs
     removeExisting true
 }
+generateCodeFromSource.onlyIf { !project.hasProperty('skipGenerate') }
+compileJava.dependsOn generateCodeFromSource
 
 jacocoTestReport {
     reports {

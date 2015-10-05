@@ -13,7 +13,6 @@ import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.TaskAction
 
 class CodeGenerator extends DefaultTask {
-    def text
     /**
      * The destination of the source code.
      */
@@ -27,7 +26,6 @@ class CodeGenerator extends DefaultTask {
     @TaskAction
     def runAction(){
         println "GENERATING CODE FROM OPENCV SOURCE"
-        println text
         println dest
 
         //Get the target directory
