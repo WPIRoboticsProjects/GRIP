@@ -9,7 +9,7 @@ import java.util.Set;
 
 public class MethodDefaultValue extends DefaultValue {
 
-    public MethodDefaultValue(String packageName, String name){
+    public MethodDefaultValue(String packageName, String name) {
         super(packageName, name);
     }
 

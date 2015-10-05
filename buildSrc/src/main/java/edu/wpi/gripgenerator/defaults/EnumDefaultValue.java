@@ -2,7 +2,10 @@ package edu.wpi.gripgenerator.defaults;
 
 
 import com.github.javaparser.ASTHelper;
-import com.github.javaparser.ast.expr.*;
+import com.github.javaparser.ast.expr.Expression;
+import com.github.javaparser.ast.expr.FieldAccessExpr;
+import com.github.javaparser.ast.expr.MethodCallExpr;
+import com.github.javaparser.ast.expr.NameExpr;
 import com.github.javaparser.ast.type.Type;
 
 import java.util.Arrays;
@@ -16,11 +19,11 @@ import java.util.Set;
 public class EnumDefaultValue extends DefaultValue {
     private final Set<String> enumConstantNames;
 
-    public EnumDefaultValue(String packageName, String name, String ...enumConstantNames){
+    public EnumDefaultValue(String packageName, String name, String... enumConstantNames) {
         this(packageName, name, new HashSet(Arrays.asList(enumConstantNames)));
     }
 
-    public EnumDefaultValue(String packageName, String name, Set<String> enumConstantNames){
+    public EnumDefaultValue(String packageName, String name, Set<String> enumConstantNames) {
         super(packageName, name);
         this.enumConstantNames = enumConstantNames;
     }

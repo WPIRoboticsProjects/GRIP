@@ -6,7 +6,10 @@ import com.github.javaparser.ast.body.VariableDeclaratorId;
 import com.github.javaparser.ast.expr.*;
 import com.github.javaparser.ast.stmt.BlockStmt;
 import com.github.javaparser.ast.stmt.ReturnStmt;
-import com.github.javaparser.ast.type.*;
+import com.github.javaparser.ast.type.ClassOrInterfaceType;
+import com.github.javaparser.ast.type.ReferenceType;
+import com.github.javaparser.ast.type.Type;
+import com.github.javaparser.ast.type.WildcardType;
 import edu.wpi.gripgenerator.defaults.DefaultValueCollector;
 import edu.wpi.gripgenerator.settings.DefinedParamType;
 
@@ -25,15 +28,14 @@ public class SocketHintDeclarationCollection {
 
 
     /**
-     *
      * @param paramTypes
      */
-    public SocketHintDeclarationCollection(DefaultValueCollector collector, List<DefinedParamType> paramTypes){
+    public SocketHintDeclarationCollection(DefaultValueCollector collector, List<DefinedParamType> paramTypes) {
         this.paramTypes = paramTypes;
         this.collector = collector;
 
         // Figure out which hint map to put this defined param type into
-        for(DefinedParamType type : paramTypes){
+        for (DefinedParamType type : paramTypes) {
             Map<Type, List<DefinedParamType>> assignmentMap;
             List<DefinedParamType> assignmentList;
             assignmentMap = type.isOutput() ? outputHintsMap : inputHintsMap;
@@ -44,21 +46,21 @@ public class SocketHintDeclarationCollection {
         }
     }
 
-    public List<Expression> getSocketAssignments(String inputParamId, String outputParamId){
+    public List<Expression> getSocketAssignments(String inputParamId, String outputParamId) {
         List<Expression> assignments = new ArrayList<>();
         int inputIndex = 0;
         int outputIndex = 0;
-        for(DefinedParamType paramType: paramTypes){
+        for (DefinedParamType paramType : paramTypes) {
             int index;
             String paramId;
-            if (inputParamTypes.contains(paramType)){
+            if (inputParamTypes.contains(paramType)) {
                 paramId = inputParamId;
                 index = inputIndex;
-                inputIndex ++;
-            } else if (outputParamTypes.contains(paramType)){
+                inputIndex++;
+            } else if (outputParamTypes.contains(paramType)) {
                 paramId = outputParamId;
                 index = outputIndex;
-                outputIndex ++;
+                outputIndex++;
             } else {
                 assert false : "The paramType was not in either the input or output list";
                 return null;
@@ -89,7 +91,7 @@ public class SocketHintDeclarationCollection {
         return assignments;
     }
 
-    public ObjectCreationExpr getSocketListParam(DefinedParamType definedParamType, ClassOrInterfaceType socketType){
+    public ObjectCreationExpr getSocketListParam(DefinedParamType definedParamType, ClassOrInterfaceType socketType) {
         System.out.println("Generating for default " + (definedParamType.getDefaultValue().isPresent() ? definedParamType.getDefaultValue().get().getName().toString() : "null"));
         return new ObjectCreationExpr(null, socketType, Arrays.asList(
                 new NameExpr("eventBus"),
@@ -97,9 +99,9 @@ public class SocketHintDeclarationCollection {
         ));
     }
 
-    private BlockStmt getInputOrOutputSocketBody(List<DefinedParamType> paramTypes, ClassOrInterfaceType socketType){
+    private BlockStmt getInputOrOutputSocketBody(List<DefinedParamType> paramTypes, ClassOrInterfaceType socketType) {
         List<Expression> passedExpressions = new ArrayList<>();
-        for (DefinedParamType inputParam : paramTypes){
+        for (DefinedParamType inputParam : paramTypes) {
             passedExpressions.add(getSocketListParam(inputParam, socketType));
         }
         BlockStmt returnStatement = new BlockStmt(
@@ -110,26 +112,26 @@ public class SocketHintDeclarationCollection {
         return returnStatement;
     }
 
-    public BlockStmt getInputSocketBody(){
+    public BlockStmt getInputSocketBody() {
         return getInputOrOutputSocketBody(inputParamTypes, new ClassOrInterfaceType("InputSocket"));
     }
 
-    public BlockStmt getOutputSocketBody(){
-        return getInputOrOutputSocketBody(outputParamTypes,  new ClassOrInterfaceType("OutputSocket"));
+    public BlockStmt getOutputSocketBody() {
+        return getInputOrOutputSocketBody(outputParamTypes, new ClassOrInterfaceType("OutputSocket"));
     }
 
-    public List<SocketHintDeclaration> getAllSocketHints(){
+    public List<SocketHintDeclaration> getAllSocketHints() {
         List<SocketHintDeclaration> socketHintDeclarations = new ArrayList<>();
-        for(Type type : inputHintsMap.keySet()){
+        for (Type type : inputHintsMap.keySet()) {
             socketHintDeclarations.add(new SocketHintDeclaration(collector, type, inputHintsMap.get(type)));
         }
-        for(Type type : outputHintsMap.keySet()){
+        for (Type type : outputHintsMap.keySet()) {
             socketHintDeclarations.add(new SocketHintDeclaration(collector, type, outputHintsMap.get(type)));
         }
         return socketHintDeclarations;
     }
 
-    public static Type getSocketReturnParam(String socketNameType){
+    public static Type getSocketReturnParam(String socketNameType) {
         ClassOrInterfaceType socketType = new ClassOrInterfaceType(null, socketNameType);
         socketType.setTypeArgs(Arrays.asList(new WildcardType()));
         return new ReferenceType(socketType, 1);

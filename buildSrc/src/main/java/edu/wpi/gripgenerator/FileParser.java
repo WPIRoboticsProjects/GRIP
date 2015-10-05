@@ -26,9 +26,9 @@ public class FileParser {
     /**
      * Regex splits the parameter into three distinct capture groups.
      * <ol>
-     *     <li>The type and the param with optional varargs.</li>
-     *     <li>The comment that is after the parameter.</li>
-     *     <li>The various ways that the parameter can end.</li>
+     * <li>The type and the param with optional varargs.</li>
+     * <li>The comment that is after the parameter.</li>
+     * <li>The various ways that the parameter can end.</li>
      * </ol>
      */
     protected static final String methodReorderPattern = "([A-Za-z1-9]+ (?:\\.\\.\\.)?[a-z][A-Za-z0-9_]*)(/\\*=[^ ]*\\*/)((?:,)|(?: \\)))";
@@ -42,11 +42,12 @@ public class FileParser {
     /**
      * There is a bug in the JavaParser that will incorrectly associate comments after a parameter but
      * before a comma will incorrectly associate that comment with the next param in the method's params.
-     * @see <a href="https://github.com/javaparser/javaparser/issues/199">Javaparser Issue:199</a>
+     *
      * @param stream The original input file.
      * @return The processed output stream.
+     * @see <a href="https://github.com/javaparser/javaparser/issues/199">Javaparser Issue:199</a>
      */
-    private static InputStream preProcessStream(InputStream stream){
+    private static InputStream preProcessStream(InputStream stream) {
         //FIXME: This is a hack around. This should be removed once the above noted issue is resolved.
         java.util.Scanner s = new java.util.Scanner(stream).useDelimiter("\\A");
         String input = s.hasNext() ? s.next() : "";
@@ -54,7 +55,7 @@ public class FileParser {
         return new ByteArrayInputStream(input.getBytes(StandardCharsets.UTF_8));
     }
 
-    private static CompilationUnit readFile(URL url){
+    private static CompilationUnit readFile(URL url) {
         try {
             return JavaParser.parse(preProcessStream(url.openStream()));
         } catch (IOException e) {
@@ -66,9 +67,10 @@ public class FileParser {
 
     /**
      * Generates all of the source code from the opencv bindings
+     *
      * @return A map of the filename with the compilation units
      */
-    public static Map<String, CompilationUnit> generateAllSourceCode(){
+    public static Map<String, CompilationUnit> generateAllSourceCode() {
         URL INPUT_URL = FileParser.class.getResource("/org/bytedeco/javacpp/opencv_core.txt");
         CompilationUnit compilationUnit = readFile(INPUT_URL);
         Map<String, CompilationUnit> returnMap = new HashMap<>();
@@ -80,13 +82,13 @@ public class FileParser {
         );
 
         if (compilationUnit != null) {
-            returnMap.putAll( parseOpenCVCore(compilationUnit, collector, operationList) );
+            returnMap.putAll(parseOpenCVCore(compilationUnit, collector, operationList));
         } else {
             System.err.print("Invalid File input");
         }
         URL INPUT_URL2 = FileParser.class.getResource("/org/bytedeco/javacpp/opencv_imgproc.txt");
         compilationUnit = readFile(INPUT_URL2);
-        if(compilationUnit != null){
+        if (compilationUnit != null) {
             returnMap.putAll(parseOpenImgprc(compilationUnit, collector, operationList));
 
         }
@@ -96,7 +98,7 @@ public class FileParser {
         return returnMap;
     }
 
-    public static Map<String, CompilationUnit> parseOpenImgprc(CompilationUnit imgprocDeclaration, DefaultValueCollector collector, OperationList operations){
+    public static Map<String, CompilationUnit> parseOpenImgprc(CompilationUnit imgprocDeclaration, DefaultValueCollector collector, OperationList operations) {
         Map<String, CompilationUnit> compilationUnits = new HashMap<>();
         DefinedMethodCollection collection = new DefinedMethodCollection("opencv_imgproc",
                 new DefinedMethod("Sobel", false, "Mat", "Mat"),
@@ -113,13 +115,13 @@ public class FileParser {
                 new DefinedMethod("cornerMinEigenVal", false, "Mat", "Mat"),
                 new DefinedMethod("cornerHarris", false, "Mat", "Mat"),
                 new DefinedMethod("cornerEigenValsAndVecs", false, "Mat", "Mat")
-                ).setOutputDefaults("dst");
+        ).setOutputDefaults("dst");
         new OpenCVMethodVisitor(collection).visit(imgprocDeclaration, compilationUnits);
         collection.generateCompilationUnits(collector, compilationUnits, operations);
         return compilationUnits;
     }
 
-    public static Map<String, CompilationUnit> parseOpenCVCore(CompilationUnit coreDeclaration, DefaultValueCollector collector, OperationList operations){
+    public static Map<String, CompilationUnit> parseOpenCVCore(CompilationUnit coreDeclaration, DefaultValueCollector collector, OperationList operations) {
         Map<String, CompilationUnit> compilationUnits = new HashMap<>();
 
         new OpenCVEnumVisitor(collector).visit(coreDeclaration, compilationUnits);
@@ -159,7 +161,7 @@ public class FileParser {
         return compilationUnits;
     }
 
-    public static void main(String ... args) {
+    public static void main(String... args) {
         FileParser.generateAllSourceCode();
     }
 }

@@ -15,34 +15,34 @@ public class OpenCVMethodVisitor extends VoidVisitorAdapter<Map<String, Compilat
     private final static String DESTINATION_PARAM_NAME = "dst";
     private final List<DefinedMethodCollection> collections;
 
-    public OpenCVMethodVisitor(DefinedMethodCollection ...collections){
+    public OpenCVMethodVisitor(DefinedMethodCollection... collections) {
         this.collections = Arrays.asList(collections);
     }
 
-    private DefinedMethodCollection getDefinedCollectionMatchingParentOf(MethodDeclaration declaration){
-        for(DefinedMethodCollection collection : collections){
-            if(collection.matchesParent(declaration)) return collection;
+    private DefinedMethodCollection getDefinedCollectionMatchingParentOf(MethodDeclaration declaration) {
+        for (DefinedMethodCollection collection : collections) {
+            if (collection.matchesParent(declaration)) return collection;
         }
         return null;
     }
 
-    private DefinedMethod getDefinedMethodMatching(MethodDeclaration declaration){
+    private DefinedMethod getDefinedMethodMatching(MethodDeclaration declaration) {
         DefinedMethodCollection collection = getDefinedCollectionMatchingParentOf(declaration);
-        if(collection != null){
+        if (collection != null) {
             return collection.getMethodMatching(declaration);
         }
         return null;
     }
 
 
-    public void visit(MethodDeclaration declaration, final Map<String, CompilationUnit> args){
+    public void visit(MethodDeclaration declaration, final Map<String, CompilationUnit> args) {
         DefinedMethod method = getDefinedMethodMatching(declaration);
-        if(method != null) {
+        if (method != null) {
             System.out.print("Found " + method.getMethodName());
             method.assignIfBestMatch(declaration);
         }
-        for(Parameter param : declaration.getParameters()){
-            if(param.getId().getName().equals(DESTINATION_PARAM_NAME)){
+        for (Parameter param : declaration.getParameters()) {
+            if (param.getId().getName().equals(DESTINATION_PARAM_NAME)) {
                 System.out.println(declaration.getDeclarationAsString(true, true));
             }
         }

@@ -9,24 +9,24 @@ import com.github.javaparser.ast.type.Type;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class ObjectDefaultValue extends DefaultValue{
+public class ObjectDefaultValue extends DefaultValue {
     private final ClassOrInterfaceType type;
     private final List<Expression> defaultValues;
 
-    public ObjectDefaultValue(Type type){
+    public ObjectDefaultValue(Type type) {
         super("", type.toStringWithoutComments());
         this.type = new ClassOrInterfaceType(type.toStringWithoutComments());
         this.defaultValues = Collections.emptyList();
     }
 
-    public ObjectDefaultValue(String type, String ...defaultValues){
+    public ObjectDefaultValue(String type, String... defaultValues) {
         super("", type);
         this.type = new ClassOrInterfaceType(type);
         this.defaultValues = Arrays.asList(defaultValues).stream().map(NameExpr::new).collect(Collectors.toList());
     }
 
     @Override
-    public ImportDeclaration getImportDeclaration(){
+    public ImportDeclaration getImportDeclaration() {
         return null;
     }
 
@@ -37,7 +37,7 @@ public class ObjectDefaultValue extends DefaultValue{
 
     @Override
     public Expression getDefaultValue(String defaultValue) {
-        if (!this.defaultValues.isEmpty()){
+        if (!this.defaultValues.isEmpty()) {
             LambdaExpr provider = new LambdaExpr();
             provider.setBody(
                     new ExpressionStmt(

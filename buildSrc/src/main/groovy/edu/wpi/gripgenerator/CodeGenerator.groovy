@@ -24,7 +24,7 @@ class CodeGenerator extends DefaultTask {
     def removeExisting
 
     @TaskAction
-    def runAction(){
+    def runAction() {
         println "GENERATING CODE FROM OPENCV SOURCE"
         println dest
 
@@ -38,12 +38,12 @@ class CodeGenerator extends DefaultTask {
 
         File targetDirectory = new File(targetDirectoryString);
 
-        if(removeExisting) targetDirectory.deleteDir();
+        if (removeExisting) targetDirectory.deleteDir();
 
-        for(String fileName : files.keySet()){
+        for (String fileName : files.keySet()) {
             CompilationUnit fileUnit = files.get(fileName);
             File packageDir = new File(targetDirectory, "/" + fileUnit.package.getName().toString().replace('.', '/').replace(' ', '').replace(';', ''));
-            if(packageDir.exists()){
+            if (packageDir.exists()) {
                 //println "The file " + fileName + " already exists";
             } else {
                 packageDir.mkdirs();

@@ -22,12 +22,12 @@ import static com.github.javaparser.ASTHelper.createReferenceType;
  * Helps create SocketHint declarations.
  * For example:
  * <code>
- *     SocketHintDeclaration testDeclaration = new SocketHintDeclaration("Mat", Arrays.asList("src1", "src2"));
- *     testDeclaration.getDeclaration().toString()
+ * SocketHintDeclaration testDeclaration = new SocketHintDeclaration("Mat", Arrays.asList("src1", "src2"));
+ * testDeclaration.getDeclaration().toString()
  * </code>
  * will generate
  * <code>
- *     private final SocketHint<Mat> src1Hint = new SocketHint<Mat>("src1", Mat.class), src2Hint = new SocketHint<Mat>("src2", Mat.class);
+ * private final SocketHint<Mat> src1Hint = new SocketHint<Mat>("src1", Mat.class), src2Hint = new SocketHint<Mat>("src2", Mat.class);
  * </code>
  */
 public class SocketHintDeclaration {
@@ -44,26 +44,27 @@ public class SocketHintDeclaration {
 
     /**
      * USED ONLY IN TESTING!
+     *
      * @param genericTypeName
      * @param hintNames
      * @param isOutput
      */
-    public SocketHintDeclaration(String genericTypeName, List<String> hintNames, boolean isOutput){
+    public SocketHintDeclaration(String genericTypeName, List<String> hintNames, boolean isOutput) {
         this(null, createReferenceType(genericTypeName, 0), hintNames, isOutput);
     }
 
-    public SocketHintDeclaration(DefaultValueCollector collector, Type genericType, List<String> hintNames, boolean isOutput){
+    public SocketHintDeclaration(DefaultValueCollector collector, Type genericType, List<String> hintNames, boolean isOutput) {
         this.genericType = genericType;
         this.paramTypes = hintNames.stream().map(n -> new DefinedParamType(
-                genericType.toStringWithoutComments(),
-                new Parameter(genericType, new VariableDeclaratorId(n)))
+                        genericType.toStringWithoutComments(),
+                        new Parameter(genericType, new VariableDeclaratorId(n)))
         ).collect(Collectors.toList());
         this.isOutput = isOutput;
         this.collector = collector;
     }
 
 
-    public SocketHintDeclaration(DefaultValueCollector collector, Type genericType, List<DefinedParamType> paramTypes){
+    public SocketHintDeclaration(DefaultValueCollector collector, Type genericType, List<DefinedParamType> paramTypes) {
         /* Convert this to the 'boxed' type if this is a PrimitiveType */
         this.genericType = genericType instanceof PrimitiveType ? ((PrimitiveType) genericType).toBoxedType() : genericType;
         this.paramTypes = paramTypes;
@@ -71,19 +72,19 @@ public class SocketHintDeclaration {
         this.collector = collector;
     }
 
-    public boolean isOutput(){
+    public boolean isOutput() {
         return this.isOutput;
     }
 
-    private FieldAccessExpr getViewEnumElement(String value){
+    private FieldAccessExpr getViewEnumElement(String value) {
         return new FieldAccessExpr(
                 new NameExpr("SocketHint.View"),
                 value
         );
     }
 
-    private List<Expression> getSocketHintAdditionalParams(DefinedParamType paramType){
-        if(paramType.getDefaultValue().isPresent()){
+    private List<Expression> getSocketHintAdditionalParams(DefinedParamType paramType) {
+        if (paramType.getDefaultValue().isPresent()) {
             DefaultValue defaultValue = paramType.getDefaultValue().get();
             return Arrays.asList(
                     paramType.getDefaultValue().isPresent() ?
@@ -99,16 +100,17 @@ public class SocketHintDeclaration {
 
     /**
      * Creates a socket hint declaration from the constructor.
+     *
      * @return The field declaration
      */
-    public FieldDeclaration getDeclaration(){
+    public FieldDeclaration getDeclaration() {
         final int modifiers = ModifierSet.addModifier(ModifierSet.FINAL, ModifierSet.PRIVATE);
 
         final ClassOrInterfaceType socketHintType = new ClassOrInterfaceType(SOCKET_HINT_CLASS_NAME);
         socketHintType.setTypeArgs(Collections.singletonList(genericType));
 
         final List<VariableDeclarator> variableDeclarations = new ArrayList<>();
-        for(DefinedParamType paramType : paramTypes){
+        for (DefinedParamType paramType : paramTypes) {
             String hintName = paramType.getName();
             // The variableId
             final String fullHintName = hintName + HINT_POSTFIX;

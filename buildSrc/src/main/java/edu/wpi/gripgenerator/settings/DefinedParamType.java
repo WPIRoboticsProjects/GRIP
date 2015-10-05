@@ -26,7 +26,7 @@ import static com.github.javaparser.ASTHelper.createReferenceType;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 public class DefinedParamType {
-    public enum DefinedParamState{
+    public enum DefinedParamState {
         INPUT,
         OUTPUT
     }
@@ -43,42 +43,43 @@ public class DefinedParamType {
     /**
      * Defines a Param type that a method must match.
      * Defaults the value to being an input.
+     *
      * @param type
      */
-    public DefinedParamType(String type){
+    public DefinedParamType(String type) {
         this(type, DefinedParamState.INPUT);
     }
 
-    public DefinedParamType(String type, Parameter param){
+    public DefinedParamType(String type, Parameter param) {
         this(type);
         parameter = Optional.of(param);
     }
 
-    public DefinedParamType(String type, DefinedParamState state){
+    public DefinedParamType(String type, DefinedParamState state) {
         this.type = type;
         this.state = state;
     }
 
-    public static List<DefinedParamType> fromStrings(List<String> params){
+    public static List<DefinedParamType> fromStrings(List<String> params) {
         List<DefinedParamType> paramStates = new ArrayList<>();
-        for(String param : params){
+        for (String param : params) {
             paramStates.add(new DefinedParamType(param));
         }
         return paramStates;
     }
 
-    public DefinedParamType setDefaultValue(DefaultValue defaultValue){
+    public DefinedParamType setDefaultValue(DefaultValue defaultValue) {
         checkNotNull(defaultValue);
         //System.out.println("Setting default value " + defaultValue.getName());
         this.defaultValue = Optional.of(defaultValue);
         return this;
     }
 
-    public Optional<DefaultValue> getDefaultValue(){
+    public Optional<DefaultValue> getDefaultValue() {
         return defaultValue;
     }
 
-    void setParamAs(Parameter param){
+    void setParamAs(Parameter param) {
         checkNotNull(param);
         this.parameter = Optional.of(param);
 //        System.out.println("Param: " + param);
@@ -88,52 +89,52 @@ public class DefinedParamType {
         Pattern defaultPrimitive = Pattern.compile(".*=([\\-a-zA-Z0-9_\\.]*)");
         Pattern defaultEnumPrimitive = Pattern.compile(".*=(?:cv::)([\\-a-zA-Z0-9_\\.]*)");
 
-        if(param.getComment()!= null && param.getType() instanceof PrimitiveType){
+        if (param.getComment() != null && param.getType() instanceof PrimitiveType) {
             //System.out.println("Checking match");
             Matcher matchesPrimitive = defaultPrimitive.matcher(param.getComment().getContent());
             Matcher matchesEnumPrimitive = defaultEnumPrimitive.matcher(param.getComment().getContent());
-            if(matchesPrimitive.find()) System.out.println("Primitive Matcher: " + matchesPrimitive.group());
-            if(matchesEnumPrimitive.find()) System.out.println("Enum Matcher: " + matchesEnumPrimitive.group(1));
-            if(matchesPrimitive.matches()) {
+            if (matchesPrimitive.find()) System.out.println("Primitive Matcher: " + matchesPrimitive.group());
+            if (matchesEnumPrimitive.find()) System.out.println("Enum Matcher: " + matchesEnumPrimitive.group(1));
+            if (matchesPrimitive.matches()) {
                 System.out.println("Matching Primitive: " + matchesPrimitive.group(1));
                 this.literalDefaultValue = matchesPrimitive.group(1);
-                this.defaultValue = Optional.of(new PrimitiveDefaultValue((PrimitiveType)param.getType()));
+                this.defaultValue = Optional.of(new PrimitiveDefaultValue((PrimitiveType) param.getType()));
             }
-            if(matchesEnumPrimitive.matches()){
+            if (matchesEnumPrimitive.matches()) {
                 //System.out.println("Matching Enum: " + matchesEnumPrimitive.group(1));
                 this.literalDefaultValue = matchesEnumPrimitive.group(1);
                 //The default value should be assigned
             }
-        } else if (param.getType() instanceof PrimitiveType){
+        } else if (param.getType() instanceof PrimitiveType) {
             this.literalDefaultValue = "0";
-            this.defaultValue = Optional.of(this.defaultValue.orElse(new PrimitiveDefaultValue((PrimitiveType)param.getType())));
+            this.defaultValue = Optional.of(this.defaultValue.orElse(new PrimitiveDefaultValue((PrimitiveType) param.getType())));
         } else {
             this.defaultValue = Optional.of(this.defaultValue.orElse(new ObjectDefaultValue(param.getType())));
         }
         //System.out.println(param.getType().getClass());
     }
 
-    public boolean isMatch(Parameter param){
+    public boolean isMatch(Parameter param) {
         return type.equals(param.getType().toString());
     }
 
-    private Type getRealType(){
-        if(parameter.isPresent()) return parameter.get().getType();
+    private Type getRealType() {
+        if (parameter.isPresent()) return parameter.get().getType();
         return createReferenceType(type, 0);
     }
 
-    public Type getType(){
-        if(defaultValue.isPresent()){
+    public Type getType() {
+        if (defaultValue.isPresent()) {
             return defaultValue.get().getType().orElse(getRealType());
         }
         return getRealType();
     }
 
-    public Type getTypeBoxedIfPossible(){
+    public Type getTypeBoxedIfPossible() {
         return getType() instanceof PrimitiveType ? ((PrimitiveType) getType()).toBoxedType() : getType();
     }
 
-    private List<NormalAnnotationExpr> getAnnotationsMatchingIfPresent(){
+    private List<NormalAnnotationExpr> getAnnotationsMatchingIfPresent() {
         if (parameter.isPresent() && parameter.get().getAnnotations() != null) {
             Parameter param = parameter.get();
             return param.getAnnotations().stream()
@@ -145,9 +146,9 @@ public class DefinedParamType {
         return null;
     }
 
-    public String getLiteralDefaultValue(){
+    public String getLiteralDefaultValue() {
         List<NormalAnnotationExpr> matchingAnnotations = getAnnotationsMatchingIfPresent();
-        if (matchingAnnotations != null){
+        if (matchingAnnotations != null) {
             for (NormalAnnotationExpr matching : matchingAnnotations) {
                 Optional<MemberValuePair> constructorPair = matching.getPairs().stream().filter(p -> constructorCallExpression.matcher(p.getValue().toString()).find()).findFirst();
                 Optional<MemberValuePair> methodPair = matching.getPairs().stream().filter(p -> methodCallExpression.matcher(p.getValue().toString()).find()).findFirst();
@@ -158,8 +159,8 @@ public class DefinedParamType {
         return this.literalDefaultValue;
     }
 
-    public ImportDeclaration getImport(){
-        if(defaultValue.isPresent()){
+    public ImportDeclaration getImport() {
+        if (defaultValue.isPresent()) {
             return defaultValue.get().getImportDeclaration();
         } else {
             return null;
@@ -169,21 +170,22 @@ public class DefinedParamType {
     /**
      * @return True if this para type represents an output.
      */
-    public boolean isOutput(){
+    public boolean isOutput() {
         return state.equals(DefinedParamState.OUTPUT);
     }
 
-    public String getName(){
+    public String getName() {
         return parameter.get().getId().getName();
     }
 
     /**
      * Gets the literal expression that should be passed to the opencv method.
      * This allows for any last type conversions or enumerations field accessing
+     *
      * @return The Expression to pass to the opencv method.
      */
-    public Expression getLiteralExpression(){
-        if (defaultValue.isPresent() && defaultValue.get() instanceof EnumDefaultValue){
+    public Expression getLiteralExpression() {
+        if (defaultValue.isPresent() && defaultValue.get() instanceof EnumDefaultValue) {
             return new FieldAccessExpr(createNameExpr(getName()), "value");
         } else {
             return createNameExpr(getName());
@@ -193,7 +195,7 @@ public class DefinedParamType {
     /**
      * Makes this param an output.
      */
-    void setOutput(){
+    void setOutput() {
         state = DefinedParamState.OUTPUT;
     }
 

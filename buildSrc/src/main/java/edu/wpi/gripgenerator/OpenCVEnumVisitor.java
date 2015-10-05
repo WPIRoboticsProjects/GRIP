@@ -28,28 +28,29 @@ public class OpenCVEnumVisitor extends VoidVisitorAdapter<Map<String, Compilatio
     private static final String IMPORT_EXPRESSION = "org.bytedeco.javacpp.opencv_core";
     /**
      * @see <a href=http://fiddle.re/e0ek86>Regex Example</a>
-     * */
+     */
     private static final Pattern ENUM_REGEX = Pattern.compile(".*enum cv::([a-zA-Z_]*)?:?:?\\s?([a-zA-Z_]*)");
     private static final String BASE_CLASS_NAME = "opencv_core";
     private final DefaultValueCollector collector;
 
-    public OpenCVEnumVisitor(DefaultValueCollector collector){
+    public OpenCVEnumVisitor(DefaultValueCollector collector) {
         this.collector = collector;
     }
 
     /**
      * Generates the contents of the constructor.
+     *
      * @param valueString The string representing the field that this will be assigned to
      * @return
      */
-    private BlockStmt getDefaultConstructorBlockStatement(String valueString){
+    private BlockStmt getDefaultConstructorBlockStatement(String valueString) {
         BlockStmt block = new BlockStmt();
         AssignExpr assignment = new AssignExpr(new FieldAccessExpr(new ThisExpr(), valueString), new NameExpr(valueString), AssignExpr.Operator.assign);
         ASTHelper.addStmt(block, assignment);
         return block;
     }
 
-    private EnumConstantDeclaration generateEnumConstant(VariableDeclarator var, Expression parentAccessor){
+    private EnumConstantDeclaration generateEnumConstant(VariableDeclarator var, Expression parentAccessor) {
         // Create the constant
         EnumConstantDeclaration enumConstant = new EnumConstantDeclaration(var.getId().getName());
         List<Expression> expressionList = new ArrayList<>();
@@ -58,11 +59,11 @@ public class OpenCVEnumVisitor extends VoidVisitorAdapter<Map<String, Compilatio
         enumConstant.setArgs(expressionList);
 
         // Add the javadoc comment
-        if(var.hasComment()) enumConstant.setJavaDoc(new JavadocComment(var.getComment().getContent()));
+        if (var.hasComment()) enumConstant.setJavaDoc(new JavadocComment(var.getComment().getContent()));
         return enumConstant;
     }
 
-    private void addEnumConstants(EnumDeclaration enumDec, FieldDeclaration declaration, Expression parentAccessor){
+    private void addEnumConstants(EnumDeclaration enumDec, FieldDeclaration declaration, Expression parentAccessor) {
         // Generate the enum constants
         List<EnumConstantDeclaration> enumConstants = enumDec.getEntries() == null ? new ArrayList<>() : enumDec.getEntries();
         for (VariableDeclarator var : declaration.getVariables()) {
@@ -72,7 +73,7 @@ public class OpenCVEnumVisitor extends VoidVisitorAdapter<Map<String, Compilatio
 
     }
 
-    private CompilationUnit generateFromDeclaration(final FieldDeclaration declaration, String name, Expression parentAccessor){
+    private CompilationUnit generateFromDeclaration(final FieldDeclaration declaration, String name, Expression parentAccessor) {
         final String valueString = "value";
 
         // Generate new compilation unit
@@ -103,26 +104,26 @@ public class OpenCVEnumVisitor extends VoidVisitorAdapter<Map<String, Compilatio
     }
 
     @Override
-    public void visit(final FieldDeclaration declaration, final Map<String, CompilationUnit> arg){
+    public void visit(final FieldDeclaration declaration, final Map<String, CompilationUnit> arg) {
         super.visit(declaration, arg);
 
         Comment declarationComment = declaration.getComment();
-        if(declarationComment != null) {
+        if (declarationComment != null) {
             Matcher matcher = ENUM_REGEX.matcher(declarationComment.toString());
             if (matcher.find()) {
                 //This is the base class we are trying to find.
                 NameExpr baseClazz = new NameExpr(BASE_CLASS_NAME);
-                if(declaration.getParentNode() instanceof ClassOrInterfaceDeclaration){
+                if (declaration.getParentNode() instanceof ClassOrInterfaceDeclaration) {
                     Expression subClass;
                     ClassOrInterfaceDeclaration clazz = (ClassOrInterfaceDeclaration) declaration.getParentNode();
-                    if(!clazz.getName().equals(baseClazz.getName())){
+                    if (!clazz.getName().equals(baseClazz.getName())) {
                         subClass = new FieldAccessExpr(baseClazz, clazz.getName());
                     } else {
                         subClass = baseClazz;
                     }
 
                     String name = matcher.group(1) + matcher.group(2) + enumNamePostFix;
-                    if(!arg.containsKey(name)) {
+                    if (!arg.containsKey(name)) {
                         // This is where the enum is generated
                         collector.add(new EnumDefaultValue(PACKAGE_EXPRESSION, name, declaration.getVariables().stream().map(e -> e.getId().getName()).collect(Collectors.toSet())));
                         arg.put(name, generateFromDeclaration(declaration, name, subClass));

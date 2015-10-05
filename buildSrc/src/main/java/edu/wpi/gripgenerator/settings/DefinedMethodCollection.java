@@ -16,47 +16,48 @@ public class DefinedMethodCollection {
     private final Map<String, DefinedMethod> definedMethodMap;
     private final Set<String> outputDefaults = new HashSet<>();
 
-    public DefinedMethodCollection(String className, DefinedMethod ...methodList){
+    public DefinedMethodCollection(String className, DefinedMethod... methodList) {
         this(className, Arrays.asList(methodList));
     }
 
-    public DefinedMethodCollection(String className, List<DefinedMethod> methodList){
+    public DefinedMethodCollection(String className, List<DefinedMethod> methodList) {
         this.className = className;
         methodList.forEach(m -> m.setCollectionOf(this));
         // Basically turn the list into a map with the method name as the key
         this.definedMethodMap = methodList.stream().collect(Collectors.toMap(DefinedMethod::getMethodName, t -> t));
     }
 
-    public DefinedMethodCollection setOutputDefaults(String ...paramNames){
+    public DefinedMethodCollection setOutputDefaults(String... paramNames) {
         outputDefaults.addAll(Arrays.asList(paramNames));
         return this;
     }
 
-    public boolean matchesParent(MethodDeclaration declaration){
+    public boolean matchesParent(MethodDeclaration declaration) {
         Node parent = declaration.getParentNode();
-        if(parent instanceof ClassOrInterfaceDeclaration){
+        if (parent instanceof ClassOrInterfaceDeclaration) {
             return ((ClassOrInterfaceDeclaration) parent).getName().equals(this.className);
         }
         return false;
     }
 
-    public String getClassName(){
+    public String getClassName() {
         return className;
     }
 
-    public boolean isOutputDefault(String check){
+    public boolean isOutputDefault(String check) {
         return outputDefaults.contains(check);
     }
 
 
     /**
      * Tries to find a method matching the given MethodDeclaraion
+     *
      * @param declaration The declaration to match against
      * @return The DefinedMethod that matches or <code>null</code> if none exists.
      */
-    public DefinedMethod getMethodMatching(MethodDeclaration declaration){
+    public DefinedMethod getMethodMatching(MethodDeclaration declaration) {
         DefinedMethod possibleMatch = definedMethodMap.get(declaration.getName());
-        if (possibleMatch != null && possibleMatch.isMatch(declaration.getParameters())){
+        if (possibleMatch != null && possibleMatch.isMatch(declaration.getParameters())) {
             return possibleMatch;
         } else {
             return null;
@@ -64,7 +65,7 @@ public class DefinedMethodCollection {
     }
 
     public void generateCompilationUnits(DefaultValueCollector collector, Map<String, CompilationUnit> compilationUnits, OperationList operations) {
-        for(DefinedMethod method : definedMethodMap.values()){
+        for (DefinedMethod method : definedMethodMap.values()) {
             Operation thisOperation = new Operation(collector, method, className);
             operations.addOperation(thisOperation);
             CompilationUnit cu = thisOperation.getDeclaration();

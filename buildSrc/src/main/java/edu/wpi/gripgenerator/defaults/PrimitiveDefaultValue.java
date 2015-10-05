@@ -15,7 +15,7 @@ import java.util.Set;
  * and the comment following defines the default is a primitive not an Enum Declaration
  * then this is used.
  */
-public class PrimitiveDefaultValue extends DefaultValue{
+public class PrimitiveDefaultValue extends DefaultValue {
     private PrimitiveType type;
     private String viewValue;
     private Expression domainValue;
@@ -23,19 +23,20 @@ public class PrimitiveDefaultValue extends DefaultValue{
 
     /**
      * Allows you to provide a primitive default value with a
-     * @param type The Primitive type of this default value.
+     *
+     * @param type            The Primitive type of this default value.
      * @param defaultOverride Nullable, The default override to use instead of whatever
      *                        the opencv function defines should be used as a default.
      */
-    public PrimitiveDefaultValue(PrimitiveType type, String defaultOverride){
+    public PrimitiveDefaultValue(PrimitiveType type, String defaultOverride) {
         this(type);
         this.defaultOverride = Optional.ofNullable(defaultOverride);
     }
 
-    public PrimitiveDefaultValue(PrimitiveType type){
+    public PrimitiveDefaultValue(PrimitiveType type) {
         super("", type.getType().name());
         this.type = type;
-        switch (type.getType()){
+        switch (type.getType()) {
             case Boolean:
                 this.viewValue = "CHECKBOX";
                 this.domainValue = createDomainValueExpression(
@@ -77,10 +78,11 @@ public class PrimitiveDefaultValue extends DefaultValue{
 
     /**
      * Creates a domain value expression given a list of expressions.
+     *
      * @param expressions
      * @return The expression for the domain.
      */
-    private Expression createDomainValueExpression(Expression ...expressions){
+    private Expression createDomainValueExpression(Expression... expressions) {
         return new ArrayCreationExpr(type.toBoxedType(), 1,
                 new ArrayInitializerExpr(
                         Arrays.asList(expressions)
@@ -89,7 +91,7 @@ public class PrimitiveDefaultValue extends DefaultValue{
     }
 
     @Override
-    public ImportDeclaration getImportDeclaration(){
+    public ImportDeclaration getImportDeclaration() {
         return null;
     }
 
@@ -100,16 +102,21 @@ public class PrimitiveDefaultValue extends DefaultValue{
 
     @Override
     public Expression getDefaultValue(String defaultValue) {
-        if(this.defaultOverride.isPresent()) defaultValue = this.defaultOverride.get();
-        switch (type.getType()){
-            case Boolean: return new BooleanLiteralExpr(Boolean.valueOf(defaultValue));
-            case Int: return new IntegerLiteralExpr(Integer.valueOf(defaultValue).toString());
-            case Float: return new DoubleLiteralExpr(Float.valueOf(defaultValue).toString());
-            case Double: return new DoubleLiteralExpr(Double.valueOf(defaultValue).toString());
+        if (this.defaultOverride.isPresent()) defaultValue = this.defaultOverride.get();
+        switch (type.getType()) {
+            case Boolean:
+                return new BooleanLiteralExpr(Boolean.valueOf(defaultValue));
+            case Int:
+                return new IntegerLiteralExpr(Integer.valueOf(defaultValue).toString());
+            case Float:
+                return new DoubleLiteralExpr(Float.valueOf(defaultValue).toString());
+            case Double:
+                return new DoubleLiteralExpr(Double.valueOf(defaultValue).toString());
             case Char:
                 assert defaultValue.length() == 1 : "Invalid default value: " + defaultValue + " for type char";
                 return new CharLiteralExpr(defaultValue);
-            default: throw new UnsupportedOperationException("Type " + type.getType() + " is not supported.");
+            default:
+                throw new UnsupportedOperationException("Type " + type.getType() + " is not supported.");
         }
     }
 

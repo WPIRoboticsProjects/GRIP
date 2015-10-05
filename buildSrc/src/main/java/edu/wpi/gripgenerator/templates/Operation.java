@@ -38,11 +38,12 @@ public class Operation {
 
     /**
      * Constructs an Operation
-     * @param collector The collection of default values.
+     *
+     * @param collector     The collection of default values.
      * @param definedMethod The method that this operation is wrapping
-     * @param className The name of the class being generated
+     * @param className     The name of the class being generated
      */
-    public Operation(DefaultValueCollector collector, DefinedMethod definedMethod, String className){
+    public Operation(DefaultValueCollector collector, DefinedMethod definedMethod, String className) {
         this.definedMethod = definedMethod;
         this.packageDec = new PackageDeclaration(new NameExpr("edu.wpi.grip.generated." + className));
         this.operationParams = this.definedMethod.getFinalizedParamTypes(collector);
@@ -50,11 +51,11 @@ public class Operation {
         this.javadocComment = new JavadocComment(" Operation to call {@link " + className + "#" + definedMethod.getMethodName() + "} ");
     }
 
-    public String getOperationName(){
+    public String getOperationName() {
         return definedMethod.getMethodName();
     }
 
-    private List<ImportDeclaration> getAdditionalImports(){
+    private List<ImportDeclaration> getAdditionalImports() {
         List<ImportDeclaration> imports = new ArrayList(Collections.singletonList(new ImportDeclaration(new NameExpr("org.bytedeco.javacpp." + definedMethod.getParentObjectName()), false, false)));
         imports.addAll(this.definedMethod.getImports());
         return imports;
@@ -62,9 +63,10 @@ public class Operation {
 
     /**
      * Creates the Name method
+     *
      * @return
      */
-    private MethodDeclaration getNameMethod(){
+    private MethodDeclaration getNameMethod() {
         MethodDeclaration getName = new MethodDeclaration(
                 ModifierSet.PUBLIC,
                 Collections.singletonList(OVERRIDE_ANNOTATION),
@@ -85,9 +87,10 @@ public class Operation {
 
     /**
      * Creates the description method
+     *
      * @return
      */
-    private MethodDeclaration getDescriptionMethod(){
+    private MethodDeclaration getDescriptionMethod() {
         MethodDeclaration getDescription = new MethodDeclaration(
                 ModifierSet.PUBLIC,
                 Collections.singletonList(OVERRIDE_ANNOTATION),
@@ -108,9 +111,10 @@ public class Operation {
 
     /**
      * Creates the method that returns the input socket of this operation.
+     *
      * @return The method declaration.
      */
-    private MethodDeclaration getCreateInputSocketsMethod(){
+    private MethodDeclaration getCreateInputSocketsMethod() {
         return new MethodDeclaration(
                 ModifierSet.PUBLIC,
                 Arrays.asList(OVERRIDE_ANNOTATION, SUPPRESS_ANNOTATION),
@@ -128,9 +132,10 @@ public class Operation {
 
     /**
      * Creates the method that returns the output sockets of this operation.
+     *
      * @return The method declaration.
      */
-    private MethodDeclaration getCreateOutputSocketsMethod(){
+    private MethodDeclaration getCreateOutputSocketsMethod() {
         return new MethodDeclaration(
                 ModifierSet.PUBLIC,
                 Arrays.asList(OVERRIDE_ANNOTATION, SUPPRESS_ANNOTATION),
@@ -147,7 +152,7 @@ public class Operation {
     }
 
 
-    private Expression getFunctionCallExpression(){
+    private Expression getFunctionCallExpression() {
         return new MethodCallExpr(
                 new NameExpr(definedMethod.getParentObjectName()),
                 definedMethod.getMethodName(),
@@ -157,11 +162,12 @@ public class Operation {
 
     /**
      * Generates the perform function
-     * @param inputParamId The name of the variable for the input to the function
+     *
+     * @param inputParamId  The name of the variable for the input to the function
      * @param outputParamId The name of the variable for the output to the function
      * @return The list of statements that are performed inside of the perform function.
      */
-    private List<Statement> getPerformExpressionList(String inputParamId, String outputParamId){
+    private List<Statement> getPerformExpressionList(String inputParamId, String outputParamId) {
         assert !inputParamId.equals(outputParamId) : "The input and output param can not be the same";
         List<Expression> expressionList = socketHintDeclarationCollection.getSocketAssignments(inputParamId, outputParamId);
         List<Statement> performStatement = expressionList.stream().map(ExpressionStmt::new).collect(Collectors.toList());
@@ -191,18 +197,18 @@ public class Operation {
                                         new NameExpr(outputParamId),
                                         new BlockStmt(
                                                 Collections.singletonList(
-                                                    new ExpressionStmt(
-                                                            new MethodCallExpr(
-                                                                    new NameExpr(outputSocketForEachVariableId),
-                                                                    "setValue",
-                                                                    Collections.singletonList(
-                                                                            new MethodCallExpr(
-                                                                                    new NameExpr(outputSocketForEachVariableId),
-                                                                                    "getValue"
-                                                                            )
-                                                                    )
-                                                            )
-                                                    )
+                                                        new ExpressionStmt(
+                                                                new MethodCallExpr(
+                                                                        new NameExpr(outputSocketForEachVariableId),
+                                                                        "setValue",
+                                                                        Collections.singletonList(
+                                                                                new MethodCallExpr(
+                                                                                        new NameExpr(outputSocketForEachVariableId),
+                                                                                        "getValue"
+                                                                                )
+                                                                        )
+                                                                )
+                                                        )
                                                 )
                                         )
                                 )
@@ -240,7 +246,7 @@ public class Operation {
         return performStatement;
     }
 
-    private MethodDeclaration getPerformMethod(){
+    private MethodDeclaration getPerformMethod() {
         String inputParamId = "inputs";
         String outputParamId = "outputs";
         return new MethodDeclaration(
@@ -263,18 +269,19 @@ public class Operation {
 
     /**
      * Generates the class definition for the Operation
+     *
      * @return
      */
-    private ClassOrInterfaceDeclaration getClassDeclaration(){
+    private ClassOrInterfaceDeclaration getClassDeclaration() {
 //        System.out.println("Generating: " + getOperationName());
 //        System.out.println(definedMethod.methodToString());
         ClassOrInterfaceDeclaration operation = new ClassOrInterfaceDeclaration(ModifierSet.PUBLIC, false, getOperationName());
         operation.setImplements(Collections.singletonList(iOperation));
         operation.setJavaDoc(javadocComment);
         operation.setComment(new BlockComment(
-                  " * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *\n" +
-                " * ===== THIS CODE HAS BEEN DYNAMICALLY GENERATED! DO NOT MODIFY! ==== *\n" +
-                " * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * "));
+                " * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *\n" +
+                        " * ===== THIS CODE HAS BEEN DYNAMICALLY GENERATED! DO NOT MODIFY! ==== *\n" +
+                        " * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * "));
         operation.setMembers(socketHintDeclarationCollection.getAllSocketHints().stream().map(SocketHintDeclaration::getDeclaration).collect(Collectors.toList()));
         ASTHelper.addMember(operation, getNameMethod());
         ASTHelper.addMember(operation, getDescriptionMethod());
@@ -286,9 +293,10 @@ public class Operation {
 
     /**
      * Creates the operation declaration
+     *
      * @return The operation declaration ready to be turned into a file.
      */
-    public CompilationUnit getDeclaration(){
+    public CompilationUnit getDeclaration() {
         Set<ImportDeclaration> importList = Sets.newHashSet(
                 SocketHintDeclaration.SOCKET_IMPORT,
                 OPERATION_IMPORT,

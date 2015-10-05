@@ -9,14 +9,14 @@ import com.github.javaparser.ast.type.Type;
 import java.util.Optional;
 import java.util.Set;
 
-public class NullDefaultValue extends DefaultValue{
+public class NullDefaultValue extends DefaultValue {
 
-    public NullDefaultValue(){
+    public NullDefaultValue() {
         super("", "null");
     }
 
     @Override
-    public ImportDeclaration getImportDeclaration(){
+    public ImportDeclaration getImportDeclaration() {
         return null;
     }
 
