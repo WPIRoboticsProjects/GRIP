@@ -69,7 +69,7 @@ public class DefinedMethodCollection {
             Operation thisOperation = new Operation(collector, method, className);
             operations.addOperation(thisOperation);
             CompilationUnit cu = thisOperation.getDeclaration();
-            System.out.println(cu);
+            //System.out.println(cu);
             compilationUnits.put(method.getMethodName(), cu);
         }
     }

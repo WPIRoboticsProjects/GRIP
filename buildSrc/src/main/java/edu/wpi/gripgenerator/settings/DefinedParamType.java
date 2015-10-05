@@ -93,10 +93,10 @@ public class DefinedParamType {
             //System.out.println("Checking match");
             Matcher matchesPrimitive = defaultPrimitive.matcher(param.getComment().getContent());
             Matcher matchesEnumPrimitive = defaultEnumPrimitive.matcher(param.getComment().getContent());
-            if (matchesPrimitive.find()) System.out.println("Primitive Matcher: " + matchesPrimitive.group());
-            if (matchesEnumPrimitive.find()) System.out.println("Enum Matcher: " + matchesEnumPrimitive.group(1));
+            //if (matchesPrimitive.find()) System.out.println("Primitive Matcher: " + matchesPrimitive.group());
+            //if (matchesEnumPrimitive.find()) System.out.println("Enum Matcher: " + matchesEnumPrimitive.group(1));
             if (matchesPrimitive.matches()) {
-                System.out.println("Matching Primitive: " + matchesPrimitive.group(1));
+                //System.out.println("Matching Primitive: " + matchesPrimitive.group(1));
                 this.literalDefaultValue = matchesPrimitive.group(1);
                 this.defaultValue = Optional.of(new PrimitiveDefaultValue((PrimitiveType) param.getType()));
             }

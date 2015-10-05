@@ -92,7 +92,7 @@ public class SocketHintDeclarationCollection {
     }
 
     public ObjectCreationExpr getSocketListParam(DefinedParamType definedParamType, ClassOrInterfaceType socketType) {
-        System.out.println("Generating for default " + (definedParamType.getDefaultValue().isPresent() ? definedParamType.getDefaultValue().get().getName().toString() : "null"));
+        //System.out.println("Generating for default " + (definedParamType.getDefaultValue().isPresent() ? definedParamType.getDefaultValue().get().getName().toString() : "null"));
         return new ObjectCreationExpr(null, socketType, Arrays.asList(
                 new NameExpr("eventBus"),
                 new NameExpr(definedParamType.getName() + SocketHintDeclaration.HINT_POSTFIX)
