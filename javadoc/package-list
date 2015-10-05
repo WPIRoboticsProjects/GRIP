@@ -9,3 +9,4 @@ edu.wpi.grip.core.sources
 edu.wpi.grip.ui
 edu.wpi.grip.ui.controllers
 edu.wpi.grip.ui.models
+edu.wpi.grip.ui.preview
