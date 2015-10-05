@@ -8,7 +8,12 @@ import edu.wpi.gripgenerator.defaults.DefaultValueCollector;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class DefinedMethod {
+/**
+ * Allows you to define a Method that will be collected as the library is parsed.
+ * This object is then used to store the method declaration that matches this method.
+ * If a better match is found later in the parsing then it is used.
+ */
+public final class DefinedMethod {
     private final String methodName;
     private final List<DefinedParamType> paramTypes;
     private final boolean isCompleteList;
@@ -19,22 +24,38 @@ public class DefinedMethod {
 
 
     /**
-     * Constructs the defined method with it assumed to be the complete list
-     * @param methodName
-     * @param paramTypes
+     * Constructs the defined method. It is assumed that this is not the complete list of parameters.
+     * @param methodName the name of the method
+     * @param paramTypes the type of param to match. Case sensitive.
      */
     public DefinedMethod(String methodName, String ...paramTypes){
         this(methodName, false, paramTypes);
     }
 
+    /**
+     * Constructs the defined method. It is assumed that this is not the complete list of parameters.
+     * @param methodName The name of the method.
+     */
     public DefinedMethod(String methodName){
         this(methodName, false, new ArrayList());
     }
 
+    /**
+     * Create a defined method
+     * @param methodName The name of the method
+     * @param isCompleteList true if this should match a method without any params.
+     */
     public DefinedMethod(String methodName, boolean isCompleteList){
         this(methodName, isCompleteList, new ArrayList());
     }
 
+    /**
+     *
+     * @param methodName The name of the method
+     * @param isCompleteList true if this should match a method with only the params provided and no more.
+     *                       Otherwise will try to find one with these params and additional params.
+     * @param paramTypes The param types to match this method with.
+     */
     public DefinedMethod(String methodName, boolean isCompleteList, String ...paramTypes){
         this(methodName, isCompleteList, Arrays.asList(paramTypes));
     }
@@ -51,6 +72,10 @@ public class DefinedMethod {
         this.isCompleteList = isCompleteList;
     }
 
+    /**
+     * Set this DefinedMethod as part of a given collection
+     * @param collection The collection this method is a part of
+     */
     void setCollectionOf(DefinedMethodCollection collection){
         this.collectionOf = collection;
     }
@@ -59,6 +84,11 @@ public class DefinedMethod {
         return methodName;
     }
 
+    /**
+     * Adds a description to this method.
+     * @param description The description to use for this method.
+     * @return This. Allows for method chaining off of constructor.
+     */
     public DefinedMethod addDescription(String description){
         this.description = Optional.of(description);
         return this;
@@ -92,7 +122,11 @@ public class DefinedMethod {
         return true;
     }
 
-
+    /**
+     * Assigns this MethodDeclaration if it is a match to the params defined for this method.
+     * @param declaration The declaration to try to assign.
+     * @return False if assignment has failed.
+     */
     public boolean assignIfBestMatch(MethodDeclaration declaration) {
         assert !finalized : "Assigning on a method that has already been finalized";
         if (!isMatch(declaration.getParameters())) {
@@ -109,6 +143,13 @@ public class DefinedMethod {
         return true;
     }
 
+    /**
+     * Finalizes the Method
+     * This method takes the MethodDeclaration that has been assigned to it and
+     * constructs additional {@link DefinedParamType DefinedParamTypes} as needed
+     * @param collector The collector used to assign default values.
+     * @return true if finalization succeeds or has already been completed.
+     */
     protected boolean finalizeParamTypes(DefaultValueCollector collector){
         if(finalized) return true;
         this.finalized = true;
@@ -137,17 +178,23 @@ public class DefinedMethod {
             }
             return this.finalized;
         } else {
-            //TODO: Throw an error?
-            System.err.println("No method was found that matched this method definition " + toSimpleString());
-            this.finalized = false;
-            return false;
+            throw new IllegalStateException("No method was found that matched this method definition " + toSimpleString());
         }
     }
 
+    /**
+     * Gets the imports required for this Defined Method to compile
+     * @return The list of required imports.
+     */
     public List<ImportDeclaration> getImports(){
         return paramTypes.stream().map(p -> p.getImport()).filter(i -> i != null).collect(Collectors.toList());
     }
 
+    /**
+     * Gets the finalized list of param types.
+     * @param collector The collector to use
+     * @return The defined param types.
+     */
     public List<DefinedParamType> getFinalizedParamTypes(DefaultValueCollector collector){
         if(!this.finalizeParamTypes(collector)){ return null; }
         return this.paramTypes;

@@ -93,15 +93,11 @@ public class SocketHintDeclarationCollection {
         System.out.println("Generating for default " + (definedParamType.getDefaultValue().isPresent() ? definedParamType.getDefaultValue().get().getName().toString() : "null"));
         return new ObjectCreationExpr(null, socketType, Arrays.asList(
                 new NameExpr("eventBus"),
-                new NameExpr(definedParamType.getName() + SocketHintDeclaration.HINT_POSTFIX),
-                definedParamType.getDefaultValue().isPresent() ?
-                        definedParamType.getDefaultValue().get().getDefaultValue(definedParamType.getLiteralDefaultValue()) :
-                        new NullLiteralExpr()
+                new NameExpr(definedParamType.getName() + SocketHintDeclaration.HINT_POSTFIX)
         ));
     }
 
-    private BlockStmt getInputOrOutputSocketBody(List<DefinedParamType> paramTypes){
-        ClassOrInterfaceType socketType = new ClassOrInterfaceType("Socket");
+    private BlockStmt getInputOrOutputSocketBody(List<DefinedParamType> paramTypes, ClassOrInterfaceType socketType){
         List<Expression> passedExpressions = new ArrayList<>();
         for (DefinedParamType inputParam : paramTypes){
             passedExpressions.add(getSocketListParam(inputParam, socketType));
@@ -115,11 +111,11 @@ public class SocketHintDeclarationCollection {
     }
 
     public BlockStmt getInputSocketBody(){
-        return getInputOrOutputSocketBody(inputParamTypes);
+        return getInputOrOutputSocketBody(inputParamTypes, new ClassOrInterfaceType("InputSocket"));
     }
 
     public BlockStmt getOutputSocketBody(){
-        return getInputOrOutputSocketBody(outputParamTypes);
+        return getInputOrOutputSocketBody(outputParamTypes,  new ClassOrInterfaceType("OutputSocket"));
     }
 
     public List<SocketHintDeclaration> getAllSocketHints(){
@@ -133,8 +129,8 @@ public class SocketHintDeclarationCollection {
         return socketHintDeclarations;
     }
 
-    public static Type getSocketReturnParam(){
-        ClassOrInterfaceType socketType = new ClassOrInterfaceType(null, "Socket");
+    public static Type getSocketReturnParam(String socketNameType){
+        ClassOrInterfaceType socketType = new ClassOrInterfaceType(null, socketNameType);
         socketType.setTypeArgs(Arrays.asList(new WildcardType()));
         return new ReferenceType(socketType, 1);
     }

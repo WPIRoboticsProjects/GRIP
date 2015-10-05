@@ -9,10 +9,28 @@ import java.util.Arrays;
 import java.util.Optional;
 import java.util.Set;
 
+/**
+ * Default value for a primitive constant.
+ * If the opencv method defines that it takes a primitive variable
+ * and the comment following defines the default is a primitive not an Enum Declaration
+ * then this is used.
+ */
 public class PrimitiveDefaultValue extends DefaultValue{
     private PrimitiveType type;
     private String viewValue;
     private Expression domainValue;
+    private Optional<String> defaultOverride = Optional.empty();
+
+    /**
+     * Allows you to provide a primitive default value with a
+     * @param type The Primitive type of this default value.
+     * @param defaultOverride Nullable, The default override to use instead of whatever
+     *                        the opencv function defines should be used as a default.
+     */
+    public PrimitiveDefaultValue(PrimitiveType type, String defaultOverride){
+        this(type);
+        this.defaultOverride = Optional.ofNullable(defaultOverride);
+    }
 
     public PrimitiveDefaultValue(PrimitiveType type){
         super("", type.getType().name());
@@ -57,8 +75,11 @@ public class PrimitiveDefaultValue extends DefaultValue{
         }
     }
 
-
-
+    /**
+     * Creates a domain value expression given a list of expressions.
+     * @param expressions
+     * @return The expression for the domain.
+     */
     private Expression createDomainValueExpression(Expression ...expressions){
         return new ArrayCreationExpr(type.toBoxedType(), 1,
                 new ArrayInitializerExpr(
@@ -79,6 +100,7 @@ public class PrimitiveDefaultValue extends DefaultValue{
 
     @Override
     public Expression getDefaultValue(String defaultValue) {
+        if(this.defaultOverride.isPresent()) defaultValue = this.defaultOverride.get();
         switch (type.getType()){
             case Boolean: return new BooleanLiteralExpr(Boolean.valueOf(defaultValue));
             case Int: return new IntegerLiteralExpr(Integer.valueOf(defaultValue).toString());

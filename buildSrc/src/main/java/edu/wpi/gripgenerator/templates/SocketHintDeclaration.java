@@ -86,6 +86,9 @@ public class SocketHintDeclaration {
         if(paramType.getDefaultValue().isPresent()){
             DefaultValue defaultValue = paramType.getDefaultValue().get();
             return Arrays.asList(
+                    paramType.getDefaultValue().isPresent() ?
+                            paramType.getDefaultValue().get().getDefaultValue(paramType.getLiteralDefaultValue()) :
+                            new NullLiteralExpr(),
                     getViewEnumElement(defaultValue.getViewType()),
                     defaultValue.getDomainValue()
             );

@@ -14,7 +14,14 @@ import org.gradle.api.tasks.TaskAction
 
 class CodeGenerator extends DefaultTask {
     def text
+    /**
+     * The destination of the source code.
+     */
     def dest
+    /**
+     * Whether or not the contents of the destination directory should be removed prior to the
+     * generated code being added.
+     */
     def removeExisting
 
     @TaskAction
@@ -28,7 +35,7 @@ class CodeGenerator extends DefaultTask {
         String targetDirectoryString = destSet.getAt(0).toString()
 
         //Generate all of the output units
-        Map<String, CompilationUnit> files = FileParser.testRead();
+        Map<String, CompilationUnit> files = FileParser.generateAllSourceCode();
 
 
         File targetDirectory = new File(targetDirectoryString);
@@ -47,45 +54,4 @@ class CodeGenerator extends DefaultTask {
         }
     }
 
-//    public generate( project, String packageName, String className ) {
-//        // Where to write the classes
-//        File targetDirectory = new File( project.build.directory + '/generated-sources/groovy' )
-//
-//        // The directory to write the source to
-//        File packageDir = new File( targetDirectory, packageName.replace( '.', '/' ) )
-//
-//        // Now to create our enum
-//        def out = []
-//        out<<'package '+packageName+';\n'
-//        out<<'public enum '+className+' {\n'
-//
-//        // We have four suits
-//        def suit = [ 'D', 'S', 'H', 'C']
-//
-//        // Each suit has A, 2-9, T, J, Q & K
-//        def rank = [ 'A', '2', '3', '4', '5', '6', '7', '8', '9', 'T', 'J', 'Q', 'K' ]
-//
-//        // For each suit, write an entry for each card
-//        suit.eachWithIndex {
-//            s, i -> def indent = i==0 ? '    ' : ',\n    '
-//                rank.each {
-//                    r -> out<< indent + s + r
-//                        indent = ','
-//                }
-//        }
-//
-//        // Mark the end of the enum list
-//        out<<';\n'
-//
-//        // Finish the enum class
-//        out<<'}\n'
-//
-//        // Convert the array into a string
-//        StringBuilder sb = new StringBuilder()
-//        out.each { sb.append(it) }
-//
-//        // Now write the source, ensuring the directory exists first
-//        packageDir.mkdirs()
-//        new File( packageDir, className + ".java" ).write( sb.toString() );
-//    }
 }

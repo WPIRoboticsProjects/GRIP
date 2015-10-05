@@ -10,6 +10,9 @@ import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 
+/**
+ * Constructs a Default Value for an enumeration.
+ */
 public class EnumDefaultValue extends DefaultValue {
     private final Set<String> enumConstantNames;
 

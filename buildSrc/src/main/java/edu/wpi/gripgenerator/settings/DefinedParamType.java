@@ -69,7 +69,7 @@ public class DefinedParamType {
 
     public DefinedParamType setDefaultValue(DefaultValue defaultValue){
         checkNotNull(defaultValue);
-        System.out.println("Setting default value " + defaultValue.getName());
+        //System.out.println("Setting default value " + defaultValue.getName());
         this.defaultValue = Optional.of(defaultValue);
         return this;
     }
@@ -81,15 +81,15 @@ public class DefinedParamType {
     void setParamAs(Parameter param){
         checkNotNull(param);
         this.parameter = Optional.of(param);
-        System.out.println("Param: " + param);
-        System.out.println("Param w/out comments: " + param.toStringWithoutComments());
-        System.out.println("Comment: " + param.getComment());
-        System.out.println("Orphan Comments: " + param.getOrphanComments());
+//        System.out.println("Param: " + param);
+//        System.out.println("Param w/out comments: " + param.toStringWithoutComments());
+//        System.out.println("Comment: " + param.getComment());
+//        System.out.println("Orphan Comments: " + param.getOrphanComments());
         Pattern defaultPrimitive = Pattern.compile(".*=([\\-a-zA-Z0-9_\\.]*)");
         Pattern defaultEnumPrimitive = Pattern.compile(".*=(?:cv::)([\\-a-zA-Z0-9_\\.]*)");
 
         if(param.getComment()!= null && param.getType() instanceof PrimitiveType){
-            System.out.println("Checking match");
+            //System.out.println("Checking match");
             Matcher matchesPrimitive = defaultPrimitive.matcher(param.getComment().getContent());
             Matcher matchesEnumPrimitive = defaultEnumPrimitive.matcher(param.getComment().getContent());
             if(matchesPrimitive.find()) System.out.println("Primitive Matcher: " + matchesPrimitive.group());
@@ -100,16 +100,17 @@ public class DefinedParamType {
                 this.defaultValue = Optional.of(new PrimitiveDefaultValue((PrimitiveType)param.getType()));
             }
             if(matchesEnumPrimitive.matches()){
-                System.out.println("Matching Enum: " + matchesEnumPrimitive.group(1));
+                //System.out.println("Matching Enum: " + matchesEnumPrimitive.group(1));
                 this.literalDefaultValue = matchesEnumPrimitive.group(1);
+                //The default value should be assigned
             }
         } else if (param.getType() instanceof PrimitiveType){
             this.literalDefaultValue = "0";
-            this.defaultValue = Optional.of(new PrimitiveDefaultValue((PrimitiveType)param.getType()));
+            this.defaultValue = Optional.of(this.defaultValue.orElse(new PrimitiveDefaultValue((PrimitiveType)param.getType())));
         } else {
             this.defaultValue = Optional.of(this.defaultValue.orElse(new ObjectDefaultValue(param.getType())));
         }
-        System.out.println(param.getType().getClass());
+        //System.out.println(param.getType().getClass());
     }
 
     public boolean isMatch(Parameter param){
@@ -150,12 +151,9 @@ public class DefinedParamType {
             for (NormalAnnotationExpr matching : matchingAnnotations) {
                 Optional<MemberValuePair> constructorPair = matching.getPairs().stream().filter(p -> constructorCallExpression.matcher(p.getValue().toString()).find()).findFirst();
                 Optional<MemberValuePair> methodPair = matching.getPairs().stream().filter(p -> methodCallExpression.matcher(p.getValue().toString()).find()).findFirst();
-                System.out.println("Constructor: " + constructorPair);
-                System.out.println("Method: " + methodPair);
+//                System.out.println("Constructor: " + constructorPair);
+//                System.out.println("Method: " + methodPair);
             }
-        }
-        if(parameter.isPresent()){
-            System.out.println();
         }
         return this.literalDefaultValue;
     }
@@ -168,11 +166,9 @@ public class DefinedParamType {
         }
     }
 
-
-    public List<Expression> getSocketAdditionalParams(){
-        return null;
-    }
-
+    /**
+     * @return True if this para type represents an output.
+     */
     public boolean isOutput(){
         return state.equals(DefinedParamState.OUTPUT);
     }
@@ -181,6 +177,11 @@ public class DefinedParamType {
         return parameter.get().getId().getName();
     }
 
+    /**
+     * Gets the literal expression that should be passed to the opencv method.
+     * This allows for any last type conversions or enumerations field accessing
+     * @return The Expression to pass to the opencv method.
+     */
     public Expression getLiteralExpression(){
         if (defaultValue.isPresent() && defaultValue.get() instanceof EnumDefaultValue){
             return new FieldAccessExpr(createNameExpr(getName()), "value");
@@ -189,6 +190,9 @@ public class DefinedParamType {
         }
     }
 
+    /**
+     * Makes this param an output.
+     */
     void setOutput(){
         state = DefinedParamState.OUTPUT;
     }

@@ -13,7 +13,10 @@ import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
 import edu.wpi.gripgenerator.defaults.DefaultValueCollector;
 import edu.wpi.gripgenerator.defaults.EnumDefaultValue;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -121,8 +124,8 @@ public class OpenCVEnumVisitor extends VoidVisitorAdapter<Map<String, Compilatio
                     String name = matcher.group(1) + matcher.group(2) + enumNamePostFix;
                     if(!arg.containsKey(name)) {
                         // This is where the enum is generated
-                        arg.put(name, generateFromDeclaration(declaration, name, subClass));
                         collector.add(new EnumDefaultValue(PACKAGE_EXPRESSION, name, declaration.getVariables().stream().map(e -> e.getId().getName()).collect(Collectors.toSet())));
+                        arg.put(name, generateFromDeclaration(declaration, name, subClass));
                     } else {
                         CompilationUnit existingEnum = arg.get(name);
                         addEnumConstants((EnumDeclaration) existingEnum.getTypes().get(0), declaration, subClass);

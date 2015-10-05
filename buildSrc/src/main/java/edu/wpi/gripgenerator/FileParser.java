@@ -4,11 +4,11 @@ import com.github.javaparser.JavaParser;
 import com.github.javaparser.ParseException;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.ImportDeclaration;
-import com.github.javaparser.ast.body.TypeDeclaration;
-import com.github.javaparser.ast.comments.Comment;
 import com.github.javaparser.ast.expr.NameExpr;
+import com.github.javaparser.ast.type.PrimitiveType;
 import edu.wpi.gripgenerator.defaults.DefaultValueCollector;
 import edu.wpi.gripgenerator.defaults.ObjectDefaultValue;
+import edu.wpi.gripgenerator.defaults.PrimitiveDefaultValue;
 import edu.wpi.gripgenerator.settings.DefinedMethod;
 import edu.wpi.gripgenerator.settings.DefinedMethodCollection;
 import edu.wpi.gripgenerator.settings.DefinedParamType;
@@ -21,8 +21,6 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class FileParser {
     /**
@@ -33,7 +31,7 @@ public class FileParser {
      *     <li>The various ways that the parameter can end.</li>
      * </ol>
      */
-    protected static final String methodReorderPattern = "([A-Za-z1-9]+ (?:\\.\\.\\.)?[a-z][A-Za-z0-9]*)(/\\*=[^ ]*\\*/)((?:,)|(?: \\)))";
+    protected static final String methodReorderPattern = "([A-Za-z1-9]+ (?:\\.\\.\\.)?[a-z][A-Za-z0-9_]*)(/\\*=[^ ]*\\*/)((?:,)|(?: \\)))";
 
     /**
      * Reorders the {@link FileParser#methodReorderPattern} capture groups so the JavaParser can correctly
@@ -56,19 +54,21 @@ public class FileParser {
         return new ByteArrayInputStream(input.getBytes(StandardCharsets.UTF_8));
     }
 
-    public static CompilationUnit readFile(URL url){
-
+    private static CompilationUnit readFile(URL url){
         try {
             return JavaParser.parse(preProcessStream(url.openStream()));
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new IllegalStateException(e);
         } catch (ParseException e) {
-            e.printStackTrace();
+            throw new IllegalStateException(e);
         }
-        return null;
     }
 
-    public static Map<String, CompilationUnit> testRead(){
+    /**
+     * Generates all of the source code from the opencv bindings
+     * @return A map of the filename with the compilation units
+     */
+    public static Map<String, CompilationUnit> generateAllSourceCode(){
         URL INPUT_URL = FileParser.class.getResource("/org/bytedeco/javacpp/opencv_core.txt");
         CompilationUnit compilationUnit = readFile(INPUT_URL);
         Map<String, CompilationUnit> returnMap = new HashMap<>();
@@ -80,11 +80,7 @@ public class FileParser {
         );
 
         if (compilationUnit != null) {
-            for(TypeDeclaration type : compilationUnit.getTypes()){
-                if(type.getName().equals("opencv_core")){
-                    returnMap.putAll( parseOpenCVCore(compilationUnit, collector, operationList) );
-                }
-            }
+            returnMap.putAll( parseOpenCVCore(compilationUnit, collector, operationList) );
         } else {
             System.err.print("Invalid File input");
         }
@@ -95,8 +91,8 @@ public class FileParser {
 
         }
 
+        // Generate the Operation List class last
         returnMap.put(operationList.getClassName(), operationList.getDeclaration());
-
         return returnMap;
     }
 
@@ -125,20 +121,6 @@ public class FileParser {
 
     public static Map<String, CompilationUnit> parseOpenCVCore(CompilationUnit coreDeclaration, DefaultValueCollector collector, OperationList operations){
         Map<String, CompilationUnit> compilationUnits = new HashMap<>();
-        Pattern enumRegex = Pattern.compile(".*enum cv::([a-zA-Z_]*)");
-        for(Comment comment : coreDeclaration.getAllContainedComments()){
-            Matcher matcher = enumRegex.matcher(comment.getContent());
-            if(matcher.find()){
-                System.out.print(comment.getContent());
-                System.out.print(" ");
-                System.out.print(matcher.group(1));
-                System.out.print(" ");
-                System.out.print(comment.getBeginLine());
-                System.out.print(" ");
-                System.out.print(comment.getEndLine());
-                System.out.println();
-            }
-        }
 
         new OpenCVEnumVisitor(collector).visit(coreDeclaration, compilationUnits);
 
@@ -157,12 +139,17 @@ public class FileParser {
                 new DefinedMethod("bitwise_xor", false, "Mat", "Mat"),
                 new DefinedMethod("bitwise_not", false, "Mat", "Mat"),
                 new DefinedMethod("absdiff", false, "Mat", "Mat"),
-                new DefinedMethod("inRange", false),
+                // TODO: Fix (Causes Segfault)
+                //new DefinedMethod("inRange", false),
                 new DefinedMethod("compare"),
                 new DefinedMethod("max", false, "Mat", "Mat"),
                 new DefinedMethod("min", false, "Mat", "Mat"),
                 new DefinedMethod("sqrt", false, "Mat", "Mat"),
-                new DefinedMethod("pow", false, "Mat")
+                new DefinedMethod("pow", false,
+                        new DefinedParamType("Mat"),
+                        new DefinedParamType("double")
+                                .setDefaultValue(new PrimitiveDefaultValue(new PrimitiveType(PrimitiveType.Primitive.Double), "1"))
+                )
         ).setOutputDefaults("dst");
         new OpenCVMethodVisitor(collection).visit(coreDeclaration, compilationUnits);
 
@@ -173,6 +160,6 @@ public class FileParser {
     }
 
     public static void main(String ... args) {
-        FileParser.testRead();
+        FileParser.generateAllSourceCode();
     }
 }

@@ -1,10 +1,8 @@
 package edu.wpi.gripgenerator.defaults;
 
 import com.github.javaparser.ast.ImportDeclaration;
-import com.github.javaparser.ast.expr.Expression;
-import com.github.javaparser.ast.expr.NameExpr;
-import com.github.javaparser.ast.expr.NullLiteralExpr;
-import com.github.javaparser.ast.expr.ObjectCreationExpr;
+import com.github.javaparser.ast.expr.*;
+import com.github.javaparser.ast.stmt.ExpressionStmt;
 import com.github.javaparser.ast.type.ClassOrInterfaceType;
 import com.github.javaparser.ast.type.Type;
 
@@ -39,7 +37,21 @@ public class ObjectDefaultValue extends DefaultValue{
 
     @Override
     public Expression getDefaultValue(String defaultValue) {
-        return new ObjectCreationExpr(null, type, defaultValues);
+        if (!this.defaultValues.isEmpty()){
+            LambdaExpr provider = new LambdaExpr();
+            provider.setBody(
+                    new ExpressionStmt(
+                            new ObjectCreationExpr(null, type, defaultValues)
+                    )
+            );
+            provider.setParametersEnclosed(true);
+            return provider;
+        } else {
+            MethodReferenceExpr referenceExpr = new MethodReferenceExpr();
+            referenceExpr.setScope(new NameExpr(type.getName()));
+            referenceExpr.setIdentifier("new");
+            return referenceExpr;
+        }
     }
 
     @Override
