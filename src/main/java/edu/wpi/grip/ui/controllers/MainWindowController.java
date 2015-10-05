@@ -8,12 +8,13 @@ import edu.wpi.grip.core.operations.PythonScriptOperation;
 import edu.wpi.grip.core.sinks.DummySink;
 import edu.wpi.grip.ui.PaletteView;
 import edu.wpi.grip.ui.PipelineView;
-import edu.wpi.grip.ui.preview.Previews;
+import edu.wpi.grip.ui.preview.PreviewsView;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.SplitPane;
 
+import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
@@ -29,9 +30,6 @@ public class MainWindowController implements Initializable {
 
     @FXML
     private ScrollPane bottomPane;
-
-    private PipelineView pipelineView;
-
 
     private final Operation add = new PythonScriptOperation(
             "import edu.wpi.grip.core as grip\n" +
@@ -73,12 +71,18 @@ public class MainWindowController implements Initializable {
             "    return a * b\n"
     );
 
+    private final PythonScriptOperation gompeiOperation;
+
+    public MainWindowController() throws IOException {
+        this.gompeiOperation = new PythonScriptOperation(getClass().getResource("/edu/wpi/grip/scripts/gompei.py"));
+    }
+
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        Previews previewPaneView = new Previews(eventBus);
+        PreviewsView previewPaneView = new PreviewsView(eventBus);
 
         PaletteView paletteView = new PaletteView(eventBus);
-        paletteView.operationsProperty().addAll(this.add, this.multiply);
+        paletteView.operationsProperty().addAll(this.add, this.multiply, this.gompeiOperation);
 
         PipelineView pipelineView = new PipelineView(eventBus, new Pipeline(this.eventBus));
 

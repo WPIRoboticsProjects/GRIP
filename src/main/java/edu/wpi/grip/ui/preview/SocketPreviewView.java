@@ -7,7 +7,6 @@ import edu.wpi.grip.core.events.SocketChangedEvent;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.scene.control.TitledPane;
-import javafx.scene.text.TextAlignment;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -39,8 +38,6 @@ public abstract class SocketPreviewView<T> extends TitledPane {
         this.setText(this.socket.getSocketHint().getIdentifier());
         this.getStyleClass().add("socket-preview");
         this.setCollapsible(false);
-
-        this.setTextAlignment(TextAlignment.CENTER);
     }
 
     public Socket<T> getSocket() {
@@ -48,7 +45,8 @@ public abstract class SocketPreviewView<T> extends TitledPane {
     }
 
     /**
-     * The value of the socket being previewed.  Subclasses bind this to some
+     * The value of the socket being previewed.  Subclasses bind this to some visible property to show the user what
+     * the value of the socket is.
      */
     public ObjectProperty<T> valueProperty() {
         return this.valueProperty;

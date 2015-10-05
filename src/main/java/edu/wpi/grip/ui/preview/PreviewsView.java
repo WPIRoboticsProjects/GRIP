@@ -21,7 +21,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
  *
  * @see Socket#isPreviewed()
  */
-public class Previews extends VBox {
+public class PreviewsView extends VBox {
 
     @FXML
     private HBox previewBox;
@@ -29,7 +29,7 @@ public class Previews extends VBox {
     private final EventBus eventBus;
     private final List<OutputSocket<?>> previewedSockets;
 
-    public Previews(EventBus eventBus) {
+    public PreviewsView(EventBus eventBus) {
         checkNotNull(eventBus);
 
         this.eventBus = eventBus;
