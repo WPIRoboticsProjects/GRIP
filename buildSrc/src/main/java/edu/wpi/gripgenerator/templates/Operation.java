@@ -163,14 +163,48 @@ public class Operation {
      */
     private List<Statement> getPerformExpressionList(String inputParamId, String outputParamId){
         assert !inputParamId.equals(outputParamId) : "The input and output param can not be the same";
-        final String exceptionVariable = "e";
         List<Expression> expressionList = socketHintDeclarationCollection.getSocketAssignments(inputParamId, outputParamId);
         List<Statement> performStatement = expressionList.stream().map(ExpressionStmt::new).collect(Collectors.toList());
+        final String exceptionVariable = "e";
+        final String outputSocketForEachVariableId = "outputSocket";
         final TryStmt performTry = new TryStmt(
                 new BlockStmt(
-                        Collections.singletonList(
+                        Arrays.asList(
+                                /* Make the operation function call */
                                 new ExpressionStmt(
                                         getFunctionCallExpression()
+                                ),
+                                /*
+                                 * Afterwards iterate over all of the output sockets and call setValue using the value
+                                 * stored.
+                                 */
+                                new ForeachStmt(
+                                        new VariableDeclarationExpr(
+                                                0,
+                                                ASTHelper.createReferenceType("OutputSocket", 0),
+                                                Collections.singletonList(
+                                                        new VariableDeclarator(
+                                                                new VariableDeclaratorId(outputSocketForEachVariableId)
+                                                        )
+                                                )
+                                        ),
+                                        new NameExpr(outputParamId),
+                                        new BlockStmt(
+                                                Collections.singletonList(
+                                                    new ExpressionStmt(
+                                                            new MethodCallExpr(
+                                                                    new NameExpr(outputSocketForEachVariableId),
+                                                                    "setValue",
+                                                                    Collections.singletonList(
+                                                                            new MethodCallExpr(
+                                                                                    new NameExpr(outputSocketForEachVariableId),
+                                                                                    "getValue"
+                                                                            )
+                                                                    )
+                                                            )
+                                                    )
+                                                )
+                                        )
                                 )
                         )
                 ),
@@ -185,6 +219,7 @@ public class Operation {
                                         new VariableDeclaratorId(exceptionVariable)
                                 ),
                                 new BlockStmt(
+                                        // TODO: Add some sort of indication that an error has occurred
                                         Collections.singletonList(
                                                 new ExpressionStmt(
                                                         new MethodCallExpr(
