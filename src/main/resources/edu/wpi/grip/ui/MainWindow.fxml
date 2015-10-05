@@ -49,14 +49,7 @@
         </MenuBar>
         <SplitPane dividerPositions="0.6" orientation="VERTICAL" VBox.vgrow="ALWAYS">
             <items>
-                <SplitPane dividerPositions="1.0" orientation="HORIZONTAL" fx:id="topPane">
-                    <FlowPane styleClass="placeholder">
-                        <children>
-                            <Label alignment="CENTER" prefWidth="-1.0" styleClass="placeholder"
-                                   text="Preview" textAlignment="CENTER" wrapText="false"/>
-                        </children>
-                    </FlowPane>
-                </SplitPane>
+                <SplitPane dividerPositions="1.0" orientation="HORIZONTAL" fx:id="topPane"/>
                 <ScrollPane fx:id="bottomPane"/>
             </items>
         </SplitPane>

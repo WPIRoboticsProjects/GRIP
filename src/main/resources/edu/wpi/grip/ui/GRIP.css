@@ -79,6 +79,16 @@ ImageView.operation-icon {
     -fx-pref-width: 40em;
 }
 
+.previews HBox {
+    -fx-spacing: 1em;
+    -fx-padding: 1em;
+}
+
+.socket-preview .title {
+    -fx-font-weight: bold;
+    -fx-padding: 0.5em;
+}
+
 .steps {
     -fx-padding: 1em;
     -fx-spacing: 1em;
@@ -145,6 +155,7 @@ ImageView.operation-icon {
     -fx-background-insets: -0.2, 1, 2, -1.4, 2.6;
     -fx-background-radius: 1em;
 }
+
 .socket VBox {
     -fx-pref-height: 0em;
     -fx-pref-width: 13em;
