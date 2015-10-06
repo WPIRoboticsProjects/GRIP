@@ -31,7 +31,7 @@ public class FileParser {
      * <li>The various ways that the parameter can end.</li>
      * </ol>
      */
-    protected static final String methodReorderPattern = "([A-Za-z1-9]+ (?:\\.\\.\\.)?[a-z][A-Za-z0-9_]*)(/\\*=[^ ]*\\*/)((?:,)|(?: \\)))";
+    protected static final String methodReorderPattern = "([A-Za-z1-9]+ (?:\\.\\.\\.)?[a-z][A-Za-z0-9_]*)(/\\*=[^ ]*\\*/)((?:,)|(?:\\s*\\)))";
 
     /**
      * Reorders the {@link FileParser#methodReorderPattern} capture groups so the JavaParser can correctly

@@ -5,7 +5,6 @@ import com.github.javaparser.ast.ImportDeclaration;
 import com.github.javaparser.ast.body.Parameter;
 import com.github.javaparser.ast.expr.Expression;
 import com.github.javaparser.ast.expr.FieldAccessExpr;
-import com.github.javaparser.ast.expr.MemberValuePair;
 import com.github.javaparser.ast.expr.NormalAnnotationExpr;
 import com.github.javaparser.ast.type.PrimitiveType;
 import com.github.javaparser.ast.type.Type;
@@ -86,8 +85,8 @@ public class DefinedParamType {
 //        System.out.println("Param w/out comments: " + param.toStringWithoutComments());
 //        System.out.println("Comment: " + param.getComment());
 //        System.out.println("Orphan Comments: " + param.getOrphanComments());
-        Pattern defaultPrimitive = Pattern.compile(".*=([\\-a-zA-Z0-9_\\.]*)");
-        Pattern defaultEnumPrimitive = Pattern.compile(".*=(?:cv::)([\\-a-zA-Z0-9_\\.]*)");
+        Pattern defaultPrimitive = Pattern.compile(".*=([\\-a-zA-Z0-9_\\.]*.*)");
+        Pattern defaultEnumPrimitive = Pattern.compile(".*=(?:cv::)([\\-a-zA-Z0-9_\\.]*.*)");
 
         if (param.getComment() != null && param.getType() instanceof PrimitiveType) {
             //System.out.println("Checking match");
@@ -95,15 +94,14 @@ public class DefinedParamType {
             Matcher matchesEnumPrimitive = defaultEnumPrimitive.matcher(param.getComment().getContent());
             //if (matchesPrimitive.find()) System.out.println("Primitive Matcher: " + matchesPrimitive.group());
             //if (matchesEnumPrimitive.find()) System.out.println("Enum Matcher: " + matchesEnumPrimitive.group(1));
-            if (matchesPrimitive.matches()) {
-                //System.out.println("Matching Primitive: " + matchesPrimitive.group(1));
-                this.literalDefaultValue = matchesPrimitive.group(1);
-                this.defaultValue = Optional.of(new PrimitiveDefaultValue((PrimitiveType) param.getType()));
-            }
             if (matchesEnumPrimitive.matches()) {
                 //System.out.println("Matching Enum: " + matchesEnumPrimitive.group(1));
                 this.literalDefaultValue = matchesEnumPrimitive.group(1);
                 //The default value should be assigned
+            } else if (matchesPrimitive.matches()) {
+                //System.out.println("Matching Primitive: " + matchesPrimitive.group(1));
+                this.literalDefaultValue = matchesPrimitive.group(1);
+                this.defaultValue = Optional.of(new PrimitiveDefaultValue((PrimitiveType) param.getType()));
             }
         } else if (param.getType() instanceof PrimitiveType) {
             this.literalDefaultValue = "0";
@@ -147,15 +145,6 @@ public class DefinedParamType {
     }
 
     public String getLiteralDefaultValue() {
-        List<NormalAnnotationExpr> matchingAnnotations = getAnnotationsMatchingIfPresent();
-        if (matchingAnnotations != null) {
-            for (NormalAnnotationExpr matching : matchingAnnotations) {
-                Optional<MemberValuePair> constructorPair = matching.getPairs().stream().filter(p -> constructorCallExpression.matcher(p.getValue().toString()).find()).findFirst();
-                Optional<MemberValuePair> methodPair = matching.getPairs().stream().filter(p -> methodCallExpression.matcher(p.getValue().toString()).find()).findFirst();
-//                System.out.println("Constructor: " + constructorPair);
-//                System.out.println("Method: " + methodPair);
-            }
-        }
         return this.literalDefaultValue;
     }
 

@@ -37,4 +37,14 @@ public class FileParserTest {
         String replacedMethod = testString.replaceAll(FileParser.methodReorderPattern, FileParser.methodNewOrder);
         assertEquals("Result was not the expected string after regex replacement", expectedResult, replacedMethod);
     }
+
+    @Test
+    public void testNegativeValues(){
+        final String testMethod = "multiply(@ByVal Mat src1, @ByVal Mat src2,\n" +
+                "                           @ByVal Mat dst, double scale/*=1*/, int dtype/*=-1*/);";
+        final String expectedResult = "multiply(@ByVal Mat src1, @ByVal Mat src2,\n" +
+                "                           @ByVal Mat dst, /*=1*/double scale, /*=-1*/int dtype);";
+        String replacedMethod = testMethod.replaceAll(FileParser.methodReorderPattern, FileParser.methodNewOrder);
+        assertEquals("Result was not the expected string after regex replacement", expectedResult, replacedMethod);
+    }
 }
