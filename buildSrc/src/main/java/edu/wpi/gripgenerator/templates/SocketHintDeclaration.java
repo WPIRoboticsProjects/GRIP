@@ -1,5 +1,6 @@
 package edu.wpi.gripgenerator.templates;
 
+import com.github.javaparser.ASTHelper;
 import com.github.javaparser.ast.ImportDeclaration;
 import com.github.javaparser.ast.body.*;
 import com.github.javaparser.ast.expr.*;
@@ -66,7 +67,12 @@ public class SocketHintDeclaration {
 
     public SocketHintDeclaration(DefaultValueCollector collector, Type genericType, List<DefinedParamType> paramTypes) {
         /* Convert this to the 'boxed' type if this is a PrimitiveType */
-        this.genericType = genericType instanceof PrimitiveType ? ((PrimitiveType) genericType).toBoxedType() : genericType;
+        this.genericType =
+                genericType instanceof PrimitiveType ?
+                        ((PrimitiveType) genericType).getType().equals(PrimitiveType.Primitive.Boolean) ?
+                                ((PrimitiveType) genericType).getType().toBoxedType() :
+                                ASTHelper.createReferenceType("Number", 0)
+                        : genericType;
         this.paramTypes = paramTypes;
         this.isOutput = paramTypes.get(0).isOutput();
         this.collector = collector;
