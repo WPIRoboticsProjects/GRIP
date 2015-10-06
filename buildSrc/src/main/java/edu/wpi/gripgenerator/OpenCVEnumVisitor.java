@@ -59,7 +59,9 @@ public class OpenCVEnumVisitor extends VoidVisitorAdapter<Map<String, Compilatio
         enumConstant.setArgs(expressionList);
 
         // Add the javadoc comment
-        if (var.hasComment()) enumConstant.setJavaDoc(new JavadocComment(var.getComment().getContent()));
+        if (var.hasComment() && var.getComment() instanceof  JavadocComment){
+            enumConstant.setJavaDoc(new JavadocComment(var.getComment().getContent()));
+        }
         return enumConstant;
     }
 

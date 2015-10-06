@@ -53,6 +53,7 @@ check.dependsOn jacocoTestReport
 
 allprojects {
     tasks.withType(Javadoc) {
+        source compileJava.source
         options.addStringOption('Xdoclint:all,-html', '-quiet')
     }
 }
