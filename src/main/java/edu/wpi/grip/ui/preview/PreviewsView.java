@@ -5,6 +5,7 @@ import com.google.common.eventbus.Subscribe;
 import edu.wpi.grip.core.OutputSocket;
 import edu.wpi.grip.core.Socket;
 import edu.wpi.grip.core.events.SocketPreviewChangedEvent;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.layout.HBox;
@@ -49,21 +50,23 @@ public class PreviewsView extends VBox {
 
     @Subscribe
     public synchronized void onSocketPreviewChanged(SocketPreviewChangedEvent event) {
-        final OutputSocket<?> socket = event.getSocket();
+        Platform.runLater(() -> {
+            final OutputSocket<?> socket = event.getSocket();
 
-        if (socket.isPreviewed()) {
-            // If the socket was just set as previewed, add it to the list of previewed sockets and add a new view for it.
-            if (!this.previewedSockets.contains(socket)) {
-                this.previewedSockets.add(socket);
-                this.previewBox.getChildren().add(SocketPreviewViewFactory.createPreviewView(this.eventBus, socket));
+            if (socket.isPreviewed()) {
+                // If the socket was just set as previewed, add it to the list of previewed sockets and add a new view for it.
+                if (!this.previewedSockets.contains(socket)) {
+                    this.previewedSockets.add(socket);
+                    this.previewBox.getChildren().add(SocketPreviewViewFactory.createPreviewView(this.eventBus, socket));
+                }
+            } else {
+                // If the socket was just set as not previewed, remove both it and the corresponding control
+                int index = this.previewedSockets.indexOf(socket);
+                if (index != -1) {
+                    this.previewedSockets.remove(index);
+                    this.eventBus.unregister(this.previewBox.getChildren().remove(index));
+                }
             }
-        } else {
-            // If the socket was just set as not previewed, remove both it and the corresponding control
-            int index = this.previewedSockets.indexOf(socket);
-            if (index != -1) {
-                this.previewedSockets.remove(index);
-                this.eventBus.unregister(this.previewBox.getChildren().remove(index));
-            }
-        }
+        });
     }
 }

@@ -1,10 +1,8 @@
 package edu.wpi.grip.core;
 
 import com.google.common.eventbus.EventBus;
-import edu.wpi.grip.core.events.ConnectionAddedEvent;
-import edu.wpi.grip.core.events.ConnectionRemovedEvent;
-import edu.wpi.grip.core.events.StepAddedEvent;
-import edu.wpi.grip.core.events.StepRemovedEvent;
+import edu.wpi.grip.core.events.*;
+import edu.wpi.grip.core.sources.ImageFileSource;
 import org.junit.Test;
 
 import java.util.Arrays;
@@ -15,6 +13,27 @@ import static org.junit.Assert.*;
 public class PipelineTest {
     EventBus eventBus = new EventBus();
     Operation addition = new AdditionOperation();
+
+    @Test
+    public void testAddSource() {
+        Pipeline pipeline = new Pipeline(eventBus);
+        Source source = new ImageFileSource(eventBus);
+
+        eventBus.post(new SourceAddedEvent(source));
+
+        assertEquals(Collections.singletonList(source), pipeline.getSources());
+    }
+
+    @Test
+    public void testRemoveSource() {
+        Pipeline pipeline = new Pipeline(eventBus);
+        Source source = new ImageFileSource(eventBus);
+
+        eventBus.post(new SourceAddedEvent(source));
+        eventBus.post(new SourceRemovedEvent(source));
+
+        assertEquals(Collections.emptyList(), pipeline.getSources());
+    }
 
     @Test
     @SuppressWarnings("unchecked")
