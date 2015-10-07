@@ -72,9 +72,11 @@ public class MainWindowController implements Initializable {
     );
 
     private final PythonScriptOperation gompeiOperation;
+    private final PythonScriptOperation sampleFilter;
 
     public MainWindowController() throws IOException {
         this.gompeiOperation = new PythonScriptOperation(getClass().getResource("/edu/wpi/grip/scripts/gompei.py"));
+        this.sampleFilter= new PythonScriptOperation(getClass().getResource("/edu/wpi/grip/scripts/sample-filter.py"));
     }
 
     @Override
@@ -82,7 +84,7 @@ public class MainWindowController implements Initializable {
         PreviewsView previewPaneView = new PreviewsView(eventBus);
 
         PaletteView paletteView = new PaletteView(eventBus);
-        paletteView.operationsProperty().addAll(this.add, this.multiply, this.gompeiOperation);
+        paletteView.operationsProperty().addAll(this.add, this.multiply, this.gompeiOperation, this.sampleFilter);
 
         PipelineView pipelineView = new PipelineView(eventBus, new Pipeline(this.eventBus));
 
