@@ -7,7 +7,7 @@ import edu.wpi.grip.core.events.SetSinkEvent;
 import edu.wpi.grip.core.operations.PythonScriptOperation;
 import edu.wpi.grip.core.sinks.DummySink;
 import edu.wpi.grip.ui.PaletteView;
-import edu.wpi.grip.ui.PipelineView;
+import edu.wpi.grip.ui.pipeline.PipelineView;
 import edu.wpi.grip.ui.preview.PreviewsView;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;

@@ -47,7 +47,7 @@
         </TitledPane>
     </children>
     <stylesheets>
-        <URL value="@roboto/Roboto.css"/>
-        <URL value="@GRIP.css"/>
+        <URL value="@../roboto/Roboto.css"/>
+        <URL value="@../GRIP.css"/>
     </stylesheets>
 </fx:root>

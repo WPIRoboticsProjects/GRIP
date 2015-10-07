@@ -1,4 +1,4 @@
-package edu.wpi.grip.ui;
+package edu.wpi.grip.ui.pipeline;
 
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
