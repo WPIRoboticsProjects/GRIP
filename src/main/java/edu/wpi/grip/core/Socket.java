@@ -75,16 +75,13 @@ public abstract class Socket<T> {
     }
 
     /**
-     * Set the value of the socket, and fire off a {@link edu.wpi.grip.core.events.SocketChangedEvent} if the value is
-     * different from the current one.
+     * Set the value of the socket, and fire off a {@link edu.wpi.grip.core.events.SocketChangedEvent}.
      *
      * @param value The value to store in this socket.
      */
     public void setValue(T value) {
-        if (!this.value.equals(value)) {
-            this.value = this.getSocketHint().getType().cast(value);
-            eventBus.post(new SocketChangedEvent(this));
-        }
+        this.value = this.getSocketHint().getType().cast(value);
+        eventBus.post(new SocketChangedEvent(this));
     }
 
     /**
