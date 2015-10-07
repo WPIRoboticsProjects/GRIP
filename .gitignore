@@ -78,5 +78,5 @@ hs_err_pid*
 node_modules
 bower_components
 
-#Generated files while being tested.
+#Generated files should be ignored as the are regenerated as a build step
 src/generated
