@@ -64,9 +64,11 @@ public class Step {
 
     @Subscribe
     public void onInputSocketChanged(SocketChangedEvent e) {
+        final Socket socket = e.getSocket();
+
         // If this socket that changed is one of the inputs to this step, run the operation with the new value.
-        if (e.getSocket().getStep() == this) {
-            operation.perform(inputSockets, outputSockets);
+        if (socket.getStep() == this && socket.getDirection().equals(Socket.Direction.INPUT)) {
+            this.operation.perform(inputSockets, outputSockets);
         }
     }
 }

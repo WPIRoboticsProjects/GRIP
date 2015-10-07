@@ -9,6 +9,7 @@ import edu.wpi.grip.core.events.SocketPublishedEvent;
 /**
  * Represents the output of an {@link Operation}. The OutputSocket also provides the ability to
  * make the value in a socket published.
+ *
  * @param <T> The type of the value that this socket stores.
  */
 public class OutputSocket<T> extends Socket<T> {
@@ -35,23 +36,18 @@ public class OutputSocket<T> extends Socket<T> {
      * @param eventBus   The Guava {@link EventBus} used by the application.
      * @param socketHint {@link #getSocketHint}
      */
-    public OutputSocket(EventBus eventBus, SocketHint<T> socketHint){
+    public OutputSocket(EventBus eventBus, SocketHint<T> socketHint) {
         super(eventBus, socketHint, Direction.OUTPUT);
     }
 
     @Override
-    public void setValue(T value){
-        // Check equality first before the value is ste
-        final boolean isNewValue = !this.getValue().equals(value);
-        // Set the value now that we know if there is a new value being stored
+    public void setValue(T value) {
         super.setValue(value);
-        // Now that the value is stored then publish the event
-        if (isNewValue) {
-            // If the socket's value is set to be published, also send a SocketPublishedEvent to notify any sinks that
-            // it has changed.
-            if (this.isPublished()) {
-                eventBus.post(new SocketPublishedEvent(this));
-            }
+
+        // If the socket's value is set to be published, also send a SocketPublishedEvent to notify any sinks that
+        // it has changed.
+        if (this.isPublished()) {
+            eventBus.post(new SocketPublishedEvent(this));
         }
     }
 
@@ -106,7 +102,7 @@ public class OutputSocket<T> extends Socket<T> {
 
 
     @Override
-    public String toString(){
+    public String toString() {
         return MoreObjects.toStringHelper(this)
                 .add("socketHint", getSocketHint())
                 .add("value", getValue())
