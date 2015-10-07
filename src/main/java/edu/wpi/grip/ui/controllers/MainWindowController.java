@@ -1,13 +1,18 @@
 package edu.wpi.grip.ui.controllers;
 
 import com.google.common.eventbus.EventBus;
+import com.google.common.eventbus.Subscribe;
+import edu.wpi.grip.core.InputSocket;
 import edu.wpi.grip.core.Operation;
+import edu.wpi.grip.core.OutputSocket;
 import edu.wpi.grip.core.Pipeline;
 import edu.wpi.grip.core.events.SetSinkEvent;
 import edu.wpi.grip.core.events.SourceAddedEvent;
+import edu.wpi.grip.core.events.StepRemovedEvent;
 import edu.wpi.grip.core.operations.PythonScriptOperation;
 import edu.wpi.grip.core.sinks.DummySink;
 import edu.wpi.grip.core.sources.ImageFileSource;
+import edu.wpi.grip.core.sources.WebcamSource;
 import edu.wpi.grip.ui.PaletteView;
 import edu.wpi.grip.ui.pipeline.PipelineView;
 import edu.wpi.grip.ui.preview.PreviewsView;
@@ -19,6 +24,7 @@ import javafx.scene.control.SplitPane;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
+import java.util.concurrent.TimeoutException;
 
 /**
  * The Controller for the application window.  Most of this class is throwaway code to demonstrate the current
@@ -73,6 +79,49 @@ public class MainWindowController implements Initializable {
             "    return a * b\n"
     );
 
+    private final Operation webcam = new Operation() {
+        private OutputSocket[] outputSockets;
+        private WebcamSource webcamSource;
+
+        @Override
+        public String getName() {
+            return "Webcam";
+        }
+
+        @Override
+        public String getDescription() {
+            return "Gets a Video Feed from a webcamera";
+        }
+
+        @Override
+        public InputSocket<?>[] createInputSockets(EventBus eventBus) {
+            return new InputSocket<?>[0];
+        }
+
+        @Override
+        public OutputSocket<?>[] createOutputSockets(EventBus eventBus) {
+            webcamSource = new WebcamSource(eventBus);
+            webcamSource.startVideo(0);
+            this.outputSockets = webcamSource.getOutputSockets();
+            return this.outputSockets;
+        }
+
+        @Override
+        public void perform(InputSocket<?>[] inputs, OutputSocket<?>[] outputs) {
+        }
+
+        @Subscribe
+        public void onStepRemoved(StepRemovedEvent event){
+            if (event.getStep().getOutputSockets().equals(this.outputSockets)){
+                try {
+                    webcamSource.stopVideo();
+                } catch (TimeoutException e) {
+                    throw new IllegalStateException("Could not stop video source", e);
+                }
+            }
+        }
+    };
+
     private final PythonScriptOperation gompeiOperation;
     private final PythonScriptOperation sampleFilter;
 
@@ -86,7 +135,11 @@ public class MainWindowController implements Initializable {
         PreviewsView previewPaneView = new PreviewsView(eventBus);
 
         PaletteView paletteView = new PaletteView(eventBus);
-        paletteView.operationsProperty().addAll(this.add, this.multiply, this.gompeiOperation, this.sampleFilter);
+
+        // REGISTER THE WEBCAMERA TO TAKE EVENTS
+        eventBus.register(this.webcam);
+
+        paletteView.operationsProperty().addAll(this.webcam, this.add, this.multiply, this.gompeiOperation, this.sampleFilter);
 
         PipelineView pipelineView = new PipelineView(eventBus, new Pipeline(this.eventBus));
 
