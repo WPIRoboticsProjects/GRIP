@@ -1,9 +1,10 @@
 package edu.wpi.grip.ui.preview;
 
 import com.google.common.eventbus.EventBus;
+import com.google.common.eventbus.Subscribe;
 import com.google.common.primitives.UnsignedBytes;
-import edu.wpi.grip.core.Socket;
-import javafx.application.Platform;
+import edu.wpi.grip.core.OutputSocket;
+import edu.wpi.grip.core.events.SocketChangedEvent;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.PixelFormat;
@@ -27,20 +28,20 @@ public class ImageSocketPreviewView extends SocketPreviewView<Mat> {
      * @param eventBus The EventBus used by the application
      * @param socket   An output socket to preview
      */
-    public ImageSocketPreviewView(EventBus eventBus, Socket<Mat> socket) {
+    public ImageSocketPreviewView(EventBus eventBus, OutputSocket<Mat> socket) {
         super(eventBus, socket);
 
-        this.convertImage();
-
-
-        this.imageView = new ImageView(this.image);
+        this.imageView = new ImageView();
         this.setContent(imageView);
 
-        // Every time the Mat changes, convert it into a JavaFX image and show it.
-        this.valueProperty().addListener(observable -> Platform.runLater(() -> {
+        this.convertImage();
+    }
+
+    @Subscribe
+    public void onSocketChanged(SocketChangedEvent event) {
+        if (event.getSocket() == this.getSocket()) {
             this.convertImage();
-            this.imageView.setImage(this.image);
-        }));
+        }
     }
 
     /**
@@ -53,12 +54,18 @@ public class ImageSocketPreviewView extends SocketPreviewView<Mat> {
      * (Mat -> Frame -> BufferedImage -> JavaFX Image) and is way too slow to use for a real-time video.
      */
     private void convertImage() {
-        final Mat mat = this.valueProperty().get();
+        final Mat mat = this.getSocket().getValue();
         final int width = mat.cols();
         final int height = mat.rows();
         final int channels = mat.channels();
 
         assert channels == 3 : "Only 3-channel/BGR images can be previewed";
+
+        // Don't try to render empty images.
+        if (mat.empty()) {
+            this.imageView.setImage(null);
+            return;
+        }
 
         // If the size of the Mat changed for whatever reason, allocate a new image with the proper dimensions and a buffer
         // big enough to hold all of the pixels in the image.
@@ -81,5 +88,6 @@ public class ImageSocketPreviewView extends SocketPreviewView<Mat> {
 
         final PixelFormat<IntBuffer> argb = PixelFormat.getIntArgbInstance();
         this.image.getPixelWriter().setPixels(0, 0, width, height, argb, this.pixels, width);
+        this.imageView.setImage(this.image);
     }
 }
