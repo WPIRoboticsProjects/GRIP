@@ -1,7 +1,7 @@
 package edu.wpi.grip.ui.preview;
 
 import com.google.common.eventbus.EventBus;
-import edu.wpi.grip.core.Socket;
+import edu.wpi.grip.core.OutputSocket;
 
 import static org.bytedeco.javacpp.opencv_core.Mat;
 
@@ -16,9 +16,9 @@ public class SocketPreviewViewFactory {
      * out what control to use to render a given socket.
      */
     @SuppressWarnings("unchecked")
-    public static <T> SocketPreviewView<T> createPreviewView(EventBus eventBus, Socket<T> socket) {
+    public static <T> SocketPreviewView<T> createPreviewView(EventBus eventBus, OutputSocket<T> socket) {
         if (socket.getSocketHint().getType() == Mat.class) {
-            return (SocketPreviewView) new ImageSocketPreviewView(eventBus, (Socket<Mat>) socket);
+            return (SocketPreviewView) new ImageSocketPreviewView(eventBus, (OutputSocket<Mat>) socket);
         } else {
             return new TextAreaSocketPreviewView<>(eventBus, socket);
         }
