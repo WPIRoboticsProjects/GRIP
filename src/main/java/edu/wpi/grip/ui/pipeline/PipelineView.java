@@ -2,14 +2,8 @@ package edu.wpi.grip.ui.pipeline;
 
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
-import edu.wpi.grip.core.Connection;
-import edu.wpi.grip.core.Pipeline;
-import edu.wpi.grip.core.Socket;
-import edu.wpi.grip.core.Step;
-import edu.wpi.grip.core.events.ConnectionAddedEvent;
-import edu.wpi.grip.core.events.ConnectionRemovedEvent;
-import edu.wpi.grip.core.events.StepAddedEvent;
-import edu.wpi.grip.core.events.StepRemovedEvent;
+import edu.wpi.grip.core.*;
+import edu.wpi.grip.core.events.*;
 import javafx.application.Platform;
 import javafx.beans.InvalidationListener;
 import javafx.beans.property.ReadOnlyObjectProperty;
@@ -23,6 +17,7 @@ import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.shape.Rectangle;
 
 import java.io.IOException;
@@ -35,6 +30,10 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * A JavaFX control fro the pipeline.  This control renders a list of steps.
  */
 public class PipelineView extends StackPane implements Initializable {
+
+    @FXML
+    private VBox sources;
+
     @FXML
     private HBox steps;
 
@@ -65,8 +64,14 @@ public class PipelineView extends StackPane implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        for (Step step : pipeline.getSteps()) {
-            steps.getChildren().add(new StepView(this.eventBus, step));
+        for (Source source : this.pipeline.getSources()) {
+            for (OutputSocket<?> socket : source.getOutputSockets()) {
+                this.sources.getChildren().add(new OutputSocketView(eventBus, socket));
+            }
+        }
+
+        for (Step step : this.pipeline.getSteps()) {
+            this.steps.getChildren().add(new StepView(this.eventBus, step));
         }
 
         connections.getChildren().add(new Rectangle(0, 0, 1, 1));
@@ -74,6 +79,14 @@ public class PipelineView extends StackPane implements Initializable {
 
     public Pipeline getPipeline() {
         return this.pipeline;
+    }
+
+    /**
+     * @return An unmodifiable list of {@link SourceView} corresponding to all of the sources in the pipeline
+     */
+    @SuppressWarnings("unchecked")
+    public ObservableList<SourceView> getSources() {
+        return (ObservableList) this.sources.getChildrenUnmodifiable();
     }
 
     /**
@@ -109,7 +122,8 @@ public class PipelineView extends StackPane implements Initializable {
     }
 
     /**
-     * @return The {@link OutputSocketView} that corresponds with the given socket
+     * @return The {@link OutputSocketView} that corresponds with the given socket, either from one of the steps in
+     * the pipeline or from a source
      */
     private OutputSocketView findOutputSocketView(Socket socket) {
         for (StepView stepView : this.getSteps()) {
@@ -117,6 +131,28 @@ public class PipelineView extends StackPane implements Initializable {
                 if (socketView.getSocket() == socket) {
                     return socketView;
                 }
+            }
+        }
+
+        for (SourceView sourceView : this.getSources()) {
+            for (OutputSocketView socketView : sourceView.getOutputSockets()) {
+                if (socketView.getSocket() == socket) {
+                    return socketView;
+                }
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * @return The {@link SourceView} that corresponds with the given source
+     */
+
+    private SourceView findSourceView(Source source) {
+        for (SourceView sourceView : this.getSources()) {
+            if (sourceView.getSource() == source) {
+                return sourceView;
             }
         }
 
@@ -193,6 +229,16 @@ public class PipelineView extends StackPane implements Initializable {
 
             this.connections.getChildren().add(connectionView);
         });
+    }
+
+    @Subscribe
+    public void onSourceAdded(SourceAddedEvent event) {
+        Platform.runLater(() -> this.sources.getChildren().add(new SourceView(this.eventBus, event.getSource())));
+    }
+
+    @Subscribe
+    public void onSourceRemoved(SourceRemovedEvent event) {
+        Platform.runLater(() -> this.sources.getChildren().remove(findSourceView(event.getSource())));
     }
 
     @Subscribe

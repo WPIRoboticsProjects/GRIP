@@ -1,13 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.Group?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.*?>
 <?import java.net.URL?>
+<?import javafx.scene.control.Separator?>
 <fx:root type="javafx.scene.layout.StackPane" maxWidth="Infinity" maxHeight="Infinity" xmlns:fx="http://javafx.com/fxml"
          styleClass="pipeline">
     <children>
-        <HBox fx:id="steps" styleClass="steps"/>
+        <HBox>
+            <VBox>
+                <Label styleClass="pane-title" text="Sources"/>
+                <Separator orientation="HORIZONTAL"/>
+                <VBox fx:id="sources" styleClass="sources"/>
+            </VBox>
+            <Separator orientation="VERTICAL"/>
+            <HBox fx:id="steps" styleClass="steps"/>
+        </HBox>
         <Group fx:id="connections">
             <StackPane.alignment>TOP_LEFT</StackPane.alignment>
         </Group>
