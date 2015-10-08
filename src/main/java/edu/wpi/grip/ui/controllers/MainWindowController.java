@@ -12,7 +12,7 @@ import edu.wpi.grip.core.events.StepRemovedEvent;
 import edu.wpi.grip.core.operations.PythonScriptOperation;
 import edu.wpi.grip.core.sinks.DummySink;
 import edu.wpi.grip.core.sources.ImageFileSource;
-import edu.wpi.grip.core.sources.WebcamSource;
+import edu.wpi.grip.core.sources.WebCamSource;
 import edu.wpi.grip.ui.PaletteView;
 import edu.wpi.grip.ui.pipeline.PipelineView;
 import edu.wpi.grip.ui.preview.PreviewsView;
@@ -81,7 +81,7 @@ public class MainWindowController implements Initializable {
 
     private final Operation webcam = new Operation() {
         private OutputSocket[] outputSockets;
-        private WebcamSource webcamSource;
+        private WebCamSource webCamSource;
 
         @Override
         public String getName() {
@@ -100,9 +100,9 @@ public class MainWindowController implements Initializable {
 
         @Override
         public OutputSocket<?>[] createOutputSockets(EventBus eventBus) {
-            webcamSource = new WebcamSource(eventBus);
-            webcamSource.startVideo(0);
-            this.outputSockets = webcamSource.getOutputSockets();
+            webCamSource = new WebCamSource(eventBus);
+            webCamSource.startVideo(WebCamSource.SourceType.ANY);
+            this.outputSockets = webCamSource.getOutputSockets();
             return this.outputSockets;
         }
 
@@ -114,7 +114,7 @@ public class MainWindowController implements Initializable {
         public void onStepRemoved(StepRemovedEvent event){
             if (event.getStep().getOutputSockets().equals(this.outputSockets)){
                 try {
-                    webcamSource.stopVideo();
+                    webCamSource.stopVideo();
                 } catch (TimeoutException e) {
                     throw new IllegalStateException("Could not stop video source", e);
                 }
