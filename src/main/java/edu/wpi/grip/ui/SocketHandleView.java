@@ -12,6 +12,8 @@ import edu.wpi.grip.core.events.SocketConnectedChangedEvent;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.css.PseudoClass;
+import javafx.scene.Cursor;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.input.DataFormat;
 import javafx.scene.input.Dragboard;
@@ -79,6 +81,8 @@ public class SocketHandleView extends Button {
 
             this.connectingProperty.set(true);
             draggingSocket = Optional.of(this.socket);
+
+            ((Node)mouseEvent.getSource()).setCursor(Cursor.CLOSED_HAND);
         });
 
         // Remove the "connecting" property (which changes the appearance of the handle) when the user moves the cursor
@@ -87,7 +91,10 @@ public class SocketHandleView extends Button {
         // to be dragged away.
         this.setOnDragExited(dragEvent ->
                 draggingSocket.ifPresent(other -> this.connectingProperty.set(this.socket == other)));
-        this.setOnDragDone(dragEvent -> this.connectingProperty.set(false));
+        this.setOnDragDone(dragEvent -> {
+            this.connectingProperty.set(false);
+            ((Node)dragEvent.getSource()).setCursor(Cursor.DEFAULT);
+        });
 
         // When the user drops the connection onto another socket, add a new connection.
         this.setOnDragDropped(dragEvent -> {
