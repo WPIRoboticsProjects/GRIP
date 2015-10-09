@@ -67,7 +67,7 @@ public class OperationList {
                         new MethodCallExpr(
                                 new NameExpr("Arrays"),
                                 "asList",
-                                operations.stream().map(o -> new ObjectCreationExpr(null, new ClassOrInterfaceType(o.getOperationName()), null)).collect(Collectors.toList())
+                                operations.stream().map(o -> new ObjectCreationExpr(null, new ClassOrInterfaceType(o.getOperationClassName()), null)).collect(Collectors.toList())
                         )
                 )
         );

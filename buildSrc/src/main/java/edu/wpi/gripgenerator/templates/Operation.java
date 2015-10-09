@@ -11,6 +11,8 @@ import com.github.javaparser.ast.expr.*;
 import com.github.javaparser.ast.stmt.*;
 import com.github.javaparser.ast.type.ClassOrInterfaceType;
 import com.github.javaparser.ast.type.VoidType;
+import com.google.common.base.Ascii;
+import com.google.common.base.CaseFormat;
 import com.google.common.collect.Sets;
 import edu.wpi.gripgenerator.defaults.DefaultValueCollector;
 import edu.wpi.gripgenerator.settings.DefinedMethod;
@@ -51,8 +53,23 @@ public class Operation {
         this.javadocComment = new JavadocComment(" Operation to call {@link " + className + "#" + definedMethod.getMethodName() + "} ");
     }
 
-    public String getOperationName() {
-        return definedMethod.getMethodName();
+    /**
+     * Gets the CamelCase formatted name version of the class name.
+     * @return The name to be used as the Class and file name.
+     */
+    public String getOperationClassName() {
+        final String name = definedMethod.getMethodName();
+        final CaseFormat format;
+        if (name.contains("_")) {
+            format = CaseFormat.LOWER_UNDERSCORE;
+        } else if(Ascii.isLowerCase(name.charAt(0))) {
+            format = CaseFormat.LOWER_CAMEL;
+        } else if(Ascii.isUpperCase(name.charAt(0))){
+            format = CaseFormat.UPPER_CAMEL;
+        } else {
+            throw new UnsupportedOperationException("Can not convert class name for " + name);
+        }
+        return format.to(CaseFormat.UPPER_CAMEL, definedMethod.getMethodName());
     }
 
     private List<ImportDeclaration> getAdditionalImports() {
@@ -273,9 +290,9 @@ public class Operation {
      * @return
      */
     private ClassOrInterfaceDeclaration getClassDeclaration() {
-//        System.out.println("Generating: " + getOperationName());
+//        System.out.println("Generating: " + getOperationClassName());
 //        System.out.println(definedMethod.methodToString());
-        ClassOrInterfaceDeclaration operation = new ClassOrInterfaceDeclaration(ModifierSet.PUBLIC, false, getOperationName());
+        ClassOrInterfaceDeclaration operation = new ClassOrInterfaceDeclaration(ModifierSet.PUBLIC, false, getOperationClassName());
         operation.setImplements(Collections.singletonList(iOperation));
         operation.setJavaDoc(javadocComment);
         operation.setComment(new BlockComment(
