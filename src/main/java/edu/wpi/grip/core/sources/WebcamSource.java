@@ -18,24 +18,28 @@ import java.util.concurrent.TimeoutException;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
- * Provides a way to generate a constantly updated {@link Mat} from a WebCam attached
- * to the users computer.
+ * Provides a way to generate a constantly updated {@link Mat} from a Webcam attached
+ * to the user's computer.
  */
-public class WebCamSource implements Source {
+public class WebcamSource implements Source {
 
     private final SocketHint<Mat> imageOutputHint = new SocketHint<Mat>("Image", Mat.class, Mat::new);
-    private final SocketHint<Number> framerateOutputHint = new SocketHint<Number>("Framerate", Number.class, 0);
+    private final SocketHint<Number> frameRateOutputHint = new SocketHint<Number>("Frame Rate", Number.class, 0);
     private OutputSocket<Mat> frameOutputSocket;
     private OutputSocket<Number> frameRateOutputSocket;
-    private Optional<Thread> executor;
+    private Optional<Thread> frameThread;
     private Optional<OpenCVFrameGrabber> grabber;
 
-    public WebCamSource(EventBus eventBus) {
+    /**
+     * Creates a Webcam source that can be used as an input to a pipeline
+     * @param eventBus The EventBus to attach to
+     */
+    public WebcamSource(EventBus eventBus) {
         checkNotNull(eventBus, "Event Bus was null.");
-        frameOutputSocket = new OutputSocket(eventBus, imageOutputHint);
-        frameRateOutputSocket = new OutputSocket(eventBus, framerateOutputHint);
-        grabber = Optional.empty();
-        executor = Optional.empty();
+        this.frameOutputSocket = new OutputSocket(eventBus, imageOutputHint);
+        this.frameRateOutputSocket = new OutputSocket(eventBus, frameRateOutputHint);
+        this.grabber = Optional.empty();
+        this.frameThread = Optional.empty();
     }
 
     @Override
@@ -45,15 +49,16 @@ public class WebCamSource implements Source {
 
     /**
      * Starts the video capture from the
-     * @param deviceNumber The type of the device the webcam should be attached with
+     *
+     * @param deviceNumber The index of the Webcam device that should be attached to
      */
     public synchronized void startVideo(final int deviceNumber) {
         final OpenCVFrameConverter.ToMat convertToMat = new OpenCVFrameConverter.ToMat();
         final OpenCVFrameGrabber grabber = new OpenCVFrameGrabber(deviceNumber);
-        if(this.executor.isPresent()){
+        if (this.frameThread.isPresent()) {
             throw new IllegalStateException("The video retrieval thread has already been started.");
         }
-        if(this.grabber.isPresent()){
+        if (this.grabber.isPresent()) {
             throw new IllegalStateException("The Frame Grabber has already been started.");
         }
         try {
@@ -66,7 +71,7 @@ public class WebCamSource implements Source {
 
         final Thread frameExecutor = new Thread(() -> {
             long lastFrame = System.currentTimeMillis();
-            while(!Thread.interrupted()) {
+            while (!Thread.interrupted()) {
                 final Frame videoFrame;
                 try {
                     videoFrame = grabber.grab();
@@ -75,27 +80,28 @@ public class WebCamSource implements Source {
                 }
                 frameOutputSocket.setValue(convertToMat.convert(videoFrame));
                 long thisMoment = System.currentTimeMillis();
-                frameRateOutputSocket.setValue(1000/(thisMoment - lastFrame));
+                frameRateOutputSocket.setValue(1000 / (thisMoment - lastFrame));
                 lastFrame = thisMoment;
             }
         });
         frameExecutor.setUncaughtExceptionHandler(
                 (thread, exception) -> {
-                    System.err.println("WebCam Frame Grabber Thread crashed with uncaught exception:");
+                    System.err.println("Webcam Frame Grabber Thread crashed with uncaught exception:");
                     exception.printStackTrace();
                 }
         );
         frameExecutor.start();
-        executor = Optional.of (frameExecutor);
+        frameThread = Optional.of(frameExecutor);
     }
 
     /**
-     * Stops the video feed from being
-     * @throws TimeoutException If the thread running the WebCam fails to join this one after a timeout.
+     * Stops the video feed from updating the output socket.
+     *
+     * @throws TimeoutException If the thread running the Webcam fails to join this one after a timeout.
      */
     public void stopVideo() throws TimeoutException {
-        if(executor.isPresent()){
-            final Thread ex = executor.get();
+        if (frameThread.isPresent()) {
+            final Thread ex = frameThread.get();
             ex.interrupt();
             try {
                 ex.join(TimeUnit.SECONDS.toMillis(2));
@@ -107,7 +113,7 @@ public class WebCamSource implements Source {
                 System.out.println("Caught Exception:");
                 e.printStackTrace();
             } finally {
-                executor = Optional.empty();
+                frameThread = Optional.empty();
                 // This will always run even if a timeout exception occurs
                 try {
                     grabber.ifPresent((openCVFrameGrabber) -> {
@@ -123,7 +129,7 @@ public class WebCamSource implements Source {
                 }
             }
         } else {
-            throw new IllegalStateException("Tried to stop a webcam that is already stopped.");
+            throw new IllegalStateException("Tried to stop a Webcam that is already stopped.");
         }
 
     }
