@@ -77,11 +77,12 @@ public class ImageSocketPreviewView extends SocketPreviewView<Mat> {
         // Convert the BGR data from the Mat into ARGB data that we can put into a JavaFX WritableImage
         // TODO: Also add functions for converting binary and grayscale data into ARGB
         ByteBuffer buffer = mat.<ByteBuffer>createBuffer();
+        final int stride = buffer.capacity() / height;
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
-                final int b = UnsignedBytes.toInt(buffer.get((width * y + x) * channels));
-                final int g = UnsignedBytes.toInt(buffer.get((width * y + x) * channels + 1));
-                final int r = UnsignedBytes.toInt(buffer.get((width * y + x) * channels + 2));
+                final int b = UnsignedBytes.toInt(buffer.get(stride * y + channels * x));
+                final int g = UnsignedBytes.toInt(buffer.get(stride * y + channels * x + 1));
+                final int r = UnsignedBytes.toInt(buffer.get(stride * y + channels * x + 2));
                 this.pixels.put(width * y + x, (0xff << 24) | (r << 16) | (g << 8) | b);
             }
         }
