@@ -1,15 +1,13 @@
 package edu.wpi.gripgenerator.templates;
 
+import com.github.javaparser.ASTHelper;
 import com.github.javaparser.ast.body.ModifierSet;
 import com.github.javaparser.ast.body.VariableDeclarator;
 import com.github.javaparser.ast.body.VariableDeclaratorId;
 import com.github.javaparser.ast.expr.*;
 import com.github.javaparser.ast.stmt.BlockStmt;
 import com.github.javaparser.ast.stmt.ReturnStmt;
-import com.github.javaparser.ast.type.ClassOrInterfaceType;
-import com.github.javaparser.ast.type.ReferenceType;
-import com.github.javaparser.ast.type.Type;
-import com.github.javaparser.ast.type.WildcardType;
+import com.github.javaparser.ast.type.*;
 import edu.wpi.gripgenerator.defaults.DefaultValueCollector;
 import edu.wpi.gripgenerator.settings.DefinedParamType;
 
@@ -65,25 +63,62 @@ public class SocketHintDeclarationCollection {
                 assert false : "The paramType was not in either the input or output list";
                 return null;
             }
+            final MethodCallExpr getValueExpression = new MethodCallExpr(
+                    new ArrayAccessExpr(
+                            new NameExpr(paramId),
+                            new IntegerLiteralExpr(String.valueOf(index))
+                    ),
+                    "getValue"
+            );
+            final Expression assignExpression;
+            if (paramType.getType() instanceof PrimitiveType && (!((PrimitiveType) paramType.getType()).getType().equals(PrimitiveType.Primitive.Boolean))) {
+                final String numberConversionFunction;
+                switch (((PrimitiveType) paramType.getType()).getType()) {
+                    case Int:
+                        numberConversionFunction = "intValue";
+                        break;
+                    case Short:
+                    case Char:
+                        numberConversionFunction = "shortValue";
+                        break;
+                    case Float:
+                        numberConversionFunction = "floatValue";
+                        break;
+                    case Double:
+                        numberConversionFunction = "doubleValue";
+                        break;
+                    case Byte:
+                        numberConversionFunction = "byteValue";
+                        break;
+                    case Long:
+                        numberConversionFunction = "longValue";
+                        break;
+                    default:
+                        throw new IllegalStateException("Conversion for type " + paramType.getType() + " is not defined");
+                }
+                assignExpression = new MethodCallExpr(
+                        new EnclosedExpr(
+                                new CastExpr(
+                                        ASTHelper.createReferenceType("Number", 0),
+                                        getValueExpression
+                                )
+                        ),
+                        numberConversionFunction
+                );
+            } else {
+                assignExpression = new CastExpr(
+                        paramType.getTypeBoxedIfPossible(),
+                        getValueExpression
+                );
+            }
+
             assignments.add(
                     new VariableDeclarationExpr(
                             ModifierSet.FINAL,
                             paramType.getType(),
-                            Arrays.asList(
+                            Collections.singletonList(
                                     new VariableDeclarator(
-                                            new VariableDeclaratorId(paramType.getName()),
-                                            new CastExpr(
-                                                    paramType.getTypeBoxedIfPossible(),
-                                                    new MethodCallExpr(
-                                                            new ArrayAccessExpr(
-                                                                    new NameExpr(paramId),
-                                                                    new IntegerLiteralExpr(String.valueOf(index))
-                                                            ),
-                                                            "getValue"
-                                                    )
-                                            )
-
-                                    )
+                                            new VariableDeclaratorId(paramType.getName()), assignExpression)
                             )
                     )
             );
