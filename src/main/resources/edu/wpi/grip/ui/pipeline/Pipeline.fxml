@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.Group?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.*?>
+<?import java.net.URL?>
+<fx:root type="javafx.scene.layout.StackPane" maxWidth="Infinity" maxHeight="Infinity" xmlns:fx="http://javafx.com/fxml"
+         styleClass="pipeline">
+    <children>
+        <HBox>
+            <VBox fillWidth="true">
+                <Label styleClass="pane-title" text="Sources"/>
+                <Separator orientation="HORIZONTAL"/>
+                <Pane fx:id="addSourcePane"/>
+                <VBox fx:id="sources" styleClass="sources"/>
+            </VBox>
+            <Separator orientation="VERTICAL"/>
+            <HBox fx:id="steps" styleClass="steps"/>
+        </HBox>
+        <Group fx:id="connections">
+            <StackPane.alignment>TOP_LEFT</StackPane.alignment>
+        </Group>
+    </children>
+    <stylesheets>
+        <URL value="@../roboto/Roboto.css"/>
+        <URL value="@../GRIP.css"/>
+    </stylesheets>
+</fx:root>

@@ -12,7 +12,7 @@
         <ToggleButton fx:id="preview">
             <graphic>
                 <ImageView>
-                    <Image url="@icons/preview.png" requestedWidth="32" requestedHeight="32"/>
+                    <Image url="@../icons/preview.png" requestedWidth="32" requestedHeight="32"/>
                 </ImageView>
             </graphic>
             <tooltip>
@@ -22,7 +22,7 @@
         <ToggleButton fx:id="publish">
             <graphic>
                 <ImageView>
-                    <Image url="@icons/publish.png" requestedWidth="32" requestedHeight="32"/>
+                    <Image url="@../icons/publish.png" requestedWidth="32" requestedHeight="32"/>
                 </ImageView>
             </graphic>
             <tooltip>

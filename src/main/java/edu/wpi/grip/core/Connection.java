@@ -4,6 +4,7 @@ import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import edu.wpi.grip.core.events.ConnectionRemovedEvent;
 import edu.wpi.grip.core.events.SocketChangedEvent;
+import edu.wpi.grip.core.events.SourceRemovedEvent;
 import edu.wpi.grip.core.events.StepRemovedEvent;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -51,7 +52,7 @@ public class Connection<T> {
     }
 
     @Subscribe
-    public void onStepRemoved(StepRemovedEvent e) {
+    public void removeConnection(StepRemovedEvent e) {
         // Remove this connection if one of the steps it was connected to was removed
         for (Socket socket : e.getStep().getOutputSockets()) {
             if (socket == this.inputSocket || socket == this.outputSocket) {
@@ -62,6 +63,17 @@ public class Connection<T> {
 
         for (Socket socket : e.getStep().getInputSockets()) {
             if (socket == this.inputSocket || socket == this.outputSocket) {
+                this.eventBus.post(new ConnectionRemovedEvent(this));
+                return;
+            }
+        }
+    }
+
+    @Subscribe
+    public void removeConnection(SourceRemovedEvent e) {
+        // Remove this connection if it's from a source that was removed
+        for (OutputSocket socket : e.getSource().getOutputSockets()) {
+            if (socket == this.outputSocket) {
                 this.eventBus.post(new ConnectionRemovedEvent(this));
                 return;
             }

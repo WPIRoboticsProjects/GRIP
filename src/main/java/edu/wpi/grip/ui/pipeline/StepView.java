@@ -1,7 +1,6 @@
-package edu.wpi.grip.ui;
+package edu.wpi.grip.ui.pipeline;
 
 import com.google.common.eventbus.EventBus;
-import edu.wpi.grip.core.Socket;
 import edu.wpi.grip.core.InputSocket;
 import edu.wpi.grip.core.OutputSocket;
 import edu.wpi.grip.core.Step;

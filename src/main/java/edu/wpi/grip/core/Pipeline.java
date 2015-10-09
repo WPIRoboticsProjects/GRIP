@@ -15,12 +15,14 @@ import java.util.*;
  */
 public class Pipeline {
     private final EventBus eventBus;
+    private final List<Source> sources;
     private final List<Step> steps;
     private final Set<Connection> connections;
     private Optional<Sink> sink;
 
     public Pipeline(EventBus eventBus) {
         this.eventBus = eventBus;
+        this.sources = new ArrayList<>();
         this.steps = new ArrayList<>();
         this.connections = new HashSet<>();
         this.sink = Optional.empty();
@@ -36,6 +38,14 @@ public class Pipeline {
         this.steps.forEach(this.eventBus::register);
         this.connections.forEach(this.eventBus::register);
         this.sink.ifPresent(this.eventBus::register);
+    }
+
+    /**
+     * @return The unmodifiable list of sources for inputs to the algorithm
+     * @see Source
+     */
+    public List<Source> getSources() {
+        return Collections.unmodifiableList(this.sources);
     }
 
     /**
@@ -57,6 +67,22 @@ public class Pipeline {
      */
     public Optional<Sink> getSink() {
         return this.sink;
+    }
+
+    @Subscribe
+    public void onSourceAdded(SourceAddedEvent event) {
+        this.sources.add(event.getSource());
+    }
+
+    @Subscribe
+    public void onSourceRemoved(SourceRemovedEvent event) {
+        this.sources.remove(event.getSource());
+
+        // Sockets of deleted sources should not be published or previewed
+        for (OutputSocket<?> socket : event.getSource().getOutputSockets()) {
+            socket.setPublished(false);
+            socket.setPreviewed(false);
+        }
     }
 
     @Subscribe
