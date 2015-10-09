@@ -12,14 +12,14 @@ import org.junit.Test;
 import static org.junit.Assert.assertTrue;
 
 
-public class subtractTest {
+public class SubtractTest {
     private EventBus eventBus;
-    private subtract subtractOperation;
+    private Subtract subtractOperation;
 
     @Before
     public void setUp() throws Exception {
         this.eventBus = new EventBus();
-        this.subtractOperation = new subtract();
+        this.subtractOperation = new Subtract();
     }
 
     /**
