@@ -18,8 +18,16 @@ import java.util.concurrent.TimeoutException;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+/**
+ * Provides a way to generate a constantly updated {@link Mat} from a WebCam attached
+ * to the users computer.
+ */
 public class WebCamSource implements Source {
 
+    /**
+     * Statically defined list of devices that opencv
+     * supports as WebCam devices.
+     */
     public enum SourceType {
         ANY(opencv_videoio.CV_CAP_ANY, "AutoDetect"),
 
@@ -72,7 +80,13 @@ public class WebCamSource implements Source {
 
         GPHOTO2(opencv_videoio.CV_CAP_GPHOTO2, "");
 
+        /**
+         * The constant value that this enum is equivalent to.
+         */
         final int value;
+        /**
+         * The group that this input belongs to as defined by the comments in {@link opencv_videoio}.
+         */
         final String group;
         SourceType(final int value, final String group){
             this.value = value;
