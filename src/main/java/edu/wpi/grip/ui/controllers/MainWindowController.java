@@ -101,7 +101,7 @@ public class MainWindowController implements Initializable {
         @Override
         public OutputSocket<?>[] createOutputSockets(EventBus eventBus) {
             webCamSource = new WebCamSource(eventBus);
-            webCamSource.startVideo(WebCamSource.SourceType.ANY);
+            webCamSource.startVideo(0);
             this.outputSockets = webCamSource.getOutputSockets();
             return this.outputSockets;
         }
