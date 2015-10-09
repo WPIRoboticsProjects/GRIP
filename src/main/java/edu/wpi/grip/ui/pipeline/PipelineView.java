@@ -123,7 +123,7 @@ public class PipelineView extends StackPane implements Initializable {
             }
         }
 
-        return null;
+        return null; // TODO throw an exception
     }
 
     /**
@@ -147,7 +147,7 @@ public class PipelineView extends StackPane implements Initializable {
             }
         }
 
-        return null;
+        return null; // TODO throw an exception
     }
 
     /**
@@ -161,7 +161,7 @@ public class PipelineView extends StackPane implements Initializable {
             }
         }
 
-        return null;
+        return null; // TODO throw an exception
     }
 
     /**
@@ -174,7 +174,7 @@ public class PipelineView extends StackPane implements Initializable {
             }
         }
 
-        return null;
+        return null; // TODO throw an exception
     }
 
     /**
@@ -187,7 +187,7 @@ public class PipelineView extends StackPane implements Initializable {
             }
         }
 
-        return null;
+        return null; // TODO throw an exception
     }
 
     /**
