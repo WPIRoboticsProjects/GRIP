@@ -7,11 +7,9 @@ import edu.wpi.grip.core.Operation;
 import edu.wpi.grip.core.OutputSocket;
 import edu.wpi.grip.core.Pipeline;
 import edu.wpi.grip.core.events.SetSinkEvent;
-import edu.wpi.grip.core.events.SourceAddedEvent;
 import edu.wpi.grip.core.events.StepRemovedEvent;
 import edu.wpi.grip.core.operations.PythonScriptOperation;
 import edu.wpi.grip.core.sinks.DummySink;
-import edu.wpi.grip.core.sources.ImageFileSource;
 import edu.wpi.grip.core.sources.WebcamSource;
 import edu.wpi.grip.generated.CVOperations;
 import edu.wpi.grip.ui.PaletteView;
@@ -167,15 +165,6 @@ public class MainWindowController implements Initializable {
         this.topPane.getItems().addAll(previewPaneView, paletteView);
         this.bottomPane.setContent(pipelineView);
 
-
-        final ImageFileSource source1 = new ImageFileSource(eventBus);
-        source1.loadImage(getClass().getResource("/edu/wpi/grip/images/fall-gompei.jpeg"));
-
-        final ImageFileSource source2 = new ImageFileSource(eventBus);
-        source2.loadImage(getClass().getResource("/edu/wpi/grip/images/winter-gompei.jpeg"));
-
-        this.eventBus.post(new SourceAddedEvent(source1));
-        this.eventBus.post(new SourceAddedEvent(source2));
         this.eventBus.post(new SetSinkEvent(new DummySink()));
     }
 }
