@@ -16,6 +16,7 @@ import javafx.geometry.Point2D;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.shape.Rectangle;
@@ -30,9 +31,11 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * A JavaFX control fro the pipeline.  This control renders a list of steps.
  */
 public class PipelineView extends StackPane implements Initializable {
-
     @FXML
     private VBox sources;
+
+    @FXML
+    private Pane addSourcePane;
 
     @FXML
     private HBox steps;
@@ -58,6 +61,8 @@ public class PipelineView extends StackPane implements Initializable {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+
+        this.addSourcePane.getChildren().add(new AddSourceView(eventBus));
 
         this.eventBus.register(this);
     }

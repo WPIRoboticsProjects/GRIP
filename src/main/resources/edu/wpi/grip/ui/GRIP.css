@@ -89,19 +89,24 @@ ImageView.operation-icon {
     -fx-padding: 0.5em;
 }
 
+.sources {
+    -fx-padding: 1em;
+    -fx-spacing: 1em;
+}
+
 .source {
     -fx-padding: 1em;
     -fx-spacing: 1em;
-
-    -fx-background-color:
-        linear-gradient(to bottom, derive(-fx-color,-15%) 95%, derive(-fx-color,-25%) 100%),
-        -fx-inner-border,
-        -fx-body-color;
-    -fx-background-insets: 0, 1, 2;
+    -fx-border-width: 1px;
+    -fx-border-color: #c8c8c8;
 }
 
 Label.source-name {
     -fx-font-weight: bold;
+}
+
+Button.add-source {
+    -fx-padding: 1em;
 }
 
 .steps {
