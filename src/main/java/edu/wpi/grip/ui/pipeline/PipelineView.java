@@ -114,7 +114,7 @@ public class PipelineView extends StackPane implements Initializable {
     /**
      * @return The {@link InputSocketView} that corresponds with the given socket
      */
-    private InputSocketView findInputSocketView(Socket socket) {
+    private InputSocketView findInputSocketView(InputSocket socket) {
         for (StepView stepView : this.getSteps()) {
             for (InputSocketView socketView : stepView.getInputSockets()) {
                 if (socketView.getSocket() == socket) {
@@ -123,14 +123,14 @@ public class PipelineView extends StackPane implements Initializable {
             }
         }
 
-        return null; // TODO throw an exception
+        throw new IllegalArgumentException("input socket view does not exist in pipeline: " + socket);
     }
 
     /**
      * @return The {@link OutputSocketView} that corresponds with the given socket, either from one of the steps in
      * the pipeline or from a source
      */
-    private OutputSocketView findOutputSocketView(Socket socket) {
+    private OutputSocketView findOutputSocketView(OutputSocket socket) {
         for (StepView stepView : this.getSteps()) {
             for (OutputSocketView socketView : stepView.getOutputSockets()) {
                 if (socketView.getSocket() == socket) {
@@ -147,7 +147,7 @@ public class PipelineView extends StackPane implements Initializable {
             }
         }
 
-        return null; // TODO throw an exception
+        throw new IllegalArgumentException("output socket view does not exist in pipeline: " + socket);
     }
 
     /**
@@ -161,7 +161,7 @@ public class PipelineView extends StackPane implements Initializable {
             }
         }
 
-        return null; // TODO throw an exception
+        throw new IllegalArgumentException("source view does not exist in pipeline: " + source);
     }
 
     /**
@@ -174,7 +174,7 @@ public class PipelineView extends StackPane implements Initializable {
             }
         }
 
-        return null; // TODO throw an exception
+        throw new IllegalArgumentException("step view does not exist in pipeline: " + step);
     }
 
     /**
@@ -187,7 +187,7 @@ public class PipelineView extends StackPane implements Initializable {
             }
         }
 
-        return null; // TODO throw an exception
+        throw new IllegalArgumentException("connection view does not exist in pipeline: " + connection);
     }
 
     /**
@@ -200,10 +200,6 @@ public class PipelineView extends StackPane implements Initializable {
             // we know where to position it.
             final OutputSocketView outputSocketView = findOutputSocketView(connection.getOutputSocket());
             final InputSocketView inputSocketView = findInputSocketView(connection.getInputSocket());
-
-            if (inputSocketView == null || outputSocketView == null) {
-                throw new RuntimeException("Connection added for socket that does not exist in the pipeline");
-            }
 
             final ConnectionView connectionView = new ConnectionView(this.eventBus, connection);
 
@@ -250,10 +246,8 @@ public class PipelineView extends StackPane implements Initializable {
     public void onStepAdded(StepAddedEvent event) {
         // Add a new control to the pipelineview for the step that was added
         Platform.runLater(() -> {
-            synchronized (this) {
-                int index = event.getIndex().or(this.steps.getChildren().size());
-                this.steps.getChildren().add(index, new StepView(this.eventBus, event.getStep()));
-            }
+            int index = event.getIndex().or(this.steps.getChildren().size());
+            this.steps.getChildren().add(index, new StepView(this.eventBus, event.getStep()));
         });
     }
 
@@ -261,22 +255,16 @@ public class PipelineView extends StackPane implements Initializable {
     public void onStepRemoved(StepRemovedEvent event) {
         // Remove the control that corresponds with the step that was removed
         Platform.runLater(() -> {
-            synchronized (this) {
-                final StepView stepView = findStepView(event.getStep());
-                if (stepView != null) {
-                    this.steps.getChildren().remove(stepView);
-                    this.eventBus.unregister(stepView);
-                }
-            }
+            final StepView stepView = findStepView(event.getStep());
+            this.steps.getChildren().remove(stepView);
+            this.eventBus.unregister(stepView);
         });
     }
 
     @Subscribe
     public void onConnectionAdded(ConnectionAddedEvent event) {
-        final Connection connection = event.getConnection();
-
         // Add the new connection view
-        Platform.runLater(() -> this.addConnectionView(connection));
+        Platform.runLater(() -> this.addConnectionView(event.getConnection()));
     }
 
     @Subscribe
@@ -284,10 +272,8 @@ public class PipelineView extends StackPane implements Initializable {
         // Remove the control that corresponds with the connection that was removed
         Platform.runLater(() -> {
             final ConnectionView connectionView = findConnectionView(event.getConnection());
-            if (connectionView != null) {
-                this.connections.getChildren().remove(connectionView);
-                this.eventBus.unregister(connectionView);
-            }
+            this.connections.getChildren().remove(connectionView);
+            this.eventBus.unregister(connectionView);
         });
     }
 }
