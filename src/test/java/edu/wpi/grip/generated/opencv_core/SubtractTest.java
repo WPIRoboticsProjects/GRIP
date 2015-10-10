@@ -1,8 +1,7 @@
-package edu.wpi.grip.core.operations.opencv;
+package edu.wpi.grip.generated.opencv_core;
 
 import com.google.common.eventbus.EventBus;
 import edu.wpi.grip.core.InputSocket;
-import edu.wpi.grip.core.Operation;
 import edu.wpi.grip.core.OutputSocket;
 import org.bytedeco.javacpp.opencv_core;
 import org.bytedeco.javacpp.opencv_core.Mat;
@@ -12,15 +11,15 @@ import org.junit.Test;
 
 import static org.junit.Assert.assertTrue;
 
-public class AddOperationTest {
 
-    EventBus eventBus;
-    Operation addition;
+public class SubtractTest {
+    private EventBus eventBus;
+    private Subtract subtractOperation;
 
     @Before
     public void setUp() throws Exception {
         this.eventBus = new EventBus();
-        this.addition = new AddOperation();
+        this.subtractOperation = new Subtract();
     }
 
     /**
@@ -47,28 +46,18 @@ public class AddOperationTest {
     }
 
     @Test
-    public void testAddMatrixOfOnesToMatrixOfTwosEqualsMatrixOfThrees() {
-        // Given
-        InputSocket[] inputs = addition.createInputSockets(eventBus);
-        OutputSocket[] outputs = addition.createOutputSockets(eventBus);
-        InputSocket<Mat> a = inputs[0], b = inputs[1];
-        OutputSocket<Mat> c = outputs[0];
+    public void testSubtract(){
+        InputSocket<Mat>[] inputs = (InputSocket<Mat>[])subtractOperation.createInputSockets(eventBus);
+        OutputSocket<Mat>[] outputs = (OutputSocket<Mat>[])subtractOperation.createOutputSockets(eventBus);
 
         int sz[] = {256, 256};
 
-        a.setValue(new Mat(2, sz, opencv_core.CV_8U, Scalar.all(1)));
-        b.setValue(new Mat(2, sz, opencv_core.CV_8U, Scalar.all(2)));
-
-        //When
-        long startTime = System.currentTimeMillis();
-        for(int i = 0; i<1000; i++){
-            addition.perform(inputs, outputs);
-        }
-        long endTime = System.currentTimeMillis();
-        System.out.println("Run time: " + (endTime - startTime));
+        inputs[0].setValue(new Mat(2, sz, opencv_core.CV_8U, Scalar.all(9)));
+        inputs[1].setValue(new Mat(2, sz, opencv_core.CV_8U, Scalar.all(4)));
+        subtractOperation.perform(inputs, outputs);
 
         //Then
-        Mat expectedResult = new Mat(2, sz, opencv_core.CV_8U, Scalar.all(3));
-        assertTrue(isMatEqual(c.getValue(), expectedResult));
+        Mat expectedResult = new Mat(2, sz, opencv_core.CV_8U, Scalar.all(5));
+        assertTrue(isMatEqual(outputs[0].getValue(), expectedResult));
     }
 }

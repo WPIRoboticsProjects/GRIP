@@ -3,6 +3,15 @@ apply plugin: 'application'
 apply plugin: 'jacoco'
 apply from: 'javafx.plugin'
 
+sourceSets{
+    generated{
+        java{
+            /* Note: When referencing this it becomes `srcDirs` */
+            srcDir 'src/generated/java'
+        }
+    }
+}
+
 
 repositories {
     mavenCentral()
@@ -24,6 +33,16 @@ dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.11'
 }
 
+compileJava.source sourceSets.generated.java, sourceSets.main.java
+
+task generateCodeFromSource( type: CodeGenerator ){
+    description 'Generates the Operation Wrappers for the OpenCV methods.\n To skip run with parm `-PskipGenerate`'
+    dest sourceSets.generated.java.srcDirs
+    removeExisting true
+}
+generateCodeFromSource.onlyIf { !project.hasProperty('skipGenerate') }
+compileJava.dependsOn generateCodeFromSource
+
 jacocoTestReport {
     reports {
         xml.enabled = true
@@ -34,6 +53,7 @@ check.dependsOn jacocoTestReport
 
 allprojects {
     tasks.withType(Javadoc) {
+        source compileJava.source
         options.addStringOption('Xdoclint:all,-html', '-quiet')
     }
 }

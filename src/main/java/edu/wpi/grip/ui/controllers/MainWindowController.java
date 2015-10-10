@@ -13,6 +13,7 @@ import edu.wpi.grip.core.operations.PythonScriptOperation;
 import edu.wpi.grip.core.sinks.DummySink;
 import edu.wpi.grip.core.sources.ImageFileSource;
 import edu.wpi.grip.core.sources.WebcamSource;
+import edu.wpi.grip.generated.CVOperations;
 import edu.wpi.grip.ui.PaletteView;
 import edu.wpi.grip.ui.pipeline.PipelineView;
 import edu.wpi.grip.ui.preview.PreviewsView;
@@ -23,8 +24,12 @@ import javafx.scene.control.SplitPane;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.ResourceBundle;
 import java.util.concurrent.TimeoutException;
+import java.util.stream.Collectors;
 
 /**
  * The Controller for the application window.  Most of this class is throwaway code to demonstrate the current
@@ -139,7 +144,23 @@ public class MainWindowController implements Initializable {
         // REGISTER THE WEBCAMERA TO TAKE EVENTS
         eventBus.register(this.webcam);
 
-        paletteView.operationsProperty().addAll(this.webcam, this.add, this.multiply, this.gompeiOperation, this.sampleFilter);
+        List<Operation> operationList = new ArrayList(
+                Arrays.asList(
+                        this.webcam,
+                        this.add,
+                        this.multiply,
+                        this.gompeiOperation,
+                        this.sampleFilter
+                )
+        );
+        operationList.addAll(CVOperations.OPERATIONS);
+
+        paletteView.operationsProperty().addAll(
+                operationList.stream()
+                        .sorted((a, b) -> a.getName().compareToIgnoreCase(b.getName()))
+                        .collect(Collectors.toList())
+        );
+
 
         PipelineView pipelineView = new PipelineView(eventBus, new Pipeline(this.eventBus));
 

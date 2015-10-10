@@ -3,7 +3,7 @@ package edu.wpi.grip.core.operations.opencv;
 import com.google.common.eventbus.EventBus;
 import edu.wpi.grip.core.*;
 import org.bytedeco.javacpp.opencv_core;
-import org.bytedeco.javacpp.opencv_core.*;
+import org.bytedeco.javacpp.opencv_core.Mat;
 
 
 /**
