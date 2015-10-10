@@ -6,6 +6,10 @@ edu.wpi.grip.core.operations.opencv
 edu.wpi.grip.core.serialization
 edu.wpi.grip.core.sinks
 edu.wpi.grip.core.sources
+edu.wpi.grip.generated
+edu.wpi.grip.generated.opencv_core
+edu.wpi.grip.generated.opencv_core.enumeration
+edu.wpi.grip.generated.opencv_imgproc
 edu.wpi.grip.ui
 edu.wpi.grip.ui.controllers
 edu.wpi.grip.ui.models
