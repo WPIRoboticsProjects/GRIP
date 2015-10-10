@@ -25,11 +25,9 @@ public class SourceView extends VBox {
 
         this.getStyleClass().add("source");
 
-        // TODO: add some sort of getName() method to Source?  There's probably a better way to label these than the class
-        // name.
-        final Label title = new Label(source.getClass().getSimpleName());
-        title.getStyleClass().add("source-name");
-        this.getChildren().add(title);
+        final Label nameLabel = new Label(source.getName());
+        nameLabel.getStyleClass().add("source-name");
+        this.getChildren().add(nameLabel);
 
         this.sockets = new VBox();
         this.getChildren().add(this.sockets);

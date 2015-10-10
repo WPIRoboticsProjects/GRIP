@@ -59,14 +59,12 @@ public class AddSourceView extends HBox {
 
             if (imageFiles == null) return;
 
-            // Add a new source for each image and load it.
+            // Add a new source for each image .
             imageFiles.forEach(file -> {
-                final ImageFileSource source = new ImageFileSource(eventBus);
-                eventBus.post(new SourceAddedEvent(source));
-
                 this.loadSourceExecutor.execute(() -> {
                     try {
-                        source.loadImage(file.toURI().toURL());
+                        final ImageFileSource source = new ImageFileSource(eventBus, file.toURI().toURL());
+                        eventBus.post(new SourceAddedEvent(source));
                     } catch (MalformedURLException e) {
                         e.printStackTrace();
                     }
@@ -91,10 +89,10 @@ public class AddSourceView extends HBox {
 
             // If the user clicks OK, add a new webcam source
             dialog.showAndWait().filter(Predicate.isEqual(ButtonType.OK)).ifPresent(result -> {
-                final WebcamSource source = new WebcamSource(eventBus);
-                eventBus.post(new SourceAddedEvent(source));
-
-                this.loadSourceExecutor.execute(() -> source.startVideo(cameraIndex.getValue()));
+                this.loadSourceExecutor.execute(() -> {
+                    final WebcamSource source = new WebcamSource(eventBus, cameraIndex.getValue());
+                    eventBus.post(new SourceAddedEvent(source));
+                });
             });
         });
     }

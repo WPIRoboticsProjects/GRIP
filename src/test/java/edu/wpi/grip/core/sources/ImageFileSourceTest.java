@@ -18,19 +18,17 @@ public class ImageFileSourceTest {
     private final URL imageUrl = ImageFileSourceTest.class.getResource("/edu/wpi/grip/images/GRIP_Logo.png");
     private final URL textUrl = ImageFileSourceTest.class.getResource("/edu/wpi/grip/images/NotAnImage.txt");
     private static EventBus eventBus;
-    private static ImageFileSource fileSource;
 
     @Before
-    public void setUp(){
+    public void setUp() {
         this.eventBus = new EventBus();
-        this.fileSource = new ImageFileSource(eventBus);
     }
 
     @Test
-    public void testLoadImageToMat(){
+    public void testLoadImageToMat() {
         // Given above setup
         // When
-        fileSource.loadImage(imageUrl);
+        final ImageFileSource fileSource = new ImageFileSource(eventBus, this.imageUrl);
         OutputSocket<Mat> outputSocket = fileSource.getOutputSockets()[0];
 
         // Then
@@ -42,15 +40,15 @@ public class ImageFileSourceTest {
     }
 
     @Test
-    public void testReadInTextFile(){
-        fileSource.loadImage(textUrl);
+    public void testReadInTextFile() {
+        final ImageFileSource fileSource = new ImageFileSource(eventBus, this.textUrl);
         OutputSocket<Mat> outputSocket = fileSource.getOutputSockets()[0];
         assertTrue("No matrix should have been returned.", outputSocket.getValue().empty());
     }
 
     @Test
     public void testReadInFileWithoutExtention() throws MalformedURLException {
-        fileSource.loadImage(new URL("file://temp/fdkajdl3eaf"));
+        final ImageFileSource fileSource = new ImageFileSource(eventBus, new URL("file://temp/fdkajdl3eaf"));
         OutputSocket<Mat> outputSocket = fileSource.getOutputSockets()[0];
         assertTrue("No matrix should have been returned.", outputSocket.getValue().empty());
     }

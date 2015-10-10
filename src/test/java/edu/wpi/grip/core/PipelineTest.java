@@ -17,7 +17,7 @@ public class PipelineTest {
     @Test
     public void testAddSource() {
         Pipeline pipeline = new Pipeline(eventBus);
-        Source source = new ImageFileSource(eventBus);
+        Source source = new ImageFileSource(eventBus, getClass().getResource("/edu/wpi/grip/images/GRIP_Logo.png"));
 
         eventBus.post(new SourceAddedEvent(source));
 
@@ -27,7 +27,7 @@ public class PipelineTest {
     @Test
     public void testRemoveSource() {
         Pipeline pipeline = new Pipeline(eventBus);
-        Source source = new ImageFileSource(eventBus);
+        Source source = new ImageFileSource(eventBus, getClass().getResource("/edu/wpi/grip/images/GRIP_Logo.png"));
 
         eventBus.post(new SourceAddedEvent(source));
         eventBus.post(new SourceRemovedEvent(source));
