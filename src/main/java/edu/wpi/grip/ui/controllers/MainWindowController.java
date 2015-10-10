@@ -73,11 +73,9 @@ public class MainWindowController implements Initializable {
             "    return a * b\n"
     );
 
-    private final PythonScriptOperation gompeiOperation;
     private final PythonScriptOperation sampleFilter;
 
     public MainWindowController() throws IOException {
-        this.gompeiOperation = new PythonScriptOperation(getClass().getResource("/edu/wpi/grip/scripts/gompei.py"));
         this.sampleFilter = new PythonScriptOperation(getClass().getResource("/edu/wpi/grip/scripts/sample-filter.py"));
     }
 
@@ -86,7 +84,7 @@ public class MainWindowController implements Initializable {
         PreviewsView previewPaneView = new PreviewsView(eventBus);
 
         PaletteView paletteView = new PaletteView(eventBus);
-        paletteView.operationsProperty().addAll(this.add, this.multiply, this.gompeiOperation, this.sampleFilter);
+        paletteView.operationsProperty().addAll(this.add, this.multiply, this.sampleFilter);
         paletteView.operationsProperty().addAll(CVOperations.OPERATIONS.stream()
                 .sorted((a, b) -> a.getName().compareToIgnoreCase(b.getName()))
                 .collect(Collectors.toList()));
