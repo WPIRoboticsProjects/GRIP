@@ -3,9 +3,14 @@ package edu.wpi.grip.ui.pipeline;
 import com.google.common.eventbus.EventBus;
 import edu.wpi.grip.core.OutputSocket;
 import edu.wpi.grip.core.Source;
+import edu.wpi.grip.core.events.SourceRemovedEvent;
 import javafx.collections.ObservableList;
+import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
+
+import java.io.IOException;
 
 /**
  * A JavaFX control that represents a {@link Source}.  <code>SourceView</code>s are somewhat analogous to
@@ -14,23 +19,29 @@ import javafx.scene.layout.VBox;
  */
 public class SourceView extends VBox {
 
+    @FXML
+    private Label name;
+
+    @FXML
+    private VBox sockets;
+
     private final EventBus eventBus;
     private final Source source;
-
-    private final VBox sockets;
 
     public SourceView(EventBus eventBus, Source source) {
         this.eventBus = eventBus;
         this.source = source;
 
-        this.getStyleClass().add("source");
+        try {
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("Source.fxml"));
+            fxmlLoader.setRoot(this);
+            fxmlLoader.setController(this);
+            fxmlLoader.load();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
 
-        final Label nameLabel = new Label(source.getName());
-        nameLabel.getStyleClass().add("source-name");
-        this.getChildren().add(nameLabel);
-
-        this.sockets = new VBox();
-        this.getChildren().add(this.sockets);
+        this.name.setText(source.getName());
 
         for (OutputSocket<?> socket : source.getOutputSockets()) {
             this.sockets.getChildren().add(new OutputSocketView(eventBus, socket));
@@ -47,5 +58,10 @@ public class SourceView extends VBox {
     @SuppressWarnings("unchecked")
     public ObservableList<OutputSocketView> getOutputSockets() {
         return (ObservableList) this.sockets.getChildrenUnmodifiable();
+    }
+
+    @FXML
+    public void delete() {
+        this.eventBus.post(new SourceRemovedEvent(this.getSource()));
     }
 }

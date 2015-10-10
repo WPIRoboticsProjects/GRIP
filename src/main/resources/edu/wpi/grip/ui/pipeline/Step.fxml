@@ -26,7 +26,7 @@
             <graphic>
                 <HBox styleClass="icons">
                     <children>
-                        <Button fx:id="deleteButton" text="✕">
+                        <Button fx:id="deleteButton" styleClass="delete" text="✕">
                             <HBox.margin>
                                 <Insets/>
                             </HBox.margin>

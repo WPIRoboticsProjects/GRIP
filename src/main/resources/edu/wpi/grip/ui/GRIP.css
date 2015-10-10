@@ -103,6 +103,7 @@ ImageView.operation-icon {
 
 Label.source-name {
     -fx-font-weight: bold;
+    -fx-graphic-text-gap: 0.5em;
 }
 
 Button.add-source {
@@ -122,7 +123,7 @@ Button.add-source {
     -fx-spacing: 1em;
 }
 
-.step HBox.icons .button {
+Button.delete {
     -fx-padding: 0.2em 0.8em;
     -fx-font-weight: bold;
     -fx-font-color: -fx-dark-color;
