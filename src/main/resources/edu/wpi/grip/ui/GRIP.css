@@ -129,7 +129,7 @@ Button.add-source {
     -fx-font-size: 1.5em;
 }
 
-.step VBox {
+.step VBox, .source VBox {
     -fx-spacing: 2em;
 }
 

@@ -3,6 +3,7 @@ package edu.wpi.grip.ui.pipeline;
 import com.google.common.eventbus.EventBus;
 import edu.wpi.grip.core.events.SourceAddedEvent;
 import edu.wpi.grip.core.sources.ImageFileSource;
+import edu.wpi.grip.core.sources.WebcamSource;
 import javafx.event.EventHandler;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
@@ -21,6 +22,7 @@ import java.util.List;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
+import java.util.function.Predicate;
 
 /**
  * A box of buttons that let the user add different kinds of {@link Source}s.  Depending on which button is pressed,
@@ -73,7 +75,27 @@ public class AddSourceView extends HBox {
         });
 
         addButton("Add\nWebcam", getClass().getResource("/edu/wpi/grip/ui/icons/add-webcam.png"), mouseEvent -> {
-            System.out.println(mouseEvent);
+            final Parent root = this.getScene().getRoot();
+
+            // Show a dialog for the user to pick a camera index
+            final Dialog<ButtonType> dialog = new Dialog<>();
+            final Spinner<Integer> cameraIndex = new Spinner<Integer>(0, Integer.MAX_VALUE, 0);
+
+            dialog.setTitle("Add Webcam");
+            dialog.setHeaderText("Choose a camera");
+            dialog.setContentText("index");
+            dialog.getDialogPane().setContent(cameraIndex);
+            dialog.getDialogPane().getButtonTypes().addAll(ButtonType.CANCEL, ButtonType.OK);
+            dialog.getDialogPane().setStyle(root.getStyle());
+            dialog.getDialogPane().getStylesheets().addAll(root.getStylesheets());
+
+            // If the user clicks OK, add a new webcam source
+            dialog.showAndWait().filter(Predicate.isEqual(ButtonType.OK)).ifPresent(result -> {
+                final WebcamSource source = new WebcamSource(eventBus);
+                eventBus.post(new SourceAddedEvent(source));
+
+                this.loadSourceExecutor.execute(() -> source.startVideo(cameraIndex.getValue()));
+            });
         });
     }
 
