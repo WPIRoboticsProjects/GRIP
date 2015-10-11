@@ -6,6 +6,10 @@ import com.google.common.eventbus.EventBus;
 import edu.wpi.grip.core.events.SocketPreviewChangedEvent;
 import edu.wpi.grip.core.events.SocketPublishedEvent;
 
+import java.util.function.Supplier;
+
+import static com.google.common.base.Preconditions.checkArgument;
+
 /**
  * Represents the output of an {@link Operation}. The OutputSocket also provides the ability to
  * make the value in a socket published.
@@ -53,9 +57,12 @@ public class OutputSocket<T> extends Socket<T> {
 
     /**
      * @param published If <code>true</code>, this socket will be published by any sink that is currently active.  For
-     *                  example, it may be set as a NetworkTables value.
+     *                  example, it may be set as a NetworkTables value.  The socket must be publishable.
+     * @see SocketHint#SocketHint(String, Class, Supplier, SocketHint.View, Object[], boolean)
      */
     public void setPublished(boolean published) {
+        checkArgument(this.getSocketHint().isPublishable() || !published, "socket is not publishable");
+
         /* Check if this value is changing */
         final boolean change = isPublished() != published;
         /* Save whether it was published before. */

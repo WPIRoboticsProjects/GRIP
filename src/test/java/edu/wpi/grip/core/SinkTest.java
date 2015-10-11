@@ -31,10 +31,17 @@ public class SinkTest {
     public void createSimplePipeline() {
         final Pipeline pipeLine = new Pipeline(eventBus);
 
-        final Step step = new Step(eventBus, new PythonScriptOperation("import edu.wpi.grip.core as grip\nimport java" +
-                ".lang.Integer\n\ninputs = [\n    grip.SocketHint(\"a\", java.lang.Integer, 0),\n    grip.SocketHint(" +
-                "\"b\", java.lang.Integer, 0),\n]\n\noutputs = [\n    grip.SocketHint(\"sum\", java.lang.Integer, 0)," +
-                "\n]\n\ndef perform(a, b):\n    return a + b\n"));
+        final Step step = new Step(eventBus, new PythonScriptOperation(
+                "import edu.wpi.grip.core as grip\n" +
+                "import java.lang.Number\n" +
+                "inputs = [\n" +
+                "    grip.SocketHint('a', java.lang.Number, 0),\n" +
+                "    grip.SocketHint('b', java.lang.Number, 0),\n" +
+                "]\n" +
+                "outputs = [\n" +
+                "    grip.SocketHint('sum', java.lang.Number, 0.0, grip.SocketHint.View.NONE, None, True),\n" +
+                "]\n" +
+                "def perform(a, b): return a + b\n"));
 
         this.eventBus.post(new StepAddedEvent(step));
 
