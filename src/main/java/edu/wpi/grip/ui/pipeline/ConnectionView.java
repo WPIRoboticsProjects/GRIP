@@ -34,18 +34,19 @@ public class ConnectionView extends CubicCurve {
         this.setStroke(STROKE);
         this.setStrokeWidth(2.0);
 
+        this.controlX1Property().bind(this.startXProperty().add(this.endXProperty()).multiply(0.5));
+        this.controlY1Property().bind(this.startYProperty());
+        this.controlX2Property().bind(this.controlX1Property());
+        this.controlY2Property().bind(this.endYProperty());
+
         this.outputHandleProperty().addListener(observable -> {
             this.setStartX(this.outputHandle.get().getX());
             this.setStartY(this.outputHandle.get().getY());
-            this.setControlY1(this.outputHandle.get().getY());
-            this.setControlX2(this.outputHandle.get().getX());
         });
 
         this.inputHandleProperty().addListener(observable -> {
             this.setEndX(this.inputHandle.get().getX());
             this.setEndY(this.inputHandle.get().getY());
-            this.setControlY2(this.inputHandle.get().getY());
-            this.setControlX1(this.inputHandle.get().getX());
         });
 
         this.eventBus.register(this);
