@@ -46,7 +46,7 @@ public class MainWindowController implements Initializable {
             "]\n" +
 
             "outputs = [\n" +
-            "    grip.SocketHint('sum', java.lang.Number, 0.0),\n" +
+            "    grip.SocketHint('sum', java.lang.Number, 0.0, grip.SocketHint.View.NONE, None, True),\n" +
             "]\n" +
 
             "def perform(a, b):\n" +
@@ -66,7 +66,7 @@ public class MainWindowController implements Initializable {
             "]\n" +
 
             "outputs = [\n" +
-            "    grip.SocketHint('product', java.lang.Number, 0.0),\n" +
+            "    grip.SocketHint('product', java.lang.Number, 0.0, grip.SocketHint.View.NONE, None, True),\n" +
             "]\n" +
 
             "def perform(a, b):\n" +

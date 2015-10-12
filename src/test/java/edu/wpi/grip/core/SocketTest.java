@@ -112,4 +112,12 @@ public class SocketTest {
 
         socket.setValue("I am not a Double");
     }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testNotPublishableSocket() throws Exception {
+        final SocketHint<Double> sh = new SocketHint<>("foo", Double.class, 0.0);
+        final OutputSocket<Double> socket = new OutputSocket<Double>(eventBus, sh);
+
+        socket.setPublished(true);
+    }
 }
