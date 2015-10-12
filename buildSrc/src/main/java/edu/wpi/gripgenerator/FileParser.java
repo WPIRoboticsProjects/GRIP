@@ -151,12 +151,12 @@ public class FileParser {
                 ),
                 new DefinedMethod("max", false, "Mat", "Mat"),
                 new DefinedMethod("min", false, "Mat", "Mat"),
-                new DefinedMethod("sqrt", false, "Mat", "Mat"),
-                new DefinedMethod("pow", false,
-                        new DefinedParamType("Mat"),
-                        new DefinedParamType("double")
-                                .setDefaultValue(new PrimitiveDefaultValue(new PrimitiveType(PrimitiveType.Primitive.Double), "1"))
-                )
+//                new DefinedMethod("sqrt", false, "Mat", "Mat"),
+//                new DefinedMethod("pow", false,
+//                        new DefinedParamType("Mat"),
+//                        new DefinedParamType("double")
+//                                .setDefaultValue(new PrimitiveDefaultValue(new PrimitiveType(PrimitiveType.Primitive.Double), "1"))
+//                )
         ).setOutputDefaults("dst");
         new OpenCVMethodVisitor(collection).visit(coreDeclaration, compilationUnits);
 
