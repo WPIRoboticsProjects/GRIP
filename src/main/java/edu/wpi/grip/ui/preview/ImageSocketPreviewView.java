@@ -13,6 +13,8 @@ import javafx.scene.image.WritableImage;
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 
+import static org.bytedeco.javacpp.opencv_core.CV_8S;
+import static org.bytedeco.javacpp.opencv_core.CV_8U;
 import static org.bytedeco.javacpp.opencv_core.Mat;
 
 /**
@@ -59,7 +61,11 @@ public class ImageSocketPreviewView extends SocketPreviewView<Mat> {
         final int height = mat.rows();
         final int channels = mat.channels();
 
-        assert channels == 3 : "Only 3-channel/BGR images can be previewed";
+        assert channels == 3 || channels == 1 :
+                "Only 3-channel BGR images or single-channel grayscale images can be previewed";
+
+        assert mat.type() == CV_8U || mat.type() == CV_8S :
+                "Only images with 8 bits per channel can be previewed";
 
         // Don't try to render empty images.
         if (mat.empty()) {
@@ -74,17 +80,34 @@ public class ImageSocketPreviewView extends SocketPreviewView<Mat> {
             this.pixels = IntBuffer.allocate(width * height);
         }
 
-        // Convert the BGR data from the Mat into ARGB data that we can put into a JavaFX WritableImage
-        // TODO: Also add functions for converting binary and grayscale data into ARGB
-        ByteBuffer buffer = mat.<ByteBuffer>createBuffer();
+        final ByteBuffer buffer = mat.<ByteBuffer>createBuffer();
         final int stride = buffer.capacity() / height;
-        for (int y = 0; y < height; y++) {
-            for (int x = 0; x < width; x++) {
-                final int b = UnsignedBytes.toInt(buffer.get(stride * y + channels * x));
-                final int g = UnsignedBytes.toInt(buffer.get(stride * y + channels * x + 1));
-                final int r = UnsignedBytes.toInt(buffer.get(stride * y + channels * x + 2));
-                this.pixels.put(width * y + x, (0xff << 24) | (r << 16) | (g << 8) | b);
-            }
+
+        // Convert the data from the Mat into ARGB data that we can put into a JavaFX WritableImage
+        switch (channels) {
+            case 1:
+                // 1 channel - convert grayscale to ARGB
+                for (int y = 0; y < height; y++) {
+                    for (int x = 0; x < width; x++) {
+                        final int value = UnsignedBytes.toInt(buffer.get(stride * y + channels * x));
+                        this.pixels.put(width * y + x, (0xff << 24) | (value << 16) | (value << 8) | value);
+                    }
+                }
+
+                break;
+
+            case 3:
+                // 3 channels - convert BGR to RGBA
+                for (int y = 0; y < height; y++) {
+                    for (int x = 0; x < width; x++) {
+                        final int b = UnsignedBytes.toInt(buffer.get(stride * y + channels * x));
+                        final int g = UnsignedBytes.toInt(buffer.get(stride * y + channels * x + 1));
+                        final int r = UnsignedBytes.toInt(buffer.get(stride * y + channels * x + 2));
+                        this.pixels.put(width * y + x, (0xff << 24) | (r << 16) | (g << 8) | b);
+                    }
+                }
+
+                break;
         }
 
         final PixelFormat<IntBuffer> argb = PixelFormat.getIntArgbInstance();
