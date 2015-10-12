@@ -23,6 +23,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
  */
 public class WebcamSource implements Source {
 
+    private final String name;
     private final SocketHint<Mat> imageOutputHint = new SocketHint<Mat>("Image", Mat.class, Mat::new);
     private final SocketHint<Number> frameRateOutputHint = new SocketHint<Number>("Frame Rate", Number.class, 0);
     private OutputSocket<Mat> frameOutputSocket;
@@ -34,12 +35,22 @@ public class WebcamSource implements Source {
      * Creates a Webcam source that can be used as an input to a pipeline
      * @param eventBus The EventBus to attach to
      */
-    public WebcamSource(EventBus eventBus) {
+    public WebcamSource(EventBus eventBus, int deviceNumber) {
         checkNotNull(eventBus, "Event Bus was null.");
+
+        this.name = "Webcam " + deviceNumber;
+
         this.frameOutputSocket = new OutputSocket(eventBus, imageOutputHint);
         this.frameRateOutputSocket = new OutputSocket(eventBus, frameRateOutputHint);
         this.grabber = Optional.empty();
         this.frameThread = Optional.empty();
+
+        this.startVideo(deviceNumber);
+    }
+
+    @Override
+    public String getName() {
+        return this.name;
     }
 
     @Override
@@ -52,7 +63,7 @@ public class WebcamSource implements Source {
      *
      * @param deviceNumber The index of the Webcam device that should be attached to
      */
-    public synchronized void startVideo(final int deviceNumber) {
+    private synchronized void startVideo(final int deviceNumber) {
         final OpenCVFrameConverter.ToMat convertToMat = new OpenCVFrameConverter.ToMat();
         final OpenCVFrameGrabber grabber = new OpenCVFrameGrabber(deviceNumber);
         if (this.frameThread.isPresent()) {
@@ -99,7 +110,7 @@ public class WebcamSource implements Source {
      *
      * @throws TimeoutException If the thread running the Webcam fails to join this one after a timeout.
      */
-    public void stopVideo() throws TimeoutException {
+    private void stopVideo() throws TimeoutException {
         if (frameThread.isPresent()) {
             final Thread ex = frameThread.get();
             ex.interrupt();

@@ -98,11 +98,14 @@ ImageView.operation-icon {
     -fx-padding: 1em;
     -fx-spacing: 1em;
     -fx-border-width: 1px;
-    -fx-border-color: #c8c8c8;
+    -fx-border-color: -fx-box-border;
+    -fx-background-color: -fx-background;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.25), 32, 0, 4, 4);
 }
 
 Label.source-name {
     -fx-font-weight: bold;
+    -fx-graphic-text-gap: 0.5em;
 }
 
 Button.add-source {
@@ -122,14 +125,14 @@ Button.add-source {
     -fx-spacing: 1em;
 }
 
-.step HBox.icons .button {
+Button.delete {
     -fx-padding: 0.2em 0.8em;
     -fx-font-weight: bold;
     -fx-font-color: -fx-dark-color;
     -fx-font-size: 1.5em;
 }
 
-.step VBox {
+.step VBox, .source VBox {
     -fx-spacing: 2em;
 }
 
