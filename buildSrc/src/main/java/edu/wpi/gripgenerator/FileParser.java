@@ -143,7 +143,12 @@ public class FileParser {
                 new DefinedMethod("absdiff", false, "Mat", "Mat"),
                 // TODO: Fix (Causes Segfault)
                 //new DefinedMethod("inRange", false),
-                new DefinedMethod("compare"),
+                new DefinedMethod("compare", true,
+                        new DefinedParamType("Mat"),
+                        new DefinedParamType("Mat"),
+                        new DefinedParamType("Mat"),
+                        new DefinedParamType("int").setLiteralDefaultValue("CMP_EQ")
+                ),
                 new DefinedMethod("max", false, "Mat", "Mat"),
                 new DefinedMethod("min", false, "Mat", "Mat"),
                 new DefinedMethod("sqrt", false, "Mat", "Mat"),

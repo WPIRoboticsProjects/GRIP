@@ -34,7 +34,7 @@ public class DefinedParamType {
     private DefinedParamState state;
     private Optional<Parameter> parameter = Optional.empty();
     private Optional<DefaultValue> defaultValue = Optional.empty();
-    private String literalDefaultValue;
+    private Optional<String> literalDefaultValue = Optional.empty();
 
     private final Pattern constructorCallExpression = Pattern.compile(".*cv?:?:([A-Z][a-zA-Z_]*)\\(.*\\)");
     private final Pattern methodCallExpression = Pattern.compile(".*cv?:?:([a-z][a-zA-Z_]*)\\(.*\\)");
@@ -67,6 +67,11 @@ public class DefinedParamType {
         return paramStates;
     }
 
+    public DefinedParamType setLiteralDefaultValue(String literalDefaultValue){
+        this.literalDefaultValue = Optional.of(literalDefaultValue);
+        return this;
+    }
+
     public DefinedParamType setDefaultValue(DefaultValue defaultValue) {
         checkNotNull(defaultValue);
         //System.out.println("Setting default value " + defaultValue.getName());
@@ -96,15 +101,15 @@ public class DefinedParamType {
             //if (matchesEnumPrimitive.find()) System.out.println("Enum Matcher: " + matchesEnumPrimitive.group(1));
             if (matchesEnumPrimitive.matches()) {
                 //System.out.println("Matching Enum: " + matchesEnumPrimitive.group(1));
-                this.literalDefaultValue = matchesEnumPrimitive.group(1);
+                this.literalDefaultValue = Optional.of(matchesEnumPrimitive.group(1));
                 //The default value should be assigned
             } else if (matchesPrimitive.matches()) {
                 //System.out.println("Matching Primitive: " + matchesPrimitive.group(1));
-                this.literalDefaultValue = matchesPrimitive.group(1);
+                this.literalDefaultValue = Optional.of(matchesPrimitive.group(1));
                 this.defaultValue = Optional.of(new PrimitiveDefaultValue((PrimitiveType) param.getType()));
             }
         } else if (param.getType() instanceof PrimitiveType) {
-            this.literalDefaultValue = "0";
+            this.literalDefaultValue = Optional.of(this.literalDefaultValue.orElse("0"));
             this.defaultValue = Optional.of(this.defaultValue.orElse(new PrimitiveDefaultValue((PrimitiveType) param.getType())));
         } else {
             this.defaultValue = Optional.of(this.defaultValue.orElse(new ObjectDefaultValue(param.getType())));
@@ -145,7 +150,7 @@ public class DefinedParamType {
     }
 
     public String getLiteralDefaultValue() {
-        return this.literalDefaultValue;
+        return this.literalDefaultValue.orElse("");
     }
 
     public ImportDeclaration getImport() {
