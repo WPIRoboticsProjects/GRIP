@@ -102,7 +102,6 @@ public class FileParser {
         Map<String, CompilationUnit> compilationUnits = new HashMap<>();
         DefinedMethodCollection collection = new DefinedMethodCollection("opencv_imgproc",
                 new DefinedMethod("Sobel", false, "Mat", "Mat"),
-                new DefinedMethod("accumulateSquare", false, "Mat", "Mat"),
                 new DefinedMethod("medianBlur", false, "Mat", "Mat"),
                 new DefinedMethod("GaussianBlur", false,
                         new DefinedParamType("Mat"),
