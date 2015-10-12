@@ -98,7 +98,13 @@ public class FileParser {
 
     public static Map<String, CompilationUnit> parseOpenImgprc(CompilationUnit imgprocDeclaration, DefaultValueCollector collector, OperationList operations) {
         Map<String, CompilationUnit> compilationUnits = new HashMap<>();
-        DefinedMethodCollection collection = new DefinedMethodCollection("opencv_imgproc",
+        final String baseClassName = "opencv_imgproc";
+
+        OpenCVEnumVisitor enumVisitor = new OpenCVEnumVisitor(baseClassName, collector);
+        enumVisitor.visit(imgprocDeclaration, compilationUnits);
+        compilationUnits.putAll(enumVisitor.generateCompilationUnits());
+
+        DefinedMethodCollection collection = new DefinedMethodCollection(baseClassName,
                 new DefinedMethod("Sobel", false, "Mat", "Mat"),
                 new DefinedMethod("medianBlur", false, "Mat", "Mat"),
                 new DefinedMethod("GaussianBlur", false,
@@ -120,10 +126,13 @@ public class FileParser {
 
     public static Map<String, CompilationUnit> parseOpenCVCore(CompilationUnit coreDeclaration, DefaultValueCollector collector, OperationList operations) {
         Map<String, CompilationUnit> compilationUnits = new HashMap<>();
+        final String baseClassName = "opencv_core";
 
-        new OpenCVEnumVisitor(collector).visit(coreDeclaration, compilationUnits);
+        OpenCVEnumVisitor enumVisitor = new OpenCVEnumVisitor(baseClassName, collector);
+        enumVisitor.visit(coreDeclaration, compilationUnits);
+        compilationUnits.putAll(enumVisitor.generateCompilationUnits());
 
-        DefinedMethodCollection collection = new DefinedMethodCollection("opencv_core",
+        DefinedMethodCollection collection = new DefinedMethodCollection(baseClassName,
                 new DefinedMethod("add", false, "Mat", "Mat", "Mat"),
                 new DefinedMethod("subtract", false, "Mat", "Mat", "Mat").addDescription("Calculates the per-pixel difference between two images"),
                 new DefinedMethod("multiply", false, "Mat", "Mat", "Mat"),

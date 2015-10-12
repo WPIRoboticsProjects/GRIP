@@ -1,6 +1,7 @@
 package edu.wpi.gripgenerator.defaults;
 
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -17,6 +18,10 @@ public class DefaultValueCollector {
             defaultValueMap.put(value, enumDefault);
         }
         defaultValueEnumNameMap.put(enumDefault.getName(), enumDefault);
+    }
+
+    public void addAll(Collection<EnumDefaultValue> enumDefaults){
+        enumDefaults.forEach(this::add);
     }
 
     /**

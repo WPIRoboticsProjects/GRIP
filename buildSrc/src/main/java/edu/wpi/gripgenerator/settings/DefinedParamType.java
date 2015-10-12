@@ -118,7 +118,7 @@ public class DefinedParamType {
     }
 
     public boolean isMatch(Parameter param) {
-        return type.equals(param.getType().toString());
+        return type.equals(param.getType().toStringWithoutComments());
     }
 
     private Type getRealType() {
