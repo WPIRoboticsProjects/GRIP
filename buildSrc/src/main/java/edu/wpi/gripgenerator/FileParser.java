@@ -117,7 +117,61 @@ public class FileParser {
                 new DefinedMethod("Canny", false, new DefinedParamType("Mat"), new DefinedParamType("Mat", DefinedParamType.DefinedParamState.OUTPUT)),
                 new DefinedMethod("cornerMinEigenVal", false, "Mat", "Mat"),
                 new DefinedMethod("cornerHarris", false, "Mat", "Mat"),
-                new DefinedMethod("cornerEigenValsAndVecs", false, "Mat", "Mat")
+                new DefinedMethod("cornerEigenValsAndVecs", false, "Mat", "Mat"),
+                new DefinedMethod("threshold", false,
+                        new DefinedParamType("Mat"),
+                        new DefinedParamType("Mat"),
+                        new DefinedParamType("double"),
+                        new DefinedParamType("double"),
+                        new DefinedParamType("int").setLiteralDefaultValue("THRESH_BINARY")
+                ).addDescription("Applies a fixed-level threshold to each array element. " +
+                        "The function applies fixed-level thresholding to a single-channel array. The function is typically " +
+                        "used to get a bi-level (binary) image out of a grayscale image ( cv::compare could be also used for " +
+                        "this purpose) or for removing a noise, that is, filtering out pixels with too small or too large " +
+                        "values. There are several types of thresholding supported by the function. They are determined by " +
+                        "type parameter. " +
+                        "Also, the special values cv::THRESH_OTSU or cv::THRESH_TRIANGLE may be combined with one of the " +
+                        "above values. In these cases, the function determines the optimal threshold value using the Otsu's " +
+                        "or Triangle algorithm and uses it instead of the specified thresh . The function returns the " +
+                        "computed threshold value. Currently, the Otsu's and Triangle methods are implemented only for 8-bit " +
+                        "images."),
+                new DefinedMethod("adaptiveThreshold", false,
+                        new DefinedParamType("Mat"),
+                        new DefinedParamType("Mat"),
+                        new DefinedParamType("double"),
+                        new DefinedParamType("int").setLiteralDefaultValue("ADAPTIVE_THRESH_MEAN_C"),
+                        new DefinedParamType("int").setLiteralDefaultValue("THRESH_BINARY")
+                ).addDescription("Applies an adaptive threshold to an array. The function transforms a grayscale image to a binary image"),
+                new DefinedMethod("erode", false,
+                        new DefinedParamType("Mat"),
+                        new DefinedParamType("Mat"),
+                        new DefinedParamType("Mat")
+                ),
+                new DefinedMethod("cvtColor", false,
+                        new DefinedParamType("Mat"),
+                        new DefinedParamType("Mat"),
+                        new DefinedParamType("int").setLiteralDefaultValue("COLOR_BGR2BGRA")
+                ).addDescription("The function converts an input image from one color space to another. In case of a transformation " +
+                        "to-from RGB color space, the order of the channels should be specified explicitly (RGB or BGR). Note " +
+                        "that the default color format in OpenCV is often referred to as RGB but it is actually BGR (the " +
+                        "bytes are reversed). So the first byte in a standard (24-bit) color image will be an 8-bit Blue " +
+                        "component, the second byte will be Green, and the third byte will be Red. The fourth, fifth, and " +
+                        "sixth bytes would then be the second pixel (Blue, then Green, then Red), and so on."),
+                new DefinedMethod("applyColorMap", true,
+                        new DefinedParamType("Mat"),
+                        new DefinedParamType("Mat"),
+                        new DefinedParamType("int").setLiteralDefaultValue("COLORMAP_AUTUMN")
+                ).addDescription("Applies a GNU Octave/MATLAB equivalent colormap on a given image."),
+                new DefinedMethod("resize", false,
+                        new DefinedParamType("Mat"),
+                        new DefinedParamType("Mat"),
+                        new DefinedParamType("Size")
+                ).addDescription("The function resize resizes the image src down to or up to the specified size. Note that the " +
+                        "initial dst type or size are not taken into account. Instead, the size and type are derived from " +
+                        "the `src`,`dsize`,`fx`, and `fy`. To shrink an image, it will generally look best with CV_INTER_AREA interpolation, whereas to " +
+                        "enlarge an image, it will generally look best with CV_INTER_CUBIC (slow) or CV_INTER_LINEAR " +
+                        "(faster but still looks OK)")
+
         ).setOutputDefaults("dst");
         new OpenCVMethodVisitor(collection).visit(imgprocDeclaration, compilationUnits);
         collection.generateCompilationUnits(collector, compilationUnits, operations);
