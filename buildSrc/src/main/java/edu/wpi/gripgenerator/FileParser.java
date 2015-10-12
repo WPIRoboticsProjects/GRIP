@@ -5,10 +5,8 @@ import com.github.javaparser.ParseException;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.ImportDeclaration;
 import com.github.javaparser.ast.expr.NameExpr;
-import com.github.javaparser.ast.type.PrimitiveType;
 import edu.wpi.gripgenerator.defaults.DefaultValueCollector;
 import edu.wpi.gripgenerator.defaults.ObjectDefaultValue;
-import edu.wpi.gripgenerator.defaults.PrimitiveDefaultValue;
 import edu.wpi.gripgenerator.settings.DefinedMethod;
 import edu.wpi.gripgenerator.settings.DefinedMethodCollection;
 import edu.wpi.gripgenerator.settings.DefinedParamType;
@@ -149,7 +147,7 @@ public class FileParser {
                         new DefinedParamType("int").setLiteralDefaultValue("CMP_EQ")
                 ),
                 new DefinedMethod("max", false, "Mat", "Mat"),
-                new DefinedMethod("min", false, "Mat", "Mat"),
+                new DefinedMethod("min", false, "Mat", "Mat")
 //                new DefinedMethod("sqrt", false, "Mat", "Mat"),
 //                new DefinedMethod("pow", false,
 //                        new DefinedParamType("Mat"),
