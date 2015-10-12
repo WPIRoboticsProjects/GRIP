@@ -5,10 +5,8 @@ import com.github.javaparser.ParseException;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.ImportDeclaration;
 import com.github.javaparser.ast.expr.NameExpr;
-import com.github.javaparser.ast.type.PrimitiveType;
 import edu.wpi.gripgenerator.defaults.DefaultValueCollector;
 import edu.wpi.gripgenerator.defaults.ObjectDefaultValue;
-import edu.wpi.gripgenerator.defaults.PrimitiveDefaultValue;
 import edu.wpi.gripgenerator.settings.DefinedMethod;
 import edu.wpi.gripgenerator.settings.DefinedMethodCollection;
 import edu.wpi.gripgenerator.settings.DefinedParamType;
@@ -102,7 +100,6 @@ public class FileParser {
         Map<String, CompilationUnit> compilationUnits = new HashMap<>();
         DefinedMethodCollection collection = new DefinedMethodCollection("opencv_imgproc",
                 new DefinedMethod("Sobel", false, "Mat", "Mat"),
-                new DefinedMethod("accumulateSquare", false, "Mat", "Mat"),
                 new DefinedMethod("medianBlur", false, "Mat", "Mat"),
                 new DefinedMethod("GaussianBlur", false,
                         new DefinedParamType("Mat"),
@@ -143,15 +140,20 @@ public class FileParser {
                 new DefinedMethod("absdiff", false, "Mat", "Mat"),
                 // TODO: Fix (Causes Segfault)
                 //new DefinedMethod("inRange", false),
-                new DefinedMethod("compare"),
-                new DefinedMethod("max", false, "Mat", "Mat"),
-                new DefinedMethod("min", false, "Mat", "Mat"),
-                new DefinedMethod("sqrt", false, "Mat", "Mat"),
-                new DefinedMethod("pow", false,
+                new DefinedMethod("compare", true,
                         new DefinedParamType("Mat"),
-                        new DefinedParamType("double")
-                                .setDefaultValue(new PrimitiveDefaultValue(new PrimitiveType(PrimitiveType.Primitive.Double), "1"))
-                )
+                        new DefinedParamType("Mat"),
+                        new DefinedParamType("Mat"),
+                        new DefinedParamType("int").setLiteralDefaultValue("CMP_EQ")
+                ),
+                new DefinedMethod("max", false, "Mat", "Mat"),
+                new DefinedMethod("min", false, "Mat", "Mat")
+//                new DefinedMethod("sqrt", false, "Mat", "Mat"),
+//                new DefinedMethod("pow", false,
+//                        new DefinedParamType("Mat"),
+//                        new DefinedParamType("double")
+//                                .setDefaultValue(new PrimitiveDefaultValue(new PrimitiveType(PrimitiveType.Primitive.Double), "1"))
+//                )
         ).setOutputDefaults("dst");
         new OpenCVMethodVisitor(collection).visit(coreDeclaration, compilationUnits);
 
