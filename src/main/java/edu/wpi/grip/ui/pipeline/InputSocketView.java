@@ -163,10 +163,23 @@ public class InputSocketView extends GridPane implements Initializable {
 
                 break;
             }
+            case CHECKBOX: {
+                checkArgument(socketHint.getType() == Boolean.class);
+
+                CheckBox checkBox = new CheckBox();
+                checkBox.setContentDisplay(ContentDisplay.RIGHT);
+                checkBox.setSelected((Boolean) socket.getValue());
+
+                this.identifier.setGraphic(checkBox);
+                this.identifier.setContentDisplay(ContentDisplay.RIGHT);
+                this.valueProperty.bindBidirectional(checkBox.selectedProperty());
+
+                break;
+            }
             default:
                 // This shouldn't ever happen, but it's probably a good idea to crash instead of silently doing nothing
                 // and wondering why no control is showing up.
-                throw new RuntimeException("Unexpected socket view hint");
+                throw new RuntimeException("Unexpected socket view hint: " + socketHint.getView());
         }
 
         // Always disable the control if there's a connection to the socket.
