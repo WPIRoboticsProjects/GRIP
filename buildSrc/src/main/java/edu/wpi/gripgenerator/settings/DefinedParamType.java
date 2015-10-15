@@ -27,7 +27,17 @@ import static com.google.common.base.Preconditions.checkNotNull;
 public class DefinedParamType {
     public enum DefinedParamState {
         INPUT,
-        OUTPUT
+        OUTPUT,
+        INPUT_AND_OUTPUT;
+
+        public boolean isInput(){
+            return this.equals(INPUT) || this.equals(INPUT_AND_OUTPUT);
+        }
+
+        public boolean isOutput(){
+            return this.equals(OUTPUT) || this.equals(INPUT_AND_OUTPUT);
+        }
+
     }
 
     private final String type;
@@ -161,11 +171,19 @@ public class DefinedParamType {
         }
     }
 
+    public boolean isInput(){
+        return state.isInput();
+    }
+
+    public boolean isOutput(){
+        return state.isOutput();
+    }
+
     /**
-     * @return True if this para type represents an output.
+     * @return The state of this param
      */
-    public boolean isOutput() {
-        return state.equals(DefinedParamState.OUTPUT);
+    public DefinedParamState getState() {
+        return state;
     }
 
     public String getName() {

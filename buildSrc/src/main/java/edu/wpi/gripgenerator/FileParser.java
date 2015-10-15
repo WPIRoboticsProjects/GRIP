@@ -4,9 +4,13 @@ import com.github.javaparser.JavaParser;
 import com.github.javaparser.ParseException;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.ImportDeclaration;
+import com.github.javaparser.ast.expr.Expression;
+import com.github.javaparser.ast.expr.FieldAccessExpr;
 import com.github.javaparser.ast.expr.NameExpr;
+import com.github.javaparser.ast.type.PrimitiveType;
 import edu.wpi.gripgenerator.defaults.DefaultValueCollector;
 import edu.wpi.gripgenerator.defaults.ObjectDefaultValue;
+import edu.wpi.gripgenerator.defaults.PrimitiveDefaultValue;
 import edu.wpi.gripgenerator.settings.DefinedMethod;
 import edu.wpi.gripgenerator.settings.DefinedMethodCollection;
 import edu.wpi.gripgenerator.settings.DefinedParamType;
@@ -17,8 +21,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 public class FileParser {
     /**
@@ -73,6 +79,20 @@ public class FileParser {
         CompilationUnit compilationUnit = readFile(INPUT_URL);
         Map<String, CompilationUnit> returnMap = new HashMap<>();
         DefaultValueCollector collector = new DefaultValueCollector();
+        collector.add(new PrimitiveDefaultValue(new PrimitiveType(PrimitiveType.Primitive.Double)){
+            @Override
+            protected Set<String> getDefaultValues() {
+                return Collections.singleton("CV_PI");
+            }
+
+            @Override
+            public Expression getDefaultValue(String defaultValue) {
+                return new FieldAccessExpr(
+                        new NameExpr("Math"),
+                        "PI"
+                );
+            }
+        });
 
         OperationList operationList = new OperationList(
                 new ImportDeclaration(new NameExpr("edu.wpi.grip.generated.opencv_core"), false, true),
@@ -170,8 +190,11 @@ public class FileParser {
                         "initial dst type or size are not taken into account. Instead, the size and type are derived from " +
                         "the `src`,`dsize`,`fx`, and `fy`. To shrink an image, it will generally look best with CV_INTER_AREA interpolation, whereas to " +
                         "enlarge an image, it will generally look best with CV_INTER_CUBIC (slow) or CV_INTER_LINEAR " +
-                        "(faster but still looks OK)")
-
+                        "(faster but still looks OK)"),
+                new DefinedMethod("HoughLines", false,
+                        new DefinedParamType("Mat", DefinedParamType.DefinedParamState.INPUT_AND_OUTPUT),
+                        new DefinedParamType("Mat", DefinedParamType.DefinedParamState.OUTPUT)
+                )
         ).setOutputDefaults("dst");
         new OpenCVMethodVisitor(collection).visit(imgprocDeclaration, compilationUnits);
         collection.generateCompilationUnits(collector, compilationUnits, operations);

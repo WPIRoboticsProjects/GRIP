@@ -20,8 +20,14 @@ public class DefaultValueCollector {
         defaultValueEnumNameMap.put(enumDefault.getName(), enumDefault);
     }
 
-    public void addAll(Collection<EnumDefaultValue> enumDefaults){
+    public void addAll(Collection<EnumDefaultValue> enumDefaults) {
         enumDefaults.forEach(this::add);
+    }
+
+    public void add(DefaultValue defaultValue) {
+        for (String value : defaultValue.getDefaultValues()) {
+            defaultValueMap.put(value, defaultValue);
+        }
     }
 
     /**
