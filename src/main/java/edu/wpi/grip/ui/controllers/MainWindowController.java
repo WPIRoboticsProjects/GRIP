@@ -8,6 +8,9 @@ import edu.wpi.grip.core.operations.PythonScriptOperation;
 import edu.wpi.grip.core.operations.composite.BlurOperation;
 import edu.wpi.grip.core.operations.composite.RGBThresholdOperation;
 import edu.wpi.grip.core.operations.composite.DesaturateOperation;
+import edu.wpi.grip.core.operations.opencv.MatFieldAccessor;
+import edu.wpi.grip.core.operations.opencv.NewPointOperation;
+import edu.wpi.grip.core.operations.opencv.NewSizeOperation;
 import edu.wpi.grip.core.sinks.DummySink;
 import edu.wpi.grip.generated.CVOperations;
 import edu.wpi.grip.ui.PaletteView;
@@ -20,6 +23,7 @@ import javafx.scene.control.SplitPane;
 
 import java.net.URL;
 import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
@@ -109,7 +113,11 @@ public class MainWindowController implements Initializable {
 
         paletteView.operationsProperty().addAll(this.add, this.multiply);
 
-        paletteView.operationsProperty().addAll(CVOperations.OPERATIONS.stream()
+        List<Operation> allCVOperations = new ArrayList(CVOperations.OPERATIONS);
+        allCVOperations.add(new NewPointOperation());
+        allCVOperations.add(new NewSizeOperation());
+        allCVOperations.add(new MatFieldAccessor());
+        paletteView.operationsProperty().addAll(allCVOperations.stream()
                 .sorted((a, b) -> a.getName().compareToIgnoreCase(b.getName()))
                 .collect(Collectors.toList()));
 
