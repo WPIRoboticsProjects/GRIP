@@ -194,7 +194,10 @@ public class FileParser {
                 new DefinedMethod("HoughLines", false,
                         new DefinedParamType("Mat", DefinedParamType.DefinedParamState.INPUT_AND_OUTPUT),
                         new DefinedParamType("Mat", DefinedParamType.DefinedParamState.OUTPUT)
-                )
+                ),
+                new DefinedMethod("rectangle", false,
+                        new DefinedParamType("Mat", DefinedParamType.DefinedParamState.INPUT_AND_OUTPUT),
+                        new DefinedParamType("Point"))
         ).setOutputDefaults("dst");
         new OpenCVMethodVisitor(collection).visit(imgprocDeclaration, compilationUnits);
         collection.generateCompilationUnits(collector, compilationUnits, operations);
