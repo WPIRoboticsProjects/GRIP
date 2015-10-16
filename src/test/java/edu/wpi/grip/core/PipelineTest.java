@@ -5,19 +5,22 @@ import edu.wpi.grip.core.events.*;
 import edu.wpi.grip.core.sources.ImageFileSource;
 import org.junit.Test;
 
+import java.io.File;
+import java.net.URISyntaxException;
 import java.util.Arrays;
 import java.util.Collections;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class PipelineTest {
     EventBus eventBus = new EventBus();
     Operation addition = new AdditionOperation();
 
     @Test
-    public void testAddSource() {
+    public void testAddSource() throws URISyntaxException {
         Pipeline pipeline = new Pipeline(eventBus);
-        Source source = new ImageFileSource(eventBus, getClass().getResource("/edu/wpi/grip/images/GRIP_Logo.png"));
+        Source source = new ImageFileSource(eventBus, new File(getClass().getResource("/edu/wpi/grip/images/GRIP_Logo.png").toURI()));
 
         eventBus.post(new SourceAddedEvent(source));
 
@@ -25,9 +28,9 @@ public class PipelineTest {
     }
 
     @Test
-    public void testRemoveSource() {
+    public void testRemoveSource() throws URISyntaxException {
         Pipeline pipeline = new Pipeline(eventBus);
-        Source source = new ImageFileSource(eventBus, getClass().getResource("/edu/wpi/grip/images/GRIP_Logo.png"));
+        Source source = new ImageFileSource(eventBus, new File(getClass().getResource("/edu/wpi/grip/images/GRIP_Logo.png").toURI()));
 
         eventBus.post(new SourceAddedEvent(source));
         eventBus.post(new SourceRemovedEvent(source));

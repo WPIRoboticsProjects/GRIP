@@ -6,8 +6,9 @@ import org.bytedeco.javacpp.opencv_core.Mat;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.io.File;
 import java.net.MalformedURLException;
-import java.net.URL;
+import java.net.URISyntaxException;
 
 import static org.junit.Assert.*;
 
@@ -15,20 +16,22 @@ import static org.junit.Assert.*;
  *
  */
 public class ImageFileSourceTest {
-    private final URL imageUrl = ImageFileSourceTest.class.getResource("/edu/wpi/grip/images/GRIP_Logo.png");
-    private final URL textUrl = ImageFileSourceTest.class.getResource("/edu/wpi/grip/images/NotAnImage.txt");
+    private File imageFile;
+    private File textFile;
     private static EventBus eventBus;
 
     @Before
-    public void setUp() {
+    public void setUp() throws URISyntaxException {
         this.eventBus = new EventBus();
+        textFile = new File(ImageFileSourceTest.class.getResource("/edu/wpi/grip/images/NotAnImage.txt").toURI());
+        imageFile = new File(ImageFileSourceTest.class.getResource("/edu/wpi/grip/images/GRIP_Logo.png").toURI());
     }
 
     @Test
     public void testLoadImageToMat() {
         // Given above setup
         // When
-        final ImageFileSource fileSource = new ImageFileSource(eventBus, this.imageUrl);
+        final ImageFileSource fileSource = new ImageFileSource(eventBus, this.imageFile);
         OutputSocket<Mat> outputSocket = fileSource.getOutputSockets()[0];
 
         // Then
@@ -41,14 +44,14 @@ public class ImageFileSourceTest {
 
     @Test
     public void testReadInTextFile() {
-        final ImageFileSource fileSource = new ImageFileSource(eventBus, this.textUrl);
+        final ImageFileSource fileSource = new ImageFileSource(eventBus, this.textFile);
         OutputSocket<Mat> outputSocket = fileSource.getOutputSockets()[0];
         assertTrue("No matrix should have been returned.", outputSocket.getValue().empty());
     }
 
     @Test
-    public void testReadInFileWithoutExtention() throws MalformedURLException {
-        final ImageFileSource fileSource = new ImageFileSource(eventBus, new URL("file://temp/fdkajdl3eaf"));
+    public void testReadInFileWithoutExtension() throws MalformedURLException {
+        final ImageFileSource fileSource = new ImageFileSource(eventBus, new File("file://temp/fdkajdl3eaf"));
         OutputSocket<Mat> outputSocket = fileSource.getOutputSockets()[0];
         assertTrue("No matrix should have been returned.", outputSocket.getValue().empty());
     }

@@ -1,14 +1,16 @@
 package edu.wpi.grip.core.sources;
 
 import com.google.common.eventbus.EventBus;
+import com.google.common.io.Files;
 import edu.wpi.grip.core.OutputSocket;
 import edu.wpi.grip.core.SocketHint;
 import edu.wpi.grip.core.Source;
 import org.bytedeco.javacpp.opencv_core.Mat;
 import org.bytedeco.javacpp.opencv_imgcodecs;
 
-import java.net.URL;
+import java.io.File;
 import java.net.URLDecoder;
+import java.nio.file.Paths;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -24,15 +26,18 @@ public class ImageFileSource implements Source {
 
     /**
      * @param eventBus The event bus for the pipeline.
-     * @param imageURL The location on the file system where the image exists.
+     * @param file     The location on the file system where the image exists.
      */
-    public ImageFileSource(EventBus eventBus, URL imageURL) {
+    public ImageFileSource(EventBus eventBus, File file) {
         checkNotNull(eventBus, "Event Bus was null.");
+        checkNotNull(file, "Image was null");
 
-        this.name = imageURL.toString().substring(imageURL.toString().lastIndexOf('/') + 1);
+        final String path = URLDecoder.decode(Paths.get(file.toURI()).toString());
+
+        this.name = Files.getNameWithoutExtension(path);
         this.outputSocket = new OutputSocket<Mat>(eventBus, imageOutputHint);
 
-        this.loadImage(imageURL);
+        this.loadImage(path);
     }
 
     @Override
@@ -48,26 +53,22 @@ public class ImageFileSource implements Source {
     /**
      * Loads the image and posts an update to the {@link EventBus}
      *
-     * @param imageURL The location on the file system where the image exists.
+     * @param path The location on the file system where the image exists.
      */
-    private void loadImage(URL imageURL) {
-        this.loadImage(imageURL, opencv_imgcodecs.IMREAD_COLOR);
+    private void loadImage(String path) {
+        this.loadImage(path, opencv_imgcodecs.IMREAD_COLOR);
     }
 
     /**
      * Loads the image and posts an update to the {@link EventBus}
      *
-     * @param imageURL The location on the file system where the image exists.
-     * @param flags    Flags to pass to imread {@link opencv_imgcodecs#imread(String, int)}
+     * @param image The location on the file system where the image exists.
+     * @param flags Flags to pass to imread {@link opencv_imgcodecs#imread(String, int)}
      */
-    private void loadImage(URL imageURL, final int flags) {
-        checkNotNull(imageURL, "Image URL was null.");
-
-        final String path = URLDecoder.decode(imageURL.getPath());
-
-        Mat image = opencv_imgcodecs.imread(path, flags);
-        if (!image.empty()) {
-            this.outputSocket.setValue(image);
+    private void loadImage(String path, final int flags) {
+        Mat mat = opencv_imgcodecs.imread(path, flags);
+        if (!mat.empty()) {
+            this.outputSocket.setValue(mat);
         } else {
             // TODO Output Error to GUI about invalid url
             new Exception("Error loading image " + path).printStackTrace(System.err);
