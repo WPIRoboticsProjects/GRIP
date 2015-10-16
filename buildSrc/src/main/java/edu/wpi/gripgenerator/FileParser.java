@@ -184,7 +184,13 @@ public class FileParser {
                 ).addDescription("Resize the image to the specified size."),
                 new DefinedMethod("rectangle", false,
                         new DefinedParamType("Mat", DefinedParamType.DefinedParamDirection.INPUT_AND_OUTPUT),
-                        new DefinedParamType("Point")
+                        new DefinedParamType("Point"),
+                        new DefinedParamType("Point"),
+                        new DefinedParamType("Scalar").setDefaultValue(new ObjectDefaultValue("Scalar") {
+                            public String getViewType() {
+                                return "COLOR";
+                            }
+                        })
                 ).addDescription("Draw a rectangle (outline or filled) on an image.")
         ).setDirectionDefaults(DefinedParamType.DefinedParamDirection.OUTPUT, "dst")
                 .setIgnoreDefaults("dtype", "ddepth");
