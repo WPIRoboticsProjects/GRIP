@@ -15,8 +15,9 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.SplitPane;
 
-import java.io.IOException;
 import java.net.URL;
+import java.util.Arrays;
+import java.util.List;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
 
@@ -76,10 +77,16 @@ public class MainWindowController implements Initializable {
             "    return a * b\n"
     );
 
-    private final PythonScriptOperation sampleFilter;
+    private final static List<URL> scripts = Arrays.asList(
+        MainWindowController.class.getResource("/edu/wpi/grip/scripts/sample-filter.py")
+    );
 
-    public MainWindowController() throws IOException {
-        this.sampleFilter = new PythonScriptOperation(getClass().getResource("/edu/wpi/grip/scripts/sample-filter.py"));
+    private static Operation loadOperation(URL url) {
+        try {
+            return new PythonScriptOperation(url);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
@@ -87,7 +94,10 @@ public class MainWindowController implements Initializable {
         PreviewsView previewPaneView = new PreviewsView(eventBus);
 
         PaletteView paletteView = new PaletteView(eventBus);
-        paletteView.operationsProperty().addAll(this.add, this.multiply, this.sampleFilter);
+        paletteView.operationsProperty().addAll(scripts.stream()
+                    .map(MainWindowController::loadOperation)
+                    .collect(Collectors.toList()));
+        paletteView.operationsProperty().addAll(this.add, this.multiply);
         paletteView.operationsProperty().addAll(CVOperations.OPERATIONS.stream()
                 .sorted((a, b) -> a.getName().compareToIgnoreCase(b.getName()))
                 .collect(Collectors.toList()));
