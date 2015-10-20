@@ -7,7 +7,6 @@ import edu.wpi.grip.core.sources.WebcamSource;
 import javafx.event.EventHandler;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
@@ -16,12 +15,12 @@ import javafx.stage.FileChooser;
 import javafx.stage.Screen;
 
 import java.io.File;
-import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLDecoder;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadFactory;
 import java.util.function.Predicate;
 
 /**
@@ -62,12 +61,7 @@ public class AddSourceView extends HBox {
             // Add a new source for each image .
             imageFiles.forEach(file -> {
                 this.loadSourceExecutor.execute(() -> {
-                    try {
-                        final ImageFileSource source = new ImageFileSource(eventBus, file.toURI().toURL());
-                        eventBus.post(new SourceAddedEvent(source));
-                    } catch (MalformedURLException e) {
-                        e.printStackTrace();
-                    }
+                    eventBus.post(new SourceAddedEvent(new ImageFileSource(eventBus, file)));
                 });
             });
         });
