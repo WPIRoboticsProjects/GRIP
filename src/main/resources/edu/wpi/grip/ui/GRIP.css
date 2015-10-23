@@ -133,7 +133,7 @@ Button.delete {
 }
 
 .step VBox, .source VBox {
-    -fx-spacing: 2em;
+    -fx-spacing: 0.5em;
 }
 
 .step .title {
