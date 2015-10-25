@@ -4,6 +4,7 @@ import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import edu.wpi.grip.core.*;
 import edu.wpi.grip.core.events.*;
+import edu.wpi.grip.ui.pipeline.input.InputSocketView;
 import javafx.application.Platform;
 import javafx.beans.InvalidationListener;
 import javafx.beans.property.ReadOnlyObjectProperty;
