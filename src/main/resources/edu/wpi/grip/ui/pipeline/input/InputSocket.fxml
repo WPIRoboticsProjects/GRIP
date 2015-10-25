@@ -2,17 +2,13 @@
 
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.*?>
-<?import java.net.URL?>
+
 <fx:root styleClass="socket" type="javafx.scene.layout.GridPane" xmlns="http://javafx.com/javafx/null"
          xmlns:fx="http://javafx.com/fxml/1">
     <children>
         <Label fx:id="identifier" styleClass="socket-identifier" GridPane.rowIndex="0"
                GridPane.columnIndex="1"/>
-        <StackPane fx:id="controlPane" styleClass="socket-control" GridPane.rowIndex="1"
+        <StackPane fx:id="contentPane" styleClass="socket-control" GridPane.rowIndex="1"
                    GridPane.columnIndex="1"/>
     </children>
-    <stylesheets>
-        <URL value="@../roboto/Roboto.css"/>
-        <URL value="@../GRIP.css"/>
-    </stylesheets>
 </fx:root>
