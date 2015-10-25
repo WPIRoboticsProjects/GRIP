@@ -5,6 +5,8 @@ import edu.wpi.grip.core.InputSocket;
 import edu.wpi.grip.core.OutputSocket;
 import edu.wpi.grip.core.Step;
 import edu.wpi.grip.core.events.StepRemovedEvent;
+import edu.wpi.grip.ui.pipeline.input.InputSocketView;
+import edu.wpi.grip.ui.pipeline.input.InputSocketViewFactory;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -79,7 +81,7 @@ public class StepView extends AnchorPane implements Initializable {
 
         // Add a SocketControlView for each input socket and output socket
         for (InputSocket<?> inputSocket : this.step.getInputSockets()) {
-            this.inputs.getChildren().add(new InputSocketView(this.eventBus, inputSocket));
+            this.inputs.getChildren().add(InputSocketViewFactory.createInputSocketView(eventBus, inputSocket));
         }
 
         for (OutputSocket<?> outputSocket : this.step.getOutputSockets()) {
