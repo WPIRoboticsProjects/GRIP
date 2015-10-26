@@ -23,9 +23,9 @@ public class InputSocketViewFactory {
             case SPINNER:
                 if (socketHint.getType().equals(Number.class)) {
                     return (InputSocketView<T>) new NumberSpinnerInputSocketView(eventBus, (InputSocket<Number>) socket);
+                } else {
+                    return new ListSpinnerInputSocketView<>(eventBus, socket);
                 }
-
-                break;
 
             case SLIDER:
                 if (socketHint.getType().equals(Number.class)) {
