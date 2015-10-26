@@ -27,9 +27,25 @@ public abstract class SocketPreviewView<T> extends TitledPane {
 
         this.eventBus.register(this);
 
-        this.setText(this.socket.getSocketHint().getIdentifier());
+        this.setText(this.getTitle());
         this.getStyleClass().add("socket-preview");
         this.setCollapsible(false);
+    }
+
+    /**
+     * @return A string of text to display in the GUI to identify this preview, including the name of the output socket
+     * and what operation it is the output of.
+     */
+    private String getTitle() {
+        String title = "";
+
+        if (this.socket.getStep() != null) {
+            title += this.socket.getStep().getOperation().getName() + " → ";
+        }
+
+        title += this.socket.getSocketHint().getIdentifier();
+
+        return title;
     }
 
     public OutputSocket<T> getSocket() {
