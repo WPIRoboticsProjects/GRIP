@@ -18,7 +18,8 @@ public class InputSocketViewFactory {
 
         switch (socketHint.getView()) {
             case NONE:
-                return new InputSocketView<T>(eventBus, socket) {};
+                return new InputSocketView<T>(eventBus, socket) {
+                };
 
             case SPINNER:
                 if (socketHint.getType().equals(Number.class)) {
@@ -39,8 +40,7 @@ public class InputSocketViewFactory {
                 break;
 
             case SELECT:
-                // TODO
-                break;
+                return new SelectInputSocketView<>(eventBus, socket);
 
             case CHECKBOX:
                 if (socketHint.getType().equals(Boolean.class)) {
