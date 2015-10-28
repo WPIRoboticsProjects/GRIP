@@ -9,6 +9,7 @@ import com.github.javaparser.ast.expr.FieldAccessExpr;
 import com.github.javaparser.ast.expr.NameExpr;
 import com.github.javaparser.ast.type.PrimitiveType;
 import edu.wpi.gripgenerator.defaults.DefaultValueCollector;
+import edu.wpi.gripgenerator.defaults.EnumDefaultValue;
 import edu.wpi.gripgenerator.defaults.ObjectDefaultValue;
 import edu.wpi.gripgenerator.defaults.PrimitiveDefaultValue;
 import edu.wpi.gripgenerator.settings.DefinedMethod;
@@ -93,6 +94,8 @@ public class FileParser {
                 );
             }
         });
+
+        collector.add(new EnumDefaultValue("edu.wpi.grip.core.operations.opencv.enumeration", "FlipCode", "X_AXIS", "Y_AXIS", "BOTH_AXIS"));
 
         OperationList operationList = new OperationList(
                 new ImportDeclaration(new NameExpr("edu.wpi.grip.generated.opencv_core"), false, true),
@@ -221,7 +224,7 @@ public class FileParser {
                 new DefinedMethod("normalize", false, "Mat", "Mat"),
                 new DefinedMethod("batchDistance", false, "Mat", "Mat"),
                 new DefinedMethod("addWeighted", false, "Mat"),
-                new DefinedMethod("flip", false, "Mat", "Mat"),
+                new DefinedMethod("flip", false, new DefinedParamType("Mat"), new DefinedParamType("Mat"), new DefinedParamType("int").setLiteralDefaultValue("Y_AXIS")),
                 new DefinedMethod("bitwise_and", false, "Mat", "Mat"),
                 new DefinedMethod("bitwise_or", false, "Mat", "Mat"),
                 new DefinedMethod("bitwise_xor", false, "Mat", "Mat"),
