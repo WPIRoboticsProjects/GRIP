@@ -25,7 +25,10 @@ import java.util.stream.Collectors;
  * features until a fully usable application is implemented.
  */
 public class MainWindowController implements Initializable {
-    private final EventBus eventBus = new EventBus();
+    private final EventBus eventBus = new EventBus((exception, context) -> {
+        new IllegalStateException("Could not dispatch event: "
+                + context.getSubscriber() + " to " + context.getSubscriberMethod(), exception).printStackTrace(System.err);
+    });
 
     @FXML
     private SplitPane topPane;
