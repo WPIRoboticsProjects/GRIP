@@ -4,6 +4,8 @@ import com.google.common.eventbus.EventBus;
 import edu.wpi.grip.core.InputSocket;
 import edu.wpi.grip.core.SocketHint;
 
+import java.util.List;
+
 /**
  * Factory for constructing editable controls for input sockets
  */
@@ -36,7 +38,10 @@ public class InputSocketViewFactory {
                 break;
 
             case RANGE:
-                // TODO
+                if (socketHint.getType().equals(List.class)) {
+                    return (InputSocketView<T>) new RangeInputSocketView(eventBus, (InputSocket<List<Number>>) socket);
+                }
+
                 break;
 
             case SELECT:
