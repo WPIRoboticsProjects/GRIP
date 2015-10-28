@@ -33,16 +33,19 @@ public class InputSocketViewFactory {
             case SLIDER:
                 if (socketHint.getType().equals(Number.class)) {
                     return (InputSocketView<T>) new SliderInputSocketView(eventBus, (InputSocket<Number>) socket);
+                } else {
+                    throw new IllegalArgumentException("Could not create view for socket.  SLIDER views must be Numbers. "
+                            + socket.toString());
                 }
-
-                break;
 
             case RANGE:
                 if (socketHint.getType().equals(List.class)) {
                     return (InputSocketView<T>) new RangeInputSocketView(eventBus, (InputSocket<List<Number>>) socket);
+                } else {
+                    throw new IllegalArgumentException("Could not create view for socket.  RANGE views must be Lists. "
+                            + socket.toString());
                 }
 
-                break;
 
             case SELECT:
                 return new SelectInputSocketView<>(eventBus, socket);
@@ -50,11 +53,14 @@ public class InputSocketViewFactory {
             case CHECKBOX:
                 if (socketHint.getType().equals(Boolean.class)) {
                     return (InputSocketView<T>) new CheckboxInputSocketView(eventBus, (InputSocket<Boolean>) socket);
+                } else {
+                    throw new IllegalArgumentException("Could not create view for socket.  CHECKBOX views must be Booleans. "
+                            + socket.toString());
                 }
 
-                break;
+            default:
+                throw new IllegalArgumentException("Could not create view for socket. " + socket.toString());
         }
 
-        throw new RuntimeException("Could not create view for socket: " + socket.toString());
     }
 }
