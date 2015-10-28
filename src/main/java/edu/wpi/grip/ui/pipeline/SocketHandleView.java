@@ -49,7 +49,7 @@ public class SocketHandleView extends Button {
         this.socket = socket;
         this.eventBus = eventBus;
 
-        this.getStyleClass().add("socket-handle");
+        this.getStyleClass().addAll("socket-handle", socket.getDirection().toString().toLowerCase());
 
         this.connectingProperty.addListener((observableValue, oldValue, isConnecting) ->
                 this.pseudoClassStateChanged(CONNECTING_PSEUDO_CLASS, isConnecting));

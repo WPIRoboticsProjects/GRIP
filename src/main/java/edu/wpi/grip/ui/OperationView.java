@@ -4,6 +4,7 @@ import com.google.common.eventbus.EventBus;
 import edu.wpi.grip.core.Operation;
 import edu.wpi.grip.core.Step;
 import edu.wpi.grip.core.events.StepAddedEvent;
+import edu.wpi.grip.ui.util.StyleClassNameUtility;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -53,12 +54,12 @@ public class OperationView extends GridPane implements Initializable {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-
         this.eventBus.register(this);
     }
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+        this.setId(StyleClassNameUtility.idNameFor(this.operation));
         this.name.setText(this.operation.getName());
         this.description.setText(this.operation.getDescription());
         this.operation.getIcon().ifPresent(icon -> this.icon.setImage(new Image(icon)));

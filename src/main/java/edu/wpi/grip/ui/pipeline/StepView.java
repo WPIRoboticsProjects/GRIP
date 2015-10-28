@@ -7,6 +7,7 @@ import edu.wpi.grip.core.Step;
 import edu.wpi.grip.core.events.StepRemovedEvent;
 import edu.wpi.grip.ui.pipeline.input.InputSocketView;
 import edu.wpi.grip.ui.pipeline.input.InputSocketViewFactory;
+import edu.wpi.grip.ui.util.StyleClassNameUtility;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -69,6 +70,7 @@ public class StepView extends AnchorPane implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+        this.getStyleClass().add(StyleClassNameUtility.classNameFor(this.step));
         this.stepPane.setText(this.step.getOperation().getName());
         this.stepPane.setAlignment(Pos.TOP_LEFT);
         this.stepPane.setContentDisplay(ContentDisplay.LEFT);
