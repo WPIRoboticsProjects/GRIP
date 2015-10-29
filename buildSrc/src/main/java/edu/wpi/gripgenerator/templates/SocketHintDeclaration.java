@@ -119,6 +119,9 @@ public class SocketHintDeclaration {
 
         final List<VariableDeclarator> variableDeclarations = new ArrayList<>();
         for (DefinedParamType paramType : paramTypes) {
+            // Don't generate hint for ignored param
+            if (paramType.isIgnored()) continue;
+
             String hintName = paramType.getName();
             // The variableId
             final String fullHintName = hintName
@@ -137,6 +140,8 @@ public class SocketHintDeclaration {
                             // Create new instantiation of type socket hint type
                             new ObjectCreationExpr(null, socketHintType, paramSet)));
         }
+        if (variableDeclarations.isEmpty()) return null;
+
         return new FieldDeclaration(modifiers, socketHintType, variableDeclarations);
     }
 }

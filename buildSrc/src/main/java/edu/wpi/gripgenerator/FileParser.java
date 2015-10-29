@@ -201,7 +201,7 @@ public class FileParser {
                 new DefinedMethod("rectangle", false,
                         new DefinedParamType("Mat", DefinedParamType.DefinedParamState.INPUT_AND_OUTPUT),
                         new DefinedParamType("Point"))
-        ).setOutputDefaults("dst");
+        ).setOutputDefaults("dst").setIgnoreDefaults("dtype");
         new OpenCVMethodVisitor(collection).visit(imgprocDeclaration, compilationUnits);
         collection.generateCompilationUnits(collector, compilationUnits, operations);
         return compilationUnits;
@@ -224,7 +224,10 @@ public class FileParser {
                 new DefinedMethod("normalize", false, "Mat", "Mat"),
                 new DefinedMethod("batchDistance", false, "Mat", "Mat"),
                 new DefinedMethod("addWeighted", false, "Mat"),
-                new DefinedMethod("flip", false, new DefinedParamType("Mat"), new DefinedParamType("Mat"), new DefinedParamType("int").setLiteralDefaultValue("Y_AXIS")),
+                new DefinedMethod("flip", false,
+                        new DefinedParamType("Mat"),
+                        new DefinedParamType("Mat"),
+                        new DefinedParamType("int").setLiteralDefaultValue("Y_AXIS")),
                 new DefinedMethod("bitwise_and", false, "Mat", "Mat"),
                 new DefinedMethod("bitwise_or", false, "Mat", "Mat"),
                 new DefinedMethod("bitwise_xor", false, "Mat", "Mat"),
@@ -246,7 +249,7 @@ public class FileParser {
 //                        new DefinedParamType("double")
 //                                .setDefaultValue(new PrimitiveDefaultValue(new PrimitiveType(PrimitiveType.Primitive.Double), "1"))
 //                )
-        ).setOutputDefaults("dst");
+        ).setOutputDefaults("dst").setIgnoreDefaults("dtype");
         new OpenCVMethodVisitor(collection).visit(coreDeclaration, compilationUnits);
 
         collection.generateCompilationUnits(collector, compilationUnits, operations);

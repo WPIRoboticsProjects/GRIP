@@ -171,10 +171,11 @@ public final class DefinedMethod {
                 Parameter param = declaration.getParameters().get(i);
                 DefinedParamType definedParamType;
                 assert i < paramTypes.size() : "The size of the params list was less than than the index. Invalid state";
-                if (i == paramTypes.size()) {
+
+                if (i == paramTypes.size()) { // Create the defined param for this param because it wasn't defined
                     definedParamType = new DefinedParamType(param.getType().toString());
                     paramTypes.add(definedParamType);
-                } else {
+                } else { // Otherwise grab the predefined one.
                     definedParamType = paramTypes.get(i);
                 }
                 definedParamType.setParamAs(param);
@@ -184,6 +185,9 @@ public final class DefinedMethod {
                 }
                 if (collectionOf.isOutputDefault(param.getId().getName())) {
                     definedParamType.setOutput();
+                }
+                if (collectionOf.shouldIgnore(param.getId().getName())){
+                    definedParamType.setIgnored();
                 }
             }
             return this.finalized;

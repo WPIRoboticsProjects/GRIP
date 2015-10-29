@@ -147,6 +147,9 @@ public class SocketHintDeclarationCollection {
                 assert false : "The paramType was not in either the input or output list";
                 return null;
             }
+            // We still need to increment the values if the param is ignored
+            if (paramType.isIgnored()) continue;
+
             final MethodCallExpr getValueExpression = getValueExpression(paramId, index);
             final Expression assignExpression;
             if (paramType.getType() instanceof PrimitiveType && (!((PrimitiveType) paramType.getType()).getType().equals(PrimitiveType.Primitive.Boolean))) {
@@ -215,6 +218,7 @@ public class SocketHintDeclarationCollection {
     private BlockStmt getInputOrOutputSocketBody(List<DefinedParamType> paramTypes, ClassOrInterfaceType socketType, String inputOrOutputPostfix) {
         List<Expression> passedExpressions = new ArrayList<>();
         for (DefinedParamType inputParam : paramTypes) {
+            if (inputParam.isIgnored()) continue;
             passedExpressions.add(getSocketListParam(inputParam, socketType, inputOrOutputPostfix));
         }
         BlockStmt returnStatement = new BlockStmt(

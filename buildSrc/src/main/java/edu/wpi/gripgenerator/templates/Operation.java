@@ -299,7 +299,12 @@ public class Operation {
                 " * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *\n" +
                         " * ===== THIS CODE HAS BEEN DYNAMICALLY GENERATED! DO NOT MODIFY! ==== *\n" +
                         " * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * "));
-        operation.setMembers(socketHintDeclarationCollection.getAllSocketHints().stream().map(SocketHintDeclaration::getDeclaration).collect(Collectors.toList()));
+        operation.setMembers(socketHintDeclarationCollection
+                .getAllSocketHints()
+                .stream()
+                .map(SocketHintDeclaration::getDeclaration)
+                .filter(declaration -> declaration != null)
+                .collect(Collectors.toList()));
         ASTHelper.addMember(operation, getNameMethod());
         ASTHelper.addMember(operation, getDescriptionMethod());
         ASTHelper.addMember(operation, getCreateInputSocketsMethod());
