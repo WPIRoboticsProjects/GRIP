@@ -36,6 +36,8 @@ public class SocketHintDeclaration {
     public static final ImportDeclaration SOCKET_IMPORT = new ImportDeclaration(
             new NameExpr("edu.wpi.grip.core." + SOCKET_HINT_CLASS_NAME), false, false);
     public static final String HINT_POSTFIX = "Hint";
+    public static final String INPUT_POSTFIX = "Input";
+    public static final String OUTPUT_POSTFIX = "Output";
     //End Statics
 
     private final Type genericType;
@@ -65,7 +67,7 @@ public class SocketHintDeclaration {
     }
 
 
-    public SocketHintDeclaration(DefaultValueCollector collector, Type genericType, List<DefinedParamType> paramTypes) {
+    public SocketHintDeclaration(DefaultValueCollector collector, Type genericType, List<DefinedParamType> paramTypes, DefinedParamType.DefinedParamState state) {
         /* Convert this to the 'boxed' type if this is a PrimitiveType */
         this.genericType =
                 genericType instanceof PrimitiveType ?
@@ -74,7 +76,7 @@ public class SocketHintDeclaration {
                                 ASTHelper.createReferenceType("Number", 0)
                         : genericType;
         this.paramTypes = paramTypes;
-        this.isOutput = paramTypes.get(0).isOutput();
+        this.isOutput = state.isOutput();
         this.collector = collector;
     }
 
@@ -117,9 +119,14 @@ public class SocketHintDeclaration {
 
         final List<VariableDeclarator> variableDeclarations = new ArrayList<>();
         for (DefinedParamType paramType : paramTypes) {
+            // Don't generate hint for ignored param
+            if (paramType.isIgnored()) continue;
+
             String hintName = paramType.getName();
             // The variableId
-            final String fullHintName = hintName + HINT_POSTFIX;
+            final String fullHintName = hintName
+                    + (isOutput() ? OUTPUT_POSTFIX : INPUT_POSTFIX)
+                    + HINT_POSTFIX;
             // The name hint of the socket hint
             final StringLiteralExpr stringLiteralExpr = new StringLiteralExpr(hintName);
             final ClassExpr classExpr = new ClassExpr(genericType);
@@ -133,6 +140,8 @@ public class SocketHintDeclaration {
                             // Create new instantiation of type socket hint type
                             new ObjectCreationExpr(null, socketHintType, paramSet)));
         }
+        if (variableDeclarations.isEmpty()) return null;
+
         return new FieldDeclaration(modifiers, socketHintType, variableDeclarations);
     }
 }

@@ -15,6 +15,7 @@ public class DefinedMethodCollection {
     private final String className;
     private final Map<String, DefinedMethod> definedMethodMap;
     private final Set<String> outputDefaults = new HashSet<>();
+    private final Set<String> ignoreDefaults = new HashSet<>();
 
     public DefinedMethodCollection(String className, DefinedMethod... methodList) {
         this(className, Arrays.asList(methodList));
@@ -32,6 +33,11 @@ public class DefinedMethodCollection {
         return this;
     }
 
+    public DefinedMethodCollection setIgnoreDefaults(String... ignoreDefaults) {
+        this.ignoreDefaults.addAll(Arrays.asList(ignoreDefaults));
+        return this;
+    }
+
     public boolean matchesParent(MethodDeclaration declaration) {
         Node parent = declaration.getParentNode();
         if (parent instanceof ClassOrInterfaceDeclaration) {
@@ -46,6 +52,10 @@ public class DefinedMethodCollection {
 
     public boolean isOutputDefault(String check) {
         return outputDefaults.contains(check);
+    }
+
+    public boolean shouldIgnore(String check) {
+        return ignoreDefaults.contains(check);
     }
 
 

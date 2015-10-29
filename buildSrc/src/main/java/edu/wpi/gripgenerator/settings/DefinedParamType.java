@@ -27,7 +27,17 @@ import static com.google.common.base.Preconditions.checkNotNull;
 public class DefinedParamType {
     public enum DefinedParamState {
         INPUT,
-        OUTPUT
+        OUTPUT,
+        INPUT_AND_OUTPUT;
+
+        public boolean isInput() {
+            return this.equals(INPUT) || this.equals(INPUT_AND_OUTPUT);
+        }
+
+        public boolean isOutput() {
+            return this.equals(OUTPUT) || this.equals(INPUT_AND_OUTPUT);
+        }
+
     }
 
     private final String type;
@@ -35,6 +45,7 @@ public class DefinedParamType {
     private Optional<Parameter> parameter = Optional.empty();
     private Optional<DefaultValue> defaultValue = Optional.empty();
     private Optional<String> literalDefaultValue = Optional.empty();
+    private boolean shoudIgnore = false;
 
     private final Pattern constructorCallExpression = Pattern.compile(".*cv?:?:([A-Z][a-zA-Z_]*)\\(.*\\)");
     private final Pattern methodCallExpression = Pattern.compile(".*cv?:?:([a-z][a-zA-Z_]*)\\(.*\\)");
@@ -67,7 +78,7 @@ public class DefinedParamType {
         return paramStates;
     }
 
-    public DefinedParamType setLiteralDefaultValue(String literalDefaultValue){
+    public DefinedParamType setLiteralDefaultValue(String literalDefaultValue) {
         this.literalDefaultValue = Optional.of(literalDefaultValue);
         return this;
     }
@@ -118,7 +129,7 @@ public class DefinedParamType {
     }
 
     public boolean isMatch(Parameter param) {
-        return type.equals(param.getType().toString());
+        return type.equals(param.getType().toStringWithoutComments());
     }
 
     private Type getRealType() {
@@ -161,11 +172,23 @@ public class DefinedParamType {
         }
     }
 
-    /**
-     * @return True if this para type represents an output.
-     */
+    public boolean isInput() {
+        return state.isInput();
+    }
+
     public boolean isOutput() {
-        return state.equals(DefinedParamState.OUTPUT);
+        return state.isOutput();
+    }
+
+    public boolean isIgnored() {
+        return this.shoudIgnore;
+    }
+
+    /**
+     * @return The state of this param
+     */
+    public DefinedParamState getState() {
+        return state;
     }
 
     public String getName() {
@@ -181,6 +204,11 @@ public class DefinedParamType {
     public Expression getLiteralExpression() {
         if (defaultValue.isPresent() && defaultValue.get() instanceof EnumDefaultValue) {
             return new FieldAccessExpr(createNameExpr(getName()), "value");
+        } else if (isIgnored()) {
+            return getDefaultValue()
+                    .orElseThrow(() -> new IllegalStateException("Default Value was not present for ignored param " + this.toString()))
+                    .getDefaultValue(this.literalDefaultValue
+                            .orElseThrow(() -> new IllegalStateException("Literal Default Value was not defined for ignored param " + this.toString())));
         } else {
             return createNameExpr(getName());
         }
@@ -191,6 +219,10 @@ public class DefinedParamType {
      */
     void setOutput() {
         state = DefinedParamState.OUTPUT;
+    }
+
+    public void setIgnored() {
+        this.shoudIgnore = true;
     }
 
 }

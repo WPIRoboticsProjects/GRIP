@@ -4,9 +4,14 @@ import com.github.javaparser.JavaParser;
 import com.github.javaparser.ParseException;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.ImportDeclaration;
+import com.github.javaparser.ast.expr.Expression;
+import com.github.javaparser.ast.expr.FieldAccessExpr;
 import com.github.javaparser.ast.expr.NameExpr;
+import com.github.javaparser.ast.type.PrimitiveType;
 import edu.wpi.gripgenerator.defaults.DefaultValueCollector;
+import edu.wpi.gripgenerator.defaults.EnumDefaultValue;
 import edu.wpi.gripgenerator.defaults.ObjectDefaultValue;
+import edu.wpi.gripgenerator.defaults.PrimitiveDefaultValue;
 import edu.wpi.gripgenerator.settings.DefinedMethod;
 import edu.wpi.gripgenerator.settings.DefinedMethodCollection;
 import edu.wpi.gripgenerator.settings.DefinedParamType;
@@ -17,8 +22,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 public class FileParser {
     /**
@@ -73,6 +80,22 @@ public class FileParser {
         CompilationUnit compilationUnit = readFile(INPUT_URL);
         Map<String, CompilationUnit> returnMap = new HashMap<>();
         DefaultValueCollector collector = new DefaultValueCollector();
+        collector.add(new PrimitiveDefaultValue(new PrimitiveType(PrimitiveType.Primitive.Double)) {
+            @Override
+            protected Set<String> getDefaultValues() {
+                return Collections.singleton("CV_PI");
+            }
+
+            @Override
+            public Expression getDefaultValue(String defaultValue) {
+                return new FieldAccessExpr(
+                        new NameExpr("Math"),
+                        "PI"
+                );
+            }
+        });
+
+        collector.add(new EnumDefaultValue("edu.wpi.grip.core.operations.opencv.enumeration", "FlipCode", "X_AXIS", "Y_AXIS", "BOTH_AXES"));
 
         OperationList operationList = new OperationList(
                 new ImportDeclaration(new NameExpr("edu.wpi.grip.generated.opencv_core"), false, true),
@@ -98,7 +121,13 @@ public class FileParser {
 
     public static Map<String, CompilationUnit> parseOpenImgprc(CompilationUnit imgprocDeclaration, DefaultValueCollector collector, OperationList operations) {
         Map<String, CompilationUnit> compilationUnits = new HashMap<>();
-        DefinedMethodCollection collection = new DefinedMethodCollection("opencv_imgproc",
+        final String baseClassName = "opencv_imgproc";
+
+        OpenCVEnumVisitor enumVisitor = new OpenCVEnumVisitor(baseClassName, collector);
+        enumVisitor.visit(imgprocDeclaration, compilationUnits);
+        compilationUnits.putAll(enumVisitor.generateCompilationUnits());
+
+        DefinedMethodCollection collection = new DefinedMethodCollection(baseClassName,
                 new DefinedMethod("Sobel", false, "Mat", "Mat"),
                 new DefinedMethod("medianBlur", false, "Mat", "Mat"),
                 new DefinedMethod("GaussianBlur", false,
@@ -111,8 +140,68 @@ public class FileParser {
                 new DefinedMethod("Canny", false, new DefinedParamType("Mat"), new DefinedParamType("Mat", DefinedParamType.DefinedParamState.OUTPUT)),
                 new DefinedMethod("cornerMinEigenVal", false, "Mat", "Mat"),
                 new DefinedMethod("cornerHarris", false, "Mat", "Mat"),
-                new DefinedMethod("cornerEigenValsAndVecs", false, "Mat", "Mat")
-        ).setOutputDefaults("dst");
+                new DefinedMethod("cornerEigenValsAndVecs", false, "Mat", "Mat"),
+                new DefinedMethod("threshold", false,
+                        new DefinedParamType("Mat"),
+                        new DefinedParamType("Mat"),
+                        new DefinedParamType("double"),
+                        new DefinedParamType("double"),
+                        new DefinedParamType("int").setLiteralDefaultValue("THRESH_BINARY")
+                ).addDescription("Applies a fixed-level threshold to each array element. " +
+                        "The function applies fixed-level thresholding to a single-channel array. The function is typically " +
+                        "used to get a bi-level (binary) image out of a grayscale image ( cv::compare could be also used for " +
+                        "this purpose) or for removing a noise, that is, filtering out pixels with too small or too large " +
+                        "values. There are several types of thresholding supported by the function. They are determined by " +
+                        "type parameter. " +
+                        "Also, the special values cv::THRESH_OTSU or cv::THRESH_TRIANGLE may be combined with one of the " +
+                        "above values. In these cases, the function determines the optimal threshold value using the Otsu's " +
+                        "or Triangle algorithm and uses it instead of the specified thresh . The function returns the " +
+                        "computed threshold value. Currently, the Otsu's and Triangle methods are implemented only for 8-bit " +
+                        "images."),
+                new DefinedMethod("adaptiveThreshold", false,
+                        new DefinedParamType("Mat"),
+                        new DefinedParamType("Mat"),
+                        new DefinedParamType("double"),
+                        new DefinedParamType("int").setLiteralDefaultValue("ADAPTIVE_THRESH_MEAN_C"),
+                        new DefinedParamType("int").setLiteralDefaultValue("THRESH_BINARY")
+                ).addDescription("Applies an adaptive threshold to an array. The function transforms a grayscale image to a binary image"),
+                new DefinedMethod("erode", false,
+                        new DefinedParamType("Mat"),
+                        new DefinedParamType("Mat"),
+                        new DefinedParamType("Mat")
+                ),
+                new DefinedMethod("cvtColor", false,
+                        new DefinedParamType("Mat"),
+                        new DefinedParamType("Mat"),
+                        new DefinedParamType("int").setLiteralDefaultValue("COLOR_BGR2BGRA")
+                ).addDescription("The function converts an input image from one color space to another. In case of a transformation " +
+                        "to-from RGB color space, the order of the channels should be specified explicitly (RGB or BGR). Note " +
+                        "that the default color format in OpenCV is often referred to as RGB but it is actually BGR (the " +
+                        "bytes are reversed). So the first byte in a standard (24-bit) color image will be an 8-bit Blue " +
+                        "component, the second byte will be Green, and the third byte will be Red. The fourth, fifth, and " +
+                        "sixth bytes would then be the second pixel (Blue, then Green, then Red), and so on."),
+                new DefinedMethod("applyColorMap", true,
+                        new DefinedParamType("Mat"),
+                        new DefinedParamType("Mat"),
+                        new DefinedParamType("int").setLiteralDefaultValue("COLORMAP_AUTUMN")
+                ).addDescription("Applies a GNU Octave/MATLAB equivalent colormap on a given image."),
+                new DefinedMethod("resize", false,
+                        new DefinedParamType("Mat"),
+                        new DefinedParamType("Mat"),
+                        new DefinedParamType("Size")
+                ).addDescription("The function resize resizes the image src down to or up to the specified size. Note that the " +
+                        "initial dst type or size are not taken into account. Instead, the size and type are derived from " +
+                        "the `src`,`dsize`,`fx`, and `fy`. To shrink an image, it will generally look best with CV_INTER_AREA interpolation, whereas to " +
+                        "enlarge an image, it will generally look best with CV_INTER_CUBIC (slow) or CV_INTER_LINEAR " +
+                        "(faster but still looks OK)"),
+                new DefinedMethod("HoughLines", false,
+                        new DefinedParamType("Mat", DefinedParamType.DefinedParamState.INPUT_AND_OUTPUT),
+                        new DefinedParamType("Mat", DefinedParamType.DefinedParamState.OUTPUT)
+                ),
+                new DefinedMethod("rectangle", false,
+                        new DefinedParamType("Mat", DefinedParamType.DefinedParamState.INPUT_AND_OUTPUT),
+                        new DefinedParamType("Point"))
+        ).setOutputDefaults("dst").setIgnoreDefaults("dtype");
         new OpenCVMethodVisitor(collection).visit(imgprocDeclaration, compilationUnits);
         collection.generateCompilationUnits(collector, compilationUnits, operations);
         return compilationUnits;
@@ -120,10 +209,13 @@ public class FileParser {
 
     public static Map<String, CompilationUnit> parseOpenCVCore(CompilationUnit coreDeclaration, DefaultValueCollector collector, OperationList operations) {
         Map<String, CompilationUnit> compilationUnits = new HashMap<>();
+        final String baseClassName = "opencv_core";
 
-        new OpenCVEnumVisitor(collector).visit(coreDeclaration, compilationUnits);
+        OpenCVEnumVisitor enumVisitor = new OpenCVEnumVisitor(baseClassName, collector);
+        enumVisitor.visit(coreDeclaration, compilationUnits);
+        compilationUnits.putAll(enumVisitor.generateCompilationUnits());
 
-        DefinedMethodCollection collection = new DefinedMethodCollection("opencv_core",
+        DefinedMethodCollection collection = new DefinedMethodCollection(baseClassName,
                 new DefinedMethod("add", false, "Mat", "Mat", "Mat"),
                 new DefinedMethod("subtract", false, "Mat", "Mat", "Mat").addDescription("Calculates the per-pixel difference between two images"),
                 new DefinedMethod("multiply", false, "Mat", "Mat", "Mat"),
@@ -132,7 +224,10 @@ public class FileParser {
                 new DefinedMethod("normalize", false, "Mat", "Mat"),
                 new DefinedMethod("batchDistance", false, "Mat", "Mat"),
                 new DefinedMethod("addWeighted", false, "Mat"),
-                new DefinedMethod("flip", false, "Mat", "Mat"),
+                new DefinedMethod("flip", false,
+                        new DefinedParamType("Mat"),
+                        new DefinedParamType("Mat"),
+                        new DefinedParamType("int").setLiteralDefaultValue("Y_AXIS")),
                 new DefinedMethod("bitwise_and", false, "Mat", "Mat"),
                 new DefinedMethod("bitwise_or", false, "Mat", "Mat"),
                 new DefinedMethod("bitwise_xor", false, "Mat", "Mat"),
@@ -154,7 +249,7 @@ public class FileParser {
 //                        new DefinedParamType("double")
 //                                .setDefaultValue(new PrimitiveDefaultValue(new PrimitiveType(PrimitiveType.Primitive.Double), "1"))
 //                )
-        ).setOutputDefaults("dst");
+        ).setOutputDefaults("dst").setIgnoreDefaults("dtype");
         new OpenCVMethodVisitor(collection).visit(coreDeclaration, compilationUnits);
 
         collection.generateCompilationUnits(collector, compilationUnits, operations);

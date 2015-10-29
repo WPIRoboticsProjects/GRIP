@@ -1,20 +1,18 @@
 package edu.wpi.gripgenerator;
 
-import com.github.javaparser.ASTHelper;
 import com.github.javaparser.ast.CompilationUnit;
-import com.github.javaparser.ast.ImportDeclaration;
 import com.github.javaparser.ast.PackageDeclaration;
-import com.github.javaparser.ast.body.*;
+import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
+import com.github.javaparser.ast.body.FieldDeclaration;
+import com.github.javaparser.ast.body.VariableDeclarator;
 import com.github.javaparser.ast.comments.Comment;
-import com.github.javaparser.ast.comments.JavadocComment;
-import com.github.javaparser.ast.expr.*;
-import com.github.javaparser.ast.stmt.BlockStmt;
 import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
 import edu.wpi.gripgenerator.defaults.DefaultValueCollector;
 import edu.wpi.gripgenerator.defaults.EnumDefaultValue;
+import edu.wpi.gripgenerator.templates.Enumeration;
 
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -24,86 +22,57 @@ import java.util.stream.Collectors;
 
 public class OpenCVEnumVisitor extends VoidVisitorAdapter<Map<String, CompilationUnit>> {
     private static final String enumNamePostFix = "Enum";
-    private static final String PACKAGE_EXPRESSION = "edu.wpi.grip.generated.opencv_core.enumeration";
-    private static final String IMPORT_EXPRESSION = "org.bytedeco.javacpp.opencv_core";
+    private PackageDeclaration collectedPackage;
+    private final String baseClassName;
+    private final Map<String, List<VariableDeclarator>> nameValuesMap = new HashMap();
+    private final Map<String, String> nameParentClassMap = new HashMap();
     /**
      * @see <a href=http://fiddle.re/e0ek86>Regex Example</a>
      */
     private static final Pattern ENUM_REGEX = Pattern.compile(".*enum cv::([a-zA-Z_]*)?:?:?\\s?([a-zA-Z_]*)");
-    private static final String BASE_CLASS_NAME = "opencv_core";
     private final DefaultValueCollector collector;
 
-    public OpenCVEnumVisitor(DefaultValueCollector collector) {
+    public OpenCVEnumVisitor(String baseClassName, DefaultValueCollector collector) {
+        this.baseClassName = baseClassName;
         this.collector = collector;
     }
 
-    /**
-     * Generates the contents of the constructor.
-     *
-     * @param valueString The string representing the field that this will be assigned to
-     * @return
-     */
-    private BlockStmt getDefaultConstructorBlockStatement(String valueString) {
-        BlockStmt block = new BlockStmt();
-        AssignExpr assignment = new AssignExpr(new FieldAccessExpr(new ThisExpr(), valueString), new NameExpr(valueString), AssignExpr.Operator.assign);
-        ASTHelper.addStmt(block, assignment);
-        return block;
+    public Map<String, CompilationUnit> generateCompilationUnits() {
+        assert collectedPackage != null : "The package was not collected before the compilation units were generated";
+        // Add default values to the collector
+        final List<Enumeration> enumerations = nameValuesMap
+                .keySet()
+                .stream()
+                .map(k -> new Enumeration(
+                        k,
+                        collectedPackage,
+                        baseClassName,
+                        nameParentClassMap.get(k),
+                        nameValuesMap.get(k)))
+                .collect(Collectors.toList());
+        collector.addAll(
+                enumerations.stream()
+                        .map(e -> new EnumDefaultValue(
+                                e.getPackageDeclaration().getName().getName(),
+                                e.getEnumerationClassName(),
+                                nameValuesMap
+                                        .get(e.getEnumerationClassName())
+                                        .stream()
+                                        .map(name -> name.getId().getName()).collect(Collectors.toSet())
+                        ))
+                        .collect(Collectors.toList())
+        );
+        // Generate the list of enumerations
+        return enumerations.stream()
+                .collect(Collectors.toMap(Enumeration::getEnumerationClassName, Enumeration::generateUnit));
     }
 
-    private EnumConstantDeclaration generateEnumConstant(VariableDeclarator var, Expression parentAccessor) {
-        // Create the constant
-        EnumConstantDeclaration enumConstant = new EnumConstantDeclaration(var.getId().getName());
-        List<Expression> expressionList = new ArrayList<>();
-        FieldAccessExpr field = new FieldAccessExpr(parentAccessor, var.getId().getName());
-        expressionList.add(field);
-        enumConstant.setArgs(expressionList);
-
-        // Add the javadoc comment
-        if (var.hasComment() && var.getComment() instanceof  JavadocComment){
-            enumConstant.setJavaDoc(new JavadocComment(var.getComment().getContent()));
-        }
-        return enumConstant;
+    @Override
+    public void visit(final PackageDeclaration packageDeclaration, final Map<String, CompilationUnit> arg) {
+        super.visit(packageDeclaration, arg);
+        this.collectedPackage = packageDeclaration;
     }
 
-    private void addEnumConstants(EnumDeclaration enumDec, FieldDeclaration declaration, Expression parentAccessor) {
-        // Generate the enum constants
-        List<EnumConstantDeclaration> enumConstants = enumDec.getEntries() == null ? new ArrayList<>() : enumDec.getEntries();
-        for (VariableDeclarator var : declaration.getVariables()) {
-            enumConstants.add(generateEnumConstant(var, parentAccessor));
-        }
-        enumDec.setEntries(enumConstants);
-
-    }
-
-    private CompilationUnit generateFromDeclaration(final FieldDeclaration declaration, String name, Expression parentAccessor) {
-        final String valueString = "value";
-
-        // Generate new compilation unit
-        CompilationUnit newEnumCu = new CompilationUnit();
-        newEnumCu.setPackage(new PackageDeclaration(ASTHelper.createNameExpr(PACKAGE_EXPRESSION)));
-        newEnumCu.setImports(Collections.singletonList(new ImportDeclaration(ASTHelper.createNameExpr(IMPORT_EXPRESSION), false, false)));
-
-        // Create new Enum
-        EnumDeclaration newEnum = new EnumDeclaration(ModifierSet.PUBLIC, name);
-
-        VariableDeclarator valueDeclaration = new VariableDeclarator(new VariableDeclaratorId(valueString));
-        FieldDeclaration valueField = new FieldDeclaration(ModifierSet.addModifier(ModifierSet.FINAL, ModifierSet.PUBLIC), ASTHelper.INT_TYPE, Collections.singletonList(valueDeclaration));
-        ASTHelper.addMember(newEnum, valueField);
-
-        // Add a constructor
-        Parameter param = ASTHelper.createParameter(ASTHelper.INT_TYPE, valueString);
-        List<Parameter> parameters = new ArrayList<>();
-        parameters.add(param);
-
-
-        ConstructorDeclaration enumConstructor = new ConstructorDeclaration(0, null, null, name, parameters, null, getDefaultConstructorBlockStatement(valueString));
-        ASTHelper.addMember(newEnum, enumConstructor);
-
-        addEnumConstants(newEnum, declaration, parentAccessor);
-
-        ASTHelper.addTypeDeclaration(newEnumCu, newEnum);
-        return newEnumCu;
-    }
 
     @Override
     public void visit(final FieldDeclaration declaration, final Map<String, CompilationUnit> arg) {
@@ -113,26 +82,16 @@ public class OpenCVEnumVisitor extends VoidVisitorAdapter<Map<String, Compilatio
         if (declarationComment != null) {
             Matcher matcher = ENUM_REGEX.matcher(declarationComment.toString());
             if (matcher.find()) {
-                //This is the base class we are trying to find.
-                NameExpr baseClazz = new NameExpr(BASE_CLASS_NAME);
                 if (declaration.getParentNode() instanceof ClassOrInterfaceDeclaration) {
-                    Expression subClass;
                     ClassOrInterfaceDeclaration clazz = (ClassOrInterfaceDeclaration) declaration.getParentNode();
-                    if (!clazz.getName().equals(baseClazz.getName())) {
-                        subClass = new FieldAccessExpr(baseClazz, clazz.getName());
-                    } else {
-                        subClass = baseClazz;
-                    }
 
+                    /* Defines the name of the enumeration generated */
                     String name = matcher.group(1) + matcher.group(2) + enumNamePostFix;
-                    if (!arg.containsKey(name)) {
-                        // This is where the enum is generated
-                        collector.add(new EnumDefaultValue(PACKAGE_EXPRESSION, name, declaration.getVariables().stream().map(e -> e.getId().getName()).collect(Collectors.toSet())));
-                        arg.put(name, generateFromDeclaration(declaration, name, subClass));
-                    } else {
-                        CompilationUnit existingEnum = arg.get(name);
-                        addEnumConstants((EnumDeclaration) existingEnum.getTypes().get(0), declaration, subClass);
-                        collector.addToEnum(collector.getEnum(name), declaration.getVariables().stream().map(e -> e.getId().getName()).collect(Collectors.toList()));
+
+                    nameValuesMap.putIfAbsent(name, new ArrayList());
+                    nameValuesMap.get(name).addAll(declaration.getVariables());
+                    if (!clazz.getName().equals(baseClassName)) {
+                        nameParentClassMap.put(name, clazz.getName());
                     }
                 } else {
                     throw new Error("Parent of Enum declaration was not a ClassOrInterfaceDeclaration");
@@ -140,4 +99,6 @@ public class OpenCVEnumVisitor extends VoidVisitorAdapter<Map<String, Compilatio
             }
         }
     }
+
+
 }
