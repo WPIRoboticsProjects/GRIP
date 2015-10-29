@@ -2,7 +2,7 @@ package edu.wpi.grip.core;
 
 import com.google.common.eventbus.EventBus;
 
-public class AdditionOperation implements Operation {
+public class SubtractionOperation implements Operation {
     private SocketHint<Double>
             aHint = new SocketHint<>("a", Double.class, 0.0),
             bHint = new SocketHint<>("b", Double.class, 0.0),
@@ -10,12 +10,12 @@ public class AdditionOperation implements Operation {
 
     @Override
     public String getName() {
-        return "Add";
+        return "Subtract";
     }
 
     @Override
     public String getDescription() {
-        return "Compute the sum of two doubles";
+        return "Compute the difference between two doubles";
     }
 
     @Override
@@ -33,6 +33,6 @@ public class AdditionOperation implements Operation {
         InputSocket<Double> a = inputs[0], b = inputs[1];
         OutputSocket<Double> c = outputs[0];
 
-        c.setValue(a.getValue() + b.getValue());
+        c.setValue(a.getValue() - b.getValue());
     }
 }
