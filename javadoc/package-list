@@ -16,3 +16,4 @@ edu.wpi.grip.ui.models
 edu.wpi.grip.ui.pipeline
 edu.wpi.grip.ui.pipeline.input
 edu.wpi.grip.ui.preview
+edu.wpi.grip.ui.util
