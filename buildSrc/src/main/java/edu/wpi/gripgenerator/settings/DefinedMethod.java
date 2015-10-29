@@ -105,7 +105,7 @@ public final class DefinedMethod {
         if (this.description.isPresent()) {
             return this.description.get();
         } else {
-            return "No Description Yet";
+            return "";
         }
     }
 

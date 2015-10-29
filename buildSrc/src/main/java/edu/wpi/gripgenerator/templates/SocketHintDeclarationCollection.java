@@ -4,6 +4,7 @@ import com.github.javaparser.ASTHelper;
 import com.github.javaparser.ast.body.ModifierSet;
 import com.github.javaparser.ast.body.VariableDeclarator;
 import com.github.javaparser.ast.body.VariableDeclaratorId;
+import com.github.javaparser.ast.comments.BlockComment;
 import com.github.javaparser.ast.expr.*;
 import com.github.javaparser.ast.stmt.BlockStmt;
 import com.github.javaparser.ast.stmt.ReturnStmt;
@@ -78,31 +79,39 @@ public class SocketHintDeclarationCollection {
     }
 
     private Expression generateCopyExpression(DefinedParamType type, String inputParmId, int inputIndex, String outputParamId, int outputIndex) {
-        // GOAL: ((OutputSocket<Mat>)outputs[0]).setValue(((InputSocket<Mat>)inputs[0]).getValue().clone());
+        // GOAL: ((OutputSocket<Mat>) outputs[0]).getValue().setTo(((InputSocket<Mat>) inputs[0]).getValue());
         final ClassOrInterfaceType outputType = new ClassOrInterfaceType("OutputSocket");
         final ClassOrInterfaceType inputType = new ClassOrInterfaceType("InputSocket");
         outputType.setTypeArgs(Collections.singletonList(type.getType()));
         inputType.setTypeArgs(Collections.singletonList(type.getType()));
 
-        return getOrSetValueExpression(
+        final MethodCallExpr copyExpression = new MethodCallExpr(
+                getOrSetValueExpression(
                         new EnclosedExpr(
                                 new CastExpr(
                                         outputType,
                                         arrayAccessExpr(outputParamId, outputIndex)
                                 )
                         ),
-                        new MethodCallExpr(
-                                getOrSetValueExpression(
-                                        new EnclosedExpr(
-                                                new CastExpr(
-                                                        inputType,
-                                                        arrayAccessExpr(inputParmId, inputIndex)
-                                                )
-                                        ),
-                                        null),
-                                "clone"
+                        null
+                ),
+                "setTo",
+                Collections.singletonList(
+                        getOrSetValueExpression(
+                                new EnclosedExpr(
+                                        new CastExpr(
+                                                inputType,
+                                                arrayAccessExpr(inputParmId, inputIndex)
+                                        )
+                                ),
+                                null
                         )
-                );
+                )
+        );
+        copyExpression.setComment(new BlockComment(
+                " Sets the value of the input Mat to the output because this operation does not have a destination Mat. "
+        ));
+        return copyExpression;
     }
 
     public List<Expression> getSocketAssignments(String inputParamId, String outputParamId) {
