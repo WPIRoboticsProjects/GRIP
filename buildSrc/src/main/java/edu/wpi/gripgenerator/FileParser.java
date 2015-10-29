@@ -80,7 +80,7 @@ public class FileParser {
         CompilationUnit compilationUnit = readFile(INPUT_URL);
         Map<String, CompilationUnit> returnMap = new HashMap<>();
         DefaultValueCollector collector = new DefaultValueCollector();
-        collector.add(new PrimitiveDefaultValue(new PrimitiveType(PrimitiveType.Primitive.Double)){
+        collector.add(new PrimitiveDefaultValue(new PrimitiveType(PrimitiveType.Primitive.Double)) {
             @Override
             protected Set<String> getDefaultValues() {
                 return Collections.singleton("CV_PI");
@@ -95,7 +95,7 @@ public class FileParser {
             }
         });
 
-        collector.add(new EnumDefaultValue("edu.wpi.grip.core.operations.opencv.enumeration", "FlipCode", "X_AXIS", "Y_AXIS", "BOTH_AXIS"));
+        collector.add(new EnumDefaultValue("edu.wpi.grip.core.operations.opencv.enumeration", "FlipCode", "X_AXIS", "Y_AXIS", "BOTH_AXES"));
 
         OperationList operationList = new OperationList(
                 new ImportDeclaration(new NameExpr("edu.wpi.grip.generated.opencv_core"), false, true),

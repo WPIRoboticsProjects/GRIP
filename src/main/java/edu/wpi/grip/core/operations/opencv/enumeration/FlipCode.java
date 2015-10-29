@@ -8,7 +8,7 @@ public enum FlipCode {
     // IMPORTANT! If you change the name of these values then you must also change the FileParser in the generator.
     X_AXIS(0),
     Y_AXIS(1),
-    BOTH_AXIS(-1);
+    BOTH_AXES(-1);
 
     public final int value;
 

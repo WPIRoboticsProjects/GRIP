@@ -44,11 +44,11 @@ public class OpenCVEnumVisitor extends VoidVisitorAdapter<Map<String, Compilatio
                 .keySet()
                 .stream()
                 .map(k -> new Enumeration(
-                                k,
-                                collectedPackage,
-                                baseClassName,
-                                nameParentClassMap.get(k),
-                                nameValuesMap.get(k)))
+                        k,
+                        collectedPackage,
+                        baseClassName,
+                        nameParentClassMap.get(k),
+                        nameValuesMap.get(k)))
                 .collect(Collectors.toList());
         collector.addAll(
                 enumerations.stream()
