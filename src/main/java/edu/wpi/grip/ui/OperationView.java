@@ -9,6 +9,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
+import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
@@ -59,16 +60,27 @@ public class OperationView extends GridPane implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+        final double iconSizePixels = ICON_SIZE_INCHES * Screen.getPrimary().getDpi();
+
         this.setId(StyleClassNameUtility.idNameFor(this.operation));
         this.name.setText(this.operation.getName());
         this.description.setText(this.operation.getDescription());
+        this.description.setMaxHeight(iconSizePixels);
+
+        final Tooltip tooltip = new Tooltip(this.operation.getDescription());
+        tooltip.setPrefWidth(400.0);
+        tooltip.setWrapText(true);
+        Tooltip.install(this, tooltip);
+
+        this.description.setAccessibleHelp(this.operation.getDescription());
+
         this.operation.getIcon().ifPresent(icon -> this.icon.setImage(new Image(icon)));
 
         // Make the icon a fixed width and height in inches.  It would be cleaner to define this in CSS, but JavaFX
         // doesn't allow fitWidth or fitHeight to be used from CSS, and defining it in FXML would not allow it to be
         // set dynamically based on DPI.
-        this.icon.setFitWidth(ICON_SIZE_INCHES * Screen.getPrimary().getDpi());
-        this.icon.setFitHeight(ICON_SIZE_INCHES * Screen.getPrimary().getDpi());
+        this.icon.setFitWidth(iconSizePixels);
+        this.icon.setFitHeight(iconSizePixels);
 
 
         // When the user clicks the operation, add a new step.
