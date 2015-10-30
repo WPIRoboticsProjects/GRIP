@@ -119,6 +119,9 @@ public class SocketHintDeclarationCollection {
         int inputIndex = 0;
         int outputIndex = 0;
         for (DefinedParamType paramType : paramTypes) {
+            // We still need to increment the values if the param is ignored
+            if (paramType.isIgnored()) continue;
+
             int index;
             String paramId;
             if (inputParamTypes.contains(paramType) && outputParamTypes.contains(paramType)) {
@@ -147,8 +150,6 @@ public class SocketHintDeclarationCollection {
                 assert false : "The paramType was not in either the input or output list";
                 return null;
             }
-            // We still need to increment the values if the param is ignored
-            if (paramType.isIgnored()) continue;
 
             final MethodCallExpr getValueExpression = getValueExpression(paramId, index);
             final Expression assignExpression;
