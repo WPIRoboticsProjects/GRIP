@@ -1,5 +1,6 @@
 package edu.wpi.grip;
 
+import edu.wpi.grip.ui.ExceptionView;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -14,6 +15,16 @@ public class Main extends Application {
 
     @Override
     public void start(Stage stage) throws Exception {
+
+
+        Thread.currentThread().setUncaughtExceptionHandler((thread, throwable) -> {
+            System.out.println("Handler caught exception: "+throwable.getMessage());
+            final ExceptionView exceptionView = new ExceptionView(throwable, getHostServices());
+            exceptionView.showAndWait();
+
+            throwable.printStackTrace();
+        });
+
         FXMLLoader loader = new FXMLLoader(getClass().getResource("ui/MainWindow.fxml"));
         Parent root = loader.load();
 
