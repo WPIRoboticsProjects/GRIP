@@ -5,6 +5,9 @@ import edu.wpi.grip.core.Operation;
 import edu.wpi.grip.core.Pipeline;
 import edu.wpi.grip.core.events.SetSinkEvent;
 import edu.wpi.grip.core.operations.PythonScriptOperation;
+import edu.wpi.grip.core.operations.composite.BlurOperation;
+import edu.wpi.grip.core.operations.composite.RGBThresholdOperation;
+import edu.wpi.grip.core.operations.composite.DesaturateOperation;
 import edu.wpi.grip.core.sinks.DummySink;
 import edu.wpi.grip.generated.CVOperations;
 import edu.wpi.grip.ui.PaletteView;
@@ -78,7 +81,7 @@ public class MainWindowController implements Initializable {
     );
 
     private final static List<URL> scripts = Arrays.asList(
-        MainWindowController.class.getResource("/edu/wpi/grip/scripts/sample-filter.py")
+            MainWindowController.class.getResource("/edu/wpi/grip/scripts/sample-filter.py")
     );
 
     private static Operation loadOperation(URL url) {
@@ -93,16 +96,24 @@ public class MainWindowController implements Initializable {
     public void initialize(URL url, ResourceBundle resourceBundle) {
         PreviewsView previewPaneView = new PreviewsView(eventBus);
 
-        PaletteView paletteView = new PaletteView(eventBus);
+        final PaletteView paletteView = new PaletteView(eventBus);
+
+        paletteView.operationsProperty().addAll(
+                new BlurOperation(),
+                new RGBThresholdOperation(),
+                new DesaturateOperation());
+
         paletteView.operationsProperty().addAll(scripts.stream()
-                    .map(MainWindowController::loadOperation)
-                    .collect(Collectors.toList()));
+                .map(MainWindowController::loadOperation)
+                .collect(Collectors.toList()));
+
         paletteView.operationsProperty().addAll(this.add, this.multiply);
+
         paletteView.operationsProperty().addAll(CVOperations.OPERATIONS.stream()
                 .sorted((a, b) -> a.getName().compareToIgnoreCase(b.getName()))
                 .collect(Collectors.toList()));
 
-        PipelineView pipelineView = new PipelineView(eventBus, new Pipeline(this.eventBus));
+        final PipelineView pipelineView = new PipelineView(eventBus, new Pipeline(this.eventBus));
 
         this.topPane.getItems().addAll(previewPaneView, paletteView);
         this.bottomPane.setContent(pipelineView);
