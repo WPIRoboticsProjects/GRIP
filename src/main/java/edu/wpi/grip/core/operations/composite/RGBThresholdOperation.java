@@ -19,12 +19,12 @@ import static org.bytedeco.javacpp.opencv_core.*;
 public class RGBThresholdOperation implements Operation {
 
     private final SocketHint<Mat> inputHint = new SocketHint<Mat>("Input", Mat.class, Mat::new);
-    private final SocketHint<List> redHint = new SocketHint("Red", List.class,
-            () -> Arrays.asList(0.0, 255.0), SocketHint.View.RANGE, new Number[]{0.0, 255.0});
-    private final SocketHint<List> greenHint = new SocketHint("Green", List.class,
-            () -> Arrays.asList(0.0, 255.0), SocketHint.View.RANGE, new Number[]{0.0, 255.0});
-    private final SocketHint<List> blueHint = new SocketHint("Blue", List.class,
-            () -> Arrays.asList(0.0, 255.0), SocketHint.View.RANGE, new Number[]{0.0, 255.0});
+    private final SocketHint<List> redHint = new SocketHint<List>("Red", List.class,
+            () -> Arrays.asList(0.0, 255.0), SocketHint.View.RANGE, new List[]{Arrays.asList(0.0, 255.0)});
+    private final SocketHint<List> greenHint = new SocketHint<List>("Green", List.class,
+            () -> Arrays.asList(0.0, 255.0), SocketHint.View.RANGE, new List[]{Arrays.asList(0.0, 255.0)});
+    private final SocketHint<List> blueHint = new SocketHint<List>("Blue", List.class,
+            () -> Arrays.asList(0.0, 255.0), SocketHint.View.RANGE, new List[]{Arrays.asList(0.0, 255.0)});
 
     private final SocketHint<Mat> outputHint = new SocketHint<Mat>("output", Mat.class, Mat::new);
 
@@ -59,9 +59,6 @@ public class RGBThresholdOperation implements Operation {
                 new OutputSocket<>(eventBus, outputHint)
         };
     }
-
-    final private Mat low = new Mat();
-    final private Mat high = new Mat();
 
     @Override
     @SuppressWarnings("unchecked")
