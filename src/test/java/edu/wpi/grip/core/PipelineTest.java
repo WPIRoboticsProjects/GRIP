@@ -91,6 +91,51 @@ public class PipelineTest {
     }
 
     @Test
+    public void testMoveStep() {
+        Pipeline pipeline = new Pipeline(eventBus);
+        Step step1 = new Step(eventBus, addition);
+        Step step2 = new Step(eventBus, addition);
+        Step step3 = new Step(eventBus, addition);
+
+        eventBus.post(new StepAddedEvent(step1));
+        eventBus.post(new StepAddedEvent(step2));
+        eventBus.post(new StepAddedEvent(step3));
+        eventBus.post(new StepMovedEvent(step1, +1));
+
+        assertEquals(Arrays.asList(step2, step1, step3), pipeline.getSteps());
+    }
+
+    @Test
+    public void testMoveStepToBeginning() {
+        Pipeline pipeline = new Pipeline(eventBus);
+        Step step1 = new Step(eventBus, addition);
+        Step step2 = new Step(eventBus, addition);
+        Step step3 = new Step(eventBus, addition);
+
+        eventBus.post(new StepAddedEvent(step1));
+        eventBus.post(new StepAddedEvent(step2));
+        eventBus.post(new StepAddedEvent(step3));
+        eventBus.post(new StepMovedEvent(step2, -10));
+
+        assertEquals(Arrays.asList(step2, step1, step3), pipeline.getSteps());
+    }
+
+    @Test
+    public void testMoveStepToEnd() {
+        Pipeline pipeline = new Pipeline(eventBus);
+        Step step1 = new Step(eventBus, addition);
+        Step step2 = new Step(eventBus, addition);
+        Step step3 = new Step(eventBus, addition);
+
+        eventBus.post(new StepAddedEvent(step1));
+        eventBus.post(new StepAddedEvent(step2));
+        eventBus.post(new StepAddedEvent(step3));
+        eventBus.post(new StepMovedEvent(step2, +10));
+
+        assertEquals(Arrays.asList(step1, step3, step2), pipeline.getSteps());
+    }
+
+    @Test
     @SuppressWarnings("unchecked")
     public void testAddConnection() {
         Pipeline pipeline = new Pipeline(eventBus);

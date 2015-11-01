@@ -104,6 +104,20 @@ public class Pipeline {
     }
 
     @Subscribe
+    public void onStepMoved(StepMovedEvent event) {
+        final Step step = event.getStep();
+
+        synchronized (this) {
+            final int oldIndex = this.steps.indexOf(step);
+            this.steps.remove(oldIndex);
+
+            // Compute the new index of the step, clamping to the beginning or end of pipeline if it goes past either end
+            final int newIndex = Math.min(Math.max(oldIndex + event.getDistance(), 0), this.steps.size());
+            this.steps.add(newIndex, step);
+        }
+    }
+
+    @Subscribe
     public void onConnectionAdded(ConnectionAddedEvent event) {
         this.connections.add(event.getConnection());
         this.eventBus.register(event.getConnection());
