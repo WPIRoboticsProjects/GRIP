@@ -50,10 +50,10 @@ public final class ExceptionView extends Alert {
     private final ButtonType openGitHubIssuesBtnType = new ButtonType("Open GitHub Issues");
 
     /**
-     * @see <a href="http://code.makery.ch/blog/javafx-dialogs-official/">Inspiration</a>
      * @param throwable The throwable exception to display this alert for.
-     * @param services The host services, allows access to {@link HostServices#showDocument(String)} in order to display
-     *                 the issue website.
+     * @param services  The host services, allows access to {@link HostServices#showDocument(String)} in order to display
+     *                  the issue website.
+     * @see <a href="http://code.makery.ch/blog/javafx-dialogs-official/">Inspiration</a>
      */
     public ExceptionView(final Throwable throwable, final HostServices services) {
         super(AlertType.ERROR);
@@ -133,11 +133,12 @@ public final class ExceptionView extends Alert {
 
     /**
      * Iterates through the causes until the root cause is found.
+     *
      * @param throwable The throwable to iterate through.
      * @return The initial throwable
      */
-    private Throwable generateInitialCause(Throwable throwable){
-        if(throwable.getCause() == null){
+    private Throwable generateInitialCause(Throwable throwable) {
+        if (throwable.getCause() == null) {
             return throwable;
         } else {
             return generateInitialCause(throwable.getCause());
@@ -146,28 +147,30 @@ public final class ExceptionView extends Alert {
 
     /**
      * Takes the throwable and generates the markdown for the exception.
+     *
      * @param throwable The initial throwable passed to the constructor
      * @return The markdown for the exception.
      */
-    private String generateExceptionMessage(Throwable throwable){
+    private String generateExceptionMessage(Throwable throwable) {
         final StringWriter sw = new StringWriter();
         final PrintWriter pw = new PrintWriter(sw);
         throwable.printStackTrace(pw);
 
         return new StringBuilder(sw.toString()
                 /* Allow users to maintain anonymity */
-                .replace(System.getProperty("user.home"), "$HOME").replace(System.getProperty("user.name"),"$USER"))
+                .replace(System.getProperty("user.home"), "$HOME").replace(System.getProperty("user.name"), "$USER"))
                 .insert(0, "## Stack Trace:\n```java\n").append("\n```").toString();
     }
 
     /**
      * Takes the options listed above and creates a markdown table with each param.
+     *
      * @return The markdown text for the System info.
      */
-    private String generateSystemInfoMessage(){
+    private String generateSystemInfoMessage() {
         final StringBuilder systemInfo = new StringBuilder("## System Info:\n\n");
         systemInfo.append("Property Name | Property \n ----- | -----\n");
-        for(String option : systemOptions) {
+        for (String option : systemOptions) {
             systemInfo.append(option).append(" | ").append(System.getProperty(option)).append("\n");
         }
         return systemInfo.append("\n").toString();
@@ -175,10 +178,11 @@ public final class ExceptionView extends Alert {
 
     /**
      * Creates the text that gets pasted into the new github issue.
+     *
      * @param message The message from the input box
      * @return The fully constructed issue text.
      */
-    private String issueText(String message){
+    private String issueText(String message) {
         return new StringBuilder(ISSUE_PROMPT_QUESTION)
                 .append("\n\n")
                 .append(message)
