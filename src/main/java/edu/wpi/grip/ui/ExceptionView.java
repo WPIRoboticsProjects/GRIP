@@ -93,12 +93,11 @@ public final class ExceptionView extends Alert {
         GridPane.setVgrow(inputBox, Priority.ALWAYS);
         GridPane.setHgrow(inputBox, Priority.ALWAYS);
 
-        final GridPane messageContent = new GridPane();
-        messageContent.setMaxWidth(Double.MAX_VALUE);
-        messageContent.setMaxHeight(Double.MAX_VALUE);
-        messageContent.add(whatHappenedLabel, 0, 0);
-        messageContent.add(inputBox, 0, 1);
-        this.getDialogPane().setContent(messageContent);
+        final GridPane dialogContent = new GridPane();
+        dialogContent.setMaxWidth(Double.MAX_VALUE);
+        dialogContent.setMaxHeight(Double.MAX_VALUE);
+        dialogContent.add(whatHappenedLabel, 0, 0);
+        dialogContent.add(inputBox, 0, 1);
 
         final Label issuePasteLabel = new Label(COPY_PASTE_LABEL_TEXT);
 
@@ -107,17 +106,11 @@ public final class ExceptionView extends Alert {
 
         issueText.setMaxWidth(Double.MAX_VALUE);
         issueText.setMaxHeight(Double.MAX_VALUE);
-        GridPane.setVgrow(issueText, Priority.ALWAYS);
-        GridPane.setHgrow(issueText, Priority.ALWAYS);
 
-        final GridPane expContent = new GridPane();
-        expContent.setMaxWidth(Double.MAX_VALUE);
-        expContent.add(issuePasteLabel, 0, 0);
-        expContent.add(issueText, 0, 1);
 
-        // Set expandable Exception into the dialog pane.
-        this.getDialogPane().setExpandableContent(expContent);
-        this.getDialogPane().setExpanded(true);
+        dialogContent.add(issuePasteLabel, 0, 2);
+        dialogContent.add(issueText, 0, 3);
+        this.getDialogPane().setContent(dialogContent);
 
 
         // Prevent these two buttons from causing the alert to close
