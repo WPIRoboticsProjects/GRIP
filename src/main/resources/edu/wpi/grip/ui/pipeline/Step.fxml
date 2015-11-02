@@ -1,49 +1,44 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.*?>
-<?import java.lang.*?>
-<?import java.net.*?>
 <?import javafx.scene.control.*?>
-<?import javafx.scene.image.*?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.control.Separator?>
-<?import javafx.scene.control.TitledPane?>
-<?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.VBox?>
-<?import java.net.URL?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.*?>
 
-<fx:root type="javafx.scene.layout.AnchorPane" xmlns="http://javafx.com/javafx/null"
-         xmlns:fx="http://javafx.com/fxml/1">
+<fx:root type="javafx.scene.layout.VBox" xmlns="http://javafx.com/javafx/null"
+         xmlns:fx="http://javafx.com/fxml/1" styleClass="step">
     <children>
-        <TitledPane fx:id="stepPane" alignment="CENTER" animated="false" collapsible="false" maxHeight="-Infinity"
-                    maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="step">
+        <HBox>
+            <children>
+                <Button fx:id="deleteButton" onMouseClicked="#deleteStep" styleClass="delete" text="✕"
+                        HBox.hgrow="NEVER">
+                    <tooltip>
+                        <Tooltip text="Delete Step"/>
+                    </tooltip>
+                </Button>
+                <Pane HBox.hgrow="ALWAYS"/>
+                <Button fx:id="moveLeftButton" onMouseClicked="#moveStepLeft" styleClass="move-left"
+                        text="◀" HBox.hgrow="NEVER">
+                    <tooltip>
+                        <Tooltip text="Move Step Left"/>
+                    </tooltip>
+                </Button>
+                <Button fx:id="moveRightButton" onMouseClicked="#moveStepRight" styleClass="move-right"
+                        text="▶" HBox.hgrow="NEVER">
+                    <tooltip>
+                        <Tooltip text="Move Step Right"/>
+                    </tooltip>
+                </Button>
+            </children>
+        </HBox>
+        <Separator orientation="HORIZONTAL"/>
+        <Label fx:id="title" maxWidth="Infinity" styleClass="title">
             <graphic>
-                <HBox styleClass="icons">
-                    <children>
-                        <Button fx:id="deleteButton" styleClass="delete" text="✕">
-                            <HBox.margin>
-                                <Insets/>
-                            </HBox.margin>
-                        </Button>
-                        <ImageView fx:id="icon"/>
-                    </children>
-                </HBox>
+                <ImageView fx:id="icon"/>
             </graphic>
-            <content>
-                <VBox styleClass="sockets">
-                    <children>
-                        <VBox fx:id="inputs"/>
-                        <Separator orientation="HORIZONTAL"/>
-                        <VBox fx:id="outputs"/>
-                    </children>
-                </VBox>
-            </content>
-        </TitledPane>
+        </Label>
+        <Separator orientation="HORIZONTAL"/>
+        <VBox fx:id="inputs" styleClass="sockets"/>
+        <Separator orientation="HORIZONTAL"/>
+        <VBox fx:id="outputs" styleClass="sockets"/>
     </children>
 </fx:root>

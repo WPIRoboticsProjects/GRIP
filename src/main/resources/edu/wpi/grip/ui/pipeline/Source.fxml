@@ -11,6 +11,6 @@
                 <Button text="✕" styleClass="delete" onMouseClicked="#delete"/>
             </graphic>
         </Label>
-        <VBox fx:id="sockets"/>
+        <VBox fx:id="sockets" styleClass="sockets"/>
     </children>
 </fx:root>
