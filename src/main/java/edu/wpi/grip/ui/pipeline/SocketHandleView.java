@@ -13,6 +13,7 @@ import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.css.PseudoClass;
 import javafx.scene.control.Button;
+import javafx.scene.control.Tooltip;
 import javafx.scene.input.DataFormat;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
@@ -45,6 +46,8 @@ public class SocketHandleView extends Button {
     public SocketHandleView(EventBus eventBus, Socket socket) {
         checkNotNull(eventBus);
         checkNotNull(socket);
+
+        this.setTooltip(new Tooltip("Drag to connect"));
 
         this.socket = socket;
         this.eventBus = eventBus;
