@@ -3,6 +3,7 @@ package edu.wpi.grip.ui;
 import javafx.application.HostServices;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
+import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
@@ -20,8 +21,11 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * Also, provides links with quick access to the githup issue page.
  */
 public final class ExceptionView extends Alert {
-    private static final String PROJECT_ISSUE_LINK = "https://github.com/WPIRoboticsProjects/GRIP/issues";
-    private static final String ISSUE_PROMPT_QUESTION = "What were the actions that caused this error occurred?";
+    private static final String
+            PROJECT_ISSUE_LINK = "https://github.com/WPIRoboticsProjects/GRIP/issues",
+            ISSUE_PROMPT_QUESTION = "What were the actions performed prior to this error appearing?",
+            ISSUE_PROMPT_TEXT = "Short description of what you were doing when this dialog appeared.",
+            COPY_PASTE_LABEL_TEXT = "Please paste this into a new issue on the project's GitHub:";
 
     private static final String systemOptions[] = {
             "javafx.version",
@@ -46,8 +50,9 @@ public final class ExceptionView extends Alert {
     private final String systemInfoMessage;
     private final Throwable initialCause;
 
-    private final ButtonType copyToClipboardBtnType = new ButtonType("Copy To Clipboard");
+    private final ButtonType copyToClipboardBtnType = new ButtonType("Copy to Clipboard");
     private final ButtonType openGitHubIssuesBtnType = new ButtonType("Open GitHub Issues");
+    private final ButtonType closeBtnType = new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
 
     /**
      * @param throwable The throwable exception to display this alert for.
@@ -55,7 +60,7 @@ public final class ExceptionView extends Alert {
      *                  the issue website.
      * @see <a href="http://code.makery.ch/blog/javafx-dialogs-official/">Inspiration</a>
      */
-    public ExceptionView(final Throwable throwable, final HostServices services) {
+    public ExceptionView(final Parent root, final Throwable throwable, final HostServices services) {
         super(AlertType.ERROR);
         checkNotNull(throwable, "The Throwable can not be null");
         checkNotNull(services, "HostServices can not be null");
@@ -67,7 +72,12 @@ public final class ExceptionView extends Alert {
         this.setTitle(initialCause.getClass().getSimpleName());
         this.setHeaderText(initialCause.getMessage());
 
-        this.getButtonTypes().addAll(copyToClipboardBtnType, openGitHubIssuesBtnType);
+        // Set stylesheet
+        this.getDialogPane().getStylesheets().addAll(root.getStylesheets());
+
+        // Add two additional buttons
+        this.getButtonTypes().removeIf((buttonType)->buttonType.equals(ButtonType.OK));
+        this.getButtonTypes().addAll(copyToClipboardBtnType, openGitHubIssuesBtnType, closeBtnType);
 
         final Label whatHappenedLabel = new Label(ISSUE_PROMPT_QUESTION);
 
@@ -75,7 +85,7 @@ public final class ExceptionView extends Alert {
 
         final TextArea inputBox = new TextArea();
         inputBox.textProperty().addListener((observable, oldValue, newValue) -> issueText.setText(issueText(newValue)));
-        inputBox.setPromptText("Short description of what you were doing when this dialog appeared.");
+        inputBox.setPromptText(ISSUE_PROMPT_TEXT);
         inputBox.setEditable(true);
         inputBox.setWrapText(true);
         inputBox.setMaxWidth(Double.MAX_VALUE);
@@ -90,7 +100,7 @@ public final class ExceptionView extends Alert {
         messageContent.add(inputBox, 0, 1);
         this.getDialogPane().setContent(messageContent);
 
-        final Label issuePasteLabel = new Label("Please paste this into an issue on the project GitHub:");
+        final Label issuePasteLabel = new Label(COPY_PASTE_LABEL_TEXT);
 
         issueText.setEditable(false);
         issueText.setWrapText(true);
