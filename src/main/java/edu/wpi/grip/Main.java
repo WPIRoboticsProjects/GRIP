@@ -18,11 +18,11 @@ public class Main extends Application {
 
 
         Thread.currentThread().setUncaughtExceptionHandler((thread, throwable) -> {
-            System.out.println("Handler caught exception: "+throwable.getMessage());
+            // Print throwable before showing the exception so that errors are in order in the console.
+            throwable.printStackTrace();
+
             final ExceptionView exceptionView = new ExceptionView(throwable, getHostServices());
             exceptionView.showAndWait();
-
-            throwable.printStackTrace();
         });
 
         FXMLLoader loader = new FXMLLoader(getClass().getResource("ui/MainWindow.fxml"));
