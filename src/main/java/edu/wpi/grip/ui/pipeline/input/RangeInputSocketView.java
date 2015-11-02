@@ -27,15 +27,18 @@ public class RangeInputSocketView extends InputSocketView<List<Number>> {
         final Object[] domain = socket.getSocketHint().getDomain();
         final List<Number> value = socket.getValue();
 
-        checkArgument(domain != null
-                        && domain.length == 2
-                        && domain[0] instanceof Number
-                        && domain[1] instanceof Number,
-                "Sliders must have a domain with two numbers (min and max)");
+        checkArgument(domain != null && domain.length == 1 && domain[0] instanceof List,
+                "Sliders must have a domain with a list of two numbers (min and max)");
+
+        @SuppressWarnings("unchecked")
+        final List<Number> extremes = (List<Number>) domain[0];
+        checkArgument(extremes.size() == 2 && extremes.get(0) instanceof Number && extremes.get(1) instanceof Number,
+                "Sliders must have a domain with a list of two numbers (min and max)");
+
         checkArgument(value.size() == 2, "Range sliders must contain two values (low and high)");
 
-        final double min = ((Number) domain[0]).doubleValue();
-        final double max = ((Number) domain[1]).doubleValue();
+        final double min = extremes.get(0).doubleValue();
+        final double max = extremes.get(1).doubleValue();
         final double initialLow = value.get(0).doubleValue();
         final double initialHigh = value.get(1).doubleValue();
 

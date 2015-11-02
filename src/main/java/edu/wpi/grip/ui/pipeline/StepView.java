@@ -4,6 +4,7 @@ import com.google.common.eventbus.EventBus;
 import edu.wpi.grip.core.InputSocket;
 import edu.wpi.grip.core.OutputSocket;
 import edu.wpi.grip.core.Step;
+import edu.wpi.grip.core.events.StepMovedEvent;
 import edu.wpi.grip.core.events.StepRemovedEvent;
 import edu.wpi.grip.ui.pipeline.input.InputSocketView;
 import edu.wpi.grip.ui.pipeline.input.InputSocketViewFactory;
@@ -12,13 +13,9 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.geometry.Pos;
-import javafx.scene.control.Button;
-import javafx.scene.control.ContentDisplay;
-import javafx.scene.control.TitledPane;
+import javafx.scene.control.Labeled;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Screen;
 
@@ -32,15 +29,12 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * A JavaFX control that shows a step in the pipeline.  This control shows the name of the operation as well as a list
  * of input sockets and output sockets.
  */
-public class StepView extends AnchorPane implements Initializable {
+public class StepView extends VBox implements Initializable {
     @FXML
-    private TitledPane stepPane;
+    private Labeled title;
 
     @FXML
     private ImageView icon;
-
-    @FXML
-    private Button deleteButton;
 
     @FXML
     private VBox inputs;
@@ -71,9 +65,7 @@ public class StepView extends AnchorPane implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         this.getStyleClass().add(StyleClassNameUtility.classNameFor(this.step));
-        this.stepPane.setText(this.step.getOperation().getName());
-        this.stepPane.setAlignment(Pos.TOP_LEFT);
-        this.stepPane.setContentDisplay(ContentDisplay.LEFT);
+        this.title.setText(this.step.getOperation().getName());
 
         this.step.getOperation().getIcon().ifPresent(icon -> {
             this.icon.setImage(new Image(icon));
@@ -89,9 +81,6 @@ public class StepView extends AnchorPane implements Initializable {
         for (OutputSocket<?> outputSocket : this.step.getOutputSockets()) {
             this.outputs.getChildren().add(new OutputSocketView(this.eventBus, outputSocket));
         }
-
-        // When the delete button is pressed, remove this step.
-        this.deleteButton.setOnMouseClicked(mouseEvent -> this.eventBus.post(new StepRemovedEvent(this.step)));
     }
 
     /**
@@ -112,5 +101,20 @@ public class StepView extends AnchorPane implements Initializable {
 
     public Step getStep() {
         return this.step;
+    }
+
+    @FXML
+    private void deleteStep() {
+        this.eventBus.post(new StepRemovedEvent(this.step));
+    }
+
+    @FXML
+    private void moveStepLeft() {
+        this.eventBus.post(new StepMovedEvent(this.step, -1));
+    }
+
+    @FXML
+    private void moveStepRight() {
+        this.eventBus.post(new StepMovedEvent(this.step, +1));
     }
 }

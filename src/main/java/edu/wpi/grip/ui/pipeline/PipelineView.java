@@ -263,6 +263,21 @@ public class PipelineView extends StackPane implements Initializable {
     }
 
     @Subscribe
+    public void onStepMoved(StepMovedEvent event) {
+        Platform.runLater(() -> {
+            final StepView stepView = findStepView(event.getStep());
+
+            final int oldIndex = this.getSteps().indexOf(stepView);
+            final int newIndex = Math.min(Math.max(oldIndex + event.getDistance(), 0), this.getSteps().size() - 1);
+
+            if (newIndex != oldIndex) {
+                this.steps.getChildren().remove(oldIndex);
+                this.steps.getChildren().add(newIndex, stepView);
+            }
+        });
+    }
+
+    @Subscribe
     public void onConnectionAdded(ConnectionAddedEvent event) {
         // Add the new connection view
         Platform.runLater(() -> this.addConnectionView(event.getConnection()));

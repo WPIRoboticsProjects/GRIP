@@ -2,6 +2,8 @@ package edu.wpi.grip.ui.controllers;
 
 
 import edu.wpi.grip.Main;
+import edu.wpi.grip.core.AdditionOperation;
+import edu.wpi.grip.ui.PaletteView;
 import javafx.stage.Stage;
 import org.junit.Test;
 import org.testfx.framework.junit.ApplicationTest;
@@ -15,15 +17,18 @@ public class MainWindowControllerTest extends ApplicationTest {
     @Override
     public void start(Stage stage) throws Exception {
         new Main().start(stage);
+
+        final PaletteView palette = lookup(".palette").<PaletteView>queryFirst();
+        palette.operationsProperty().setAll(new AdditionOperation());
     }
 
     @Test
     public void testShouldCreateNewOperationInPipelineView() {
         // Given:
-        clickOn("#python-multiply-operation");
+        clickOn("#add-operation");
 
         // Then:
-        verifyThat(".pipeline", NodeMatchers.hasChildren(1, ".python-multiply-step"));
+        verifyThat(".pipeline", NodeMatchers.hasChild(".add-step"));
     }
 
 
