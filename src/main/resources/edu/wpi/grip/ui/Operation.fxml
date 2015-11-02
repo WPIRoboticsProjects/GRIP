@@ -15,10 +15,6 @@
         <Label fx:id="name" styleClass="operation-name" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
         <Label fx:id="description" styleClass="operation-description" GridPane.columnIndex="1" GridPane.rowIndex="1" textOverrun="WORD_ELLIPSIS"/>
     </children>
-    <stylesheets>
-        <URL value="@roboto/Roboto.css"/>
-        <URL value="@GRIP.css"/>
-    </stylesheets>
     <columnConstraints>
         <ColumnConstraints/>
     </columnConstraints>
