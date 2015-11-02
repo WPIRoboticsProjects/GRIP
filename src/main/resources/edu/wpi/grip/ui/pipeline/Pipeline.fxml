@@ -25,8 +25,4 @@
             <StackPane.alignment>TOP_LEFT</StackPane.alignment>
         </Group>
     </children>
-    <stylesheets>
-        <URL value="@../roboto/Roboto.css"/>
-        <URL value="@../GRIP.css"/>
-    </stylesheets>
 </fx:root>
