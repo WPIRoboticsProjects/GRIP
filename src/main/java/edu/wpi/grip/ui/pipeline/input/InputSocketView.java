@@ -30,6 +30,9 @@ public abstract class InputSocketView<T> extends GridPane {
     private Label identifier;
 
     @FXML
+    private Label type;
+
+    @FXML
     private StackPane contentPane;
 
     private ObjectProperty<Node> contentProperty;
@@ -60,7 +63,8 @@ public abstract class InputSocketView<T> extends GridPane {
             throw new RuntimeException(e);
         }
 
-        this.identifier.setText(socket.getSocketHint().getIdentifier());
+        this.identifier.setText(this.socket.getSocketHint().getIdentifier());
+        this.type.setText(this.socket.getSocketHint().getType().getSimpleName());
 
         this.handle = new SocketHandleView(this.eventBus, this.socket);
         this.add(this.handle, 0, 0);
