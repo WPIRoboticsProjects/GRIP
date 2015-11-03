@@ -1,7 +1,5 @@
 # NOTE: Don't use `sudo` anywhere or the build will run on Travis's slower, outdated build system
 language: java
-jdk:
-  - oraclejdk8
 
 # GCC needs to be 4.8 or higher so that GOMP_4.0 is installed for opencv
 # This is incredibly hard to track down, find the solution for and fix.
@@ -45,9 +43,6 @@ env:
   global:
     secure: f90qqcA5inkHmYUK6WNITkSPbalpw+r+6nzykPdN30ahB8OUupYxoJxFknxw74raPQ69IgsDF+f8RihEBNIjH8TiMihkcwbkUGGfYaON+sVdvV/GgRQcUk0tm/wrWxRiB1qOYfsvU4sdyvFWBtAbeuhBH1JMLlQGaFjHTJOUwCjm3iEW0CKC9btsgcZIvIrHkP2KNHUMD2iBs6BJ4W448ElQTBBnaoInWUm/ecV+nNUX9yT1CpVWABVuioUkSWSm7eMiqYnvm4J9+LUh8+IMYyodO2hjPWlQ18yhmP9kSlGpQT6pRZjCRd394GE8plKxxWwp9CVXyUY/KQiYoNMRQaAiwuNnXrCi2Et1Fp8+MzQjpl+2CWbdtPwqGhKrGICfhPHvswNE2jM7VLAu/8Gn+ubhKuYfiibska5tXDBknrVbOiV1s9h3y3hI2WyyUg+T1ZsirhGVzMSmDk4HZnLUf7uEEMZEMQzLC0yk495TTZ2zihRnAkOXhNd24lHVwns2WSu0BKvawaDlfQinCbddKGNXE0cdkDvO9xk4IsbioRJ3w8DhBdL4HAEw/Gzx5N3xEVXgOAtwoP+zH2b3LIXQvP5pkuyna48R9L7Fc+EXUmejuRUmjQQMbsdLbx6Ci8gnd6Xq7CYvwry6t3R0GKuCwziuZNl44doHYR6MK7CDBWo=
 
-os:
-  - linux
-
 deploy:
   provider: releases
   api_key:
@@ -65,3 +60,7 @@ cache:
   directories:
     - $HOME/.gradle/caches/
     - $HOME/.gradle/wrapper/
+
+os:
+  - linux
+  - osx
