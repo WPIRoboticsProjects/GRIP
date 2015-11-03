@@ -1,6 +1,6 @@
 package edu.wpi.grip;
 
-import edu.wpi.grip.ui.ExceptionView;
+import edu.wpi.grip.ui.ExceptionAlert;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -25,8 +25,8 @@ public class Main extends Application {
             // Print throwable before showing the exception so that errors are in order in the console.
             throwable.printStackTrace();
 
-            final ExceptionView exceptionView = new ExceptionView(root, throwable, getHostServices());
-            exceptionView.showAndWait();
+            final ExceptionAlert exceptionAlert = new ExceptionAlert(root, throwable, getHostServices());
+            exceptionAlert.showAndWait();
         });
 
         // Set the root font size based on the DPI of the primary screen.  As long as all sizes are defined in ems,

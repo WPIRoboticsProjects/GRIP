@@ -1,14 +1,12 @@
 package edu.wpi.grip.ui;
 
+import com.google.common.net.UrlEscapers;
 import javafx.application.HostServices;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
-import javafx.scene.input.Clipboard;
-import javafx.scene.input.ClipboardContent;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.Priority;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -20,11 +18,13 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * Includes a textbox with formatted markdown to allow the issue to be pasted into GitHub easily.
  * Also, provides links with quick access to the githup issue page.
  */
-public final class ExceptionView extends Alert {
+public final class ExceptionAlert extends Alert {
     private static final String
-            PROJECT_ISSUE_LINK = "https://github.com/WPIRoboticsProjects/GRIP/issues",
+            PROJECT_ISSUE_LINK = "https://github.com/WPIRoboticsProjects/GRIP/issues/new",
             ISSUE_PROMPT_QUESTION = "What were the actions performed prior to this error appearing?",
-            ISSUE_PROMPT_TEXT = "Short description of what you were doing when this dialog appeared.",
+            ISSUE_PROMPT_TEXT = "We value your feedback and want to hear about the problems you encounter!\n"
+                    + "Please take the time to create an issue on GitHub. With the contents of the box below "
+                    + "as well as a short description of what you were doing when this dialog appeared.",
             COPY_PASTE_LABEL_TEXT = "Please paste this into a new issue on the project's GitHub:";
 
     private static final String systemOptions[] = {
@@ -50,7 +50,6 @@ public final class ExceptionView extends Alert {
     private final String systemInfoMessage;
     private final Throwable initialCause;
 
-    private final ButtonType copyToClipboardBtnType = new ButtonType("Copy to Clipboard");
     private final ButtonType openGitHubIssuesBtnType = new ButtonType("Open GitHub Issues");
     private final ButtonType closeBtnType = new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
 
@@ -60,7 +59,7 @@ public final class ExceptionView extends Alert {
      *                  the issue website.
      * @see <a href="http://code.makery.ch/blog/javafx-dialogs-official/">Inspiration</a>
      */
-    public ExceptionView(final Parent root, final Throwable throwable, final HostServices services) {
+    public ExceptionAlert(final Parent root, final Throwable throwable, final HostServices services) {
         super(AlertType.ERROR);
         checkNotNull(throwable, "The Throwable can not be null");
         checkNotNull(services, "HostServices can not be null");
@@ -73,65 +72,59 @@ public final class ExceptionView extends Alert {
         this.setHeaderText(initialCause.getMessage());
 
         // Set stylesheet
+        this.getDialogPane().styleProperty().bind(root.styleProperty());
         this.getDialogPane().getStylesheets().addAll(root.getStylesheets());
 
         // Add two additional buttons
-        this.getButtonTypes().removeIf((buttonType)->buttonType.equals(ButtonType.OK));
-        this.getButtonTypes().addAll(copyToClipboardBtnType, openGitHubIssuesBtnType, closeBtnType);
+        this.getButtonTypes().removeIf((buttonType) -> buttonType.equals(ButtonType.OK));
+        this.getButtonTypes().addAll(openGitHubIssuesBtnType, closeBtnType);
 
-        final Label whatHappenedLabel = new Label(ISSUE_PROMPT_QUESTION);
-
-        final TextArea issueText = new TextArea(issueText(""));
-
-        final TextArea inputBox = new TextArea();
-        inputBox.textProperty().addListener((observable, oldValue, newValue) -> issueText.setText(issueText(newValue)));
-        inputBox.setPromptText(ISSUE_PROMPT_TEXT);
-        inputBox.setEditable(true);
-        inputBox.setWrapText(true);
-        inputBox.setMaxWidth(Double.MAX_VALUE);
-        inputBox.setMaxHeight(Double.MAX_VALUE);
-        GridPane.setVgrow(inputBox, Priority.ALWAYS);
-        GridPane.setHgrow(inputBox, Priority.ALWAYS);
 
         final GridPane dialogContent = new GridPane();
         dialogContent.setMaxWidth(Double.MAX_VALUE);
         dialogContent.setMaxHeight(Double.MAX_VALUE);
-        dialogContent.add(whatHappenedLabel, 0, 0);
-        dialogContent.add(inputBox, 0, 1);
+
+
+        final Label issuePromptText = new Label(ISSUE_PROMPT_TEXT);
+        issuePromptText.setWrapText(true);
 
         final Label issuePasteLabel = new Label(COPY_PASTE_LABEL_TEXT);
+        issuePasteLabel.setWrapText(true);
 
+        final TextArea issueText = new TextArea(issueText(""));
+        issuePasteLabel.setLabelFor(issueText);
         issueText.setEditable(false);
         issueText.setWrapText(true);
 
         issueText.setMaxWidth(Double.MAX_VALUE);
         issueText.setMaxHeight(Double.MAX_VALUE);
 
-
-        dialogContent.add(issuePasteLabel, 0, 2);
-        dialogContent.add(issueText, 0, 3);
+        dialogContent.add(issuePasteLabel, 0, 1);
+        dialogContent.add(issueText, 0, 2);
         this.getDialogPane().setContent(dialogContent);
 
 
-        // Prevent these two buttons from causing the alert to close
-        final Button copyToClipboardBtn = (Button) this.getDialogPane().lookupButton(copyToClipboardBtnType);
-        copyToClipboardBtn.addEventFilter(ActionEvent.ACTION, event -> {
-            final ClipboardContent content = new ClipboardContent();
-            content.putString(issueText.getText());
-            Clipboard.getSystemClipboard().setContent(content);
-            // Prevent the dialog from closing
-            event.consume();
-        });
-
         final Button openGitHubIssueBtn = (Button) this.getDialogPane().lookupButton(openGitHubIssuesBtnType);
         openGitHubIssueBtn.addEventFilter(ActionEvent.ACTION, event -> {
-            services.showDocument(PROJECT_ISSUE_LINK);
+            final StringBuilder URL_STRING = new StringBuilder(PROJECT_ISSUE_LINK)
+                    .append("?title=")
+                    .append(
+                            UrlEscapers.urlFormParameterEscaper().escape(
+                                    initialCause.getClass().getSimpleName() + ": " + initialCause.getMessage()
+                            )
+                    ).append("&body=")
+                    .append(UrlEscapers.urlFormParameterEscaper().escape(
+                            issueText("")
+                    ));
+
+
+            services.showDocument(URL_STRING.toString());
             // Prevent the dialog from closing
             event.consume();
         });
 
         // Set the initial focus to the input box so the cursor goes there first
-        Platform.runLater(() -> inputBox.requestFocus());
+        Platform.runLater(() -> issueText.requestFocus());
     }
 
     /**
