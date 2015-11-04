@@ -184,7 +184,7 @@ public final class DefinedMethod {
                     definedParamType.setDefaultValue(collector.getDefaultValueFor(defaultValue));
                 }
                 if (collectionOf.isOutputDefault(param.getId().getName())) {
-                    definedParamType.setOutput();
+                    definedParamType.trySetOutput();
                 }
                 if (collectionOf.shouldIgnore(param.getId().getName())){
                     definedParamType.setIgnored();
