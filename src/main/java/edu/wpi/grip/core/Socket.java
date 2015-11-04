@@ -4,9 +4,13 @@ import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
-import edu.wpi.grip.core.events.*;
+import edu.wpi.grip.core.events.ConnectionAddedEvent;
+import edu.wpi.grip.core.events.ConnectionRemovedEvent;
+import edu.wpi.grip.core.events.SocketChangedEvent;
+import edu.wpi.grip.core.events.SocketConnectedChangedEvent;
 
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -24,7 +28,7 @@ public abstract class Socket<T> {
     public enum Direction {INPUT, OUTPUT}
 
     protected final EventBus eventBus;
-    private Step step;
+    private Optional<Step> step = Optional.empty();
     private final Direction direction;
     private final Set<Connection> connections = new HashSet<>();
     private final SocketHint<T> socketHint;
@@ -94,14 +98,14 @@ public abstract class Socket<T> {
     /**
      * @param step The step that this socket is part of.
      */
-    public void setStep(Step step) {
+    public void setStep(Optional<Step> step) {
         this.step = step;
     }
 
     /**
      * @return The step that this socket is part of, or <code>null</code> if it has not been set.
      */
-    public Step getStep() {
+    public Optional<Step> getStep() {
         return step;
     }
 
