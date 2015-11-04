@@ -183,9 +183,14 @@ public final class DefinedMethod {
                 if (defaultValue != null && collector.hasDefaultValueFor(defaultValue)) {
                     definedParamType.setDefaultValue(collector.getDefaultValueFor(defaultValue));
                 }
-                if (collectionOf.isOutputDefault(param.getId().getName())) {
-                    definedParamType.setOutput();
-                }
+
+                /*
+                 * Sets the defined params direction given the mapping provided to the collector in the File Parser.
+                 */
+                collectionOf
+                        .getDefaultDirection(param.getId().getName())
+                        .ifPresent(definedParamDirection -> definedParamType.trySetDirection(definedParamDirection));
+
                 if (collectionOf.shouldIgnore(param.getId().getName())){
                     definedParamType.setIgnored();
                 }

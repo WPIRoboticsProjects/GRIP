@@ -137,7 +137,7 @@ public class FileParser {
                 ),
                 new DefinedMethod("Laplacian", "Mat", "Mat"),
                 new DefinedMethod("dilate", false, "Mat", "Mat"),
-                new DefinedMethod("Canny", false, new DefinedParamType("Mat"), new DefinedParamType("Mat", DefinedParamType.DefinedParamState.OUTPUT)),
+                new DefinedMethod("Canny", false, new DefinedParamType("Mat"), new DefinedParamType("Mat", DefinedParamType.DefinedParamDirection.OUTPUT)),
                 new DefinedMethod("cornerMinEigenVal", false, "Mat", "Mat"),
                 new DefinedMethod("cornerHarris", false, "Mat", "Mat"),
                 new DefinedMethod("cornerEigenValsAndVecs", false, "Mat", "Mat"),
@@ -195,13 +195,13 @@ public class FileParser {
                         "enlarge an image, it will generally look best with CV_INTER_CUBIC (slow) or CV_INTER_LINEAR " +
                         "(faster but still looks OK)"),
                 new DefinedMethod("HoughLines", false,
-                        new DefinedParamType("Mat", DefinedParamType.DefinedParamState.INPUT_AND_OUTPUT),
-                        new DefinedParamType("Mat", DefinedParamType.DefinedParamState.OUTPUT)
+                        new DefinedParamType("Mat", DefinedParamType.DefinedParamDirection.INPUT_AND_OUTPUT),
+                        new DefinedParamType("Mat", DefinedParamType.DefinedParamDirection.OUTPUT)
                 ),
                 new DefinedMethod("rectangle", false,
-                        new DefinedParamType("Mat", DefinedParamType.DefinedParamState.INPUT_AND_OUTPUT),
+                        new DefinedParamType("Mat", DefinedParamType.DefinedParamDirection.INPUT_AND_OUTPUT),
                         new DefinedParamType("Point"))
-        ).setOutputDefaults("dst").setIgnoreDefaults("dtype");
+        ).setDirectionDefaults(DefinedParamType.DefinedParamDirection.OUTPUT, "dst").setIgnoreDefaults("dtype");
         new OpenCVMethodVisitor(collection).visit(imgprocDeclaration, compilationUnits);
         collection.generateCompilationUnits(collector, compilationUnits, operations);
         return compilationUnits;
@@ -249,7 +249,7 @@ public class FileParser {
 //                        new DefinedParamType("double")
 //                                .setDefaultValue(new PrimitiveDefaultValue(new PrimitiveType(PrimitiveType.Primitive.Double), "1"))
 //                )
-        ).setOutputDefaults("dst").setIgnoreDefaults("dtype");
+        ).setDirectionDefaults(DefinedParamType.DefinedParamDirection.OUTPUT, "dst").setIgnoreDefaults("dtype");
         new OpenCVMethodVisitor(collection).visit(coreDeclaration, compilationUnits);
 
         collection.generateCompilationUnits(collector, compilationUnits, operations);

@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 public class DefinedMethodCollection {
     private final String className;
     private final Map<String, DefinedMethod> definedMethodMap;
-    private final Set<String> outputDefaults = new HashSet<>();
+    private final Map<DefinedParamType.DefinedParamDirection, Set<String>> directionDefault = new HashMap<>();
     private final Set<String> ignoreDefaults = new HashSet<>();
 
     public DefinedMethodCollection(String className, DefinedMethod... methodList) {
@@ -28,8 +28,9 @@ public class DefinedMethodCollection {
         this.definedMethodMap = methodList.stream().collect(Collectors.toMap(DefinedMethod::getMethodName, t -> t));
     }
 
-    public DefinedMethodCollection setOutputDefaults(String... paramNames) {
-        outputDefaults.addAll(Arrays.asList(paramNames));
+    public DefinedMethodCollection setDirectionDefaults(DefinedParamType.DefinedParamDirection direction, String... paramNames) {
+        directionDefault.putIfAbsent(direction, new HashSet<>());
+        directionDefault.get(direction).addAll(Arrays.asList(paramNames));
         return this;
     }
 
@@ -50,8 +51,18 @@ public class DefinedMethodCollection {
         return className;
     }
 
-    public boolean isOutputDefault(String check) {
-        return outputDefaults.contains(check);
+    /**
+     * Gets the default direction for a given param's Variable Identifier
+     * @param check The Variable identifier to check
+     * @return The direction this has been mapped to
+     */
+    public Optional<DefinedParamType.DefinedParamDirection> getDefaultDirection(String check) {
+        for(DefinedParamType.DefinedParamDirection direction : DefinedParamType.DefinedParamDirection.values()){
+            if(directionDefault.getOrDefault(direction, Collections.EMPTY_SET).contains(check)){
+                return Optional.of(direction);
+            }
+        }
+        return Optional.empty();
     }
 
     public boolean shouldIgnore(String check) {

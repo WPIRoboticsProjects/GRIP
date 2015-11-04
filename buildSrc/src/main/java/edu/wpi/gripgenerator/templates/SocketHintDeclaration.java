@@ -67,7 +67,7 @@ public class SocketHintDeclaration {
     }
 
 
-    public SocketHintDeclaration(DefaultValueCollector collector, Type genericType, List<DefinedParamType> paramTypes, DefinedParamType.DefinedParamState state) {
+    public SocketHintDeclaration(DefaultValueCollector collector, Type genericType, List<DefinedParamType> paramTypes, DefinedParamType.DefinedParamDirection state) {
         /* Convert this to the 'boxed' type if this is a PrimitiveType */
         this.genericType =
                 genericType instanceof PrimitiveType ?

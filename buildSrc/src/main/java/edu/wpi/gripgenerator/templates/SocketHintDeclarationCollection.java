@@ -50,10 +50,10 @@ public class SocketHintDeclarationCollection {
 
         // Figure out which hint map to put this defined param type into
         for (DefinedParamType type : paramTypes) {
-            if (type.getState().isInput()) {
+            if (type.getDirection().isInput()) {
                 addToInput(type);
             }
-            if (type.getState().isOutput()) {
+            if (type.getDirection().isOutput()) {
                 addToOutput(type);
             }
         }
@@ -241,10 +241,10 @@ public class SocketHintDeclarationCollection {
     public List<SocketHintDeclaration> getAllSocketHints() {
         List<SocketHintDeclaration> socketHintDeclarations = new ArrayList<>();
         for (Type type : inputHintsMap.keySet()) {
-            socketHintDeclarations.add(new SocketHintDeclaration(collector, type, inputHintsMap.get(type), DefinedParamType.DefinedParamState.INPUT));
+            socketHintDeclarations.add(new SocketHintDeclaration(collector, type, inputHintsMap.get(type), DefinedParamType.DefinedParamDirection.INPUT));
         }
         for (Type type : outputHintsMap.keySet()) {
-            socketHintDeclarations.add(new SocketHintDeclaration(collector, type, outputHintsMap.get(type), DefinedParamType.DefinedParamState.OUTPUT));
+            socketHintDeclarations.add(new SocketHintDeclaration(collector, type, outputHintsMap.get(type), DefinedParamType.DefinedParamDirection.OUTPUT));
         }
         return socketHintDeclarations;
     }

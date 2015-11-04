@@ -25,7 +25,7 @@ import static com.github.javaparser.ASTHelper.createReferenceType;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 public class DefinedParamType {
-    public enum DefinedParamState {
+    public enum DefinedParamDirection {
         INPUT,
         OUTPUT,
         INPUT_AND_OUTPUT;
@@ -41,7 +41,7 @@ public class DefinedParamType {
     }
 
     private final String type;
-    private DefinedParamState state;
+    private Optional<DefinedParamDirection> direction;
     private Optional<Parameter> parameter = Optional.empty();
     private Optional<DefaultValue> defaultValue = Optional.empty();
     private Optional<String> literalDefaultValue = Optional.empty();
@@ -54,20 +54,31 @@ public class DefinedParamType {
      * Defines a Param type that a method must match.
      * Defaults the value to being an input.
      *
-     * @param type
+     * @param type the type of param that this should match
      */
     public DefinedParamType(String type) {
-        this(type, DefinedParamState.INPUT);
+        this.type = type;
+        this.direction = Optional.empty();
     }
 
+    /**
+     * Used for testing only.
+     * @param type
+     * @param param
+     */
     public DefinedParamType(String type, Parameter param) {
         this(type);
         parameter = Optional.of(param);
     }
 
-    public DefinedParamType(String type, DefinedParamState state) {
-        this.type = type;
-        this.state = state;
+    /**
+     *
+     * @param type The type of param that this should match
+     * @param direction The direction of the param. Will override whatever defaults are set by the method collector
+     */
+    public DefinedParamType(String type, DefinedParamDirection direction) {
+        this(type);
+        this.direction = Optional.ofNullable(direction);
     }
 
     public static List<DefinedParamType> fromStrings(List<String> params) {
@@ -173,11 +184,11 @@ public class DefinedParamType {
     }
 
     public boolean isInput() {
-        return state.isInput();
+        return getDirection().isInput();
     }
 
     public boolean isOutput() {
-        return state.isOutput();
+        return getDirection().isOutput();
     }
 
     public boolean isIgnored() {
@@ -185,10 +196,13 @@ public class DefinedParamType {
     }
 
     /**
-     * @return The state of this param
+     * Gets the direction of this param it hasn't been assigned prior to calling this method then it is assigned by this call.
+     * @return The direction of this param.
      */
-    public DefinedParamState getState() {
-        return state;
+    public DefinedParamDirection getDirection() {
+        if (direction.isPresent()) return direction.get();
+        direction = Optional.of(DefinedParamDirection.INPUT);
+        return direction.get();
     }
 
     public String getName() {
@@ -215,10 +229,10 @@ public class DefinedParamType {
     }
 
     /**
-     * Makes this param an output.
+     * Makes this param an output if it hasn't been explicitly set in the constructor
      */
-    void setOutput() {
-        state = DefinedParamState.OUTPUT;
+    void trySetDirection(DefinedParamDirection direction) {
+        this.direction = Optional.of(this.direction.orElseGet(() -> direction));
     }
 
     public void setIgnored() {
