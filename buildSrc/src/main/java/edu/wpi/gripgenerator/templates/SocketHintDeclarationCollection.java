@@ -79,7 +79,7 @@ public class SocketHintDeclarationCollection {
     }
 
     private Expression generateCopyExpression(DefinedParamType type, String inputParmId, int inputIndex, String outputParamId, int outputIndex) {
-        // GOAL: ((OutputSocket<Mat>) outputs[0]).getValue().setTo(((InputSocket<Mat>) inputs[0]).getValue());
+        // GOAL: ((InputSocket<Mat>) inputs[0]).getValue().assignTo(((OutputSocket<Mat>) outputs[0]).getValue());
         final ClassOrInterfaceType outputType = new ClassOrInterfaceType("OutputSocket");
         final ClassOrInterfaceType inputType = new ClassOrInterfaceType("InputSocket");
         outputType.setTypeArgs(Collections.singletonList(type.getType()));
@@ -89,19 +89,19 @@ public class SocketHintDeclarationCollection {
                 getOrSetValueExpression(
                         new EnclosedExpr(
                                 new CastExpr(
-                                        outputType,
-                                        arrayAccessExpr(outputParamId, outputIndex)
+                                        inputType,
+                                        arrayAccessExpr(inputParmId, inputIndex)
                                 )
                         ),
                         null
                 ),
-                "setTo",
+                "assignTo",
                 Collections.singletonList(
                         getOrSetValueExpression(
                                 new EnclosedExpr(
                                         new CastExpr(
-                                                inputType,
-                                                arrayAccessExpr(inputParmId, inputIndex)
+                                                outputType,
+                                                arrayAccessExpr(outputParamId, outputIndex)
                                         )
                                 ),
                                 null
