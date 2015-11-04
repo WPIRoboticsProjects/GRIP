@@ -39,8 +39,8 @@ public abstract class SocketPreviewView<T> extends TitledPane {
     private String getTitle() {
         String title = "";
 
-        if (this.socket.getStep() != null) {
-            title += this.socket.getStep().getOperation().getName() + " → ";
+        if (this.socket.getStep().isPresent()) {
+            title += this.socket.getStep().get().getOperation().getName() + " → ";
         }
 
         title += this.socket.getSocketHint().getIdentifier();
