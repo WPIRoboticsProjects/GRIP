@@ -8,6 +8,21 @@
       xmlns="http://javafx.com/javafx/8.0.40"
       xmlns:fx="http://javafx.com/fxml/1">
     <children>
+        <MenuBar VBox.vgrow="NEVER">
+            <menus>
+                <Menu mnemonicParsing="false" text="Edit">
+                    <items>
+                        <MenuItem fx:id="undoMenuItem" mnemonicParsing="false" text="Undo"/>
+                        <MenuItem fx:id="redoMenuItem" mnemonicParsing="false" text="Redo"/>
+                    </items>
+                </Menu>
+                <Menu mnemonicParsing="false" text="Help">
+                    <items>
+                        <MenuItem mnemonicParsing="false" text="About GRIP"/>
+                    </items>
+                </Menu>
+            </menus>
+        </MenuBar>
         <SplitPane dividerPositions="0.6" orientation="VERTICAL" VBox.vgrow="ALWAYS">
             <items>
                 <SplitPane dividerPositions="1.0" orientation="HORIZONTAL" fx:id="topPane"/>

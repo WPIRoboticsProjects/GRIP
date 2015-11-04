@@ -6,7 +6,7 @@ import edu.wpi.grip.core.Step;
 /**
  * An event that occurs when a new step is moved from one position to another in the pipeline
  */
-public class StepMovedEvent {
+public class StepMovedEvent implements UndoableEvent {
     private final Step step;
     private final int distance;
 
@@ -33,5 +33,10 @@ public class StepMovedEvent {
                 .add("step", step)
                 .add("distance", distance)
                 .toString();
+    }
+
+    @Override
+    public StepMovedEvent createUndoEvent() {
+        return new StepMovedEvent(step, -distance);
     }
 }

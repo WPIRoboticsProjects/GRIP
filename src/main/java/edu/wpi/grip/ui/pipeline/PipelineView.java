@@ -247,7 +247,7 @@ public class PipelineView extends StackPane implements Initializable {
     public void onStepAdded(StepAddedEvent event) {
         // Add a new control to the pipelineview for the step that was added
         Platform.runLater(() -> {
-            int index = event.getIndex().or(this.steps.getChildren().size());
+            int index = event.getIndex().orElse(this.steps.getChildren().size());
             this.steps.getChildren().add(index, new StepView(this.eventBus, event.getStep()));
         });
     }

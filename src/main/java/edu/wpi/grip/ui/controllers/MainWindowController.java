@@ -1,9 +1,12 @@
 package edu.wpi.grip.ui.controllers;
 
 import com.google.common.eventbus.EventBus;
+import edu.wpi.grip.core.EventHistory;
 import edu.wpi.grip.core.Operation;
 import edu.wpi.grip.core.Pipeline;
+import edu.wpi.grip.core.events.RedoPublishedEvent;
 import edu.wpi.grip.core.events.SetSinkEvent;
+import edu.wpi.grip.core.events.UndoPublishedEvent;
 import edu.wpi.grip.core.operations.PythonScriptOperation;
 import edu.wpi.grip.core.operations.composite.BlurOperation;
 import edu.wpi.grip.core.operations.composite.RGBThresholdOperation;
@@ -18,6 +21,7 @@ import edu.wpi.grip.ui.pipeline.PipelineView;
 import edu.wpi.grip.ui.preview.PreviewsView;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.SplitPane;
 
@@ -37,6 +41,14 @@ public class MainWindowController implements Initializable {
         new IllegalStateException("Could not dispatch event: "
                 + context.getSubscriber() + " to " + context.getSubscriberMethod(), exception).printStackTrace(System.err);
     });
+
+    private final EventHistory eventHistory;
+
+    @FXML
+    private MenuItem undoMenuItem;
+
+    @FXML
+    private MenuItem redoMenuItem;
 
     @FXML
     private SplitPane topPane;
@@ -96,6 +108,10 @@ public class MainWindowController implements Initializable {
         }
     }
 
+    public MainWindowController(){
+        this.eventHistory = new EventHistory(this.eventBus);
+    }
+
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         PreviewsView previewPaneView = new PreviewsView(eventBus);
@@ -125,6 +141,9 @@ public class MainWindowController implements Initializable {
 
         this.topPane.getItems().addAll(previewPaneView, paletteView);
         this.bottomPane.setContent(pipelineView);
+
+        this.undoMenuItem.setOnAction((event)-> eventBus.post(new UndoPublishedEvent()));
+        this.redoMenuItem.setOnAction((event)-> eventBus.post(new RedoPublishedEvent()));
 
         this.eventBus.post(new SetSinkEvent(new DummySink()));
     }

@@ -2,13 +2,12 @@ package edu.wpi.grip.core.events;
 
 import com.google.common.base.MoreObjects;
 import edu.wpi.grip.core.Connection;
-import edu.wpi.grip.core.Step;
 
 /**
  * An event that occurs when a new connection is added to the pipeline.  This is triggered by the user adding a
  * connection with the GUI.
  */
-public class ConnectionAddedEvent {
+public class ConnectionAddedEvent implements AddedEvent {
     private final Connection connection;
 
     /**
@@ -25,10 +24,19 @@ public class ConnectionAddedEvent {
         return this.connection;
     }
 
+    public ConnectionRemovedEvent undoEvent() {
+        return new ConnectionRemovedEvent(this.connection);
+    }
+
     @Override
     public String toString() {
         return MoreObjects.toStringHelper(this)
                 .add("connection", connection)
                 .toString();
+    }
+
+    @Override
+    public ConnectionRemovedEvent createUndoEvent() {
+        return new ConnectionRemovedEvent(connection);
     }
 }

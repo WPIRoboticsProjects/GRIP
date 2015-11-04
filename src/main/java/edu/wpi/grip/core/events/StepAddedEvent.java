@@ -1,16 +1,16 @@
 package edu.wpi.grip.core.events;
 
 import com.google.common.base.MoreObjects;
-import com.google.common.base.Optional;
-import edu.wpi.grip.core.Socket;
 import edu.wpi.grip.core.Step;
+
+import java.util.Optional;
 
 
 /**
  * An event that occurs when a new step is added to the pipeline.  This is triggered by the user adding a step with the
  * GUI.
  */
-public class StepAddedEvent {
+public class StepAddedEvent implements AddedEvent {
     private final Step step;
     private final Optional<Integer> index;
 
@@ -28,7 +28,7 @@ public class StepAddedEvent {
      */
     public StepAddedEvent(Step step) {
         this.step = step;
-        this.index = Optional.absent();
+        this.index = Optional.empty();
     }
 
     /**
@@ -51,5 +51,14 @@ public class StepAddedEvent {
                 .add("step", step)
                 .add("index", index)
                 .toString();
+    }
+
+    @Override
+    public StepRemovedEvent createUndoEvent() {
+        if (index.isPresent()){
+            return new StepRemovedEvent(step, index.get());
+        } else {
+            return new StepRemovedEvent(step);
+        }
     }
 }
