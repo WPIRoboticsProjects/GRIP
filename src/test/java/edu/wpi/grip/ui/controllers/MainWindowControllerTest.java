@@ -3,6 +3,7 @@ package edu.wpi.grip.ui.controllers;
 
 import edu.wpi.grip.Main;
 import edu.wpi.grip.core.AdditionOperation;
+import edu.wpi.grip.core.events.OperationAddedEvent;
 import edu.wpi.grip.ui.PaletteView;
 import javafx.stage.Stage;
 import org.junit.Test;
@@ -19,7 +20,8 @@ public class MainWindowControllerTest extends ApplicationTest {
         new Main().start(stage);
 
         final PaletteView palette = lookup(".palette").<PaletteView>queryFirst();
-        palette.operationsProperty().setAll(new AdditionOperation());
+        palette.clearOperations();
+        palette.onOperationAdded(new OperationAddedEvent(new AdditionOperation()));
     }
 
     @Test

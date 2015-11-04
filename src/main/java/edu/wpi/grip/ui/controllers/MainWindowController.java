@@ -3,11 +3,12 @@ package edu.wpi.grip.ui.controllers;
 import com.google.common.eventbus.EventBus;
 import edu.wpi.grip.core.Operation;
 import edu.wpi.grip.core.Pipeline;
+import edu.wpi.grip.core.events.OperationAddedEvent;
 import edu.wpi.grip.core.events.SetSinkEvent;
 import edu.wpi.grip.core.operations.PythonScriptOperation;
 import edu.wpi.grip.core.operations.composite.BlurOperation;
-import edu.wpi.grip.core.operations.composite.RGBThresholdOperation;
 import edu.wpi.grip.core.operations.composite.DesaturateOperation;
+import edu.wpi.grip.core.operations.composite.RGBThresholdOperation;
 import edu.wpi.grip.core.operations.opencv.MatFieldAccessor;
 import edu.wpi.grip.core.operations.opencv.NewPointOperation;
 import edu.wpi.grip.core.operations.opencv.NewSizeOperation;
@@ -23,10 +24,8 @@ import javafx.scene.control.SplitPane;
 
 import java.net.URL;
 import java.util.Arrays;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
-import java.util.stream.Collectors;
 
 /**
  * The Controller for the application window.  Most of this class is throwaway code to demonstrate the current
@@ -98,33 +97,26 @@ public class MainWindowController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        PreviewsView previewPaneView = new PreviewsView(eventBus);
+        this.topPane.getItems().addAll(new PreviewsView(this.eventBus), new PaletteView(this.eventBus));
+        this.bottomPane.setContent(new PipelineView(this.eventBus, new Pipeline(this.eventBus)));
 
-        final PaletteView paletteView = new PaletteView(eventBus);
+        // Add the default built-in operations to the palette
+        this.eventBus.post(new OperationAddedEvent(new BlurOperation()));
+        this.eventBus.post(new OperationAddedEvent(new RGBThresholdOperation()));
+        this.eventBus.post(new OperationAddedEvent(new DesaturateOperation()));
+        this.eventBus.post(new OperationAddedEvent(new NewPointOperation()));
+        this.eventBus.post(new OperationAddedEvent(new NewSizeOperation()));
+        this.eventBus.post(new OperationAddedEvent(new MatFieldAccessor()));
 
-        paletteView.operationsProperty().addAll(
-                new BlurOperation(),
-                new RGBThresholdOperation(),
-                new DesaturateOperation());
+        // TODO: Remove these before release
+        this.eventBus.post(new OperationAddedEvent(this.add));
+        this.eventBus.post(new OperationAddedEvent(this.multiply));
+        scripts.stream().map(MainWindowController::loadOperation)
+                .map(OperationAddedEvent::new).forEach(this.eventBus::post);
 
-        paletteView.operationsProperty().addAll(scripts.stream()
-                .map(MainWindowController::loadOperation)
-                .collect(Collectors.toList()));
-
-        paletteView.operationsProperty().addAll(this.add, this.multiply);
-
-        List<Operation> allCVOperations = new ArrayList(CVOperations.OPERATIONS);
-        allCVOperations.add(new NewPointOperation());
-        allCVOperations.add(new NewSizeOperation());
-        allCVOperations.add(new MatFieldAccessor());
-        paletteView.operationsProperty().addAll(allCVOperations.stream()
-                .sorted((a, b) -> a.getName().compareToIgnoreCase(b.getName()))
-                .collect(Collectors.toList()));
-
-        final PipelineView pipelineView = new PipelineView(eventBus, new Pipeline(this.eventBus));
-
-        this.topPane.getItems().addAll(previewPaneView, paletteView);
-        this.bottomPane.setContent(pipelineView);
+        // Add all of the auto-generated OpenCV operations
+        CVOperations.OPERATIONS.stream()
+                .map(OperationAddedEvent::new).forEach(this.eventBus::post);
 
         this.eventBus.post(new SetSinkEvent(new DummySink()));
     }

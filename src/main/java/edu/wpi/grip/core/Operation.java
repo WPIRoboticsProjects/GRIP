@@ -12,7 +12,7 @@ import java.util.Optional;
 public interface Operation {
 
     /**
-     * @return The user-facing name of the operation, such as "Gaussian Blur"
+     * @return The unique user-facing name of the operation, such as "Gaussian Blur"
      */
     String getName();
 
