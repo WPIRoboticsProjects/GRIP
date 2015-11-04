@@ -8,7 +8,7 @@ import edu.wpi.grip.core.Socket;
  * be called if the number of connections either goes to zero when it was non-zero, or when it was zero and one is
  * added.
  * <p>
- * The GUI listens to this event to determine how to render sockets and weather or not so show input controls for them.
+ * The GUI listens to this event to determine how to render sockets and whether or not so show input controls for them.
  */
 public class SocketConnectedChangedEvent {
     private final Socket socket;
