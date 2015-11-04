@@ -29,7 +29,11 @@
                 <Tooltip text="Publish Socket"/>
             </tooltip>
         </ToggleButton>
-        <Label fx:id="identifier" styleClass="socket-identifier"/>
+        <Label fx:id="identifier" contentDisplay="RIGHT" styleClass="socket-identifier">
+            <graphic>
+                <Label fx:id="type" opacity=".5"/>
+            </graphic>
+        </Label>
         <StackPane fx:id="handlePane"/>
     </children>
 </fx:root>

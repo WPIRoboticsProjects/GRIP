@@ -33,6 +33,9 @@ public class OutputSocketView extends HBox implements Initializable {
     private Label identifier;
 
     @FXML
+    private Label type;
+
+    @FXML
     private ToggleButton publish;
 
     @FXML
@@ -102,6 +105,7 @@ public class OutputSocketView extends HBox implements Initializable {
 
         // Set the label on the control based on the identifier from the socket hint
         this.identifier.setText(socketHint.getIdentifier());
+        this.type.setText(socketHint.getType().getSimpleName());
     }
 
     public Socket getSocket() {
