@@ -4,7 +4,10 @@ import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import edu.wpi.grip.core.events.SocketChangedEvent;
 
+import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
+import java.util.function.Function;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -62,6 +65,50 @@ public class Step {
      */
     public OutputSocket<?>[] getOutputSockets() {
         return outputSockets;
+    }
+
+    /**
+     * Performs a graph search and either searches forward or backward through the graph of connections and steps.
+     *
+     * @param socketList          The sockets to search
+     * @param connectionSocketMap Maps the socket that is desired to be found for a given connection.
+     * @param recursiveStepMap    The recursive function to call itself on the next step in the graph.
+     * @return The Set of steps connected to a given list of sockets
+     */
+    private Set<Step> getConnectedSteps(Socket<?>[] socketList, Function<Connection, Socket> connectionSocketMap, Function<Step, Set<Step>> recursiveStepMap) {
+        Set<Step> connectedSteps = new HashSet<>(socketList.length + 1);
+        connectedSteps.add(this);
+        for (Socket<?> socket : socketList) {
+            for (Connection<?> connection : socket.getConnections()) {
+                final Socket<?> connectedSocket = connectionSocketMap.apply(connection);
+                connectedSocket.getStep().ifPresent(s -> {
+                    connectedSteps.addAll(recursiveStepMap.apply(s));
+                });
+            }
+        }
+        return connectedSteps;
+    }
+
+    /**
+     * Recursively retrieves all of the steps that are connected to the input side of this socket.
+     * Only looks at {@link InputSocket InputSockets} for subsequent steps that are visited.
+     *
+     * @return The full set of step that are attached to this steps and subsequent steps input sockets.
+     * This set includes itself.
+     */
+    public Set<Step> getConnectedInputSteps() {
+        return getConnectedSteps(inputSockets, connection -> connection.getOutputSocket(), step -> step.getConnectedInputSteps());
+    }
+
+    /**
+     * Recursively retrieves all of the steps that are connected to the output side of this socket.
+     * Only looks at {@link OutputSocket OutputSockets} for subsequent steps that are visited.
+     *
+     * @return The full set of step that are attached to this steps and subsequent steps input sockets.
+     * This set includes itself.
+     */
+    public Set<Step> getConnectedOutputSteps() {
+        return getConnectedSteps(outputSockets, connection -> connection.getInputSocket(), step -> step.getConnectedOutputSteps());
     }
 
     @Subscribe

@@ -7,6 +7,8 @@ import edu.wpi.grip.core.events.SocketChangedEvent;
 import edu.wpi.grip.core.events.SourceRemovedEvent;
 import edu.wpi.grip.core.events.StepRemovedEvent;
 
+import java.util.Set;
+
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
@@ -22,7 +24,7 @@ public class Connection<T> {
      * @param outputSocket The socket to listen for changes in.
      * @param inputSocket  A different socket to update when a change occurs in the first.
      */
-    public Connection(EventBus eventBus, OutputSocket<? extends T> outputSocket, InputSocket<T> inputSocket) {
+    public Connection(EventBus eventBus, OutputSocket<? extends T> outputSocket, InputSocket<T> inputSocket) throws InfiniteLoopException {
         this.eventBus = eventBus;
         this.outputSocket = outputSocket;
         this.inputSocket = inputSocket;
@@ -31,9 +33,32 @@ public class Connection<T> {
         checkNotNull(outputSocket);
         checkNotNull(eventBus);
 
+        if (willCreateInfiniteLoop(outputSocket, inputSocket)) {
+            throw new InfiniteLoopException(outputSocket, inputSocket);
+        }
+
         inputSocket.setValue(outputSocket.getValue());
 
         eventBus.register(this);
+    }
+
+    /**
+     * Determines if this connection will create an infinite loop
+     *
+     * @param outputSocket The input socket to search for sockets
+     * @param inputSocket  The output socket to search for sockets
+     * @return False if this will create an infinite loop
+     */
+    private boolean willCreateInfiniteLoop(OutputSocket<?> outputSocket, InputSocket<?> inputSocket) {
+        // There can't be any loops between two sockets that aren't owned by steps
+        if (!outputSocket.getStep().isPresent()) return false;
+        if (!inputSocket.getStep().isPresent()) return false;
+        // If the input socket and the output socket are both on the same step this should not be a connection either
+        if (outputSocket.getStep().equals(inputSocket.getStep())) return true;
+
+        final Set<Step> inputStepsConnectedToOutput = outputSocket.getStep().get().getConnectedInputSteps();
+        final Set<Step> outputStepsConnectedToInput = inputSocket.getStep().get().getConnectedOutputSteps();
+        return inputStepsConnectedToOutput.stream().anyMatch(outStep -> outputStepsConnectedToInput.contains(outStep));
     }
 
     public OutputSocket<? extends T> getOutputSocket() {
@@ -77,6 +102,15 @@ public class Connection<T> {
                 this.eventBus.post(new ConnectionRemovedEvent(this));
                 return;
             }
+        }
+    }
+
+    /**
+     * Thrown when the user tries to create a connection that will result in an infinite loop.
+     */
+    public static class InfiniteLoopException extends Exception {
+        public InfiniteLoopException(OutputSocket outputSocket, InputSocket<?> inputSocket) {
+            super("Connecting " + outputSocket + " to " + inputSocket + " would create an infinite loop");
         }
     }
 }

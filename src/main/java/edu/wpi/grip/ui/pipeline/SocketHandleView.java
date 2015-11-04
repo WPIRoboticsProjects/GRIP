@@ -114,8 +114,14 @@ public class SocketHandleView extends Button {
                     default:
                         throw new IllegalStateException("The Socket was a type that wasn't expected " + other.getDirection());
                 }
-                final Connection connection = new Connection(eventBus, outputSocket, inputSocket);
-                eventBus.post(new ConnectionAddedEvent(connection));
+                final Connection connection;
+                try {
+                    connection = new Connection(eventBus, outputSocket, inputSocket);
+                    eventBus.post(new ConnectionAddedEvent(connection));
+                } catch (Connection.InfiniteLoopException e) {
+                    //TODO: Handle this exception in a reasonable way
+                    throw new IllegalStateException("Created an infinite loop!", e);
+                }
             });
         });
 

@@ -137,7 +137,7 @@ public class PipelineTest {
 
     @Test
     @SuppressWarnings("unchecked")
-    public void testAddConnection() {
+    public void testAddConnection() throws Connection.InfiniteLoopException {
         Pipeline pipeline = new Pipeline(eventBus);
         Step step1 = new Step(eventBus, addition);
         Step step2 = new Step(eventBus, addition);
@@ -151,7 +151,7 @@ public class PipelineTest {
 
     @Test
     @SuppressWarnings("unchecked")
-    public void testRemoveConnection() {
+    public void testRemoveConnection() throws Connection.InfiniteLoopException {
         Pipeline pipeline = new Pipeline(eventBus);
         Step step1 = new Step(eventBus, addition);
         Step step2 = new Step(eventBus, addition);
@@ -166,7 +166,7 @@ public class PipelineTest {
 
     @Test
     @SuppressWarnings("unchecked")
-    public void testPipeline() {
+    public void testPipeline() throws Connection.InfiniteLoopException {
         Pipeline pipeline = new Pipeline(eventBus);
         Step step1 = new Step(eventBus, addition);
         Step step2 = new Step(eventBus, addition);
@@ -196,7 +196,7 @@ public class PipelineTest {
 
     @Test
     @SuppressWarnings("unchecked")
-    public void testPipelineRemoved() {
+    public void testPipelineRemoved() throws Connection.InfiniteLoopException {
         Pipeline pipeline = new Pipeline(eventBus);
         Step step1 = new Step(eventBus, addition);
         Step step2 = new Step(eventBus, addition);
