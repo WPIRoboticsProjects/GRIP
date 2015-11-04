@@ -4,6 +4,8 @@ import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import edu.wpi.grip.core.events.SocketChangedEvent;
 
+import java.util.Optional;
+
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
@@ -28,12 +30,12 @@ public class Step {
         // Create the list of input and output sockets, and mark this step as their owner.
         inputSockets = operation.createInputSockets(eventBus);
         for (Socket<?> socket : inputSockets) {
-            socket.setStep(this);
+            socket.setStep(Optional.of(this));
         }
 
         outputSockets = operation.createOutputSockets(eventBus);
         for (Socket<?> socket : outputSockets) {
-            socket.setStep(this);
+            socket.setStep(Optional.of(this));
         }
 
         operation.perform(inputSockets, outputSockets);
@@ -64,10 +66,10 @@ public class Step {
 
     @Subscribe
     public void onInputSocketChanged(SocketChangedEvent e) {
-        final Socket socket = e.getSocket();
+        final Socket<?> socket = e.getSocket();
 
         // If this socket that changed is one of the inputs to this step, run the operation with the new value.
-        if (socket.getStep() == this && socket.getDirection().equals(Socket.Direction.INPUT)) {
+        if (socket.getStep().equals(Optional.of(this)) && socket.getDirection().equals(Socket.Direction.INPUT)) {
             this.operation.perform(inputSockets, outputSockets);
         }
     }
