@@ -87,7 +87,7 @@ public class Pipeline {
 
     @Subscribe
     public void onStepAdded(StepAddedEvent event) {
-        this.steps.add(event.getIndex().or(this.steps.size()), event.getStep());
+        this.steps.add(event.getIndex().orElse(this.steps.size()), event.getStep());
         this.eventBus.register(event.getStep());
     }
 

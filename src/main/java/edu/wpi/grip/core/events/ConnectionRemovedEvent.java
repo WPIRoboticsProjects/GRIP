@@ -1,13 +1,12 @@
 package edu.wpi.grip.core.events;
 
-import com.google.common.base.MoreObjects;
 import edu.wpi.grip.core.Connection;
 
 /**
  * An event that occurs when a connection is removed from the pipeline.  This is triggered by the user deleting a
  * connection with the GUI.
  */
-public class ConnectionRemovedEvent {
+public class ConnectionRemovedEvent implements RemovedEvent {
     private final Connection connection;
 
     /**
@@ -24,10 +23,10 @@ public class ConnectionRemovedEvent {
         return this.connection;
     }
 
-    @Override
-    public String toString() {
-        return MoreObjects.toStringHelper(this)
-                .add("connection", connection)
-                .toString();
+    public ConnectionAddedEvent createUndoEvent() {
+        return new ConnectionAddedEvent(connection);
     }
+
+
+
 }

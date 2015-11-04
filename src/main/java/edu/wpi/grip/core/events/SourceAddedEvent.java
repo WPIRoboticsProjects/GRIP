@@ -10,7 +10,7 @@ import edu.wpi.grip.core.Source;
  *
  * @see Source
  */
-public class SourceAddedEvent {
+public class SourceAddedEvent implements AddedEvent {
     private final Source source;
 
     /**
@@ -32,5 +32,10 @@ public class SourceAddedEvent {
         return MoreObjects.toStringHelper(this)
                 .add("source", source)
                 .toString();
+    }
+
+    @Override
+    public SourceRemovedEvent createUndoEvent() {
+        return new SourceRemovedEvent(source);
     }
 }
