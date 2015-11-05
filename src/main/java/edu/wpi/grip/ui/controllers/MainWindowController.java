@@ -5,15 +5,12 @@ import edu.wpi.grip.core.Operation;
 import edu.wpi.grip.core.Pipeline;
 import edu.wpi.grip.core.events.OperationAddedEvent;
 import edu.wpi.grip.core.events.SetSinkEvent;
+import edu.wpi.grip.core.operations.OpenCVOperations;
 import edu.wpi.grip.core.operations.PythonScriptOperation;
 import edu.wpi.grip.core.operations.composite.BlurOperation;
 import edu.wpi.grip.core.operations.composite.DesaturateOperation;
 import edu.wpi.grip.core.operations.composite.RGBThresholdOperation;
-import edu.wpi.grip.core.operations.opencv.MatFieldAccessor;
-import edu.wpi.grip.core.operations.opencv.NewPointOperation;
-import edu.wpi.grip.core.operations.opencv.NewSizeOperation;
 import edu.wpi.grip.core.sinks.DummySink;
-import edu.wpi.grip.generated.CVOperations;
 import edu.wpi.grip.ui.PaletteView;
 import edu.wpi.grip.ui.pipeline.PipelineView;
 import edu.wpi.grip.ui.preview.PreviewsView;
@@ -104,9 +101,6 @@ public class MainWindowController implements Initializable {
         this.eventBus.post(new OperationAddedEvent(new BlurOperation()));
         this.eventBus.post(new OperationAddedEvent(new RGBThresholdOperation()));
         this.eventBus.post(new OperationAddedEvent(new DesaturateOperation()));
-        this.eventBus.post(new OperationAddedEvent(new NewPointOperation()));
-        this.eventBus.post(new OperationAddedEvent(new NewSizeOperation()));
-        this.eventBus.post(new OperationAddedEvent(new MatFieldAccessor()));
 
         // TODO: Remove these before release
         this.eventBus.post(new OperationAddedEvent(this.add));
@@ -115,8 +109,7 @@ public class MainWindowController implements Initializable {
                 .map(OperationAddedEvent::new).forEach(this.eventBus::post);
 
         // Add all of the auto-generated OpenCV operations
-        CVOperations.OPERATIONS.stream()
-                .map(OperationAddedEvent::new).forEach(this.eventBus::post);
+        OpenCVOperations.publishAllOperations(eventBus);
 
         this.eventBus.post(new SetSinkEvent(new DummySink()));
     }

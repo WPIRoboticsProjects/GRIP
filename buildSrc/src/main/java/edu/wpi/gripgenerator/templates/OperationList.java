@@ -58,7 +58,7 @@ public class OperationList {
         listType.setTypeArgs(Arrays.asList(new ClassOrInterfaceType("Operation")));
         return new FieldDeclaration(
                 ModifierSet.addModifier(
-                        ModifierSet.addModifier(ModifierSet.FINAL, ModifierSet.PUBLIC),
+                        ModifierSet.addModifier(ModifierSet.FINAL, ModifierSet.PROTECTED),
                         ModifierSet.STATIC
                 ),
                 listType,
