@@ -201,12 +201,20 @@ public class FileParser {
                 new DefinedMethod("rectangle", false,
                         new DefinedParamType("Mat", DefinedParamType.DefinedParamDirection.INPUT_AND_OUTPUT),
                         new DefinedParamType("Point"))
-        ).setDirectionDefaults(DefinedParamType.DefinedParamDirection.OUTPUT, "dst").setIgnoreDefaults("dtype");
+        ).setDirectionDefaults(DefinedParamType.DefinedParamDirection.OUTPUT, "dst")
+                .setIgnoreDefaults("dtype", "ddepth");
         new OpenCVMethodVisitor(collection).visit(imgprocDeclaration, compilationUnits);
         collection.generateCompilationUnits(collector, compilationUnits, operations);
         return compilationUnits;
     }
 
+    /**
+     * Defines all of the methods that get parsed out of OpenCV Core.
+     * @param coreDeclaration The source from the core file
+     * @param collector The collection of predefined fields
+     * @param operations The list of operations that will be generated at the end.
+     * @return The map of the name of the file to the contents of the new source file
+     */
     public static Map<String, CompilationUnit> parseOpenCVCore(CompilationUnit coreDeclaration, DefaultValueCollector collector, OperationList operations) {
         Map<String, CompilationUnit> compilationUnits = new HashMap<>();
         final String baseClassName = "opencv_core";
@@ -216,43 +224,77 @@ public class FileParser {
         compilationUnits.putAll(enumVisitor.generateCompilationUnits());
 
         DefinedMethodCollection collection = new DefinedMethodCollection(baseClassName,
-                new DefinedMethod("add", false, "Mat", "Mat", "Mat"),
-                new DefinedMethod("subtract", false, "Mat", "Mat", "Mat").addDescription("Calculates the per-pixel difference between two images"),
-                new DefinedMethod("multiply", false, "Mat", "Mat", "Mat"),
-                new DefinedMethod("divide", false, "Mat", "Mat", "Mat"),
-                new DefinedMethod("scaleAdd", false, "Mat", "double", "Mat", "Mat"),
-                new DefinedMethod("normalize", false, "Mat", "Mat"),
-                new DefinedMethod("batchDistance", false, "Mat", "Mat"),
-                new DefinedMethod("addWeighted", false, "Mat"),
+                new DefinedMethod("add", false, "Mat", "Mat", "Mat")
+                        .addDescription("Calculates the per-pixel sum of two Mats"),
+                new DefinedMethod("subtract", false, "Mat", "Mat", "Mat")
+                        .addDescription("Calculates the per-pixel difference between two Mats"),
+                new DefinedMethod("multiply", false, "Mat", "Mat", "Mat")
+                        .addDescription("Calculates the per-pixel scaled product of two Mats"),
+                new DefinedMethod("divide", false, "Mat", "Mat", "Mat")
+                        .addDescription("Performs per-pixel division of two Mats"),
+                new DefinedMethod("bitwise_and", false, "Mat", "Mat")
+                        .addDescription("Computes bitwise conjunction of the two Mats"),
+                new DefinedMethod("bitwise_or", false, "Mat", "Mat")
+                        .addDescription("Calculates the per-element bit-wise disjunction of two Mats"),
+                new DefinedMethod("bitwise_xor", false, "Mat", "Mat")
+                        .addDescription("Calculates the per-element bit-wise \\\"exclusive or\\\" operation on two Mats"),
+                new DefinedMethod("bitwise_not", false, "Mat", "Mat")
+                        .addDescription("Calculates per-element bit-wise inversion of the input Mat")
+        )
+                .setDirectionDefaults(DefinedParamType.DefinedParamDirection.INPUT_AND_OUTPUT, "dst")
+                .setIgnoreDefaults("dtype");
+
+        DefinedMethodCollection collection2 = new DefinedMethodCollection(baseClassName,
+                new DefinedMethod("scaleAdd", false, "Mat", "double", "Mat", "Mat")
+                        .addDescription("Calculates the weighted sum of two arrays."),
+                new DefinedMethod("normalize", false, "Mat", "Mat")
+                        .addDescription("Normalizes the norm or value range of a Mat"),
+                new DefinedMethod("addWeighted", false, "Mat")
+                        .addDescription("Calculates the weighted sum of two arrays."),
                 new DefinedMethod("flip", false,
                         new DefinedParamType("Mat"),
                         new DefinedParamType("Mat"),
-                        new DefinedParamType("int").setLiteralDefaultValue("Y_AXIS")),
-                new DefinedMethod("bitwise_and", false, "Mat", "Mat"),
-                new DefinedMethod("bitwise_or", false, "Mat", "Mat"),
-                new DefinedMethod("bitwise_xor", false, "Mat", "Mat"),
-                new DefinedMethod("bitwise_not", false, "Mat", "Mat"),
-                new DefinedMethod("absdiff", false, "Mat", "Mat"),
-                // TODO: Fix (Causes Segfault)
-                //new DefinedMethod("inRange", false),
+                        new DefinedParamType("int").setLiteralDefaultValue("Y_AXIS"))
+                        .addDescription("Flips a 2D array around vertical, horizontal, or both axes."),
+                new DefinedMethod("absdiff", false, "Mat", "Mat")
+                        .addDescription("Calculates the per-element absolute difference between two arrays."),
                 new DefinedMethod("compare", true,
                         new DefinedParamType("Mat"),
                         new DefinedParamType("Mat"),
                         new DefinedParamType("Mat"),
                         new DefinedParamType("int").setLiteralDefaultValue("CMP_EQ")
-                ),
-                new DefinedMethod("max", false, "Mat", "Mat"),
+                ).addDescription("Performs the per-element comparison of two Mats"),
+                new DefinedMethod("max", false, "Mat", "Mat")
+                        .addDescription("Calculates per-element maximum of two Mats"),
                 new DefinedMethod("min", false, "Mat", "Mat")
+                        .addDescription("Calculates per-element minimum of two Mats"),
+                new DefinedMethod("extractChannel", false, "Mat", "Mat")
+                        .addDescription("Extracts a single channel from src (coi is 0-based index)"),
+                new DefinedMethod("insertChannel", false, "Mat", "Mat")
+                        .addDescription("Inserts a single channel to dst (coi is 0-based index)"),
+                new DefinedMethod("transform", false, "Mat", "Mat")
+                        .addDescription("Performs the matrix transformation of every Matrix element."),
+                new DefinedMethod("completeSymm", false,
+                        new DefinedParamType("Mat", DefinedParamType.DefinedParamDirection.INPUT_AND_OUTPUT))
+                        .addDescription("Copies the lower or the upper half of a square matrix to another half."),
+                new DefinedMethod("invert", false, "Mat", "Mat")
+                        .addDescription("Finds the inverse or pseudo-inverse of a matrix")
 //                new DefinedMethod("sqrt", false, "Mat", "Mat"),
 //                new DefinedMethod("pow", false,
 //                        new DefinedParamType("Mat"),
 //                        new DefinedParamType("double")
 //                                .setDefaultValue(new PrimitiveDefaultValue(new PrimitiveType(PrimitiveType.Primitive.Double), "1"))
 //                )
-        ).setDirectionDefaults(DefinedParamType.DefinedParamDirection.OUTPUT, "dst").setIgnoreDefaults("dtype");
+        )
+                .setDirectionDefaults(DefinedParamType.DefinedParamDirection.OUTPUT, "dst")
+                .setIgnoreDefaults("dtype", "ddepth");
+
+
         new OpenCVMethodVisitor(collection).visit(coreDeclaration, compilationUnits);
+        new OpenCVMethodVisitor(collection2).visit(coreDeclaration, compilationUnits);
 
         collection.generateCompilationUnits(collector, compilationUnits, operations);
+        collection2.generateCompilationUnits(collector, compilationUnits, operations);
 
 
         return compilationUnits;
