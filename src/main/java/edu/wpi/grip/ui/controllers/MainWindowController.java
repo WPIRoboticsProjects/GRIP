@@ -115,8 +115,7 @@ public class MainWindowController implements Initializable {
                 .map(OperationAddedEvent::new).forEach(this.eventBus::post);
 
         // Add all of the auto-generated OpenCV operations
-        CVOperations.OPERATIONS.stream()
-                .map(OperationAddedEvent::new).forEach(this.eventBus::post);
+        CVOperations.addOperations(this.eventBus);
 
         this.eventBus.post(new SetSinkEvent(new DummySink()));
     }
