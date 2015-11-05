@@ -24,10 +24,8 @@ public final class ExceptionAlert extends Alert {
     private static final String
             PROJECT_ISSUE_LINK = "https://github.com/WPIRoboticsProjects/GRIP/issues/new",
             ISSUE_PROMPT_QUESTION = "What were the actions performed prior to this error appearing?",
-            ISSUE_PROMPT_TEXT = "We value your feedback and want to hear about the problems you encounter!\n"
-                    + "Please take the time to create an issue on GitHub. With the contents of the box below "
-                    + "as well as a short description of what you were doing when this dialog appeared.",
-            COPY_PASTE_LABEL_TEXT = "Please paste this into a new issue on the project's GitHub:";
+            ISSUE_PROMPT_TEXT = "An exception occurred!  Please open an issue on the project GitHub.\n"
+                    + "We value your feedback and want to hear about the problems you encounter.";
 
     private static final String systemOptions[] = {
             "javafx.version",
@@ -88,10 +86,8 @@ public final class ExceptionAlert extends Alert {
         dialogContent.setMaxHeight(Double.MAX_VALUE);
 
 
-        final Label issuePromptText = new Label(ISSUE_PROMPT_TEXT);
-        issuePromptText.setWrapText(true);
 
-        final Label issuePasteLabel = new Label(COPY_PASTE_LABEL_TEXT);
+        final Label issuePasteLabel = new Label(ISSUE_PROMPT_TEXT);
         issuePasteLabel.setWrapText(true);
 
         final TextArea issueText = new TextArea(stackTrace(throwable));
@@ -102,9 +98,8 @@ public final class ExceptionAlert extends Alert {
         issueText.setMaxWidth(Double.MAX_VALUE);
         issueText.setMaxHeight(Double.MAX_VALUE);
 
-        dialogContent.add(issuePromptText, 0, 0);
-        dialogContent.add(issuePasteLabel, 0, 1);
-        dialogContent.add(issueText, 0, 2);
+        dialogContent.add(issuePasteLabel, 0, 0);
+        dialogContent.add(issueText, 0, 1);
         this.getDialogPane().setContent(dialogContent);
 
 
