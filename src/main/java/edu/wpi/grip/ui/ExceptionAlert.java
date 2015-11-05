@@ -91,7 +91,7 @@ public final class ExceptionAlert extends Alert {
         final Label issuePasteLabel = new Label(COPY_PASTE_LABEL_TEXT);
         issuePasteLabel.setWrapText(true);
 
-        final TextArea issueText = new TextArea(issueText(""));
+        final TextArea issueText = new TextArea(issueText());
         issuePasteLabel.setLabelFor(issueText);
         issueText.setEditable(false);
         issueText.setWrapText(true);
@@ -99,6 +99,7 @@ public final class ExceptionAlert extends Alert {
         issueText.setMaxWidth(Double.MAX_VALUE);
         issueText.setMaxHeight(Double.MAX_VALUE);
 
+        dialogContent.add(issuePromptText, 0, 0);
         dialogContent.add(issuePasteLabel, 0, 1);
         dialogContent.add(issueText, 0, 2);
         this.getDialogPane().setContent(dialogContent);
@@ -114,7 +115,7 @@ public final class ExceptionAlert extends Alert {
                             )
                     ).append("&body=")
                     .append(UrlEscapers.urlFormParameterEscaper().escape(
-                            issueText("")
+                            issueText()
                     ));
 
 
@@ -124,7 +125,7 @@ public final class ExceptionAlert extends Alert {
         });
 
         // Set the initial focus to the input box so the cursor goes there first
-        Platform.runLater(() -> issueText.requestFocus());
+        Platform.runLater(() -> openGitHubIssueBtn.requestFocus());
     }
 
     /**
@@ -175,14 +176,11 @@ public final class ExceptionAlert extends Alert {
     /**
      * Creates the text that gets pasted into the new github issue.
      *
-     * @param message The message from the input box
      * @return The fully constructed issue text.
      */
-    private String issueText(String message) {
+    private String issueText() {
         return new StringBuilder(ISSUE_PROMPT_QUESTION)
-                .append("\n\n")
-                .append(message)
-                .append("\n\n")
+                .append("\n\n\n\n")
                 .append(systemInfoMessage)
                 .append(exceptionMessage).toString();
     }
