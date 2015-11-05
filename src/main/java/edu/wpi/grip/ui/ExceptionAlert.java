@@ -6,6 +6,8 @@ import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
+import javafx.scene.input.Clipboard;
+import javafx.scene.input.ClipboardContent;
 import javafx.scene.layout.GridPane;
 
 import java.io.PrintWriter;
@@ -51,6 +53,7 @@ public final class ExceptionAlert extends Alert {
     private final Throwable initialCause;
 
     private final ButtonType openGitHubIssuesBtnType = new ButtonType("Open GitHub Issues");
+    private final ButtonType copyToClipboardBtnType = new ButtonType("Copy To Clipboard");
     private final ButtonType closeBtnType = new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
 
     /**
@@ -77,7 +80,7 @@ public final class ExceptionAlert extends Alert {
 
         // Add two additional buttons
         this.getButtonTypes().removeIf((buttonType) -> buttonType.equals(ButtonType.OK));
-        this.getButtonTypes().addAll(openGitHubIssuesBtnType, closeBtnType);
+        this.getButtonTypes().addAll(openGitHubIssuesBtnType, copyToClipboardBtnType, closeBtnType);
 
 
         final GridPane dialogContent = new GridPane();
@@ -91,7 +94,7 @@ public final class ExceptionAlert extends Alert {
         final Label issuePasteLabel = new Label(COPY_PASTE_LABEL_TEXT);
         issuePasteLabel.setWrapText(true);
 
-        final TextArea issueText = new TextArea(issueText());
+        final TextArea issueText = new TextArea(stackTrace(throwable));
         issuePasteLabel.setLabelFor(issueText);
         issueText.setEditable(false);
         issueText.setWrapText(true);
@@ -103,6 +106,17 @@ public final class ExceptionAlert extends Alert {
         dialogContent.add(issuePasteLabel, 0, 1);
         dialogContent.add(issueText, 0, 2);
         this.getDialogPane().setContent(dialogContent);
+
+
+        // Prevent these two buttons from causing the alert to close
+        final Button copyToClipboardBtn = (Button) this.getDialogPane().lookupButton(copyToClipboardBtnType);
+        copyToClipboardBtn.addEventFilter(ActionEvent.ACTION, event -> {
+            final ClipboardContent content = new ClipboardContent();
+            content.putString(issueText());
+            Clipboard.getSystemClipboard().setContent(content);
+            // Prevent the dialog from closing
+            event.consume();
+        });
 
 
         final Button openGitHubIssueBtn = (Button) this.getDialogPane().lookupButton(openGitHubIssuesBtnType);
@@ -143,17 +157,23 @@ public final class ExceptionAlert extends Alert {
     }
 
     /**
+     * Generates the Throwable's stack trace as a string.
+     */
+    private String stackTrace(Throwable throwable) {
+        final StringWriter sw = new StringWriter();
+        final PrintWriter pw = new PrintWriter(sw);
+        throwable.printStackTrace(pw);
+        return sw.toString();
+    }
+
+    /**
      * Takes the throwable and generates the markdown for the exception.
      *
      * @param throwable The initial throwable passed to the constructor
      * @return The markdown for the exception.
      */
     private String generateExceptionMessage(Throwable throwable) {
-        final StringWriter sw = new StringWriter();
-        final PrintWriter pw = new PrintWriter(sw);
-        throwable.printStackTrace(pw);
-
-        return new StringBuilder(sw.toString()
+        return new StringBuilder(stackTrace(throwable)
                 /* Allow users to maintain anonymity */
                 .replace(System.getProperty("user.home"), "$HOME").replace(System.getProperty("user.name"), "$USER"))
                 .insert(0, "## Stack Trace:\n```java\n").append("\n```").toString();
