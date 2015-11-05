@@ -2,9 +2,11 @@ package edu.wpi.grip.core.sources;
 
 
 import com.google.common.eventbus.EventBus;
+import com.google.common.eventbus.Subscribe;
 import edu.wpi.grip.core.OutputSocket;
 import edu.wpi.grip.core.SocketHint;
 import edu.wpi.grip.core.Source;
+import edu.wpi.grip.core.events.SourceRemovedEvent;
 import org.bytedeco.javacpp.opencv_core.Mat;
 import org.bytedeco.javacv.Frame;
 import org.bytedeco.javacv.FrameGrabber;
@@ -24,6 +26,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 public class WebcamSource implements Source {
 
     private final String name;
+    private final EventBus eventBus;
     private final SocketHint<Mat> imageOutputHint = new SocketHint<Mat>("Image", Mat.class, Mat::new);
     private final SocketHint<Number> frameRateOutputHint = new SocketHint<Number>("Frame Rate", Number.class, 0);
     private OutputSocket<Mat> frameOutputSocket;
@@ -33,10 +36,12 @@ public class WebcamSource implements Source {
 
     /**
      * Creates a Webcam source that can be used as an input to a pipeline
+     *
      * @param eventBus The EventBus to attach to
      */
     public WebcamSource(EventBus eventBus, int deviceNumber) {
         checkNotNull(eventBus, "Event Bus was null.");
+        this.eventBus = eventBus;
 
         this.name = "Webcam " + deviceNumber;
 
@@ -46,6 +51,7 @@ public class WebcamSource implements Source {
         this.frameThread = Optional.empty();
 
         this.startVideo(deviceNumber);
+        eventBus.register(this);
     }
 
     @Override
@@ -142,7 +148,14 @@ public class WebcamSource implements Source {
         } else {
             throw new IllegalStateException("Tried to stop a Webcam that is already stopped.");
         }
+    }
 
+    @Subscribe
+    public void onSourceRemovedEvent(SourceRemovedEvent event) throws TimeoutException {
+        if (event.getSource() == this) {
+            this.stopVideo();
+            this.eventBus.unregister(this);
+        }
     }
 
 }
