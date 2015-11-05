@@ -10,6 +10,7 @@ import edu.wpi.grip.core.operations.composite.BlurOperation;
 import edu.wpi.grip.core.operations.composite.DesaturateOperation;
 import edu.wpi.grip.core.operations.composite.RGBThresholdOperation;
 import edu.wpi.grip.core.operations.opencv.MatFieldAccessor;
+import edu.wpi.grip.core.operations.opencv.MinMaxLoc;
 import edu.wpi.grip.core.operations.opencv.NewPointOperation;
 import edu.wpi.grip.core.operations.opencv.NewSizeOperation;
 import edu.wpi.grip.core.sinks.DummySink;
@@ -107,6 +108,7 @@ public class MainWindowController implements Initializable {
         this.eventBus.post(new OperationAddedEvent(new NewPointOperation()));
         this.eventBus.post(new OperationAddedEvent(new NewSizeOperation()));
         this.eventBus.post(new OperationAddedEvent(new MatFieldAccessor()));
+        this.eventBus.post(new OperationAddedEvent(new MinMaxLoc()));
 
         // TODO: Remove these before release
         this.eventBus.post(new OperationAddedEvent(this.add));
