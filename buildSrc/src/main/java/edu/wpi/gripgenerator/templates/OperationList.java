@@ -1,17 +1,24 @@
 package edu.wpi.gripgenerator.templates;
 
 
+import com.github.javaparser.ASTHelper;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.ImportDeclaration;
 import com.github.javaparser.ast.PackageDeclaration;
-import com.github.javaparser.ast.body.*;
+import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
+import com.github.javaparser.ast.body.MethodDeclaration;
+import com.github.javaparser.ast.body.ModifierSet;
 import com.github.javaparser.ast.expr.MethodCallExpr;
 import com.github.javaparser.ast.expr.NameExpr;
 import com.github.javaparser.ast.expr.ObjectCreationExpr;
+import com.github.javaparser.ast.stmt.BlockStmt;
+import com.github.javaparser.ast.stmt.ExpressionStmt;
 import com.github.javaparser.ast.type.ClassOrInterfaceType;
+import com.github.javaparser.ast.type.VoidType;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -33,9 +40,8 @@ public class OperationList {
     public OperationList(ImportDeclaration... imports) {
         this.imports = new ArrayList(Arrays.asList(imports));
         this.imports.addAll(Arrays.asList(
-                new ImportDeclaration(new NameExpr("java.util.Arrays"), false, false),
-                new ImportDeclaration(new NameExpr("java.util.List"), false, false),
-                new ImportDeclaration(new NameExpr("edu.wpi.grip.core.Operation"), false, false)
+                new ImportDeclaration(new NameExpr("com.google.common.eventbus.EventBus"), false, false),
+                new ImportDeclaration(new NameExpr("edu.wpi.grip.core.events.OperationAddedEvent"), false, false)
         ));
         this.operations = new ArrayList<>();
     }
@@ -53,30 +59,33 @@ public class OperationList {
         operations.add(operation);
     }
 
-    private FieldDeclaration getOperationList() {
-        ClassOrInterfaceType listType = new ClassOrInterfaceType("List");
-        listType.setTypeArgs(Arrays.asList(new ClassOrInterfaceType("Operation")));
-        return new FieldDeclaration(
-                ModifierSet.addModifier(
-                        ModifierSet.addModifier(ModifierSet.FINAL, ModifierSet.PUBLIC),
-                        ModifierSet.STATIC
-                ),
-                listType,
-                new VariableDeclarator(
-                        new VariableDeclaratorId("OPERATIONS"),
-                        new MethodCallExpr(
-                                new NameExpr("Arrays"),
-                                "asList",
-                                operations.stream().map(o -> new ObjectCreationExpr(null, new ClassOrInterfaceType(o.getOperationClassName()), null)).collect(Collectors.toList())
-                        )
-                )
-        );
-    }
-
     private ClassOrInterfaceDeclaration getClassDeclaration() {
-        ClassOrInterfaceDeclaration operationList = new ClassOrInterfaceDeclaration(ModifierSet.PUBLIC, false, "CVOperations");
-        operationList.setMembers(Arrays.asList(getOperationList()));
-        return operationList;
+        final ClassOrInterfaceType eventBusType = new ClassOrInterfaceType("EventBus");
+        final ClassOrInterfaceType eventType = new ClassOrInterfaceType("OperationAddedEvent");
+
+        // This method is how the generated code tells the rest of the application about all of the generated OpenCV
+        // operations. It sends an OperationAddedEvent with a new instance of every operation.
+        final MethodDeclaration addOperations = new MethodDeclaration(ModifierSet.PUBLIC | ModifierSet.STATIC,
+                new VoidType(), "addOperations");
+
+        ASTHelper.addParameter(addOperations, ASTHelper.createParameter(eventBusType, "eventBus"));
+
+        addOperations.setBody(new BlockStmt(this.operations.stream()
+                .map(Operation::getOperationClassName)
+                .map(ClassOrInterfaceType::new)
+                // Create a new instance of each operation
+                .map(type -> new ObjectCreationExpr(null, type, null))
+                // Create a new OperationAddedEvent for every operation
+                .map(expr -> new ObjectCreationExpr(null, eventType, Collections.singletonList(expr)))
+                // Post all of the events to the event bus
+                .map(expr -> new MethodCallExpr(new NameExpr("eventBus"), "post", Collections.singletonList(expr)))
+                .map(ExpressionStmt::new)
+                .collect(Collectors.toList())));
+
+        final ClassOrInterfaceDeclaration cvoperations = new ClassOrInterfaceDeclaration(ModifierSet.PUBLIC, false,
+                "CVOperations");
+        cvoperations.setMembers(Collections.singletonList(addOperations));
+        return cvoperations;
     }
 
     /**
