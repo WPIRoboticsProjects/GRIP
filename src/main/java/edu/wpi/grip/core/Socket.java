@@ -4,10 +4,7 @@ import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
-import edu.wpi.grip.core.events.ConnectionAddedEvent;
-import edu.wpi.grip.core.events.ConnectionRemovedEvent;
-import edu.wpi.grip.core.events.SocketChangedEvent;
-import edu.wpi.grip.core.events.SocketConnectedChangedEvent;
+import edu.wpi.grip.core.events.*;
 
 import java.util.HashSet;
 import java.util.Optional;
@@ -26,12 +23,14 @@ import static com.google.common.base.Preconditions.checkNotNull;
  */
 public abstract class Socket<T> {
     public enum Direction {INPUT, OUTPUT}
+    public enum SocketStatus {VALID, POSSIBLE_INVALID, INVALID}
 
     protected final EventBus eventBus;
     private Optional<Step> step = Optional.empty();
     private final Direction direction;
     private final Set<Connection> connections = new HashSet<>();
     private final SocketHint<T> socketHint;
+    private SocketStatus status = SocketStatus.VALID;
     private T value;
 
     /**
@@ -123,6 +122,17 @@ public abstract class Socket<T> {
      */
     public Set<Connection> getConnections() {
         return ImmutableSet.copyOf(this.connections);
+    }
+
+    public void setStatus(SocketStatus status){
+        if(!this.status.equals(status)){
+            this.status = status;
+            this.eventBus.post(new SocketStatusChangedEvent(this));
+        }
+    }
+
+    public SocketStatus getStatus(){
+        return this.status;
     }
 
 

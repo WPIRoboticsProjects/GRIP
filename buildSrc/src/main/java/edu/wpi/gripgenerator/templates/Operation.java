@@ -55,6 +55,7 @@ public class Operation {
 
     /**
      * Gets the CamelCase formatted name version of the class name.
+     *
      * @return The name to be used as the Class and file name.
      */
     public String getOperationClassName() {
@@ -62,9 +63,9 @@ public class Operation {
         final CaseFormat format;
         if (name.contains("_")) {
             format = CaseFormat.LOWER_UNDERSCORE;
-        } else if(Ascii.isLowerCase(name.charAt(0))) {
+        } else if (Ascii.isLowerCase(name.charAt(0))) {
             format = CaseFormat.LOWER_CAMEL;
-        } else if(Ascii.isUpperCase(name.charAt(0))){
+        } else if (Ascii.isUpperCase(name.charAt(0))) {
             format = CaseFormat.UPPER_CAMEL;
         } else {
             throw new UnsupportedOperationException("Can not convert class name for " + name);
@@ -228,6 +229,16 @@ public class Operation {
                                                         )
                                                 )
                                         )
+                                ),
+                                new ExpressionStmt(
+                                        new MethodCallExpr(
+                                                null,
+                                                "updateSocketValidState",
+                                                Arrays.asList(
+                                                        new NameExpr(inputParamId),
+                                                        new NameExpr(outputParamId)
+                                                )
+                                        )
                                 )
                         )
                 ),
@@ -243,11 +254,22 @@ public class Operation {
                                 ),
                                 new BlockStmt(
                                         // TODO: Add some sort of indication that an error has occurred
-                                        Collections.singletonList(
+                                        Arrays.asList(
                                                 new ExpressionStmt(
                                                         new MethodCallExpr(
                                                                 new NameExpr(exceptionVariable),
                                                                 "printStackTrace"
+                                                        )
+                                                ),
+                                                new ExpressionStmt(
+                                                        new MethodCallExpr(
+                                                                null,
+                                                                "updateSocketErrorState",
+                                                                Arrays.asList(
+                                                                        new NameExpr(exceptionVariable),
+                                                                        new NameExpr(inputParamId),
+                                                                        new NameExpr(outputParamId)
+                                                                )
                                                         )
                                                 )
                                         )
