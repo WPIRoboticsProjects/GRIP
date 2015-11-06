@@ -2,6 +2,7 @@ package edu.wpi.grip.ui.preview;
 
 import com.google.common.eventbus.EventBus;
 import edu.wpi.grip.core.OutputSocket;
+import edu.wpi.grip.core.operations.composite.LinesReport;
 
 import static org.bytedeco.javacpp.opencv_core.Mat;
 
@@ -19,6 +20,8 @@ public class SocketPreviewViewFactory {
     public static <T> SocketPreviewView<T> createPreviewView(EventBus eventBus, OutputSocket<T> socket) {
         if (socket.getSocketHint().getType() == Mat.class) {
             return (SocketPreviewView) new ImageSocketPreviewView(eventBus, (OutputSocket<Mat>) socket);
+        } else if (socket.getSocketHint().getType() == LinesReport.class) {
+            return (SocketPreviewView) new LinesSocketPreviewView(eventBus, (OutputSocket<LinesReport>) socket);
         } else {
             return new TextAreaSocketPreviewView<>(eventBus, socket);
         }

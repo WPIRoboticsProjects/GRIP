@@ -7,6 +7,9 @@ import edu.wpi.grip.core.OutputSocket;
 import edu.wpi.grip.core.SocketHint;
 import org.bytedeco.javacpp.opencv_core.Size;
 
+import java.io.InputStream;
+import java.util.Optional;
+
 public class NewSizeOperation implements CVOperation {
 
     private final SocketHint<Number> widthHint = new SocketHint<Number>("width", Number.class, -1, SocketHint.View.SPINNER, new Integer[]{-1, Integer.MAX_VALUE}, false);
@@ -21,6 +24,11 @@ public class NewSizeOperation implements CVOperation {
     @Override
     public String getDescription() {
         return "Create a Size";
+    }
+
+    @Override
+    public Optional<InputStream> getIcon() {
+        return Optional.of(getClass().getResourceAsStream("/edu/wpi/grip/ui/icons/size.png"));
     }
 
     @Override
