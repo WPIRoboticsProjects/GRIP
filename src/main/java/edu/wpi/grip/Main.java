@@ -2,6 +2,7 @@ package edu.wpi.grip;
 
 import edu.wpi.grip.ui.ExceptionAlert;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -24,9 +25,17 @@ public class Main extends Application {
         Thread.currentThread().setUncaughtExceptionHandler((thread, throwable) -> {
             // Print throwable before showing the exception so that errors are in order in the console.
             throwable.printStackTrace();
-
-            final ExceptionAlert exceptionAlert = new ExceptionAlert(root, throwable, getHostServices());
-            exceptionAlert.showAndWait();
+            Platform.runLater(() -> {
+                try {
+                    final ExceptionAlert exceptionAlert = new ExceptionAlert(root, throwable, getHostServices());
+                    exceptionAlert.showAndWait();
+                } catch (RuntimeException e) {
+                    // Well in this case something has gone very, very wrong
+                    // We don't want to create a feedback loop either.
+                    e.printStackTrace();
+                    assert false : "Could not rethrow exception.";
+                }
+            });
         });
 
         // Set the root font size based on the DPI of the primary screen.  As long as all sizes are defined in ems,
