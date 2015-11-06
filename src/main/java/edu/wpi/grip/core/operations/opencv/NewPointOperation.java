@@ -7,6 +7,9 @@ import edu.wpi.grip.core.OutputSocket;
 import edu.wpi.grip.core.SocketHint;
 import org.bytedeco.javacpp.opencv_core.Point;
 
+import java.io.InputStream;
+import java.util.Optional;
+
 public class NewPointOperation implements CVOperation {
 
     private final SocketHint<Number> xHint = new SocketHint<Number>("x", Number.class, -1, SocketHint.View.SPINNER, new Integer[]{Integer.MIN_VALUE, Integer.MAX_VALUE}, false);
@@ -21,6 +24,11 @@ public class NewPointOperation implements CVOperation {
     @Override
     public String getDescription() {
         return "Create a Point";
+    }
+
+    @Override
+    public Optional<InputStream> getIcon() {
+        return Optional.of(getClass().getResourceAsStream("/edu/wpi/grip/ui/icons/point.png"));
     }
 
     @Override
