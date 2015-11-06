@@ -21,7 +21,7 @@ public class HSVThresholdOperation implements CVOperation{
 
     private final SocketHint<opencv_core.Mat> inputHint = new SocketHint<opencv_core.Mat>("Input", opencv_core.Mat.class, opencv_core.Mat::new);
     private final SocketHint<List> hueHint = new SocketHint<List>("Hue", List.class,
-            () -> Arrays.asList(0.0, 255.0), SocketHint.View.RANGE, new List[]{Arrays.asList(0.0, 180.0)});
+            () -> Arrays.asList(0.0, 180.0), SocketHint.View.RANGE, new List[]{Arrays.asList(0.0, 180.0)});
     private final SocketHint<List> saturationHint = new SocketHint<List>("Saturation", List.class,
             () -> Arrays.asList(0.0, 255.0), SocketHint.View.RANGE, new List[]{Arrays.asList(0.0, 255.0)});
     private final SocketHint<List> valueHint = new SocketHint<List>("Value", List.class,
