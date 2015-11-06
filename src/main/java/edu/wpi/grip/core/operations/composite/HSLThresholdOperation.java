@@ -16,7 +16,7 @@ import static org.bytedeco.javacpp.opencv_imgproc.COLOR_BGR2HLS;
 import static org.bytedeco.javacpp.opencv_imgproc.cvtColor;
 
 /**
- * An {@link edu.wpi.grip.core.Operation} that converts a color image into a binary image based on the HSL threshold ranges for each channel
+ * An {@link edu.wpi.grip.core.Operation} that converts a color image into a binary image based on the HSL threshold ranges
  */
 public class HSLThresholdOperation implements CVOperation {
     private final SocketHint<opencv_core.Mat> inputHint = new SocketHint<opencv_core.Mat>("Input", opencv_core.Mat.class, opencv_core.Mat::new);
@@ -36,7 +36,7 @@ public class HSLThresholdOperation implements CVOperation {
 
     @Override
     public String getDescription() {
-        return "Segment an image based on hue, saturation and luminance ranges";
+        return "Segment an image based on hue, saturation, and luminance ranges";
     }
 
     @Override
