@@ -6,12 +6,11 @@ import edu.wpi.grip.core.InputSocket;
 import edu.wpi.grip.core.OutputSocket;
 import edu.wpi.grip.core.SocketHint;
 import edu.wpi.grip.core.operations.opencv.CVOperation;
-import org.bytedeco.javacpp.opencv_core;
 
 import java.util.Arrays;
 import java.util.List;
 
-import static org.bytedeco.javacpp.opencv_core.inRange;
+import static org.bytedeco.javacpp.opencv_core.*;
 import static org.bytedeco.javacpp.opencv_imgproc.COLOR_BGR2HLS;
 import static org.bytedeco.javacpp.opencv_imgproc.cvtColor;
 
@@ -19,7 +18,7 @@ import static org.bytedeco.javacpp.opencv_imgproc.cvtColor;
  * An {@link edu.wpi.grip.core.Operation} that converts a color image into a binary image based on the HSL threshold ranges
  */
 public class HSLThresholdOperation implements CVOperation {
-    private final SocketHint<opencv_core.Mat> inputHint = new SocketHint<opencv_core.Mat>("Input", opencv_core.Mat.class, opencv_core.Mat::new);
+    private final SocketHint<Mat> inputHint = new SocketHint<Mat>("Input", Mat.class, Mat::new);
     private final SocketHint<List> hueHint = new SocketHint<List>("Hue", List.class,
             () -> Arrays.asList(0.0, 180.00), SocketHint.View.RANGE, new List[]{Arrays.asList(0.0, 180.0)});
     private final SocketHint<List> saturationHint = new SocketHint<List>("Saturation", List.class,
@@ -27,7 +26,7 @@ public class HSLThresholdOperation implements CVOperation {
     private final SocketHint<List> luminanceHint = new SocketHint<List>("Luminance", List.class,
             () -> Arrays.asList(0.0, 255.0), SocketHint.View.RANGE, new List[]{Arrays.asList(0.0, 255.0)});
 
-    private final SocketHint<opencv_core.Mat> outputHint = new SocketHint<opencv_core.Mat>("output", opencv_core.Mat.class, opencv_core.Mat::new);
+    private final SocketHint<Mat> outputHint = new SocketHint<Mat>("output", Mat.class, Mat::new);
 
     @Override
     public String getName() {
@@ -58,13 +57,13 @@ public class HSLThresholdOperation implements CVOperation {
 
     @Override
     public void perform(InputSocket<?>[] inputs, OutputSocket<?>[] outputs) {
-        final opencv_core.Mat input = ((InputSocket<opencv_core.Mat>) inputs[0]).getValue();
+        final Mat input = ((InputSocket<Mat>) inputs[0]).getValue();
         final List<Number> channel1 = ((InputSocket<List<Number>>) inputs[1]).getValue();
         final List<Number> channel2 = ((InputSocket<List<Number>>) inputs[2]).getValue();
         final List<Number> channel3 = ((InputSocket<List<Number>>) inputs[3]).getValue();
 
-        final OutputSocket<opencv_core.Mat> outputSocket = (OutputSocket<opencv_core.Mat>) outputs[0];
-        final opencv_core.Mat output = outputSocket.getValue();
+        final OutputSocket<Mat> outputSocket = (OutputSocket<Mat>) outputs[0];
+        final Mat output = outputSocket.getValue();
 
         // Do nothing if nothing is connected to the input
         if (input.empty()) {
@@ -73,17 +72,17 @@ public class HSLThresholdOperation implements CVOperation {
         }
 
         // Intentionally 1, 3, 2. This maps to the HLS open cv expects
-        final opencv_core.Mat low = new opencv_core.Mat(input.size(), input.type(), new opencv_core.Scalar(
+        final Mat low = new Mat(input.size(), input.type(), new Scalar(
                 channel1.get(0).doubleValue(),
                 channel3.get(0).doubleValue(),
                 channel2.get(0).doubleValue(), 0));
 
-        final opencv_core.Mat high = new opencv_core.Mat(input.size(), input.type(), new opencv_core.Scalar(
+        final Mat high = new Mat(input.size(), input.type(), new Scalar(
                 channel1.get(1).doubleValue(),
                 channel3.get(1).doubleValue(),
                 channel2.get(1).doubleValue(), 0));
 
-        final opencv_core.Mat hls = new opencv_core.Mat();
+        final Mat hls = new Mat();
         cvtColor(input, hls, COLOR_BGR2HLS);
         inRange(hls, low, high, output);
         outputSocket.setValue(output);
