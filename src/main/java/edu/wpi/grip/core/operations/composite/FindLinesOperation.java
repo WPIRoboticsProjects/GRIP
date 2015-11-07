@@ -65,13 +65,13 @@ public class FindLinesOperation implements Operation {
         final Mat lines = new Mat();
 
         if (input.channels() == 1) {
-            linesReport.lsd.detect(input, lines);
+            linesReport.getLineSegmentDetector().detect(input, lines);
         } else {
             // The line detector works on a single channel.  If the input is a color image, we can just give the line
             // detector a grayscale version of it
             synchronized (this.tmp) {
                 cvtColor(input, tmp, COLOR_BGR2GRAY);
-                linesReport.lsd.detect(tmp, lines);
+                linesReport.getLineSegmentDetector().detect(tmp, lines);
             }
         }
 
