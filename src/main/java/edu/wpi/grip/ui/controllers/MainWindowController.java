@@ -110,6 +110,7 @@ public class MainWindowController implements Initializable {
         this.eventBus.post(new OperationAddedEvent(new MatFieldAccessor()));
         this.eventBus.post(new OperationAddedEvent(new MinMaxLoc()));
         this.eventBus.post(new OperationAddedEvent(new HSVThresholdOperation()));
+        this.eventBus.post(new OperationAddedEvent(new HSLThresholdOperation()));
 
         // TODO: Remove these before release
         this.eventBus.post(new OperationAddedEvent(this.add));
