@@ -17,8 +17,8 @@ import static com.google.common.base.Preconditions.checkNotNull;
  */
 public class ConnectionView extends CubicCurve {
 
-    static final Paint FILL = null;
-    static final Paint STROKE = Paint.valueOf("#575757");
+    private static final Paint FILL = null;
+    private static final Paint STROKE = Paint.valueOf("#575757");
 
     private final EventBus eventBus;
     private final Connection connection;

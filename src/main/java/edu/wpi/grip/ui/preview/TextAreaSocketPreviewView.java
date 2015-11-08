@@ -13,7 +13,7 @@ import javafx.scene.control.TextArea;
  */
 public class TextAreaSocketPreviewView<T> extends SocketPreviewView<T> {
 
-    final TextArea text;
+    private final TextArea text;
 
     /**
      * @param eventBus The EventBus used by the application

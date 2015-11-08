@@ -15,7 +15,7 @@ import static com.google.common.base.Preconditions.checkArgument;
  */
 public class RangeInputSocketView extends InputSocketView<List<Number>> {
 
-    final RangeSlider slider;
+    private final RangeSlider slider;
 
     /**
      * @param socket An <code>InputSocket</code> with a domain containing two <code>Number</code>s (the min and max

@@ -1,12 +1,11 @@
 package edu.wpi.grip.core.operations.composite;
 
-import org.bytedeco.javacpp.opencv_core;
-
 import java.util.ArrayList;
 import java.util.List;
 
 import static org.bytedeco.javacpp.opencv_core.Mat;
-import static org.bytedeco.javacpp.opencv_imgproc.*;
+import static org.bytedeco.javacpp.opencv_imgproc.LineSegmentDetector;
+import static org.bytedeco.javacpp.opencv_imgproc.createLineSegmentDetector;
 
 /**
  * This class contains the results of a line detection algorithm.  It has an input matrix (the image supplied to
@@ -17,6 +16,11 @@ import static org.bytedeco.javacpp.opencv_imgproc.*;
  * random matrix.
  */
 public class LinesReport {
+    private Mat input = new Mat();
+    private List<Line> lines = new ArrayList<>();
+
+    private final LineSegmentDetector lsd = createLineSegmentDetector();
+
     public static class Line {
         public final double x1, y1, x2, y2;
 
@@ -32,11 +36,6 @@ public class LinesReport {
         }
     }
 
-    private Mat input = new opencv_core.Mat();
-    private List<Line> lines = new ArrayList<>();
-
-    LineSegmentDetector lsd = createLineSegmentDetector();
-
     public void setLines(List<Line> lines) {
         this.lines = lines;
     }
@@ -47,6 +46,10 @@ public class LinesReport {
 
     public void setInput(Mat input) {
         this.input = input;
+    }
+
+    protected LineSegmentDetector getLineSegmentDetector() {
+        return lsd;
     }
 
     /**
