@@ -8,6 +8,7 @@ import edu.wpi.grip.core.OutputSocket;
 import edu.wpi.grip.core.Socket;
 import edu.wpi.grip.core.events.ConnectionAddedEvent;
 import edu.wpi.grip.core.events.ConnectionRemovedEvent;
+import edu.wpi.grip.core.events.ErrorAddedEvent;
 import edu.wpi.grip.core.events.SocketConnectedChangedEvent;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -102,20 +103,24 @@ public class SocketHandleView extends Button {
                 // dragging either into the other.
                 switch (other.getDirection()) {
                     case INPUT:
-                        inputSocket = (InputSocket)other;
+                        inputSocket = (InputSocket) other;
                         assert this.socket.getDirection().equals(Socket.Direction.OUTPUT) : "The socket was not an Output";
-                        outputSocket = (OutputSocket)this.socket;
+                        outputSocket = (OutputSocket) this.socket;
                         break;
                     case OUTPUT:
                         assert this.socket.getDirection().equals(Socket.Direction.INPUT) : "The socket was not an Input";
-                        inputSocket = (InputSocket)this.socket;
-                        outputSocket = (OutputSocket)other;
+                        inputSocket = (InputSocket) this.socket;
+                        outputSocket = (OutputSocket) other;
                         break;
                     default:
                         throw new IllegalStateException("The Socket was a type that wasn't expected " + other.getDirection());
                 }
-                final Connection connection = new Connection(eventBus, outputSocket, inputSocket);
-                eventBus.post(new ConnectionAddedEvent(connection));
+                try {
+                    final Connection connection = new Connection(eventBus, outputSocket, inputSocket);
+                    eventBus.post(new ConnectionAddedEvent(connection));
+                } catch (ClassCastException e) {
+                    eventBus.post(new ErrorAddedEvent(e, "Incompatible Socket Types"));
+                }
             });
         });
 
