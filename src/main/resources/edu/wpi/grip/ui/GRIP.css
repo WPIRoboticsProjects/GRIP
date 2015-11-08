@@ -178,6 +178,19 @@ VBox.sockets {
     -fx-background-radius: 1em;
 }
 
+.possible-invalid {
+    -fx-background-color:
+            #ecebe9,
+            rgba(0,0,0,0.05),
+            linear-gradient(#dcca8a, #c7a740),
+            linear-gradient(#f9f2d6 0%, #f4e5bc 20%, #e6c75d 80%, #e2c045 100%),
+            linear-gradient(#f6ebbe, #e6c34d);
+}
+
+.invalid {
+    -fx-background-color: linear-gradient(#ff5400, #be1d00);
+}
+
 .socket VBox {
     -fx-pref-height: 0em;
     -fx-pref-width: 13em;

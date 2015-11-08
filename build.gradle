@@ -25,6 +25,7 @@ dependencies {
     compile group: 'org.python', name: 'jython', version: '2.7.0'
     compile group: 'com.thoughtworks.xstream', name: 'xstream', version: '1.4.8'
     compile group: 'org.bytedeco', name: 'javacv', version: '1.0'
+    compile group: 'org.controlsfx', name: 'controlsfx', version: '8.40.9'
     compile group: 'org.bytedeco.javacpp-presets', name: 'opencv', version: '3.0.0-1.0'
     compile group: 'org.bytedeco.javacpp-presets', name: 'opencv', version: '3.0.0-1.0', classifier: "linux-x86"
     compile group: 'org.bytedeco.javacpp-presets', name: 'opencv', version: '3.0.0-1.0', classifier: "linux-x86_64"

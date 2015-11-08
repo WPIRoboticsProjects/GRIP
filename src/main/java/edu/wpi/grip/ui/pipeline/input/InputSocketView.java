@@ -1,8 +1,10 @@
 package edu.wpi.grip.ui.pipeline.input;
 
 import com.google.common.eventbus.EventBus;
+import com.google.common.eventbus.Subscribe;
 import edu.wpi.grip.core.InputSocket;
 import edu.wpi.grip.core.Socket;
+import edu.wpi.grip.core.events.SocketStatusChangedEvent;
 import edu.wpi.grip.ui.pipeline.SocketHandleView;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
@@ -69,6 +71,8 @@ public abstract class InputSocketView<T> extends GridPane {
         this.handle = new SocketHandleView(this.eventBus, this.socket);
         this.add(this.handle, 0, 0);
 
+        colorToStatus();
+
         this.eventBus.register(this);
     }
 
@@ -99,5 +103,33 @@ public abstract class InputSocketView<T> extends GridPane {
 
     public Label getIdentifier() {
         return this.identifier;
+    }
+
+    private void colorToStatus(){
+        final String invalidClass = "invalid";
+        final String possibleInvalidClass = "possible-invalid";
+        final Socket.SocketStatus status = this.socket.getStatus();
+        switch (status){
+            case INVALID:
+                identifier.getStyleClass().remove(possibleInvalidClass);
+                identifier.getStyleClass().add(invalidClass);
+                break;
+            case POSSIBLE_INVALID:
+                identifier.getStyleClass().remove(invalidClass);
+                identifier.getStyleClass().add(possibleInvalidClass);
+                break;
+            case VALID:
+                identifier.getStyleClass().remove(invalidClass);
+                identifier.getStyleClass().remove(possibleInvalidClass);
+                break;
+            default: throw new IllegalStateException("Invalid Status Type: " + status);
+        }
+    }
+
+    @Subscribe
+    public void onSocketStatusChange(SocketStatusChangedEvent event){
+        if (event.getSocket() == this.socket) {
+            colorToStatus();
+        }
     }
 }
