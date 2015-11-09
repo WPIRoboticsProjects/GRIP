@@ -83,7 +83,9 @@ public class BlurOperation implements Operation {
         final Mat output = outputSocket.getValue();
 
         // Do nothing if nothing is connected to the input
+        // TODO: this should happen automatically for all sockets that are marked as required
         if (input.empty()) {
+            outputSocket.setValue(outputSocket.getSocketHint().createInitialValue());
             return;
         }
 
