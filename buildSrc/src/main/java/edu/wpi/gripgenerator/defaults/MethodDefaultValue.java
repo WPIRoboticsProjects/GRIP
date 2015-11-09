@@ -24,11 +24,6 @@ public class MethodDefaultValue extends DefaultValue {
     }
 
     @Override
-    public Expression getDomainValue() {
-        return new NullLiteralExpr();
-    }
-
-    @Override
     public String getViewType() {
         return "NONE";
     }

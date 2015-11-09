@@ -35,7 +35,7 @@ public class Connection<T> {
         checkNotNull(eventBus);
         checkArgument(Connection.canConnect(outputSocket, inputSocket), "Cannot connect sockets");
 
-        inputSocket.setValue(outputSocket.getValue());
+        inputSocket.setValueOptional(outputSocket.getValue());
 
         eventBus.register(this);
     }
@@ -100,7 +100,7 @@ public class Connection<T> {
     @Subscribe
     public void onOutputChanged(SocketChangedEvent e) {
         if (e.getSocket() == outputSocket) {
-            inputSocket.setValue(outputSocket.getValue());
+            inputSocket.setValueOptional(outputSocket.getValue());
         }
     }
 

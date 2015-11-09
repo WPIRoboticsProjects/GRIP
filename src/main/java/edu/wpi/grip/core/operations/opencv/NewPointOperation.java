@@ -45,8 +45,8 @@ public class NewPointOperation implements CVOperation {
     public void perform(InputSocket<?>[] inputs, OutputSocket<?>[] outputs) {
         final InputSocket<Number> xSocket = (InputSocket<Number>) inputs[0];
         final InputSocket<Number> ySocket = (InputSocket<Number>) inputs[1];
-        final int xValue = xSocket.getValue().intValue();
-        final int yValue = ySocket.getValue().intValue();
+        final int xValue = xSocket.getValue().get().intValue();
+        final int yValue = ySocket.getValue().get().intValue();
         final OutputSocket<Point> outputSocket = (OutputSocket<Point>) outputs[0];
         outputSocket.setValue(new Point(xValue, yValue));
     }

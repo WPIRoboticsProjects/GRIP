@@ -121,8 +121,8 @@ public class PrimitiveDefaultValue extends DefaultValue {
     }
 
     @Override
-    public Expression getDomainValue() {
-        return domainValue;
+    public Optional<Expression> getDomainValue() {
+        return Optional.of(domainValue);
     }
 
     @Override

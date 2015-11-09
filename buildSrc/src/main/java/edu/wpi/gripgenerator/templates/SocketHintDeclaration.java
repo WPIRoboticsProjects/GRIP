@@ -7,12 +7,10 @@ import com.github.javaparser.ast.expr.*;
 import com.github.javaparser.ast.type.ClassOrInterfaceType;
 import com.github.javaparser.ast.type.PrimitiveType;
 import com.github.javaparser.ast.type.Type;
-import edu.wpi.gripgenerator.defaults.DefaultValue;
 import edu.wpi.gripgenerator.defaults.DefaultValueCollector;
 import edu.wpi.gripgenerator.settings.DefinedParamType;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -33,6 +31,7 @@ import static com.github.javaparser.ASTHelper.createReferenceType;
  */
 public class SocketHintDeclaration {
     public static final String SOCKET_HINT_CLASS_NAME = "SocketHint";
+    public static final String SOCKET_HINT_BUILDER_CLASS_NAME = "Builder";
     public static final ImportDeclaration SOCKET_IMPORT = new ImportDeclaration(
             new NameExpr("edu.wpi.grip.core." + SOCKET_HINT_CLASS_NAME), false, false);
     public static final String HINT_POSTFIX = "Hint";
@@ -91,21 +90,6 @@ public class SocketHintDeclaration {
         );
     }
 
-    private List<Expression> getSocketHintAdditionalParams(DefinedParamType paramType) {
-        if (paramType.getDefaultValue().isPresent()) {
-            DefaultValue defaultValue = paramType.getDefaultValue().get();
-            return Arrays.asList(
-                    paramType.getDefaultValue().isPresent() ?
-                            paramType.getDefaultValue().get().getDefaultValue(paramType.getLiteralDefaultValue()) :
-                            new NullLiteralExpr(),
-                    getViewEnumElement(defaultValue.getViewType()),
-                    defaultValue.getDomainValue()
-            );
-
-        }
-        return Collections.emptyList();
-    }
-
     /**
      * Creates a socket hint declaration from the constructor.
      *
@@ -116,6 +100,8 @@ public class SocketHintDeclaration {
 
         final ClassOrInterfaceType socketHintType = new ClassOrInterfaceType(SOCKET_HINT_CLASS_NAME);
         socketHintType.setTypeArgs(Collections.singletonList(genericType));
+
+        final ClassOrInterfaceType socketHintBuilderType = new ClassOrInterfaceType(new ClassOrInterfaceType(SOCKET_HINT_CLASS_NAME), SOCKET_HINT_BUILDER_CLASS_NAME);
 
         final List<VariableDeclarator> variableDeclarations = new ArrayList<>();
         for (DefinedParamType paramType : paramTypes) {
@@ -129,19 +115,57 @@ public class SocketHintDeclaration {
                     + HINT_POSTFIX;
             // The name hint of the socket hint
             final StringLiteralExpr stringLiteralExpr = new StringLiteralExpr(hintName);
-            final ClassExpr classExpr = new ClassExpr(genericType);
 
-            //Add the additional params to the list for this param set.
-            final List<Expression> paramSet = new ArrayList<>(getSocketHintAdditionalParams(paramType));
-            paramSet.addAll(0, Arrays.asList(stringLiteralExpr, classExpr));
             variableDeclarations.add(
                     new VariableDeclarator(
                             new VariableDeclaratorId(fullHintName),
                             // Create new instantiation of type socket hint type
-                            new ObjectCreationExpr(null, socketHintType, paramSet)));
+                            socketHintBuilder(socketHintBuilderType, stringLiteralExpr, paramType)
+                    )
+            );
         }
         if (variableDeclarations.isEmpty()) return null;
 
         return new FieldDeclaration(modifiers, socketHintType, variableDeclarations);
+    }
+
+    private MethodCallExpr socketHintBuilder(ClassOrInterfaceType socketHintBuilderType, StringLiteralExpr stringLiteralExpr, DefinedParamType paramType){
+        final ClassExpr classExpr = new ClassExpr(genericType);
+
+        final MethodCallExpr[] builtMethod = {new MethodCallExpr(
+                // Constructor call
+                new ObjectCreationExpr(null, socketHintBuilderType, Collections.singletonList(classExpr)),
+                // Identifier method
+                "identifier",
+                Collections.singletonList(stringLiteralExpr)
+        )};
+
+        paramType.getDefaultValue().ifPresent(defaultValue -> {
+            builtMethod[0] = new MethodCallExpr(
+                    builtMethod[0],
+                    "initialValueSupplier",
+                    Collections.singletonList(defaultValue.getDefaultValue(paramType.getLiteralDefaultValue()))
+            );
+
+            builtMethod[0] = new MethodCallExpr(
+                    builtMethod[0],
+                    "view",
+                    Collections.singletonList(getViewEnumElement(defaultValue.getViewType()))
+            );
+
+            defaultValue.getDomainValue().ifPresent(domain -> {
+                builtMethod[0] = new MethodCallExpr(
+                        builtMethod[0],
+                        "domain",
+                        Collections.singletonList(domain)
+                );
+            });
+        });
+
+
+        return new MethodCallExpr(
+                builtMethod[0],
+                "build"
+        );
     }
 }

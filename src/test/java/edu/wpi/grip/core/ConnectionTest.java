@@ -26,7 +26,7 @@ public class ConnectionTest {
         final Connection<Double> connection = new Connection<>(eventBus, foo, bar);
 
         foo.setValue(testValue);
-        assertEquals(testValue, bar.getValue());
+        assertEquals(testValue, bar.getValue().get());
 
         eventBus.unregister(connection);
     }

@@ -42,11 +42,11 @@ public class EnumDefaultValue extends DefaultValue {
     }
 
     @Override
-    public Expression getDomainValue() {
-        return new MethodCallExpr(
+    public Optional<Expression> getDomainValue() {
+        return Optional.of(new MethodCallExpr(
                 new NameExpr(name),
                 "values"
-        );
+        ));
     }
 
     @Override

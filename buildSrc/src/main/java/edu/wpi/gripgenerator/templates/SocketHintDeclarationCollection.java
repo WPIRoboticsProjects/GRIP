@@ -75,7 +75,7 @@ public class SocketHintDeclarationCollection {
     }
 
     private MethodCallExpr getValueExpression(String paramId, int index) {
-        return getOrSetValueExpression(arrayAccessExpr(paramId, index), null);
+        return new MethodCallExpr(getOrSetValueExpression(arrayAccessExpr(paramId, index), null), "get");
     }
 
     private Expression generateCopyExpression(DefinedParamType type, String inputParmId, int inputIndex, String outputParamId, int outputIndex) {

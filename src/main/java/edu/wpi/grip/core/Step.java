@@ -84,6 +84,11 @@ public class Step {
 
         // If this socket that changed is one of the inputs to this step, run the operation with the new value.
         if (socket.getStep().equals(Optional.of(this)) && socket.getDirection().equals(Socket.Direction.INPUT)) {
+            for (InputSocket<?> inputSocket : inputSockets) {
+                if (!inputSocket.getValue().isPresent()) {
+                    return;
+                }
+            }
             this.operation.perform(inputSockets, outputSockets, data);
         }
     }

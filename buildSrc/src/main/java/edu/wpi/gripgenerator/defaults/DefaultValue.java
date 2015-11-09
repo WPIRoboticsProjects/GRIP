@@ -52,7 +52,9 @@ public abstract class DefaultValue {
      *
      * @return The expression defining the given domain.
      */
-    public abstract Expression getDomainValue();
+    public Optional<Expression> getDomainValue(){
+        return Optional.empty();
+    }
 
     /**
      * @return
