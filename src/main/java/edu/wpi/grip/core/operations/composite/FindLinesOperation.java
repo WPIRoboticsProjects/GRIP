@@ -8,10 +8,12 @@ import edu.wpi.grip.core.SocketHint;
 import org.bytedeco.javacpp.indexer.FloatIndexer;
 
 import java.io.InputStream;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Optional;
 
-import static org.bytedeco.javacpp.opencv_core.*;
-import static org.bytedeco.javacpp.opencv_imgproc.*;
+import static org.bytedeco.javacpp.opencv_core.Mat;
+import static org.bytedeco.javacpp.opencv_imgproc.COLOR_BGR2GRAY;
+import static org.bytedeco.javacpp.opencv_imgproc.cvtColor;
 
 /**
  * Find line segments in a color or grayscale image
@@ -47,11 +49,14 @@ public class FindLinesOperation implements Operation {
         return new OutputSocket<?>[]{new OutputSocket<>(eventBus, linesHint)};
     }
 
-    private final Mat tmp = new Mat();
+    @Override
+    public Optional<Mat> createData() {
+        return Optional.of(new Mat());
+    }
 
     @Override
     @SuppressWarnings("unchecked")
-    public void perform(InputSocket<?>[] inputs, OutputSocket<?>[] outputs) {
+    public void perform(InputSocket<?>[] inputs, OutputSocket<?>[] outputs, Optional<?> data) {
         final Mat input = (Mat) inputs[0].getValue();
         final OutputSocket<LinesReport> linesReportSocket = (OutputSocket<LinesReport>) outputs[0];
         final LinesReport linesReport = linesReportSocket.getValue();
@@ -69,10 +74,9 @@ public class FindLinesOperation implements Operation {
         } else {
             // The line detector works on a single channel.  If the input is a color image, we can just give the line
             // detector a grayscale version of it
-            synchronized (this.tmp) {
-                cvtColor(input, tmp, COLOR_BGR2GRAY);
-                linesReport.getLineSegmentDetector().detect(tmp, lines);
-            }
+            final Mat tmp = (Mat) data.get();
+            cvtColor(input, tmp, COLOR_BGR2GRAY);
+            linesReport.getLineSegmentDetector().detect(tmp, lines);
         }
 
         // Store the lines in the LinesReport object
