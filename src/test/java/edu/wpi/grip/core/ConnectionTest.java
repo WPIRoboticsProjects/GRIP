@@ -1,6 +1,7 @@
 package edu.wpi.grip.core;
 
 import com.google.common.eventbus.EventBus;
+import edu.wpi.grip.core.events.ConnectionRemovedEvent;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -15,7 +16,7 @@ public class ConnectionTest {
     private InputSocket<Double> bar;
 
     @Before
-    public void setUp(){
+    public void setUp() {
         foo = new OutputSocket<>(eventBus, fooHint);
         bar = new InputSocket<>(eventBus, barHint);
     }
@@ -26,6 +27,17 @@ public class ConnectionTest {
 
         foo.setValue(testValue);
         assertEquals(testValue, bar.getValue());
+
+        eventBus.unregister(connection);
+    }
+
+    @Test
+    public void testInputSocketResets() {
+        final Connection<Double> connection = new Connection<>(eventBus, foo, bar);
+
+        foo.setValue(testValue);
+        eventBus.post(new ConnectionRemovedEvent(connection));
+        assertEquals(0.0, bar.getValue(), 0.01);
 
         eventBus.unregister(connection);
     }

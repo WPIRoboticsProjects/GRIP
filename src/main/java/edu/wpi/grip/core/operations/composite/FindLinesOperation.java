@@ -57,11 +57,11 @@ public class FindLinesOperation implements Operation {
         final LinesReport linesReport = linesReportSocket.getValue();
 
         // Do nothing if nothing is connected to the input
-        // TODO: report what preconditions (like a non-empty matrix) are necessary for operations
+        // TODO: this should happen automatically for all sockets that are marked as required
         if (input.empty()) {
+            linesReportSocket.setValue(linesReportSocket.getSocketHint().createInitialValue());
             return;
         }
-
         final Mat lines = new Mat();
 
         if (input.channels() == 1) {
