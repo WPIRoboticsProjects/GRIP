@@ -228,4 +228,27 @@ public class PipelineTest {
 
         assertEquals((Double) 789.0, sum2.getValue());
     }
+
+    @Test(expected = IllegalArgumentException.class)
+    @SuppressWarnings("unchecked")
+    public void testCannotConnectBackwards() {
+        Pipeline pipeline = new Pipeline(eventBus);
+        Step step1 = new Step(eventBus, addition);
+        Step step2 = new Step(eventBus, addition);
+        InputSocket<Double> a1 = (InputSocket<Double>) step1.getInputSockets()[0];
+        OutputSocket<Double> sum2 = (OutputSocket<Double>) step2.getOutputSockets()[0];
+
+        eventBus.post(new StepAddedEvent(step1));
+        eventBus.post(new StepAddedEvent(step2));
+        new Connection<>(eventBus, sum2, a1);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    @SuppressWarnings("unchecked")
+    public void testCannotConnectIncompatibleTypes() {
+        InputSocket<Double> a = new InputSocket<>(eventBus, new SocketHint<>("a", Double.class, 0.0));
+        OutputSocket<String> b = new OutputSocket<>(eventBus, new SocketHint<>("b", String.class, ""));
+
+        new Connection<>(eventBus, (OutputSocket) b, (InputSocket) a);
+    }
 }
