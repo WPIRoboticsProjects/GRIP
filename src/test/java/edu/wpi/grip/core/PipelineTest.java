@@ -139,11 +139,13 @@ public class PipelineTest {
     @SuppressWarnings("unchecked")
     public void testAddConnection() {
         Pipeline pipeline = new Pipeline(eventBus);
+
         Step step1 = new Step(eventBus, addition);
         Step step2 = new Step(eventBus, addition);
-        Connection connection = new Connection(eventBus, step1.getOutputSockets()[0], step2.getInputSockets()[0]);
-
         eventBus.post(new StepAddedEvent(step1));
+        eventBus.post(new StepAddedEvent(step2));
+
+        Connection connection = new Connection(eventBus, step1.getOutputSockets()[0], step2.getInputSockets()[0]);
         eventBus.post(new ConnectionAddedEvent(connection));
 
         assertEquals(Collections.singleton(connection), pipeline.getConnections());
@@ -153,11 +155,13 @@ public class PipelineTest {
     @SuppressWarnings("unchecked")
     public void testRemoveConnection() {
         Pipeline pipeline = new Pipeline(eventBus);
+
         Step step1 = new Step(eventBus, addition);
         Step step2 = new Step(eventBus, addition);
-        Connection connection = new Connection(eventBus, step1.getOutputSockets()[0], step2.getInputSockets()[0]);
-
         eventBus.post(new StepAddedEvent(step1));
+        eventBus.post(new StepAddedEvent(step2));
+
+        Connection connection = new Connection(eventBus, step1.getOutputSockets()[0], step2.getInputSockets()[0]);
         eventBus.post(new ConnectionAddedEvent(connection));
         eventBus.post(new ConnectionRemovedEvent(connection));
 
@@ -176,7 +180,6 @@ public class PipelineTest {
         InputSocket<Double> a2 = (InputSocket<Double>) step2.getInputSockets()[0];
         InputSocket<Double> b2 = (InputSocket<Double>) step2.getInputSockets()[1];
         OutputSocket<Double> sum2 = (OutputSocket<Double>) step2.getOutputSockets()[0];
-        Connection connection = new Connection(eventBus, sum1, a2);
 
         // The result of this is the following equalities:
         //      sum1 = a1+b1
@@ -185,6 +188,8 @@ public class PipelineTest {
         // So, sum2 will be equal to a1+b1+b2
         eventBus.post(new StepAddedEvent(step1));
         eventBus.post(new StepAddedEvent(step2));
+
+        Connection connection = new Connection(eventBus, sum1, a2);
         eventBus.post(new ConnectionAddedEvent(connection));
 
         a1.setValue(123.0);
@@ -206,12 +211,13 @@ public class PipelineTest {
         InputSocket<Double> a2 = (InputSocket<Double>) step2.getInputSockets()[0];
         InputSocket<Double> b2 = (InputSocket<Double>) step2.getInputSockets()[1];
         OutputSocket<Double> sum2 = (OutputSocket<Double>) step2.getOutputSockets()[0];
-        Connection connection = new Connection(eventBus, sum1, a2);
 
         a2.setValue(0.0);
 
         eventBus.post(new StepAddedEvent(step1));
         eventBus.post(new StepAddedEvent(step2));
+
+        Connection connection = new Connection(eventBus, sum1, a2);
         eventBus.post(new ConnectionAddedEvent(connection));
         eventBus.post(new ConnectionRemovedEvent(connection));
 
@@ -221,5 +227,28 @@ public class PipelineTest {
         b2.setValue(789.0);
 
         assertEquals((Double) 789.0, sum2.getValue());
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    @SuppressWarnings("unchecked")
+    public void testCannotConnectBackwards() {
+        Pipeline pipeline = new Pipeline(eventBus);
+        Step step1 = new Step(eventBus, addition);
+        Step step2 = new Step(eventBus, addition);
+        InputSocket<Double> a1 = (InputSocket<Double>) step1.getInputSockets()[0];
+        OutputSocket<Double> sum2 = (OutputSocket<Double>) step2.getOutputSockets()[0];
+
+        eventBus.post(new StepAddedEvent(step1));
+        eventBus.post(new StepAddedEvent(step2));
+        new Connection<>(eventBus, sum2, a1);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    @SuppressWarnings("unchecked")
+    public void testCannotConnectIncompatibleTypes() {
+        InputSocket<Double> a = new InputSocket<>(eventBus, new SocketHint<>("a", Double.class, 0.0));
+        OutputSocket<String> b = new OutputSocket<>(eventBus, new SocketHint<>("b", String.class, ""));
+
+        new Connection<>(eventBus, (OutputSocket) b, (InputSocket) a);
     }
 }
