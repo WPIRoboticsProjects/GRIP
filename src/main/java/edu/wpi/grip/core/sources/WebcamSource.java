@@ -6,6 +6,7 @@ import com.google.common.eventbus.Subscribe;
 import edu.wpi.grip.core.OutputSocket;
 import edu.wpi.grip.core.SocketHint;
 import edu.wpi.grip.core.Source;
+import edu.wpi.grip.core.events.FatalErrorEvent;
 import edu.wpi.grip.core.events.SourceRemovedEvent;
 import org.bytedeco.javacpp.opencv_core.Mat;
 import org.bytedeco.javacv.Frame;
@@ -13,6 +14,7 @@ import org.bytedeco.javacv.FrameGrabber;
 import org.bytedeco.javacv.OpenCVFrameConverter;
 import org.bytedeco.javacv.OpenCVFrameGrabber;
 
+import java.io.IOException;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
@@ -39,7 +41,7 @@ public class WebcamSource implements Source {
      *
      * @param eventBus The EventBus to attach to
      */
-    public WebcamSource(EventBus eventBus, int deviceNumber) {
+    public WebcamSource(EventBus eventBus, int deviceNumber) throws IOException {
         checkNotNull(eventBus, "Event Bus was null.");
         this.eventBus = eventBus;
 
@@ -69,7 +71,7 @@ public class WebcamSource implements Source {
      *
      * @param deviceNumber The index of the Webcam device that should be attached to
      */
-    private synchronized void startVideo(final int deviceNumber) {
+    private synchronized void startVideo(final int deviceNumber) throws IOException {
         final OpenCVFrameConverter.ToMat convertToMat = new OpenCVFrameConverter.ToMat();
         final OpenCVFrameGrabber grabber = new OpenCVFrameGrabber(deviceNumber);
         if (this.frameThread.isPresent()) {
@@ -81,8 +83,9 @@ public class WebcamSource implements Source {
         try {
             grabber.start();
         } catch (FrameGrabber.Exception e) {
-            throw new IllegalStateException("A problem occurred trying to start the frame grabber", e);
+            throw new IOException("A problem occurred trying to start the frame grabber for device number " + deviceNumber, e);
         }
+
         // Store the grabber only once it has been started in the case that there is an exception.
         this.grabber = Optional.of(grabber);
 
@@ -112,11 +115,13 @@ public class WebcamSource implements Source {
                     // TODO Pass Exception to the UI.
                     System.err.println("Webcam Frame Grabber Thread crashed with uncaught exception:");
                     exception.printStackTrace();
+                    eventBus.post(new FatalErrorEvent(exception));
                     try {
                         stopVideo();
                     } catch (TimeoutException e) {
                         System.err.println("Webcam Frame Grabber could not be stopped!");
                         e.printStackTrace();
+                        eventBus.post(new FatalErrorEvent(e));
                     }
                 }
         );
@@ -139,6 +144,7 @@ public class WebcamSource implements Source {
                     throw new TimeoutException("Unable to terminate video feed from Web Camera");
                 }
             } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
                 //TODO: Move this into a logging framework
                 System.out.println("Caught Exception:");
                 e.printStackTrace();

@@ -9,6 +9,7 @@ import org.bytedeco.javacpp.opencv_core.Mat;
 import org.bytedeco.javacpp.opencv_imgcodecs;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.URLDecoder;
 import java.nio.file.Paths;
 
@@ -28,7 +29,7 @@ public class ImageFileSource implements Source {
      * @param eventBus The event bus for the pipeline.
      * @param file     The location on the file system where the image exists.
      */
-    public ImageFileSource(EventBus eventBus, File file) {
+    public ImageFileSource(EventBus eventBus, File file) throws IOException {
         checkNotNull(eventBus, "Event Bus was null.");
         checkNotNull(file, "Image was null");
 
@@ -36,6 +37,7 @@ public class ImageFileSource implements Source {
 
         this.name = Files.getNameWithoutExtension(path);
         this.outputSocket = new OutputSocket<Mat>(eventBus, imageOutputHint);
+
 
         this.loadImage(path);
     }
@@ -55,23 +57,23 @@ public class ImageFileSource implements Source {
      *
      * @param path The location on the file system where the image exists.
      */
-    private void loadImage(String path) {
+    private void loadImage(String path) throws IOException {
         this.loadImage(path, opencv_imgcodecs.IMREAD_COLOR);
     }
 
     /**
      * Loads the image and posts an update to the {@link EventBus}
      *
-     * @param image The location on the file system where the image exists.
+     * @param path  The location on the file system where the image exists.
      * @param flags Flags to pass to imread {@link opencv_imgcodecs#imread(String, int)}
      */
-    private void loadImage(String path, final int flags) {
+    private void loadImage(String path, final int flags) throws IOException {
         Mat mat = opencv_imgcodecs.imread(path, flags);
         if (!mat.empty()) {
             this.outputSocket.setValue(mat);
         } else {
             // TODO Output Error to GUI about invalid url
-            new Exception("Error loading image " + path).printStackTrace(System.err);
+            throw new IOException("Error loading image " + path);
         }
     }
 }

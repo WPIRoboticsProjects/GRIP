@@ -3,7 +3,6 @@ package edu.wpi.grip.ui.preview;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import edu.wpi.grip.core.OutputSocket;
-import edu.wpi.grip.core.Socket;
 import edu.wpi.grip.core.events.SocketPreviewChangedEvent;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -20,7 +19,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 /**
  * A simple JavaFX container that automatically shows previews of all sockets marked as "previewed".
  *
- * @see Socket#isPreviewed()
+ * @see OutputSocket#isPreviewed()
  */
 public class PreviewsView extends VBox {
 
