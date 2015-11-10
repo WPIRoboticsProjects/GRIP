@@ -1,16 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.layout.VBox?>
-
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
-
-<fx:root type="javafx.scene.layout.VBox" xmlns="http://javafx.com/javafx/null" xmlns:fx="http://javafx.com/fxml/1"
-         fillWidth="true" styleClass="palette">
+<?import javafx.scene.layout.VBox?>
+<?import org.controlsfx.control.textfield.CustomTextField?>
+<fx:root fillWidth="true" styleClass="palette" type="javafx.scene.layout.VBox" xmlns="http://javafx.com/javafx/8.0.40"
+         xmlns:fx="http://javafx.com/fxml/1">
     <children>
         <Label styleClass="pane-title" text="Operation Palette"/>
-        <ScrollPane hbarPolicy="NEVER" vbarPolicy="AS_NEEDED" fitToWidth="true" fitToHeight="true"
-                    fx:id="palettePane">
+        <CustomTextField fx:id="operationSearch" promptText="Search"></CustomTextField>
+        <ScrollPane fx:id="palettePane" fitToHeight="true" fitToWidth="true" hbarPolicy="NEVER" vbarPolicy="AS_NEEDED">
             <VBox fx:id="operations"/>
         </ScrollPane>
     </children>

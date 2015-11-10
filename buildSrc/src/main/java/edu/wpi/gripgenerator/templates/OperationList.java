@@ -71,6 +71,7 @@ public class OperationList {
         ASTHelper.addParameter(addOperations, ASTHelper.createParameter(eventBusType, "eventBus"));
 
         addOperations.setBody(new BlockStmt(this.operations.stream()
+                .sorted((o1, o2) -> o1.getOperationClassName().toLowerCase().compareToIgnoreCase(o2.getOperationClassName()))
                 .map(Operation::getOperationClassName)
                 .map(ClassOrInterfaceType::new)
                 // Create a new instance of each operation

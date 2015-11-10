@@ -88,5 +88,14 @@ public class OperationView extends GridPane implements Initializable {
             Step step = new Step(this.eventBus, this.operation);
             this.eventBus.post(new StepAddedEvent(step));
         });
+
+
+        // Ensures that when this element is hidden that it also removes its size calculations
+        this.managedProperty().bind(this.visibleProperty());
+    }
+
+
+    public Operation getOperation() {
+        return operation;
     }
 }
