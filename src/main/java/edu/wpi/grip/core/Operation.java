@@ -42,12 +42,27 @@ public interface Operation {
     OutputSocket<?>[] createOutputSockets(EventBus eventBus);
 
     /**
+     * Override this to provide persistent per-step data
+     */
+    default Optional<?> createData() {
+        return Optional.empty();
+    }
+
+    /**
      * Perform the operation on the specified inputs, storing the results in the specified outputs.
      *
      * @param inputs  An array obtained from {@link #createInputSockets(EventBus)}. The caller can set the value of
      *                each socket to an actual parameter for the operation.
      * @param outputs An array obtained from {@link #createOutputSockets(EventBus)}. The outputs of the operation will
      *                be stored in these sockets.
+     * @param data    Optional data to be passed to the operation
      */
-    void perform(InputSocket<?>[] inputs, OutputSocket<?>[] outputs);
+    default void perform(InputSocket<?>[] inputs, OutputSocket<?>[] outputs, Optional<?> data) {
+        perform(inputs, outputs);
+    }
+
+    @Deprecated
+    default void perform(InputSocket<?>[] inputs, OutputSocket<?>[] outputs) {
+        throw new UnsupportedOperationException("Perform was not overridden");
+    }
 }
