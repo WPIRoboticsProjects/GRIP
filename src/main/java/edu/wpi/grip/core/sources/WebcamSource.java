@@ -95,7 +95,13 @@ public class WebcamSource implements Source {
                 } catch (FrameGrabber.Exception e) {
                     throw new IllegalStateException("Failed to grab image", e);
                 }
-                frameOutputSocket.setValue(convertToMat.convert(videoFrame));
+                final Mat frameMat = convertToMat.convert(videoFrame);
+
+                if (frameMat == null || frameMat.isNull()) {
+                    throw new IllegalStateException("The camera returned a null frame Mat");
+                }
+
+                frameOutputSocket.setValue(frameMat);
                 long thisMoment = System.currentTimeMillis();
                 frameRateOutputSocket.setValue(1000 / (thisMoment - lastFrame));
                 lastFrame = thisMoment;
@@ -103,8 +109,15 @@ public class WebcamSource implements Source {
         });
         frameExecutor.setUncaughtExceptionHandler(
                 (thread, exception) -> {
+                    // TODO Pass Exception to the UI.
                     System.err.println("Webcam Frame Grabber Thread crashed with uncaught exception:");
                     exception.printStackTrace();
+                    try {
+                        stopVideo();
+                    } catch (TimeoutException e) {
+                        System.err.println("Webcam Frame Grabber could not be stopped!");
+                        e.printStackTrace();
+                    }
                 }
         );
         frameExecutor.start();
