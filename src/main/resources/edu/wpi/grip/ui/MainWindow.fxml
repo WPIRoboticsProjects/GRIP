@@ -1,22 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.*?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.layout.*?>
 <?import java.net.URL?>
-<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"
-      minWidth="-Infinity" styleClass="main-window" fx:controller="edu.wpi.grip.ui.controllers.MainWindowController"
-      xmlns="http://javafx.com/javafx/8.0.40"
-      xmlns:fx="http://javafx.com/fxml/1">
+<?import org.controlsfx.control.NotificationPane?>
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="main-window" xmlns="http://javafx.com/javafx/8.0.40" xmlns:fx="http://javafx.com/fxml/1" fx:controller="edu.wpi.grip.ui.controllers.MainWindowController">
     <children>
-        <SplitPane dividerPositions="0.6" orientation="VERTICAL" VBox.vgrow="ALWAYS">
-            <items>
-                <SplitPane dividerPositions="1.0" orientation="HORIZONTAL" fx:id="topPane"/>
-                <ScrollPane fx:id="bottomPane"/>
-            </items>
-        </SplitPane>
+        <NotificationPane fx:id="notificationPane">
+            <content>
+                <SplitPane dividerPositions="0.6" orientation="VERTICAL" VBox.vgrow="ALWAYS">
+                    <items>
+                        <SplitPane fx:id="topPane" dividerPositions="1.0" orientation="HORIZONTAL" />
+                        <ScrollPane fx:id="bottomPane" />
+                    </items>
+                </SplitPane>
+            </content>
+        </NotificationPane>
     </children>
     <stylesheets>
-        <URL value="@roboto/Roboto.css"/>
-        <URL value="@GRIP.css"/>
+        <URL value="@roboto/Roboto.css" />
+        <URL value="@GRIP.css" />
     </stylesheets>
 </VBox>
