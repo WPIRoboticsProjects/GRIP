@@ -56,7 +56,7 @@ public class RGBThresholdOperation extends ThresholdOperation {
 
     @Override
     public Optional<Mat[]> createData() {
-        return Optional.of(new Mat[]{new Mat()});
+        return Optional.of(new Mat[]{new Mat(), new Mat()});
     }
 
     @Override
