@@ -45,6 +45,7 @@ public class RangeInputSocketView extends InputSocketView<List<Number>> {
         this.slider = new RangeSlider(min, max, initialLow, initialHigh);
         this.slider.setShowTickMarks(true);
         this.slider.setShowTickLabels(true);
+        this.slider.setMajorTickUnit(max - min);
 
         // Set the socket values whenever the range changes
         this.slider.lowValueProperty().addListener(o -> {
