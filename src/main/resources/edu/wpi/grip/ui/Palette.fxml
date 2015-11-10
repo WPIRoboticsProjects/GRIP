@@ -8,7 +8,7 @@
          xmlns:fx="http://javafx.com/fxml/1">
     <children>
         <Label styleClass="pane-title" text="Operation Palette"/>
-        <CustomTextField fx:id="operationSearch"></CustomTextField>
+        <CustomTextField fx:id="operationSearch" promptText="Search"></CustomTextField>
         <ScrollPane fx:id="palettePane" fitToHeight="true" fitToWidth="true" hbarPolicy="NEVER" vbarPolicy="AS_NEEDED">
             <VBox fx:id="operations"/>
         </ScrollPane>
