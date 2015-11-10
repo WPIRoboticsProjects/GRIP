@@ -101,16 +101,17 @@ public class MainWindowController implements Initializable {
 
         // Add the default built-in operations to the palette
         this.eventBus.post(new OperationAddedEvent(new BlurOperation()));
-        this.eventBus.post(new OperationAddedEvent(new RGBThresholdOperation()));
         this.eventBus.post(new OperationAddedEvent(new DesaturateOperation()));
+        this.eventBus.post(new OperationAddedEvent(new RGBThresholdOperation()));
+        this.eventBus.post(new OperationAddedEvent(new HSVThresholdOperation()));
+        this.eventBus.post(new OperationAddedEvent(new HSLThresholdOperation()));
+        this.eventBus.post(new OperationAddedEvent(new FindBlobsOperation()));
         this.eventBus.post(new OperationAddedEvent(new FindLinesOperation()));
         this.eventBus.post(new OperationAddedEvent(new FilterLinesOperation()));
+        this.eventBus.post(new OperationAddedEvent(new MinMaxLoc()));
         this.eventBus.post(new OperationAddedEvent(new NewPointOperation()));
         this.eventBus.post(new OperationAddedEvent(new NewSizeOperation()));
         this.eventBus.post(new OperationAddedEvent(new MatFieldAccessor()));
-        this.eventBus.post(new OperationAddedEvent(new MinMaxLoc()));
-        this.eventBus.post(new OperationAddedEvent(new HSVThresholdOperation()));
-        this.eventBus.post(new OperationAddedEvent(new HSLThresholdOperation()));
 
         // TODO: Remove these before release
         this.eventBus.post(new OperationAddedEvent(this.add));
