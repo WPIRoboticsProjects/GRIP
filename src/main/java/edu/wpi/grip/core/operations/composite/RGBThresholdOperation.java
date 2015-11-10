@@ -6,7 +6,6 @@ import edu.wpi.grip.core.Operation;
 import edu.wpi.grip.core.OutputSocket;
 import edu.wpi.grip.core.SocketHint;
 
-import java.io.InputStream;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -16,7 +15,7 @@ import static org.bytedeco.javacpp.opencv_core.*;
 /**
  * An {@link Operation} that converts a color image into a binary image based on threshold ranges for each channel
  */
-public class RGBThresholdOperation implements Operation {
+public class RGBThresholdOperation extends ThresholdOperation {
 
     private final SocketHint<Mat> inputHint = new SocketHint<Mat>("Input", Mat.class, Mat::new);
     private final SocketHint<List> redHint = new SocketHint<List>("Red", List.class,
@@ -39,11 +38,6 @@ public class RGBThresholdOperation implements Operation {
     }
 
     @Override
-    public Optional<InputStream> getIcon() {
-        return Optional.of(getClass().getResourceAsStream("/edu/wpi/grip/ui/icons/threshold.png"));
-    }
-
-    @Override
     public InputSocket<?>[] createInputSockets(EventBus eventBus) {
         return new InputSocket<?>[]{
                 new InputSocket<>(eventBus, inputHint),
@@ -61,8 +55,15 @@ public class RGBThresholdOperation implements Operation {
     }
 
     @Override
+    public Optional<Mat[]> createData() {
+        return Optional.of(new Mat[]{new Mat()});
+    }
+
+    @Override
     @SuppressWarnings("unchecked")
-    public void perform(InputSocket<?>[] inputs, OutputSocket<?>[] outputs) {
+    public void perform(InputSocket<?>[] inputs, OutputSocket<?>[] outputs, Optional<?> data) {
+        final Mat[] dataArray = (Mat[]) data.orElseThrow(() -> new IllegalStateException("Data was not provided"));
+
         final Mat input = ((InputSocket<Mat>) inputs[0]).getValue();
         final List<Number> channel1 = ((InputSocket<List<Number>>) inputs[1]).getValue();
         final List<Number> channel2 = ((InputSocket<List<Number>>) inputs[2]).getValue();
@@ -78,15 +79,18 @@ public class RGBThresholdOperation implements Operation {
             return;
         }
 
-        final Mat low = new Mat(input.size(), input.type(), new Scalar(
+        final Scalar lowScalar = new Scalar(
                 channel3.get(0).doubleValue(),
                 channel2.get(0).doubleValue(),
-                channel1.get(0).doubleValue(), 0));
+                channel1.get(0).doubleValue(), 0);
 
-        final Mat high = new Mat(input.size(), input.type(), new Scalar(
+        final Scalar highScalar = new Scalar(
                 channel3.get(1).doubleValue(),
                 channel2.get(1).doubleValue(),
-                channel1.get(1).doubleValue(), 0));
+                channel1.get(1).doubleValue(), 0);
+
+        final Mat low = reallocateMatIfInputSizeOrWidthChanged(dataArray, 0, lowScalar, input);
+        final Mat high = reallocateMatIfInputSizeOrWidthChanged(dataArray, 1, highScalar, input);
 
         inRange(input, low, high, output);
 
