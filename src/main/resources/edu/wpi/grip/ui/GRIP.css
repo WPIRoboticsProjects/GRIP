@@ -146,7 +146,7 @@ VBox.sockets {
 }
 
 .socket .socket-control {
-    -fx-pref-width: 10em;
+    -fx-pref-width: 12em;
 }
 
 .socket-handle {
@@ -176,10 +176,4 @@ VBox.sockets {
     -fx-background-color: -fx-focus-color, -fx-inner-border, -fx-body-color, -fx-faint-focus-color, -fx-text-base-color;
     -fx-background-insets: -0.2, 1, 2, -1.4, 2.6;
     -fx-background-radius: 1em;
-}
-
-.socket VBox {
-    -fx-pref-height: 0em;
-    -fx-pref-width: 13em;
-    -fx-padding: 1em;
 }

@@ -35,6 +35,8 @@ public class SliderInputSocketView extends InputSocketView<Number> {
         final double initialValue = socket.getValue().doubleValue();
 
         this.slider = new Slider(min, max, initialValue);
+        this.slider.setShowTickMarks(true);
+        this.slider.setShowTickLabels(true);
         this.slider.valueProperty().addListener(o -> this.getSocket().setValue(this.slider.getValue()));
         this.slider.disableProperty().bind(this.getHandle().connectedProperty());
 
