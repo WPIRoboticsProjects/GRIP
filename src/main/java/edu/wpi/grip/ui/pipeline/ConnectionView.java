@@ -2,6 +2,7 @@ package edu.wpi.grip.ui.pipeline;
 
 import com.google.common.eventbus.EventBus;
 import edu.wpi.grip.core.Connection;
+import edu.wpi.grip.ui.util.DPIUtility;
 import edu.wpi.grip.ui.util.StyleClassNameUtility;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
@@ -33,7 +34,7 @@ public class ConnectionView extends CubicCurve {
 
         this.setFill(FILL);
         this.setStroke(STROKE);
-        this.setStrokeWidth(2.0);
+        this.setStrokeWidth(DPIUtility.STROKE_WIDTH);
 
         this.getStyleClass().add(StyleClassNameUtility.classNameFor(connection));
 

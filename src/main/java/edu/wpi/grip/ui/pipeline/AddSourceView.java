@@ -4,6 +4,7 @@ import com.google.common.eventbus.EventBus;
 import edu.wpi.grip.core.events.SourceAddedEvent;
 import edu.wpi.grip.core.sources.ImageFileSource;
 import edu.wpi.grip.core.sources.WebcamSource;
+import edu.wpi.grip.ui.util.DPIUtility;
 import javafx.event.EventHandler;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
@@ -29,8 +30,6 @@ import java.util.function.Predicate;
  * in a file picker that the user can use to browse for an image.
  */
 public class AddSourceView extends HBox {
-
-    private final static double ICON_SIZE_INCHES = 1.0 / 6.0;
 
     private final EventBus eventBus;
 
@@ -92,13 +91,12 @@ public class AddSourceView extends HBox {
     }
 
     /**
-     * Add a new button for adding a source.  This method takes care of resizing the button graphic and setting the
-     * event handler.
+     * Add a new button for adding a source.  This method takes care of setting the event handler.
      */
     private void addButton(String text, URL graphicURL, EventHandler<? super MouseEvent> onMouseClicked) {
         final ImageView graphic = new ImageView(graphicURL.toString());
-        graphic.setFitWidth(Screen.getPrimary().getDpi() * ICON_SIZE_INCHES);
-        graphic.setFitHeight(Screen.getPrimary().getDpi() * ICON_SIZE_INCHES);
+        graphic.setFitWidth(DPIUtility.SMALL_ICON_SIZE);
+        graphic.setFitHeight(DPIUtility.SMALL_ICON_SIZE);
 
         final Button button = new Button(text, graphic);
         button.setTextAlignment(TextAlignment.CENTER);

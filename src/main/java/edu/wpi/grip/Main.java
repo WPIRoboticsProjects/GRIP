@@ -1,12 +1,12 @@
 package edu.wpi.grip;
 
 import edu.wpi.grip.ui.ExceptionAlert;
+import edu.wpi.grip.ui.util.DPIUtility;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.stage.Screen;
 import javafx.stage.Stage;
 
 public class Main extends Application {
@@ -44,13 +44,7 @@ public class Main extends Application {
             });
         });
 
-        // Set the root font size based on the DPI of the primary screen.  As long as all sizes are defined in ems,
-        // this means the GUI will be a reasonable physical size on high DPI displays as it is on normal displays.
-        // TODO: Maybe make this part of a preference
-        if (Screen.getPrimary().getDpi() >= 192.0) {
-            root.setStyle("-fx-font-size: 20px");
-        }
-
+        root.setStyle("-fx-font-size: " + DPIUtility.FONT_SIZE + "px");
 
         stage.setTitle("GRIP Computer Vision Engine");
         stage.setScene(new Scene(root));

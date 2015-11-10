@@ -40,7 +40,7 @@ public class LinesSocketPreviewView extends SocketPreviewView<LinesReport> {
         super(eventBus, socket);
 
         final VBox content = new VBox();
-        content.setSpacing(Screen.getPrimary().getDpi() * 0.1);
+        content.getStyleClass().add("preview-box");
         content.getChildren().add(this.imageView);
         content.getChildren().add(new Separator(Orientation.HORIZONTAL));
         content.getChildren().add(this.infoLabel);

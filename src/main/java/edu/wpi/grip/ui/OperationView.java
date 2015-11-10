@@ -4,6 +4,7 @@ import com.google.common.eventbus.EventBus;
 import edu.wpi.grip.core.Operation;
 import edu.wpi.grip.core.Step;
 import edu.wpi.grip.core.events.StepAddedEvent;
+import edu.wpi.grip.ui.util.DPIUtility;
 import edu.wpi.grip.ui.util.StyleClassNameUtility;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -13,7 +14,6 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
-import javafx.stage.Screen;
 
 import java.io.IOException;
 import java.net.URL;
@@ -38,8 +38,6 @@ public class OperationView extends GridPane implements Initializable {
     @FXML
     private ImageView icon;
 
-    private static final double ICON_SIZE_INCHES = 0.5;
-
     public OperationView(EventBus eventBus, Operation operation) {
         checkNotNull(eventBus);
         checkNotNull(operation);
@@ -60,12 +58,10 @@ public class OperationView extends GridPane implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        final double iconSizePixels = ICON_SIZE_INCHES * Screen.getPrimary().getDpi();
-
         this.setId(StyleClassNameUtility.idNameFor(this.operation));
         this.name.setText(this.operation.getName());
         this.description.setText(this.operation.getDescription());
-        this.description.setMaxHeight(iconSizePixels);
+        this.description.setMaxHeight(DPIUtility.LARGE_ICON_SIZE);
 
         final Tooltip tooltip = new Tooltip(this.operation.getDescription());
         tooltip.setPrefWidth(400.0);
@@ -79,8 +75,8 @@ public class OperationView extends GridPane implements Initializable {
         // Make the icon a fixed width and height in inches.  It would be cleaner to define this in CSS, but JavaFX
         // doesn't allow fitWidth or fitHeight to be used from CSS, and defining it in FXML would not allow it to be
         // set dynamically based on DPI.
-        this.icon.setFitWidth(iconSizePixels);
-        this.icon.setFitHeight(iconSizePixels);
+        this.icon.setFitWidth(DPIUtility.LARGE_ICON_SIZE);
+        this.icon.setFitHeight(DPIUtility.LARGE_ICON_SIZE);
 
 
         // When the user clicks the operation, add a new step.

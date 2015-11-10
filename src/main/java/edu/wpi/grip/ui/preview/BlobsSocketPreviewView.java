@@ -13,7 +13,6 @@ import javafx.scene.control.Separator;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
-import javafx.stage.Screen;
 
 import static org.bytedeco.javacpp.opencv_core.*;
 import static org.bytedeco.javacpp.opencv_imgproc.*;
@@ -37,7 +36,7 @@ public class BlobsSocketPreviewView extends SocketPreviewView<BlobsReport> {
         super(eventBus, socket);
 
         final VBox content = new VBox();
-        content.setSpacing(Screen.getPrimary().getDpi() * 0.1);
+        content.getStyleClass().add("preview-box");
         content.getChildren().add(this.imageView);
         content.getChildren().add(new Separator(Orientation.HORIZONTAL));
         content.getChildren().add(this.infoLabel);
