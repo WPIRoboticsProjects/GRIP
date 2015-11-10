@@ -5,10 +5,10 @@ import com.google.common.eventbus.EventBus;
 import edu.wpi.grip.core.InputSocket;
 import edu.wpi.grip.core.OutputSocket;
 import edu.wpi.grip.core.SocketHint;
-import edu.wpi.grip.core.operations.opencv.CVOperation;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import static org.bytedeco.javacpp.opencv_core.*;
 import static org.bytedeco.javacpp.opencv_imgproc.COLOR_BGR2HLS;
@@ -17,7 +17,7 @@ import static org.bytedeco.javacpp.opencv_imgproc.cvtColor;
 /**
  * An {@link edu.wpi.grip.core.Operation} that converts a color image into a binary image based on the HSL threshold ranges
  */
-public class HSLThresholdOperation implements CVOperation {
+public class HSLThresholdOperation extends ThresholdOperation {
     private final SocketHint<Mat> inputHint = new SocketHint<Mat>("Input", Mat.class, Mat::new);
     private final SocketHint<List> hueHint = new SocketHint<List>("Hue", List.class,
             () -> Arrays.asList(0.0, 180.00), SocketHint.View.RANGE, new List[]{Arrays.asList(0.0, 180.0)});
@@ -56,7 +56,9 @@ public class HSLThresholdOperation implements CVOperation {
     }
 
     @Override
-    public void perform(InputSocket<?>[] inputs, OutputSocket<?>[] outputs) {
+    public void perform(InputSocket<?>[] inputs, OutputSocket<?>[] outputs, Optional<?> data) {
+        final Mat[] dataArray = (Mat[]) data.orElseThrow(() -> new IllegalStateException("Data was not provided"));
+
         final Mat input = ((InputSocket<Mat>) inputs[0]).getValue();
         final List<Number> channel1 = ((InputSocket<List<Number>>) inputs[1]).getValue();
         final List<Number> channel2 = ((InputSocket<List<Number>>) inputs[2]).getValue();
@@ -73,17 +75,20 @@ public class HSLThresholdOperation implements CVOperation {
         }
 
         // Intentionally 1, 3, 2. This maps to the HLS open cv expects
-        final Mat low = new Mat(input.size(), input.type(), new Scalar(
+        final Scalar lowScalar = new Scalar(
                 channel1.get(0).doubleValue(),
                 channel3.get(0).doubleValue(),
-                channel2.get(0).doubleValue(), 0));
+                channel2.get(0).doubleValue(), 0);
 
-        final Mat high = new Mat(input.size(), input.type(), new Scalar(
+        final Scalar highScalar = new Scalar(
                 channel1.get(1).doubleValue(),
                 channel3.get(1).doubleValue(),
-                channel2.get(1).doubleValue(), 0));
+                channel2.get(1).doubleValue(), 0);
 
-        final Mat hls = new Mat();
+        final Mat low = reallocateMatIfInputSizeOrWidthChanged(dataArray, 0, lowScalar, input);
+        final Mat high = reallocateMatIfInputSizeOrWidthChanged(dataArray, 1, highScalar, input);
+        final Mat hls = dataArray[2];
+
         cvtColor(input, hls, COLOR_BGR2HLS);
         inRange(hls, low, high, output);
         outputSocket.setValue(output);

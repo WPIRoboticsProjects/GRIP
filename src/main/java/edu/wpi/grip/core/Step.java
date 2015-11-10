@@ -16,6 +16,7 @@ public class Step {
     private Operation operation;
     private InputSocket<?>[] inputSockets;
     private OutputSocket<?>[] outputSockets;
+    private Optional<?> data;
     private Pipeline pipeline;
 
     /**
@@ -39,7 +40,9 @@ public class Step {
             socket.setStep(Optional.of(this));
         }
 
-        operation.perform(inputSockets, outputSockets);
+        data = operation.createData();
+
+        operation.perform(inputSockets, outputSockets, data);
 
         eventBus.register(this);
     }
@@ -79,7 +82,7 @@ public class Step {
 
         // If this socket that changed is one of the inputs to this step, run the operation with the new value.
         if (socket.getStep().equals(Optional.of(this)) && socket.getDirection().equals(Socket.Direction.INPUT)) {
-            this.operation.perform(inputSockets, outputSockets);
+            this.operation.perform(inputSockets, outputSockets, data);
         }
     }
 }
