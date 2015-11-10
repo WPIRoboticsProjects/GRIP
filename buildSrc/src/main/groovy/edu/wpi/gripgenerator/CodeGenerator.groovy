@@ -25,9 +25,6 @@ class CodeGenerator extends DefaultTask {
 
     @TaskAction
     def runAction() {
-        println "GENERATING CODE FROM OPENCV SOURCE"
-        println dest
-
         //Get the target directory
         LinkedHashSet destSet = dest;
         String targetDirectoryString = destSet.getAt(0).toString()
