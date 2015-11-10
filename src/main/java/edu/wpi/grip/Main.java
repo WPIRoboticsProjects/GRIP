@@ -26,22 +26,22 @@ public class Main extends Application {
          * Any exceptions thrown by the UI will be caught here and an exception dialog will be displayed
          */
         Thread.currentThread().setUncaughtExceptionHandler((thread, throwable) -> {
-            // Don't create more than one exception dialog at the same time
-            synchronized (this.dialogLock) {
-                // Print throwable before showing the exception so that errors are in order in the console.
-                throwable.printStackTrace();
-                Platform.runLater(() -> {
-                    try {
+            // Print throwable before showing the exception so that errors are in order in the console.
+            throwable.printStackTrace();
+            Platform.runLater(() -> {
+                try {
+                    // Don't create more than one exception dialog at the same time
+                    synchronized (this.dialogLock) {
                         final ExceptionAlert exceptionAlert = new ExceptionAlert(root, throwable, getHostServices());
                         exceptionAlert.showAndWait();
-                    } catch (RuntimeException e) {
-                        // Well in this case something has gone very, very wrong
-                        // We don't want to create a feedback loop either.
-                        e.printStackTrace();
-                        assert false : "Could not rethrow exception.";
                     }
-                });
-            }
+                } catch (RuntimeException e) {
+                    // Well in this case something has gone very, very wrong
+                    // We don't want to create a feedback loop either.
+                    e.printStackTrace();
+                    assert false : "Could not rethrow exception.";
+                }
+            });
         });
 
         // Set the root font size based on the DPI of the primary screen.  As long as all sizes are defined in ems,
