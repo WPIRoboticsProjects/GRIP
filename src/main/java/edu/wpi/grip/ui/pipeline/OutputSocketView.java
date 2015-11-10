@@ -4,6 +4,7 @@ import com.google.common.eventbus.EventBus;
 import edu.wpi.grip.core.OutputSocket;
 import edu.wpi.grip.core.Socket;
 import edu.wpi.grip.core.SocketHint;
+import edu.wpi.grip.ui.util.DPIUtility;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -12,7 +13,6 @@ import javafx.scene.control.ToggleButton;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
-import javafx.stage.Screen;
 
 import java.io.IOException;
 import java.net.URL;
@@ -26,8 +26,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * the output.
  */
 public class OutputSocketView extends HBox implements Initializable {
-
-    private static final double BUTTON_ICON_SIZE_INCHES = 1.0 / 6.0;
 
     @FXML
     private Label identifier;
@@ -88,11 +86,10 @@ public class OutputSocketView extends HBox implements Initializable {
         // Set all button icons to be the same size, regardless of screen resolution
         final ImageView previewIcon = (ImageView) this.preview.getGraphic();
         final ImageView publishIcon = (ImageView) this.publish.getGraphic();
-        final double buttonSize = BUTTON_ICON_SIZE_INCHES * Screen.getPrimary().getDpi();
-        previewIcon.setFitWidth(buttonSize);
-        previewIcon.setFitHeight(buttonSize);
-        publishIcon.setFitWidth(buttonSize);
-        publishIcon.setFitHeight(buttonSize);
+        previewIcon.setFitWidth(DPIUtility.SMALL_ICON_SIZE);
+        previewIcon.setFitHeight(DPIUtility.SMALL_ICON_SIZE);
+        publishIcon.setFitWidth(DPIUtility.SMALL_ICON_SIZE);
+        publishIcon.setFitHeight(DPIUtility.SMALL_ICON_SIZE);
 
         this.eventBus.register(this);
     }

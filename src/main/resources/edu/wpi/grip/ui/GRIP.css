@@ -177,3 +177,11 @@ VBox.sockets {
     -fx-background-insets: -0.2, 1, 2, -1.4, 2.6;
     -fx-background-radius: 1em;
 }
+
+.small-icon-button {
+    -fx-padding: 0.5em;
+}
+
+.preview-box {
+    -fx-spacing: 0.5em;
+}

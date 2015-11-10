@@ -8,6 +8,7 @@ import edu.wpi.grip.core.events.StepMovedEvent;
 import edu.wpi.grip.core.events.StepRemovedEvent;
 import edu.wpi.grip.ui.pipeline.input.InputSocketView;
 import edu.wpi.grip.ui.pipeline.input.InputSocketViewFactory;
+import edu.wpi.grip.ui.util.DPIUtility;
 import edu.wpi.grip.ui.util.StyleClassNameUtility;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -17,7 +18,6 @@ import javafx.scene.control.Labeled;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
-import javafx.stage.Screen;
 
 import java.io.IOException;
 import java.net.URL;
@@ -67,11 +67,9 @@ public class StepView extends VBox implements Initializable {
         this.getStyleClass().add(StyleClassNameUtility.classNameFor(this.step));
         this.title.setText(this.step.getOperation().getName());
 
-        this.step.getOperation().getIcon().ifPresent(icon -> {
-            this.icon.setImage(new Image(icon));
-            this.icon.setFitWidth(Screen.getPrimary().getDpi() * 0.25);
-            this.icon.setFitHeight(Screen.getPrimary().getDpi() * 0.25);
-        });
+        this.step.getOperation().getIcon().ifPresent(icon -> this.icon.setImage(new Image(icon)));
+        this.icon.setFitWidth(DPIUtility.SMALL_ICON_SIZE);
+        this.icon.setFitHeight(DPIUtility.SMALL_ICON_SIZE);
 
         // Add a SocketControlView for each input socket and output socket
         for (InputSocket<?> inputSocket : this.step.getInputSockets()) {
