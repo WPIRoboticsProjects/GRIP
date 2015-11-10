@@ -69,6 +69,13 @@ public class Pipeline {
         return this.sink;
     }
 
+    /**
+     * @return true if the step1 is before step2 in the pipeline
+     */
+    protected synchronized boolean isBefore(Step step1, Step step2) {
+        return this.steps.indexOf(step1) < this.steps.indexOf(step2);
+    }
+
     @Subscribe
     public void onSourceAdded(SourceAddedEvent event) {
         this.sources.add(event.getSource());
@@ -86,13 +93,16 @@ public class Pipeline {
     }
 
     @Subscribe
-    public void onStepAdded(StepAddedEvent event) {
-        this.steps.add(event.getIndex().or(this.steps.size()), event.getStep());
+    public synchronized void onStepAdded(StepAddedEvent event) {
+        final Step step = event.getStep();
+        step.setPipeline(this);
+
+        this.steps.add(event.getIndex().or(this.steps.size()), step);
         this.eventBus.register(event.getStep());
     }
 
     @Subscribe
-    public void onStepRemoved(StepRemovedEvent event) {
+    public synchronized void onStepRemoved(StepRemovedEvent event) {
         this.steps.remove(event.getStep());
         this.eventBus.unregister(event.getStep());
 
@@ -104,17 +114,15 @@ public class Pipeline {
     }
 
     @Subscribe
-    public void onStepMoved(StepMovedEvent event) {
+    public synchronized void onStepMoved(StepMovedEvent event) {
         final Step step = event.getStep();
 
-        synchronized (this) {
-            final int oldIndex = this.steps.indexOf(step);
-            this.steps.remove(oldIndex);
+        final int oldIndex = this.steps.indexOf(step);
+        this.steps.remove(oldIndex);
 
-            // Compute the new index of the step, clamping to the beginning or end of pipeline if it goes past either end
-            final int newIndex = Math.min(Math.max(oldIndex + event.getDistance(), 0), this.steps.size());
-            this.steps.add(newIndex, step);
-        }
+        // Compute the new index of the step, clamping to the beginning or end of pipeline if it goes past either end
+        final int newIndex = Math.min(Math.max(oldIndex + event.getDistance(), 0), this.steps.size());
+        this.steps.add(newIndex, step);
     }
 
     @Subscribe

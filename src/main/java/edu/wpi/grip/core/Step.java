@@ -16,6 +16,7 @@ public class Step {
     private Operation operation;
     private InputSocket<?>[] inputSockets;
     private OutputSocket<?>[] outputSockets;
+    private Pipeline pipeline;
 
     /**
      * @param eventBus  The Guava {@link EventBus} used by the application.
@@ -62,6 +63,14 @@ public class Step {
      */
     public OutputSocket<?>[] getOutputSockets() {
         return outputSockets;
+    }
+
+    protected void setPipeline(Pipeline pipeline) {
+        this.pipeline = pipeline;
+    }
+
+    protected Pipeline getPipeline() {
+        return this.pipeline;
     }
 
     @Subscribe
