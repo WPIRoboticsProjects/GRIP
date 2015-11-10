@@ -45,10 +45,12 @@ public class Main extends Application {
         });
 
         // Set the root font size based on the DPI of the primary screen.  As long as all sizes are defined in ems,
-        // this means the GUI will be the same physical size on high DPI displays as it is on normal displays.
-        final double fontSizePoints = 9.0;
-        final double fontSizePixels = Screen.getPrimary().getDpi() * fontSizePoints / 72.0;
-        root.setStyle("-fx-font-size: " + fontSizePixels + "px");
+        // this means the GUI will be a reasonable physical size on high DPI displays as it is on normal displays.
+        // TODO: Maybe make this part of a preference
+        if (Screen.getPrimary().getDpi() >= 192.0) {
+            root.setStyle("-fx-font-size: 20px");
+        }
+
 
         stage.setTitle("GRIP Computer Vision Engine");
         stage.setScene(new Scene(root));
