@@ -70,7 +70,8 @@ public class ImageFileSource implements Source {
     private void loadImage(String path, final int flags) throws IOException {
         Mat mat = opencv_imgcodecs.imread(path, flags);
         if (!mat.empty()) {
-            this.outputSocket.setValue(mat);
+            mat.copyTo(this.outputSocket.getValue());
+            this.outputSocket.setValue(this.outputSocket.getValue());
         } else {
             // TODO Output Error to GUI about invalid url
             throw new IOException("Error loading image " + path);

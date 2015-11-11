@@ -83,7 +83,7 @@ public abstract class Socket<T> {
      *
      * @param value The value to store in this socket.
      */
-    public void setValue(T value) {
+    public synchronized void setValue(T value) {
         this.value = this.getSocketHint().getType().cast(value);
         eventBus.post(new SocketChangedEvent(this));
     }
