@@ -14,7 +14,6 @@ edu.wpi.grip.generated.opencv_core.enumeration
 edu.wpi.grip.generated.opencv_imgproc
 edu.wpi.grip.generated.opencv_imgproc.enumeration
 edu.wpi.grip.ui
-edu.wpi.grip.ui.controllers
 edu.wpi.grip.ui.pipeline
 edu.wpi.grip.ui.pipeline.input
 edu.wpi.grip.ui.preview
