@@ -90,8 +90,12 @@ public class HSVThresholdOperation extends ThresholdOperation {
         final Mat high = reallocateMatIfInputSizeOrWidthChanged(dataArray, 1, highScalar, input);
         final Mat hsv = dataArray[2];
 
-        cvtColor(input, hsv, COLOR_BGR2HSV);
-        inRange(hsv, low, high, output);
-        outputSocket.setValue(output);
+        try {
+            cvtColor(input, hsv, COLOR_BGR2HSV);
+            inRange(hsv, low, high, output);
+            outputSocket.setValue(output);
+        } catch (RuntimeException e) {
+            e.printStackTrace(); // TODO: Report OpenCV errors
+        }
     }
 }
