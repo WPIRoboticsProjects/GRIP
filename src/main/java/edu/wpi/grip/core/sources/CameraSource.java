@@ -47,7 +47,7 @@ public class CameraSource implements Source {
      * Creates a camera source that can be used as an input to a pipeline
      *
      * @param eventBus     The EventBus to attach to
-     * @param deviceNumber A URL to stream video from an IP camera
+     * @param address A URL to stream video from an IP camera
      */
     public CameraSource(EventBus eventBus, String address) throws IOException {
         this(eventBus, new IPCameraFrameGrabber(address), "IP Camera " + new URL(address).getHost());
@@ -115,7 +115,8 @@ public class CameraSource implements Source {
                     throw new IllegalStateException("The camera returned a null frame Mat");
                 }
 
-                frameOutputSocket.setValue(frameMat);
+                frameMat.copyTo(frameOutputSocket.getValue());
+                frameOutputSocket.setValue(frameOutputSocket.getValue());
                 long thisMoment = System.currentTimeMillis();
                 frameRateOutputSocket.setValue(1000 / (thisMoment - lastFrame));
                 lastFrame = thisMoment;

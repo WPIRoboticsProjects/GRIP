@@ -50,17 +50,18 @@ public class Main extends Application {
         // Print throwable before showing the exception so that errors are in order in the console
         error.getThrowable().printStackTrace();
         Platform.runLater(() -> {
-            try {
-                // Don't create more than one exception dialog at the same time
-                synchronized (this.dialogLock) {
+            synchronized (this.dialogLock) {
+                try {
+                    // Don't create more than one exception dialog at the same time
                     final ExceptionAlert exceptionAlert = new ExceptionAlert(root, error.getThrowable(), getHostServices());
                     exceptionAlert.showAndWait();
+                } catch (RuntimeException e) {
+                    // Well in this case something has gone very, very wrong
+                    // We don't want to create a feedback loop either.
+                    e.printStackTrace();
+                    assert false : "Could not rethrow exception.";
+                    Platform.exit();
                 }
-            } catch (RuntimeException e) {
-                // Well in this case something has gone very, very wrong
-                // We don't want to create a feedback loop either.
-                e.printStackTrace();
-                assert false : "Could not rethrow exception.";
             }
         });
     }
