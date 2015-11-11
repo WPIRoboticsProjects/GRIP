@@ -51,6 +51,7 @@ public class MainWindowController implements Initializable {
         this.eventBus.post(new OperationAddedEvent(new FindBlobsOperation()));
         this.eventBus.post(new OperationAddedEvent(new FindLinesOperation()));
         this.eventBus.post(new OperationAddedEvent(new FilterLinesOperation()));
+        this.eventBus.post(new OperationAddedEvent(new MaskOperation()));
         this.eventBus.post(new OperationAddedEvent(new MinMaxLoc()));
         this.eventBus.post(new OperationAddedEvent(new NewPointOperation()));
         this.eventBus.post(new OperationAddedEvent(new NewSizeOperation()));
