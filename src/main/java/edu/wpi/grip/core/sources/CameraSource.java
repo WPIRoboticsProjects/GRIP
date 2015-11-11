@@ -9,12 +9,10 @@ import edu.wpi.grip.core.Source;
 import edu.wpi.grip.core.events.FatalErrorEvent;
 import edu.wpi.grip.core.events.SourceRemovedEvent;
 import org.bytedeco.javacpp.opencv_core.Mat;
-import org.bytedeco.javacv.Frame;
-import org.bytedeco.javacv.FrameGrabber;
-import org.bytedeco.javacv.OpenCVFrameConverter;
-import org.bytedeco.javacv.OpenCVFrameGrabber;
+import org.bytedeco.javacv.*;
 
 import java.io.IOException;
+import java.net.URL;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
@@ -22,10 +20,9 @@ import java.util.concurrent.TimeoutException;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
- * Provides a way to generate a constantly updated {@link Mat} from a Webcam attached
- * to the user's computer.
+ * Provides a way to generate a constantly updated {@link Mat} from a camera
  */
-public class WebcamSource implements Source {
+public class CameraSource implements Source {
 
     private final String name;
     private final EventBus eventBus;
@@ -34,26 +31,41 @@ public class WebcamSource implements Source {
     private OutputSocket<Mat> frameOutputSocket;
     private OutputSocket<Number> frameRateOutputSocket;
     private Optional<Thread> frameThread;
-    private Optional<OpenCVFrameGrabber> grabber;
+    private Optional<FrameGrabber> grabber;
 
     /**
-     * Creates a Webcam source that can be used as an input to a pipeline
+     * Creates a camera source that can be used as an input to a pipeline
      *
-     * @param eventBus The EventBus to attach to
+     * @param eventBus     The EventBus to attach to
+     * @param deviceNumber The device number of the webcam
      */
-    public WebcamSource(EventBus eventBus, int deviceNumber) throws IOException {
+    public CameraSource(EventBus eventBus, int deviceNumber) throws IOException {
+        this(eventBus, new OpenCVFrameGrabber(deviceNumber), "Webcam " + deviceNumber);
+    }
+
+    /**
+     * Creates a camera source that can be used as an input to a pipeline
+     *
+     * @param eventBus     The EventBus to attach to
+     * @param deviceNumber A URL to stream video from an IP camera
+     */
+    public CameraSource(EventBus eventBus, String address) throws IOException {
+        this(eventBus, new IPCameraFrameGrabber(address), "IP Camera " + new URL(address).getHost());
+    }
+
+    public CameraSource(EventBus eventBus, FrameGrabber frameGrabber, String name) throws IOException {
         checkNotNull(eventBus, "Event Bus was null.");
         this.eventBus = eventBus;
 
-        this.name = "Webcam " + deviceNumber;
-
-        this.frameOutputSocket = new OutputSocket(eventBus, imageOutputHint);
-        this.frameRateOutputSocket = new OutputSocket(eventBus, frameRateOutputHint);
+        this.frameOutputSocket = new OutputSocket<>(eventBus, imageOutputHint);
+        this.frameRateOutputSocket = new OutputSocket<>(eventBus, frameRateOutputHint);
         this.grabber = Optional.empty();
         this.frameThread = Optional.empty();
+        this.name = name;
 
-        this.startVideo(deviceNumber);
         eventBus.register(this);
+
+        this.startVideo(frameGrabber);
     }
 
     @Override
@@ -69,11 +81,10 @@ public class WebcamSource implements Source {
     /**
      * Starts the video capture from the
      *
-     * @param deviceNumber The index of the Webcam device that should be attached to
+     * @param grabber A JavaCV {@link FrameGrabber} instance to capture from
      */
-    private synchronized void startVideo(final int deviceNumber) throws IOException {
+    private synchronized void startVideo(FrameGrabber grabber) throws IOException {
         final OpenCVFrameConverter.ToMat convertToMat = new OpenCVFrameConverter.ToMat();
-        final OpenCVFrameGrabber grabber = new OpenCVFrameGrabber(deviceNumber);
         if (this.frameThread.isPresent()) {
             throw new IllegalStateException("The video retrieval thread has already been started.");
         }
@@ -83,7 +94,7 @@ public class WebcamSource implements Source {
         try {
             grabber.start();
         } catch (FrameGrabber.Exception e) {
-            throw new IOException("A problem occurred trying to start the frame grabber for device number " + deviceNumber, e);
+            throw new IOException("A problem occurred trying to start the frame grabber for " + this.name, e);
         }
 
         // Store the grabber only once it has been started in the case that there is an exception.
