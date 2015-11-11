@@ -1,10 +1,9 @@
-package edu.wpi.grip.ui.controllers;
+package edu.wpi.grip.ui;
 
 
 import edu.wpi.grip.Main;
 import edu.wpi.grip.core.AdditionOperation;
 import edu.wpi.grip.core.events.OperationAddedEvent;
-import edu.wpi.grip.ui.PaletteView;
 import javafx.stage.Stage;
 import org.junit.Test;
 import org.testfx.framework.junit.ApplicationTest;
@@ -13,7 +12,7 @@ import org.testfx.matcher.base.NodeMatchers;
 import static org.testfx.api.FxAssert.verifyThat;
 
 
-public class MainWindowControllerTest extends ApplicationTest {
+public class MainWindowTest extends ApplicationTest {
 
     @Override
     public void start(Stage stage) throws Exception {

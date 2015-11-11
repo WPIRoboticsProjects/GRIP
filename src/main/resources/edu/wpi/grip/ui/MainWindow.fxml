@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.layout.VBox?>
 <?import java.net.URL?>
-<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"
-      minWidth="-Infinity" styleClass="main-window" fx:controller="edu.wpi.grip.ui.controllers.MainWindowController"
-      xmlns="http://javafx.com/javafx/8.0.40"
-      xmlns:fx="http://javafx.com/fxml/1">
+<fx:root type="javafx.scene.layout.VBox" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"
+         minWidth="-Infinity" styleClass="main-window"
+         xmlns="http://javafx.com/javafx/null"
+         xmlns:fx="http://javafx.com/fxml/1">
     <children>
         <SplitPane dividerPositions="0.6" orientation="VERTICAL" VBox.vgrow="ALWAYS">
             <items>
@@ -19,4 +20,5 @@
         <URL value="@roboto/Roboto.css"/>
         <URL value="@GRIP.css"/>
     </stylesheets>
-</VBox>
+</fx:root>
+

@@ -7,6 +7,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 
@@ -28,7 +29,7 @@ public class ImageFileSourceTest {
     }
 
     @Test
-    public void testLoadImageToMat() {
+    public void testLoadImageToMat() throws IOException {
         // Given above setup
         // When
         final ImageFileSource fileSource = new ImageFileSource(eventBus, this.imageFile);
@@ -42,15 +43,15 @@ public class ImageFileSourceTest {
         assertEquals("Matrix from loaded image did not have expected number of cols.", 480, outputSocket.getValue().cols());
     }
 
-    @Test
-    public void testReadInTextFile() {
+    @Test(expected = IOException.class)
+    public void testReadInTextFile() throws IOException {
         final ImageFileSource fileSource = new ImageFileSource(eventBus, this.textFile);
         OutputSocket<Mat> outputSocket = fileSource.getOutputSockets()[0];
         assertTrue("No matrix should have been returned.", outputSocket.getValue().empty());
     }
 
-    @Test
-    public void testReadInFileWithoutExtension() throws MalformedURLException {
+    @Test(expected = IOException.class)
+    public void testReadInFileWithoutExtension() throws MalformedURLException, IOException {
         final ImageFileSource fileSource = new ImageFileSource(eventBus, new File("file://temp/fdkajdl3eaf"));
         OutputSocket<Mat> outputSocket = fileSource.getOutputSockets()[0];
         assertTrue("No matrix should have been returned.", outputSocket.getValue().empty());
