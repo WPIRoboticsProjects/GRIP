@@ -4,7 +4,7 @@ import com.google.common.eventbus.EventBus;
 import edu.wpi.grip.core.events.FatalErrorEvent;
 import edu.wpi.grip.core.events.SourceAddedEvent;
 import edu.wpi.grip.core.sources.ImageFileSource;
-import edu.wpi.grip.core.sources.WebcamSource;
+import edu.wpi.grip.core.sources.CameraSource;
 import edu.wpi.grip.ui.util.DPIUtility;
 import javafx.event.EventHandler;
 import javafx.scene.Parent;
@@ -14,7 +14,6 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.FileChooser;
-import javafx.stage.Screen;
 
 import java.io.File;
 import java.io.IOException;
@@ -86,11 +85,41 @@ public class AddSourceView extends HBox {
             dialog.getDialogPane().setStyle(root.getStyle());
             dialog.getDialogPane().getStylesheets().addAll(root.getStylesheets());
 
-            // If the user clicks OK, add a new webcam source
+            // If the user clicks OK, add a new camera source
             dialog.showAndWait().filter(Predicate.isEqual(ButtonType.OK)).ifPresent(result -> {
                 loadSourceExecutor.execute(() -> {
                     try {
-                        final WebcamSource source = new WebcamSource(eventBus, cameraIndex.getValue());
+                        final CameraSource source = new CameraSource(eventBus, cameraIndex.getValue());
+                        eventBus.post(new SourceAddedEvent(source));
+                    } catch (IOException e) {
+                        eventBus.post(new FatalErrorEvent(e));
+                        e.printStackTrace();
+                    }
+                });
+            });
+        });
+
+        addButton("Add IP\nCamera", getClass().getResource("/edu/wpi/grip/ui/icons/add-webcam.png"), mouseEvent -> {
+            final Parent root = this.getScene().getRoot();
+
+            // Show a dialog for the user to pick a camera URL
+            final Dialog<ButtonType> dialog = new Dialog<>();
+            final TextField cameraAddress = new TextField();
+            cameraAddress.setPromptText("Ex: http://10.1.90.11/mjpg/video.mjpg");
+
+            dialog.setTitle("Add IP Camera");
+            dialog.setHeaderText("Enter the IP camera URL");
+            dialog.setContentText("URL");
+            dialog.getDialogPane().setContent(cameraAddress);
+            dialog.getDialogPane().getButtonTypes().addAll(ButtonType.CANCEL, ButtonType.OK);
+            dialog.getDialogPane().setStyle(root.getStyle());
+            dialog.getDialogPane().getStylesheets().addAll(root.getStylesheets());
+
+            // If the user clicks OK, add a new camera source
+            dialog.showAndWait().filter(Predicate.isEqual(ButtonType.OK)).ifPresent(result -> {
+                loadSourceExecutor.execute(() -> {
+                    try {
+                        final CameraSource source = new CameraSource(eventBus, cameraAddress.getText());
                         eventBus.post(new SourceAddedEvent(source));
                     } catch (IOException e) {
                         eventBus.post(new FatalErrorEvent(e));
