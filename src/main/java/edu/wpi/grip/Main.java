@@ -10,6 +10,7 @@ import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
 public class Main extends Application {
@@ -39,6 +40,7 @@ public class Main extends Application {
         root.setStyle("-fx-font-size: " + DPIUtility.FONT_SIZE + "px");
 
         stage.setTitle("GRIP Computer Vision Engine");
+        stage.getIcons().add(new Image("/edu/wpi/grip/ui/icons/grip.png"));
         stage.setScene(new Scene(root));
         stage.show();
     }
