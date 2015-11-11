@@ -194,7 +194,8 @@ public class FileParser {
                 new DefinedMethod("rectangle", false,
                         new DefinedParamType("Mat", DefinedParamType.DefinedParamDirection.INPUT_AND_OUTPUT),
                         new DefinedParamType("Point"))
-        ).setDirectionDefaults(DefinedParamType.DefinedParamDirection.OUTPUT, "dst").setIgnoreDefaults("dtype");
+        ).setDirectionDefaults(DefinedParamType.DefinedParamDirection.OUTPUT, "dst")
+                .setIgnoreDefaults("dtype", "ddepth");
         new OpenCVMethodVisitor(collection).visit(imgprocDeclaration, compilationUnits);
         collection.generateCompilationUnits(collector, compilationUnits, operations);
         return compilationUnits;
@@ -209,39 +210,52 @@ public class FileParser {
         compilationUnits.putAll(enumVisitor.generateCompilationUnits());
 
         DefinedMethodCollection collection = new DefinedMethodCollection(baseClassName,
-                new DefinedMethod("add", true, "Mat", "Mat", "Mat"),
-                new DefinedMethod("subtract", true, "Mat", "Mat", "Mat").addDescription("Calculates the per-pixel difference between two images"),
-                new DefinedMethod("multiply", false, "Mat", "Mat", "Mat"),
-                new DefinedMethod("divide", false, "Mat", "Mat", "Mat"),
+                new DefinedMethod("add", true, "Mat", "Mat", "Mat")
+                        .addDescription("Calculate the per-pixel sum of two Mats"),
+                new DefinedMethod("subtract", true, "Mat", "Mat", "Mat")
+                        .addDescription("Calculate the per-pixel difference between two Mats"),
+                new DefinedMethod("multiply", false, "Mat", "Mat", "Mat")
+                        .addDescription("Calculate the per-pixel scaled product of two Mats."),
+                new DefinedMethod("divide", false, "Mat", "Mat", "Mat")
+                        .addDescription("Preform per-pixel division of two Mats."),
                 new DefinedMethod("scaleAdd", false, "Mat", "double", "Mat", "Mat"),
 //                new DefinedMethod("normalize", false, "Mat", "Mat"),
-                new DefinedMethod("addWeighted", false, "Mat"),
+                new DefinedMethod("addWeighted", false, "Mat")
+                        .addDescription("Calculate the weighted sum of two Mats."),
                 new DefinedMethod("flip", false,
                         new DefinedParamType("Mat"),
                         new DefinedParamType("Mat"),
-                        new DefinedParamType("int").setLiteralDefaultValue("Y_AXIS")),
-                new DefinedMethod("bitwise_and", true, "Mat", "Mat", "Mat"),
-                new DefinedMethod("bitwise_or", true, "Mat", "Mat", "Mat"),
-                new DefinedMethod("bitwise_xor", true, "Mat", "Mat", "Mat"),
-                new DefinedMethod("bitwise_not", true, "Mat", "Mat"),
+                        new DefinedParamType("int").setLiteralDefaultValue("Y_AXIS"))
+                        .addDescription("Flip Mat around vertical, horizontal, or both axes."),
+                new DefinedMethod("bitwise_and", true, "Mat", "Mat", "Mat")
+                        .addDescription("Calculate bitwise conjunction of the two Mats"),
+                new DefinedMethod("bitwise_or", true, "Mat", "Mat", "Mat")
+                        .addDescription("Calculate the per-element bit-wise disjunction of two Mats"),
+                new DefinedMethod("bitwise_xor", true, "Mat", "Mat", "Mat")
+                        .addDescription("Calculate the per-element bit-wise \\\"exclusive or\\\" operation on two Mats"),
+                new DefinedMethod("bitwise_not", true, "Mat", "Mat")
+                        .addDescription("Calculate per-element bit-wise inversion of the input Mat"),
                 new DefinedMethod("absdiff", false, "Mat", "Mat"),
-                // TODO: Fix (Causes Segfault)
-                //new DefinedMethod("inRange", false),
                 new DefinedMethod("compare", true,
                         new DefinedParamType("Mat"),
                         new DefinedParamType("Mat"),
                         new DefinedParamType("Mat"),
                         new DefinedParamType("int").setLiteralDefaultValue("CMP_EQ")
-                ),
-                new DefinedMethod("max", false, "Mat", "Mat"),
+                ).addDescription("Compare each pixel in two Mats."),
+                new DefinedMethod("max", false, "Mat", "Mat")
+                        .addDescription("Calculate per-element maximum of two Mats."),
                 new DefinedMethod("min", false, "Mat", "Mat")
+                        .addDescription("Calculate the per-element minimum of two Mats."),
+                new DefinedMethod("extractChannel", false, "Mat", "Mat")
+                        .addDescription("Extract a single channel from a Mat.")
 //                new DefinedMethod("sqrt", false, "Mat", "Mat"),
 //                new DefinedMethod("pow", false,
 //                        new DefinedParamType("Mat"),
 //                        new DefinedParamType("double")
 //                                .setDefaultValue(new PrimitiveDefaultValue(new PrimitiveType(PrimitiveType.Primitive.Double), "1"))
 //                )
-        ).setDirectionDefaults(DefinedParamType.DefinedParamDirection.OUTPUT, "dst").setIgnoreDefaults("dtype");
+        ).setDirectionDefaults(DefinedParamType.DefinedParamDirection.OUTPUT, "dst")
+                .setIgnoreDefaults("dtype", "ddepth");
         new OpenCVMethodVisitor(collection).visit(coreDeclaration, compilationUnits);
 
         collection.generateCompilationUnits(collector, compilationUnits, operations);
