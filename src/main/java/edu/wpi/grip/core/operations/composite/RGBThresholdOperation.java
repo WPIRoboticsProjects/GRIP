@@ -92,8 +92,12 @@ public class RGBThresholdOperation extends ThresholdOperation {
         final Mat low = reallocateMatIfInputSizeOrWidthChanged(dataArray, 0, lowScalar, input);
         final Mat high = reallocateMatIfInputSizeOrWidthChanged(dataArray, 1, highScalar, input);
 
-        inRange(input, low, high, output);
+        try {
+            inRange(input, low, high, output);
 
-        outputSocket.setValue(output);
+            outputSocket.setValue(output);
+        } catch (RuntimeException e) {
+            e.printStackTrace(); // TODO: Report OpenCV errors
+        }
     }
 }

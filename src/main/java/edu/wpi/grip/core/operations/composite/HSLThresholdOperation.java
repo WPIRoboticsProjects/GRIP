@@ -74,6 +74,7 @@ public class HSLThresholdOperation extends ThresholdOperation {
             return;
         }
 
+
         // Intentionally 1, 3, 2. This maps to the HLS open cv expects
         final Scalar lowScalar = new Scalar(
                 channel1.get(0).doubleValue(),
@@ -89,8 +90,12 @@ public class HSLThresholdOperation extends ThresholdOperation {
         final Mat high = reallocateMatIfInputSizeOrWidthChanged(dataArray, 1, highScalar, input);
         final Mat hls = dataArray[2];
 
-        cvtColor(input, hls, COLOR_BGR2HLS);
-        inRange(hls, low, high, output);
-        outputSocket.setValue(output);
+        try {
+            cvtColor(input, hls, COLOR_BGR2HLS);
+            inRange(hls, low, high, output);
+            outputSocket.setValue(output);
+        } catch (RuntimeException e) {
+            e.printStackTrace(); // TODO: Report OpenCV errors
+        }
     }
 }
