@@ -138,9 +138,6 @@ public class FileParser {
                 new DefinedMethod("Laplacian", "Mat", "Mat"),
                 new DefinedMethod("dilate", false, "Mat", "Mat"),
                 new DefinedMethod("Canny", false, new DefinedParamType("Mat"), new DefinedParamType("Mat", DefinedParamType.DefinedParamDirection.OUTPUT)),
-                new DefinedMethod("cornerMinEigenVal", false, "Mat", "Mat"),
-                new DefinedMethod("cornerHarris", false, "Mat", "Mat"),
-                new DefinedMethod("cornerEigenValsAndVecs", false, "Mat", "Mat"),
                 new DefinedMethod("threshold", false,
                         new DefinedParamType("Mat"),
                         new DefinedParamType("Mat"),
@@ -194,10 +191,6 @@ public class FileParser {
                         "the `src`,`dsize`,`fx`, and `fy`. To shrink an image, it will generally look best with CV_INTER_AREA interpolation, whereas to " +
                         "enlarge an image, it will generally look best with CV_INTER_CUBIC (slow) or CV_INTER_LINEAR " +
                         "(faster but still looks OK)"),
-                new DefinedMethod("HoughLines", false,
-                        new DefinedParamType("Mat", DefinedParamType.DefinedParamDirection.INPUT_AND_OUTPUT),
-                        new DefinedParamType("Mat", DefinedParamType.DefinedParamDirection.OUTPUT)
-                ),
                 new DefinedMethod("rectangle", false,
                         new DefinedParamType("Mat", DefinedParamType.DefinedParamDirection.INPUT_AND_OUTPUT),
                         new DefinedParamType("Point"))
@@ -216,22 +209,21 @@ public class FileParser {
         compilationUnits.putAll(enumVisitor.generateCompilationUnits());
 
         DefinedMethodCollection collection = new DefinedMethodCollection(baseClassName,
-                new DefinedMethod("add", false, "Mat", "Mat", "Mat"),
-                new DefinedMethod("subtract", false, "Mat", "Mat", "Mat").addDescription("Calculates the per-pixel difference between two images"),
+                new DefinedMethod("add", true, "Mat", "Mat", "Mat"),
+                new DefinedMethod("subtract", true, "Mat", "Mat", "Mat").addDescription("Calculates the per-pixel difference between two images"),
                 new DefinedMethod("multiply", false, "Mat", "Mat", "Mat"),
                 new DefinedMethod("divide", false, "Mat", "Mat", "Mat"),
                 new DefinedMethod("scaleAdd", false, "Mat", "double", "Mat", "Mat"),
-                new DefinedMethod("normalize", false, "Mat", "Mat"),
-                new DefinedMethod("batchDistance", false, "Mat", "Mat"),
+//                new DefinedMethod("normalize", false, "Mat", "Mat"),
                 new DefinedMethod("addWeighted", false, "Mat"),
                 new DefinedMethod("flip", false,
                         new DefinedParamType("Mat"),
                         new DefinedParamType("Mat"),
                         new DefinedParamType("int").setLiteralDefaultValue("Y_AXIS")),
-                new DefinedMethod("bitwise_and", false, "Mat", "Mat"),
-                new DefinedMethod("bitwise_or", false, "Mat", "Mat"),
-                new DefinedMethod("bitwise_xor", false, "Mat", "Mat"),
-                new DefinedMethod("bitwise_not", false, "Mat", "Mat"),
+                new DefinedMethod("bitwise_and", true, "Mat", "Mat", "Mat"),
+                new DefinedMethod("bitwise_or", true, "Mat", "Mat", "Mat"),
+                new DefinedMethod("bitwise_xor", true, "Mat", "Mat", "Mat"),
+                new DefinedMethod("bitwise_not", true, "Mat", "Mat"),
                 new DefinedMethod("absdiff", false, "Mat", "Mat"),
                 // TODO: Fix (Causes Segfault)
                 //new DefinedMethod("inRange", false),
