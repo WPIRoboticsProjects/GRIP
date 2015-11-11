@@ -1,6 +1,7 @@
 package edu.wpi.grip.ui.pipeline;
 
 import com.google.common.eventbus.EventBus;
+import edu.wpi.grip.core.events.FatalErrorEvent;
 import edu.wpi.grip.core.events.SourceAddedEvent;
 import edu.wpi.grip.core.sources.ImageFileSource;
 import edu.wpi.grip.core.sources.WebcamSource;
@@ -16,16 +17,15 @@ import javafx.stage.FileChooser;
 import javafx.stage.Screen;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.URL;
-import java.net.URLDecoder;
-import java.nio.file.Paths;
 import java.util.List;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.function.Predicate;
 
 /**
- * A box of buttons that let the user add different kinds of {@link Source}s.  Depending on which button is pressed,
+ * A box of buttons that let the user add different kinds of {@link edu.wpi.grip.core.Source Source}s.  Depending on which button is pressed,
  * a different dialog is presented for the user to construct that source.  As an example, the image file source results
  * in a file picker that the user can use to browse for an image.
  */
@@ -33,20 +33,21 @@ public class AddSourceView extends HBox {
 
     private final EventBus eventBus;
 
-    /**
-     * Sources typically have to block while they load, so that should be done in a separate daemon thread to avoid
-     * freezing up the GUI.
-     */
-    private final Executor loadSourceExecutor = Executors.newSingleThreadExecutor(runnable -> {
-        final Thread thread = new Thread(runnable);
-        thread.setDaemon(true);
-        return thread;
-    });
-
     public AddSourceView(EventBus eventBus) {
         this.eventBus = eventBus;
 
         this.setFillHeight(true);
+
+        /*
+         * Sources typically have to block while they load, so that should be done in a separate daemon thread to avoid
+         * freezing up the GUI.
+         */
+        final Executor loadSourceExecutor = Executors.newSingleThreadExecutor(runnable -> {
+            final Thread thread = new Thread(runnable);
+            thread.setDaemon(true);
+            thread.setUncaughtExceptionHandler((t, e) -> this.eventBus.post(new FatalErrorEvent(e)));
+            return thread;
+        });
 
         addButton("Add\nImage", getClass().getResource("/edu/wpi/grip/ui/icons/add-image.png"), mouseEvent -> {
             // Show a file picker so the user can open one or more images from disk
@@ -59,8 +60,13 @@ public class AddSourceView extends HBox {
 
             // Add a new source for each image .
             imageFiles.forEach(file -> {
-                this.loadSourceExecutor.execute(() -> {
-                    eventBus.post(new SourceAddedEvent(new ImageFileSource(eventBus, file)));
+                loadSourceExecutor.execute(() -> {
+                    try {
+                        eventBus.post(new SourceAddedEvent(new ImageFileSource(eventBus, file)));
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                        eventBus.post(new FatalErrorEvent(e));
+                    }
                 });
             });
         });
@@ -82,9 +88,14 @@ public class AddSourceView extends HBox {
 
             // If the user clicks OK, add a new webcam source
             dialog.showAndWait().filter(Predicate.isEqual(ButtonType.OK)).ifPresent(result -> {
-                this.loadSourceExecutor.execute(() -> {
-                    final WebcamSource source = new WebcamSource(eventBus, cameraIndex.getValue());
-                    eventBus.post(new SourceAddedEvent(source));
+                loadSourceExecutor.execute(() -> {
+                    try {
+                        final WebcamSource source = new WebcamSource(eventBus, cameraIndex.getValue());
+                        eventBus.post(new SourceAddedEvent(source));
+                    } catch (IOException e) {
+                        eventBus.post(new FatalErrorEvent(e));
+                        e.printStackTrace();
+                    }
                 });
             });
         });

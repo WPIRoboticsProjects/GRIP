@@ -6,6 +6,7 @@ import edu.wpi.grip.core.sources.ImageFileSource;
 import org.junit.Test;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.Arrays;
 import java.util.Collections;
@@ -18,7 +19,7 @@ public class PipelineTest {
     Operation addition = new AdditionOperation();
 
     @Test
-    public void testAddSource() throws URISyntaxException {
+    public void testAddSource() throws URISyntaxException, IOException {
         Pipeline pipeline = new Pipeline(eventBus);
         Source source = new ImageFileSource(eventBus, new File(getClass().getResource("/edu/wpi/grip/images/GRIP_Logo.png").toURI()));
 
@@ -28,7 +29,7 @@ public class PipelineTest {
     }
 
     @Test
-    public void testRemoveSource() throws URISyntaxException {
+    public void testRemoveSource() throws URISyntaxException, IOException {
         Pipeline pipeline = new Pipeline(eventBus);
         Source source = new ImageFileSource(eventBus, new File(getClass().getResource("/edu/wpi/grip/images/GRIP_Logo.png").toURI()));
 
