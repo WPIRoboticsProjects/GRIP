@@ -17,6 +17,8 @@ import javafx.stage.FileChooser;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.List;
 import java.util.concurrent.Executor;
@@ -104,14 +106,28 @@ public class AddSourceView extends HBox {
 
             // Show a dialog for the user to pick a camera URL
             final Dialog<ButtonType> dialog = new Dialog<>();
+
             final TextField cameraAddress = new TextField();
             cameraAddress.setPromptText("Ex: http://10.1.90.11/mjpg/video.mjpg");
+            cameraAddress.textProperty().addListener(observable -> {
+                boolean validURL = true;
+
+                try {
+                    new URL(cameraAddress.getText()).toURI();
+                } catch (MalformedURLException | URISyntaxException e) {
+                    validURL = false;
+                }
+
+                // Enable the "OK" button only if the user has entered a valid URL
+                dialog.getDialogPane().lookupButton(ButtonType.OK).setDisable(!validURL);
+            });
 
             dialog.setTitle("Add IP Camera");
             dialog.setHeaderText("Enter the IP camera URL");
             dialog.setContentText("URL");
             dialog.getDialogPane().setContent(cameraAddress);
             dialog.getDialogPane().getButtonTypes().addAll(ButtonType.CANCEL, ButtonType.OK);
+            dialog.getDialogPane().lookupButton(ButtonType.OK).setDisable(true);
             dialog.getDialogPane().setStyle(root.getStyle());
             dialog.getDialogPane().getStylesheets().addAll(root.getStylesheets());
 

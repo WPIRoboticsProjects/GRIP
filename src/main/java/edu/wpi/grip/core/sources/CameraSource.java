@@ -81,7 +81,7 @@ public class CameraSource implements Source {
     /**
      * Starts the video capture from the
      *
-     * @param deviceNumber The index of the Webcam device that should be attached to
+     * @param grabber A JavaCV {@link FrameGrabber} instance to capture from
      */
     private synchronized void startVideo(FrameGrabber grabber) throws IOException {
         final OpenCVFrameConverter.ToMat convertToMat = new OpenCVFrameConverter.ToMat();
@@ -94,7 +94,7 @@ public class CameraSource implements Source {
         try {
             grabber.start();
         } catch (FrameGrabber.Exception e) {
-            throw new IOException("A problem occurred trying to start the frame grabber", e);
+            throw new IOException("A problem occurred trying to start the frame grabber for " + this.name, e);
         }
 
         // Store the grabber only once it has been started in the case that there is an exception.
