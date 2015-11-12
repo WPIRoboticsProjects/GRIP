@@ -8,12 +8,12 @@ import edu.wpi.grip.core.operations.composite.LinesReport;
 import edu.wpi.grip.ui.util.ImageConverter;
 import javafx.application.Platform;
 import javafx.geometry.Orientation;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.Separator;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
-import javafx.stage.Screen;
 import org.bytedeco.javacpp.opencv_core;
 
 import java.util.List;
@@ -31,6 +31,7 @@ public class LinesSocketPreviewView extends SocketPreviewView<LinesReport> {
     private final ImageView imageView = new ImageView();
     private final Label infoLabel = new Label();
     private final Mat tmp = new Mat();
+    private boolean showInputImage = false;
 
     /**
      * @param eventBus The EventBus used by the application
@@ -39,11 +40,16 @@ public class LinesSocketPreviewView extends SocketPreviewView<LinesReport> {
     public LinesSocketPreviewView(EventBus eventBus, OutputSocket<LinesReport> socket) {
         super(eventBus, socket);
 
-        final VBox content = new VBox();
+        // Add a checkbox to set if the preview should just show the lines, or also the input image
+        final CheckBox show = new CheckBox("Show Input Image");
+        show.setSelected(this.showInputImage);
+        show.selectedProperty().addListener(observable -> {
+            this.showInputImage = show.isSelected();
+            this.convertImage();
+        });
+
+        final VBox content = new VBox(this.imageView, new Separator(Orientation.HORIZONTAL), this.infoLabel, show);
         content.getStyleClass().add("preview-box");
-        content.getChildren().add(this.imageView);
-        content.getChildren().add(new Separator(Orientation.HORIZONTAL));
-        content.getChildren().add(this.infoLabel);
         this.setContent(content);
 
         this.convertImage();
@@ -65,10 +71,16 @@ public class LinesSocketPreviewView extends SocketPreviewView<LinesReport> {
             // If there were lines found, draw them on the image before displaying it
             if (!linesReport.getLines().isEmpty()) {
                 if (input.channels() == 3) {
-                    input = input.clone();
+                    input.copyTo(tmp);
                 } else {
                     cvtColor(input, tmp, CV_GRAY2BGR);
-                    input = tmp;
+                }
+
+                input = tmp;
+
+                // If we don't want to see the background image, set it to black
+                if (!this.showInputImage) {
+                    bitwise_xor(tmp, tmp, tmp);
                 }
 
                 // For each line in the report, draw a line along with the starting and ending points
