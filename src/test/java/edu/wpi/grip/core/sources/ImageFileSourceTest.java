@@ -52,7 +52,9 @@ public class ImageFileSourceTest {
 
     @Test(expected = IOException.class)
     public void testReadInFileWithoutExtension() throws MalformedURLException, IOException {
-        final ImageFileSource fileSource = new ImageFileSource(eventBus, new File("file://temp/fdkajdl3eaf"));
+        final File testFile = new File("temp" + File.separator +"fdkajdl3eaf");
+
+        final ImageFileSource fileSource = new ImageFileSource(eventBus, testFile);
         OutputSocket<Mat> outputSocket = fileSource.getOutputSockets()[0];
         assertTrue("No matrix should have been returned.", outputSocket.getValue().empty());
     }
