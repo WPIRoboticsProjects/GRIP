@@ -1,0 +1,20 @@
+install:
+  - choco install -y InnoSetup
+
+build_script:
+  - gradlew.bat assemble --stacktrace
+
+after_build:
+  - dir build
+
+artifacts:
+  - path: build\distributions\*.exe
+
+deploy:
+  - provider: GitHub
+    artifact: /.*\.exe/           # upload all exe packages to release assets
+    draft: true
+    prerelease: true
+    on:
+      branch: master                # release from master branch only
+      appveyor_repo_tag: true       # deploy on tag push only
