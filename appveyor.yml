@@ -5,7 +5,7 @@ build_script:
   - gradlew.bat assemble --stacktrace
 
 after_build:
-  - dir build
+  - dir build /s
 
 artifacts:
   - path: build\distributions\*.exe
@@ -21,3 +21,6 @@ deploy:
   on:
     branch: master                # release from master branch only
     appveyor_repo_tag: true       # deploy on tag push only
+
+cache:
+  - C:\Users\appveyor\.gradle
