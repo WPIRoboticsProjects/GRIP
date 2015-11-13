@@ -7,23 +7,12 @@
     -fx-pref-height: 70.0em;
 }
 
-.main-window Label.status {
-    -fx-text-fill: #999999;
-    -fx-padding: 0.5em 1.0em;
-}
-
-.main-window Label.placeholder {
-    -fx-text-fill: #555555;
+.pane-title {
+    -fx-background-color: -fx-control-inner-background;
     -fx-font-weight: bold;
-    -fx-padding: 1.0em 2.0em;
+    -fx-padding: 1.0em;
+    -fx-border-width: 1px;
 }
-
-Label.pane-title {
-    -fx-text-fill: #555555;
-    -fx-font-weight: bold;
-    -fx-padding: 1.0em 2.0em;
-}
-
 .palette {
     -fx-min-width: 20em;
 }
@@ -31,14 +20,9 @@ Label.pane-title {
 .operation {
     -fx-cursor: hand;
     -fx-hgap: 1em;
-    -fx-vgap: 0em;
-    -fx-padding: 1em;
-
-    -fx-background-color:
-        linear-gradient(to bottom, derive(-fx-color,-15%) 95%, derive(-fx-color,-25%) 100%),
-        -fx-inner-border,
-        -fx-body-color;
-    -fx-background-insets: 0, 1, 2;
+    -fx-padding: 0.5em;
+    -fx-alignment: center-left;
+    -fx-background-color: -fx-color;
 }
 
 .operation:hover {
@@ -58,10 +42,6 @@ Label.operation-description {
     -fx-alignment: top-left;
 }
 
-ImageView.operation-icon {
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.25), 32, 0, 4, 4);
-}
-
 .sink-window {
     -fx-pref-width: 60.0em;
     -fx-pref-height: 40.0em;
@@ -79,9 +59,23 @@ ImageView.operation-icon {
     -fx-pref-width: 40em;
 }
 
+.previews, .palette {
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
+}
+
+.scroll-pane {
+    -fx-background-color: -fx-control-inner-background;
+
+}
+
+.palette {
+    -fx-pref-width: 30em;
+}
+
 .previews HBox {
     -fx-spacing: 1em;
-    -fx-padding: 1em;
+    -fx-padding: 0.5em;
 }
 
 .socket-preview .title {
@@ -90,12 +84,12 @@ ImageView.operation-icon {
 }
 
 .sources {
-    -fx-padding: 1em;
+    -fx-padding: 0.5em;
     -fx-spacing: 1em;
 }
 
 .source {
-    -fx-padding: 1em;
+    -fx-padding: 0.5em;
     -fx-spacing: 1em;
     -fx-border-width: 1px;
     -fx-border-color: -fx-box-border;
@@ -108,19 +102,19 @@ Label.source-name {
 }
 
 Button.add-source {
-    -fx-padding: 1em;
+    -fx-padding: 0.5em;
 }
 
 .steps {
     -fx-spacing: 1em;
-    -fx-padding: 1em;
+    -fx-padding: 0.5em;
 }
 
 .step {
     -fx-pref-width: 15em;
     -fx-border-color: -fx-box-border;
     -fx-background-color: -fx-background;
-    -fx-padding: 1em;
+    -fx-padding: 1.0em;
     -fx-spacing: 0.5em;
 }
 
@@ -154,6 +148,7 @@ VBox.sockets {
     -fx-min-height: 1em;
     -fx-max-width: 1em;
     -fx-max-height: 1em;
+    -fx-cursor: hand;
 }
 
 .socket-handle:connecting {
@@ -168,11 +163,11 @@ VBox.sockets {
 }
 
 .socket-handle:connected {
-    -fx-background-color: -fx-shadow-highlight-color, -fx-outer-border, -fx-inner-border, #575757;
+    -fx-background-color: -fx-shadow-highlight-color, -fx-outer-border, -fx-inner-border, -fx-mark-color;
 }
 
 .socket-handle:connected:focused {
-    -fx-background-color: -fx-focus-color, -fx-inner-border, -fx-body-color, -fx-faint-focus-color, -fx-text-base-color;
+    -fx-background-color: -fx-focus-color, -fx-inner-border, -fx-body-color, -fx-faint-focus-color, -fx-mark-color;
     -fx-background-insets: -0.2, 1, 2, -1.4, 2.6;
     -fx-background-radius: 1em;
 }
@@ -183,4 +178,9 @@ VBox.sockets {
 
 .preview-box {
     -fx-spacing: 0.5em;
+}
+
+.connection {
+    -fx-stroke: -fx-mark-color;
+    -fx-fill: none;
 }
