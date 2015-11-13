@@ -11,10 +11,13 @@ artifacts:
   - path: build\distributions\*.exe
 
 deploy:
-  - provider: GitHub
-    artifact: /.*\.exe/           # upload all exe packages to release assets
-    draft: true
-    prerelease: true
-    on:
-      branch: master                # release from master branch only
-      appveyor_repo_tag: true       # deploy on tag push only
+  provider: GitHub
+  description: ''
+  auth_token:
+      secure: k0uhlsYxGoZkHVNNm4E+WnOiBfzsv4yLS+htlplR7JwzARqiAC2RU0cVnsIg1UF0
+  artifact: /.*\.exe/           # upload all exe packages to release assets
+  draft: true
+  prerelease: true
+  on:
+    branch: master                # release from master branch only
+    appveyor_repo_tag: true       # deploy on tag push only
