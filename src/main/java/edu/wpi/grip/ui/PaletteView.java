@@ -65,6 +65,9 @@ public class PaletteView extends VBox {
         this.operations.getChildren().addListener(filterOperations);
         this.operationSearch.textProperty().addListener(filterOperations);
 
+        // The palette should have a lower priority for resizing than other elements
+        this.getProperties().put("resizable-with-parent", false);
+
         this.eventBus.register(this);
     }
 

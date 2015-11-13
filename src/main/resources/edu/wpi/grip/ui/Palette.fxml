@@ -7,8 +7,8 @@
 <fx:root fillWidth="true" styleClass="palette" type="javafx.scene.layout.VBox" xmlns="http://javafx.com/javafx/8.0.40"
          xmlns:fx="http://javafx.com/fxml/1">
     <children>
-        <Label styleClass="pane-title" text="Operation Palette"/>
-        <CustomTextField fx:id="operationSearch" promptText="Search"></CustomTextField>
+        <Label styleClass="pane-title" text="Operation Palette" maxWidth="Infinity"/>
+        <CustomTextField fx:id="operationSearch" promptText="Search"/>
         <ScrollPane fx:id="palettePane" fitToHeight="true" fitToWidth="true" hbarPolicy="NEVER" vbarPolicy="AS_NEEDED">
             <VBox fx:id="operations"/>
         </ScrollPane>

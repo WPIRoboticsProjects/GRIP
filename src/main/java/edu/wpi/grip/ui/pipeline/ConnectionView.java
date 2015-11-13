@@ -7,7 +7,6 @@ import edu.wpi.grip.ui.util.StyleClassNameUtility;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.geometry.Point2D;
-import javafx.scene.paint.Paint;
 import javafx.scene.shape.CubicCurve;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -17,9 +16,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * connected to which inputs between different steps in the pipeline.a
  */
 public class ConnectionView extends CubicCurve {
-
-    private static final Paint FILL = null;
-    private static final Paint STROKE = Paint.valueOf("#575757");
 
     private final EventBus eventBus;
     private final Connection connection;
@@ -32,11 +28,8 @@ public class ConnectionView extends CubicCurve {
         this.eventBus = eventBus;
         this.connection = connection;
 
-        this.setFill(FILL);
-        this.setStroke(STROKE);
         this.setStrokeWidth(DPIUtility.STROKE_WIDTH);
-
-        this.getStyleClass().add(StyleClassNameUtility.classNameFor(connection));
+        this.getStyleClass().addAll("connection", StyleClassNameUtility.classNameFor(connection));
 
         this.controlX1Property().bind(this.startXProperty().add(this.endXProperty()).multiply(0.5));
         this.controlY1Property().bind(this.startYProperty());
