@@ -43,8 +43,13 @@ public class MainWindowView extends VBox {
             throw new RuntimeException("FXML Failed to load", e);
         }
 
-        this.topPane.getItems().addAll(new PreviewsView(eventBus), new PaletteView(eventBus));
-        this.bottomPane.setContent(new PipelineView(eventBus, new Pipeline(eventBus)));
+        final PreviewsView previewsView = new PreviewsView(eventBus);
+        final PaletteView paletteView = new PaletteView(eventBus);
+        final PipelineView pipelineView = new PipelineView(eventBus, new Pipeline(eventBus));
+
+        this.topPane.getItems().addAll(previewsView, paletteView);
+        this.bottomPane.setContent(pipelineView);
+        pipelineView.prefHeightProperty().bind(this.bottomPane.heightProperty());
 
         // Add the default built-in operations to the palette
         eventBus.post(new OperationAddedEvent(new BlurOperation()));
