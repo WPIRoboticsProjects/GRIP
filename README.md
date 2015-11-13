@@ -10,11 +10,17 @@ GRIP (the Graphically Represented Image Processing engine) is a program for rapi
 vision algorithms, primarily for robotics applications.  **It is currently in a very early state of development**,
 should be ready in time for the 2016 FIRST Robotics Competition.
 
-## Running
+## ALPHA TESTERS
+
+1. Download the newest [release](https://github.com/WPIRoboticsProjects/GRIP/releases) for your operating system.
+2. Run the included installer.
+3. Open GRIP
+
+## DEVELOPERS
+
 To run, use the included Gradle wrapper script.
 
     ./gradlew run
-
 
 ## Docs
 Javadocs for the project can be found [here](http://WPIRoboticsProjects.github.io/GRIP)
