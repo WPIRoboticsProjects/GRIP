@@ -1,6 +1,7 @@
 package edu.wpi.grip.ui;
 
 import com.google.common.eventbus.EventBus;
+import edu.wpi.grip.core.Palette;
 import edu.wpi.grip.core.Pipeline;
 import edu.wpi.grip.core.events.OperationAddedEvent;
 import edu.wpi.grip.core.events.SetSinkEvent;
@@ -44,7 +45,7 @@ public class MainWindowView extends VBox {
         }
 
         final PreviewsView previewsView = new PreviewsView(eventBus);
-        final PaletteView paletteView = new PaletteView(eventBus);
+        final PaletteView paletteView = new PaletteView(eventBus, new Palette(eventBus));
         final PipelineView pipelineView = new PipelineView(eventBus, new Pipeline(eventBus));
 
         this.topPane.getItems().addAll(previewsView, paletteView);
