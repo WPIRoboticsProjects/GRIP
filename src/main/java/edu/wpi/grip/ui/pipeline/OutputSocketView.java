@@ -4,13 +4,11 @@ import com.google.common.eventbus.EventBus;
 import edu.wpi.grip.core.OutputSocket;
 import edu.wpi.grip.core.Socket;
 import edu.wpi.grip.core.SocketHint;
-import edu.wpi.grip.ui.util.DPIUtility;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import javafx.scene.control.ToggleButton;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 
@@ -82,14 +80,6 @@ public class OutputSocketView extends HBox implements Initializable {
         // Show a button to choose if we want to preview the socket or not
         this.preview.setSelected(this.socket.isPreviewed());
         this.preview.selectedProperty().addListener(value -> this.socket.setPreviewed(this.preview.isSelected()));
-
-        // Set all button icons to be the same size, regardless of screen resolution
-        final ImageView previewIcon = (ImageView) this.preview.getGraphic();
-        final ImageView publishIcon = (ImageView) this.publish.getGraphic();
-        previewIcon.setFitWidth(DPIUtility.SMALL_ICON_SIZE);
-        previewIcon.setFitHeight(DPIUtility.SMALL_ICON_SIZE);
-        publishIcon.setFitWidth(DPIUtility.SMALL_ICON_SIZE);
-        publishIcon.setFitHeight(DPIUtility.SMALL_ICON_SIZE);
 
         this.eventBus.register(this);
     }
