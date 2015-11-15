@@ -3,6 +3,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.*?>
+<?import edu.wpi.grip.ui.util.DPIUtility ?>
 
 <fx:root type="javafx.scene.layout.VBox" xmlns="http://javafx.com/javafx/null"
          xmlns:fx="http://javafx.com/fxml/1" styleClass="step">
@@ -33,7 +34,14 @@
         <Separator orientation="HORIZONTAL"/>
         <Label fx:id="title" maxWidth="Infinity" styleClass="title">
             <graphic>
-                <ImageView fx:id="icon"/>
+                <ImageView fx:id="icon">
+                    <fitWidth>
+                        <DPIUtility fx:constant="SMALL_ICON_SIZE"/>
+                    </fitWidth>
+                    <fitHeight>
+                        <DPIUtility fx:constant="SMALL_ICON_SIZE"/>
+                    </fitHeight>
+                </ImageView>
             </graphic>
         </Label>
         <Separator orientation="HORIZONTAL"/>

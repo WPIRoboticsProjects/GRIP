@@ -6,6 +6,7 @@
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.*?>
+<?import edu.wpi.grip.ui.util.DPIUtility ?>
 <fx:root styleClass="socket" type="javafx.scene.layout.HBox" xmlns="http://javafx.com/javafx/null"
          xmlns:fx="http://javafx.com/fxml/1" alignment="CENTER_RIGHT">
     <children>
@@ -13,6 +14,12 @@
             <graphic>
                 <ImageView>
                     <Image url="@../icons/preview.png"/>
+                    <fitWidth>
+                        <DPIUtility fx:constant="SMALL_ICON_SIZE"/>
+                    </fitWidth>
+                    <fitHeight>
+                        <DPIUtility fx:constant="SMALL_ICON_SIZE"/>
+                    </fitHeight>
                 </ImageView>
             </graphic>
             <tooltip>
@@ -23,6 +30,12 @@
             <graphic>
                 <ImageView>
                     <Image url="@../icons/publish.png"/>
+                    <fitWidth>
+                        <DPIUtility fx:constant="SMALL_ICON_SIZE"/>
+                    </fitWidth>
+                    <fitHeight>
+                        <DPIUtility fx:constant="SMALL_ICON_SIZE"/>
+                    </fitHeight>
                 </ImageView>
             </graphic>
             <tooltip>
