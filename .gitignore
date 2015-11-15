@@ -48,6 +48,11 @@ gradle-app.setting
 # IntelliJ
 out/
 
+# Eclipse
+.classpath
+.project
+.settings/
+
 # mpeltonen/sbt-idea plugin
 .idea_modules/
 
@@ -80,3 +85,4 @@ bower_components
 
 #Generated files should be ignored as the are regenerated as a build step
 src/generated
+/bin/
