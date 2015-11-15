@@ -74,6 +74,23 @@ allprojects {
     }
 }
 
+// IDE setup
+
+eclipse.classpath {
+  file.whenMerged { cp ->
+    sourceSets.generated.java.srcDirs.forEach { srcDir ->
+      def source_folder = new org.gradle.plugins.ide.eclipse.model.SourceFolder(srcDir.getAbsolutePath(), "build/classes/merged")
+      if (cp.entries.find() { it.path == source_folder.path } == null)
+        cp.entries.add(source_folder)
+    }
+  }
+}
+
+idea.module {
+  sourceDirs += sourceSets.generated.java.srcDirs
+}
+
+// End IDE setup
 
 task wrapper(type: Wrapper) {
     gradleVersion = '2.6'
