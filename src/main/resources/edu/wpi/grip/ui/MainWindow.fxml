@@ -1,14 +1,52 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.ScrollPane?>
-<?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
+<?import java.lang.Double?>
 <?import java.net.URL?>
+<?import edu.wpi.grip.ui.util.DPIUtility ?>
 <fx:root type="javafx.scene.layout.VBox" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"
          minWidth="-Infinity" styleClass="main-window"
          xmlns="http://javafx.com/javafx/null"
          xmlns:fx="http://javafx.com/fxml/1">
     <children>
+        <HBox styleClass="menu-box">
+            <children>
+                <Button onMouseClicked="#open" text="Open" styleClass="small-icon-button">
+                    <graphic>
+                        <ImageView>
+                            <fitWidth>
+                                <DPIUtility fx:constant="SMALL_ICON_SIZE"/>
+                            </fitWidth>
+                            <fitHeight>
+                                <DPIUtility fx:constant="SMALL_ICON_SIZE"/>
+                            </fitHeight>
+                            <image>
+                                <Image url="@icons/open.png"/>
+                            </image>
+                        </ImageView>
+                    </graphic>
+                </Button>
+                <Button onMouseClicked="#save" text="Save" styleClass="small-icon-button">
+                    <graphic>
+                        <ImageView>
+                            <fitWidth>
+                                <DPIUtility fx:constant="SMALL_ICON_SIZE"/>
+                            </fitWidth>
+                            <fitHeight>
+                                <DPIUtility fx:constant="SMALL_ICON_SIZE"/>
+                            </fitHeight>
+                            <image>
+                                <Image url="@icons/save.png"/>
+                            </image>
+                        </ImageView>
+                    </graphic>
+                </Button>
+            </children>
+        </HBox>
         <SplitPane dividerPositions="0.6" orientation="VERTICAL" VBox.vgrow="ALWAYS">
             <items>
                 <SplitPane dividerPositions="1.0" orientation="HORIZONTAL" fx:id="topPane"/>

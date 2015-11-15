@@ -33,6 +33,13 @@ public class MainWindowView extends VBox {
     @FXML
     private ScrollPane bottomPane;
 
+    final private EventBus eventBus;
+
+    final private PreviewsView previews;
+    final private PaletteView palette;
+    final private PipelineView pipeline;
+
+
     public MainWindowView(final EventBus eventBus) {
         eventBus.register(this);
         try {
@@ -44,13 +51,15 @@ public class MainWindowView extends VBox {
             throw new RuntimeException("FXML Failed to load", e);
         }
 
-        final PreviewsView previewsView = new PreviewsView(eventBus);
-        final PaletteView paletteView = new PaletteView(eventBus, new Palette(eventBus));
-        final PipelineView pipelineView = new PipelineView(eventBus, new Pipeline(eventBus));
+        this.eventBus = eventBus;
 
-        this.topPane.getItems().addAll(previewsView, paletteView);
-        this.bottomPane.setContent(pipelineView);
-        pipelineView.prefHeightProperty().bind(this.bottomPane.heightProperty());
+        this.previews = new PreviewsView(eventBus);
+        this.palette = new PaletteView(eventBus, new Palette(this.eventBus));
+        this.pipeline = new PipelineView(eventBus, new Pipeline(this.eventBus));
+
+        this.topPane.getItems().addAll(previews, palette);
+        this.bottomPane.setContent(pipeline);
+        pipeline.prefHeightProperty().bind(this.bottomPane.heightProperty());
 
         // Add the default built-in operations to the palette
         eventBus.post(new OperationAddedEvent(new BlurOperation()));
@@ -72,5 +81,16 @@ public class MainWindowView extends VBox {
 
         eventBus.post(new SetSinkEvent(new DummySink()));
     }
+
+    @FXML
+    public void save() throws IOException {
+        // TODO
+    }
+
+    @FXML
+    public void open() throws IOException {
+        // TODO
+    }
+
 }
 
