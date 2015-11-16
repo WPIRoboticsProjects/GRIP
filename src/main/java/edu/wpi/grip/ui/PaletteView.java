@@ -4,6 +4,7 @@ import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import edu.wpi.grip.core.Operation;
 import edu.wpi.grip.core.events.OperationAddedEvent;
+import edu.wpi.grip.ui.util.SearchUtility;
 import javafx.beans.InvalidationListener;
 import javafx.beans.property.ObjectProperty;
 import javafx.fxml.FXML;
@@ -14,6 +15,7 @@ import org.controlsfx.control.textfield.CustomTextField;
 import org.controlsfx.control.textfield.TextFields;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -33,7 +35,6 @@ public class PaletteView extends VBox {
     @FXML
     private CustomTextField operationSearch;
 
-
     public PaletteView(EventBus eventBus) {
         checkNotNull(eventBus);
 
@@ -48,18 +49,17 @@ public class PaletteView extends VBox {
             throw new RuntimeException(e);
         }
 
+        setupClearButtonField(operationSearch);
 
-        try {
-            setupClearButtonField(operationSearch);
-        } catch (Exception e) {
-            throw new IllegalStateException("Problem calling the setupClearButtonField method on TextFields", e);
-        }
+        final InvalidationListener filterOperations = observable -> {
+            this.operations.getChildren().forEach(node -> {
+                final Operation operation = ((OperationView) node).getOperation();
+                final String searchText = this.operationSearch.getText();
 
-        final InvalidationListener filterOperations = observable ->
-                this.operations.getChildren().forEach(node -> {
-                    final Operation operation = ((OperationView) node).getOperation();
-                    node.setVisible(searchAlgorithmMatches(this.operationSearch.getText(), operation.getName()));
-                });
+                node.setVisible(SearchUtility.fuzzyContains(operation.getName(), searchText)
+                        || SearchUtility.fuzzyContains(operation.getDescription(), searchText));
+            });
+        };
 
         // Update the visibility of each node when either the list of nodes or the filter text changes
         this.operations.getChildren().addListener(filterOperations);
@@ -71,24 +71,20 @@ public class PaletteView extends VBox {
         this.eventBus.register(this);
     }
 
-
-    // XXX: This is the only way to do this unfortunately.
-    // This is where this came from: https://bitbucket.org/controlsfx/controlsfx/issues/330/making-textfieldssetupclearbuttonfield
-    private void setupClearButtonField(CustomTextField customTextField) throws Exception {
-        Method m = TextFields.class.getDeclaredMethod("setupClearButtonField", TextField.class, ObjectProperty.class);
-        m.setAccessible(true);
-        m.invoke(null, customTextField, customTextField.rightProperty());
-    }
-
     /**
-     * @param searchText The text to search for
-     * @param name       The name of the operation to check
-     * @return true if the search text matches the name
+     * Make the search box have a "clear" button
+     * <p>
+     * XXX: This is the only way to do this unfortunately.
+     * This is where this came from: https://bitbucket.org/controlsfx/controlsfx/issues/330/making-textfieldssetupclearbuttonfield
      */
-    private boolean searchAlgorithmMatches(String searchText, String name) {
-        // TODO: Make this use a fuzzy search
-        final String lowerCaseSearchString = searchText.toLowerCase();
-        return lowerCaseSearchString.isEmpty() || name.toLowerCase().contains(lowerCaseSearchString);
+    private void setupClearButtonField(CustomTextField customTextField) {
+        try {
+            final Method m = TextFields.class.getDeclaredMethod("setupClearButtonField", TextField.class, ObjectProperty.class);
+            m.setAccessible(true);
+            m.invoke(null, customTextField, customTextField.rightProperty());
+        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**
