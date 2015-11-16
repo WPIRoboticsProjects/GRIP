@@ -1,18 +1,12 @@
-buildscript {
-    repositories {
-        jcenter()
-    }
-    dependencies {
-        classpath group: 'com.github.jengelman.gradle.plugins', name: 'shadow', version: '1.2.2'
-    }
+plugins {
+    id 'com.github.johnrengelman.shadow' version '1.2.2'
+    id 'java'
+    id 'idea'
+    id 'eclipse'
+    id 'application'
+    id 'jacoco'
 }
 
-apply plugin: 'java'
-apply plugin: 'idea'
-apply plugin: 'eclipse'
-apply plugin: 'application'
-apply plugin: 'jacoco'
-apply plugin: 'com.github.johnrengelman.shadow'
 apply from: 'http://dl.bintray.com/shemnon/javafx-gradle/8.1.1/javafx.plugin'
 
 version = '0.1.0'
