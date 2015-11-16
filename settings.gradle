@@ -1,2 +1,3 @@
+include 'core', 'applicationUi'
 rootProject.name = 'GRIP'
 
