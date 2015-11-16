@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<fx:root type="javafx.scene.layout.VBox" xmlns="http://javafx.com/javafx/null" xmlns:fx="http://javafx.com/fxml/1"
+         fillWidth="true" maxHeight="Infinity" styleClass="previews">
+    <children>
+        <Label styleClass="pane-title" text="Preview" VBox.Vgrow="NEVER" maxWidth="Infinity"/>
+        <ScrollPane hbarPolicy="AS_NEEDED" vbarPolicy="AS_NEEDED" fitToWidth="false" fitToHeight="false"
+                    maxHeight="Infinity" VBox.Vgrow="ALWAYS">
+            <HBox fx:id="previewBox"/>
+        </ScrollPane>
+    </children>
+</fx:root>
