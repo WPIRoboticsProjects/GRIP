@@ -2,7 +2,7 @@ install:
   - choco install -y InnoSetup
 
 build_script:
-  - gradlew.bat assemble --stacktrace
+  - gradlew.bat :ui:assemble --stacktrace
 
 after_build:
   - dir build /s
