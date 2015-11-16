@@ -3,6 +3,11 @@ language: java
 jdk:
   - oraclejdk8
 
+env:
+  - TARGET_PROJECT=":core"
+  - TARGET_PROJECT=":ui"
+
+
 # GCC needs to be 4.8 or higher so that GOMP_4.0 is installed for opencv
 # This is incredibly hard to track down, find the solution for and fix.
 # https://github.com/bytedeco/javacpp-presets/issues/84
@@ -20,7 +25,8 @@ before_install:
   - export DISPLAY=:99.0
   - sh -e /etc/init.d/xvfb start
 
-install: ./gradlew assemble --stacktrace
+install:
+  - "./gradlew :ui:assemble --stacktrace"
 
 after_failure: #Run again with debug info enabled
   - ./gradlew check  --stacktrace --info
