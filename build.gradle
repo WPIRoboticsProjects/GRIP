@@ -35,7 +35,11 @@ repositories {
     jcenter()
 }
 
+def os = System.getProperty("os.name").toLowerCase()
 dependencies {
+    if (os.contains("windows")) compile fileTree(include: ['*windows.jar'], dir: 'libs')
+    else if (os.contains("linux")) compile fileTree(include: ['*linux.jar'], dir: 'libs')
+    else if (os.contains("mac")) compile fileTree(include: ['*os*x.jar'], dir: 'libs')
     compile group: 'org.controlsfx', name: 'controlsfx', version: '8.40.10'
     compile group: 'com.google.guava', name: 'guava', version: '18.0'
     compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.4'
