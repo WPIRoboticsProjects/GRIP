@@ -32,7 +32,7 @@ public class ImageFileSourceTest {
     public void testLoadImageToMat() throws IOException {
         // Given above setup
         // When
-        final ImageFileSource fileSource = new ImageFileSource(eventBus, this.imageFile);
+        final ImageFileSource fileSource = new ImageFileSource(eventBus, this.imageFile).start(eventBus);
         OutputSocket<Mat> outputSocket = fileSource.getOutputSockets()[0];
 
         // Then
@@ -45,7 +45,7 @@ public class ImageFileSourceTest {
 
     @Test(expected = IOException.class)
     public void testReadInTextFile() throws IOException {
-        final ImageFileSource fileSource = new ImageFileSource(eventBus, this.textFile);
+        final ImageFileSource fileSource = new ImageFileSource(eventBus, this.textFile).start(eventBus);
         OutputSocket<Mat> outputSocket = fileSource.getOutputSockets()[0];
         assertTrue("No matrix should have been returned.", outputSocket.getValue().get().empty());
     }
@@ -54,7 +54,7 @@ public class ImageFileSourceTest {
     public void testReadInFileWithoutExtension() throws MalformedURLException, IOException {
         final File testFile = new File("temp" + File.separator +"fdkajdl3eaf");
 
-        final ImageFileSource fileSource = new ImageFileSource(eventBus, testFile);
+        final ImageFileSource fileSource = new ImageFileSource(eventBus, testFile).start(eventBus);
         OutputSocket<Mat> outputSocket = fileSource.getOutputSockets()[0];
         assertTrue("No matrix should have been returned.", outputSocket.getValue().get().empty());
     }

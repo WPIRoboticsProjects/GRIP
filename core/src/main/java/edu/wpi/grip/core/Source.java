@@ -45,4 +45,17 @@ public abstract class Source {
      * @see #getProperties()
      */
     public abstract void createFromProperties(EventBus eventBus, Properties properties) throws IOException;
+
+
+    public <T extends Source> T start(EventBus eventBus) throws IOException {
+        final T source = (T) start();
+        eventBus.register(source);
+        return source;
+    };
+
+    protected abstract Source start() throws IOException;
+
+    public abstract Source stop() throws Exception;
+
+    public abstract boolean isRunning();
 }

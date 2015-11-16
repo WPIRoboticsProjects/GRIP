@@ -11,6 +11,8 @@ import edu.wpi.grip.core.SocketHints;
 import edu.wpi.grip.core.Source;
 import edu.wpi.grip.core.events.UnexpectedThrowableEvent;
 import edu.wpi.grip.core.events.SourceRemovedEvent;
+import edu.wpi.grip.core.events.SourceStartedEvent;
+import edu.wpi.grip.core.events.SourceStoppedEvent;
 import org.bytedeco.javacpp.opencv_core.Mat;
 import org.bytedeco.javacv.*;
 
@@ -42,7 +44,7 @@ public class CameraSource extends Source {
     private OutputSocket<Mat> frameOutputSocket;
     private OutputSocket<Number> frameRateOutputSocket;
     private Optional<Thread> frameThread;
-    private Optional<FrameGrabber> grabber;
+    private FrameGrabber grabber;
 
     /**
      * Creates a camera source that can be used as an input to a pipeline
@@ -72,7 +74,6 @@ public class CameraSource extends Source {
      * Used for serialization
      */
     public CameraSource() {
-        this.grabber = Optional.empty();
         this.frameThread = Optional.empty();
     }
 
@@ -81,9 +82,8 @@ public class CameraSource extends Source {
         this.name = name;
         this.frameOutputSocket = new OutputSocket<>(eventBus, imageOutputHint);
         this.frameRateOutputSocket = new OutputSocket<>(eventBus, frameRateOutputHint);
-
-        this.eventBus.register(this);
-        this.startVideo(frameGrabber);
+        this.grabber = frameGrabber;
+        eventBus.register(this);
     }
 
     @Override
@@ -127,109 +127,117 @@ public class CameraSource extends Source {
     }
 
     /**
-     * Starts the video capture from the
-     *
-     * @param grabber A JavaCV {@link FrameGrabber} instance to capture from
+     * Starts the video capture from the source device
      */
-    private synchronized void startVideo(FrameGrabber grabber) throws IOException {
+    public CameraSource start() throws IOException, IllegalStateException {
         final OpenCVFrameConverter.ToMat convertToMat = new OpenCVFrameConverter.ToMat();
-        if (this.frameThread.isPresent()) {
-            throw new IllegalStateException("The video retrieval thread has already been started.");
-        }
-        if (this.grabber.isPresent()) {
-            throw new IllegalStateException("The Frame Grabber has already been started.");
-        }
-        try {
-            grabber.start();
-        } catch (FrameGrabber.Exception e) {
-            throw new IOException("A problem occurred trying to start the frame grabber for " + this.name, e);
-        }
-
-        // Store the grabber only once it has been started in the case that there is an exception.
-        this.grabber = Optional.of(grabber);
-
-        final Thread frameExecutor = new Thread(() -> {
-            long lastFrame = System.currentTimeMillis();
-            while (!Thread.interrupted()) {
-                final Frame videoFrame;
-                try {
-                    videoFrame = grabber.grab();
-                } catch (FrameGrabber.Exception e) {
-                    throw new IllegalStateException("Failed to grab image", e);
-                }
-                final Mat frameMat = convertToMat.convert(videoFrame);
-
-                if (frameMat == null || frameMat.isNull()) {
-                    throw new IllegalStateException("The camera returned a null frame Mat");
-                }
-
-                frameMat.copyTo(frameOutputSocket.getValue().get());
-                frameOutputSocket.setValue(frameOutputSocket.getValue().get());
-                long thisMoment = System.currentTimeMillis();
-                frameRateOutputSocket.setValue(1000 / (thisMoment - lastFrame));
-                lastFrame = thisMoment;
+        synchronized (this.frameThread) {
+            if (this.frameThread.isPresent()) {
+                throw new IllegalStateException("The video retrieval thread has already been started.");
             }
-        }, "Camera");
-        frameExecutor.setUncaughtExceptionHandler(
-                (thread, exception) -> {
-                    eventBus.post(new UnexpectedThrowableEvent(exception, "Webcam Frame Grabber Thread crashed with uncaught exception"));
+            try {
+                grabber.start();
+            } catch (FrameGrabber.Exception e) {
+                throw new IOException("A problem occurred trying to start the frame grabber for " + this.name, e);
+            }
+
+            final Thread frameExecutor = new Thread(() -> {
+                long lastFrame = System.currentTimeMillis();
+                while (!Thread.interrupted()) {
+                    final Frame videoFrame;
                     try {
-                        stopVideo();
-                    } catch (TimeoutException e) {
-                        eventBus.post(new UnexpectedThrowableEvent(e, "Webcam Frame Grabber could not be stopped!"));
+                        videoFrame = grabber.grab();
+                    } catch (FrameGrabber.Exception e) {
+                        throw new IllegalStateException("Failed to grab image", e);
                     }
+
+                    final Mat frameMat = convertToMat.convert(videoFrame);
+
+                    if (frameMat == null || frameMat.isNull()) {
+                        throw new IllegalStateException("The camera returned a null frame Mat");
+                    }
+
+                    frameMat.copyTo(frameOutputSocket.getValue().get());
+                    frameOutputSocket.setValue(frameOutputSocket.getValue().get());
+                    long thisMoment = System.currentTimeMillis();
+                    frameRateOutputSocket.setValue(1000 / (thisMoment - lastFrame));
+                    lastFrame = thisMoment;
                 }
-        );
-        frameExecutor.setDaemon(true);
-        frameExecutor.start();
-        frameThread = Optional.of(frameExecutor);
+            }, "Camera");
+
+            frameExecutor.setUncaughtExceptionHandler(
+                    (thread, exception) -> {
+                        eventBus.post(new UnexpectedThrowableEvent(exception, "Camera Frame Grabber Thread crashed with uncaught exception"));
+                        try {
+                            stop();
+                        } catch (TimeoutException e) {
+                            eventBus.post(new UnexpectedThrowableEvent(e, "Camera Frame Grabber could not be stopped!"));
+                        }
+                    }
+            );
+            frameExecutor.setDaemon(true);
+            frameExecutor.start();
+            this.frameThread = Optional.of(frameExecutor);
+        }
+        eventBus.post(new SourceStartedEvent(this));
+        return this;
     }
 
     /**
      * Stops the video feed from updating the output socket.
      *
-     * @throws TimeoutException If the thread running the Webcam fails to join this one after a timeout.
+     * @throws TimeoutException      If the thread running the Webcam fails to join this one after a timeout.
+     * @throws IllegalStateException If the camera was already stopped
      */
-    private void stopVideo() throws TimeoutException {
-        if (frameThread.isPresent()) {
-            final Thread ex = frameThread.get();
-            ex.interrupt();
-            try {
-                ex.join(TimeUnit.SECONDS.toMillis(2));
-                if (ex.isAlive()) {
-                    throw new TimeoutException("Unable to terminate video feed from Web Camera");
-                }
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-                //TODO: Move this into a logging framework
-                System.out.println("Caught Exception:");
-                e.printStackTrace();
-            } finally {
-                frameThread = Optional.empty();
-                // This will always run even if a timeout exception occurs
+    public CameraSource stop() throws TimeoutException, IllegalStateException {
+        synchronized (this.frameThread) {
+            if (frameThread.isPresent()) {
+                final Thread ex = frameThread.get();
+                ex.interrupt();
                 try {
-                    grabber.ifPresent(grabber -> {
-                        try {
-                            grabber.stop();
-                        } catch (FrameGrabber.Exception e) {
-                            throw new IllegalStateException("A problem occurred trying to stop the frame grabber", e);
-                        }
-                    });
+                    ex.join(TimeUnit.SECONDS.toMillis(500));
+                    if (ex.isAlive()) {
+                        throw new TimeoutException("Unable to terminate video feed from Web Camera");
+                    }
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                    //TODO: Move this into a logging framework
+                    System.out.println("Caught Exception:");
+                    e.printStackTrace();
                 } finally {
-                    // This will always run even if we fail to stop the grabber
-                    grabber = Optional.empty();
+                    // Clean up this resource as you can't restart a stopped thread
+                    this.frameThread = Optional.empty();
+                    // This will always run even if a timeout exception occurs
+                    try {
+                        grabber.stop();
+                    } catch (FrameGrabber.Exception e) {
+                        throw new IllegalStateException("A problem occurred trying to stop the frame grabber", e);
+                    }
                 }
+            } else {
+                throw new IllegalStateException("Tried to stop a Webcam that is already stopped.");
             }
-        } else {
-            throw new IllegalStateException("Tried to stop a Webcam that is already stopped.");
+        }
+        eventBus.post(new SourceStoppedEvent(this));
+        frameRateOutputSocket.setValue(0);
+        return this;
+    }
+
+    @Override
+    public boolean isRunning() {
+        synchronized (this.frameThread) {
+            return this.frameThread.isPresent() && this.frameThread.get().isAlive();
         }
     }
 
     @Subscribe
     public void onSourceRemovedEvent(SourceRemovedEvent event) throws TimeoutException {
         if (event.getSource() == this) {
-            this.stopVideo();
-            this.eventBus.unregister(this);
+            try {
+                this.stop();
+            } finally {
+                this.eventBus.unregister(this);
+            }
         }
     }
 

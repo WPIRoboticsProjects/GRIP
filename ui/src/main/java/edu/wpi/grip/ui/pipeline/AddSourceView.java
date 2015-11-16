@@ -6,6 +6,7 @@ import edu.wpi.grip.core.events.SourceAddedEvent;
 import edu.wpi.grip.core.sources.CameraSource;
 import edu.wpi.grip.core.sources.ImageFileSource;
 import edu.wpi.grip.ui.util.DPIUtility;
+import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
@@ -21,6 +22,8 @@ import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.List;
+import java.util.concurrent.Executor;
+import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 /**
@@ -29,6 +32,11 @@ import java.util.function.Predicate;
  * in a file picker that the user can use to browse for an image.
  */
 public class AddSourceView extends HBox {
+
+    @FunctionalInterface
+    private interface SupplierWithIO<T> {
+        T getWithIO() throws IOException;
+    }
 
     private final EventBus eventBus;
 
@@ -49,7 +57,7 @@ public class AddSourceView extends HBox {
             // Add a new source for each image .
             imageFiles.forEach(file -> {
                 try {
-                    eventBus.post(new SourceAddedEvent(new ImageFileSource(eventBus, file)));
+                    eventBus.post(new SourceAddedEvent(new ImageFileSource(eventBus, file).start(eventBus)));
                 } catch (IOException e) {
                     eventBus.post(new UnexpectedThrowableEvent(e, "Tried to create an invalid source"));
                 }
@@ -72,14 +80,11 @@ public class AddSourceView extends HBox {
             dialog.getDialogPane().getStylesheets().addAll(root.getStylesheets());
 
             // If the user clicks OK, add a new camera source
-            dialog.showAndWait().filter(Predicate.isEqual(ButtonType.OK)).ifPresent(result -> {
-                try {
-                    final CameraSource source = new CameraSource(eventBus, cameraIndex.getValue());
-                    eventBus.post(new SourceAddedEvent(source));
-                } catch (IOException e) {
-                    eventBus.post(new UnexpectedThrowableEvent(e, "Tried to create an invalid source"));
-                }
-            });
+            loadCamera(dialog,
+                    () -> new CameraSource(eventBus, cameraIndex.getValue()).start(eventBus),
+                    e -> {
+                        // TODO: Indicate to user that the camera source was invalid
+                    });
         });
 
         addButton("Add IP\nCamera", getClass().getResource("/edu/wpi/grip/ui/icons/add-webcam.png"), mouseEvent -> {
@@ -113,16 +118,35 @@ public class AddSourceView extends HBox {
             dialog.getDialogPane().getStylesheets().addAll(root.getStylesheets());
 
             // If the user clicks OK, add a new camera source
-            dialog.showAndWait().filter(Predicate.isEqual(ButtonType.OK)).ifPresent(result -> {
-                try {
-                    final CameraSource source = new CameraSource(eventBus, cameraAddress.getText());
-                    eventBus.post(new SourceAddedEvent(source));
-                } catch (IOException e) {
-                    eventBus.post(new UnexpectedThrowableEvent(e, "Tried to create an invalid source"));
-                }
-            });
+            loadCamera(dialog,
+                    () -> new CameraSource(eventBus, cameraAddress.getText()).start(eventBus),
+                    e -> {
+                        // TODO: Indicate to user that the camera source was invalid
+                    });
         });
     }
+
+    /**
+     *
+     * @param dialog The dialog to load the camera with
+     * @param cameraSourceSupplier The supplier that will create the camera
+     * @param failureCallback The handler for when the camera source supplier throws an IO Exception
+     */
+    private void loadCamera(Dialog<ButtonType> dialog, SupplierWithIO<CameraSource> cameraSourceSupplier, Consumer<IOException> failureCallback){
+        assert Platform.isFxApplicationThread() : "Should only run in FX thread";
+        dialog.showAndWait().filter(Predicate.isEqual(ButtonType.OK)).ifPresent(result -> {
+            try {
+                // Will try to create the camera with the values from the supplier
+                final CameraSource source = cameraSourceSupplier.getWithIO();
+                eventBus.post(new SourceAddedEvent(source));
+            } catch (IOException e) {
+                // This will run it again with the new values retrieved by the supplier
+                failureCallback.accept(e);
+                Platform.runLater(() -> loadCamera(dialog, cameraSourceSupplier, failureCallback));
+            }
+        });
+    }
+
 
     /**
      * Add a new button for adding a source.  This method takes care of setting the event handler.

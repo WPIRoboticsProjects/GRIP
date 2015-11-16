@@ -7,6 +7,7 @@ import edu.wpi.grip.core.OutputSocket;
 import edu.wpi.grip.core.SocketHint;
 import edu.wpi.grip.core.SocketHints;
 import edu.wpi.grip.core.Source;
+import edu.wpi.grip.core.events.SourceStartedEvent;
 import org.bytedeco.javacpp.opencv_core.Mat;
 import org.bytedeco.javacpp.opencv_imgcodecs;
 
@@ -31,6 +32,8 @@ public class ImageFileSource extends Source {
     private String path;
     private final SocketHint<Mat> imageOutputHint = SocketHints.Inputs.createMatSocketHint("Image", true);
     private OutputSocket<Mat> outputSocket;
+    private EventBus eventBus;
+    private boolean started = false;
 
     /**
      * @param eventBus The event bus for the pipeline.
@@ -80,8 +83,23 @@ public class ImageFileSource extends Source {
         if (path == null) {
             throw new IllegalArgumentException("Cannot create ImageFileSource without a path.");
         }
-
         this.initialize(eventBus, path);
+    }
+
+    public ImageFileSource start() throws IOException {
+        this.started = true;
+        loadImage(this.path);
+        return this;
+    }
+
+    @Override
+    public ImageFileSource stop() {
+        return this;
+    }
+
+    @Override
+    public boolean isRunning() {
+        return this.started;
     }
 
     /**
@@ -108,5 +126,6 @@ public class ImageFileSource extends Source {
             // TODO Output Error to GUI about invalid url
             throw new IOException("Error loading image " + path);
         }
+        this.eventBus.post(new SourceStartedEvent(this));
     }
 }
