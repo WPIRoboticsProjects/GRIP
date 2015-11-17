@@ -1,7 +1,6 @@
 package edu.wpi.grip.ui;
 
 
-import edu.wpi.grip.Main;
 import edu.wpi.grip.core.AdditionOperation;
 import edu.wpi.grip.core.events.OperationAddedEvent;
 import javafx.stage.Stage;

@@ -1,11 +1,9 @@
-package edu.wpi.grip;
+package edu.wpi.grip.ui;
 
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import edu.wpi.grip.core.events.FatalErrorEvent;
-import edu.wpi.grip.ui.ExceptionAlert;
 import edu.wpi.grip.ui.util.DPIUtility;
-import edu.wpi.grip.ui.MainWindowView;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.scene.Parent;
