@@ -9,7 +9,6 @@ plugins {
 }
 
 apply from: 'http://dl.bintray.com/shemnon/javafx-gradle/8.1.1/javafx.plugin'
-apply plugin: 'com.google.osdetector'
 
 version = '0.1.0'
 
