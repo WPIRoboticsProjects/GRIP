@@ -2,6 +2,7 @@ package edu.wpi.grip.core;
 
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
+import com.thoughtworks.xstream.annotations.XStreamAlias;
 import edu.wpi.grip.core.events.ConnectionRemovedEvent;
 import edu.wpi.grip.core.events.SocketChangedEvent;
 import edu.wpi.grip.core.events.SourceRemovedEvent;
@@ -13,6 +14,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 /**
  * A connection is a rule that causes one socket to update to always the value of another socket.
  */
+@XStreamAlias(value = "grip:Connection")
 public class Connection<T> {
     private final EventBus eventBus;
     private final OutputSocket<? extends T> outputSocket;

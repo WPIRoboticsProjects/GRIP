@@ -2,6 +2,7 @@ package edu.wpi.grip.core;
 
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
+import com.thoughtworks.xstream.annotations.XStreamAlias;
 import edu.wpi.grip.core.events.*;
 
 import java.util.*;
@@ -13,6 +14,7 @@ import java.util.*;
  * The pipeline class is responsible for listening for other components of the application (such as the GUI) adding
  * or removing steps and connections, and for registering and unregistering them from the event bus when appropriate.
  */
+@XStreamAlias(value = "grip:Pipeline")
 public class Pipeline {
     private final EventBus eventBus;
     private final List<Source> sources;
