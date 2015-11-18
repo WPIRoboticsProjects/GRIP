@@ -1,21 +1,102 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import edu.wpi.grip.ui.util.DPIUtility?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
+<?import javafx.scene.input.KeyCodeCombination?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
-<?import java.lang.Double?>
 <?import java.net.URL?>
-<?import edu.wpi.grip.ui.util.DPIUtility ?>
+<?language javascript?>
+
 <fx:root type="javafx.scene.layout.VBox" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"
          minWidth="-Infinity" styleClass="main-window"
          xmlns="http://javafx.com/javafx/null"
          xmlns:fx="http://javafx.com/fxml/1">
     <children>
+        <MenuBar>
+            <Menu text="File">
+                <MenuItem text="New" onAction="#newProject">
+                    <accelerator>
+                        <KeyCodeCombination alt="UP" code="N" control="DOWN" meta="UP" shift="UP" shortcut="UP"/>
+                    </accelerator>
+                    <graphic>
+                        <ImageView>
+                            <fitWidth>
+                                <DPIUtility fx:constant="SMALL_ICON_SIZE"/>
+                            </fitWidth>
+                            <fitHeight>
+                                <DPIUtility fx:constant="SMALL_ICON_SIZE"/>
+                            </fitHeight>
+                            <image>
+                                <Image url="@icons/new.png"/>
+                            </image>
+                        </ImageView>
+                    </graphic>
+                </MenuItem>
+                <MenuItem text="Open" onAction="#openProject">
+                    <accelerator>
+                        <KeyCodeCombination alt="UP" code="O" control="DOWN" meta="UP" shift="UP" shortcut="UP"/>
+                    </accelerator>
+                    <graphic>
+                        <ImageView>
+                            <fitWidth>
+                                <DPIUtility fx:constant="SMALL_ICON_SIZE"/>
+                            </fitWidth>
+                            <fitHeight>
+                                <DPIUtility fx:constant="SMALL_ICON_SIZE"/>
+                            </fitHeight>
+                            <image>
+                                <Image url="@icons/open.png"/>
+                            </image>
+                        </ImageView>
+                    </graphic>
+                </MenuItem>
+                <MenuItem text="Save" onAction="#saveProject">
+                    <accelerator>
+                        <KeyCodeCombination alt="UP" code="S" control="DOWN" meta="UP" shift="UP" shortcut="UP"/>
+                    </accelerator>
+                    <graphic>
+                        <ImageView>
+                            <fitWidth>
+                                <DPIUtility fx:constant="SMALL_ICON_SIZE"/>
+                            </fitWidth>
+                            <fitHeight>
+                                <DPIUtility fx:constant="SMALL_ICON_SIZE"/>
+                            </fitHeight>
+                            <image>
+                                <Image url="@icons/save.png"/>
+                            </image>
+                        </ImageView>
+                    </graphic>
+                </MenuItem>
+                <SeparatorMenuItem/>
+                <MenuItem text="Exit" onAction="java.lang.System.exit(0)">
+                    <accelerator>
+                        <KeyCodeCombination alt="UP" code="Q" control="DOWN" meta="UP" shift="UP" shortcut="UP"/>
+                    </accelerator>
+                </MenuItem>
+            </Menu>
+        </MenuBar>
         <HBox styleClass="menu-box">
             <children>
-                <Button onMouseClicked="#open" text="Open" styleClass="small-icon-button">
+                <Button text="New" onMouseClicked="#newProject" styleClass="small-icon-button">
+                    <graphic>
+                        <ImageView>
+                            <fitWidth>
+                                <DPIUtility fx:constant="SMALL_ICON_SIZE"/>
+                            </fitWidth>
+                            <fitHeight>
+                                <DPIUtility fx:constant="SMALL_ICON_SIZE"/>
+                            </fitHeight>
+                            <image>
+                                <Image url="@icons/new.png"/>
+                            </image>
+                        </ImageView>
+                    </graphic>
+                </Button>
+                <Button text="Open" onMouseClicked="#openProject" styleClass="small-icon-button">
                     <graphic>
                         <ImageView>
                             <fitWidth>
@@ -30,7 +111,7 @@
                         </ImageView>
                     </graphic>
                 </Button>
-                <Button onMouseClicked="#save" text="Save" styleClass="small-icon-button">
+                <Button text="Save" onMouseClicked="#saveProject" styleClass="small-icon-button">
                     <graphic>
                         <ImageView>
                             <fitWidth>

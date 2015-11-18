@@ -10,6 +10,7 @@ import edu.wpi.grip.core.operations.opencv.MatFieldAccessor;
 import edu.wpi.grip.core.operations.opencv.MinMaxLoc;
 import edu.wpi.grip.core.operations.opencv.NewPointOperation;
 import edu.wpi.grip.core.operations.opencv.NewSizeOperation;
+import edu.wpi.grip.core.serialization.Project;
 import edu.wpi.grip.core.sinks.DummySink;
 import edu.wpi.grip.generated.CVOperations;
 import edu.wpi.grip.ui.pipeline.PipelineView;
@@ -19,8 +20,9 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.SplitPane;
 import javafx.scene.layout.VBox;
+import javafx.stage.FileChooser;
 
-import java.io.IOException;
+import java.io.*;
 
 /**
  * The Controller for the application window.
@@ -39,6 +41,7 @@ public class MainWindowView extends VBox {
     final private PaletteView palette;
     final private PipelineView pipeline;
 
+    final private Project project;
 
     public MainWindowView(final EventBus eventBus) {
         eventBus.register(this);
@@ -80,17 +83,33 @@ public class MainWindowView extends VBox {
         CVOperations.addOperations(eventBus);
 
         eventBus.post(new SetSinkEvent(new DummySink()));
+
+        this.project = new Project(this.eventBus, this.pipeline.getPipeline(), this.palette.getPalette());
     }
 
     @FXML
-    public void save() throws IOException {
-        // TODO
+    public void newProject() {
+        this.pipeline.getPipeline().clear();
     }
 
     @FXML
-    public void open() throws IOException {
-        // TODO
+    public void openProject() throws IOException {
+        final FileChooser fileChooser = new FileChooser();
+        final File file = fileChooser.showOpenDialog(this.getScene().getWindow());
+
+        if (file != null) {
+            this.project.readFrom(new FileReader(file));
+        }
     }
 
+    @FXML
+    public void saveProject() throws IOException {
+        final FileChooser fileChooser = new FileChooser();
+        final File file = fileChooser.showOpenDialog(this.getScene().getWindow());
+
+        if (file != null) {
+            this.project.writeTo(new FileWriter(file));
+        }
+    }
 }
 
