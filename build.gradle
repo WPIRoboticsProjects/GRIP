@@ -1,12 +1,3 @@
-buildscript {
-  repositories {
-    mavenCentral()
-  }
-  dependencies {
-    classpath 'com.google.gradle:osdetector-gradle-plugin:1.4.0'
-  }
-}
-
 plugins {
     id 'com.github.johnrengelman.shadow' version '1.2.2'
     id 'java'
@@ -14,6 +5,7 @@ plugins {
     id 'eclipse'
     id 'application'
     id 'jacoco'
+    id 'com.google.osdetector' version '1.4.0'
 }
 
 apply from: 'http://dl.bintray.com/shemnon/javafx-gradle/8.1.1/javafx.plugin'
