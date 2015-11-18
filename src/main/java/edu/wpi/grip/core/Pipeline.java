@@ -6,6 +6,7 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
 import edu.wpi.grip.core.events.*;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Pipeline has the list of steps in a computer vision algorithm, as well as the set of connections between the inputs
@@ -40,6 +41,23 @@ public class Pipeline {
         this.steps.forEach(this.eventBus::register);
         this.connections.forEach(this.eventBus::register);
         this.sink.ifPresent(this.eventBus::register);
+    }
+
+    /**
+     * Remove everything in the pipeline
+     */
+    public void clear() {
+        // These streams are both collected into lists because streams cannot modify their source.  Sending a
+        // StepRemovedEvent or SourceRemovedEvent modifies this.steps or this.sources.
+        this.steps.stream()
+                .map(StepRemovedEvent::new)
+                .collect(Collectors.toList())
+                .forEach(this.eventBus::post);
+
+        this.sources.stream()
+                .map(SourceRemovedEvent::new)
+                .collect(Collectors.toList())
+                .forEach(this.eventBus::post);
     }
 
     /**
