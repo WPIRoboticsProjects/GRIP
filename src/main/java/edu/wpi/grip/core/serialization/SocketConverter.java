@@ -15,7 +15,12 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * Created by tom on 11/5/15.
+ * An XStream converter for serializing and deserializing sockets.  Socket elements include indexes to indicate where
+ * in the pipeline they are.  Input sockets can include values if specified, and output sockets can include boolean
+ * attributes indicating if they are published and/or previewed.
+ * <p>
+ * Deserializing a socket doesn't create the socket itself - this is done when the step is created.  Instead, this
+ * converter is used to reference particular sockets when defining values, published/previewed flags, and connections.
  */
 class SocketConverter implements Converter {
 
