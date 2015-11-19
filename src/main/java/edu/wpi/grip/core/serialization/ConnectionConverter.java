@@ -17,9 +17,6 @@ import edu.wpi.grip.core.events.ConnectionAddedEvent;
  */
 class ConnectionConverter implements Converter {
 
-    private final static String OUTPUT_SOCKET_NODE = "grip:Input";
-    private final static String INPUT_SOCKET_NODE = "grip:Output";
-
     private final EventBus eventBus;
 
     public ConnectionConverter(EventBus eventBus) {
@@ -38,23 +35,14 @@ class ConnectionConverter implements Converter {
         OutputSocket<?> outputSocket = null;
         InputSocket<?> inputSocket = null;
 
+        // Read the child nodes of this connection. An output socket and an input socket should be defined.
         while (reader.hasMoreChildren()) {
-            reader.moveDown();
-
-            switch (reader.getNodeName()) {
-                case OUTPUT_SOCKET_NODE:
-                    outputSocket = (OutputSocket<?>) context.convertAnother(null, OutputSocket.class);
-                    break;
-
-                case INPUT_SOCKET_NODE:
-                    inputSocket = (InputSocket<?>) context.convertAnother(null, InputSocket.class);
-                    break;
-
-                default:
-                    throw new ConversionException("Unexpected node in connection: " + reader.getNodeName());
+            Socket<?> tmp = (Socket<?>) context.convertAnother(null, Socket.class);
+            if (tmp.getDirection() == Socket.Direction.INPUT) {
+                inputSocket = (InputSocket<?>) tmp;
+            } else {
+                outputSocket = (OutputSocket<?>) tmp;
             }
-
-            reader.moveUp();
         }
 
         if (inputSocket == null || outputSocket == null) {

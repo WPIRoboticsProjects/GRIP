@@ -7,10 +7,7 @@ import com.thoughtworks.xstream.converters.MarshallingContext;
 import com.thoughtworks.xstream.converters.UnmarshallingContext;
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
-import edu.wpi.grip.core.InputSocket;
-import edu.wpi.grip.core.Operation;
-import edu.wpi.grip.core.Palette;
-import edu.wpi.grip.core.Step;
+import edu.wpi.grip.core.*;
 import edu.wpi.grip.core.events.StepAddedEvent;
 
 import java.util.Optional;
@@ -61,9 +58,7 @@ class StepConverter implements Converter {
         this.eventBus.post(new StepAddedEvent(new Step(this.eventBus, operation.get())));
 
         while (reader.hasMoreChildren()) {
-            reader.moveDown();
-            context.convertAnother(this, InputSocket.class);
-            reader.moveUp();
+            context.convertAnother(this, Socket.class);
         }
 
         return null;

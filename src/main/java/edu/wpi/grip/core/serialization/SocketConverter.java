@@ -24,12 +24,10 @@ class SocketConverter implements Converter {
 
     final private Mapper mapper;
     final private Pipeline pipeline;
-    final private Socket.Direction direction;
 
-    public SocketConverter(Mapper mapper, Pipeline pipeline, Socket.Direction direction) {
+    public SocketConverter(Mapper mapper, Pipeline pipeline) {
         this.mapper = mapper;
         this.pipeline = pipeline;
-        this.direction = direction;
     }
 
     @Override
@@ -67,13 +65,25 @@ class SocketConverter implements Converter {
     @Override
     public Object unmarshal(HierarchicalStreamReader reader, UnmarshallingContext context) {
         try {
+            reader.moveDown();
+
+            final String nodeName = reader.getNodeName();
             final int stepIndex = Integer.valueOf(reader.getAttribute(STEP_ATTRIBUTE));
             final int socketIndex = Integer.valueOf(reader.getAttribute(SOCKET_ATTRIBUTE));
+
+            Socket.Direction direction;
+            if (nodeName.equals(mapper.serializedClass(InputSocket.class))) {
+                direction = Socket.Direction.INPUT;
+            } else if (nodeName.equals(mapper.serializedClass(OutputSocket.class))) {
+                direction = Socket.Direction.OUTPUT;
+            } else {
+                throw new IllegalArgumentException("Unexpected socket node name: " + nodeName);
+            }
 
             // Look up the socket using the saved indexes.  Serializing sockets this way makes it so different things
             // (such as connections) can reference sockets in the pipeline.
             final Step step = pipeline.getSteps().get(stepIndex);
-            final Socket socket = this.direction == Socket.Direction.INPUT ?
+            final Socket socket = direction == Socket.Direction.INPUT ?
                     step.getInputSockets()[socketIndex] : step.getOutputSockets()[socketIndex];
 
             if (reader.hasMoreChildren()) {
@@ -85,6 +95,8 @@ class SocketConverter implements Converter {
                 }
                 reader.moveUp();
             }
+
+            reader.moveUp();
 
             return socket;
         } catch (Exception e) {
@@ -113,8 +125,6 @@ class SocketConverter implements Converter {
 
     @Override
     public boolean canConvert(Class type) {
-        return this.direction == Socket.Direction.INPUT ?
-                InputSocket.class.equals(type) :
-                OutputSocket.class.equals(type);
+        return Socket.class.isAssignableFrom(type);
     }
 }

@@ -18,8 +18,7 @@ public class Project {
     public Project(EventBus eventBus, Pipeline pipeline, Palette palette) {
         this.pipeline = pipeline;
 
-        this.xstream.registerConverter(new SocketConverter(xstream.getMapper(), pipeline, Socket.Direction.INPUT));
-        this.xstream.registerConverter(new SocketConverter(xstream.getMapper(), pipeline, Socket.Direction.OUTPUT));
+        this.xstream.registerConverter(new SocketConverter(xstream.getMapper(), pipeline));
         this.xstream.registerConverter(new StepConverter(eventBus, palette));
         this.xstream.registerConverter(new ConnectionConverter(eventBus));
         this.xstream.registerConverter(new InjectedObjectConverter<>(eventBus), XStream.PRIORITY_VERY_HIGH);
