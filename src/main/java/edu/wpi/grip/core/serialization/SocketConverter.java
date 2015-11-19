@@ -21,6 +21,8 @@ class SocketConverter implements Converter {
 
     final private static String STEP_ATTRIBUTE = "step";
     final private static String SOCKET_ATTRIBUTE = "socket";
+    final private static String PUBLISHED_ATTRIBUTE = "published";
+    final private static String PREVIEWED_ATTRIBUTE = "previewed";
 
     final private Mapper mapper;
     final private Pipeline pipeline;
@@ -43,8 +45,14 @@ class SocketConverter implements Converter {
                 final Socket<?>[] sockets = socket.getDirection() == Socket.Direction.INPUT ?
                         step.getInputSockets() : step.getOutputSockets();
 
-                writer.addAttribute(STEP_ATTRIBUTE, "" + pipeline.getSteps().indexOf(step));
-                writer.addAttribute(SOCKET_ATTRIBUTE, "" + Arrays.asList(sockets).indexOf(socket));
+                writer.addAttribute(STEP_ATTRIBUTE, String.valueOf(pipeline.getSteps().indexOf(step)));
+                writer.addAttribute(SOCKET_ATTRIBUTE, String.valueOf(Arrays.asList(sockets).indexOf(socket)));
+            }
+
+            // Save whether or not output sockets are published and previewed
+            if (socket.getDirection() == Socket.Direction.OUTPUT) {
+                writer.addAttribute(PUBLISHED_ATTRIBUTE, String.valueOf(((OutputSocket) socket).isPublished()));
+                writer.addAttribute(PREVIEWED_ATTRIBUTE, String.valueOf(((OutputSocket) socket).isPreviewed()));
             }
 
             // Save the value of input sockets that could possibly have been set with the GUI
@@ -85,6 +93,11 @@ class SocketConverter implements Converter {
             final Step step = pipeline.getSteps().get(stepIndex);
             final Socket socket = direction == Socket.Direction.INPUT ?
                     step.getInputSockets()[socketIndex] : step.getOutputSockets()[socketIndex];
+
+            if (socket.getDirection() == Socket.Direction.OUTPUT) {
+                ((OutputSocket) socket).setPublished(Boolean.valueOf(reader.getAttribute(PUBLISHED_ATTRIBUTE)));
+                ((OutputSocket) socket).setPreviewed(Boolean.valueOf(reader.getAttribute(PREVIEWED_ATTRIBUTE)));
+            }
 
             if (reader.hasMoreChildren()) {
                 reader.moveDown();

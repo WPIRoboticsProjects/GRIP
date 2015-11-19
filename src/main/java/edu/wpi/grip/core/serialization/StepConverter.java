@@ -36,11 +36,13 @@ class StepConverter implements Converter {
 
         writer.addAttribute(NAME_ATTRIBUTE, step.getOperation().getName());
 
-        // Also save any inputs that aren't connected, since their values are manually specified by the user
+        // Also save any sockets in the step
         for (InputSocket<?> socket : step.getInputSockets()) {
-            if (socket.getConnections().isEmpty()) {
-                context.convertAnother(socket);
-            }
+            context.convertAnother(socket);
+        }
+
+        for (OutputSocket<?> socket : step.getOutputSockets()) {
+            context.convertAnother(socket);
         }
     }
 
