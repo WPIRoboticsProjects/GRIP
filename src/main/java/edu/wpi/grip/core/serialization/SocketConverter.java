@@ -25,6 +25,7 @@ import java.util.List;
 class SocketConverter implements Converter {
 
     final private static String STEP_ATTRIBUTE = "step";
+    final private static String SOURCE_ATTRIBUTE = "source";
     final private static String SOCKET_ATTRIBUTE = "socket";
     final private static String PUBLISHED_ATTRIBUTE = "published";
     final private static String PREVIEWED_ATTRIBUTE = "previewed";
@@ -38,21 +39,25 @@ class SocketConverter implements Converter {
     }
 
     @Override
-    public void marshal(Object source, HierarchicalStreamWriter writer, MarshallingContext context) {
-        final Socket<?> socket = (Socket<?>) source;
+    public void marshal(Object obj, HierarchicalStreamWriter writer, MarshallingContext context) {
+        final Socket<?> socket = (Socket<?>) obj;
 
         try {
             writer.startNode(mapper.serializedClass(socket.getClass()));
 
-            // Save the location of the socket in the pipeline. TODO: Also handle sockets from a source
-            if (socket.getStep().isPresent()) {
-                final Step step = socket.getStep().get();
+            // Save the location of the socket in the pipeline.
+            socket.getStep().ifPresent(step -> {
                 final Socket<?>[] sockets = socket.getDirection() == Socket.Direction.INPUT ?
                         step.getInputSockets() : step.getOutputSockets();
-
                 writer.addAttribute(STEP_ATTRIBUTE, String.valueOf(pipeline.getSteps().indexOf(step)));
                 writer.addAttribute(SOCKET_ATTRIBUTE, String.valueOf(Arrays.asList(sockets).indexOf(socket)));
-            }
+            });
+
+            socket.getSource().ifPresent(source -> {
+                final Socket<?>[] sockets = source.getOutputSockets();
+                writer.addAttribute(SOURCE_ATTRIBUTE, String.valueOf(pipeline.getSources().indexOf(source)));
+                writer.addAttribute(SOCKET_ATTRIBUTE, String.valueOf(Arrays.asList(sockets).indexOf(socket)));
+            });
 
             // Save whether or not output sockets are published and previewed
             if (socket.getDirection() == Socket.Direction.OUTPUT) {
@@ -86,8 +91,6 @@ class SocketConverter implements Converter {
             reader.moveDown();
 
             final String nodeName = reader.getNodeName();
-            final int stepIndex = Integer.valueOf(reader.getAttribute(STEP_ATTRIBUTE));
-            final int socketIndex = Integer.valueOf(reader.getAttribute(SOCKET_ATTRIBUTE));
 
             Socket.Direction direction;
             if (nodeName.equals(mapper.serializedClass(InputSocket.class))) {
@@ -100,9 +103,23 @@ class SocketConverter implements Converter {
 
             // Look up the socket using the saved indexes.  Serializing sockets this way makes it so different things
             // (such as connections) can reference sockets in the pipeline.
-            final Step step = pipeline.getSteps().get(stepIndex);
-            final Socket socket = direction == Socket.Direction.INPUT ?
-                    step.getInputSockets()[socketIndex] : step.getOutputSockets()[socketIndex];
+            Socket socket;
+            if (reader.getAttribute(STEP_ATTRIBUTE) != null) {
+                final int stepIndex = Integer.valueOf(reader.getAttribute(STEP_ATTRIBUTE));
+                final int socketIndex = Integer.valueOf(reader.getAttribute(SOCKET_ATTRIBUTE));
+
+                final Step step = pipeline.getSteps().get(stepIndex);
+                socket = direction == Socket.Direction.INPUT ?
+                        step.getInputSockets()[socketIndex] : step.getOutputSockets()[socketIndex];
+            } else if (reader.getAttribute(SOURCE_ATTRIBUTE) != null) {
+                final int sourceIndex = Integer.valueOf(reader.getAttribute(SOURCE_ATTRIBUTE));
+                final int socketIndex = Integer.valueOf(reader.getAttribute(SOCKET_ATTRIBUTE));
+
+                final Source source = pipeline.getSources().get(sourceIndex);
+                socket = source.getOutputSockets()[socketIndex];
+            } else {
+                throw new ConversionException("Sockets must have either a step or source attribute");
+            }
 
             if (socket.getDirection() == Socket.Direction.OUTPUT) {
                 ((OutputSocket) socket).setPublished(Boolean.valueOf(reader.getAttribute(PUBLISHED_ATTRIBUTE)));
