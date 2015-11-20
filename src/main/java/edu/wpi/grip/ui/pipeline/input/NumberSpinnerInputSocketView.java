@@ -7,6 +7,7 @@ import edu.wpi.grip.core.events.SocketChangedEvent;
 import javafx.beans.InvalidationListener;
 import javafx.scene.control.Spinner;
 import javafx.scene.control.SpinnerValueFactory;
+import javafx.util.StringConverter;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
@@ -47,6 +48,10 @@ public class NumberSpinnerInputSocketView extends InputSocketView<Number> {
         final Spinner<Double> spinner = new Spinner<>(this.valueFactory);
         spinner.setEditable(true);
         spinner.disableProperty().bind(this.getHandle().connectedProperty());
+        spinner.focusedProperty().addListener((s, ov, nv) -> {// Code found at http://stackoverflow.com/questions/32340476/manually-typing-in-text-in-javafx-spinner-is-not-updating-the-value-unless-user
+            if (nv) return;
+            commitEditorText(spinner);
+        });
         this.setContent(spinner);
     }
 
@@ -60,6 +65,20 @@ public class NumberSpinnerInputSocketView extends InputSocketView<Number> {
                 this.valueFactory.valueProperty().removeListener(updateSocketFromSpinner);
                 this.valueFactory.setValue(this.getSocket().getValue().doubleValue());
                 this.valueFactory.valueProperty().addListener(updateSocketFromSpinner);
+            }
+        }
+    }
+
+    // Code found at http://stackoverflow.com/questions/32340476/manually-typing-in-text-in-javafx-spinner-is-not-updating-the-value-unless-user
+    private <T> void commitEditorText(Spinner<T> spinner) {
+        if (!spinner.isEditable()) return;
+        String text = spinner.getEditor().getText();
+        SpinnerValueFactory<T> valueFactory = spinner.getValueFactory();
+        if (valueFactory != null) {
+            StringConverter<T> converter = valueFactory.getConverter();
+            if (converter != null) {
+                T value = converter.fromString(text);
+                valueFactory.setValue(value);
             }
         }
     }
