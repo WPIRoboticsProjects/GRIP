@@ -3,6 +3,7 @@ package edu.wpi.grip.core.sources;
 
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
+import com.thoughtworks.xstream.annotations.XStreamAlias;
 import edu.wpi.grip.core.OutputSocket;
 import edu.wpi.grip.core.SocketHint;
 import edu.wpi.grip.core.Source;
@@ -14,6 +15,7 @@ import org.bytedeco.javacv.*;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Optional;
+import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
@@ -22,10 +24,17 @@ import static com.google.common.base.Preconditions.checkNotNull;
 /**
  * Provides a way to generate a constantly updated {@link Mat} from a camera
  */
-public class CameraSource implements Source {
+@XStreamAlias(value = "grip:Camera")
+public class CameraSource extends Source {
 
-    private final String name;
-    private final EventBus eventBus;
+    private final static String DEVICE_NUMBER_PROPERTY = "deviceNumber";
+    private final static String ADDRESS_PROPERTY = "address";
+
+    private EventBus eventBus;
+    private String name;
+
+    private Properties properties = new Properties();
+
     private final SocketHint<Mat> imageOutputHint = new SocketHint<Mat>("Image", Mat.class, Mat::new);
     private final SocketHint<Number> frameRateOutputHint = new SocketHint<Number>("Frame Rate", Number.class, 0);
     private OutputSocket<Mat> frameOutputSocket;
@@ -40,31 +49,38 @@ public class CameraSource implements Source {
      * @param deviceNumber The device number of the webcam
      */
     public CameraSource(EventBus eventBus, int deviceNumber) throws IOException {
-        this(eventBus, new OpenCVFrameGrabber(deviceNumber), "Webcam " + deviceNumber);
+        this();
+        this.properties.setProperty(DEVICE_NUMBER_PROPERTY, "" + deviceNumber);
+        this.createFromProperties(eventBus, this.properties);
     }
 
     /**
      * Creates a camera source that can be used as an input to a pipeline
      *
-     * @param eventBus     The EventBus to attach to
-     * @param address A URL to stream video from an IP camera
+     * @param eventBus The EventBus to attach to
+     * @param address  A URL to stream video from an IP camera
      */
     public CameraSource(EventBus eventBus, String address) throws IOException {
-        this(eventBus, new IPCameraFrameGrabber(address), "IP Camera " + new URL(address).getHost());
+        this();
+        this.properties.setProperty(ADDRESS_PROPERTY, address);
+        this.createFromProperties(eventBus, this.properties);
     }
 
-    public CameraSource(EventBus eventBus, FrameGrabber frameGrabber, String name) throws IOException {
-        checkNotNull(eventBus, "Event Bus was null.");
-        this.eventBus = eventBus;
-
-        this.frameOutputSocket = new OutputSocket<>(eventBus, imageOutputHint);
-        this.frameRateOutputSocket = new OutputSocket<>(eventBus, frameRateOutputHint);
+    /**
+     * Used for serialization
+     */
+    public CameraSource() {
         this.grabber = Optional.empty();
         this.frameThread = Optional.empty();
+    }
+
+    private void initialize(EventBus eventBus, FrameGrabber frameGrabber, String name) throws IOException {
+        this.eventBus = checkNotNull(eventBus, "Event Bus was null.");
         this.name = name;
+        this.frameOutputSocket = new OutputSocket<>(eventBus, imageOutputHint);
+        this.frameRateOutputSocket = new OutputSocket<>(eventBus, frameRateOutputHint);
 
-        eventBus.register(this);
-
+        this.eventBus.register(this);
         this.startVideo(frameGrabber);
     }
 
@@ -74,8 +90,28 @@ public class CameraSource implements Source {
     }
 
     @Override
-    public OutputSocket[] getOutputSockets() {
+    public OutputSocket[] createOutputSockets() {
         return new OutputSocket[]{frameOutputSocket, frameRateOutputSocket};
+    }
+
+    @Override
+    public Properties getProperties() {
+        return this.properties;
+    }
+
+    @Override
+    public void createFromProperties(EventBus eventBus, Properties properties) throws IOException {
+        final String deviceNumber = properties.getProperty(DEVICE_NUMBER_PROPERTY);
+        final String address = properties.getProperty(ADDRESS_PROPERTY);
+
+        if (deviceNumber != null) {
+            this.initialize(eventBus, new OpenCVFrameGrabber(Integer.valueOf(deviceNumber)), "Webcam " + deviceNumber);
+        } else if (address != null) {
+            this.initialize(eventBus, new IPCameraFrameGrabber(address), "IP Camera " + new URL(address).getHost());
+        } else {
+            throw new IllegalArgumentException("Cannot initialize CameraSource without either a device number or " +
+                    "address");
+        }
     }
 
     /**

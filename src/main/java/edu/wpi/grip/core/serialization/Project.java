@@ -3,6 +3,8 @@ package edu.wpi.grip.core.serialization;
 import com.google.common.eventbus.EventBus;
 import com.thoughtworks.xstream.XStream;
 import edu.wpi.grip.core.*;
+import edu.wpi.grip.core.sources.CameraSource;
+import edu.wpi.grip.core.sources.ImageFileSource;
 
 import java.io.Reader;
 import java.io.Writer;
@@ -18,15 +20,19 @@ public class Project {
     public Project(EventBus eventBus, Pipeline pipeline, Palette palette) {
         this.pipeline = pipeline;
 
-        this.xstream.registerConverter(new SocketConverter(xstream.getMapper(), pipeline));
         this.xstream.registerConverter(new StepConverter(eventBus, palette));
+        this.xstream.registerConverter(new SourceConverter(eventBus, xstream.getMapper()));
+        this.xstream.registerConverter(new SocketConverter(xstream.getMapper(), pipeline));
+
         this.xstream.registerConverter(new ConnectionConverter(eventBus));
         this.xstream.registerConverter(new InjectedObjectConverter<>(eventBus), XStream.PRIORITY_VERY_HIGH);
         this.xstream.registerConverter(new PythonScriptOperationConverter(), XStream.PRIORITY_VERY_HIGH);
         this.xstream.registerConverter(new MatConverter());
 
         this.xstream.processAnnotations(new Class[]{
-                Pipeline.class, Step.class, Connection.class, InputSocket.class, OutputSocket.class});
+                Pipeline.class, Step.class, Connection.class, InputSocket.class, OutputSocket.class,
+                ImageFileSource.class, CameraSource.class
+        });
 
         this.xstream.setMode(XStream.NO_REFERENCES);
     }
