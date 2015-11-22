@@ -48,7 +48,7 @@ public class BlurOperation implements Operation {
 
     @Override
     public String getDescription() {
-        return "Soften the details of a Mat to remove noise.";
+        return "Soften the details of an image to remove noise.";
     }
 
     @Override

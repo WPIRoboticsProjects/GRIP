@@ -31,7 +31,7 @@ public class FindLinesOperation implements Operation {
 
     @Override
     public String getDescription() {
-        return "Detect line segments in a Mat.";
+        return "Detect line segments in an image.";
     }
 
     @Override

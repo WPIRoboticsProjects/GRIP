@@ -25,7 +25,7 @@ public class MatFieldAccessor implements CVOperation {
 
     @Override
     public String getDescription() {
-        return "Provide access to the various methods on an OpenCV Mat object.";
+        return "Provide access to the various elements and properties of an OpenCV Mat object (an image).";
     }
 
     @Override
