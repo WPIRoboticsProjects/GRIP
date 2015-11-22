@@ -27,7 +27,7 @@ public class DesaturateOperation implements Operation {
 
     @Override
     public String getDescription() {
-        return "Convert a color image into shades of gray";
+        return "Convert a color Mat into shades of gray.";
     }
 
     @Override

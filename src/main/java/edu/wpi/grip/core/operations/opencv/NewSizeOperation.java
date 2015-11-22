@@ -23,7 +23,7 @@ public class NewSizeOperation implements CVOperation {
 
     @Override
     public String getDescription() {
-        return "Create a Size";
+        return "Create a size.";
     }
 
     @Override

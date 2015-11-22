@@ -22,7 +22,7 @@ public class AddOperation implements Operation {
 
     @Override
     public String getDescription() {
-        return "Compute the per-pixel sum of two images";
+        return "Compute the per-pixel sum of two Mats.";
     }
 
     @Override

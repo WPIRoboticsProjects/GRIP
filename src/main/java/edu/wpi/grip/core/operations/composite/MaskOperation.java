@@ -29,7 +29,7 @@ public class MaskOperation implements Operation {
 
     @Override
     public String getDescription() {
-        return "Filter out an area of interest in an image using a binary mask";
+        return "Filter out an area of interest in a Mat using a binary mask.";
     }
 
     @Override

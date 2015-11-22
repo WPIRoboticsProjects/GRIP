@@ -39,7 +39,7 @@ public class FindBlobsOperation implements Operation {
 
     @Override
     public String getDescription() {
-        return "Detect groups of pixels in an image";
+        return "Detect groups of pixels in an image.";
     }
 
     @Override
