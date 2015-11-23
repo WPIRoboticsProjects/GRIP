@@ -129,60 +129,60 @@ public class FileParser {
 
         DefinedMethodCollection collection = new DefinedMethodCollection(baseClassName,
                 new DefinedMethod("Sobel", false, "Mat", "Mat"
-                ).addDescription("Finds edges by calculating the requested derivative order for the given image."),
+                ).addDescription("Find edges by calculating the requested derivative order for the given image."),
                 new DefinedMethod("medianBlur", false, "Mat", "Mat"
-                ).addDescription("Applies a Median blur to an image."),
+                ).addDescription("Apply a Median blur to an image."),
                 new DefinedMethod("GaussianBlur", false,
                         new DefinedParamType("Mat"),
                         new DefinedParamType("Mat"),
                         new DefinedParamType("Size").setDefaultValue(new ObjectDefaultValue("Size", "1", "1"))
-                ).addDescription("Applies a Gaussian blur to an image."),
+                ).addDescription("Apply a Gaussian blur to an image."),
                 new DefinedMethod("Laplacian", "Mat", "Mat"
-                ).addDescription("Finds edges by calculating the Laplacian for the given image."),
+                ).addDescription("Find edges by calculating the Laplacian for the given image."),
                 new DefinedMethod("dilate", false, "Mat", "Mat"
-                ).addDescription("Applies a dilation (expands areas of higher values) to an image."),
+                ).addDescription("Apply a dilation (expands areas of higher values) to an image."),
                 new DefinedMethod("Canny", false,
                         new DefinedParamType("Mat"),
                         new DefinedParamType("Mat", DefinedParamType.DefinedParamDirection.OUTPUT)
-                ).addDescription("Applies a \\\"canny edge detection\\\" algorithm to an image."),
+                ).addDescription("Apply a \\\"canny edge detection\\\" algorithm to an image."),
                 new DefinedMethod("threshold", false,
                         new DefinedParamType("Mat"),
                         new DefinedParamType("Mat"),
                         new DefinedParamType("double"),
                         new DefinedParamType("double"),
                         new DefinedParamType("int").setLiteralDefaultValue("THRESH_BINARY")
-                ).addDescription("Applies a fixed-level threshold to each array element in an image."),
+                ).addDescription("Apply a fixed-level threshold to each array element in an image."),
                 new DefinedMethod("adaptiveThreshold", false,
                         new DefinedParamType("Mat"),
                         new DefinedParamType("Mat"),
                         new DefinedParamType("double"),
                         new DefinedParamType("int").setLiteralDefaultValue("ADAPTIVE_THRESH_MEAN_C"),
                         new DefinedParamType("int").setLiteralDefaultValue("THRESH_BINARY")
-                ).addDescription("Applies an adaptive threshold to an array (transforms a grayscale image to a binary image)."),
+                ).addDescription("Apply an adaptive threshold to an array (transforms a grayscale image to a binary image)."),
                 new DefinedMethod("erode", false,
                         new DefinedParamType("Mat"),
                         new DefinedParamType("Mat"),
                         new DefinedParamType("Mat")
-                ).addDescription("Applies an erosion (expands areas of lower values) to an image."),
+                ).addDescription("Apply an erosion (expands areas of lower values) to an image."),
                 new DefinedMethod("cvtColor", false,
                         new DefinedParamType("Mat"),
                         new DefinedParamType("Mat"),
                         new DefinedParamType("int").setLiteralDefaultValue("COLOR_BGR2BGRA")
-                ).addDescription("Converts an image from one color space to another."),
+                ).addDescription("Convert an image from one color space to another."),
                 new DefinedMethod("applyColorMap", true,
                         new DefinedParamType("Mat"),
                         new DefinedParamType("Mat"),
                         new DefinedParamType("int").setLiteralDefaultValue("COLORMAP_AUTUMN")
-                ).addDescription("Applies a GNU Octave/MATLAB equivalent colormap on a given image."),
+                ).addDescription("Apply a GNU Octave/MATLAB equivalent colormap on a given image."),
                 new DefinedMethod("resize", false,
                         new DefinedParamType("Mat"),
                         new DefinedParamType("Mat"),
                         new DefinedParamType("Size")
-                ).addDescription("Resizes the image to the specified size."),
+                ).addDescription("Resize the image to the specified size."),
                 new DefinedMethod("rectangle", false,
                         new DefinedParamType("Mat", DefinedParamType.DefinedParamDirection.INPUT_AND_OUTPUT),
                         new DefinedParamType("Point")
-                ).addDescription("Draws a rectangle (outline or filled) on an image.")
+                ).addDescription("Draw a rectangle (outline or filled) on an image.")
         ).setDirectionDefaults(DefinedParamType.DefinedParamDirection.OUTPUT, "dst")
                 .setIgnoreDefaults("dtype", "ddepth");
         new OpenCVMethodVisitor(collection).visit(imgprocDeclaration, compilationUnits);
@@ -208,7 +208,7 @@ public class FileParser {
                 new DefinedMethod("divide", false, "Mat", "Mat", "Mat")
                         .addDescription("Perform per-pixel division of two images."),
                 new DefinedMethod("scaleAdd", false, "Mat", "double", "Mat", "Mat")
-                        .addDescription("Calculates the sum of two images where one image is multiplied by a scalar."),
+                        .addDescription("Calculate the sum of two images where one image is multiplied by a scalar."),
 //                new DefinedMethod("normalize", false, "Mat", "Mat"),
                 new DefinedMethod("addWeighted", false, "Mat")
                         .addDescription("Calculate the weighted sum of two images."),
