@@ -2,6 +2,7 @@ package edu.wpi.grip.core;
 
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
+import com.thoughtworks.xstream.annotations.XStreamAlias;
 import edu.wpi.grip.core.events.SocketChangedEvent;
 
 import java.util.Optional;
@@ -12,6 +13,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * A step is an instance of an operation in a pipeline.  A step contains a list of input and output sockets, and it
  * runs the operation whenever one of the input sockets changes.
  */
+@XStreamAlias(value = "grip:Step")
 public class Step {
     private Operation operation;
     private InputSocket<?>[] inputSockets;

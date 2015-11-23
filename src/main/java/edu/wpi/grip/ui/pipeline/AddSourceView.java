@@ -3,8 +3,8 @@ package edu.wpi.grip.ui.pipeline;
 import com.google.common.eventbus.EventBus;
 import edu.wpi.grip.core.events.FatalErrorEvent;
 import edu.wpi.grip.core.events.SourceAddedEvent;
-import edu.wpi.grip.core.sources.ImageFileSource;
 import edu.wpi.grip.core.sources.CameraSource;
+import edu.wpi.grip.core.sources.ImageFileSource;
 import edu.wpi.grip.ui.util.DPIUtility;
 import javafx.event.EventHandler;
 import javafx.scene.Parent;
@@ -21,8 +21,6 @@ import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.List;
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
 import java.util.function.Predicate;
 
 /**
@@ -39,17 +37,6 @@ public class AddSourceView extends HBox {
 
         this.setFillHeight(true);
 
-        /*
-         * Sources typically have to block while they load, so that should be done in a separate daemon thread to avoid
-         * freezing up the GUI.
-         */
-        final Executor loadSourceExecutor = Executors.newSingleThreadExecutor(runnable -> {
-            final Thread thread = new Thread(runnable);
-            thread.setDaemon(true);
-            thread.setUncaughtExceptionHandler((t, e) -> this.eventBus.post(new FatalErrorEvent(e)));
-            return thread;
-        });
-
         addButton("Add\nImage", getClass().getResource("/edu/wpi/grip/ui/icons/add-image.png"), mouseEvent -> {
             // Show a file picker so the user can open one or more images from disk
             final FileChooser fileChooser = new FileChooser();
@@ -61,14 +48,12 @@ public class AddSourceView extends HBox {
 
             // Add a new source for each image .
             imageFiles.forEach(file -> {
-                loadSourceExecutor.execute(() -> {
-                    try {
-                        eventBus.post(new SourceAddedEvent(new ImageFileSource(eventBus, file)));
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                        eventBus.post(new FatalErrorEvent(e));
-                    }
-                });
+                try {
+                    eventBus.post(new SourceAddedEvent(new ImageFileSource(eventBus, file)));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    eventBus.post(new FatalErrorEvent(e));
+                }
             });
         });
 
@@ -89,15 +74,13 @@ public class AddSourceView extends HBox {
 
             // If the user clicks OK, add a new camera source
             dialog.showAndWait().filter(Predicate.isEqual(ButtonType.OK)).ifPresent(result -> {
-                loadSourceExecutor.execute(() -> {
-                    try {
-                        final CameraSource source = new CameraSource(eventBus, cameraIndex.getValue());
-                        eventBus.post(new SourceAddedEvent(source));
-                    } catch (IOException e) {
-                        eventBus.post(new FatalErrorEvent(e));
-                        e.printStackTrace();
-                    }
-                });
+                try {
+                    final CameraSource source = new CameraSource(eventBus, cameraIndex.getValue());
+                    eventBus.post(new SourceAddedEvent(source));
+                } catch (IOException e) {
+                    eventBus.post(new FatalErrorEvent(e));
+                    e.printStackTrace();
+                }
             });
         });
 
@@ -133,15 +116,13 @@ public class AddSourceView extends HBox {
 
             // If the user clicks OK, add a new camera source
             dialog.showAndWait().filter(Predicate.isEqual(ButtonType.OK)).ifPresent(result -> {
-                loadSourceExecutor.execute(() -> {
-                    try {
-                        final CameraSource source = new CameraSource(eventBus, cameraAddress.getText());
-                        eventBus.post(new SourceAddedEvent(source));
-                    } catch (IOException e) {
-                        eventBus.post(new FatalErrorEvent(e));
-                        e.printStackTrace();
-                    }
-                });
+                try {
+                    final CameraSource source = new CameraSource(eventBus, cameraAddress.getText());
+                    eventBus.post(new SourceAddedEvent(source));
+                } catch (IOException e) {
+                    eventBus.post(new FatalErrorEvent(e));
+                    e.printStackTrace();
+                }
             });
         });
     }

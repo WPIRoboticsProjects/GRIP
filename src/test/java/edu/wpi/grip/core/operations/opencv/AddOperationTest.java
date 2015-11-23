@@ -1,6 +1,7 @@
 package edu.wpi.grip.core.operations.opencv;
 
 import com.google.common.eventbus.EventBus;
+import edu.wpi.grip.core.AddOperation;
 import edu.wpi.grip.core.InputSocket;
 import edu.wpi.grip.core.Operation;
 import edu.wpi.grip.core.OutputSocket;

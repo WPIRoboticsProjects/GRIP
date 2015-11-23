@@ -3,6 +3,7 @@ package edu.wpi.grip.core;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.eventbus.EventBus;
+import com.thoughtworks.xstream.annotations.XStreamAlias;
 import edu.wpi.grip.core.events.SocketPreviewChangedEvent;
 import edu.wpi.grip.core.events.SocketPublishedEvent;
 
@@ -16,6 +17,7 @@ import static com.google.common.base.Preconditions.checkArgument;
  *
  * @param <T> The type of the value that this socket stores.
  */
+@XStreamAlias(value = "grip:Output")
 public class OutputSocket<T> extends Socket<T> {
 
     /**
