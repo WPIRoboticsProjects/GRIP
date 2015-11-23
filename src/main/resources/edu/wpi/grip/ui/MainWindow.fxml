@@ -71,63 +71,32 @@
                         </ImageView>
                     </graphic>
                 </MenuItem>
+                <MenuItem text="Save As" onAction="#saveProjectAs">
+                    <accelerator>
+                        <KeyCodeCombination alt="UP" code="S" control="DOWN" meta="UP" shift="DOWN" shortcut="UP"/>
+                    </accelerator>
+                    <graphic>
+                        <ImageView>
+                            <fitWidth>
+                                <DPIUtility fx:constant="SMALL_ICON_SIZE"/>
+                            </fitWidth>
+                            <fitHeight>
+                                <DPIUtility fx:constant="SMALL_ICON_SIZE"/>
+                            </fitHeight>
+                            <image>
+                                <Image url="@icons/save-as.png"/>
+                            </image>
+                        </ImageView>
+                    </graphic>
+                </MenuItem>
                 <SeparatorMenuItem/>
-                <MenuItem text="Exit" onAction="java.lang.System.exit(0)">
+                <MenuItem text="Exit" onAction="#quit">
                     <accelerator>
                         <KeyCodeCombination alt="UP" code="Q" control="DOWN" meta="UP" shift="UP" shortcut="UP"/>
                     </accelerator>
                 </MenuItem>
             </Menu>
         </MenuBar>
-        <HBox styleClass="menu-box">
-            <children>
-                <Button text="New" onMouseClicked="#newProject" styleClass="small-icon-button">
-                    <graphic>
-                        <ImageView>
-                            <fitWidth>
-                                <DPIUtility fx:constant="SMALL_ICON_SIZE"/>
-                            </fitWidth>
-                            <fitHeight>
-                                <DPIUtility fx:constant="SMALL_ICON_SIZE"/>
-                            </fitHeight>
-                            <image>
-                                <Image url="@icons/new.png"/>
-                            </image>
-                        </ImageView>
-                    </graphic>
-                </Button>
-                <Button text="Open" onMouseClicked="#openProject" styleClass="small-icon-button">
-                    <graphic>
-                        <ImageView>
-                            <fitWidth>
-                                <DPIUtility fx:constant="SMALL_ICON_SIZE"/>
-                            </fitWidth>
-                            <fitHeight>
-                                <DPIUtility fx:constant="SMALL_ICON_SIZE"/>
-                            </fitHeight>
-                            <image>
-                                <Image url="@icons/open.png"/>
-                            </image>
-                        </ImageView>
-                    </graphic>
-                </Button>
-                <Button text="Save" onMouseClicked="#saveProject" styleClass="small-icon-button">
-                    <graphic>
-                        <ImageView>
-                            <fitWidth>
-                                <DPIUtility fx:constant="SMALL_ICON_SIZE"/>
-                            </fitWidth>
-                            <fitHeight>
-                                <DPIUtility fx:constant="SMALL_ICON_SIZE"/>
-                            </fitHeight>
-                            <image>
-                                <Image url="@icons/save.png"/>
-                            </image>
-                        </ImageView>
-                    </graphic>
-                </Button>
-            </children>
-        </HBox>
         <SplitPane dividerPositions="0.6" orientation="VERTICAL" VBox.vgrow="ALWAYS">
             <items>
                 <SplitPane dividerPositions="1.0" orientation="HORIZONTAL" fx:id="topPane"/>

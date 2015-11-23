@@ -44,10 +44,10 @@ public class ProjectTest {
 
     private void serializeAndDeserialize() {
         final Writer writer = new StringWriter();
-        project.writeTo(writer);
+        project.save(writer);
 
         final Reader reader = new StringReader(writer.toString());
-        project.readFrom(reader);
+        project.open(reader);
     }
 
     @Test
