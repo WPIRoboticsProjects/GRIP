@@ -4,6 +4,13 @@ install:
 build_script:
   - gradlew.bat assemble --stacktrace
 
+# to run your custom scripts instead of automatic tests
+test_script:
+  - gradlew.bat check --stacktrace -PprintTestResults
+
+platform:
+  - x64
+
 after_build:
   - dir build /s
 

@@ -23,7 +23,7 @@ before_install:
 install: ./gradlew assemble --stacktrace
 
 after_failure: #Run again with debug info enabled
-  - ./gradlew check  --stacktrace --info
+  - ./gradlew check  --stacktrace -PprintTestResults
 
 after_success:
   - bash <(curl -s https://codecov.io/bash) # Code Coverage Reporting
