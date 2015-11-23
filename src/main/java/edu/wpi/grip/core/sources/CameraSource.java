@@ -173,6 +173,7 @@ public class CameraSource extends Source {
                     }
                 }
         );
+        frameExecutor.setDaemon(true);
         frameExecutor.start();
         frameThread = Optional.of(frameExecutor);
     }
