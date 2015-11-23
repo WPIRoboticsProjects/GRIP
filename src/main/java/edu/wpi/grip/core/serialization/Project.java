@@ -24,11 +24,7 @@ public class Project {
         this.xstream.registerConverter(new StepConverter(eventBus, palette));
         this.xstream.registerConverter(new SourceConverter(eventBus, xstream.getMapper()));
         this.xstream.registerConverter(new SocketConverter(xstream.getMapper(), pipeline));
-
         this.xstream.registerConverter(new ConnectionConverter(eventBus));
-        this.xstream.registerConverter(new InjectedObjectConverter<>(eventBus), XStream.PRIORITY_VERY_HIGH);
-        this.xstream.registerConverter(new PythonScriptOperationConverter(), XStream.PRIORITY_VERY_HIGH);
-        this.xstream.registerConverter(new MatConverter());
 
         this.xstream.processAnnotations(new Class[]{
                 Pipeline.class, Step.class, Connection.class, InputSocket.class, OutputSocket.class,

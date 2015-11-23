@@ -3,6 +3,7 @@ package edu.wpi.grip.core;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
+import com.thoughtworks.xstream.annotations.XStreamOmitField;
 import edu.wpi.grip.core.events.*;
 
 import java.util.*;
@@ -17,7 +18,10 @@ import java.util.stream.Collectors;
  */
 @XStreamAlias(value = "grip:Pipeline")
 public class Pipeline {
+
+    @XStreamOmitField
     private final EventBus eventBus;
+
     private final List<Source> sources;
     private final List<Step> steps;
     private final Set<Connection> connections;
