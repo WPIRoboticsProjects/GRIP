@@ -140,7 +140,7 @@ public class FileParser {
                 new DefinedMethod("Laplacian", "Mat", "Mat"
                 ).addDescription("Find edges by calculating the Laplacian for the given image."),
                 new DefinedMethod("dilate", false, "Mat", "Mat"
-                ).addDescription("Apply a dilation (expands areas of higher values) to an image."),
+                ).addDescription("Expands areas of higher values in an image."),
                 new DefinedMethod("Canny", false,
                         new DefinedParamType("Mat"),
                         new DefinedParamType("Mat", DefinedParamType.DefinedParamDirection.OUTPUT)
@@ -158,12 +158,12 @@ public class FileParser {
                         new DefinedParamType("double"),
                         new DefinedParamType("int").setLiteralDefaultValue("ADAPTIVE_THRESH_MEAN_C"),
                         new DefinedParamType("int").setLiteralDefaultValue("THRESH_BINARY")
-                ).addDescription("Apply an adaptive threshold to an array (transforms a grayscale image to a binary image)."),
+                ).addDescription("Transforms a grayscale image to a binary image)."),
                 new DefinedMethod("erode", false,
                         new DefinedParamType("Mat"),
                         new DefinedParamType("Mat"),
                         new DefinedParamType("Mat")
-                ).addDescription("Apply an erosion (expands areas of lower values) to an image."),
+                ).addDescription("Expands areas of lower values in an image."),
                 new DefinedMethod("cvtColor", false,
                         new DefinedParamType("Mat"),
                         new DefinedParamType("Mat"),
@@ -173,7 +173,7 @@ public class FileParser {
                         new DefinedParamType("Mat"),
                         new DefinedParamType("Mat"),
                         new DefinedParamType("int").setLiteralDefaultValue("COLORMAP_AUTUMN")
-                ).addDescription("Apply a GNU Octave/MATLAB equivalent colormap on a given image."),
+                ).addDescription("Apply a MATLAB equivalent colormap to an image."),
                 new DefinedMethod("resize", false,
                         new DefinedParamType("Mat"),
                         new DefinedParamType("Mat"),
