@@ -2,9 +2,12 @@ package edu.wpi.grip.core;
 
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
+import com.thoughtworks.xstream.annotations.XStreamAlias;
+import com.thoughtworks.xstream.annotations.XStreamOmitField;
 import edu.wpi.grip.core.events.*;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Pipeline has the list of steps in a computer vision algorithm, as well as the set of connections between the inputs
@@ -13,8 +16,12 @@ import java.util.*;
  * The pipeline class is responsible for listening for other components of the application (such as the GUI) adding
  * or removing steps and connections, and for registering and unregistering them from the event bus when appropriate.
  */
+@XStreamAlias(value = "grip:Pipeline")
 public class Pipeline {
+
+    @XStreamOmitField
     private final EventBus eventBus;
+
     private final List<Source> sources;
     private final List<Step> steps;
     private final Set<Connection> connections;
@@ -38,6 +45,23 @@ public class Pipeline {
         this.steps.forEach(this.eventBus::register);
         this.connections.forEach(this.eventBus::register);
         this.sink.ifPresent(this.eventBus::register);
+    }
+
+    /**
+     * Remove everything in the pipeline
+     */
+    public void clear() {
+        // These streams are both collected into lists because streams cannot modify their source.  Sending a
+        // StepRemovedEvent or SourceRemovedEvent modifies this.steps or this.sources.
+        this.steps.stream()
+                .map(StepRemovedEvent::new)
+                .collect(Collectors.toList())
+                .forEach(this.eventBus::post);
+
+        this.sources.stream()
+                .map(SourceRemovedEvent::new)
+                .collect(Collectors.toList())
+                .forEach(this.eventBus::post);
     }
 
     /**

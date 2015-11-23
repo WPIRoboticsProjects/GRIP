@@ -14,6 +14,7 @@ import java.util.Optional;
 import java.util.Set;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.checkState;
 
 /**
  * A Socket is an abstract wrapper for a value that can be updated and passed around operations.  Sockets contain a set of hints
@@ -29,6 +30,7 @@ public abstract class Socket<T> {
 
     protected final EventBus eventBus;
     private Optional<Step> step = Optional.empty();
+    private Optional<Source> source = Optional.empty();
     private final Direction direction;
     private final Set<Connection> connections = new HashSet<>();
     private final SocketHint<T> socketHint;
@@ -96,19 +98,36 @@ public abstract class Socket<T> {
     }
 
     /**
-     * @param step The step that this socket is part of.
+     * @param step The step that this socket is part of, if it's in a step.
      */
-    public void setStep(Optional<Step> step) {
+    protected void setStep(Optional<Step> step) {
+        step.ifPresent(s -> checkState(!this.source.isPresent(), "Socket cannot be both in a step and a source"));
         this.step = step;
     }
 
     /**
-     * @return The step that this socket is part of, or <code>null</code> if it has not been set.
+     * @return The step that this socket is part of
+     * @see #getSource()
      */
     public Optional<Step> getStep() {
         return step;
     }
 
+    /**
+     * @param source The source that this socket is part of, if it's in a source.
+     */
+    protected void setSource(Optional<Source> source) {
+        source.ifPresent(s -> checkState(!this.step.isPresent(), "Socket cannot be both in a step and a source"));
+        this.source = source;
+    }
+
+    /**
+     * @return The source that this socket is part of
+     * @see #getStep()
+     */
+    public Optional<Source> getSource() {
+        return source;
+    }
 
     /**
      * @return <code>INPUT</code> if this is the input to a step or sink, <code>OUTPUT</code> if this is the output of

@@ -3,6 +3,7 @@ package edu.wpi.grip.ui;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import edu.wpi.grip.core.Operation;
+import edu.wpi.grip.core.Palette;
 import edu.wpi.grip.core.events.OperationAddedEvent;
 import edu.wpi.grip.ui.util.SearchUtility;
 import javafx.beans.InvalidationListener;
@@ -27,18 +28,20 @@ import static com.google.common.base.Preconditions.checkNotNull;
  */
 public class PaletteView extends VBox {
 
-    private final EventBus eventBus;
-
     @FXML
     private VBox operations;
 
     @FXML
     private CustomTextField operationSearch;
 
-    public PaletteView(EventBus eventBus) {
+    private final EventBus eventBus;
+    private final Palette palette;
+
+    public PaletteView(EventBus eventBus, Palette palette) {
         checkNotNull(eventBus);
 
         this.eventBus = eventBus;
+        this.palette = palette;
 
         try {
             FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("Palette.fxml"));
@@ -51,11 +54,15 @@ public class PaletteView extends VBox {
 
         setupClearButtonField(operationSearch);
 
+        for (Operation operation : this.palette.getOperations()) {
+            this.operations.getChildren().add(new OperationView(this.eventBus, operation));
+        }
+
+
         final InvalidationListener filterOperations = observable -> {
             this.operations.getChildren().forEach(node -> {
                 final Operation operation = ((OperationView) node).getOperation();
                 final String searchText = this.operationSearch.getText();
-
                 node.setVisible(SearchUtility.fuzzyContains(operation.getName(), searchText)
                         || SearchUtility.fuzzyContains(operation.getDescription(), searchText));
             });
@@ -92,6 +99,13 @@ public class PaletteView extends VBox {
      */
     public void clearOperations() {
         this.operations.getChildren().clear();
+    }
+
+    /**
+     * @return The palette of operations shown in this view
+     */
+    public Palette getPalette() {
+        return palette;
     }
 
     @Subscribe

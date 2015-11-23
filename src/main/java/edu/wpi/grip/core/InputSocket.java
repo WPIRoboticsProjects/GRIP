@@ -2,6 +2,7 @@ package edu.wpi.grip.core;
 
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
+import com.thoughtworks.xstream.annotations.XStreamAlias;
 import edu.wpi.grip.core.events.SocketConnectedChangedEvent;
 
 /**
@@ -9,6 +10,7 @@ import edu.wpi.grip.core.events.SocketConnectedChangedEvent;
  *
  * @param <T> The type of the value that this socket stores
  */
+@XStreamAlias(value = "grip:Input")
 public class InputSocket<T> extends Socket<T> {
 
     /**

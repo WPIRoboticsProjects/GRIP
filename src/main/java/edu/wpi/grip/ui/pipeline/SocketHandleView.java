@@ -60,6 +60,8 @@ public class SocketHandleView extends Button {
         this.connectedProperty.addListener((observableValue, oldValue, isConnected) ->
                 this.pseudoClassStateChanged(CONNECTED_PSEUDO_CLASS, isConnected));
 
+        this.connectedProperty().set(!this.socket.getConnections().isEmpty());
+
         this.eventBus.register(this);
 
         // When the user clicks on a socket, remove any connections associated with that socket.
