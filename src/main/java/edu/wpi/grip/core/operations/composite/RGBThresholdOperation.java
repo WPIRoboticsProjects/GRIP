@@ -34,7 +34,7 @@ public class RGBThresholdOperation extends ThresholdOperation {
 
     @Override
     public String getDescription() {
-        return "Segment an image based on color ranges";
+        return "Segment an image based on color ranges.";
     }
 
     @Override

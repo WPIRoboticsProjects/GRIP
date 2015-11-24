@@ -128,72 +128,61 @@ public class FileParser {
         compilationUnits.putAll(enumVisitor.generateCompilationUnits());
 
         DefinedMethodCollection collection = new DefinedMethodCollection(baseClassName,
-                new DefinedMethod("Sobel", false, "Mat", "Mat"),
-                new DefinedMethod("medianBlur", false, "Mat", "Mat"),
+                new DefinedMethod("Sobel", false, "Mat", "Mat"
+                ).addDescription("Find edges by calculating the requested derivative order for the given image."),
+                new DefinedMethod("medianBlur", false, "Mat", "Mat"
+                ).addDescription("Apply a Median blur to an image."),
                 new DefinedMethod("GaussianBlur", false,
                         new DefinedParamType("Mat"),
                         new DefinedParamType("Mat"),
                         new DefinedParamType("Size").setDefaultValue(new ObjectDefaultValue("Size", "1", "1"))
-                ),
-                new DefinedMethod("Laplacian", "Mat", "Mat"),
-                new DefinedMethod("dilate", false, "Mat", "Mat"),
-                new DefinedMethod("Canny", false, new DefinedParamType("Mat"), new DefinedParamType("Mat", DefinedParamType.DefinedParamDirection.OUTPUT)),
+                ).addDescription("Apply a Gaussian blur to an image."),
+                new DefinedMethod("Laplacian", "Mat", "Mat"
+                ).addDescription("Find edges by calculating the Laplacian for the given image."),
+                new DefinedMethod("dilate", false, "Mat", "Mat"
+                ).addDescription("Expands areas of higher values in an image."),
+                new DefinedMethod("Canny", false,
+                        new DefinedParamType("Mat"),
+                        new DefinedParamType("Mat", DefinedParamType.DefinedParamDirection.OUTPUT)
+                ).addDescription("Apply a \\\"canny edge detection\\\" algorithm to an image."),
                 new DefinedMethod("threshold", false,
                         new DefinedParamType("Mat"),
                         new DefinedParamType("Mat"),
                         new DefinedParamType("double"),
                         new DefinedParamType("double"),
                         new DefinedParamType("int").setLiteralDefaultValue("THRESH_BINARY")
-                ).addDescription("Applies a fixed-level threshold to each array element. " +
-                        "The function applies fixed-level thresholding to a single-channel array. The function is typically " +
-                        "used to get a bi-level (binary) image out of a grayscale image ( cv::compare could be also used for " +
-                        "this purpose) or for removing a noise, that is, filtering out pixels with too small or too large " +
-                        "values. There are several types of thresholding supported by the function. They are determined by " +
-                        "type parameter. " +
-                        "Also, the special values cv::THRESH_OTSU or cv::THRESH_TRIANGLE may be combined with one of the " +
-                        "above values. In these cases, the function determines the optimal threshold value using the Otsu's " +
-                        "or Triangle algorithm and uses it instead of the specified thresh . The function returns the " +
-                        "computed threshold value. Currently, the Otsu's and Triangle methods are implemented only for 8-bit " +
-                        "images."),
+                ).addDescription("Apply a fixed-level threshold to each array element in an image."),
                 new DefinedMethod("adaptiveThreshold", false,
                         new DefinedParamType("Mat"),
                         new DefinedParamType("Mat"),
                         new DefinedParamType("double"),
                         new DefinedParamType("int").setLiteralDefaultValue("ADAPTIVE_THRESH_MEAN_C"),
                         new DefinedParamType("int").setLiteralDefaultValue("THRESH_BINARY")
-                ).addDescription("Applies an adaptive threshold to an array. The function transforms a grayscale image to a binary image"),
+                ).addDescription("Transforms a grayscale image to a binary image)."),
                 new DefinedMethod("erode", false,
                         new DefinedParamType("Mat"),
                         new DefinedParamType("Mat"),
                         new DefinedParamType("Mat")
-                ),
+                ).addDescription("Expands areas of lower values in an image."),
                 new DefinedMethod("cvtColor", false,
                         new DefinedParamType("Mat"),
                         new DefinedParamType("Mat"),
                         new DefinedParamType("int").setLiteralDefaultValue("COLOR_BGR2BGRA")
-                ).addDescription("The function converts an input image from one color space to another. In case of a transformation " +
-                        "to-from RGB color space, the order of the channels should be specified explicitly (RGB or BGR). Note " +
-                        "that the default color format in OpenCV is often referred to as RGB but it is actually BGR (the " +
-                        "bytes are reversed). So the first byte in a standard (24-bit) color image will be an 8-bit Blue " +
-                        "component, the second byte will be Green, and the third byte will be Red. The fourth, fifth, and " +
-                        "sixth bytes would then be the second pixel (Blue, then Green, then Red), and so on."),
+                ).addDescription("Convert an image from one color space to another."),
                 new DefinedMethod("applyColorMap", true,
                         new DefinedParamType("Mat"),
                         new DefinedParamType("Mat"),
                         new DefinedParamType("int").setLiteralDefaultValue("COLORMAP_AUTUMN")
-                ).addDescription("Applies a GNU Octave/MATLAB equivalent colormap on a given image."),
+                ).addDescription("Apply a MATLAB equivalent colormap to an image."),
                 new DefinedMethod("resize", false,
                         new DefinedParamType("Mat"),
                         new DefinedParamType("Mat"),
                         new DefinedParamType("Size")
-                ).addDescription("The function resize resizes the image src down to or up to the specified size. Note that the " +
-                        "initial dst type or size are not taken into account. Instead, the size and type are derived from " +
-                        "the `src`,`dsize`,`fx`, and `fy`. To shrink an image, it will generally look best with CV_INTER_AREA interpolation, whereas to " +
-                        "enlarge an image, it will generally look best with CV_INTER_CUBIC (slow) or CV_INTER_LINEAR " +
-                        "(faster but still looks OK)"),
+                ).addDescription("Resize the image to the specified size."),
                 new DefinedMethod("rectangle", false,
                         new DefinedParamType("Mat", DefinedParamType.DefinedParamDirection.INPUT_AND_OUTPUT),
-                        new DefinedParamType("Point"))
+                        new DefinedParamType("Point")
+                ).addDescription("Draw a rectangle (outline or filled) on an image.")
         ).setDirectionDefaults(DefinedParamType.DefinedParamDirection.OUTPUT, "dst")
                 .setIgnoreDefaults("dtype", "ddepth");
         new OpenCVMethodVisitor(collection).visit(imgprocDeclaration, compilationUnits);
@@ -211,43 +200,45 @@ public class FileParser {
 
         DefinedMethodCollection collection = new DefinedMethodCollection(baseClassName,
                 new DefinedMethod("add", true, "Mat", "Mat", "Mat")
-                        .addDescription("Calculate the per-pixel sum of two Mats"),
+                        .addDescription("Calculate the per-pixel sum of two images."),
                 new DefinedMethod("subtract", true, "Mat", "Mat", "Mat")
-                        .addDescription("Calculate the per-pixel difference between two Mats"),
+                        .addDescription("Calculate the per-pixel difference between two images."),
                 new DefinedMethod("multiply", false, "Mat", "Mat", "Mat")
-                        .addDescription("Calculate the per-pixel scaled product of two Mats."),
+                        .addDescription("Calculate the per-pixel scaled product of two images."),
                 new DefinedMethod("divide", false, "Mat", "Mat", "Mat")
-                        .addDescription("Preform per-pixel division of two Mats."),
-                new DefinedMethod("scaleAdd", false, "Mat", "double", "Mat", "Mat"),
+                        .addDescription("Perform per-pixel division of two images."),
+                new DefinedMethod("scaleAdd", false, "Mat", "double", "Mat", "Mat")
+                        .addDescription("Calculate the sum of two images where one image is multiplied by a scalar."),
 //                new DefinedMethod("normalize", false, "Mat", "Mat"),
                 new DefinedMethod("addWeighted", false, "Mat")
-                        .addDescription("Calculate the weighted sum of two Mats."),
+                        .addDescription("Calculate the weighted sum of two images."),
                 new DefinedMethod("flip", false,
                         new DefinedParamType("Mat"),
                         new DefinedParamType("Mat"),
                         new DefinedParamType("int").setLiteralDefaultValue("Y_AXIS"))
-                        .addDescription("Flip Mat around vertical, horizontal, or both axes."),
+                        .addDescription("Flip image around vertical, horizontal, or both axes."),
                 new DefinedMethod("bitwise_and", true, "Mat", "Mat", "Mat")
-                        .addDescription("Calculate bitwise conjunction of the two Mats"),
+                        .addDescription("Calculate the per-element bitwise conjunction of two images."),
                 new DefinedMethod("bitwise_or", true, "Mat", "Mat", "Mat")
-                        .addDescription("Calculate the per-element bit-wise disjunction of two Mats"),
+                        .addDescription("Calculate the per-element bit-wise disjunction of two images."),
                 new DefinedMethod("bitwise_xor", true, "Mat", "Mat", "Mat")
-                        .addDescription("Calculate the per-element bit-wise \\\"exclusive or\\\" operation on two Mats"),
+                        .addDescription("Calculate the per-element bit-wise \\\"exclusive or\\\" on two images."),
                 new DefinedMethod("bitwise_not", true, "Mat", "Mat")
-                        .addDescription("Calculate per-element bit-wise inversion of the input Mat"),
-                new DefinedMethod("absdiff", false, "Mat", "Mat"),
+                        .addDescription("Calculate per-element bit-wise inversion of an image."),
+                new DefinedMethod("absdiff", false, "Mat", "Mat")
+                        .addDescription("Calculate the per-element absolute difference of two images."),
                 new DefinedMethod("compare", true,
                         new DefinedParamType("Mat"),
                         new DefinedParamType("Mat"),
                         new DefinedParamType("Mat"),
                         new DefinedParamType("int").setLiteralDefaultValue("CMP_EQ")
-                ).addDescription("Compare each pixel in two Mats."),
+                ).addDescription("Compare each pixel in two images using a given rule."),
                 new DefinedMethod("max", false, "Mat", "Mat")
-                        .addDescription("Calculate per-element maximum of two Mats."),
+                        .addDescription("Calculate per-element maximum of two images."),
                 new DefinedMethod("min", false, "Mat", "Mat")
-                        .addDescription("Calculate the per-element minimum of two Mats."),
+                        .addDescription("Calculate the per-element minimum of two images."),
                 new DefinedMethod("extractChannel", false, "Mat", "Mat")
-                        .addDescription("Extract a single channel from a Mat.")
+                        .addDescription("Extract a single channel from a image.")
 //                new DefinedMethod("sqrt", false, "Mat", "Mat"),
 //                new DefinedMethod("pow", false,
 //                        new DefinedParamType("Mat"),

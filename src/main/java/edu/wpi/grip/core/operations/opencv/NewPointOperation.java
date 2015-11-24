@@ -23,7 +23,7 @@ public class NewPointOperation implements CVOperation {
 
     @Override
     public String getDescription() {
-        return "Create a Point";
+        return "Create a point by (x,y) value.";
     }
 
     @Override

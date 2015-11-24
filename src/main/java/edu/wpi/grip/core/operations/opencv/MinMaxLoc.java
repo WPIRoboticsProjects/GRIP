@@ -30,7 +30,7 @@ public class MinMaxLoc implements CVOperation {
 
     @Override
     public String getDescription() {
-        return "Find the global minimum and maximum in an a single channel grayscale image.";
+        return "Find the global minimum and maximum in a single channel grayscale image.";
     }
 
     @Override

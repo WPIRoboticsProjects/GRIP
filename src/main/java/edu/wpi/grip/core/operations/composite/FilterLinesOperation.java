@@ -31,7 +31,7 @@ public class FilterLinesOperation implements Operation {
 
     @Override
     public String getDescription() {
-        return "Filter only lines from a Find Lines operation that fit certain criteria";
+        return "Filter only lines from a Find Lines operation that fit certain criteria.";
     }
 
     @Override

@@ -35,7 +35,7 @@ public class HSLThresholdOperation extends ThresholdOperation {
 
     @Override
     public String getDescription() {
-        return "Segment an image based on hue, saturation, and luminance ranges";
+        return "Segment an image based on hue, saturation, and luminance ranges.";
     }
 
     @Override
