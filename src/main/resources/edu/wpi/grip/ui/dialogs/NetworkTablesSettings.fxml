@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<fx:root style="-fx-border-color: black;" stylesheets="@../GRIP.css" type="DialogPane" xmlns="http://javafx.com/javafx/8.0.40" xmlns:fx="http://javafx.com/fxml/1">
+    <content>
+        <VBox>
+            <children>
+                <RadioButton fx:id="clientRadio" contentDisplay="RIGHT" mnemonicParsing="false" text="Client">
+                    <graphic>
+                        <Separator orientation="HORIZONTAL" />
+                    </graphic>
+                </RadioButton>
+                <VBox styleClass="indented">
+                    <children>
+                        <RadioButton fx:id="teamNumberRadio" contentDisplay="RIGHT" mnemonicParsing="false" text="Team Number">
+                            <graphic>
+                                <Separator orientation="HORIZONTAL" />
+                            </graphic>
+                        </RadioButton>
+                        <GridPane>
+                            <columnConstraints>
+                                <ColumnConstraints hgrow="SOMETIMES" />
+                                <ColumnConstraints hgrow="SOMETIMES" />
+                            </columnConstraints>
+                            <rowConstraints>
+                                <RowConstraints vgrow="SOMETIMES" />
+                            </rowConstraints>
+                            <children>
+                                <Label text="Number" />
+                                <Spinner editable="true" GridPane.columnIndex="1" />
+                            </children>
+                        </GridPane>
+                        <RadioButton fx:id="ipAddress" contentDisplay="RIGHT" mnemonicParsing="false" text="IP Address">
+                            <graphic>
+                                <Separator orientation="HORIZONTAL" />
+                            </graphic>
+                        </RadioButton>
+                        <GridPane>
+                            <columnConstraints>
+                                <ColumnConstraints hgrow="SOMETIMES" />
+                                <ColumnConstraints hgrow="SOMETIMES" />
+                            </columnConstraints>
+                            <rowConstraints>
+                                <RowConstraints vgrow="SOMETIMES" />
+                            </rowConstraints>
+                            <children>
+                                <Label text="IP" />
+                                <TextField promptText="roboRIO-190-FRC.local" GridPane.columnIndex="1" />
+                            </children>
+                        </GridPane>
+                    </children>
+                </VBox>
+                <RadioButton fx:id="serverRadio" contentDisplay="RIGHT" mnemonicParsing="false" text="Server">
+                    <graphic>
+                        <Separator orientation="HORIZONTAL" />
+                    </graphic>
+                </RadioButton>
+                <GridPane styleClass="indented">
+                    <columnConstraints>
+                        <ColumnConstraints hgrow="SOMETIMES" />
+                        <ColumnConstraints hgrow="SOMETIMES" />
+                    </columnConstraints>
+                    <rowConstraints>
+                        <RowConstraints />
+                    </rowConstraints>
+                    <children>
+                        <Label text="Persistent Filename" />
+                        <TextField GridPane.columnIndex="1" />
+                    </children>
+                </GridPane>
+                <Separator orientation="HORIZONTAL" />
+                <GridPane styleClass="indented">
+                    <columnConstraints>
+                        <ColumnConstraints hgrow="SOMETIMES" />
+                        <ColumnConstraints hgrow="SOMETIMES" />
+                    </columnConstraints>
+                    <rowConstraints>
+                        <RowConstraints vgrow="SOMETIMES" />
+                    </rowConstraints>
+                    <children>
+                        <Label text="Port" />
+                        <Spinner editable="true" GridPane.columnIndex="1" />
+                    </children>
+                </GridPane>
+            </children>
+        </VBox>
+    </content>
+    <buttonTypes>
+        <ButtonType fx:constant="APPLY" />
+        <ButtonType fx:constant="CLOSE" />
+    </buttonTypes>
+</fx:root>

@@ -33,13 +33,14 @@ sourceSets {
 repositories {
     mavenCentral()
     jcenter()
+    maven {
+        url="http://first.wpi.edu/FRC/roborio/maven/"
+    }
 }
 
-def os = System.getProperty("os.name").toLowerCase()
 dependencies {
-    if (os.contains("windows")) compile fileTree(include: ['*windows.jar'], dir: 'libs')
-    else if (os.contains("linux")) compile fileTree(include: ['*linux.jar'], dir: 'libs')
-    else if (os.contains("mac")) compile fileTree(include: ['*os*x.jar'], dir: 'libs')
+    compile group: 'edu.wpi.first.wpilib.networktables.java', name: 'NetworkTables', version:'3.0.0-SNAPSHOT', classifier:'desktop-development'
+    compile group: 'edu.wpi.first.wpilib.networktables.java', name: 'NetworkTables', version:'3.0.0-SNAPSHOT', classifier:'arm-development'
     compile group: 'org.controlsfx', name: 'controlsfx', version: '8.40.10'
     compile group: 'com.google.guava', name: 'guava', version: '18.0'
     compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.4'

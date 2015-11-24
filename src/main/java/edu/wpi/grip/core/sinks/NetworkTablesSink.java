@@ -4,6 +4,7 @@ import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import edu.wpi.first.wpilibj.networktables.NetworkTable;
 import edu.wpi.grip.core.OutputSocket;
+import edu.wpi.grip.core.Sink;
 import edu.wpi.grip.core.events.SocketPublishedEvent;
 import edu.wpi.grip.core.operations.composite.BlobsReport;
 import edu.wpi.grip.core.operations.composite.LinesReport;
@@ -15,14 +16,20 @@ import java.util.List;
 /**
  * Allows sockets to be published onto NetworkTables
  */
-public class NetworkTablesSink {
+public class NetworkTablesSink implements Sink {
+    private static Boolean initialized = false;
     protected static final String TABLE_NAME = "GRIP";
+
     /**
      * The {@link NetworkTable} used by {@link NetworkTablesSink}
      */
     private static final NetworkTable table = NetworkTable.getTable(TABLE_NAME);
 
     public NetworkTablesSink(EventBus eventBus) {
+        synchronized (NetworkTablesSink.initialized) {
+            if (initialized) throw new IllegalStateException("Can not create more than one NetworkTablesSink");
+            initialized = true;
+        }
         eventBus.register(this);
     }
 
@@ -89,6 +96,8 @@ public class NetworkTablesSink {
         }
     }
 
-
+    public static Boolean isInitialized(){
+        return initialized;
+    }
 
 }
