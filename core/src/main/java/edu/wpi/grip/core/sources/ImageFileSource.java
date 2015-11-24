@@ -102,6 +102,11 @@ public class ImageFileSource extends Source {
         return this.started;
     }
 
+    @Override
+    public boolean isRestartable() {
+        return false;
+    }
+
     /**
      * Loads the image and posts an update to the {@link EventBus}
      *

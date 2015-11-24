@@ -51,11 +51,38 @@ public abstract class Source {
         final T source = (T) start();
         eventBus.register(source);
         return source;
-    };
+    }
 
+    /**
+     * Starts this source.
+     * A source whose {@link #isRestartable()} returns true can also be stopped and started and stopped multiple times.
+     *
+     * @return The source object that created the camera
+     * @throws IOException If the source fails to be started
+     */
     protected abstract Source start() throws IOException;
 
+    /**
+     * Stops this source.
+     * This will stop the source publishing new socket values after this method returns.
+     * A source whose {@link #isRestartable()} returns true can also be stopped and started and stopped multiple times.
+     *
+     * @return The source that was stopped
+     * @throws Exception
+     */
     public abstract Source stop() throws Exception;
 
+    /**
+     * Used to indicate if the source is running or stopped
+     *
+     * @return true if this source is running
+     */
     public abstract boolean isRunning();
+
+    /**
+     * Used to flag to the UI if this source should have the start/stop button displayed
+     *
+     * @return true if this source can be restarted once created
+     */
+    public abstract boolean isRestartable();
 }

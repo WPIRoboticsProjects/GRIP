@@ -83,7 +83,6 @@ public class CameraSource extends Source {
         this.frameOutputSocket = new OutputSocket<>(eventBus, imageOutputHint);
         this.frameRateOutputSocket = new OutputSocket<>(eventBus, frameRateOutputHint);
         this.grabber = frameGrabber;
-        eventBus.register(this);
     }
 
     @Override
@@ -230,11 +229,16 @@ public class CameraSource extends Source {
         }
     }
 
+    @Override
+    public boolean isRestartable() {
+        return true;
+    }
+
     @Subscribe
     public void onSourceRemovedEvent(SourceRemovedEvent event) throws TimeoutException {
         if (event.getSource() == this) {
             try {
-                this.stop();
+                if (this.isRunning()) this.stop();
             } finally {
                 this.eventBus.unregister(this);
             }
