@@ -2,7 +2,6 @@ package edu.wpi.grip.core.events;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Optional;
-import edu.wpi.grip.core.Socket;
 import edu.wpi.grip.core.Step;
 
 

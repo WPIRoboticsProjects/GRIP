@@ -2,7 +2,7 @@ install:
   - choco install -y InnoSetup
 
 build_script:
-  - gradlew.bat assemble --stacktrace
+  - gradlew.bat :ui:assemble --stacktrace
 
 # to run your custom scripts instead of automatic tests
 test_script:
