@@ -4,7 +4,10 @@ import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import edu.wpi.grip.core.InputSocket;
 import edu.wpi.grip.core.events.SocketChangedEvent;
+import javafx.geometry.Pos;
+import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
+import javafx.scene.layout.VBox;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
@@ -41,7 +44,14 @@ public class SliderInputSocketView extends InputSocketView<Number> {
         this.slider.valueProperty().addListener(o -> this.getSocket().setValue(this.slider.getValue()));
         this.slider.disableProperty().bind(this.getHandle().connectedProperty());
 
-        this.setContent(this.slider);
+        // Add a label under the slider to show the exact value
+        final Label label = new Label(String.format("%.0f", initialValue));
+        label.setMaxWidth(Double.MAX_VALUE);
+        label.setAlignment(Pos.CENTER);
+        this.slider.valueProperty().addListener(observable ->
+                label.setText(String.format("%.0f", this.slider.getValue())));
+
+        this.setContent(new VBox(this.slider, label));
     }
 
     @Subscribe
