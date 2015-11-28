@@ -199,7 +199,7 @@ public class MainWindowView extends VBox {
 
         this.project.getFile().ifPresent(file -> fileChooser.setInitialDirectory(file.getParentFile()));
 
-        final File file = fileChooser.showOpenDialog(this.getScene().getWindow());
+        final File file = fileChooser.showSaveDialog(this.getScene().getWindow());
         if (file == null) {
             return false;
         }
