@@ -37,13 +37,10 @@ public class PreviewsView extends VBox {
 
     private final EventBus eventBus;
     private final List<OutputSocket<?>> previewedSockets;
-    private PipelineView pipeline;//test
+    private PipelineView pipeline;//This is used to determine the order the previews are shown in.
 
-    //test:pipeline view
     public PreviewsView(EventBus eventBus, PipelineView pipeline) {
         checkNotNull(eventBus);
-
-
 
         this.eventBus = eventBus;
         this.previewedSockets = new ArrayList<>();
