@@ -22,9 +22,10 @@ import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.List;
-import java.util.concurrent.Executor;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
+
+import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * A box of buttons that let the user add different kinds of {@link edu.wpi.grip.core.Source Source}s.  Depending on which button is pressed,
@@ -33,15 +34,15 @@ import java.util.function.Predicate;
  */
 public class AddSourceView extends HBox {
 
+    private final EventBus eventBus;
+
     @FunctionalInterface
     private interface SupplierWithIO<T> {
         T getWithIO() throws IOException;
     }
 
-    private final EventBus eventBus;
-
     public AddSourceView(EventBus eventBus) {
-        this.eventBus = eventBus;
+        this.eventBus = checkNotNull(eventBus, "Event Bus can not be null");
 
         this.setFillHeight(true);
 
@@ -127,12 +128,11 @@ public class AddSourceView extends HBox {
     }
 
     /**
-     *
-     * @param dialog The dialog to load the camera with
+     * @param dialog               The dialog to load the camera with
      * @param cameraSourceSupplier The supplier that will create the camera
-     * @param failureCallback The handler for when the camera source supplier throws an IO Exception
+     * @param failureCallback      The handler for when the camera source supplier throws an IO Exception
      */
-    private void loadCamera(Dialog<ButtonType> dialog, SupplierWithIO<CameraSource> cameraSourceSupplier, Consumer<IOException> failureCallback){
+    private void loadCamera(Dialog<ButtonType> dialog, SupplierWithIO<CameraSource> cameraSourceSupplier, Consumer<IOException> failureCallback) {
         assert Platform.isFxApplicationThread() : "Should only run in FX thread";
         dialog.showAndWait().filter(Predicate.isEqual(ButtonType.OK)).ifPresent(result -> {
             try {

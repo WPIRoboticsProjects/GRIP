@@ -5,6 +5,7 @@ import com.google.common.eventbus.EventBus;
 import java.io.IOException;
 import java.util.Optional;
 import java.util.Properties;
+import java.util.concurrent.TimeoutException;
 
 /**
  * Base class for an input into the pipeline.
@@ -55,7 +56,7 @@ public abstract class Source {
 
     /**
      * Starts this source.
-     * A source whose {@link #isRestartable()} returns true can also be stopped and started and stopped multiple times.
+     * A source whose {@link #canStopAndStart()} returns true can also be stopped and started and stopped multiple times.
      *
      * @return The source object that created the camera
      * @throws IOException If the source fails to be started
@@ -65,12 +66,12 @@ public abstract class Source {
     /**
      * Stops this source.
      * This will stop the source publishing new socket values after this method returns.
-     * A source whose {@link #isRestartable()} returns true can also be stopped and started and stopped multiple times.
+     * A source whose {@link #canStopAndStart()} returns true can also be stopped and started and stopped multiple times.
      *
      * @return The source that was stopped
-     * @throws Exception
+     * @throws TimeoutException if the thread running the source fails to stop
      */
-    public abstract Source stop() throws Exception;
+    public abstract Source stop() throws TimeoutException;
 
     /**
      * Used to indicate if the source is running or stopped
@@ -84,5 +85,5 @@ public abstract class Source {
      *
      * @return true if this source can be restarted once created
      */
-    public abstract boolean isRestartable();
+    public abstract boolean canStopAndStart();
 }

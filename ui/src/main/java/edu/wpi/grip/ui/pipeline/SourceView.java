@@ -67,7 +67,7 @@ public class SourceView extends VBox {
 
         this.name.setText(source.getName());
 
-        if (!source.isRestartable()) startStopButton.setVisible(false);
+        if (!source.canStopAndStart()) startStopButton.setVisible(false);
         else {
             HBox.setHgrow(startStopButton, Priority.NEVER);
             startStopButton.setContentDisplay(ContentDisplay.RIGHT);

@@ -50,10 +50,8 @@ public class ImageFileSource extends Source {
     }
 
     private void initialize(EventBus eventBus, String path) throws IOException {
-        checkNotNull(eventBus, "Event Bus was null.");
-        checkNotNull(path, "Path was null");
-
-        this.path = path;
+        this.eventBus = checkNotNull(eventBus, "Event Bus was null.");
+        this.path = checkNotNull(path, "Path was null");
         this.name = Files.getNameWithoutExtension(this.path);
         this.outputSocket = new OutputSocket<>(eventBus, imageOutputHint);
 
@@ -103,7 +101,7 @@ public class ImageFileSource extends Source {
     }
 
     @Override
-    public boolean isRestartable() {
+    public boolean canStopAndStart() {
         return false;
     }
 

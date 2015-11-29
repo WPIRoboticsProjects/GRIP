@@ -230,7 +230,7 @@ public class CameraSource extends Source {
     }
 
     @Override
-    public boolean isRestartable() {
+    public boolean canStopAndStart() {
         return true;
     }
 
