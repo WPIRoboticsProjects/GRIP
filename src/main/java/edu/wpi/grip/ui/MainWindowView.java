@@ -62,9 +62,9 @@ public class MainWindowView extends VBox {
 
         this.eventBus = eventBus;
 
-        this.previews = new PreviewsView(eventBus);
         this.palette = new PaletteView(eventBus, new Palette(this.eventBus));
         this.pipeline = new PipelineView(eventBus, new Pipeline(this.eventBus));
+        this.previews = new PreviewsView(eventBus, pipeline);//Pass the pipeline to the PreviewsView to allow proper ordering of the previews
 
         this.topPane.getItems().addAll(previews, palette);
         this.bottomPane.setContent(pipeline);
