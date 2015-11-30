@@ -4,6 +4,9 @@ import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import edu.wpi.grip.core.InputSocket;
 import edu.wpi.grip.core.events.SocketChangedEvent;
+import javafx.geometry.Pos;
+import javafx.scene.control.Label;
+import javafx.scene.layout.VBox;
 import org.controlsfx.control.RangeSlider;
 
 import java.util.List;
@@ -64,7 +67,17 @@ public class RangeInputSocketView extends InputSocketView<List<Number>> {
 
         this.slider.disableProperty().bind(this.getHandle().connectedProperty());
 
-        this.setContent(this.slider);
+        // Add a label under the slider to show the exact range
+        final Label label = new Label(String.format("%.0f - %.0f", initialLow, initialHigh));
+        label.setMaxWidth(Double.MAX_VALUE);
+        label.setAlignment(Pos.CENTER);
+        this.slider.lowValueProperty().addListener(observable ->
+                label.setText(String.format("%.0f - %.0f", this.slider.getLowValue(), this.slider.getHighValue())));
+        this.slider.highValueProperty().addListener(observable ->
+                label.setText(String.format("%.0f - %.0f", this.slider.getLowValue(), this.slider.getHighValue())));
+
+
+        this.setContent(new VBox(this.slider, label));
     }
 
     @Subscribe
