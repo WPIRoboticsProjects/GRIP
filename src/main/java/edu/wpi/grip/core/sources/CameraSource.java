@@ -1,6 +1,7 @@
 package edu.wpi.grip.core.sources;
 
 
+import com.google.common.base.StandardSystemProperty;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
@@ -101,13 +102,21 @@ public class CameraSource extends Source {
 
     @Override
     public void createFromProperties(EventBus eventBus, Properties properties) throws IOException {
-        final String deviceNumber = properties.getProperty(DEVICE_NUMBER_PROPERTY);
-        final String address = properties.getProperty(ADDRESS_PROPERTY);
+        final String deviceNumberProperty = properties.getProperty(DEVICE_NUMBER_PROPERTY);
+        final String addressProperty = properties.getProperty(ADDRESS_PROPERTY);
 
-        if (deviceNumber != null) {
-            this.initialize(eventBus, new OpenCVFrameGrabber(Integer.valueOf(deviceNumber)), "Webcam " + deviceNumber);
-        } else if (address != null) {
-            this.initialize(eventBus, new IPCameraFrameGrabber(address), "IP Camera " + new URL(address).getHost());
+        if (deviceNumberProperty != null) {
+            final int deviceNumber = Integer.valueOf(deviceNumberProperty);
+
+            // On Windows, videoInput is much more reliable for webcam capture.  On other platforms, OpenCV's frame
+            // grabber class works fine.
+            if (StandardSystemProperty.OS_NAME.value().contains("Windows")) {
+                this.initialize(eventBus, new VideoInputFrameGrabber(deviceNumber), "Webcam " + deviceNumber);
+            } else {
+                this.initialize(eventBus, new OpenCVFrameGrabber(deviceNumber), "Webcam " + deviceNumber);
+            }
+        } else if (addressProperty != null) {
+            this.initialize(eventBus, new IPCameraFrameGrabber(addressProperty), "IP Camera " + new URL(addressProperty).getHost());
         } else {
             throw new IllegalArgumentException("Cannot initialize CameraSource without either a device number or " +
                     "address");
@@ -201,9 +210,9 @@ public class CameraSource extends Source {
                 frameThread = Optional.empty();
                 // This will always run even if a timeout exception occurs
                 try {
-                    grabber.ifPresent((openCVFrameGrabber) -> {
+                    grabber.ifPresent(grabber -> {
                         try {
-                            openCVFrameGrabber.stop();
+                            grabber.stop();
                         } catch (FrameGrabber.Exception e) {
                             throw new IllegalStateException("A problem occurred trying to stop the frame grabber", e);
                         }
