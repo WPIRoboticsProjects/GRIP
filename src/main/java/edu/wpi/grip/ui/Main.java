@@ -2,10 +2,10 @@ package edu.wpi.grip.ui;
 
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
+import com.sun.javafx.application.PlatformImpl;
 import edu.wpi.grip.core.events.FatalErrorEvent;
 import edu.wpi.grip.ui.util.DPIUtility;
 import javafx.application.Application;
-import javafx.application.Platform;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
@@ -47,18 +47,18 @@ public class Main extends Application {
     public final void onFatalErrorEvent(FatalErrorEvent error) {
         // Print throwable before showing the exception so that errors are in order in the console
         error.getThrowable().printStackTrace();
-        Platform.runLater(() -> {
+        PlatformImpl.runAndWait(() -> {
             synchronized (this.dialogLock) {
                 try {
                     // Don't create more than one exception dialog at the same time
                     final ExceptionAlert exceptionAlert = new ExceptionAlert(root, error.getThrowable(), getHostServices());
+                    exceptionAlert.setInitialFocus();
                     exceptionAlert.showAndWait();
-                } catch (RuntimeException e) {
+                } catch (Exception e) {
                     // Well in this case something has gone very, very wrong
                     // We don't want to create a feedback loop either.
                     e.printStackTrace();
-                    assert false : "Could not rethrow exception.";
-                    Platform.exit();
+                    System.exit(1); // Ensure we shut down the application if we get an exception
                 }
             }
         });
