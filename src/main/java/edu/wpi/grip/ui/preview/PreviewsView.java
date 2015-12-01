@@ -72,21 +72,26 @@ public class PreviewsView extends VBox {
 
                 if (socket.getStep().isPresent()) { //If this is a socket associated with a pipeline step (IE NOT a source)....
 
+                    int numbOfSourcePreviews = 0;//This we will use to count how many *source* previews (not *step* previews) are currently displayed
+                    while ((this.previewedSockets.size() > numbOfSourcePreviews) //While there are still previews to examine
+                            && (!this.previewedSockets.get(numbOfSourcePreviews).getStep().isPresent())) { //If this is a source...
+                        numbOfSourcePreviews++;
+                    }
+
                     Step socketStep = socket.getStep().get();//The pipeline step associated with the socket whose preview has changed
                     final StepView stepView = this.pipeline.findStepView(socketStep);//The gui object that displays the socketStep
                     int indexOfStep = this.pipeline.getSteps().indexOf(stepView); //The index of the step that has the socket in the pipeline
 
-                    int numbOfSourcePreviews = 0;//This we will use to count how many *source* previews (not *step* previews) are currently displayed
-                    while ((this.previewedSockets.size() > numbOfSourcePreviews) //While there are still previews to examine
-                            && ((this.previewedSockets.get(numbOfSourcePreviews).getSocketHint().getIdentifier().contains("Image")) //If this is a source (currently, sources can only have two types of output sockets, "Image" and "Frame Rate")...
-                            || (this.previewedSockets.get(numbOfSourcePreviews).getSocketHint().getIdentifier().contains("Frame Rate"))))
-                        numbOfSourcePreviews++;
+                    int indexInPreviews = numbOfSourcePreviews;
 
-                    indexOfStep += numbOfSourcePreviews;//Add the number of source previews currently displayed to the index so that the source previews are always displayed first
+                    while ((this.previewedSockets.size() > indexInPreviews)//Find the correct index in the displayed previews by comparing the indices in the pipeline, starting with the first non-source preview displayed
+                            && ((this.pipeline.getSteps().indexOf(this.pipeline.findStepView(this.previewedSockets.get(indexInPreviews).getStep().get()))) < indexOfStep)) {
+                        indexInPreviews++;
+                    }
 
-                    final int indexFinal = indexOfStep;
+                    final int indexFinal = indexInPreviews;
 
-                    if (indexFinal > this.previewBox.getChildren().size()) {//If the index is greater than the number of previews currently displayed...
+                    if (indexFinal > this.previewBox.getChildren().size()) {//If the index is greater than the number of previews currently displayed (this shouldn't ever happen)...
                         this.previewedSockets.add(socket);//...then just add it to the end of the list of previews
                         this.previewBox.getChildren().add(SocketPreviewViewFactory.createPreviewView(this.eventBus, socket));//...and display it last in the preview view
                     } else { // If the index is <= the number of previews currently displayed...
