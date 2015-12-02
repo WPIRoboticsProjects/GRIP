@@ -3,9 +3,11 @@ package edu.wpi.grip.ui.preview;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import edu.wpi.grip.core.OutputSocket;
+import edu.wpi.grip.core.Source;
 import edu.wpi.grip.core.Step;
 import edu.wpi.grip.core.events.SocketPreviewChangedEvent;
 import edu.wpi.grip.ui.pipeline.PipelineView;
+import edu.wpi.grip.ui.pipeline.SourceView;
 import edu.wpi.grip.ui.pipeline.StepView;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -92,8 +94,19 @@ public class PreviewsView extends VBox {
                         this.previewBox.getChildren().add(indexFinal, SocketPreviewViewFactory.createPreviewView(this.eventBus, socket));//...and display it in the correct location in the list of previews open in the gui
                     }
                 } else {//This is a socket associated with a source and not a pipeline step...
-                    this.previewedSockets.add(0, socket);//...so add it to the beginning of the list
-                    this.previewBox.getChildren().add(0, SocketPreviewViewFactory.createPreviewView(this.eventBus, socket));//...and display it first in the preview gui window
+
+                    Source socketSource = socket.getSource().get();//The source socket associated with the socket whose preview has changed
+                    final SourceView sourceView = this.pipeline.findSourceView(socketSource);//The gui object that displays the socketSource
+                    int indexOfSource = this.pipeline.getSources().indexOf(sourceView); //The index of the source that has the socket in the pipeline
+
+                    int indexInSourcePreviews = 0;
+                    while ((this.previewedSockets.size() > indexInSourcePreviews)//Find the correct index in the displayed source previews by comparing the indices
+                            && ((this.pipeline.getSources().indexOf(this.pipeline.findSourceView(this.previewedSockets.get(indexInSourcePreviews).getSource().get()))) < indexOfSource)) {
+                        indexInSourcePreviews++;
+                    }
+
+                    this.previewedSockets.add(indexInSourcePreviews, socket);
+                    this.previewBox.getChildren().add(indexInSourcePreviews, SocketPreviewViewFactory.createPreviewView(this.eventBus, socket));
                 }
             }
         } else {//The socket was already previewed, so the user must be requesting to not show this preview
