@@ -4,6 +4,7 @@ import com.google.common.net.UrlEscapers;
 import javafx.application.HostServices;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.input.Clipboard;
@@ -53,6 +54,7 @@ public final class ExceptionAlert extends Alert {
     private final ButtonType openGitHubIssuesBtnType = new ButtonType("Open GitHub Issues");
     private final ButtonType copyToClipboardBtnType = new ButtonType("Copy To Clipboard");
     private final ButtonType closeBtnType = new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
+    private final Node initialFocusElement;
 
     /**
      * @param throwable The throwable exception to display this alert for.
@@ -84,7 +86,6 @@ public final class ExceptionAlert extends Alert {
         final GridPane dialogContent = new GridPane();
         dialogContent.setMaxWidth(Double.MAX_VALUE);
         dialogContent.setMaxHeight(Double.MAX_VALUE);
-
 
 
         final Label issuePasteLabel = new Label(ISSUE_PROMPT_TEXT);
@@ -134,7 +135,15 @@ public final class ExceptionAlert extends Alert {
         });
 
         // Set the initial focus to the input box so the cursor goes there first
-        Platform.runLater(() -> openGitHubIssueBtn.requestFocus());
+        this.initialFocusElement = openGitHubIssueBtn;
+    }
+
+    /**
+     * Call this to assign the initial focus element.
+     * This is not done in the constructor so that the object is not exposed to any other threads from within the objects constructor
+     */
+    public final void setInitialFocus() {
+        Platform.runLater(() -> initialFocusElement.requestFocus());
     }
 
     /**
