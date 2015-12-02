@@ -70,9 +70,9 @@ class SocketConverter implements Converter {
                     && socket.getConnections().isEmpty()
                     && socket.getSocketHint().getView() != SocketHint.View.NONE) {
                 writer.startNode("value");
-                if (List.class.isAssignableFrom(socket.getSocketHint().getType())) {
+                if (List.class.isAssignableFrom(socket.getSocketHint().getType()) && socket.getValue().isPresent()) {
                     // XStream doesn't have a built-in converter for lists other than ArrayList
-                    context.convertAnother(new ArrayList<>((List) socket.getValue()));
+                    context.convertAnother(new ArrayList<>((List) socket.getValue().get()));
                 } else {
                     context.convertAnother(socket.getValue());
                 }

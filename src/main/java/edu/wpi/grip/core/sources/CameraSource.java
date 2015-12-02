@@ -160,8 +160,8 @@ public class CameraSource extends Source {
                     throw new IllegalStateException("The camera returned a null frame Mat");
                 }
 
-                frameMat.copyTo(frameOutputSocket.getValue());
-                frameOutputSocket.setValue(frameOutputSocket.getValue());
+                frameMat.copyTo(frameOutputSocket.getValue().get());
+                frameOutputSocket.setValue(frameOutputSocket.getValue().get());
                 long thisMoment = System.currentTimeMillis();
                 frameRateOutputSocket.setValue(1000 / (thisMoment - lastFrame));
                 lastFrame = thisMoment;

@@ -65,13 +65,13 @@ public class FindBlobsOperation implements Operation {
     @Override
     @SuppressWarnings("unchecked")
     public void perform(InputSocket<?>[] inputs, OutputSocket<?>[] outputs) {
-        final Mat input = (Mat) inputs[0].getValue();
-        final Number minArea = (Number) inputs[1].getValue();
-        final List<Number> circularity = (List<Number>) inputs[2].getValue();
-        final Boolean darkBlobs = (Boolean) inputs[3].getValue();
+        final Mat input = (Mat) inputs[0].getValue().get();
+        final Number minArea = (Number) inputs[1].getValue().get();
+        final List<Number> circularity = (List<Number>) inputs[2].getValue().get();
+        final Boolean darkBlobs = (Boolean) inputs[3].getValue().get();
 
         final OutputSocket<BlobsReport> blobsReportSocket = (OutputSocket<BlobsReport>) outputs[0];
-        final BlobsReport blobsReport = blobsReportSocket.getValue();
+        final BlobsReport blobsReport = blobsReportSocket.getValue().get();
 
         final List<BlobsReport.Blob> blobs = new ArrayList<>();
 

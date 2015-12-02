@@ -59,21 +59,13 @@ public class HSLThresholdOperation extends ThresholdOperation {
     public void perform(InputSocket<?>[] inputs, OutputSocket<?>[] outputs, Optional<?> data) {
         final Mat[] dataArray = (Mat[]) data.orElseThrow(() -> new IllegalStateException("Data was not provided"));
 
-        final Mat input = ((InputSocket<Mat>) inputs[0]).getValue();
-        final List<Number> channel1 = ((InputSocket<List<Number>>) inputs[1]).getValue();
-        final List<Number> channel2 = ((InputSocket<List<Number>>) inputs[2]).getValue();
-        final List<Number> channel3 = ((InputSocket<List<Number>>) inputs[3]).getValue();
+        final Mat input = ((InputSocket<Mat>) inputs[0]).getValue().get();
+        final List<Number> channel1 = ((InputSocket<List<Number>>) inputs[1]).getValue().get();
+        final List<Number> channel2 = ((InputSocket<List<Number>>) inputs[2]).getValue().get();
+        final List<Number> channel3 = ((InputSocket<List<Number>>) inputs[3]).getValue().get();
 
         final OutputSocket<Mat> outputSocket = (OutputSocket<Mat>) outputs[0];
-        final Mat output = outputSocket.getValue();
-
-        // Do nothing if nothing is connected to the input
-        // TODO: this should happen automatically for all sockets that are marked as required
-        if (input.empty()) {
-            outputSocket.setValue(outputSocket.getSocketHint().createInitialValue());
-            return;
-        }
-
+        final Mat output = outputSocket.getValue().get();
 
         // Intentionally 1, 3, 2. This maps to the HLS open cv expects
         final Scalar lowScalar = new Scalar(

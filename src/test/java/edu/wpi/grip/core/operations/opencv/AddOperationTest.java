@@ -70,6 +70,6 @@ public class AddOperationTest {
 
         //Then
         Mat expectedResult = new Mat(2, sz, opencv_core.CV_8U, Scalar.all(3));
-        assertTrue(isMatEqual(c.getValue(), expectedResult));
+        assertTrue(isMatEqual(c.getValue().get(), expectedResult));
     }
 }

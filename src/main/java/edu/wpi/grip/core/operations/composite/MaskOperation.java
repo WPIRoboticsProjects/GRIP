@@ -55,18 +55,11 @@ public class MaskOperation implements Operation {
     @Override
     @SuppressWarnings("unchecked")
     public void perform(InputSocket<?>[] inputs, OutputSocket<?>[] outputs) {
-        final Mat input = ((InputSocket<Mat>) inputs[0]).getValue();
-        final Mat mask = ((InputSocket<Mat>) inputs[1]).getValue();
+        final Mat input = ((InputSocket<Mat>) inputs[0]).getValue().get();
+        final Mat mask = ((InputSocket<Mat>) inputs[1]).getValue().get();
 
         final OutputSocket<Mat> outputSocket = (OutputSocket<Mat>) outputs[0];
-        final Mat output = outputSocket.getValue();
-
-        // Do nothing if nothing is connected to the input
-        // TODO: this should happen automatically for all sockets that are marked as required
-        if (input.empty()) {
-            outputSocket.setValue(outputSocket.getSocketHint().createInitialValue());
-            return;
-        }
+        final Mat output = outputSocket.getValue().get();
 
         // Clear the output to black, then copy the input to it with the mask
         bitwise_xor(output, output, output);

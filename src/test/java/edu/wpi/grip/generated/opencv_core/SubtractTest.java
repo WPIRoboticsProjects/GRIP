@@ -58,6 +58,6 @@ public class SubtractTest {
 
         //Then
         Mat expectedResult = new Mat(2, sz, opencv_core.CV_8U, Scalar.all(5));
-        assertTrue(isMatEqual(outputs[0].getValue(), expectedResult));
+        assertTrue(isMatEqual(outputs[0].getValue().get(), expectedResult));
     }
 }

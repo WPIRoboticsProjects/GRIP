@@ -25,7 +25,7 @@ public class SliderInputSocketView extends InputSocketView<Number> {
     public SliderInputSocketView(EventBus eventBus, InputSocket<Number> socket) {
         super(eventBus, socket);
 
-        final Object[] domain = socket.getSocketHint().getDomain();
+        final Object[] domain = socket.getSocketHint().getDomain().get();
 
         checkArgument(domain != null
                         && domain.length == 2
@@ -35,7 +35,7 @@ public class SliderInputSocketView extends InputSocketView<Number> {
 
         final double min = ((Number) domain[0]).doubleValue();
         final double max = ((Number) domain[1]).doubleValue();
-        final double initialValue = socket.getValue().doubleValue();
+        final double initialValue = socket.getValue().get().doubleValue();
 
         this.slider = new Slider(min, max, initialValue);
         this.slider.setShowTickMarks(true);
@@ -57,7 +57,7 @@ public class SliderInputSocketView extends InputSocketView<Number> {
     @Subscribe
     public void updateSliderValue(SocketChangedEvent event) {
         if (event.getSocket() == this.getSocket()) {
-            this.slider.setValue(this.getSocket().getValue().doubleValue());
+            this.slider.setValue(this.getSocket().getValue().get().doubleValue());
         }
     }
 }

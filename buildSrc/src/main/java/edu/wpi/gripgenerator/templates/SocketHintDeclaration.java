@@ -141,9 +141,10 @@ public class SocketHintDeclaration {
         )};
 
         paramType.getDefaultValue().ifPresent(defaultValue -> {
+
             builtMethod[0] = new MethodCallExpr(
                     builtMethod[0],
-                    "initialValueSupplier",
+                    defaultValue.getSocketBuilderInitalValueMethodNameToUse(),
                     Collections.singletonList(defaultValue.getDefaultValue(paramType.getLiteralDefaultValue()))
             );
 

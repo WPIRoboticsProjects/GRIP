@@ -8,7 +8,7 @@ import org.bytedeco.javacpp.opencv_core.Point;
 /**
  * Create default socket hints
  */
-public class SocketHints {
+public final class SocketHints {
 
     private SocketHints() { /* no op */ }
 
@@ -37,6 +37,10 @@ public class SocketHints {
         return createNumberSocketHintBuilder(identifier, number).build();
     }
 
+    public static SocketHint<Number> createNumberSocketHint(final String identifier, final Number number,
+                                                            final boolean publishable) {
+        return createNumberSocketHintBuilder(identifier, number).publishable(publishable).build();
+    }
 
     private static SocketHint.Builder<Number> createNumberSocketHintBuilder(final String identifier,
                                                                             final Number number) {

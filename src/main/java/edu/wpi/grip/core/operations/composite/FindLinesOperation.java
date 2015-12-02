@@ -57,16 +57,10 @@ public class FindLinesOperation implements Operation {
     @Override
     @SuppressWarnings("unchecked")
     public void perform(InputSocket<?>[] inputs, OutputSocket<?>[] outputs, Optional<?> data) {
-        final Mat input = (Mat) inputs[0].getValue();
+        final Mat input = (Mat) inputs[0].getValue().get();
         final OutputSocket<LinesReport> linesReportSocket = (OutputSocket<LinesReport>) outputs[0];
-        final LinesReport linesReport = linesReportSocket.getValue();
+        final LinesReport linesReport = linesReportSocket.getValue().get();
 
-        // Do nothing if nothing is connected to the input
-        // TODO: this should happen automatically for all sockets that are marked as required
-        if (input.empty()) {
-            linesReportSocket.setValue(linesReportSocket.getSocketHint().createInitialValue());
-            return;
-        }
         final Mat lines = new Mat();
 
         if (input.channels() == 1) {

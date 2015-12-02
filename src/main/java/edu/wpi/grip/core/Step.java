@@ -44,7 +44,7 @@ public class Step {
 
         data = operation.createData();
 
-        operation.perform(inputSockets, outputSockets, data);
+        runPerformIfPossible();
 
         eventBus.register(this);
     }
@@ -78,18 +78,25 @@ public class Step {
         return this.pipeline;
     }
 
+    private synchronized void runPerformIfPossible() {
+        for (InputSocket<?> inputSocket : inputSockets) {
+            if (!inputSocket.getValue().isPresent()) {
+                for (OutputSocket<?> outputSocket : outputSockets) {
+                    outputSocket.resetValueToInitial();
+                }
+                return;
+            }
+        }
+        this.operation.perform(inputSockets, outputSockets, data);
+    }
+
     @Subscribe
     public void onInputSocketChanged(SocketChangedEvent e) {
         final Socket<?> socket = e.getSocket();
 
         // If this socket that changed is one of the inputs to this step, run the operation with the new value.
         if (socket.getStep().equals(Optional.of(this)) && socket.getDirection().equals(Socket.Direction.INPUT)) {
-            for (InputSocket<?> inputSocket : inputSockets) {
-                if (!inputSocket.getValue().isPresent()) {
-                    return;
-                }
-            }
-            this.operation.perform(inputSockets, outputSockets, data);
+            runPerformIfPossible();
         }
     }
 }

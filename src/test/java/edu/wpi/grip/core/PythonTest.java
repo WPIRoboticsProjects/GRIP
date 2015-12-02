@@ -5,7 +5,6 @@ import edu.wpi.grip.core.operations.PythonScriptOperation;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
 
 public class PythonTest {
     static final int a = 1234, b = 5678;
@@ -23,7 +22,7 @@ public class PythonTest {
         aSocket.setValue(a);
         bSocket.setValue(b);
 
-        assertEquals(a + b, sumSocket.getValue());
+        assertEquals(a + b, sumSocket.getValue().get());
     }
 
     @Test
@@ -40,7 +39,7 @@ public class PythonTest {
         aSocket.setValue(a);
         bSocket.setValue(b);
 
-        assertEquals(a + b, sumSocket.getValue());
+        assertEquals(a + b, sumSocket.getValue().get());
     }
 
     @Test
@@ -55,8 +54,8 @@ public class PythonTest {
         aSocket.setValue(a);
         bSocket.setValue(b);
 
-        assertEquals(a + b, sumSocket.getValue());
-        assertEquals(a - b, differenceSocket.getValue());
+        assertEquals(a + b, sumSocket.getValue().get());
+        assertEquals(a - b, differenceSocket.getValue().get());
     }
 
     @Test
@@ -70,7 +69,7 @@ public class PythonTest {
         aSocket.setValue(a);
         bSocket.setValue(b);
 
-        assertEquals(0, sumSocket.getValue());
+        assertEquals(0, sumSocket.getValue().get());
     }
 
     @Test
@@ -84,7 +83,7 @@ public class PythonTest {
         aSocket.setValue(a);
         bSocket.setValue(b);
 
-        assertEquals(0, sumSocket.getValue());
+        assertEquals(0, sumSocket.getValue().get());
     }
 
     @Test

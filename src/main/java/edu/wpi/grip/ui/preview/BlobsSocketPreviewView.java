@@ -60,7 +60,7 @@ public class BlobsSocketPreviewView extends SocketPreviewView<BlobsReport> {
 
     private void convertImage() {
         synchronized (this) {
-            final BlobsReport blobsReport = this.getSocket().getValue();
+            final BlobsReport blobsReport = this.getSocket().getValue().get();
             Mat input = blobsReport.getInput();
 
             // If there were lines found, draw them on the image before displaying it

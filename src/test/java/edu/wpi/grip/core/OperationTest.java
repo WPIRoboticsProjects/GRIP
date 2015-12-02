@@ -20,6 +20,6 @@ public class OperationTest {
         b.setValue(5678.0);
         addition.perform(inputs, outputs);
 
-        assertEquals((Double) (1234.0 + 5678.0), c.getValue());
+        assertEquals((Double) (1234.0 + 5678.0), c.getValue().get());
     }
 }

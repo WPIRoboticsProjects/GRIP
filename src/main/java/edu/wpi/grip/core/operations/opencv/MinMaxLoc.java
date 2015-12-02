@@ -52,20 +52,20 @@ public class MinMaxLoc implements CVOperation {
 
     @Override
     public void perform(InputSocket<?>[] inputs, OutputSocket<?>[] outputs) {
-        final Mat src = (Mat) inputs[0].getValue();
-        Mat mask = (Mat) inputs[1].getValue();
+        final Mat src = (Mat) inputs[0].getValue().get();
+        Mat mask = (Mat) inputs[1].getValue().get();
         if (mask.empty()) mask = null;
         final double minVal[] = new double [1];
         final double maxVal[] = new double [1];
-        final Point minLoc = (Point) outputs[2].getValue();
-        final Point maxLoc = (Point) outputs[3].getValue();
+        final Point minLoc = (Point) outputs[2].getValue().get();
+        final Point maxLoc = (Point) outputs[3].getValue().get();
 
         try {
             opencv_core.minMaxLoc(src, minVal, maxVal, minLoc, maxLoc, mask);
             ((OutputSocket<Number>) outputs[0]).setValue(minVal[0]);
             ((OutputSocket<Number>) outputs[1]).setValue(maxVal[0]);
-            ((OutputSocket) outputs[2]).setValue(outputs[2].getValue());
-            ((OutputSocket) outputs[3]).setValue(outputs[3].getValue());
+            ((OutputSocket) outputs[2]).setValue(outputs[2].getValue().get());
+            ((OutputSocket) outputs[3]).setValue(outputs[3].getValue().get());
         } catch (final Exception e) {
             //TODO Add socket error parsing
             e.printStackTrace();

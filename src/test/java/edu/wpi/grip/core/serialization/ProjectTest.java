@@ -115,7 +115,7 @@ public class ProjectTest {
         a.setValue(123.4);
         b.setValue(567.8);
 
-        assertEquals((Double) (123.4 + 567.8), sum.getValue());
+        assertEquals((Double) (123.4 + 567.8), sum.getValue().get());
     }
 
     @Test
@@ -130,7 +130,7 @@ public class ProjectTest {
         a.setValue(1234);
         b.setValue(5678);
 
-        assertEquals((Integer) (1234 + 5678), sum.getValue());
+        assertEquals((Integer) (1234 + 5678), sum.getValue().get());
     }
 
     @Test
@@ -145,7 +145,7 @@ public class ProjectTest {
         a.setValue(1234);
         b.setValue(5678);
 
-        assertEquals((Integer) (1234 + 5678), sum.getValue());
+        assertEquals((Integer) (1234 + 5678), sum.getValue().get());
     }
 
     @Test
@@ -167,7 +167,7 @@ public class ProjectTest {
         b1.setValue(456);
         b2.setValue(789);
 
-        assertEquals((Integer) (123 + 456 + 789), sum2.getValue());
+        assertEquals((Integer) (123 + 456 + 789), sum2.getValue().get());
     }
 
     @Test
@@ -186,7 +186,7 @@ public class ProjectTest {
 
         Mat diff = new Mat();
         Mat expected = new Mat(1, 1, CV_32F, new Scalar(1234.5 + 6789.0));
-        compare(expected, sum.getValue(), diff, CMP_NE);
+        compare(expected, sum.getValue().get(), diff, CMP_NE);
         assertEquals("Deserialized pipeline with Mat operations did not produce the expected sum.",
                 0, countNonZero(diff));
     }

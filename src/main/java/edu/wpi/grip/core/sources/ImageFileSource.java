@@ -101,8 +101,8 @@ public class ImageFileSource extends Source {
     private void loadImage(String path, final int flags) throws IOException {
         Mat mat = opencv_imgcodecs.imread(path, flags);
         if (!mat.empty()) {
-            mat.copyTo(this.outputSocket.getValue());
-            this.outputSocket.setValue(this.outputSocket.getValue());
+            mat.copyTo(this.outputSocket.getValue().get());
+            this.outputSocket.setValue(this.outputSocket.getValue().get());
         } else {
             // TODO Output Error to GUI about invalid url
             throw new IOException("Error loading image " + path);

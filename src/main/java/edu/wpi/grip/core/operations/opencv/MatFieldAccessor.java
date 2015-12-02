@@ -47,7 +47,7 @@ public class MatFieldAccessor implements CVOperation {
 
     @Override
     public void perform(InputSocket<?>[] inputs, OutputSocket<?>[] outputs) {
-        final Mat inputMat = (Mat) inputs[0].getValue();
+        final Mat inputMat = (Mat) inputs[0].getValue().get();
         final OutputSocket<Size> sizeSocket = (OutputSocket<Size>) outputs[0];
         final OutputSocket<Boolean> isEmptySocket = (OutputSocket<Boolean>) outputs[1];
         final OutputSocket<Number> channelsSocket = (OutputSocket<Number>) outputs[2];

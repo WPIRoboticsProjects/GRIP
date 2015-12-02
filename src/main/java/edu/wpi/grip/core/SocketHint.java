@@ -170,8 +170,17 @@ public class SocketHint<T> {
         }
 
         public SocketHint<T> build() throws NoSuchElementException {
-            identifier.orElseThrow(() -> new NoSuchElementException("The identifier was not supplied"));
-            return new SocketHint<>(this.type, identifier.get(), initialValueSupplier, view, domain, publishable);
+            if (!view.equals(View.NONE)) {
+                initialValueSupplier.orElseThrow(() -> new NoSuchElementException("A View other than `NONE` was supplied but not an initial value"));
+            }
+            return new SocketHint<>(
+                    this.type,
+                    identifier.orElseThrow(() -> new NoSuchElementException("The identifier was not supplied")),
+                    initialValueSupplier,
+                    view,
+                    domain,
+                    publishable
+            );
         }
     }
 }

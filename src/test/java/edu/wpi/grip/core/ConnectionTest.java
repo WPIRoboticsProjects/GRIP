@@ -37,7 +37,7 @@ public class ConnectionTest {
 
         foo.setValue(testValue);
         eventBus.post(new ConnectionRemovedEvent(connection));
-        assertEquals(0.0, bar.getValue(), 0.01);
+        assertEquals(0.0, bar.getValue().get(), 0.01);
 
         eventBus.unregister(connection);
     }

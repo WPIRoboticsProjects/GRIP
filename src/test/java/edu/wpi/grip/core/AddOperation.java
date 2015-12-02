@@ -42,6 +42,6 @@ public class AddOperation implements Operation {
     @Override
     public void perform(InputSocket[] inputs, OutputSocket[] outputs) {
         Socket<Mat> a = inputs[0], b = inputs[1], sum = outputs[0];
-        opencv_core.add(a.getValue(), b.getValue(), sum.getValue());
+        opencv_core.add(a.getValue().get(), b.getValue().get(), sum.getValue().get());
     }
 }

@@ -33,6 +33,6 @@ public class SubtractionOperation implements Operation {
         InputSocket<Double> a = inputs[0], b = inputs[1];
         OutputSocket<Double> c = outputs[0];
 
-        c.setValue(a.getValue() - b.getValue());
+        c.setValue(a.getValue().get() - b.getValue().get());
     }
 }

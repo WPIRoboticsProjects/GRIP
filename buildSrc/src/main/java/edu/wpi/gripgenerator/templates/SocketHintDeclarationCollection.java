@@ -79,32 +79,38 @@ public class SocketHintDeclarationCollection {
     }
 
     private Expression generateCopyExpression(DefinedParamType type, String inputParmId, int inputIndex, String outputParamId, int outputIndex) {
-        // GOAL: ((InputSocket<Mat>) inputs[0]).getValue().assignTo(((OutputSocket<Mat>) outputs[0]).getValue());
+        // GOAL: ((InputSocket<Mat>) inputs[0]).getValue().get().assignTo(((OutputSocket<Mat>) outputs[0]).getValue().get());
         final ClassOrInterfaceType outputType = new ClassOrInterfaceType("OutputSocket");
         final ClassOrInterfaceType inputType = new ClassOrInterfaceType("InputSocket");
         outputType.setTypeArgs(Collections.singletonList(type.getType()));
         inputType.setTypeArgs(Collections.singletonList(type.getType()));
 
         final MethodCallExpr copyExpression = new MethodCallExpr(
-                getOrSetValueExpression(
-                        new EnclosedExpr(
-                                new CastExpr(
-                                        inputType,
-                                        arrayAccessExpr(inputParmId, inputIndex)
-                                )
-                        ),
-                        null
-                ),
-                "assignTo",
-                Collections.singletonList(
+                new MethodCallExpr(
                         getOrSetValueExpression(
                                 new EnclosedExpr(
                                         new CastExpr(
-                                                outputType,
-                                                arrayAccessExpr(outputParamId, outputIndex)
+                                                inputType,
+                                                arrayAccessExpr(inputParmId, inputIndex)
                                         )
                                 ),
                                 null
+                        ),
+                        "get"
+                ),
+                "assignTo",
+                Collections.singletonList(
+                        new MethodCallExpr(
+                                getOrSetValueExpression(
+                                        new EnclosedExpr(
+                                                new CastExpr(
+                                                        outputType,
+                                                        arrayAccessExpr(outputParamId, outputIndex)
+                                                )
+                                        ),
+                                        null
+                                ),
+                                "get"
                         )
                 )
         );
@@ -224,7 +230,7 @@ public class SocketHintDeclarationCollection {
         }
         BlockStmt returnStatement = new BlockStmt(
                 Arrays.asList(new ReturnStmt(
-                                new ArrayCreationExpr(socketType, 1, new ArrayInitializerExpr(passedExpressions)))
+                        new ArrayCreationExpr(socketType, 1, new ArrayInitializerExpr(passedExpressions)))
                 )
         );
         return returnStatement;

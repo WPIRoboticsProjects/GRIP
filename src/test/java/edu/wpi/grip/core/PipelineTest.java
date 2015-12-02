@@ -197,7 +197,7 @@ public class PipelineTest {
         b1.setValue(456.0);
         b2.setValue(789.0);
 
-        assertEquals((Double) 1368.0, sum2.getValue());
+        assertEquals((Double) 1368.0, sum2.getValue().get());
     }
 
     @Test
@@ -227,7 +227,7 @@ public class PipelineTest {
         b1.setValue(456.0);
         b2.setValue(789.0);
 
-        assertEquals((Double) 789.0, sum2.getValue());
+        assertEquals((Double) 789.0, sum2.getValue().get());
     }
 
     @Test(expected = IllegalArgumentException.class)

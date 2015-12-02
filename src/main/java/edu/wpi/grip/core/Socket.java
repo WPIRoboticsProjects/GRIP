@@ -34,22 +34,8 @@ public abstract class Socket<T> {
     private final Direction direction;
     private final Set<Connection> connections = new HashSet<>();
     private final SocketHint<T> socketHint;
-    private Optional<T> value;
+    private Optional<? extends T> value;
 
-    /**
-     * @param eventBus   The Guava {@link EventBus} used by the application.
-     * @param socketHint See {@link #getSocketHint()}
-     * @param value      See {@link #getValue()}
-     * @param direction  The direction that this socket represents
-     */
-    public Socket(EventBus eventBus, SocketHint<T> socketHint, T value, Direction direction) {
-        this.eventBus = checkNotNull(eventBus, "EventBus can not be null");
-        this.socketHint = checkNotNull(socketHint, "Socket Hint can not be null");
-        this.value = Optional.ofNullable(value);
-        this.direction = checkNotNull(direction, "Direction can not be null");
-
-        this.eventBus.register(this);
-    }
 
     /**
      * @param eventBus   The Guava {@link EventBus} used by the application.
@@ -57,7 +43,12 @@ public abstract class Socket<T> {
      * @param direction  The direction that this socket represents
      */
     public Socket(EventBus eventBus, SocketHint<T> socketHint, Direction direction) {
-        this(eventBus, socketHint, socketHint.createInitialValue().orElse(null), direction);
+        this.eventBus = checkNotNull(eventBus, "EventBus can not be null");
+        this.socketHint = checkNotNull(socketHint, "Socket Hint can not be null");
+        this.value = socketHint.createInitialValue();
+        this.direction = checkNotNull(direction, "Direction can not be null");
+
+        this.eventBus.register(this);
     }
 
     /**
@@ -67,31 +58,35 @@ public abstract class Socket<T> {
         return socketHint;
     }
 
-    public void setValueOptional(Optional<? extends T> optionalValue) {
-        final T setValue;
+    /**
+     * Set the value of the socket using an {@link Optional}, and fire off a {@link edu.wpi.grip.core.events.SocketChangedEvent}.
+     *
+     * @param optionalValue The optional value to assign this socket to.
+     */
+    public synchronized void setValueOptional(Optional<? extends T> optionalValue) {
+        checkNotNull(optionalValue, "The optional value can not be null");
         if (optionalValue.isPresent()) {
-            setValue = optionalValue.get();
-        } else { // Get on an empty nullable value will return an exception
-            setValue = null;
+            getSocketHint().getType().cast(optionalValue.get());
         }
-        setValue(setValue);
+        this.value = optionalValue;
+        eventBus.post(new SocketChangedEvent(this));
     }
 
     /**
      * Set the value of the socket, and fire off a {@link edu.wpi.grip.core.events.SocketChangedEvent}.
      *
-     * @param value The value to store in this socket.
+     * @param value The value to store in this socket. Nullable.
      */
-    public synchronized void setValue(T value) {
-        this.value = Optional.ofNullable(this.getSocketHint().getType().cast(value));
-        eventBus.post(new SocketChangedEvent(this));
+    public void setValue(T value) {
+        setValueOptional(Optional.ofNullable(this.getSocketHint().getType().cast(value)));
+
     }
 
     /**
      * @return The value currently stored in this socket.
      */
     public Optional<T> getValue() {
-        return this.value;
+        return (Optional<T>) this.value;
     }
 
     /**

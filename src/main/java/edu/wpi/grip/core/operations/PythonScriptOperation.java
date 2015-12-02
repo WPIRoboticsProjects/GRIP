@@ -183,7 +183,7 @@ public class PythonScriptOperation implements Operation {
             Class<?> a = inputs[i].getSocketHint().getType();
             Class<?> b = inputs[i].getValue().getClass();
 
-            pyInputs[i] = Py.java2py(inputs[i].getValue());
+            pyInputs[i] = Py.java2py(inputs[i].getValue().get());
         }
 
         try {

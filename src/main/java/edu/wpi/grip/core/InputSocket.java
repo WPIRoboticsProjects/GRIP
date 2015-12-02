@@ -13,14 +13,6 @@ import edu.wpi.grip.core.events.SocketConnectedChangedEvent;
 @XStreamAlias(value = "grip:Input")
 public class InputSocket<T> extends Socket<T> {
 
-    /**
-     * @param eventBus   The Guava {@link EventBus} used by the application.
-     * @param socketHint See {@link #getSocketHint()}
-     * @param value      See {@link #getValue()}
-     */
-    public InputSocket(EventBus eventBus, SocketHint<T> socketHint, T value) {
-        super(eventBus, socketHint, value, Direction.INPUT);
-    }
 
     /**
      * @param eventBus   The Guava {@link EventBus} used by the application.
@@ -38,7 +30,7 @@ public class InputSocket<T> extends Socket<T> {
     @Subscribe
     public void onDisconnected(SocketConnectedChangedEvent event) {
         if (event.getSocket() == this && this.getConnections().isEmpty()) {
-            this.setValue(this.getSocketHint().createInitialValue());
+            this.setValue(this.getSocketHint().createInitialValue().orElse(null));
         }
     }
 }

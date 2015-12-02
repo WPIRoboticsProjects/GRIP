@@ -32,14 +32,14 @@ public class SocketTest {
     @Test
     public void testSetValue() throws Exception {
         socket.setValue(testValue);
-        assertEquals(testValue, socket.getValue());
+        assertEquals(testValue, socket.getValue().get());
     }
 
     @Test
     public void testDefaultValue() throws Exception {
         sh = new SocketHint<>("foo", Double.class, testValue, SocketHint.View.SLIDER);
         socket = new OutputSocket<Double>(eventBus, sh);
-        assertEquals(testValue, socket.getValue());
+        assertEquals(testValue, socket.getValue().get());
 
     }
 
@@ -51,7 +51,7 @@ public class SocketTest {
             @Subscribe
             public void onSocketChanged(SocketChangedEvent e) {
                 handled[0] = true;
-                value[0] = (Double) e.getSocket().getValue();
+                value[0] = (Double) e.getSocket().getValue().get();
             }
         };
 

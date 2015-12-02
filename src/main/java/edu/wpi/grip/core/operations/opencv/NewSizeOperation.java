@@ -45,8 +45,8 @@ public class NewSizeOperation implements CVOperation {
     public void perform(InputSocket<?>[] inputs, OutputSocket<?>[] outputs) {
         final InputSocket<Number> widthSocket = (InputSocket<Number>) inputs[0];
         final InputSocket<Number> heightSocket = (InputSocket<Number>) inputs[1];
-        final int widthValue = widthSocket.getValue().intValue();
-        final int heightValue = heightSocket.getValue().intValue();
+        final int widthValue = widthSocket.getValue().get().intValue();
+        final int heightValue = heightSocket.getValue().get().intValue();
         final OutputSocket<Size> outputSocket = (OutputSocket<Size>) outputs[0];
         outputSocket.setValue(new Size(widthValue, heightValue));
     }

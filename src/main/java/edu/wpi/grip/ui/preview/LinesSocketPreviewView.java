@@ -64,7 +64,7 @@ public class LinesSocketPreviewView extends SocketPreviewView<LinesReport> {
 
     private void convertImage() {
         synchronized (this) {
-            final LinesReport linesReport = this.getSocket().getValue();
+            final LinesReport linesReport = this.getSocket().getValue().get();
             final List<LinesReport.Line> lines = linesReport.getLines();
             Mat input = linesReport.getInput();
 
