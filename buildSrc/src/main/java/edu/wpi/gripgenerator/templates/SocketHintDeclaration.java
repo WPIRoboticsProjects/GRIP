@@ -58,8 +58,8 @@ public class SocketHintDeclaration {
     public SocketHintDeclaration(DefaultValueCollector collector, Type genericType, List<String> hintNames, boolean isOutput) {
         this.genericType = genericType;
         this.paramTypes = hintNames.stream().map(n -> new DefinedParamType(
-                        genericType.toStringWithoutComments(),
-                        new Parameter(genericType, new VariableDeclaratorId(n)))
+                genericType.toStringWithoutComments(),
+                new Parameter(genericType, new VariableDeclaratorId(n)))
         ).collect(Collectors.toList());
         this.isOutput = isOutput;
         this.collector = collector;
@@ -129,7 +129,7 @@ public class SocketHintDeclaration {
         return new FieldDeclaration(modifiers, socketHintType, variableDeclarations);
     }
 
-    private MethodCallExpr socketHintBuilder(ClassOrInterfaceType socketHintBuilderType, StringLiteralExpr stringLiteralExpr, DefinedParamType paramType){
+    private MethodCallExpr socketHintBuilder(ClassOrInterfaceType socketHintBuilderType, StringLiteralExpr stringLiteralExpr, DefinedParamType paramType) {
         final ClassExpr classExpr = new ClassExpr(genericType);
 
         final MethodCallExpr[] builtMethod = {new MethodCallExpr(

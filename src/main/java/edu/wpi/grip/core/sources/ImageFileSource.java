@@ -29,7 +29,7 @@ public class ImageFileSource extends Source {
 
     private String name;
     private String path;
-    private final SocketHint<Mat> imageOutputHint = SocketHints.createMatSocketHint("Image", true);
+    private final SocketHint<Mat> imageOutputHint = SocketHints.Inputs.createMatSocketHint("Image", true);
     private OutputSocket<Mat> outputSocket;
 
     /**

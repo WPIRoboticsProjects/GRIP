@@ -10,8 +10,8 @@ import org.bytedeco.javacpp.opencv_core.Size;
 
 public class MatFieldAccessor implements CVOperation {
     private static final Mat defaultsMat = new Mat();
-    private final SocketHint matHint = SocketHints.createMatSocketHint("Input", false);
-    private final SocketHint sizeHint = SocketHints.createSizeSocketHint("size", true);
+    private final SocketHint matHint = SocketHints.Inputs.createMatSocketHint("Input", false);
+    private final SocketHint sizeHint = SocketHints.Inputs.createSizeSocketHint("size", true);
     private final SocketHint emptyHint = SocketHints.Outputs.createBooleanSocketHint("empty", defaultsMat.empty());
     private final SocketHint channelsHint = SocketHints.Outputs.createNumberSocketHint("channels", defaultsMat.channels());
     private final SocketHint colsHint = SocketHints.Outputs.createNumberSocketHint("cols", defaultsMat.rows());

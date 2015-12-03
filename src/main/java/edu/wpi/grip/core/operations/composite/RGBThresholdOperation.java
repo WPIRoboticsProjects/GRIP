@@ -13,12 +13,12 @@ import static org.bytedeco.javacpp.opencv_core.*;
  */
 public class RGBThresholdOperation extends ThresholdOperation {
 
-    private final SocketHint<Mat> inputHint = SocketHints.createMatSocketHint("Input", false);
-    private final SocketHint<List> redHint = SocketHints.createNumberListRangeSockeHint("Red", 0.0, 255.0);
-    private final SocketHint<List> greenHint = SocketHints.createNumberListRangeSockeHint("Green", 0.0, 255.0);
-    private final SocketHint<List> blueHint = SocketHints.createNumberListRangeSockeHint("Blue", 0.0, 255.0);
+    private final SocketHint<Mat> inputHint = SocketHints.Inputs.createMatSocketHint("Input", false);
+    private final SocketHint<List> redHint = SocketHints.Inputs.createNumberListRangeSocketHint("Red", 0.0, 255.0);
+    private final SocketHint<List> greenHint = SocketHints.Inputs.createNumberListRangeSocketHint("Green", 0.0, 255.0);
+    private final SocketHint<List> blueHint = SocketHints.Inputs.createNumberListRangeSocketHint("Blue", 0.0, 255.0);
 
-    private final SocketHint<Mat> outputHint = SocketHints.createMatSocketHint("Input", true);
+    private final SocketHint<Mat> outputHint = SocketHints.Outputs.createMatSocketHint("Input");
 
     @Override
     public String getName() {

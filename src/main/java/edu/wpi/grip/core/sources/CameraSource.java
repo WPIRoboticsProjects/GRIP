@@ -37,7 +37,7 @@ public class CameraSource extends Source {
 
     private Properties properties = new Properties();
 
-    private final SocketHint<Mat> imageOutputHint = SocketHints.createMatSocketHint("Image", true);
+    private final SocketHint<Mat> imageOutputHint = SocketHints.Inputs.createMatSocketHint("Image", true);
     private final SocketHint<Number> frameRateOutputHint = SocketHints.createNumberSocketHint("Frame Rate", 0);
     private OutputSocket<Mat> frameOutputSocket;
     private OutputSocket<Number> frameRateOutputSocket;

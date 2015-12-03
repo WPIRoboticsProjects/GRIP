@@ -13,8 +13,8 @@ import org.bytedeco.javacpp.opencv_core.Point;
 public class MinMaxLoc implements CVOperation {
 
     private final SocketHint<Mat>
-            srcInputHint = SocketHints.createMatSocketHint("Image", false),
-            maskInputHint = SocketHints.createMatSocketHint("Mask", false);
+            srcInputHint = SocketHints.Inputs.createMatSocketHint("Image", false),
+            maskInputHint = SocketHints.Inputs.createMatSocketHint("Mask", false);
 
     private final SocketHint<Number>
             minValOutputHint = SocketHints.Outputs.createNumberSocketHint("Min Val", 0),

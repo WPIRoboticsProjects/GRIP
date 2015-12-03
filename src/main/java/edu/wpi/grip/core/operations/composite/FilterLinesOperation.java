@@ -15,7 +15,7 @@ public class FilterLinesOperation implements Operation {
     private final SocketHint<LinesReport> inputHint =
             new SocketHint.Builder(LinesReport.class).identifier("Lines").build();
 
-    private final SocketHint<Number> minLengthHint = SocketHints.createNumberSpinnerSocketHint("Min Length", 20);
+    private final SocketHint<Number> minLengthHint = SocketHints.Inputs.createNumberSpinnerSocketHint("Min Length", 20);
 
     private final SocketHint<LinesReport> outputHint =
             new SocketHint.Builder(LinesReport.class)

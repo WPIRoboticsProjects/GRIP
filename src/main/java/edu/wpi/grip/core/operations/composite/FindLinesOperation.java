@@ -17,7 +17,7 @@ import static org.bytedeco.javacpp.opencv_imgproc.cvtColor;
  */
 public class FindLinesOperation implements Operation {
 
-    private final SocketHint<Mat> inputHint = SocketHints.createMatSocketHint("Input", false);
+    private final SocketHint<Mat> inputHint = SocketHints.Inputs.createMatSocketHint("Input", false);
     private final SocketHint<LinesReport> linesHint = new SocketHint.Builder(LinesReport.class)
             .identifier("Lines").initialValueSupplier(LinesReport::new).build();
 

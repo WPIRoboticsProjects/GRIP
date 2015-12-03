@@ -16,9 +16,9 @@ import static org.bytedeco.javacpp.opencv_features2d.SimpleBlobDetector;
  */
 public class FindBlobsOperation implements Operation {
 
-    private final SocketHint<Mat> inputHint = SocketHints.createMatSocketHint("Input", false);
-    private final SocketHint<Number> minAreaHint = SocketHints.createNumberSpinnerSocketHint("Min Area", 1);
-    private final SocketHint<List> circularityHint = SocketHints.createNumberListRangeSockeHint("Circularity", 0.0, 1.0);
+    private final SocketHint<Mat> inputHint = SocketHints.Inputs.createMatSocketHint("Input", false);
+    private final SocketHint<Number> minAreaHint = SocketHints.Inputs.createNumberSpinnerSocketHint("Min Area", 1);
+    private final SocketHint<List> circularityHint = SocketHints.Inputs.createNumberListRangeSocketHint("Circularity", 0.0, 1.0);
     private final SocketHint<Boolean> colorHint = SocketHints.createBooleanSocketHint("Dark Blobs", false);
 
     private final SocketHint<BlobsReport> blobsHint = new SocketHint.Builder(BlobsReport.class)
@@ -72,12 +72,6 @@ public class FindBlobsOperation implements Operation {
         blobsReport.setInput(input);
         blobsReport.setBlobs(blobs);
 
-        // Do nothing if nothing is connected to the input
-        // TODO: this should happen automatically for all sockets that are marked as required
-        if (input.empty()) {
-            blobsReportSocket.setValue(blobsReport);
-            return;
-        }
 
         final SimpleBlobDetector blobDetector = SimpleBlobDetector.create(new SimpleBlobDetector.Params()
                 .filterByArea(true)

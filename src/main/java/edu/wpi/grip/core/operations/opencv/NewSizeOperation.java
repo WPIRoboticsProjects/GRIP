@@ -13,8 +13,8 @@ import java.util.Optional;
 
 public class NewSizeOperation implements CVOperation {
 
-    private final SocketHint<Number> widthHint = SocketHints.createNumberSpinnerSocketHint("width", -1, new Integer[]{-1, Integer.MAX_VALUE});
-    private final SocketHint<Number> heightHint = SocketHints.createNumberSpinnerSocketHint("height", -1, new Integer[]{-1, Integer.MAX_VALUE});
+    private final SocketHint<Number> widthHint = SocketHints.Inputs.createNumberSpinnerSocketHint("width", -1, -1, Integer.MAX_VALUE);
+    private final SocketHint<Number> heightHint = SocketHints.Inputs.createNumberSpinnerSocketHint("height", -1, -1, Integer.MAX_VALUE);
     private final SocketHint<Size> outputHint = SocketHints.Outputs.createSizeSocketHint("size");
 
     @Override

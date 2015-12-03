@@ -17,8 +17,8 @@ public class SocketTest {
     private OutputSocket<Number> socket;
 
     @Before
-    public void initialize(){
-        sh = SocketHints.createNumberSliderSocketHint("foo", 0.0, new Number[]{});
+    public void initialize() {
+        sh = SocketHints.Inputs.createNumberSliderSocketHint("foo", 0.0, SocketHints.Domain.DOUBLES);
         socket = new OutputSocket<Number>(eventBus, sh);
     }
 
@@ -37,7 +37,7 @@ public class SocketTest {
 
     @Test
     public void testDefaultValue() throws Exception {
-        sh = SocketHints.createNumberSliderSocketHint("foo", testValue, new Number[]{-Double.MAX_VALUE, Double.MAX_VALUE});
+        sh = SocketHints.Inputs.createNumberSliderSocketHint("foo", testValue, SocketHints.Domain.DOUBLES);
         socket = new OutputSocket<Number>(eventBus, sh);
         assertEquals(testValue, socket.getValue().get());
 

@@ -20,12 +20,12 @@ import static org.bytedeco.javacpp.opencv_imgproc.cvtColor;
  */
 public class HSVThresholdOperation extends ThresholdOperation {
 
-    private final SocketHint<Mat> inputHint = SocketHints.createMatSocketHint("Input", false);
-    private final SocketHint<List> hueHint = SocketHints.createNumberListRangeSockeHint("Hue", 0.0, 180.0);
-    private final SocketHint<List> saturationHint = SocketHints.createNumberListRangeSockeHint("Saturation", 0.0, 255.0);
-    private final SocketHint<List> valueHint = SocketHints.createNumberListRangeSockeHint("Value", 0.0, 255.0);
+    private final SocketHint<Mat> inputHint = SocketHints.Inputs.createMatSocketHint("Input", false);
+    private final SocketHint<List> hueHint = SocketHints.Inputs.createNumberListRangeSocketHint("Hue", 0.0, 180.0);
+    private final SocketHint<List> saturationHint = SocketHints.Inputs.createNumberListRangeSocketHint("Saturation", 0.0, 255.0);
+    private final SocketHint<List> valueHint = SocketHints.Inputs.createNumberListRangeSocketHint("Value", 0.0, 255.0);
 
-    private final SocketHint<Mat> outputHint = SocketHints.createMatSocketHint("Output", true);
+    private final SocketHint<Mat> outputHint = SocketHints.Outputs.createMatSocketHint("Output");
 
     @Override
     public String getName() {

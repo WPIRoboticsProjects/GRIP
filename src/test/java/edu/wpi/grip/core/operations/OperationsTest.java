@@ -29,7 +29,7 @@ public class OperationsTest {
 
 
     @Before
-    public void setUp(){
+    public void setUp() {
         this.operationList = new ArrayList<>();
         this.throwableOptional = Optional.empty();
         this.eventBus = new EventBus((exception, context) -> throwableOptional = Optional.of(exception));
@@ -39,7 +39,7 @@ public class OperationsTest {
 
     @After
     public void afterTest() {
-        if( throwableOptional.isPresent() ) {
+        if (throwableOptional.isPresent()) {
             throw Throwables.propagate(throwableOptional.get());
         }
     }

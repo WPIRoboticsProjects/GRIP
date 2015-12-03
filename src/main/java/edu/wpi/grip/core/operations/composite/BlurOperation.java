@@ -30,16 +30,16 @@ public class BlurOperation implements Operation {
         }
     }
 
-    private final SocketHint<Mat> inputHint = SocketHints.createMatSocketHint("Input", false);
+    private final SocketHint<Mat> inputHint = SocketHints.Inputs.createMatSocketHint("Input", false);
     private final SocketHint<Type> typeHint = new SocketHint.Builder<>(Type.class)
             .identifier("Type")
             .initialValue(Type.BOX)
             .view(SocketHint.View.SELECT)
             .domain(Type.values())
             .build();
-    private final SocketHint<Number> radiusHint = SocketHints.createNumberSliderSocketHint("Radius", 0.0, new Number[]{0.0, 100.0});
+    private final SocketHint<Number> radiusHint = SocketHints.Inputs.createNumberSliderSocketHint("Radius", 0.0, 0.0, 100.0);
 
-    private final SocketHint<Mat> outputHint = SocketHints.createMatSocketHint("Output", true);
+    private final SocketHint<Mat> outputHint = SocketHints.Inputs.createMatSocketHint("Output", true);
 
     @Override
     public String getName() {

@@ -14,8 +14,8 @@ import static org.bytedeco.javacpp.opencv_core.bitwise_xor;
  */
 public class MaskOperation implements Operation {
 
-    private final SocketHint<Mat> inputHint = SocketHints.createMatSocketHint("Input", false);
-    private final SocketHint<Mat> maskHint = SocketHints.createMatSocketHint("Mask", false);
+    private final SocketHint<Mat> inputHint = SocketHints.Inputs.createMatSocketHint("Input", false);
+    private final SocketHint<Mat> maskHint = SocketHints.Inputs.createMatSocketHint("Mask", false);
 
     private final SocketHint<Mat> outputHint = SocketHints.Outputs.createMatSocketHint("Output");
 

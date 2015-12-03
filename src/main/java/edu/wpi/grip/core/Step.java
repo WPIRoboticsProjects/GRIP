@@ -5,6 +5,7 @@ import com.google.common.eventbus.Subscribe;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import edu.wpi.grip.core.events.SocketChangedEvent;
 
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -78,16 +79,41 @@ public class Step {
         return this.pipeline;
     }
 
-    private synchronized void runPerformIfPossible() {
-        for (InputSocket<?> inputSocket : inputSockets) {
-            if (!inputSocket.getValue().isPresent()) {
-                for (OutputSocket<?> outputSocket : outputSockets) {
-                    outputSocket.resetValueToInitial();
-                }
-                return;
-            }
+    /**
+     * Resets all {@link OutputSocket OutputSockets} to their initial value.
+     * Should only be used by {@link Step#runPerformIfPossible()}
+     */
+    private void resetOutputSockets() {
+        for (OutputSocket<?> outputSocket : outputSockets) {
+            outputSocket.resetValueToInitial();
         }
-        this.operation.perform(inputSockets, outputSockets, data);
+    }
+
+    /**
+     * The {@link Operation#perform} method should only be called if all {@link InputSocket#getValue()} are not empty.
+     * If one input is invalid then the perform method will not run and all output sockets will be assigned to their
+     * default values.
+     */
+    private synchronized void runPerformIfPossible() {
+        try {
+            for (InputSocket<?> inputSocket : inputSockets) {
+                inputSocket.getValue()
+                        .orElseThrow(() -> new NoSuchElementException(
+                                inputSocket.getSocketHint().getIdentifier() + " must have a value to run this step."
+                        ));
+            }
+        } catch (NoSuchElementException e) {
+            e.printStackTrace();
+            resetOutputSockets();
+            return; /* Only run the perform method if all of the input sockets are present. */
+        }
+
+        try {
+            this.operation.perform(inputSockets, outputSockets, data);
+        } catch (Exception e) {
+            e.printStackTrace();
+            resetOutputSockets();
+        }
     }
 
     @Subscribe

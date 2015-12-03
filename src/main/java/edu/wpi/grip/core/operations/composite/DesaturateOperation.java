@@ -14,8 +14,8 @@ import static org.bytedeco.javacpp.opencv_imgproc.*;
  */
 public class DesaturateOperation implements Operation {
 
-    private final SocketHint<Mat> inputHint = SocketHints.createMatSocketHint("Input", false);
-    private final SocketHint<Mat> outputHint = SocketHints.createMatSocketHint("Output", true);
+    private final SocketHint<Mat> inputHint = SocketHints.Inputs.createMatSocketHint("Input", false);
+    private final SocketHint<Mat> outputHint = SocketHints.Outputs.createMatSocketHint("Output");
 
     @Override
     public String getName() {
