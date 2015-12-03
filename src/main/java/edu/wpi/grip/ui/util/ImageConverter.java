@@ -38,7 +38,7 @@ public class ImageConverter {
         assert channels == 3 || channels == 1 :
                 "Only 3-channel BGR images or single-channel grayscale images can be converted";
 
-        assert mat.type() == CV_8U || mat.type() == CV_8S :
+        assert mat.depth() == CV_8U || mat.depth() == CV_8S :
                 "Only images with 8 bits per channel can be previewed";
 
         // Don't try to render empty images.
