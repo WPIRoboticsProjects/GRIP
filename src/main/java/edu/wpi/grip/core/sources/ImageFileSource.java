@@ -5,6 +5,7 @@ import com.google.common.io.Files;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import edu.wpi.grip.core.OutputSocket;
 import edu.wpi.grip.core.SocketHint;
+import edu.wpi.grip.core.SocketHints;
 import edu.wpi.grip.core.Source;
 import org.bytedeco.javacpp.opencv_core.Mat;
 import org.bytedeco.javacpp.opencv_imgcodecs;
@@ -28,7 +29,7 @@ public class ImageFileSource extends Source {
 
     private String name;
     private String path;
-    private final SocketHint<Mat> imageOutputHint = new SocketHint<Mat>("Image", Mat.class, Mat::new);
+    private final SocketHint<Mat> imageOutputHint = SocketHints.createMatSocketHint("Image", true);
     private OutputSocket<Mat> outputSocket;
 
     /**

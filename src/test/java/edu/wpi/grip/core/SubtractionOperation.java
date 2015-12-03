@@ -3,10 +3,10 @@ package edu.wpi.grip.core;
 import com.google.common.eventbus.EventBus;
 
 public class SubtractionOperation implements Operation {
-    private SocketHint<Double>
-            aHint = new SocketHint<>("a", Double.class, 0.0),
-            bHint = new SocketHint<>("b", Double.class, 0.0),
-            cHint = new SocketHint<>("c", Double.class, 0.0);
+    private SocketHint<Number>
+            aHint = SocketHints.createNumberSocketHint("a", 0.0),
+            bHint = SocketHints.createNumberSocketHint("b", 0.0),
+            cHint = SocketHints.Outputs.createNumberSocketHint("c", 0.0);
 
     @Override
     public String getName() {
@@ -30,9 +30,9 @@ public class SubtractionOperation implements Operation {
 
     @Override
     public void perform(InputSocket[] inputs, OutputSocket[] outputs) {
-        InputSocket<Double> a = inputs[0], b = inputs[1];
-        OutputSocket<Double> c = outputs[0];
+        InputSocket<Number> a = inputs[0], b = inputs[1];
+        OutputSocket<Number> c = outputs[0];
 
-        c.setValue(a.getValue().get() - b.getValue().get());
+        c.setValue(a.getValue().get().doubleValue() - b.getValue().get().doubleValue());
     }
 }

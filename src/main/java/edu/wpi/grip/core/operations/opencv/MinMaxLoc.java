@@ -4,6 +4,7 @@ import com.google.common.eventbus.EventBus;
 import edu.wpi.grip.core.InputSocket;
 import edu.wpi.grip.core.OutputSocket;
 import edu.wpi.grip.core.SocketHint;
+import edu.wpi.grip.core.SocketHints;
 import org.bytedeco.javacpp.opencv_core;
 import org.bytedeco.javacpp.opencv_core.Mat;
 import org.bytedeco.javacpp.opencv_core.Point;
@@ -12,16 +13,16 @@ import org.bytedeco.javacpp.opencv_core.Point;
 public class MinMaxLoc implements CVOperation {
 
     private final SocketHint<Mat>
-            srcInputHint = new SocketHint<Mat>("Image", Mat.class, Mat::new, SocketHint.View.NONE, null),
-            maskInputHint = new SocketHint<Mat>("Mask", Mat.class, Mat::new, SocketHint.View.NONE, null);
+            srcInputHint = SocketHints.createMatSocketHint("Image", false),
+            maskInputHint = SocketHints.createMatSocketHint("Mask", false);
 
     private final SocketHint<Number>
-            minValOutputHint = new SocketHint<Number>("Min Val", Number.class, 0),
-            maxValOutputHint = new SocketHint<Number>("Max Val", Number.class, 0);
+            minValOutputHint = SocketHints.Outputs.createNumberSocketHint("Min Val", 0),
+            maxValOutputHint = SocketHints.Outputs.createNumberSocketHint("Max Val", 0);
 
     private final SocketHint<Point>
-            minLocOutputHint = new SocketHint<Point>("Min Loc", Point.class, Point::new, SocketHint.View.NONE, null),
-            maxLocOutputHint = new SocketHint<Point>("Max Loc", Point.class, Point::new, SocketHint.View.NONE, null);
+            minLocOutputHint = SocketHints.Outputs.createPointSocketHint("Min Loc"),
+            maxLocOutputHint = SocketHints.Outputs.createPointSocketHint("Max Loc");
 
     @Override
     public String getName() {

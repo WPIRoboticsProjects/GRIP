@@ -4,10 +4,10 @@ import com.google.common.eventbus.EventBus;
 import edu.wpi.grip.core.InputSocket;
 import edu.wpi.grip.core.OutputSocket;
 import edu.wpi.grip.core.SocketHint;
+import edu.wpi.grip.core.SocketHints;
 import org.bytedeco.javacpp.opencv_core.Mat;
 import org.bytedeco.javacpp.opencv_core.Scalar;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -20,15 +20,12 @@ import static org.bytedeco.javacpp.opencv_imgproc.cvtColor;
  */
 public class HSVThresholdOperation extends ThresholdOperation {
 
-    private final SocketHint<Mat> inputHint = new SocketHint<Mat>("Input", Mat.class, Mat::new);
-    private final SocketHint<List> hueHint = new SocketHint<List>("Hue", List.class,
-            () -> Arrays.asList(0.0, 180.0), SocketHint.View.RANGE, new List[]{Arrays.asList(0.0, 180.0)});
-    private final SocketHint<List> saturationHint = new SocketHint<List>("Saturation", List.class,
-            () -> Arrays.asList(0.0, 255.0), SocketHint.View.RANGE, new List[]{Arrays.asList(0.0, 255.0)});
-    private final SocketHint<List> valueHint = new SocketHint<List>("Value", List.class,
-            () -> Arrays.asList(0.0, 255.0), SocketHint.View.RANGE, new List[]{Arrays.asList(0.0, 255.0)});
+    private final SocketHint<Mat> inputHint = SocketHints.createMatSocketHint("Input", false);
+    private final SocketHint<List> hueHint = SocketHints.createNumberListRangeSockeHint("Hue", 0.0, 180.0);
+    private final SocketHint<List> saturationHint = SocketHints.createNumberListRangeSockeHint("Saturation", 0.0, 255.0);
+    private final SocketHint<List> valueHint = SocketHints.createNumberListRangeSockeHint("Value", 0.0, 255.0);
 
-    private final SocketHint<Mat> outputHint = new SocketHint<Mat>("output", Mat.class, Mat::new);
+    private final SocketHint<Mat> outputHint = SocketHints.createMatSocketHint("Output", true);
 
     @Override
     public String getName() {

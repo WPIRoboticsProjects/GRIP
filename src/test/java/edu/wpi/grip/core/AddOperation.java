@@ -10,9 +10,9 @@ import org.bytedeco.javacpp.opencv_core.Mat;
  */
 public class AddOperation implements Operation {
     private SocketHint<Mat>
-            aHint = new SocketHint<Mat>("a", Mat.class, Mat::new),
-            bHint = new SocketHint<Mat>("b", Mat.class, Mat::new),
-            sumHint = new SocketHint<Mat>("sum", Mat.class, Mat::new);
+            aHint = SocketHints.createMatSocketHint("a", false),
+            bHint = SocketHints.createMatSocketHint("b", false),
+            sumHint = SocketHints.createMatSocketHint("sum", true);
 
     @Override
     public String getName() {

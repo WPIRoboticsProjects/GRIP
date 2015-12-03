@@ -1,15 +1,12 @@
 package edu.wpi.grip.core.operations.composite;
 
 import com.google.common.eventbus.EventBus;
-import edu.wpi.grip.core.InputSocket;
-import edu.wpi.grip.core.Operation;
-import edu.wpi.grip.core.OutputSocket;
-import edu.wpi.grip.core.SocketHint;
+import edu.wpi.grip.core.*;
 
 import java.io.InputStream;
 import java.util.Optional;
 
-import static org.bytedeco.javacpp.opencv_core.*;
+import static org.bytedeco.javacpp.opencv_core.Mat;
 import static org.bytedeco.javacpp.opencv_imgproc.*;
 
 /**
@@ -17,8 +14,8 @@ import static org.bytedeco.javacpp.opencv_imgproc.*;
  */
 public class DesaturateOperation implements Operation {
 
-    private final SocketHint<Mat> inputHint = new SocketHint<Mat>("Input", Mat.class, Mat::new);
-    private final SocketHint<Mat> outputHint = new SocketHint<Mat>("output", Mat.class, Mat::new);
+    private final SocketHint<Mat> inputHint = SocketHints.createMatSocketHint("Input", false);
+    private final SocketHint<Mat> outputHint = SocketHints.createMatSocketHint("Output", true);
 
     @Override
     public String getName() {

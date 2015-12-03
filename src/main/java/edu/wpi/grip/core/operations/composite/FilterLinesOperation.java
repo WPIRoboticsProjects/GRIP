@@ -1,10 +1,7 @@
 package edu.wpi.grip.core.operations.composite;
 
 import com.google.common.eventbus.EventBus;
-import edu.wpi.grip.core.InputSocket;
-import edu.wpi.grip.core.Operation;
-import edu.wpi.grip.core.OutputSocket;
-import edu.wpi.grip.core.SocketHint;
+import edu.wpi.grip.core.*;
 
 import java.io.InputStream;
 import java.util.Optional;
@@ -15,14 +12,14 @@ import java.util.stream.Collectors;
  * to only relevant ones.
  */
 public class FilterLinesOperation implements Operation {
-    private final SocketHint<LinesReport> inputHint = new SocketHint<LinesReport>("Lines", LinesReport.class,
-            LinesReport::new);
+    private final SocketHint<LinesReport> inputHint =
+            new SocketHint.Builder(LinesReport.class).identifier("Lines").build();
 
-    private final SocketHint<Number> minLengthHint = new SocketHint<>("Min Length", Number.class, 20,
-            SocketHint.View.SPINNER);
+    private final SocketHint<Number> minLengthHint = SocketHints.createNumberSpinnerSocketHint("Min Length", 20);
 
-    private final SocketHint<LinesReport> outputHint = new SocketHint<LinesReport>("Lines", LinesReport.class,
-            LinesReport::new);
+    private final SocketHint<LinesReport> outputHint =
+            new SocketHint.Builder(LinesReport.class)
+                    .identifier("Lines").initialValueSupplier(LinesReport::new).build();
 
     @Override
     public String getName() {

@@ -1,12 +1,8 @@
 package edu.wpi.grip.core.operations.composite;
 
 import com.google.common.eventbus.EventBus;
-import edu.wpi.grip.core.InputSocket;
-import edu.wpi.grip.core.Operation;
-import edu.wpi.grip.core.OutputSocket;
-import edu.wpi.grip.core.SocketHint;
+import edu.wpi.grip.core.*;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -17,15 +13,12 @@ import static org.bytedeco.javacpp.opencv_core.*;
  */
 public class RGBThresholdOperation extends ThresholdOperation {
 
-    private final SocketHint<Mat> inputHint = new SocketHint<Mat>("Input", Mat.class, Mat::new);
-    private final SocketHint<List> redHint = new SocketHint<List>("Red", List.class,
-            () -> Arrays.asList(0.0, 255.0), SocketHint.View.RANGE, new List[]{Arrays.asList(0.0, 255.0)});
-    private final SocketHint<List> greenHint = new SocketHint<List>("Green", List.class,
-            () -> Arrays.asList(0.0, 255.0), SocketHint.View.RANGE, new List[]{Arrays.asList(0.0, 255.0)});
-    private final SocketHint<List> blueHint = new SocketHint<List>("Blue", List.class,
-            () -> Arrays.asList(0.0, 255.0), SocketHint.View.RANGE, new List[]{Arrays.asList(0.0, 255.0)});
+    private final SocketHint<Mat> inputHint = SocketHints.createMatSocketHint("Input", false);
+    private final SocketHint<List> redHint = SocketHints.createNumberListRangeSockeHint("Red", 0.0, 255.0);
+    private final SocketHint<List> greenHint = SocketHints.createNumberListRangeSockeHint("Green", 0.0, 255.0);
+    private final SocketHint<List> blueHint = SocketHints.createNumberListRangeSockeHint("Blue", 0.0, 255.0);
 
-    private final SocketHint<Mat> outputHint = new SocketHint<Mat>("output", Mat.class, Mat::new);
+    private final SocketHint<Mat> outputHint = SocketHints.createMatSocketHint("Input", true);
 
     @Override
     public String getName() {

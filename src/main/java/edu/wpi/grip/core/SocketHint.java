@@ -25,62 +25,16 @@ public class SocketHint<T> {
     private final boolean publishable;
 
     /**
-     * @param identifier           A user-presentable name for the socket, such as "Blur Radius".
      * @param type                 The type of value held by the socket.
+     * @param identifier           A user-presentable name for the socket, such as "Blur Radius".
+     * @param initialValueSupplier A function that returns an initial value for newly-created sockets.
      * @param view                 A hint at the type of GUI control to use to display the socket.
      * @param domain               A hint at the range of values that this socket can hold.  For numeric types, this
      *                             can consist of two elements that correspond to a minimum and maximum value.  The
-     *                             property does not make sense for all types and is left unspecified for some.
-     * @param initialValueSupplier A function that returns an initial value for newly-created sockets.
+     *                             property does not make sense for all types and is left unspecified for some
      * @param publishable          If this isn't true, the socket won't be able to be set as published, and the GUI
      *                             should also not show a button to publish it.  This is false by default.
      */
-    @Deprecated
-    public SocketHint(String identifier, Class<T> type, Supplier<T> initialValueSupplier, View view, T[] domain,
-                      boolean publishable) {
-        this.identifier = identifier;
-        this.type = type;
-        this.initialValueSupplier = Optional.of(initialValueSupplier);
-        this.view = view;
-        this.domain = domain == null ? Optional.empty() : Optional.of(domain.clone());
-        this.publishable = publishable;
-    }
-
-    @Deprecated
-    public SocketHint(String identifier, Class<T> type, T initialValue, View view, T[] domain, boolean publishable) {
-        this(identifier, type, () -> initialValue, view, domain, publishable);
-    }
-
-    @Deprecated
-    public SocketHint(String identifier, Class<T> type, Supplier<T> initialValueSupplier, View view, T[] domain) {
-        this(identifier, type, initialValueSupplier, view, domain, false);
-    }
-
-    @Deprecated
-    public SocketHint(String identifier, Class<T> type, T initialValue, View view, T[] domain) {
-        this(identifier, type, () -> initialValue, view, domain);
-    }
-
-    @Deprecated
-    public SocketHint(String identifier, Class<T> type, Supplier<T> initialValueSupplier, View view) {
-        this(identifier, type, initialValueSupplier, view, null);
-    }
-
-    @Deprecated
-    public SocketHint(String identifier, Class<T> type, T initialValue, View view) {
-        this(identifier, type, () -> initialValue, view);
-    }
-
-    @Deprecated
-    public SocketHint(String identifier, Class<T> type, Supplier<T> initialValueSupplier) {
-        this(identifier, type, initialValueSupplier, View.NONE);
-    }
-
-    @Deprecated
-    public SocketHint(String identifier, Class<T> type, T initialValue) {
-        this(identifier, type, () -> initialValue);
-    }
-
     private SocketHint(Class<T> type, String identifier, Optional<Supplier<T>> initialValueSupplier, View view, Optional<T[]> domain, boolean publishable) {
         this.type = type;
         this.identifier = identifier;

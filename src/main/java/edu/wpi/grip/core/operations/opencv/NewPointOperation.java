@@ -5,6 +5,7 @@ import com.google.common.eventbus.EventBus;
 import edu.wpi.grip.core.InputSocket;
 import edu.wpi.grip.core.OutputSocket;
 import edu.wpi.grip.core.SocketHint;
+import edu.wpi.grip.core.SocketHints;
 import org.bytedeco.javacpp.opencv_core.Point;
 
 import java.io.InputStream;
@@ -12,9 +13,9 @@ import java.util.Optional;
 
 public class NewPointOperation implements CVOperation {
 
-    private final SocketHint<Number> xHint = new SocketHint<Number>("x", Number.class, -1, SocketHint.View.SPINNER, new Integer[]{Integer.MIN_VALUE, Integer.MAX_VALUE}, false);
-    private final SocketHint<Number> yHint = new SocketHint<Number>("y", Number.class, -1, SocketHint.View.SPINNER, new Integer[]{Integer.MIN_VALUE, Integer.MAX_VALUE}, false);
-    private final SocketHint<Point> outputHint = new SocketHint<Point>("point", Point.class, Point::new);
+    private final SocketHint<Number> xHint = SocketHints.createNumberSpinnerSocketHint("x", -1, new Integer[]{Integer.MIN_VALUE, Integer.MAX_VALUE});
+    private final SocketHint<Number> yHint = SocketHints.createNumberSpinnerSocketHint("y", -1, new Integer[]{Integer.MIN_VALUE, Integer.MAX_VALUE});
+    private final SocketHint<Point> outputHint = SocketHints.Outputs.createPointSocketHint("point");
 
     @Override
     public String getName() {

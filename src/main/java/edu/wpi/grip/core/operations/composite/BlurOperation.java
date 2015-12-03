@@ -37,7 +37,7 @@ public class BlurOperation implements Operation {
             .view(SocketHint.View.SELECT)
             .domain(Type.values())
             .build();
-    private final SocketHint<Number> radiusHint = SocketHints.createNumberSocketHint("Radius", 0.0, new Number[]{0.0, 100.0}, SocketHint.View.SLIDER);
+    private final SocketHint<Number> radiusHint = SocketHints.createNumberSliderSocketHint("Radius", 0.0, new Number[]{0.0, 100.0});
 
     private final SocketHint<Mat> outputHint = SocketHints.createMatSocketHint("Output", true);
 

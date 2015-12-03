@@ -28,7 +28,7 @@ public class SinkTest {
     }
 
     private Optional<Throwable> throwableOptional;
-    private EventBus eventBus = new EventBus((exception, context) -> throwableOptional = Optional.of(exception));
+    private EventBus eventBus;
     private InputSocket<Integer> a, b;
     private OutputSocket<Integer> sum;
 
@@ -36,17 +36,18 @@ public class SinkTest {
     @SuppressWarnings("unchecked")
     public void createSimplePipeline() {
         this.throwableOptional = Optional.empty();
+        this.eventBus = new EventBus((exception, context) -> throwableOptional = Optional.of(exception));
         final Pipeline pipeLine = new Pipeline(eventBus);
 
         final Step step = new Step(eventBus, new PythonScriptOperation(
                 "import edu.wpi.grip.core as grip\n" +
                 "import java.lang.Number\n" +
                 "inputs = [\n" +
-                "    grip.SocketHint('a', java.lang.Number, 0),\n" +
-                "    grip.SocketHint('b', java.lang.Number, 0),\n" +
+                "    grip.SocketHints.createNumberSocketHint('a', 0),\n" +
+                "    grip.SocketHints.createNumberSocketHint('b', 0),\n" +
                 "]\n" +
                 "outputs = [\n" +
-                "    grip.SocketHint('sum', java.lang.Number, 0.0, grip.SocketHint.View.NONE, None, True),\n" +
+                "    grip.SocketHints.Outputs.createNumberSocketHint('sum', 0.0),\n" +
                 "]\n" +
                 "def perform(a, b): return a + b\n"));
 

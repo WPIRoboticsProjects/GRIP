@@ -31,8 +31,8 @@ public class ProjectTest {
         pythonAdditionOperationFromURL = new PythonScriptOperation(
                 ProjectTest.class.getResource("/edu/wpi/grip/scripts/addition.py"));
         pythonAdditionOperationFromSource = new PythonScriptOperation("import edu.wpi.grip.core as grip\nimport java" +
-                ".lang.Integer\n\ninputs = [\n    grip.SocketHint(\"a\", java.lang.Integer, 0),\n    grip.SocketHint(" +
-                "\"b\", java.lang.Integer, 0),\n]\n\noutputs = [\n    grip.SocketHint(\"sum\", java.lang.Integer, 0)," +
+                ".lang.Integer\n\ninputs = [\n    grip.SocketHints.createNumberSocketHint(\"a\", 0.0),\n    grip.SocketHints.createNumberSocketHint(" +
+                "\"b\", 0.0),\n]\n\noutputs = [\n    grip.SocketHints.Outputs.createNumberSocketHint(\"sum\", 0.0)," +
                 "\n]\n\ndef perform(a, b):\n    return a + b\n");
         opencvAddOperation = new AddOperation();
 
@@ -78,14 +78,14 @@ public class ProjectTest {
     @SuppressWarnings("unchecked")
     public void testSerializePipelineWithStepsAndConnections() throws Exception {
         Step step1 = new Step(eventBus, pythonAdditionOperationFromSource);
-        InputSocket<Integer> a1 = (InputSocket<Integer>) step1.getInputSockets()[0];
-        InputSocket<Integer> b1 = (InputSocket<Integer>) step1.getInputSockets()[1];
-        OutputSocket<Integer> sum1 = (OutputSocket<Integer>) step1.getOutputSockets()[0];
+        InputSocket<Number> a1 = (InputSocket<Number>) step1.getInputSockets()[0];
+        InputSocket<Number> b1 = (InputSocket<Number>) step1.getInputSockets()[1];
+        OutputSocket<Number> sum1 = (OutputSocket<Number>) step1.getOutputSockets()[0];
 
         Step step2 = new Step(eventBus, pythonAdditionOperationFromURL);
-        InputSocket<Integer> a2 = (InputSocket<Integer>) step2.getInputSockets()[0];
-        InputSocket<Integer> b2 = (InputSocket<Integer>) step2.getInputSockets()[1];
-        OutputSocket<Integer> sum2 = (OutputSocket<Integer>) step2.getOutputSockets()[0];
+        InputSocket<Number> a2 = (InputSocket<Number>) step2.getInputSockets()[0];
+        InputSocket<Number> b2 = (InputSocket<Number>) step2.getInputSockets()[1];
+        OutputSocket<Number> sum2 = (OutputSocket<Number>) step2.getOutputSockets()[0];
 
         a1.setValue(12);
         b1.setValue(34);
@@ -93,7 +93,7 @@ public class ProjectTest {
 
         eventBus.post(new StepAddedEvent(step1));
         eventBus.post(new StepAddedEvent(step2));
-        eventBus.post(new ConnectionAddedEvent(new Connection<Integer>(eventBus, sum1, a2)));
+        eventBus.post(new ConnectionAddedEvent(new Connection<Number>(eventBus, sum1, a2)));
 
         serializeAndDeserialize();
 
@@ -109,13 +109,13 @@ public class ProjectTest {
         eventBus.post(new StepAddedEvent(new Step(eventBus, additionOperation)));
         serializeAndDeserialize();
 
-        InputSocket<Double> a = (InputSocket<Double>) pipeline.getSteps().get(0).getInputSockets()[0];
-        InputSocket<Double> b = (InputSocket<Double>) pipeline.getSteps().get(0).getInputSockets()[1];
-        OutputSocket<Double> sum = (OutputSocket<Double>) pipeline.getSteps().get(0).getOutputSockets()[0];
+        InputSocket<Number> a = (InputSocket<Number>) pipeline.getSteps().get(0).getInputSockets()[0];
+        InputSocket<Number> b = (InputSocket<Number>) pipeline.getSteps().get(0).getInputSockets()[1];
+        OutputSocket<Number> sum = (OutputSocket<Number>) pipeline.getSteps().get(0).getOutputSockets()[0];
         a.setValue(123.4);
         b.setValue(567.8);
 
-        assertEquals((Double) (123.4 + 567.8), sum.getValue().get());
+        assertEquals((Double) (123.4 + 567.8), sum.getValue().get().doubleValue());
     }
 
     @Test
@@ -124,13 +124,13 @@ public class ProjectTest {
         eventBus.post(new StepAddedEvent(new Step(eventBus, pythonAdditionOperationFromURL)));
         serializeAndDeserialize();
 
-        InputSocket<Integer> a = (InputSocket<Integer>) pipeline.getSteps().get(0).getInputSockets()[0];
-        InputSocket<Integer> b = (InputSocket<Integer>) pipeline.getSteps().get(0).getInputSockets()[1];
-        OutputSocket<Integer> sum = (OutputSocket<Integer>) pipeline.getSteps().get(0).getOutputSockets()[0];
+        InputSocket<Number> a = (InputSocket<Number>) pipeline.getSteps().get(0).getInputSockets()[0];
+        InputSocket<Number> b = (InputSocket<Number>) pipeline.getSteps().get(0).getInputSockets()[1];
+        OutputSocket<Number> sum = (OutputSocket<Number>) pipeline.getSteps().get(0).getOutputSockets()[0];
         a.setValue(1234);
         b.setValue(5678);
 
-        assertEquals((Integer) (1234 + 5678), sum.getValue().get());
+        assertEquals((int) (1234 + 5678), sum.getValue().get().intValue());
     }
 
     @Test
@@ -139,13 +139,13 @@ public class ProjectTest {
         eventBus.post(new StepAddedEvent(new Step(eventBus, pythonAdditionOperationFromSource)));
         serializeAndDeserialize();
 
-        InputSocket<Integer> a = (InputSocket<Integer>) pipeline.getSteps().get(0).getInputSockets()[0];
-        InputSocket<Integer> b = (InputSocket<Integer>) pipeline.getSteps().get(0).getInputSockets()[1];
-        OutputSocket<Integer> sum = (OutputSocket<Integer>) pipeline.getSteps().get(0).getOutputSockets()[0];
+        InputSocket<Number> a = (InputSocket<Number>) pipeline.getSteps().get(0).getInputSockets()[0];
+        InputSocket<Number> b = (InputSocket<Number>) pipeline.getSteps().get(0).getInputSockets()[1];
+        OutputSocket<Number> sum = (OutputSocket<Number>) pipeline.getSteps().get(0).getOutputSockets()[0];
         a.setValue(1234);
         b.setValue(5678);
 
-        assertEquals((Integer) (1234 + 5678), sum.getValue().get());
+        assertEquals((int) (1234 + 5678), sum.getValue().get().intValue());
     }
 
     @Test
@@ -159,15 +159,15 @@ public class ProjectTest {
                 step2.getInputSockets()[0])));
         serializeAndDeserialize();
 
-        InputSocket<Integer> a1 = (InputSocket<Integer>) pipeline.getSteps().get(0).getInputSockets()[0];
-        InputSocket<Integer> b1 = (InputSocket<Integer>) pipeline.getSteps().get(0).getInputSockets()[1];
-        InputSocket<Integer> b2 = (InputSocket<Integer>) pipeline.getSteps().get(1).getInputSockets()[1];
-        OutputSocket<Integer> sum2 = (OutputSocket<Integer>) pipeline.getSteps().get(1).getOutputSockets()[0];
+        InputSocket<Number> a1 = (InputSocket<Number>) pipeline.getSteps().get(0).getInputSockets()[0];
+        InputSocket<Number> b1 = (InputSocket<Number>) pipeline.getSteps().get(0).getInputSockets()[1];
+        InputSocket<Number> b2 = (InputSocket<Number>) pipeline.getSteps().get(1).getInputSockets()[1];
+        OutputSocket<Number> sum2 = (OutputSocket<Number>) pipeline.getSteps().get(1).getOutputSockets()[0];
         a1.setValue(123);
         b1.setValue(456);
         b2.setValue(789);
 
-        assertEquals((Integer) (123 + 456 + 789), sum2.getValue().get());
+        assertEquals((int) (123 + 456 + 789), sum2.getValue().get().intValue());
     }
 
     @Test

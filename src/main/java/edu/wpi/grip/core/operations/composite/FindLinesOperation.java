@@ -1,10 +1,7 @@
 package edu.wpi.grip.core.operations.composite;
 
 import com.google.common.eventbus.EventBus;
-import edu.wpi.grip.core.InputSocket;
-import edu.wpi.grip.core.Operation;
-import edu.wpi.grip.core.OutputSocket;
-import edu.wpi.grip.core.SocketHint;
+import edu.wpi.grip.core.*;
 import org.bytedeco.javacpp.indexer.FloatIndexer;
 
 import java.io.InputStream;
@@ -20,9 +17,9 @@ import static org.bytedeco.javacpp.opencv_imgproc.cvtColor;
  */
 public class FindLinesOperation implements Operation {
 
-    private final SocketHint<Mat> inputHint = new SocketHint<Mat>("Input", Mat.class, Mat::new);
-    private final SocketHint<LinesReport> linesHint = new SocketHint<LinesReport>("Lines", LinesReport.class,
-            LinesReport::new);
+    private final SocketHint<Mat> inputHint = SocketHints.createMatSocketHint("Input", false);
+    private final SocketHint<LinesReport> linesHint = new SocketHint.Builder(LinesReport.class)
+            .identifier("Lines").initialValueSupplier(LinesReport::new).build();
 
     @Override
     public String getName() {

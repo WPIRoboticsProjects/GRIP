@@ -9,7 +9,6 @@ import edu.wpi.grip.core.events.SocketPublishedEvent;
 
 import java.util.NoSuchElementException;
 import java.util.Optional;
-import java.util.function.Supplier;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
@@ -62,7 +61,7 @@ public class OutputSocket<T> extends Socket<T> {
     /**
      * @param published If <code>true</code>, this socket will be published by any sink that is currently active.  For
      *                  example, it may be set as a NetworkTables value.  The socket must be publishable.
-     * @see SocketHint#SocketHint(String, Class, Supplier, SocketHint.View, Object[], boolean)
+     * @see edu.wpi.grip.core.SocketHint.Builder#publishable(boolean)
      */
     public void setPublished(boolean published) {
         checkArgument(this.getSocketHint().isPublishable() || !published, "socket is not publishable");
