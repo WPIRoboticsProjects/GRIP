@@ -177,7 +177,7 @@ public class FileParser {
                 new DefinedMethod("resize", false,
                         new DefinedParamType("Mat"),
                         new DefinedParamType("Mat"),
-                        new DefinedParamType("Size")
+                        new DefinedParamType("Size").setDefaultValue(new ObjectDefaultValue("Size"))
                 ).addDescription("Resize the image to the specified size."),
                 new DefinedMethod("rectangle", false,
                         new DefinedParamType("Mat", DefinedParamType.DefinedParamDirection.INPUT_AND_OUTPUT),

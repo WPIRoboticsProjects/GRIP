@@ -104,7 +104,7 @@ public class SocketHint<T> {
         }
 
         public Builder initialValue(T value) {
-            this.initialValueSupplier = Optional.of(() -> value);
+            this.initialValueSupplier = value == null ? Optional.empty() : Optional.of(() -> value);
             return this;
         }
 
