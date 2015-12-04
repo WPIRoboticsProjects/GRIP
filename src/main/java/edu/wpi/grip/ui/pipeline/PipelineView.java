@@ -39,6 +39,9 @@ public class PipelineView extends StackPane implements Initializable {
     private Pane addSourcePane;
 
     @FXML
+    private Pane addSinkPane;
+
+    @FXML
     private HBox steps;
 
     @FXML
@@ -64,6 +67,7 @@ public class PipelineView extends StackPane implements Initializable {
         }
 
         this.addSourcePane.getChildren().add(new AddSourceView(eventBus));
+        this.addSinkPane.getChildren().add(new AddSinkView(eventBus));
 
         this.eventBus.register(this);
     }

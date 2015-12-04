@@ -6,7 +6,7 @@ import edu.wpi.grip.core.Pipeline;
 import edu.wpi.grip.core.events.SetSinkEvent;
 import edu.wpi.grip.core.operations.Operations;
 import edu.wpi.grip.core.serialization.Project;
-import edu.wpi.grip.core.sinks.DummySink;
+import edu.wpi.grip.core.sinks.NetworkTablesSink;
 import edu.wpi.grip.generated.CVOperations;
 import edu.wpi.grip.ui.pipeline.PipelineView;
 import edu.wpi.grip.ui.preview.PreviewsView;
@@ -69,7 +69,7 @@ public class MainWindowView extends VBox {
         // Add all of the auto-generated OpenCV operations
         CVOperations.addOperations(eventBus);
 
-        eventBus.post(new SetSinkEvent(new DummySink()));
+        eventBus.post(new SetSinkEvent(new NetworkTablesSink(eventBus)));
 
         this.project = new Project(this.eventBus, this.pipeline.getPipeline(), this.palette.getPalette());
     }

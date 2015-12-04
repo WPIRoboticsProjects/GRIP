@@ -1,22 +1,40 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.*?>
 <?import javafx.scene.Group?>
 <?import javafx.scene.layout.*?>
-<fx:root type="javafx.scene.layout.StackPane" maxWidth="Infinity" maxHeight="Infinity" xmlns:fx="http://javafx.com/fxml"
-         styleClass="pipeline">
+<fx:root maxHeight="Infinity" maxWidth="Infinity" styleClass="pipeline" type="javafx.scene.layout.StackPane"
+         xmlns="http://javafx.com/javafx/8.0.40" xmlns:fx="http://javafx.com/fxml/1">
     <children>
-        <HBox>
-            <VBox fillWidth="true">
-                <Label styleClass="pane-title" text="Sources" maxWidth="Infinity"/>
-                <Separator orientation="HORIZONTAL"/>
-                <Pane fx:id="addSourcePane"/>
-                <VBox fx:id="sources" styleClass="sources"/>
-            </VBox>
-            <Separator orientation="VERTICAL"/>
-            <HBox fx:id="steps" styleClass="steps" fillHeight="false"/>
-        </HBox>
+        <BorderPane>
+            <left>
+                <VBox fillWidth="true">
+                    <Label maxWidth="Infinity" styleClass="pane-title" text="Sources"/>
+                    <Separator orientation="HORIZONTAL"/>
+                    <Pane fx:id="addSourcePane"/>
+                    <VBox fx:id="sources" styleClass="sources"/>
+                </VBox>
+            </left>
+            <center>
+                <HBox fillHeight="true">
+                    <children>
+                        <Separator orientation="VERTICAL"/>
+                        <HBox fx:id="steps" fillHeight="false" maxWidth="Infinity" styleClass="steps" HBox.hgrow="ALWAYS"/>
+                        <Separator orientation="VERTICAL"/>
+                    </children>
+                </HBox>
+            </center>
+            <right>
+                <VBox fillWidth="false">
+                    <children>
+                        <Label maxWidth="Infinity" styleClass="pane-title" text="Sinks"/>
+                        <Separator orientation="HORIZONTAL"/>
+                        <Pane fx:id="addSinkPane"/>
+                        <VBox fx:id="sinks" styleClass="sinks"/>
+                    </children>
+                </VBox>
+            </right>
+        </BorderPane>
         <Group fx:id="connections" mouseTransparent="true">
             <StackPane.alignment>TOP_LEFT</StackPane.alignment>
         </Group>

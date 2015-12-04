@@ -100,7 +100,7 @@
         <SplitPane dividerPositions="0.6" orientation="VERTICAL" VBox.vgrow="ALWAYS">
             <items>
                 <SplitPane dividerPositions="1.0" orientation="HORIZONTAL" fx:id="topPane"/>
-                <ScrollPane fx:id="bottomPane"/>
+                <ScrollPane fx:id="bottomPane" fitToWidth="true"/>
             </items>
         </SplitPane>
     </children>

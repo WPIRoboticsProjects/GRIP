@@ -88,7 +88,7 @@ Label.operation-description {
     -fx-padding: 0.5em;
 }
 
-.sources {
+.sources, .sinks {
     -fx-padding: 0.5em;
     -fx-spacing: 1em;
 }
@@ -188,4 +188,8 @@ VBox.sockets {
 .connection {
     -fx-stroke: -fx-mark-color;
     -fx-fill: none;
+}
+
+.indented {
+    -fx-padding: .5em 0 0 .5em;
 }
