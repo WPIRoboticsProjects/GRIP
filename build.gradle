@@ -128,8 +128,13 @@ project(":ui") {
     apply plugin: 'application'
     apply from: 'http://dl.bintray.com/shemnon/javafx-gradle/8.1.1/javafx.plugin'
 
+    configurations {
+        ideProvider
+    }
+
     dependencies {
-        compile project(path: ':core', configuration: 'compile')
+        compile project(path: ':core', configuration: 'shadow')
+        ideProvider project(path: ':core', configuration: 'compile')
         compile group: 'org.controlsfx', name: 'controlsfx', version: '8.40.10'
         compile group: 'org.bytedeco.javacpp-presets', name: 'opencv', version: '3.0.0-1.1', classifier: os
         compile group: 'org.bytedeco.javacpp-presets', name: 'videoinput', version: '0.200-1.1', classifier: os
@@ -140,6 +145,10 @@ project(":ui") {
 
     evaluationDependsOn(':core')
     compileTestJava.dependsOn tasks.getByPath(':core:testClasses')
+
+    idea.module {
+        scopes.PROVIDED.plus += [ configurations.ideProvider ]
+    }
 
     javafx {
         appID = 'GRIP'
