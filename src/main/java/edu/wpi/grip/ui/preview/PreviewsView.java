@@ -96,7 +96,7 @@ public class PreviewsView extends VBox {
     /**
      * Find the correct index in the displayed previews for a socket associated with a source (NOT a step socket)
      * by comparing the indices in the pipeline.
-     * Called in PreviewsView::onSocketPreviewChanged(SocketPreviewChangedEvent)
+     * Called in {@link PreviewsView#onSocketPreviewChanged}
      *
      * @param socket An output socket associated with a source (NOT a step)
      * @return The correct index (an int) in the list of displayed previews for the given <code>socket</code>
@@ -120,7 +120,7 @@ public class PreviewsView extends VBox {
     /**
      * Find the correct index in the displayed previews for a socket associated with a step (NOT a source socket)
      * by comparing the indices in the pipeline, starting with the first non-source preview displayed.
-     * Called in PreviewsView::onSocketPreviewChanged(SocketPreviewChangedEvent)
+     * Called in {@link PreviewsView#onSocketPreviewChanged}
      *
      * @param socket An output socket associated with a step (NOT a source)
      * @return The correct index in the list of displayed previews for the given <code>socket</code>
@@ -144,7 +144,7 @@ public class PreviewsView extends VBox {
 
     /**
      * Counts how many source previews (NOT step previews) are currently displayed.
-     * Called in PreviewsView::getIndexInPreviewsOfAStepSocket(OutputSocket<?> socket)
+     * Called in {@link PreviewsView#getIndexInPreviewsOfAStepSocket}
      *
      * @return The number of source (NOT step) previews that are currently displayed
      * @see PreviewsView#getIndexInPreviewsOfAStepSocket(OutputSocket)
