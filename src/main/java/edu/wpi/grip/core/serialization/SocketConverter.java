@@ -74,7 +74,7 @@ class SocketConverter implements Converter {
                     // XStream doesn't have a built-in converter for lists other than ArrayList
                     context.convertAnother(new ArrayList<>((List) socket.getValue().get()));
                 } else {
-                    context.convertAnother(socket.getValue());
+                    context.convertAnother(socket.getValue().get());
                 }
                 writer.endNode();
             }
