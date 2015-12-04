@@ -33,7 +33,7 @@ public class PreviewsView extends VBox {
 
     private final EventBus eventBus;
     private final List<OutputSocket<?>> previewedSockets;
-    private PipelineView pipeline;//This is used to determine the order the previews are shown in.
+    private final PipelineView pipeline;//This is used to determine the order the previews are shown in.
 
     public PreviewsView(EventBus eventBus, PipelineView pipeline) {
         checkNotNull(eventBus);
