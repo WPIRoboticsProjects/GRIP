@@ -37,6 +37,7 @@ public class PreviewsView extends VBox {
 
     public PreviewsView(EventBus eventBus, PipelineView pipeline) {
         checkNotNull(eventBus);
+        checkNotNull(pipeline);
 
         this.eventBus = eventBus;
         this.previewedSockets = new ArrayList<>();
@@ -103,7 +104,7 @@ public class PreviewsView extends VBox {
      * @see PreviewsView#onSocketPreviewChanged(SocketPreviewChangedEvent)
      */
     private int getIndexInPreviewsOfASourceSocket(OutputSocket<?> socket) {
-        Source socketSource = socket.getSource().get();//The source socket associated with the socket whose preview has changed
+        final Source socketSource = socket.getSource().get();//The source socket associated with the socket whose preview has changed
         final SourceView sourceView = this.pipeline.findSourceView(socketSource);//The gui object that displays the socketSource
         int indexOfSource = this.pipeline.getSources().indexOf(sourceView); //The index of the source that has the socket in the pipeline
 
@@ -129,7 +130,7 @@ public class PreviewsView extends VBox {
     private int getIndexInPreviewsOfAStepSocket(OutputSocket<?> socket) {
         int numbOfSourcePreviews = getNumbOfSourcePreviews();//Count how many *source* previews (not *step* previews) are currently displayed
 
-        Step socketStep = socket.getStep().get();//The pipeline step associated with the socket whose preview has changed
+        final Step socketStep = socket.getStep().get();//The pipeline step associated with the socket whose preview has changed
         final StepView stepView = this.pipeline.findStepView(socketStep);//The gui object that displays the socketStep
         int indexOfStep = this.pipeline.getSteps().indexOf(stepView); //The index of the step that has the socket in the pipeline
 
