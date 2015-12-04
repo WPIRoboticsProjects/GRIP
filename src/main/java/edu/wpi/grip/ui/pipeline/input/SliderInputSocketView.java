@@ -25,16 +25,13 @@ public class SliderInputSocketView extends InputSocketView<Number> {
     public SliderInputSocketView(EventBus eventBus, InputSocket<Number> socket) {
         super(eventBus, socket);
 
-        final Object[] domain = socket.getSocketHint().getDomain().get();
+        final Number[] domain = socket.getSocketHint().getDomain().get();
 
-        checkArgument(domain != null
-                        && domain.length == 2
-                        && domain[0] instanceof Number
-                        && domain[1] instanceof Number,
+        checkArgument(domain.length == 2,
                 "Sliders must have a domain with two numbers (min and max)");
 
-        final double min = ((Number) domain[0]).doubleValue();
-        final double max = ((Number) domain[1]).doubleValue();
+        final double min = domain[0].doubleValue();
+        final double max = domain[1].doubleValue();
         final double initialValue = socket.getValue().get().doubleValue();
 
         this.slider = new Slider(min, max, initialValue);
