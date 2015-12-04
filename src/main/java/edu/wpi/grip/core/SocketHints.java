@@ -164,7 +164,7 @@ public final class SocketHints {
                 .domain(new List[]{Arrays.asList(domain)});
     }
 
-    private static <T> SocketHint.Builder<T> createNumberSocketHintBuilder(final String identifier,
+    private static SocketHint.Builder<Number> createNumberSocketHintBuilder(final String identifier,
                                                                            final Number number,
                                                                            final Number[] domain) {
         return createNumberSocketHintBuilder(identifier, number).domain(domain);
