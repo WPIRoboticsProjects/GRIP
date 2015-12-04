@@ -9,7 +9,7 @@ import edu.wpi.grip.core.OutputSocket;
 import edu.wpi.grip.core.SocketHint;
 import edu.wpi.grip.core.SocketHints;
 import edu.wpi.grip.core.Source;
-import edu.wpi.grip.core.events.FatalErrorEvent;
+import edu.wpi.grip.core.events.UnexpectedThrowableEvent;
 import edu.wpi.grip.core.events.SourceRemovedEvent;
 import org.bytedeco.javacpp.opencv_core.Mat;
 import org.bytedeco.javacv.*;
@@ -172,16 +172,11 @@ public class CameraSource extends Source {
         }, "Camera");
         frameExecutor.setUncaughtExceptionHandler(
                 (thread, exception) -> {
-                    // TODO Pass Exception to the UI.
-                    System.err.println("Webcam Frame Grabber Thread crashed with uncaught exception:");
-                    exception.printStackTrace();
-                    eventBus.post(new FatalErrorEvent(exception));
+                    eventBus.post(new UnexpectedThrowableEvent(exception, "Webcam Frame Grabber Thread crashed with uncaught exception"));
                     try {
                         stopVideo();
                     } catch (TimeoutException e) {
-                        System.err.println("Webcam Frame Grabber could not be stopped!");
-                        e.printStackTrace();
-                        eventBus.post(new FatalErrorEvent(e));
+                        eventBus.post(new UnexpectedThrowableEvent(e, "Webcam Frame Grabber could not be stopped!"));
                     }
                 }
         );
