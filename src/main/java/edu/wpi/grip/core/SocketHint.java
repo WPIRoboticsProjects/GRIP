@@ -93,32 +93,32 @@ public class SocketHint<T> {
             this.type = type;
         }
 
-        public Builder identifier(String identifier) {
+        public Builder<T> identifier(String identifier) {
             this.identifier = Optional.of(identifier);
             return this;
         }
 
-        public Builder initialValueSupplier(Supplier<T> initialValueSupplier) {
+        public Builder<T> initialValueSupplier(Supplier<T> initialValueSupplier) {
             this.initialValueSupplier = Optional.of(initialValueSupplier);
             return this;
         }
 
-        public Builder initialValue(T value) {
+        public Builder<T> initialValue(T value) {
             this.initialValueSupplier = value == null ? Optional.empty() : Optional.of(() -> value);
             return this;
         }
 
-        public Builder view(View view) {
+        public Builder<T> view(View view) {
             this.view = checkNotNull(view, "The view can not be null");
             return this;
         }
 
-        public Builder domain(T[] domain) {
+        public Builder<T> domain(T[] domain) {
             this.domain = Optional.of(domain);
             return this;
         }
 
-        public Builder publishable(boolean publishable) {
+        public Builder<T> publishable(boolean publishable) {
             this.publishable = publishable;
             return this;
         }
