@@ -14,7 +14,7 @@ public class MinMaxLoc implements CVOperation {
 
     private final SocketHint<Mat>
             srcInputHint = SocketHints.Inputs.createMatSocketHint("Image", false),
-            maskInputHint = SocketHints.Inputs.createMatSocketHint("Mask", false);
+            maskInputHint = SocketHints.Inputs.createMatSocketHint("Mask", true);
 
     private final SocketHint<Number>
             minValOutputHint = SocketHints.Outputs.createNumberSocketHint("Min Val", 0),
