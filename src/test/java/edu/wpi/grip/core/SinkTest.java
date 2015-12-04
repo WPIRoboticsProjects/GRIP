@@ -1,5 +1,6 @@
 package edu.wpi.grip.core;
 
+import com.google.common.base.Throwables;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import edu.wpi.grip.core.events.SetSinkEvent;
@@ -7,10 +8,14 @@ import edu.wpi.grip.core.events.SocketPublishedEvent;
 import edu.wpi.grip.core.events.StepAddedEvent;
 import edu.wpi.grip.core.operations.PythonScriptOperation;
 import edu.wpi.grip.core.sinks.DummySink;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import static org.junit.Assert.*;
+import java.util.Optional;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 
 public class SinkTest {
     private final static class MockSink implements Sink {
@@ -18,28 +23,31 @@ public class SinkTest {
 
         @Subscribe
         public void onSocketPublished(SocketPublishedEvent event) {
-            publishedValue = (Integer) event.getSocket().getValue();
+            publishedValue = (Integer) event.getSocket().getValue().get();
         }
     }
 
-    private EventBus eventBus = new EventBus();
+    private Optional<Throwable> throwableOptional;
+    private EventBus eventBus;
     private InputSocket<Integer> a, b;
     private OutputSocket<Integer> sum;
 
     @Before
     @SuppressWarnings("unchecked")
     public void createSimplePipeline() {
+        this.throwableOptional = Optional.empty();
+        this.eventBus = new EventBus((exception, context) -> throwableOptional = Optional.of(exception));
         final Pipeline pipeLine = new Pipeline(eventBus);
 
         final Step step = new Step(eventBus, new PythonScriptOperation(
                 "import edu.wpi.grip.core as grip\n" +
                 "import java.lang.Number\n" +
                 "inputs = [\n" +
-                "    grip.SocketHint('a', java.lang.Number, 0),\n" +
-                "    grip.SocketHint('b', java.lang.Number, 0),\n" +
+                "    grip.SocketHints.createNumberSocketHint('a', 0),\n" +
+                "    grip.SocketHints.createNumberSocketHint('b', 0),\n" +
                 "]\n" +
                 "outputs = [\n" +
-                "    grip.SocketHint('sum', java.lang.Number, 0.0, grip.SocketHint.View.NONE, None, True),\n" +
+                "    grip.SocketHints.Outputs.createNumberSocketHint('sum', 0.0),\n" +
                 "]\n" +
                 "def perform(a, b): return a + b\n"));
 
@@ -48,6 +56,13 @@ public class SinkTest {
         this.a = (InputSocket<Integer>) step.getInputSockets()[0];
         this.b = (InputSocket<Integer>) step.getInputSockets()[1];
         this.sum = (OutputSocket<Integer>) step.getOutputSockets()[0];
+    }
+
+    @After
+    public void afterTest() {
+        if( throwableOptional.isPresent() ) {
+            throw Throwables.propagate(throwableOptional.get());
+        }
     }
 
     @Test

@@ -1,10 +1,7 @@
 package edu.wpi.grip.core.operations.composite;
 
 import com.google.common.eventbus.EventBus;
-import edu.wpi.grip.core.InputSocket;
-import edu.wpi.grip.core.Operation;
-import edu.wpi.grip.core.OutputSocket;
-import edu.wpi.grip.core.SocketHint;
+import edu.wpi.grip.core.*;
 
 import java.io.InputStream;
 import java.util.Optional;
@@ -17,10 +14,10 @@ import static org.bytedeco.javacpp.opencv_core.bitwise_xor;
  */
 public class MaskOperation implements Operation {
 
-    private final SocketHint<Mat> inputHint = new SocketHint<Mat>("Input", Mat.class, Mat::new);
-    private final SocketHint<Mat> maskHint = new SocketHint<Mat>("Mask", Mat.class, Mat::new);
+    private final SocketHint<Mat> inputHint = SocketHints.Inputs.createMatSocketHint("Input", false);
+    private final SocketHint<Mat> maskHint = SocketHints.Inputs.createMatSocketHint("Mask", false);
 
-    private final SocketHint<Mat> outputHint = new SocketHint<Mat>("Output", Mat.class, Mat::new);
+    private final SocketHint<Mat> outputHint = SocketHints.Outputs.createMatSocketHint("Output");
 
     @Override
     public String getName() {
@@ -55,18 +52,11 @@ public class MaskOperation implements Operation {
     @Override
     @SuppressWarnings("unchecked")
     public void perform(InputSocket<?>[] inputs, OutputSocket<?>[] outputs) {
-        final Mat input = ((InputSocket<Mat>) inputs[0]).getValue();
-        final Mat mask = ((InputSocket<Mat>) inputs[1]).getValue();
+        final Mat input = ((InputSocket<Mat>) inputs[0]).getValue().get();
+        final Mat mask = ((InputSocket<Mat>) inputs[1]).getValue().get();
 
         final OutputSocket<Mat> outputSocket = (OutputSocket<Mat>) outputs[0];
-        final Mat output = outputSocket.getValue();
-
-        // Do nothing if nothing is connected to the input
-        // TODO: this should happen automatically for all sockets that are marked as required
-        if (input.empty()) {
-            outputSocket.setValue(outputSocket.getSocketHint().createInitialValue());
-            return;
-        }
+        final Mat output = outputSocket.getValue().get();
 
         // Clear the output to black, then copy the input to it with the mask
         bitwise_xor(output, output, output);

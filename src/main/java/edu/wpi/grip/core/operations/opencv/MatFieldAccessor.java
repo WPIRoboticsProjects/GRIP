@@ -4,18 +4,19 @@ import com.google.common.eventbus.EventBus;
 import edu.wpi.grip.core.InputSocket;
 import edu.wpi.grip.core.OutputSocket;
 import edu.wpi.grip.core.SocketHint;
+import edu.wpi.grip.core.SocketHints;
 import org.bytedeco.javacpp.opencv_core.Mat;
 import org.bytedeco.javacpp.opencv_core.Size;
 
 public class MatFieldAccessor implements CVOperation {
     private static final Mat defaultsMat = new Mat();
-    private final SocketHint matHint = new SocketHint("input", Mat.class, Mat::new);
-    private final SocketHint sizeHint = new SocketHint("size", Size.class, Size::new);
-    private final SocketHint emptyHint = new SocketHint("empty", Boolean.class, defaultsMat.empty());
-    private final SocketHint channelsHint = new SocketHint("channels", Number.class, defaultsMat.channels());
-    private final SocketHint colsHint = new SocketHint("cols", Number.class, defaultsMat.cols(), SocketHint.View.NONE, null, true);
-    private final SocketHint rowsHint = new SocketHint("rows", Number.class, defaultsMat.rows(), SocketHint.View.NONE, null, true);
-    private final SocketHint highValueHint = new SocketHint("high value", Number.class, defaultsMat.highValue());
+    private final SocketHint matHint = SocketHints.Inputs.createMatSocketHint("Input", false);
+    private final SocketHint sizeHint = SocketHints.Inputs.createSizeSocketHint("size", true);
+    private final SocketHint emptyHint = SocketHints.Outputs.createBooleanSocketHint("empty", defaultsMat.empty());
+    private final SocketHint channelsHint = SocketHints.Outputs.createNumberSocketHint("channels", defaultsMat.channels());
+    private final SocketHint colsHint = SocketHints.Outputs.createNumberSocketHint("cols", defaultsMat.rows());
+    private final SocketHint rowsHint = SocketHints.Outputs.createNumberSocketHint("rows", defaultsMat.rows());
+    private final SocketHint highValueHint = SocketHints.Outputs.createNumberSocketHint("high value", defaultsMat.highValue());
 
 
     @Override
@@ -47,7 +48,7 @@ public class MatFieldAccessor implements CVOperation {
 
     @Override
     public void perform(InputSocket<?>[] inputs, OutputSocket<?>[] outputs) {
-        final Mat inputMat = (Mat) inputs[0].getValue();
+        final Mat inputMat = (Mat) inputs[0].getValue().get();
         final OutputSocket<Size> sizeSocket = (OutputSocket<Size>) outputs[0];
         final OutputSocket<Boolean> isEmptySocket = (OutputSocket<Boolean>) outputs[1];
         final OutputSocket<Number> channelsSocket = (OutputSocket<Number>) outputs[2];

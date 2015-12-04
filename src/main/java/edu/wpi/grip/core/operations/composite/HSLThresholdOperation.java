@@ -5,8 +5,8 @@ import com.google.common.eventbus.EventBus;
 import edu.wpi.grip.core.InputSocket;
 import edu.wpi.grip.core.OutputSocket;
 import edu.wpi.grip.core.SocketHint;
+import edu.wpi.grip.core.SocketHints;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -18,15 +18,12 @@ import static org.bytedeco.javacpp.opencv_imgproc.cvtColor;
  * An {@link edu.wpi.grip.core.Operation} that converts a color image into a binary image based on the HSL threshold ranges
  */
 public class HSLThresholdOperation extends ThresholdOperation {
-    private final SocketHint<Mat> inputHint = new SocketHint<Mat>("Input", Mat.class, Mat::new);
-    private final SocketHint<List> hueHint = new SocketHint<List>("Hue", List.class,
-            () -> Arrays.asList(0.0, 180.00), SocketHint.View.RANGE, new List[]{Arrays.asList(0.0, 180.0)});
-    private final SocketHint<List> saturationHint = new SocketHint<List>("Saturation", List.class,
-            () -> Arrays.asList(0.0, 255.0), SocketHint.View.RANGE, new List[]{Arrays.asList(0.0, 255.0)});
-    private final SocketHint<List> luminanceHint = new SocketHint<List>("Luminance", List.class,
-            () -> Arrays.asList(0.0, 255.0), SocketHint.View.RANGE, new List[]{Arrays.asList(0.0, 255.0)});
+    private final SocketHint<Mat> inputHint = SocketHints.Inputs.createMatSocketHint("Input", false);
+    private final SocketHint<List> hueHint = SocketHints.Inputs.createNumberListRangeSocketHint("Hue", 0.0, 180.0);
+    private final SocketHint<List> saturationHint = SocketHints.Inputs.createNumberListRangeSocketHint("Saturation", 0.0, 255.0);
+    private final SocketHint<List> luminanceHint = SocketHints.Inputs.createNumberListRangeSocketHint("Luminance", 0.0, 255.0);
 
-    private final SocketHint<Mat> outputHint = new SocketHint<Mat>("output", Mat.class, Mat::new);
+    private final SocketHint<Mat> outputHint = SocketHints.Outputs.createMatSocketHint("Output");
 
     @Override
     public String getName() {
@@ -59,21 +56,13 @@ public class HSLThresholdOperation extends ThresholdOperation {
     public void perform(InputSocket<?>[] inputs, OutputSocket<?>[] outputs, Optional<?> data) {
         final Mat[] dataArray = (Mat[]) data.orElseThrow(() -> new IllegalStateException("Data was not provided"));
 
-        final Mat input = ((InputSocket<Mat>) inputs[0]).getValue();
-        final List<Number> channel1 = ((InputSocket<List<Number>>) inputs[1]).getValue();
-        final List<Number> channel2 = ((InputSocket<List<Number>>) inputs[2]).getValue();
-        final List<Number> channel3 = ((InputSocket<List<Number>>) inputs[3]).getValue();
+        final Mat input = ((InputSocket<Mat>) inputs[0]).getValue().get();
+        final List<Number> channel1 = ((InputSocket<List<Number>>) inputs[1]).getValue().get();
+        final List<Number> channel2 = ((InputSocket<List<Number>>) inputs[2]).getValue().get();
+        final List<Number> channel3 = ((InputSocket<List<Number>>) inputs[3]).getValue().get();
 
         final OutputSocket<Mat> outputSocket = (OutputSocket<Mat>) outputs[0];
-        final Mat output = outputSocket.getValue();
-
-        // Do nothing if nothing is connected to the input
-        // TODO: this should happen automatically for all sockets that are marked as required
-        if (input.empty()) {
-            outputSocket.setValue(outputSocket.getSocketHint().createInitialValue());
-            return;
-        }
-
+        final Mat output = outputSocket.getValue().get();
 
         // Intentionally 1, 3, 2. This maps to the HLS open cv expects
         final Scalar lowScalar = new Scalar(

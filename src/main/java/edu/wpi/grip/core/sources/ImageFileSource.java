@@ -5,6 +5,7 @@ import com.google.common.io.Files;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import edu.wpi.grip.core.OutputSocket;
 import edu.wpi.grip.core.SocketHint;
+import edu.wpi.grip.core.SocketHints;
 import edu.wpi.grip.core.Source;
 import org.bytedeco.javacpp.opencv_core.Mat;
 import org.bytedeco.javacpp.opencv_imgcodecs;
@@ -28,7 +29,7 @@ public class ImageFileSource extends Source {
 
     private String name;
     private String path;
-    private final SocketHint<Mat> imageOutputHint = new SocketHint<Mat>("Image", Mat.class, Mat::new);
+    private final SocketHint<Mat> imageOutputHint = SocketHints.Inputs.createMatSocketHint("Image", true);
     private OutputSocket<Mat> outputSocket;
 
     /**
@@ -101,8 +102,8 @@ public class ImageFileSource extends Source {
     private void loadImage(String path, final int flags) throws IOException {
         Mat mat = opencv_imgcodecs.imread(path, flags);
         if (!mat.empty()) {
-            mat.copyTo(this.outputSocket.getValue());
-            this.outputSocket.setValue(this.outputSocket.getValue());
+            mat.copyTo(this.outputSocket.getValue().get());
+            this.outputSocket.setValue(this.outputSocket.getValue().get());
         } else {
             // TODO Output Error to GUI about invalid url
             throw new IOException("Error loading image " + path);

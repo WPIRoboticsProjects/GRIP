@@ -54,10 +54,6 @@ public class ObjectDefaultValue extends DefaultValue {
         }
     }
 
-    @Override
-    public Expression getDomainValue() {
-        return new NullLiteralExpr();
-    }
 
     @Override
     public String getViewType() {

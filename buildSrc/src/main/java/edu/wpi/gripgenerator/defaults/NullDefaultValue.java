@@ -1,7 +1,6 @@
 package edu.wpi.gripgenerator.defaults;
 
 import com.github.javaparser.ast.ImportDeclaration;
-import com.github.javaparser.ast.comments.BlockComment;
 import com.github.javaparser.ast.expr.Expression;
 import com.github.javaparser.ast.expr.NullLiteralExpr;
 import com.github.javaparser.ast.type.Type;
@@ -27,14 +26,12 @@ public class NullDefaultValue extends DefaultValue {
 
     @Override
     public Expression getDefaultValue(String defaultValue) {
-        NullLiteralExpr expr = new NullLiteralExpr();
-        expr.setComment(new BlockComment("Intentionally null"));
-        return expr;
+        return new NullLiteralExpr();
     }
 
     @Override
-    public Expression getDomainValue() {
-        return new NullLiteralExpr();
+    public String getSocketBuilderInitalValueMethodNameToUse() {
+        return "initialValue";
     }
 
     @Override

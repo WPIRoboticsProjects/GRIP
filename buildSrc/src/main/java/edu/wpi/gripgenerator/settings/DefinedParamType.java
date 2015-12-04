@@ -8,12 +8,10 @@ import com.github.javaparser.ast.expr.FieldAccessExpr;
 import com.github.javaparser.ast.expr.NormalAnnotationExpr;
 import com.github.javaparser.ast.type.PrimitiveType;
 import com.github.javaparser.ast.type.Type;
-import edu.wpi.gripgenerator.defaults.DefaultValue;
-import edu.wpi.gripgenerator.defaults.EnumDefaultValue;
-import edu.wpi.gripgenerator.defaults.ObjectDefaultValue;
-import edu.wpi.gripgenerator.defaults.PrimitiveDefaultValue;
+import edu.wpi.gripgenerator.defaults.*;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.regex.Matcher;
@@ -133,8 +131,10 @@ public class DefinedParamType {
         } else if (param.getType() instanceof PrimitiveType) {
             this.literalDefaultValue = Optional.of(this.literalDefaultValue.orElse("0"));
             this.defaultValue = Optional.of(this.defaultValue.orElse(new PrimitiveDefaultValue((PrimitiveType) param.getType())));
-        } else {
+        } else if (isOutput() || !listAnnotationsMatching().isEmpty()) {
             this.defaultValue = Optional.of(this.defaultValue.orElse(new ObjectDefaultValue(param.getType())));
+        } else {
+            this.defaultValue = Optional.of(this.defaultValue.orElse(new NullDefaultValue()));
         }
         //System.out.println(param.getType().getClass());
     }
@@ -159,7 +159,7 @@ public class DefinedParamType {
         return getType() instanceof PrimitiveType ? ((PrimitiveType) getType()).toBoxedType() : getType();
     }
 
-    private List<NormalAnnotationExpr> getAnnotationsMatchingIfPresent() {
+    private List<NormalAnnotationExpr> listAnnotationsMatching() {
         if (parameter.isPresent() && parameter.get().getAnnotations() != null) {
             Parameter param = parameter.get();
             return param.getAnnotations().stream()
@@ -168,7 +168,7 @@ public class DefinedParamType {
                     .map(a -> (NormalAnnotationExpr) a)
                     .collect(Collectors.toList());
         }
-        return null;
+        return Collections.emptyList();
     }
 
     public String getLiteralDefaultValue() {

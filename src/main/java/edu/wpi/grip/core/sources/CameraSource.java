@@ -7,6 +7,7 @@ import com.google.common.eventbus.Subscribe;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import edu.wpi.grip.core.OutputSocket;
 import edu.wpi.grip.core.SocketHint;
+import edu.wpi.grip.core.SocketHints;
 import edu.wpi.grip.core.Source;
 import edu.wpi.grip.core.events.FatalErrorEvent;
 import edu.wpi.grip.core.events.SourceRemovedEvent;
@@ -36,8 +37,8 @@ public class CameraSource extends Source {
 
     private Properties properties = new Properties();
 
-    private final SocketHint<Mat> imageOutputHint = new SocketHint<Mat>("Image", Mat.class, Mat::new);
-    private final SocketHint<Number> frameRateOutputHint = new SocketHint<Number>("Frame Rate", Number.class, 0);
+    private final SocketHint<Mat> imageOutputHint = SocketHints.Inputs.createMatSocketHint("Image", true);
+    private final SocketHint<Number> frameRateOutputHint = SocketHints.createNumberSocketHint("Frame Rate", 0);
     private OutputSocket<Mat> frameOutputSocket;
     private OutputSocket<Number> frameRateOutputSocket;
     private Optional<Thread> frameThread;
@@ -160,8 +161,8 @@ public class CameraSource extends Source {
                     throw new IllegalStateException("The camera returned a null frame Mat");
                 }
 
-                frameMat.copyTo(frameOutputSocket.getValue());
-                frameOutputSocket.setValue(frameOutputSocket.getValue());
+                frameMat.copyTo(frameOutputSocket.getValue().get());
+                frameOutputSocket.setValue(frameOutputSocket.getValue().get());
                 long thisMoment = System.currentTimeMillis();
                 frameRateOutputSocket.setValue(1000 / (thisMoment - lastFrame));
                 lastFrame = thisMoment;

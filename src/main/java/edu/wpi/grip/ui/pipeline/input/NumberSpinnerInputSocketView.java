@@ -29,7 +29,7 @@ public class NumberSpinnerInputSocketView extends InputSocketView<Number> {
         super(eventBus, socket);
 
 
-        Object[] domain = socket.getSocketHint().getDomain();
+        Object[] domain = socket.getSocketHint().getDomain().orElseThrow(() -> new IllegalStateException("No domain was supplied"));
         if (domain == null) {
             domain = DEFAULT_DOMAIN;
         }
@@ -39,7 +39,7 @@ public class NumberSpinnerInputSocketView extends InputSocketView<Number> {
 
         final double min = ((Number) domain[0]).doubleValue();
         final double max = ((Number) domain[1]).doubleValue();
-        final double initialValue = socket.getValue().doubleValue();
+        final double initialValue = socket.getValue().get().doubleValue();
 
         this.valueFactory = new SpinnerValueFactory.DoubleSpinnerValueFactory(min, max, initialValue);
         this.updateSocketFromSpinner = o -> this.getSocket().setValue(this.valueFactory.getValue());
@@ -63,7 +63,7 @@ public class NumberSpinnerInputSocketView extends InputSocketView<Number> {
             // here would not only be redundant, but would create an infinite loop.
             synchronized (this.valueFactory) {
                 this.valueFactory.valueProperty().removeListener(updateSocketFromSpinner);
-                this.valueFactory.setValue(this.getSocket().getValue().doubleValue());
+                this.valueFactory.setValue(this.getSocket().getValue().get().doubleValue());
                 this.valueFactory.valueProperty().addListener(updateSocketFromSpinner);
             }
         }

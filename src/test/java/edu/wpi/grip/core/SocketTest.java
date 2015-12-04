@@ -13,33 +13,33 @@ import static org.junit.Assert.assertTrue;
 public class SocketTest {
     private final EventBus eventBus = new EventBus();
     private final Double testValue = 12345.6789;
-    private SocketHint<Double> sh;
-    private OutputSocket<Double> socket;
+    private SocketHint<Number> sh;
+    private OutputSocket<Number> socket;
 
     @Before
-    public void initialize(){
-        sh = new SocketHint<>("foo", Double.class, 0.0, SocketHint.View.SLIDER);
-        socket = new OutputSocket<Double>(eventBus, sh);
+    public void initialize() {
+        sh = SocketHints.Inputs.createNumberSliderSocketHint("foo", 0.0, SocketHints.Domain.DOUBLES);
+        socket = new OutputSocket<Number>(eventBus, sh);
     }
 
     @Test
     public void testGetSocketHint() throws Exception {
         assertEquals("foo", socket.getSocketHint().getIdentifier());
-        assertEquals(Double.class, socket.getSocketHint().getType());
+        assertEquals(Number.class, socket.getSocketHint().getType());
         assertEquals(SocketHint.View.SLIDER, socket.getSocketHint().getView());
     }
 
     @Test
     public void testSetValue() throws Exception {
         socket.setValue(testValue);
-        assertEquals(testValue, socket.getValue());
+        assertEquals(testValue, socket.getValue().get());
     }
 
     @Test
     public void testDefaultValue() throws Exception {
-        sh = new SocketHint<>("foo", Double.class, testValue, SocketHint.View.SLIDER);
-        socket = new OutputSocket<Double>(eventBus, sh);
-        assertEquals(testValue, socket.getValue());
+        sh = SocketHints.Inputs.createNumberSliderSocketHint("foo", testValue, SocketHints.Domain.DOUBLES);
+        socket = new OutputSocket<Number>(eventBus, sh);
+        assertEquals(testValue, socket.getValue().get());
 
     }
 
@@ -51,7 +51,7 @@ public class SocketTest {
             @Subscribe
             public void onSocketChanged(SocketChangedEvent e) {
                 handled[0] = true;
-                value[0] = (Double) e.getSocket().getValue();
+                value[0] = (Double) e.getSocket().getValue().get();
             }
         };
 
@@ -65,8 +65,8 @@ public class SocketTest {
 
     @Test
     public void testSocketPreview() {
-        SocketHint<Double> sh = new SocketHint<>("foo", Double.class, 0.0);
-        OutputSocket<Double> socket = new OutputSocket<Double>(eventBus, sh);
+        SocketHint<Number> sh = SocketHints.createNumberSocketHint("foo", 0);
+        OutputSocket<Number> socket = new OutputSocket<Number>(eventBus, sh);
 
         final boolean[] handled = new boolean[]{false};
         Object eventHandler = new Object() {
@@ -87,22 +87,22 @@ public class SocketTest {
 
     @Test(expected = NullPointerException.class)
     public void testSocketHintNotNullInput() throws Exception {
-        new InputSocket<Double>(eventBus, null);
+        new InputSocket<Number>(eventBus, null);
     }
 
     @Test(expected = NullPointerException.class)
     public void testSocketHintNotNullOutput() throws Exception {
-        new OutputSocket<Double>(eventBus, null);
+        new OutputSocket<Number>(eventBus, null);
     }
 
     @Test(expected = NullPointerException.class)
     public void testSocketEventBusNotNullInput() throws Exception {
-        new InputSocket<Double>(null, sh);
+        new InputSocket<Number>(null, sh);
     }
 
     @Test(expected = NullPointerException.class)
     public void testSocketEventBusNotNullOutput() throws Exception {
-        new OutputSocket<Double>(null, sh);
+        new OutputSocket<Number>(null, sh);
     }
 
     @Test(expected = ClassCastException.class)
@@ -113,11 +113,12 @@ public class SocketTest {
         socket.setValue("I am not a Double");
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testNotPublishableSocket() throws Exception {
-        final SocketHint<Double> sh = new SocketHint<>("foo", Double.class, 0.0);
-        final OutputSocket<Double> socket = new OutputSocket<Double>(eventBus, sh);
+        final SocketHint<Number> sh = SocketHints.Outputs.createNumberSocketHint("foo", 0.0);
+        final OutputSocket<Number> socket = new OutputSocket<Number>(eventBus, sh);
 
         socket.setPublished(true);
+        assertTrue("was not published after being set as published", socket.isPublished());
     }
 }

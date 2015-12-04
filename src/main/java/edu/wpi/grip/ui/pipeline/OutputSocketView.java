@@ -88,7 +88,6 @@ public class OutputSocketView extends HBox implements Initializable {
     @SuppressWarnings("unchecked")
     public void initialize(URL url, ResourceBundle resourceBundle) {
         SocketHint<?> socketHint = this.socket.getSocketHint();
-        Object[] domain = socketHint.getDomain();
 
         // Set the label on the control based on the identifier from the socket hint
         this.identifier.setText(socketHint.getIdentifier());

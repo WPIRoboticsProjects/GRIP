@@ -39,15 +39,15 @@ public class ImageFileSourceTest {
         assertNotNull("The output socket's value was null.", outputSocket.getValue());
 
         // Check that the image that is read in is 2 dimentional
-        assertEquals("Matrix from loaded image did not have expected number of rows.", 183, outputSocket.getValue().rows());
-        assertEquals("Matrix from loaded image did not have expected number of cols.", 480, outputSocket.getValue().cols());
+        assertEquals("Matrix from loaded image did not have expected number of rows.", 183, outputSocket.getValue().get().rows());
+        assertEquals("Matrix from loaded image did not have expected number of cols.", 480, outputSocket.getValue().get().cols());
     }
 
     @Test(expected = IOException.class)
     public void testReadInTextFile() throws IOException {
         final ImageFileSource fileSource = new ImageFileSource(eventBus, this.textFile);
         OutputSocket<Mat> outputSocket = fileSource.getOutputSockets()[0];
-        assertTrue("No matrix should have been returned.", outputSocket.getValue().empty());
+        assertTrue("No matrix should have been returned.", outputSocket.getValue().get().empty());
     }
 
     @Test(expected = IOException.class)
@@ -56,6 +56,6 @@ public class ImageFileSourceTest {
 
         final ImageFileSource fileSource = new ImageFileSource(eventBus, testFile);
         OutputSocket<Mat> outputSocket = fileSource.getOutputSockets()[0];
-        assertTrue("No matrix should have been returned.", outputSocket.getValue().empty());
+        assertTrue("No matrix should have been returned.", outputSocket.getValue().get().empty());
     }
 }

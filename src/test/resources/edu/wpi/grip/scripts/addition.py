@@ -1,13 +1,12 @@
 import edu.wpi.grip.core as grip
-import java.lang.Integer
 
 inputs = [
-    grip.SocketHint("a", java.lang.Integer, 0),
-    grip.SocketHint("b", java.lang.Integer, 0),
+    grip.SocketHints.createNumberSocketHint("a", 0.0),
+    grip.SocketHints.createNumberSocketHint("b", 0.0)
 ]
 
 outputs = [
-    grip.SocketHint("sum", java.lang.Integer, 0),
+    grip.SocketHints.Outputs.createNumberSocketHint("sum", 0.0),
 ]
 
 def perform(a, b):

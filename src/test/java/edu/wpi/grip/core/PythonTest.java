@@ -5,7 +5,6 @@ import edu.wpi.grip.core.operations.PythonScriptOperation;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
 
 public class PythonTest {
     static final int a = 1234, b = 5678;
@@ -23,14 +22,14 @@ public class PythonTest {
         aSocket.setValue(a);
         bSocket.setValue(b);
 
-        assertEquals(a + b, sumSocket.getValue());
+        assertEquals(a + b, sumSocket.getValue().get());
     }
 
     @Test
     public void testPythonAdditionFromString() throws Exception {
         Operation additionFromString = new PythonScriptOperation("import edu.wpi.grip.core as grip\nimport java" +
-                ".lang.Integer\n\ninputs = [\n    grip.SocketHint(\"a\", java.lang.Integer, 0),\n    grip.SocketHint(" +
-                "\"b\", java.lang.Integer, 0),\n]\n\noutputs = [\n    grip.SocketHint(\"sum\", java.lang.Integer, 0)," +
+                ".lang.Integer\n\ninputs = [\n    grip.SocketHints.createNumberSocketHint(\"a\", 0.0),\n    grip.SocketHints.createNumberSocketHint(" +
+                "\"b\", 0.0),\n]\n\noutputs = [\n    grip.SocketHints.Outputs.createNumberSocketHint(\"sum\", 0.0)," +
                 "\n]\n\ndef perform(a, b):\n    return a + b\n");
         Step step = new Step(eventBus, additionFromString);
         Socket aSocket = step.getInputSockets()[0];
@@ -40,7 +39,7 @@ public class PythonTest {
         aSocket.setValue(a);
         bSocket.setValue(b);
 
-        assertEquals(a + b, sumSocket.getValue());
+        assertEquals(a + b, sumSocket.getValue().get());
     }
 
     @Test
@@ -55,8 +54,8 @@ public class PythonTest {
         aSocket.setValue(a);
         bSocket.setValue(b);
 
-        assertEquals(a + b, sumSocket.getValue());
-        assertEquals(a - b, differenceSocket.getValue());
+        assertEquals(a + b, sumSocket.getValue().get());
+        assertEquals(a - b, differenceSocket.getValue().get());
     }
 
     @Test
@@ -70,7 +69,7 @@ public class PythonTest {
         aSocket.setValue(a);
         bSocket.setValue(b);
 
-        assertEquals(0, sumSocket.getValue());
+        assertEquals(0.0, sumSocket.getValue().get());
     }
 
     @Test
@@ -84,7 +83,7 @@ public class PythonTest {
         aSocket.setValue(a);
         bSocket.setValue(b);
 
-        assertEquals(0, sumSocket.getValue());
+        assertEquals(0.0, sumSocket.getValue().get());
     }
 
     @Test

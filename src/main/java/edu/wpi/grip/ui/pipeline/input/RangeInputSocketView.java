@@ -27,8 +27,8 @@ public class RangeInputSocketView extends InputSocketView<List<Number>> {
     public RangeInputSocketView(EventBus eventBus, InputSocket<List<Number>> socket) {
         super(eventBus, socket);
 
-        final Object[] domain = socket.getSocketHint().getDomain();
-        final List<Number> value = socket.getValue();
+        final Object[] domain = socket.getSocketHint().getDomain().get();
+        final List<Number> value = socket.getValue().get();
 
         checkArgument(domain != null && domain.length == 1 && domain[0] instanceof List,
                 "Sliders must have a domain with a list of two numbers (min and max)");
@@ -83,8 +83,8 @@ public class RangeInputSocketView extends InputSocketView<List<Number>> {
     @Subscribe
     public void updateSliderValue(SocketChangedEvent event) {
         if (event.getSocket() == this.getSocket()) {
-            this.slider.setLowValue(this.getSocket().getValue().get(0).doubleValue());
-            this.slider.setHighValue(this.getSocket().getValue().get(1).doubleValue());
+            this.slider.setLowValue(this.getSocket().getValue().get().get(0).doubleValue());
+            this.slider.setHighValue(this.getSocket().getValue().get().get(1).doubleValue());
         }
     }
 }

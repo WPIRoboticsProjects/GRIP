@@ -27,14 +27,14 @@ public class SelectInputSocketView<T> extends InputSocketView<T> {
     public SelectInputSocketView(EventBus eventBus, InputSocket<T> socket) {
         super(eventBus, socket);
 
-        final Object[] domain = socket.getSocketHint().getDomain();
+        final Object[] domain = socket.getSocketHint().getDomain().get();
         checkNotNull(domain);
 
         @SuppressWarnings("unchecked")
         ObservableList<T> domainList = (ObservableList<T>) FXCollections.observableList(Arrays.asList(domain));
 
         this.choiceBox = new ChoiceBox<>(domainList);
-        this.choiceBox.setValue(socket.getValue());
+        this.choiceBox.setValue(socket.getValue().get());
         this.choiceBox.disableProperty().bind(this.getHandle().connectedProperty());
 
         this.updateSocketFromChoiceBox = o -> this.getSocket().setValue(this.choiceBox.getValue());
@@ -51,7 +51,7 @@ public class SelectInputSocketView<T> extends InputSocketView<T> {
             // here would not only be redundant, but would create an infinite loop.
             synchronized (this.choiceBox) {
                 this.choiceBox.valueProperty().removeListener(updateSocketFromChoiceBox);
-                this.choiceBox.setValue(this.getSocket().getValue());
+                this.choiceBox.setValue(this.getSocket().getValue().get());
                 this.choiceBox.valueProperty().addListener(updateSocketFromChoiceBox);
             }
         }
