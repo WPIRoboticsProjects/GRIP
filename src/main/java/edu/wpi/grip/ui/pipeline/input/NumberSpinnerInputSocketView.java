@@ -16,7 +16,7 @@ import static com.google.common.base.Preconditions.checkArgument;
  */
 public class NumberSpinnerInputSocketView extends InputSocketView<Number> {
 
-    private final static Object[] DEFAULT_DOMAIN = new Object[]{-Double.MAX_VALUE, Double.MAX_VALUE};
+    private final static Number[] DEFAULT_DOMAIN = new Double[]{-Double.MAX_VALUE, Double.MAX_VALUE};
 
     private final SpinnerValueFactory<Double> valueFactory;
     private final InvalidationListener updateSocketFromSpinner;
@@ -29,16 +29,12 @@ public class NumberSpinnerInputSocketView extends InputSocketView<Number> {
         super(eventBus, socket);
 
 
-        Object[] domain = socket.getSocketHint().getDomain().orElseThrow(() -> new IllegalStateException("No domain was supplied"));
-        if (domain == null) {
-            domain = DEFAULT_DOMAIN;
-        }
+        final Number[] domain = socket.getSocketHint().getDomain().orElse(DEFAULT_DOMAIN);
 
-        checkArgument(domain.length == 2 && domain[0] instanceof Number && domain[1] instanceof Number,
-                "Spinners must have a domain with two numbers (min and max)");
+        checkArgument(domain.length == 2, "Spinners must have a domain with two numbers (min and max)");
 
-        final double min = ((Number) domain[0]).doubleValue();
-        final double max = ((Number) domain[1]).doubleValue();
+        final double min = domain[0].doubleValue();
+        final double max = domain[1].doubleValue();
         final double initialValue = socket.getValue().get().doubleValue();
 
         this.valueFactory = new SpinnerValueFactory.DoubleSpinnerValueFactory(min, max, initialValue);

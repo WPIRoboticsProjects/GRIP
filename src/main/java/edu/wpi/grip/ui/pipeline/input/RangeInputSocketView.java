@@ -30,7 +30,7 @@ public class RangeInputSocketView extends InputSocketView<List<Number>> {
         final Object[] domain = socket.getSocketHint().getDomain().get();
         final List<Number> value = socket.getValue().get();
 
-        checkArgument(domain != null && domain.length == 1 && domain[0] instanceof List,
+        checkArgument(domain.length == 1 && domain[0] instanceof List,
                 "Sliders must have a domain with a list of two numbers (min and max)");
 
         @SuppressWarnings("unchecked")
