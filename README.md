@@ -24,4 +24,4 @@ Check out the release notes and [the wiki](https://github.com/WPIRoboticsProject
 
 To build and run, use the included Gradle wrapper script.
 
-    ./gradlew run
+    ./gradlew :ui:run
