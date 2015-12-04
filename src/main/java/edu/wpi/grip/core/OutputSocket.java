@@ -7,7 +7,8 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
 import edu.wpi.grip.core.events.SocketPreviewChangedEvent;
 import edu.wpi.grip.core.events.SocketPublishedEvent;
 
-import java.util.function.Supplier;
+import java.util.NoSuchElementException;
+import java.util.Optional;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
@@ -31,19 +32,19 @@ public class OutputSocket<T> extends Socket<T> {
 
     /**
      * @param eventBus   The Guava {@link EventBus} used by the application.
-     * @param socketHint See {@link #getSocketHint()}
-     * @param value      See {@link #getValue()}
-     */
-    public OutputSocket(EventBus eventBus, SocketHint<T> socketHint, T value) {
-        super(eventBus, socketHint, value, Direction.OUTPUT);
-    }
-
-    /**
-     * @param eventBus   The Guava {@link EventBus} used by the application.
      * @param socketHint {@link #getSocketHint}
      */
     public OutputSocket(EventBus eventBus, SocketHint<T> socketHint) {
         super(eventBus, socketHint, Direction.OUTPUT);
+        getValue().orElseThrow(()-> new NoSuchElementException("The SocketHint for an output socket must have an initial value to be valid"));
+    }
+
+    @Override
+    public void setValueOptional(Optional<? extends T> optionalValue) {
+        super.setValueOptional(optionalValue);
+        if (this.isPublished()) {
+            eventBus.post(new SocketPublishedEvent(this));
+        }
     }
 
     @Override
@@ -60,7 +61,7 @@ public class OutputSocket<T> extends Socket<T> {
     /**
      * @param published If <code>true</code>, this socket will be published by any sink that is currently active.  For
      *                  example, it may be set as a NetworkTables value.  The socket must be publishable.
-     * @see SocketHint#SocketHint(String, Class, Supplier, SocketHint.View, Object[], boolean)
+     * @see edu.wpi.grip.core.SocketHint.Builder#publishable(boolean)
      */
     public void setPublished(boolean published) {
         checkArgument(this.getSocketHint().isPublishable() || !published, "socket is not publishable");
@@ -107,6 +108,12 @@ public class OutputSocket<T> extends Socket<T> {
      */
     public boolean isPreviewed() {
         return this.previewed;
+    }
+
+    protected void resetValueToInitial() {
+        this.setValue(this.getSocketHint()
+                .createInitialValue()
+                .orElse(null));
     }
 
 

@@ -101,6 +101,11 @@ public class PrimitiveDefaultValue extends DefaultValue {
     }
 
     @Override
+    public String getSocketBuilderInitalValueMethodNameToUse() {
+        return "initialValue";
+    }
+
+    @Override
     public Expression getDefaultValue(String defaultValue) {
         if (this.defaultOverride.isPresent()) defaultValue = this.defaultOverride.get();
         switch (type.getType()) {
@@ -121,8 +126,8 @@ public class PrimitiveDefaultValue extends DefaultValue {
     }
 
     @Override
-    public Expression getDomainValue() {
-        return domainValue;
+    public Optional<Expression> getDomainValue() {
+        return Optional.of(domainValue);
     }
 
     @Override

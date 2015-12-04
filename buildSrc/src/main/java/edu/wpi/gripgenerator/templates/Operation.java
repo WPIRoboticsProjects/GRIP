@@ -217,7 +217,7 @@ public class Operation {
                                                         new ExpressionStmt(
                                                                 new MethodCallExpr(
                                                                         new NameExpr(outputSocketForEachVariableId),
-                                                                        "setValue",
+                                                                        "setValueOptional",
                                                                         Collections.singletonList(
                                                                                 new MethodCallExpr(
                                                                                         new NameExpr(outputSocketForEachVariableId),

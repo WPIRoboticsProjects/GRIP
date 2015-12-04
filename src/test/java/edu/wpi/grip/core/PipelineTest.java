@@ -197,7 +197,7 @@ public class PipelineTest {
         b1.setValue(456.0);
         b2.setValue(789.0);
 
-        assertEquals((Double) 1368.0, sum2.getValue());
+        assertEquals((Double) 1368.0, sum2.getValue().get());
     }
 
     @Test
@@ -227,7 +227,7 @@ public class PipelineTest {
         b1.setValue(456.0);
         b2.setValue(789.0);
 
-        assertEquals((Double) 789.0, sum2.getValue());
+        assertEquals((Double) 789.0, sum2.getValue().get());
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -247,8 +247,8 @@ public class PipelineTest {
     @Test(expected = IllegalArgumentException.class)
     @SuppressWarnings("unchecked")
     public void testCannotConnectIncompatibleTypes() {
-        InputSocket<Double> a = new InputSocket<>(eventBus, new SocketHint<>("a", Double.class, 0.0));
-        OutputSocket<String> b = new OutputSocket<>(eventBus, new SocketHint<>("b", String.class, ""));
+        InputSocket<Number> a = new InputSocket<>(eventBus, SocketHints.createNumberSocketHint("a", 0.0));
+        OutputSocket<String> b = new OutputSocket<>(eventBus, new SocketHint.Builder<>(String.class).identifier("b").initialValue("").build());
 
         new Connection<>(eventBus, (OutputSocket) b, (InputSocket) a);
     }

@@ -7,18 +7,20 @@ import edu.wpi.grip.core.events.SocketChangedEvent;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ContentDisplay;
 
+import java.util.Optional;
+
 /**
  * An {@link InputSocketView} for booleans that shows a checkbox for the user to turn on or off
  */
 public class CheckboxInputSocketView extends InputSocketView<Boolean> {
 
-    private CheckBox checkBox;
+    private final CheckBox checkBox;
 
     public CheckboxInputSocketView(EventBus eventBus, InputSocket<Boolean> socket) {
         super(eventBus, socket);
 
         this.checkBox = new CheckBox();
-        this.checkBox.setSelected(this.getSocket().getValue());
+        assignSocketValue(socket.getValue());
         this.checkBox.selectedProperty().addListener(o -> this.getSocket().setValue(this.checkBox.isSelected()));
         this.checkBox.disableProperty().bind(this.getHandle().connectedProperty());
 
@@ -27,10 +29,14 @@ public class CheckboxInputSocketView extends InputSocketView<Boolean> {
         this.getIdentifier().setContentDisplay(ContentDisplay.RIGHT);
     }
 
+    private void assignSocketValue(final Optional<Boolean> value) {
+        this.checkBox.setSelected(value.isPresent() && value.get());
+    }
+
     @Subscribe
     public void updateCheckboxFromSocket(SocketChangedEvent event) {
         if (event.getSocket() == this.getSocket()) {
-            this.checkBox.setSelected(this.getSocket().getValue());
+            assignSocketValue(event.getSocket().getValue());
         }
     }
 }

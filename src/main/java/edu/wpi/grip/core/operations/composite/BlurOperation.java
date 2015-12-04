@@ -1,10 +1,7 @@
 package edu.wpi.grip.core.operations.composite;
 
 import com.google.common.eventbus.EventBus;
-import edu.wpi.grip.core.InputSocket;
-import edu.wpi.grip.core.Operation;
-import edu.wpi.grip.core.OutputSocket;
-import edu.wpi.grip.core.SocketHint;
+import edu.wpi.grip.core.*;
 
 import java.io.InputStream;
 import java.util.Optional;
@@ -33,13 +30,11 @@ public class BlurOperation implements Operation {
         }
     }
 
-    private final SocketHint<Mat> inputHint = new SocketHint<Mat>("Input", Mat.class, Mat::new);
-    private final SocketHint<Type> typeHint = new SocketHint<>("Type", Type.class, Type.BOX, SocketHint.View.SELECT,
-            Type.values());
-    private final SocketHint<Number> radiusHint = new SocketHint<>("Radius", Number.class, 0.0, SocketHint.View.SLIDER,
-            new Number[]{0.0, 100.0});
+    private final SocketHint<Mat> inputHint = SocketHints.Inputs.createMatSocketHint("Input", false);
+    private final SocketHint<Type> typeHint = SocketHints.createEnumSocketHint("Type", Type.BOX);
+    private final SocketHint<Number> radiusHint = SocketHints.Inputs.createNumberSliderSocketHint("Radius", 0.0, 0.0, 100.0);
 
-    private final SocketHint<Mat> outputHint = new SocketHint<Mat>("Output", Mat.class, Mat::new);
+    private final SocketHint<Mat> outputHint = SocketHints.Inputs.createMatSocketHint("Output", true);
 
     @Override
     public String getName() {
@@ -75,19 +70,12 @@ public class BlurOperation implements Operation {
     @Override
     @SuppressWarnings("unchecked")
     public void perform(InputSocket<?>[] inputs, OutputSocket<?>[] outputs) {
-        final Mat input = ((InputSocket<Mat>) inputs[0]).getValue();
-        final Type type = ((InputSocket<Type>) inputs[1]).getValue();
-        final Number radius = ((InputSocket<Number>) inputs[2]).getValue();
+        final Mat input = ((InputSocket<Mat>) inputs[0]).getValue().get();
+        final Type type = ((InputSocket<Type>) inputs[1]).getValue().get();
+        final Number radius = ((InputSocket<Number>) inputs[2]).getValue().get();
 
         final OutputSocket<Mat> outputSocket = (OutputSocket<Mat>) outputs[0];
-        final Mat output = outputSocket.getValue();
-
-        // Do nothing if nothing is connected to the input
-        // TODO: this should happen automatically for all sockets that are marked as required
-        if (input.empty()) {
-            outputSocket.setValue(outputSocket.getSocketHint().createInitialValue());
-            return;
-        }
+        final Mat output = outputSocket.getValue().get();
 
         int kernelSize;
 

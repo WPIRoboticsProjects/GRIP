@@ -5,6 +5,7 @@ import com.google.common.eventbus.EventBus;
 import edu.wpi.grip.core.InputSocket;
 import edu.wpi.grip.core.OutputSocket;
 import edu.wpi.grip.core.SocketHint;
+import edu.wpi.grip.core.SocketHints;
 import org.bytedeco.javacpp.opencv_core.Size;
 
 import java.io.InputStream;
@@ -12,9 +13,9 @@ import java.util.Optional;
 
 public class NewSizeOperation implements CVOperation {
 
-    private final SocketHint<Number> widthHint = new SocketHint<Number>("width", Number.class, -1, SocketHint.View.SPINNER, new Integer[]{-1, Integer.MAX_VALUE}, false);
-    private final SocketHint<Number> heightHint = new SocketHint<Number>("height", Number.class, -1, SocketHint.View.SPINNER, new Integer[]{-1, Integer.MAX_VALUE}, false);
-    private final SocketHint<Size> outputHint = new SocketHint<Size>("size", Size.class, Size::new);
+    private final SocketHint<Number> widthHint = SocketHints.Inputs.createNumberSpinnerSocketHint("width", -1, -1, Integer.MAX_VALUE);
+    private final SocketHint<Number> heightHint = SocketHints.Inputs.createNumberSpinnerSocketHint("height", -1, -1, Integer.MAX_VALUE);
+    private final SocketHint<Size> outputHint = SocketHints.Outputs.createSizeSocketHint("size");
 
     @Override
     public String getName() {
@@ -45,8 +46,8 @@ public class NewSizeOperation implements CVOperation {
     public void perform(InputSocket<?>[] inputs, OutputSocket<?>[] outputs) {
         final InputSocket<Number> widthSocket = (InputSocket<Number>) inputs[0];
         final InputSocket<Number> heightSocket = (InputSocket<Number>) inputs[1];
-        final int widthValue = widthSocket.getValue().intValue();
-        final int heightValue = heightSocket.getValue().intValue();
+        final int widthValue = widthSocket.getValue().get().intValue();
+        final int heightValue = heightSocket.getValue().get().intValue();
         final OutputSocket<Size> outputSocket = (OutputSocket<Size>) outputs[0];
         outputSocket.setValue(new Size(widthValue, heightValue));
     }

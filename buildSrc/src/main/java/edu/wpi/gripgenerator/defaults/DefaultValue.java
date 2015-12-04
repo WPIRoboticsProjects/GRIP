@@ -38,6 +38,10 @@ public abstract class DefaultValue {
         return new ImportDeclaration(new NameExpr(packageName + "." + this.getName()), false, false);
     }
 
+    public String getSocketBuilderInitalValueMethodNameToUse() {
+        return "initialValueSupplier";
+    }
+
     /**
      * Gets the expression for the given default value
      *
@@ -52,7 +56,9 @@ public abstract class DefaultValue {
      *
      * @return The expression defining the given domain.
      */
-    public abstract Expression getDomainValue();
+    public Optional<Expression> getDomainValue() {
+        return Optional.empty();
+    }
 
     /**
      * @return

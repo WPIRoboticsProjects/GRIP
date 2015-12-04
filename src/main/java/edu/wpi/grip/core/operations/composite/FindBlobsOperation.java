@@ -1,14 +1,10 @@
 package edu.wpi.grip.core.operations.composite;
 
 import com.google.common.eventbus.EventBus;
-import edu.wpi.grip.core.InputSocket;
-import edu.wpi.grip.core.Operation;
-import edu.wpi.grip.core.OutputSocket;
-import edu.wpi.grip.core.SocketHint;
+import edu.wpi.grip.core.*;
 
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -20,17 +16,15 @@ import static org.bytedeco.javacpp.opencv_features2d.SimpleBlobDetector;
  */
 public class FindBlobsOperation implements Operation {
 
-    private final SocketHint<Mat> inputHint = new SocketHint<Mat>("Input", Mat.class, Mat::new);
-    private final SocketHint<Number> minAreaHint = new SocketHint<>("Min Area", Number.class, 1,
-            SocketHint.View.SPINNER);
-    private final SocketHint<List> circularityHint = new SocketHint<List>("Circularity", List.class,
-            () -> Arrays.asList(0.0, 1.0), SocketHint.View.RANGE, new List[]{Arrays.asList(0, 1)});
-    private final SocketHint<Boolean> colorHint = new SocketHint<>("Dark Blobs", Boolean.class, false,
-            SocketHint.View.CHECKBOX);
+    private final SocketHint<Mat> inputHint = SocketHints.Inputs.createMatSocketHint("Input", false);
+    private final SocketHint<Number> minAreaHint = SocketHints.Inputs.createNumberSpinnerSocketHint("Min Area", 1);
+    private final SocketHint<List> circularityHint = SocketHints.Inputs.createNumberListRangeSocketHint("Circularity", 0.0, 1.0);
+    private final SocketHint<Boolean> colorHint = SocketHints.createBooleanSocketHint("Dark Blobs", false);
 
-
-    private final SocketHint<BlobsReport> blobsHint = new SocketHint<BlobsReport>("Blobs", BlobsReport.class,
-            BlobsReport::new);
+    private final SocketHint<BlobsReport> blobsHint = new SocketHint.Builder(BlobsReport.class)
+            .identifier("Blobs")
+            .initialValueSupplier(BlobsReport::new)
+            .build();
 
     @Override
     public String getName() {
@@ -65,25 +59,19 @@ public class FindBlobsOperation implements Operation {
     @Override
     @SuppressWarnings("unchecked")
     public void perform(InputSocket<?>[] inputs, OutputSocket<?>[] outputs) {
-        final Mat input = (Mat) inputs[0].getValue();
-        final Number minArea = (Number) inputs[1].getValue();
-        final List<Number> circularity = (List<Number>) inputs[2].getValue();
-        final Boolean darkBlobs = (Boolean) inputs[3].getValue();
+        final Mat input = (Mat) inputs[0].getValue().get();
+        final Number minArea = (Number) inputs[1].getValue().get();
+        final List<Number> circularity = (List<Number>) inputs[2].getValue().get();
+        final Boolean darkBlobs = (Boolean) inputs[3].getValue().get();
 
         final OutputSocket<BlobsReport> blobsReportSocket = (OutputSocket<BlobsReport>) outputs[0];
-        final BlobsReport blobsReport = blobsReportSocket.getValue();
+        final BlobsReport blobsReport = blobsReportSocket.getValue().get();
 
         final List<BlobsReport.Blob> blobs = new ArrayList<>();
 
         blobsReport.setInput(input);
         blobsReport.setBlobs(blobs);
 
-        // Do nothing if nothing is connected to the input
-        // TODO: this should happen automatically for all sockets that are marked as required
-        if (input.empty()) {
-            blobsReportSocket.setValue(blobsReport);
-            return;
-        }
 
         final SimpleBlobDetector blobDetector = SimpleBlobDetector.create(new SimpleBlobDetector.Params()
                 .filterByArea(true)

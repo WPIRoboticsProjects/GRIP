@@ -29,7 +29,7 @@ public class ListSpinnerInputSocketView<T> extends InputSocketView<T> {
     public ListSpinnerInputSocketView(EventBus eventBus, InputSocket<T> socket) {
         super(eventBus, socket);
 
-        final Object[] domain = socket.getSocketHint().getDomain();
+        final Object[] domain = socket.getSocketHint().getDomain().get();
         checkNotNull(domain);
 
         @SuppressWarnings("unchecked")
@@ -37,7 +37,7 @@ public class ListSpinnerInputSocketView<T> extends InputSocketView<T> {
 
         this.valueFactory = new SpinnerValueFactory.ListSpinnerValueFactory<>(domainList);
         this.updateSocketFromSpinner = o -> this.getSocket().setValue(this.valueFactory.getValue());
-        this.valueFactory.setValue(socket.getValue());
+        this.valueFactory.setValue(socket.getValue().get());
         this.valueFactory.valueProperty().addListener(this.updateSocketFromSpinner);
 
         final Spinner<T> spinner = new Spinner<>(this.valueFactory);
@@ -58,7 +58,7 @@ public class ListSpinnerInputSocketView<T> extends InputSocketView<T> {
             // here would not only be redundant, but would create an infinite loop.
             synchronized (this.valueFactory) {
                 this.valueFactory.valueProperty().removeListener(updateSocketFromSpinner);
-                this.valueFactory.setValue(this.getSocket().getValue());
+                this.valueFactory.setValue(this.getSocket().getValue().get());
                 this.valueFactory.valueProperty().addListener(updateSocketFromSpinner);
             }
         }

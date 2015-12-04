@@ -5,6 +5,7 @@ import com.google.common.eventbus.Subscribe;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import edu.wpi.grip.core.events.SocketChangedEvent;
 
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -44,7 +45,7 @@ public class Step {
 
         data = operation.createData();
 
-        operation.perform(inputSockets, outputSockets, data);
+        runPerformIfPossible();
 
         eventBus.register(this);
     }
@@ -78,13 +79,50 @@ public class Step {
         return this.pipeline;
     }
 
+    /**
+     * Resets all {@link OutputSocket OutputSockets} to their initial value.
+     * Should only be used by {@link Step#runPerformIfPossible()}
+     */
+    private void resetOutputSockets() {
+        for (OutputSocket<?> outputSocket : outputSockets) {
+            outputSocket.resetValueToInitial();
+        }
+    }
+
+    /**
+     * The {@link Operation#perform} method should only be called if all {@link InputSocket#getValue()} are not empty.
+     * If one input is invalid then the perform method will not run and all output sockets will be assigned to their
+     * default values.
+     */
+    private synchronized void runPerformIfPossible() {
+        try {
+            for (InputSocket<?> inputSocket : inputSockets) {
+                inputSocket.getValue()
+                        .orElseThrow(() -> new NoSuchElementException(
+                                inputSocket.getSocketHint().getIdentifier() + " must have a value to run this step."
+                        ));
+            }
+        } catch (NoSuchElementException e) {
+            e.printStackTrace();
+            resetOutputSockets();
+            return; /* Only run the perform method if all of the input sockets are present. */
+        }
+
+        try {
+            this.operation.perform(inputSockets, outputSockets, data);
+        } catch (Exception e) {
+            e.printStackTrace();
+            resetOutputSockets();
+        }
+    }
+
     @Subscribe
     public void onInputSocketChanged(SocketChangedEvent e) {
         final Socket<?> socket = e.getSocket();
 
         // If this socket that changed is one of the inputs to this step, run the operation with the new value.
         if (socket.getStep().equals(Optional.of(this)) && socket.getDirection().equals(Socket.Direction.INPUT)) {
-            this.operation.perform(inputSockets, outputSockets, data);
+            runPerformIfPossible();
         }
     }
 }

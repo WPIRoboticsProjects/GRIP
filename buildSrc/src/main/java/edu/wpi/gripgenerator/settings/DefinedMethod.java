@@ -178,18 +178,19 @@ public final class DefinedMethod {
                 } else { // Otherwise grab the predefined one.
                     definedParamType = paramTypes.get(i);
                 }
-                definedParamType.setParamAs(param);
-                String defaultValue = definedParamType.getLiteralDefaultValue();
-                if (defaultValue != null && collector.hasDefaultValueFor(defaultValue)) {
-                    definedParamType.setDefaultValue(collector.getDefaultValueFor(defaultValue));
-                }
-
                 /*
                  * Sets the defined params direction given the mapping provided to the collector in the File Parser.
                  */
                 collectionOf
                         .getDefaultDirection(param.getId().getName())
-                        .ifPresent(definedParamDirection -> definedParamType.trySetDirection(definedParamDirection));
+                        .ifPresent(definedParamType::trySetDirection);
+
+                definedParamType.setParamAs(param);
+
+                String defaultValue = definedParamType.getLiteralDefaultValue();
+                if (defaultValue != null && collector.hasDefaultValueFor(defaultValue)) {
+                    definedParamType.setDefaultValue(collector.getDefaultValueFor(defaultValue));
+                }
 
                 if (collectionOf.shouldIgnore(param.getId().getName())){
                     definedParamType.setIgnored();

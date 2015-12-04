@@ -1,12 +1,8 @@
 package edu.wpi.grip.core.operations.composite;
 
 import com.google.common.eventbus.EventBus;
-import edu.wpi.grip.core.InputSocket;
-import edu.wpi.grip.core.Operation;
-import edu.wpi.grip.core.OutputSocket;
-import edu.wpi.grip.core.SocketHint;
+import edu.wpi.grip.core.*;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -17,15 +13,12 @@ import static org.bytedeco.javacpp.opencv_core.*;
  */
 public class RGBThresholdOperation extends ThresholdOperation {
 
-    private final SocketHint<Mat> inputHint = new SocketHint<Mat>("Input", Mat.class, Mat::new);
-    private final SocketHint<List> redHint = new SocketHint<List>("Red", List.class,
-            () -> Arrays.asList(0.0, 255.0), SocketHint.View.RANGE, new List[]{Arrays.asList(0.0, 255.0)});
-    private final SocketHint<List> greenHint = new SocketHint<List>("Green", List.class,
-            () -> Arrays.asList(0.0, 255.0), SocketHint.View.RANGE, new List[]{Arrays.asList(0.0, 255.0)});
-    private final SocketHint<List> blueHint = new SocketHint<List>("Blue", List.class,
-            () -> Arrays.asList(0.0, 255.0), SocketHint.View.RANGE, new List[]{Arrays.asList(0.0, 255.0)});
+    private final SocketHint<Mat> inputHint = SocketHints.Inputs.createMatSocketHint("Input", false);
+    private final SocketHint<List> redHint = SocketHints.Inputs.createNumberListRangeSocketHint("Red", 0.0, 255.0);
+    private final SocketHint<List> greenHint = SocketHints.Inputs.createNumberListRangeSocketHint("Green", 0.0, 255.0);
+    private final SocketHint<List> blueHint = SocketHints.Inputs.createNumberListRangeSocketHint("Blue", 0.0, 255.0);
 
-    private final SocketHint<Mat> outputHint = new SocketHint<Mat>("output", Mat.class, Mat::new);
+    private final SocketHint<Mat> outputHint = SocketHints.Outputs.createMatSocketHint("Input");
 
     @Override
     public String getName() {
@@ -64,20 +57,14 @@ public class RGBThresholdOperation extends ThresholdOperation {
     public void perform(InputSocket<?>[] inputs, OutputSocket<?>[] outputs, Optional<?> data) {
         final Mat[] dataArray = (Mat[]) data.orElseThrow(() -> new IllegalStateException("Data was not provided"));
 
-        final Mat input = ((InputSocket<Mat>) inputs[0]).getValue();
-        final List<Number> channel1 = ((InputSocket<List<Number>>) inputs[1]).getValue();
-        final List<Number> channel2 = ((InputSocket<List<Number>>) inputs[2]).getValue();
-        final List<Number> channel3 = ((InputSocket<List<Number>>) inputs[3]).getValue();
+        final Mat input = ((InputSocket<Mat>) inputs[0]).getValue().get();
+        final List<Number> channel1 = ((InputSocket<List<Number>>) inputs[1]).getValue().get();
+        final List<Number> channel2 = ((InputSocket<List<Number>>) inputs[2]).getValue().get();
+        final List<Number> channel3 = ((InputSocket<List<Number>>) inputs[3]).getValue().get();
 
         final OutputSocket<Mat> outputSocket = (OutputSocket<Mat>) outputs[0];
-        final Mat output = outputSocket.getValue();
+        final Mat output = outputSocket.getValue().get();
 
-        // Do nothing if nothing is connected to the input
-        // TODO: this should happen automatically for all sockets that are marked as required
-        if (input.empty()) {
-            outputSocket.setValue(outputSocket.getSocketHint().createInitialValue());
-            return;
-        }
 
         final Scalar lowScalar = new Scalar(
                 channel3.get(0).doubleValue(),
