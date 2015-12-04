@@ -59,7 +59,7 @@ public class PreviewsView extends VBox {
      * This function is called when a preview button is pushed/triggered
      */
     public synchronized void onSocketPreviewChanged(SocketPreviewChangedEvent event) {
-        Platform.runLater(() -> {
+        Platform.runLater(() -> {//Run this function on the main gui thread
 
             final OutputSocket<?> socket = event.getSocket(); //The socket whose preview has changed
 
@@ -69,45 +69,14 @@ public class PreviewsView extends VBox {
 
                     if (socket.getStep().isPresent()) { //If this is a socket associated with a pipeline step (IE NOT a source)....
 
-                        int numbOfSourcePreviews = 0;//This we will use to count how many *source* previews (not *step* previews) are currently displayed
-                        while ((this.previewedSockets.size() > numbOfSourcePreviews) //While there are still previews to examine
-                                && (!this.previewedSockets.get(numbOfSourcePreviews).getStep().isPresent())) { //If this is a source...
-                            numbOfSourcePreviews++;
-                        }
+                        int indexInPreviews = getIndexInPreviewsOfAStepSocket(socket);//Find the appropriate index to add this preview with.
 
-                        Step socketStep = socket.getStep().get();//The pipeline step associated with the socket whose preview has changed
-                        final StepView stepView = this.pipeline.findStepView(socketStep);//The gui object that displays the socketStep
-                        int indexOfStep = this.pipeline.getSteps().indexOf(stepView); //The index of the step that has the socket in the pipeline
+                        this.previewedSockets.add(indexInPreviews, socket);//...use this index to add it to the correct location in the list of previews open
+                        this.previewBox.getChildren().add(indexInPreviews, SocketPreviewViewFactory.createPreviewView(this.eventBus, socket));//...and display it in the correct location in the list of previews open in the gui
 
-                        int indexInPreviews = numbOfSourcePreviews;
-
-                        while ((this.previewedSockets.size() > indexInPreviews)//Find the correct index in the displayed previews by comparing the indices in the pipeline, starting with the first non-source preview displayed
-                                && ((this.pipeline.getSteps().indexOf(this.pipeline.findStepView(this.previewedSockets.get(indexInPreviews).getStep().get()))) < indexOfStep)) {
-                            indexInPreviews++;
-                        }
-
-                        final int indexFinal = indexInPreviews;
-
-                        if (indexFinal > this.previewBox.getChildren().size()) {//If the index is greater than the number of previews currently displayed (this shouldn't ever happen)...
-                            this.previewedSockets.add(socket);//...then just add it to the end of the list of previews
-                            this.previewBox.getChildren().add(SocketPreviewViewFactory.createPreviewView(this.eventBus, socket));//...and display it last in the preview view
-                        } else { // If the index is <= the number of previews currently displayed...
-                            this.previewedSockets.add(indexFinal, socket);//...use this index to add it to the correct location in the list of previews open
-                            this.previewBox.getChildren().add(indexFinal, SocketPreviewViewFactory.createPreviewView(this.eventBus, socket));//...and display it in the correct location in the list of previews open in the gui
-                        }
                     } else {//This is a socket associated with a source and not a pipeline step...
 
-                        Source socketSource = socket.getSource().get();//The source socket associated with the socket whose preview has changed
-                        final SourceView sourceView = this.pipeline.findSourceView(socketSource);//The gui object that displays the socketSource
-                        int indexOfSource = this.pipeline.getSources().indexOf(sourceView); //The index of the source that has the socket in the pipeline
-
-                        int indexInSourcePreviews = 0;
-                        //Find the correct index in the displayed source previews by comparing the indices
-                        while (((this.previewedSockets.size() > indexInSourcePreviews)//If there are previews still to be examined AND
-                                && (this.previewedSockets.get(indexInSourcePreviews).getSource().isPresent()))//AND If the preview at this index is a source...
-                                && ((this.pipeline.getSources().indexOf(this.pipeline.findSourceView(this.previewedSockets.get(indexInSourcePreviews).getSource().get()))) < indexOfSource)) {//AND the preview at this index is a source with an index in the list of sources less than this source
-                            indexInSourcePreviews++;
-                        }
+                        int indexInSourcePreviews = getIndexInPreviewsOfASourceSocket(socket);//Find the appropriate index to add this preview with.
 
                         this.previewedSockets.add(indexInSourcePreviews, socket);//Add the preview to the appropriate place in the list of previewed sockets
                         this.previewBox.getChildren().add(indexInSourcePreviews, SocketPreviewViewFactory.createPreviewView(this.eventBus, socket));//Display the preview in the appropriate place
@@ -122,5 +91,70 @@ public class PreviewsView extends VBox {
                 }
             }
         });
+    }
+
+    /**
+     * Find the correct index in the displayed previews for a socket associated with a source (NOT a step socket)
+     * by comparing the indices in the pipeline.
+     * Called in PreviewsView::onSocketPreviewChanged(SocketPreviewChangedEvent)
+     *
+     * @param socket An output socket associated with a source (NOT a step)
+     * @return The correct index (an int) in the list of displayed previews for the given <code>socket</code>
+     * @see PreviewsView#onSocketPreviewChanged(SocketPreviewChangedEvent)
+     */
+    private int getIndexInPreviewsOfASourceSocket(OutputSocket<?> socket) {
+        Source socketSource = socket.getSource().get();//The source socket associated with the socket whose preview has changed
+        final SourceView sourceView = this.pipeline.findSourceView(socketSource);//The gui object that displays the socketSource
+        int indexOfSource = this.pipeline.getSources().indexOf(sourceView); //The index of the source that has the socket in the pipeline
+
+        int indexInSourcePreviews = 0;//Start with the first socket in the list of previewed sockets
+        //Find the correct index in the displayed source previews by comparing the indices
+        while (((this.previewedSockets.size() > indexInSourcePreviews)//If there are previews still to be examined AND
+                && (this.previewedSockets.get(indexInSourcePreviews).getSource().isPresent()))//AND If the preview at this index is a source...
+                && ((this.pipeline.getSources().indexOf(this.pipeline.findSourceView(this.previewedSockets.get(indexInSourcePreviews).getSource().get()))) < indexOfSource)) {//AND the preview at this index is a source with an index in the list of sources less than this source
+            indexInSourcePreviews++;
+        }
+        return indexInSourcePreviews;
+    }
+
+    /**
+     * Find the correct index in the displayed previews for a socket associated with a step (NOT a source socket)
+     * by comparing the indices in the pipeline, starting with the first non-source preview displayed.
+     * Called in PreviewsView::onSocketPreviewChanged(SocketPreviewChangedEvent)
+     *
+     * @param socket An output socket associated with a step (NOT a source)
+     * @return The correct index in the list of displayed previews for the given <code>socket</code>
+     * @see PreviewsView#onSocketPreviewChanged(SocketPreviewChangedEvent)
+     */
+    private int getIndexInPreviewsOfAStepSocket(OutputSocket<?> socket) {
+        int numbOfSourcePreviews = getNumbOfSourcePreviews();//Count how many *source* previews (not *step* previews) are currently displayed
+
+        Step socketStep = socket.getStep().get();//The pipeline step associated with the socket whose preview has changed
+        final StepView stepView = this.pipeline.findStepView(socketStep);//The gui object that displays the socketStep
+        int indexOfStep = this.pipeline.getSteps().indexOf(stepView); //The index of the step that has the socket in the pipeline
+
+        int indexInPreviews = numbOfSourcePreviews;//Start at the first non-source socket in the list of previewed sockets
+
+        while ((this.previewedSockets.size() > indexInPreviews)//While there are sockets in the list of previewed sockets yet to be examined
+                && ((this.pipeline.getSteps().indexOf(this.pipeline.findStepView(this.previewedSockets.get(indexInPreviews).getStep().get()))) < indexOfStep)) {//...AND the socket at this index in the list of displayed sockets has an index in the pipeline less than the socket passed in as "socket"
+            indexInPreviews++;
+        }
+        return indexInPreviews;
+    }
+
+    /**
+     * Counts how many source previews (NOT step previews) are currently displayed.
+     * Called in PreviewsView::getIndexInPreviewsOfAStepSocket(OutputSocket<?> socket)
+     *
+     * @return The number of source (NOT step) previews that are currently displayed
+     * @see PreviewsView#getIndexInPreviewsOfAStepSocket(OutputSocket)
+     */
+    private int getNumbOfSourcePreviews() {
+        int numbOfSourcePreviews = 0;
+        while ((this.previewedSockets.size() > numbOfSourcePreviews) //While there are still previews to examine
+                && (!this.previewedSockets.get(numbOfSourcePreviews).getStep().isPresent())) { //If this is a source...
+            numbOfSourcePreviews++;
+        }
+        return numbOfSourcePreviews;
     }
 }
