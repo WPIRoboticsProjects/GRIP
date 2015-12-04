@@ -125,6 +125,13 @@ public final class SocketHints {
         }
     }
 
+    public static <T extends Enum<T>> SocketHint<T> createEnumSocketHint(final String identifier,
+                                                                         final T defaultValue) {
+        return new SocketHint.Builder(defaultValue.getClass())
+                .identifier(identifier).initialValue(defaultValue)
+                .view(SocketHint.View.SELECT)
+                .domain(defaultValue.getClass().getEnumConstants()).build();
+    }
 
     public static SocketHint<Number> createNumberSocketHint(final String identifier, final Number number) {
         return createNumberSocketHintBuilder(identifier, number).build();
