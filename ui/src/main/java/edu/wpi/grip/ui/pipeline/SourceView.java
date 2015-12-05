@@ -25,6 +25,7 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 
 import java.io.IOException;
+import java.util.concurrent.TimeoutException;
 
 /**
  * A JavaFX control that represents a {@link Source}.  <code>SourceView</code>s are somewhat analogous to
@@ -76,12 +77,14 @@ public class SourceView extends VBox {
                 event.consume();
                 if (!startStopButton.isSelected()) try {
                     source.start(eventBus);
+                    // If this fails then an SourceStartedEvent will not be posted
                 } catch (IOException e) {
                     eventBus.post(new FatalErrorEvent(e));
                 }
                 else try {
                     source.stop();
-                } catch (Exception e) {
+                    // If this fails then an SourceStoppedEvent will not be posted
+                } catch (TimeoutException | IOException e) {
                     eventBus.post(new FatalErrorEvent(e));
                 }
             });

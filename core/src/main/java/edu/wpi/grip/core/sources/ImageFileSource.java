@@ -84,15 +84,9 @@ public class ImageFileSource extends Source {
         this.initialize(eventBus, path);
     }
 
-    public ImageFileSource start() throws IOException {
+    protected void start() throws IOException {
         this.started = true;
         loadImage(this.path);
-        return this;
-    }
-
-    @Override
-    public ImageFileSource stop() {
-        return this;
     }
 
     @Override

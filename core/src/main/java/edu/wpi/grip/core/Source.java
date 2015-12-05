@@ -47,13 +47,6 @@ public abstract class Source {
      */
     public abstract void createFromProperties(EventBus eventBus, Properties properties) throws IOException;
 
-
-    public <T extends Source> T start(EventBus eventBus) throws IOException {
-        final T source = (T) start();
-        eventBus.register(source);
-        return source;
-    }
-
     /**
      * Starts this source.
      * A source whose {@link #canStopAndStart()} returns true can also be stopped and started and stopped multiple times.
@@ -61,17 +54,32 @@ public abstract class Source {
      * @return The source object that created the camera
      * @throws IOException If the source fails to be started
      */
-    protected abstract Source start() throws IOException;
+    public <T extends Source> T start(EventBus eventBus) throws IOException {
+        start();
+        eventBus.register(this);
+        return (T) this;
+    }
+
+    /**
+     * Any method that overrides this method should post a {@link edu.wpi.grip.core.events.SourceStartedEvent}
+     * to the {@link EventBus} if is successfully starts.
+     * @throws IOException If the source fails to be started
+     */
+    protected abstract void start() throws IOException;
 
     /**
      * Stops this source.
      * This will stop the source publishing new socket values after this method returns.
      * A source whose {@link #canStopAndStart()} returns true can also be stopped and started and stopped multiple times.
      *
+     * Any method that overrides this method should post a {@link edu.wpi.grip.core.events.SourceStoppedEvent}
+     * to the {@link EventBus} if is successfully stops.
+     *
      * @return The source that was stopped
-     * @throws TimeoutException if the thread running the source fails to stop
+     * @throws TimeoutException if the thread running the source fails to stop.
+     * @throws IOException If there is a problem stopping the Source
      */
-    public abstract Source stop() throws TimeoutException;
+    public void stop() throws TimeoutException, IOException { /* no op */ }
 
     /**
      * Used to indicate if the source is running or stopped

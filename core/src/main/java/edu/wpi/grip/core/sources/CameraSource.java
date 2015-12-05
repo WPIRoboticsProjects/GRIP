@@ -128,9 +128,9 @@ public class CameraSource extends Source {
     /**
      * Starts the video capture from the source device
      */
-    public CameraSource start() throws IOException, IllegalStateException {
+    protected void start() throws IOException, IllegalStateException {
         final OpenCVFrameConverter.ToMat convertToMat = new OpenCVFrameConverter.ToMat();
-        synchronized (this.frameThread) {
+        synchronized (this) {
             if (this.frameThread.isPresent()) {
                 throw new IllegalStateException("The video retrieval thread has already been started.");
             }
@@ -179,7 +179,6 @@ public class CameraSource extends Source {
             this.frameThread = Optional.of(frameExecutor);
         }
         eventBus.post(new SourceStartedEvent(this));
-        return this;
     }
 
     /**
@@ -188,8 +187,8 @@ public class CameraSource extends Source {
      * @throws TimeoutException      If the thread running the Webcam fails to join this one after a timeout.
      * @throws IllegalStateException If the camera was already stopped
      */
-    public CameraSource stop() throws TimeoutException, IllegalStateException {
-        synchronized (this.frameThread) {
+    public void stop() throws TimeoutException, IllegalStateException {
+        synchronized (this) {
             if (frameThread.isPresent()) {
                 final Thread ex = frameThread.get();
                 ex.interrupt();
@@ -219,12 +218,11 @@ public class CameraSource extends Source {
         }
         eventBus.post(new SourceStoppedEvent(this));
         frameRateOutputSocket.setValue(0);
-        return this;
     }
 
     @Override
     public boolean isRunning() {
-        synchronized (this.frameThread) {
+        synchronized (this) {
             return this.frameThread.isPresent() && this.frameThread.get().isAlive();
         }
     }
