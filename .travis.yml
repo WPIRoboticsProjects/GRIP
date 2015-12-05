@@ -27,7 +27,7 @@ after_failure: #Run again with debug info enabled
 
 after_success:
   - bash <(curl -s https://codecov.io/bash) # Code Coverage Reporting
-  - ./gradlew javadoc
+  - ./gradlew aggregateJavadocs
   - .travis-scripts/push-javadoc-to-gh-pages.sh
   - .travis-scripts/before-deploy.sh
 
