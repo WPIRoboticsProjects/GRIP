@@ -2,7 +2,6 @@ package edu.wpi.grip.core.events;
 
 import com.google.common.base.MoreObjects;
 import edu.wpi.grip.core.Connection;
-import edu.wpi.grip.core.Step;
 
 /**
  * An event that occurs when a new connection is added to the pipeline.  This is triggered by the user adding a

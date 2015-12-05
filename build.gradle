@@ -1,112 +1,162 @@
 plugins {
-    id 'com.github.johnrengelman.shadow' version '1.2.2'
     id 'java'
     id 'idea'
     id 'eclipse'
-    id 'application'
     id 'jacoco'
     id 'com.google.osdetector' version '1.4.0'
+    id 'com.github.johnrengelman.shadow' version '1.2.2'
 }
 
-apply from: 'http://dl.bintray.com/shemnon/javafx-gradle/8.1.1/javafx.plugin'
+allprojects {
+    apply plugin: 'java'
+    apply plugin: 'application'
 
-version = '0.1.0'
 
-javafx {
-    appID = 'GRIP'
-    appName = 'GRIP'
-    mainClass = "edu.wpi.grip.ui.Main"
-}
+    repositories {
+        mavenCentral()
+        jcenter()
+    }
 
-mainClassName = "edu.wpi.grip.core.Main"
+    dependencies {
+        testCompile group: 'org.hamcrest', name: 'hamcrest-all', version: '1.3'
+        testCompile group: 'junit', name: 'junit', version: '4.12'
+    }
 
-sourceSets {
-    generated {
-        java {
-            /* Note: When referencing this it becomes `srcDirs` */
-            srcDir 'src/generated/java'
+    version = '0.1.0'
+
+    jacocoTestReport {
+        reports {
+            xml.enabled = true
+            html.enabled = true
         }
     }
-}
+    check.dependsOn jacocoTestReport
 
+    tasks.withType(Javadoc) {
+        source compileJava.source
+        options.addStringOption('Xdoclint:all,-html', '-quiet')
+    }
 
-repositories {
-    mavenCentral()
-    jcenter()
-}
-
-def os = osdetector.classifier.replace("osx", "macosx")
-
-dependencies {
-    compile group: 'org.controlsfx', name: 'controlsfx', version: '8.40.10'
-    compile group: 'com.google.guava', name: 'guava', version: '18.0'
-    compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.4'
-    compile group: 'org.python', name: 'jython', version: '2.7.0'
-    compile group: 'com.thoughtworks.xstream', name: 'xstream', version: '1.4.8'
-    compile group: 'org.bytedeco', name: 'javacv', version: '1.1'
-    compile group: 'org.bytedeco.javacpp-presets', name: 'opencv', version: '3.0.0-1.1'
-    compile group: 'org.bytedeco.javacpp-presets', name: 'opencv', version: '3.0.0-1.1', classifier: os
-    compile group: 'org.bytedeco.javacpp-presets', name: 'videoinput', version: '0.200-1.1', classifier: os
-
-    testCompile group: 'org.hamcrest', name: 'hamcrest-all', version: '1.3'
-    testCompile group: 'junit', name: 'junit', version: '4.12'
-    testCompile group: 'org.testfx', name: 'testfx-core', version: '4.0.+'
-    testCompile group: 'org.testfx', name: 'testfx-junit', version: '4.0.+'
-}
-
-compileJava.source sourceSets.generated.java, sourceSets.main.java
-
-task generateCodeFromSource(type: CodeGenerator) {
-    description 'Generates the Operation Wrappers for the OpenCV methods.\n To skip run with parm `-PskipGenerate`'
-    dest sourceSets.generated.java.srcDirs
-    removeExisting true
-}
-generateCodeFromSource.onlyIf { !project.hasProperty('skipGenerate') }
-compileJava.dependsOn generateCodeFromSource
-
-// Turn on test results
-test {
-    testLogging {
-        afterSuite { desc, result ->
-            if (!desc.parent && project.hasProperty('printTestResults')) {
-                println "Test results: ${result.resultType} (${result.testCount} tests, ${result.successfulTestCount} passed, ${result.failedTestCount} failed, ${result.skippedTestCount} skipped)"
+    // Turn on test results
+    test {
+        testLogging {
+            afterSuite { desc, result ->
+                if (!desc.parent && project.hasProperty('printTestResults')) {
+                    println "Test results: ${result.resultType} (${result.testCount} tests, ${result.successfulTestCount} passed, ${result.failedTestCount} failed, ${result.skippedTestCount} skipped)"
+                }
             }
         }
     }
 }
 
-jacocoTestReport {
-    reports {
-        xml.enabled = true
-        html.enabled = true
+def os = osdetector.classifier.replace("osx", "macosx")
+
+project(":core") {
+    apply plugin: 'java'
+    apply plugin: 'idea'
+    apply plugin: "com.github.johnrengelman.shadow"
+
+    configurations {
+        shadow
     }
-}
-check.dependsOn jacocoTestReport
 
-allprojects {
-    tasks.withType(Javadoc) {
-        source compileJava.source
-        options.addStringOption('Xdoclint:all,-html', '-quiet')
+    dependencies {
+        compile group: 'org.bytedeco', name: 'javacv', version: '1.1'
+        compile group: 'org.bytedeco.javacpp-presets', name: 'opencv', version: '3.0.0-1.1'
+        compile group: 'org.python', name: 'jython', version: '2.7.0'
+        compile group: 'com.thoughtworks.xstream', name: 'xstream', version: '1.4.8'
+        compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.4'
+        compile group: 'com.google.guava', name: 'guava', version: '18.0'
+        testCompile group: 'org.bytedeco.javacpp-presets', name: 'opencv', version: '3.0.0-1.1', classifier: os
+        testCompile group: 'org.bytedeco.javacpp-presets', name: 'videoinput', version: '0.200-1.1', classifier: os
     }
-}
 
-// IDE setup
+    mainClassName = 'edu.wpi.grip.core.Main'
 
-eclipse.classpath {
-    file.whenMerged { cp ->
-        sourceSets.generated.java.srcDirs.forEach { srcDir ->
-            def source_folder = new org.gradle.plugins.ide.eclipse.model.SourceFolder(srcDir.getAbsolutePath(), "build/classes/merged")
-            if (cp.entries.find() { it.path == source_folder.path } == null)
-                cp.entries.add(source_folder)
+    jar {
+        manifest {
+            attributes 'Implementation-Version': version, 'Main-Class': mainClassName
         }
     }
+
+    shadowJar {
+        artifacts {
+            shadow(tasks.shadowJar.archivePath) {
+                builtBy shadowJar
+            }
+        }
+    }
+
+    sourceSets {
+        generated {
+            java {
+                /* Note: When referencing this it becomes `srcDirs` */
+                srcDir 'src/generated/java'
+            }
+        }
+    }
+
+    task generateCodeFromSource(type: CodeGenerator) {
+        description 'Generates the Operation Wrappers for the OpenCV methods.\n To skip run with parm `-PskipGenerate`'
+        dest sourceSets.generated.java.srcDirs
+        removeExisting true
+    }
+    generateCodeFromSource.onlyIf { !project.hasProperty('skipGenerate') }
+    compileJava.source sourceSets.generated.java, sourceSets.main.java
+    compileJava.dependsOn generateCodeFromSource
+
+    // IDE setup
+    eclipse.classpath {
+        file.whenMerged { cp ->
+            sourceSets.generated.java.srcDirs.forEach { srcDir ->
+                def source_folder = new org.gradle.plugins.ide.eclipse.model.SourceFolder(srcDir.getAbsolutePath(), "build/classes/merged")
+                if (cp.entries.find() { it.path == source_folder.path } == null)
+                    cp.entries.add(source_folder)
+            }
+        }
+    }
+
+    idea.module {
+        sourceDirs += sourceSets.generated.java.srcDirs
+    }
+    // End IDE setup
 }
 
-idea.module {
-    sourceDirs += sourceSets.generated.java.srcDirs
-}
+project(":ui") {
+    apply plugin: 'java'
+    apply plugin: 'idea'
+    apply plugin: 'application'
+    apply from: 'http://dl.bintray.com/shemnon/javafx-gradle/8.1.1/javafx.plugin'
 
-// End IDE setup
+    configurations {
+        ideProvider
+    }
+
+    dependencies {
+        compile project(path: ':core', configuration: 'shadow')
+        ideProvider project(path: ':core', configuration: 'compile')
+        compile group: 'org.controlsfx', name: 'controlsfx', version: '8.40.10'
+        compile group: 'org.bytedeco.javacpp-presets', name: 'opencv', version: '3.0.0-1.1', classifier: os
+        compile group: 'org.bytedeco.javacpp-presets', name: 'videoinput', version: '0.200-1.1', classifier: os
+        testCompile files(project(':core').sourceSets.test.output.classesDir)
+        testCompile group: 'org.testfx', name: 'testfx-core', version: '4.0.+'
+        testCompile group: 'org.testfx', name: 'testfx-junit', version: '4.0.+'
+    }
+
+    evaluationDependsOn(':core')
+    compileTestJava.dependsOn tasks.getByPath(':core:testClasses')
+
+    idea.module {
+        scopes.PROVIDED.plus += [ configurations.ideProvider ]
+    }
+
+    javafx {
+        appID = 'GRIP'
+        appName = 'GRIP'
+        mainClass = "edu.wpi.grip.ui.Main"
+    }
+    mainClassName = javafx.mainClass
+}
 
 task wrapper(type: Wrapper) {
     gradleVersion = '2.9'
