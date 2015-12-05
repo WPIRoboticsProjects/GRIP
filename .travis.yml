@@ -53,7 +53,7 @@ deploy:
   api_key:
     secure: bdjiFXG3VBcM1iyxeputsWA9vHxgLNcxRB1i0REDNAnIEvDWpAdVr1jPBejeiOEw9s+k6EItATvQ2I7Xp5iKnYaXn0NuHzM3OSY8WNVCc+gBTaQwkijPBqi/vEXaO502CscW+H2U26QZGS/jJiUuieeErtzCNcWmCv8SRc5NFOVYdSlhAmp+aPeu2YwuweiMZNVquYM2hx7murghOYSF5hQTKq4/zrziENVi78XZS8rJFmxwOGqNj1GBLul2F9poIPjzDbPVJLeXTJEY+N3aYGJ4GyZYf6p8ynDO/v043/GuOAyNfkgSwhCcTQlmLG/mm6P9CUMoDQR9klh2eDswgrIP4rGLwILg3035nqHqwgTIKVXfspni3P/65siS6lXV0M5flEkRysMBr1GQhaIEUM32ArreMzAtC2Vn2CviKG0TwLmxyd/7W3JdoX4KrHAcKBwbqFDImWw43S6N63oTUEw6GjrI+CndwgF9RNgr5SAyS28LFXViOJe7JlGVUNU33kMNpEJxzVREzkJsO8aicaZTrvDniFOfg2WhrAyhjxmh4/IOHDE6qgtxw+2+TUzMlwdzdxb90BeXg2XfMichmKfQYQFEmZntCZcoHHDG5jbCTyAvFuOv6tdPjpr69QjiEJhEbohw8CEwoGhy1kxxQcCDCfABrOTivJ39Ui8MC6k=
   file_glob: true
-  file: "build/distributions/*.deb"
+  file: "ui/build/distributions/*.deb"
   skip_cleanup: true
   on:
     repo: WPIRoboticsProjects/GRIP
