@@ -6,6 +6,7 @@ import edu.wpi.grip.core.OutputSocket;
 import edu.wpi.grip.core.Source;
 import edu.wpi.grip.core.Step;
 import edu.wpi.grip.core.events.SocketPreviewChangedEvent;
+import edu.wpi.grip.core.events.StepMovedEvent;
 import edu.wpi.grip.ui.pipeline.PipelineView;
 import edu.wpi.grip.ui.pipeline.SourceView;
 import edu.wpi.grip.ui.pipeline.StepView;
@@ -54,6 +55,39 @@ public class PreviewsView extends VBox {
 
         this.eventBus.register(this);
     }
+    @Subscribe
+    /**
+     * This function is called when a step moves in the pipeline.
+     */
+    public synchronized void onPreviewOrderChanged(StepMovedEvent event) {
+        Platform.runLater(() -> {//Run this function on the main gui thread
+            final Step movedStep = event.getStep(); //The socket whose step position in the pipeline has changed
+            final int distanceMoved = event.getDistance();
+            final int numberOfSourcePreviews = getNumbOfSourcePreviews();
+
+            final OutputSocket<?>[] socketsMovedArray = movedStep.getOutputSockets();
+
+            for (OutputSocket<?> i : socketsMovedArray) {
+                int oldIndex = this.previewedSockets.indexOf(i);//Get the index of this preview so we can remove the correct entry
+                int newLocation = oldIndex + distanceMoved;
+
+                if (newLocation < numberOfSourcePreviews)
+                    newLocation = numberOfSourcePreviews;
+
+                if (oldIndex != -1) {//False when the preview isn't currently displayed
+                    this.previewedSockets.remove(oldIndex);
+                    this.eventBus.unregister(this.previewBox.getChildren().remove(oldIndex));
+
+                    if (newLocation > this.previewedSockets.size())
+                        newLocation = this.previewedSockets.size();
+
+                    this.previewedSockets.add(newLocation, i);//...use this index to add it to the correct location in the list of previews open
+                    this.previewBox.getChildren().add(newLocation, SocketPreviewViewFactory.createPreviewView(this.eventBus, i));//...and display it in the correct location in the list of previews open in the gui
+                }
+            }
+        });
+
+    }
 
     @Subscribe
     /**
@@ -70,23 +104,25 @@ public class PreviewsView extends VBox {
 
                     if (socket.getStep().isPresent()) { //If this is a socket associated with a pipeline step (IE NOT a source)....
 
-                        int indexInPreviews = getIndexInPreviewsOfAStepSocket(socket);//Find the appropriate index to add this preview with.
+                        //Find the appropriate index to add this preview with...
+                        int indexInPreviews = getIndexInPreviewsOfAStepSocket(socket);
 
                         this.previewedSockets.add(indexInPreviews, socket);//...use this index to add it to the correct location in the list of previews open
                         this.previewBox.getChildren().add(indexInPreviews, SocketPreviewViewFactory.createPreviewView(this.eventBus, socket));//...and display it in the correct location in the list of previews open in the gui
 
                     } else {//This is a socket associated with a source and not a pipeline step...
 
-                        int indexInSourcePreviews = getIndexInPreviewsOfASourceSocket(socket);//Find the appropriate index to add this preview with.
+                        //Find the appropriate index to add this preview with.
+                        int indexInSourcePreviews = getIndexInPreviewsOfASourceSocket(socket);
 
                         this.previewedSockets.add(indexInSourcePreviews, socket);//Add the preview to the appropriate place in the list of previewed sockets
                         this.previewBox.getChildren().add(indexInSourcePreviews, SocketPreviewViewFactory.createPreviewView(this.eventBus, socket));//Display the preview in the appropriate place
                     }
                 }
-            } else {//The socket was already previewed, so the user must be requesting to not show this preview
-                // If the socket was just set as not previewed, remove both it and the corresponding control
+            } else {//The socket was already previewed, so the user must be requesting to not show this preview (remove both it and the corresponding control)
+
                 int index = this.previewedSockets.indexOf(socket);//Get the index of this preview so we can remove the correct entry
-                if (index != -1) {//this is false when the preview isn't currently displayed
+                if (index != -1) {//False when the preview isn't currently displayed
                     this.previewedSockets.remove(index);
                     this.eventBus.unregister(this.previewBox.getChildren().remove(index));
                 }
@@ -108,7 +144,8 @@ public class PreviewsView extends VBox {
         final SourceView sourceView = this.pipeline.findSourceView(socketSource);//The gui object that displays the socketSource
         int indexOfSource = this.pipeline.getSources().indexOf(sourceView); //The index of the source that has the socket in the pipeline
 
-        int indexInSourcePreviews = 0;//Start with the first socket in the list of previewed sockets
+        //Start with the first socket in the list of previewed sockets
+        int indexInSourcePreviews = 0;
         //Find the correct index in the displayed source previews by comparing the indices
         while (((this.previewedSockets.size() > indexInSourcePreviews)//If there are previews still to be examined AND
                 && (this.previewedSockets.get(indexInSourcePreviews).getSource().isPresent()))//AND If the preview at this index is a source...
@@ -134,7 +171,8 @@ public class PreviewsView extends VBox {
         final StepView stepView = this.pipeline.findStepView(socketStep);//The gui object that displays the socketStep
         int indexOfStep = this.pipeline.getSteps().indexOf(stepView); //The index of the step that has the socket in the pipeline
 
-        int indexInPreviews = numbOfSourcePreviews;//Start at the first non-source socket in the list of previewed sockets
+        //Start at the first non-source socket in the list of previewed sockets
+        int indexInPreviews = numbOfSourcePreviews;
 
         while ((this.previewedSockets.size() > indexInPreviews)//While there are sockets in the list of previewed sockets yet to be examined
                 && ((this.pipeline.getSteps().indexOf(this.pipeline.findStepView(this.previewedSockets.get(indexInPreviews).getStep().get()))) < indexOfStep)) {//...AND the socket at this index in the list of displayed sockets has an index in the pipeline less than the socket passed in as "socket"
@@ -151,6 +189,7 @@ public class PreviewsView extends VBox {
      * @see PreviewsView#getIndexInPreviewsOfAStepSocket(OutputSocket)
      */
     private int getNumbOfSourcePreviews() {
+        //Start at the beginning of the list.
         int numbOfSourcePreviews = 0;
         while ((this.previewedSockets.size() > numbOfSourcePreviews) //While there are still previews to examine
                 && (!this.previewedSockets.get(numbOfSourcePreviews).getStep().isPresent())) { //If this is a source...
