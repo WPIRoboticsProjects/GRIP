@@ -19,6 +19,9 @@ public final class Operations {
         eventBus.post(new OperationAddedEvent(new RGBThresholdOperation()));
         eventBus.post(new OperationAddedEvent(new HSVThresholdOperation()));
         eventBus.post(new OperationAddedEvent(new HSLThresholdOperation()));
+        eventBus.post(new OperationAddedEvent(new FindContoursOperation()));
+        eventBus.post(new OperationAddedEvent(new FilterContoursOperation()));
+        eventBus.post(new OperationAddedEvent(new ConvexHullsOperation()));
         eventBus.post(new OperationAddedEvent(new FindBlobsOperation()));
         eventBus.post(new OperationAddedEvent(new FindLinesOperation()));
         eventBus.post(new OperationAddedEvent(new FilterLinesOperation()));
