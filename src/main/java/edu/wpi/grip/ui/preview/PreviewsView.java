@@ -19,6 +19,7 @@ import javafx.scene.layout.VBox;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Stack;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -67,23 +68,44 @@ public class PreviewsView extends VBox {
 
             final OutputSocket<?>[] socketsMovedArray = movedStep.getOutputSockets();
 
-            for (OutputSocket<?> i : socketsMovedArray) {
-                int oldIndex = this.previewedSockets.indexOf(i);//Get the index of this preview so we can remove the correct entry
-                int newLocation = oldIndex + distanceMoved;
+            int rightmostIndex = 0;
+            int leftmostIndex = this.previewedSockets.size();
 
-                if (newLocation < numberOfSourcePreviews)
+            Stack<OutputSocket<?>> previewedMovedSockets = new Stack<OutputSocket<?>>();
+
+            for (OutputSocket<?> i : socketsMovedArray) {
+                if (this.previewedSockets.indexOf(i)!= -1){
+                    previewedMovedSockets.push(i);
+                    if (rightmostIndex < this.previewedSockets.indexOf(i))
+                        rightmostIndex = this.previewedSockets.indexOf(i);
+                    if (leftmostIndex > this.previewedSockets.indexOf(i))
+                        leftmostIndex = this.previewedSockets.indexOf(i);
+                }
+
+            }
+
+            while (previewedMovedSockets.size() != 0){
+                OutputSocket<?> current = previewedMovedSockets.pop();
+                int oldIndex = this.previewedSockets.indexOf(current);//Get the index of this preview so we can remove the correct entry
+
+                int newLocation = 0;
+
+                if(distanceMoved<0)
+                    newLocation = leftmostIndex + distanceMoved;
+                else
+                    newLocation = rightmostIndex + distanceMoved;
+
+                if (newLocation <numberOfSourcePreviews)
                     newLocation = numberOfSourcePreviews;
 
-                if (oldIndex != -1) {//False when the preview isn't currently displayed
-                    this.previewedSockets.remove(oldIndex);
-                    this.eventBus.unregister(this.previewBox.getChildren().remove(oldIndex));
+                this.previewedSockets.remove(oldIndex);
+                this.eventBus.unregister(this.previewBox.getChildren().remove(oldIndex));
 
-                    if (newLocation > this.previewedSockets.size())
-                        newLocation = this.previewedSockets.size();
+                if (newLocation > this.previewedSockets.size())
+                    newLocation = this.previewedSockets.size();
 
-                    this.previewedSockets.add(newLocation, i);//...use this index to add it to the correct location in the list of previews open
-                    this.previewBox.getChildren().add(newLocation, SocketPreviewViewFactory.createPreviewView(this.eventBus, i));//...and display it in the correct location in the list of previews open in the gui
-                }
+                this.previewedSockets.add(newLocation, current);//...use this index to add it to the correct location in the list of previews open
+                this.previewBox.getChildren().add(newLocation, SocketPreviewViewFactory.createPreviewView(this.eventBus, current));//...and display it in the correct location in the list of previews open
             }
         });
 
