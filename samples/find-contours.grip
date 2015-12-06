@@ -1,0 +1,85 @@
+<grip:Pipeline>
+  <sources>
+    <grip:ImageFile>
+      <property name="path" value="../samples/images/rebound-rumble.jpeg"/>
+    </grip:ImageFile>
+  </sources>
+  <steps>
+    <grip:Step name="HSV Threshold">
+      <grip:Input step="0" socket="0"/>
+      <grip:Input step="0" socket="1">
+        <value>
+          <double>0.0</double>
+          <double>180.0</double>
+        </value>
+      </grip:Input>
+      <grip:Input step="0" socket="2">
+        <value>
+          <double>0.0</double>
+          <double>34.073275862068996</double>
+        </value>
+      </grip:Input>
+      <grip:Input step="0" socket="3">
+        <value>
+          <double>176.48624667258207</double>
+          <double>255.0</double>
+        </value>
+      </grip:Input>
+      <grip:Output step="0" socket="0" published="false" previewed="false"/>
+    </grip:Step>
+    <grip:Step name="Find Contours">
+      <grip:Input step="1" socket="0"/>
+      <grip:Input step="1" socket="1">
+        <value>true</value>
+      </grip:Input>
+      <grip:Output step="1" socket="0" published="false" previewed="false"/>
+    </grip:Step>
+    <grip:Step name="Convex Hulls">
+      <grip:Input step="2" socket="0"/>
+      <grip:Output step="2" socket="0" published="false" previewed="false"/>
+    </grip:Step>
+    <grip:Step name="Filter Contours">
+      <grip:Input step="3" socket="0"/>
+      <grip:Input step="3" socket="1">
+        <value>5000.0</value>
+      </grip:Input>
+      <grip:Input step="3" socket="2">
+        <value>0</value>
+      </grip:Input>
+      <grip:Input step="3" socket="3">
+        <value>0</value>
+      </grip:Input>
+      <grip:Input step="3" socket="4">
+        <value>2147483647</value>
+      </grip:Input>
+      <grip:Input step="3" socket="5">
+        <value>0</value>
+      </grip:Input>
+      <grip:Input step="3" socket="6">
+        <value>2147483647</value>
+      </grip:Input>
+      <grip:Output step="3" socket="0" published="false" previewed="true"/>
+    </grip:Step>
+  </steps>
+  <connections>
+    <grip:Connection>
+      <grip:Output step="0" socket="0" published="false" previewed="false"/>
+      <grip:Input step="1" socket="0"/>
+    </grip:Connection>
+    <grip:Connection>
+      <grip:Output step="1" socket="0" published="false" previewed="false"/>
+      <grip:Input step="2" socket="0"/>
+    </grip:Connection>
+    <grip:Connection>
+      <grip:Output step="2" socket="0" published="false" previewed="false"/>
+      <grip:Input step="3" socket="0"/>
+    </grip:Connection>
+    <grip:Connection>
+      <grip:Output source="0" socket="0" published="false" previewed="true"/>
+      <grip:Input step="0" socket="0"/>
+    </grip:Connection>
+  </connections>
+  <sink>
+    <value class="edu.wpi.grip.core.sinks.DummySink"/>
+  </sink>
+</grip:Pipeline>
