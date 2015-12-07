@@ -13,7 +13,10 @@ import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.FileChooser;
 
@@ -40,6 +43,25 @@ public class AddSourceView extends HBox {
     @FunctionalInterface
     private interface SupplierWithIO<T> {
         T getWithIO() throws IOException;
+    }
+
+    private class SourceDialog extends Dialog<ButtonType> {
+        private final Text errorText = new Text();
+
+        private SourceDialog(final Parent root, Control inputField) {
+            final GridPane gridContent = new GridPane();
+            gridContent.setMaxWidth(Double.MAX_VALUE);
+            GridPane.setHgrow(inputField, Priority.ALWAYS);
+            GridPane.setHgrow(errorText, Priority.NEVER);
+            errorText.wrappingWidthProperty().bind(inputField.widthProperty());
+            gridContent.add(errorText, 0, 0);
+            gridContent.add(inputField, 0, 1);
+
+            getDialogPane().setContent(gridContent);
+            getDialogPane().setStyle(root.getStyle());
+            getDialogPane().getStylesheets().addAll(root.getStylesheets());
+            getDialogPane().getButtonTypes().addAll(ButtonType.CANCEL, ButtonType.OK);
+        }
     }
 
     public AddSourceView(EventBus eventBus) {
@@ -76,22 +98,18 @@ public class AddSourceView extends HBox {
             final Parent root = this.getScene().getRoot();
 
             // Show a dialog for the user to pick a camera index
-            final Dialog<ButtonType> dialog = new Dialog<>();
             final Spinner<Integer> cameraIndex = new Spinner<Integer>(0, Integer.MAX_VALUE, 0);
+            final SourceDialog dialog = new SourceDialog(root, cameraIndex);
 
             dialog.setTitle("Add Webcam");
             dialog.setHeaderText("Choose a camera");
             dialog.setContentText("index");
-            dialog.getDialogPane().setContent(cameraIndex);
-            dialog.getDialogPane().getButtonTypes().addAll(ButtonType.CANCEL, ButtonType.OK);
-            dialog.getDialogPane().setStyle(root.getStyle());
-            dialog.getDialogPane().getStylesheets().addAll(root.getStylesheets());
 
             // If the user clicks OK, add a new camera source
             loadCamera(dialog,
                     () -> new CameraSource(eventBus, cameraIndex.getValue()).start(eventBus),
                     e -> {
-                        // TODO: Indicate to user that the camera source was invalid
+                        dialog.errorText.setText(e.getMessage());
                     });
         });
 
@@ -99,9 +117,9 @@ public class AddSourceView extends HBox {
             final Parent root = this.getScene().getRoot();
 
             // Show a dialog for the user to pick a camera URL
-            final Dialog<ButtonType> dialog = new Dialog<>();
 
             final TextField cameraAddress = new TextField();
+            final SourceDialog dialog = new SourceDialog(root, cameraAddress);
             cameraAddress.setPromptText("Ex: http://10.1.90.11/mjpg/video.mjpg");
             cameraAddress.textProperty().addListener(observable -> {
                 boolean validURL = true;
@@ -119,17 +137,13 @@ public class AddSourceView extends HBox {
             dialog.setTitle("Add IP Camera");
             dialog.setHeaderText("Enter the IP camera URL");
             dialog.setContentText("URL");
-            dialog.getDialogPane().setContent(cameraAddress);
-            dialog.getDialogPane().getButtonTypes().addAll(ButtonType.CANCEL, ButtonType.OK);
             dialog.getDialogPane().lookupButton(ButtonType.OK).setDisable(true);
-            dialog.getDialogPane().setStyle(root.getStyle());
-            dialog.getDialogPane().getStylesheets().addAll(root.getStylesheets());
 
             // If the user clicks OK, add a new camera source
             loadCamera(dialog,
                     () -> new CameraSource(eventBus, cameraAddress.getText()).start(eventBus),
                     e -> {
-                        // TODO: Indicate to user that the camera source was invalid
+                        dialog.errorText.setText(e.getMessage());
                     });
         });
     }
