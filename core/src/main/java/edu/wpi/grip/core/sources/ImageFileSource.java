@@ -8,6 +8,7 @@ import edu.wpi.grip.core.SocketHint;
 import edu.wpi.grip.core.SocketHints;
 import edu.wpi.grip.core.Source;
 import edu.wpi.grip.core.events.SourceStartedEvent;
+import edu.wpi.grip.core.util.OpenCVUtility;
 import org.bytedeco.javacpp.opencv_core.Mat;
 import org.bytedeco.javacpp.opencv_imgcodecs;
 
@@ -93,21 +94,10 @@ public class ImageFileSource extends Source {
         this.loadImage(path, opencv_imgcodecs.IMREAD_COLOR);
     }
 
-    /**
-     * Loads the image and posts an update to the {@link EventBus}
-     *
-     * @param path  The location on the file system where the image exists.
-     * @param flags Flags to pass to imread {@link opencv_imgcodecs#imread(String, int)}
-     */
+
     private void loadImage(String path, final int flags) throws IOException {
-        Mat mat = opencv_imgcodecs.imread(path, flags);
-        if (!mat.empty()) {
-            mat.copyTo(this.outputSocket.getValue().get());
-            this.outputSocket.setValue(this.outputSocket.getValue().get());
-        } else {
-            // TODO Output Error to GUI about invalid url
-            throw new IOException("Error loading image " + path);
-        }
+        OpenCVUtility.loadImage(path, flags, this.outputSocket.getValue().get());
+        this.outputSocket.setValue(this.outputSocket.getValue().get());
         this.eventBus.post(new SourceStartedEvent(this));
     }
 }

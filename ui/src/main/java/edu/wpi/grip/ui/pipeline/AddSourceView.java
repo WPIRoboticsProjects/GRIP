@@ -5,6 +5,7 @@ import edu.wpi.grip.core.events.UnexpectedThrowableEvent;
 import edu.wpi.grip.core.events.SourceAddedEvent;
 import edu.wpi.grip.core.sources.CameraSource;
 import edu.wpi.grip.core.sources.ImageFileSource;
+import edu.wpi.grip.core.sources.MultiImageFileSource;
 import edu.wpi.grip.ui.util.DPIUtility;
 import javafx.application.Platform;
 import javafx.event.EventHandler;
@@ -56,13 +57,19 @@ public class AddSourceView extends HBox {
             if (imageFiles == null) return;
 
             // Add a new source for each image .
-            imageFiles.forEach(file -> {
+            if(imageFiles.size() == 1) {
                 try {
-                    eventBus.post(new SourceAddedEvent(new ImageFileSource(eventBus, file)));
+                    eventBus.post(new SourceAddedEvent(new ImageFileSource(eventBus, imageFiles.get(0))));
                 } catch (IOException e) {
-                    eventBus.post(new UnexpectedThrowableEvent(e, "Tried to create an invalid source"));
+                    eventBus.post(new UnexpectedThrowableEvent(e, "The image selected was invalid"));
                 }
-            });
+            } else {
+                try {
+                    eventBus.post(new SourceAddedEvent(new MultiImageFileSource(eventBus, imageFiles)));
+                } catch (IOException e) {
+                    eventBus.post(new UnexpectedThrowableEvent(e, "One of the images selected was invalid"));
+                }
+            }
         });
 
         addButton("Add\nWebcam", getClass().getResource("/edu/wpi/grip/ui/icons/add-webcam.png"), mouseEvent -> {
