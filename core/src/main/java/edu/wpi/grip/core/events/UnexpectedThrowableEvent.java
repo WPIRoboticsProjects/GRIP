@@ -31,7 +31,7 @@ public final class UnexpectedThrowableEvent {
         return throwable;
     }
 
-    public String getMessage(){
+    public String getMessage() {
         return message;
     }
 

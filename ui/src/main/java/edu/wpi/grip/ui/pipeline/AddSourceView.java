@@ -78,7 +78,6 @@ public class AddSourceView extends HBox {
                     eventBus.post(new SourceAddedEvent(source));
                 } catch (IOException e) {
                     eventBus.post(new UnexpectedThrowableEvent(e, "Tried to create an invalid source"));
-                    e.printStackTrace();
                 }
             });
         });

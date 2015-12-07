@@ -47,6 +47,7 @@ public final class ExceptionAlert extends Alert {
 
     private final String exceptionMessage;
     private final String systemInfoMessage;
+    private final String additionalInfoMessage;
     private final String message;
     private final Throwable initialCause;
 
@@ -71,6 +72,7 @@ public final class ExceptionAlert extends Alert {
 
         this.exceptionMessage = generateExceptionMessage(throwable);
         this.systemInfoMessage = generateSystemInfoMessage();
+        this.additionalInfoMessage = generateAdditionalInfoMessage();
         this.initialCause = getInitialCause(throwable);
 
         this.setTitle(initialCause.getClass().getSimpleName());
@@ -162,7 +164,7 @@ public final class ExceptionAlert extends Alert {
         }
     }
 
-    private String getAdditionalInfoMessage() {
+    private String generateAdditionalInfoMessage() {
         return "Message: " + message + "\n";
     }
 
@@ -199,9 +201,12 @@ public final class ExceptionAlert extends Alert {
      * @return The fully constructed issue text.
      */
     private String issueText() {
-        final StringBuilder builder = new StringBuilder(ISSUE_PROMPT_QUESTION).append("\n\n\n\n")
-                .append(getAdditionalInfoMessage()).append("\n").append(systemInfoMessage).append(exceptionMessage);
-        return builder.toString();
+        return ISSUE_PROMPT_QUESTION
+                + "\n\n\n\n"
+                + additionalInfoMessage
+                + "\n"
+                + systemInfoMessage
+                + exceptionMessage;
     }
 
 
