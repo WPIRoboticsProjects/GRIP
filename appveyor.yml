@@ -15,7 +15,7 @@ after_build:
   - dir build /s
 
 artifacts:
-  - path: build\distributions\*.exe
+  - path: ui\build\distributions\*.exe
 
 deploy:
   provider: GitHub
