@@ -2,6 +2,8 @@ package edu.wpi.grip.core.sources;
 
 import com.google.common.eventbus.EventBus;
 import edu.wpi.grip.core.OutputSocket;
+import edu.wpi.grip.util.Files;
+import edu.wpi.grip.util.ImageWithData;
 import org.bytedeco.javacpp.opencv_core.Mat;
 import org.junit.Before;
 import org.junit.Test;
@@ -17,30 +19,26 @@ import static org.junit.Assert.*;
  *
  */
 public class ImageFileSourceTest {
-    private File imageFile;
-    private File textFile;
+    private final ImageWithData imageFile = Files.imageFile;
+    private final File textFile = Files.textFile;
     private static EventBus eventBus;
 
     @Before
     public void setUp() throws URISyntaxException {
         this.eventBus = new EventBus();
-        textFile = new File(ImageFileSourceTest.class.getResource("/edu/wpi/grip/images/NotAnImage.txt").toURI());
-        imageFile = new File(ImageFileSourceTest.class.getResource("/edu/wpi/grip/images/GRIP_Logo.png").toURI());
     }
 
     @Test
     public void testLoadImageToMat() throws IOException {
         // Given above setup
         // When
-        final ImageFileSource fileSource = new ImageFileSource(eventBus, this.imageFile);
+        final ImageFileSource fileSource = new ImageFileSource(eventBus, this.imageFile.file);
         OutputSocket<Mat> outputSocket = fileSource.getOutputSockets()[0];
 
         // Then
-        assertNotNull("The output socket's value was null.", outputSocket.getValue());
+        assertTrue("The output socket's value was empty.", outputSocket.getValue().isPresent());
 
-        // Check that the image that is read in is 2 dimentional
-        assertEquals("Matrix from loaded image did not have expected number of rows.", 183, outputSocket.getValue().get().rows());
-        assertEquals("Matrix from loaded image did not have expected number of cols.", 480, outputSocket.getValue().get().cols());
+        imageFile.assertSameImage(outputSocket.getValue().get());
     }
 
     @Test(expected = IOException.class)

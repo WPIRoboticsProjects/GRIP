@@ -62,7 +62,7 @@ public class MultiImageFileSource extends SwitchableSource {
     @SuppressWarnings("unchecked")
     private void initialize(final EventBus eventBus, final List<String> paths, int index) throws IOException {
         this.eventBus = checkNotNull(eventBus, "Event bus can not be null");
-        checkElementIndex(index, paths.size(), "File List Index");
+        this.index = checkElementIndex(index, paths.size(), "File List Index");
         this.paths = paths;
         this.outputSocket = new OutputSocket(eventBus, imageOutputHint);
         for (String path : paths) {
