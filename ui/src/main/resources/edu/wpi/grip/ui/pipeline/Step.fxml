@@ -15,18 +15,20 @@
             </tooltip>
         </Button>
         <Pane HBox.hgrow="ALWAYS"/>
-        <Button fx:id="moveLeftButton" onMouseClicked="#moveStepLeft" styleClass="move-left"
-                text="◀" HBox.hgrow="NEVER">
-            <tooltip>
-                <Tooltip text="Move Step Left"/>
-            </tooltip>
-        </Button>
-        <Button fx:id="moveRightButton" onMouseClicked="#moveStepRight" styleClass="move-right"
-                text="▶" HBox.hgrow="NEVER">
-            <tooltip>
-                <Tooltip text="Move Step Right"/>
-            </tooltip>
-        </Button>
+        <HBox fx:id="buttons" >
+            <Button fx:id="moveLeftButton" onMouseClicked="#moveStepLeft" styleClass="move-left"
+                    text="◀" HBox.hgrow="NEVER">
+                <tooltip>
+                    <Tooltip text="Move Step Left"/>
+                </tooltip>
+            </Button>
+            <Button fx:id="moveRightButton" onMouseClicked="#moveStepRight" styleClass="move-right"
+                    text="▶" HBox.hgrow="NEVER">
+                <tooltip>
+                    <Tooltip text="Move Step Right"/>
+                </tooltip>
+            </Button>
+        </HBox>
     </HBox>
     <Separator orientation="HORIZONTAL"/>
     <Label fx:id="title" maxWidth="Infinity" styleClass="title">
@@ -46,3 +48,4 @@
     <Separator orientation="HORIZONTAL"/>
     <VBox fx:id="outputs" styleClass="sockets"/>
 </VBox>
+

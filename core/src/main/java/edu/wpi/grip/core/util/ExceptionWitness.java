@@ -30,7 +30,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * </pre>
  * <blockquote/>
  */
-public final class ExceptionWitness {
+public class ExceptionWitness {
     private final EventBus eventBus;
     private final Object origin;
     private final AtomicBoolean isExceptionState = new AtomicBoolean(false);
@@ -61,6 +61,17 @@ public final class ExceptionWitness {
      */
     public final void flagException(Exception exception) {
         flagException(exception, null);
+    }
+
+    /**
+     * Allows a warning to be flagged without an exception. This should never be done when there is an exception
+     * involved.
+     *
+     * @param warningMessage The message to flag.
+     */
+    public final void flagWarning(final String warningMessage) {
+        isExceptionState.set(true);
+        this.eventBus.post(new ExceptionEvent(origin, warningMessage));
     }
 
     /**

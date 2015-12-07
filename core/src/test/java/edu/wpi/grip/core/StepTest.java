@@ -1,6 +1,7 @@
 package edu.wpi.grip.core;
 
 import com.google.common.eventbus.EventBus;
+import edu.wpi.grip.core.util.MockExceptionWitness;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -18,12 +19,12 @@ public class StepTest {
 
     @Test(expected = NullPointerException.class)
     public void testOperationNotNull() {
-        new Step.Factory(eventBus).create(null);
+        new Step.Factory(eventBus, (origin) -> null).create(null);
     }
 
     @Test
     public void testStep() {
-        Step step = new Step.Factory(eventBus).create(addition);
+        Step step = new Step.Factory(eventBus, (origin) -> new MockExceptionWitness(eventBus, origin)).create(addition);
         Socket<Double> a = (Socket<Double>) step.getInputSockets()[0];
         Socket<Double> b = (Socket<Double>) step.getInputSockets()[1];
         Socket<Double> c = (Socket<Double>) step.getOutputSockets()[0];
@@ -37,7 +38,7 @@ public class StepTest {
 
     @Test
     public void testSocketDirection() {
-        Step step = new Step.Factory(eventBus).create(addition);
+        Step step = new Step.Factory(eventBus, (origin) -> new MockExceptionWitness(eventBus, origin)).create(addition);
         Socket<Double> a = (Socket<Double>) step.getInputSockets()[0];
         Socket<Double> b = (Socket<Double>) step.getInputSockets()[1];
         Socket<Double> c = (Socket<Double>) step.getOutputSockets()[0];
@@ -49,7 +50,7 @@ public class StepTest {
 
     @Test
     public void testGetOperation() {
-        Step step = new Step.Factory(eventBus).create(addition);
+        Step step = new Step.Factory(eventBus, (origin) -> new MockExceptionWitness(eventBus, origin)).create(addition);
 
         assertEquals(addition, step.getOperation());
     }

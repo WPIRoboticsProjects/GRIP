@@ -6,8 +6,8 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import edu.wpi.grip.core.events.SocketChangedEvent;
+import edu.wpi.grip.core.util.ExceptionWitness;
 
-import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -20,21 +20,26 @@ import static com.google.common.base.Preconditions.checkNotNull;
  */
 @XStreamAlias(value = "grip:Step")
 public class Step {
+    private static final Logger logger = Logger.getLogger(Step.class.getName());
+    private static final String MISSING_SOCKET_MESSAGE_END = " must have a value to run this step.";
 
-    private final Logger logger =  Logger.getLogger(Step.class.getName());
+    private final ExceptionWitness witness;
 
     private final Operation operation;
     private final InputSocket<?>[] inputSockets;
     private final OutputSocket<?>[] outputSockets;
     private final Optional<?> data;
 
+
     @Singleton
     public static class Factory {
         private final EventBus eventBus;
+        private final ExceptionWitness.Factory exceptionWitnessFactory;
 
         @Inject
-        public Factory(EventBus eventBus) {
+        public Factory(EventBus eventBus, ExceptionWitness.Factory exceptionWitnessFactory) {
             this.eventBus = eventBus;
+            this.exceptionWitnessFactory = exceptionWitnessFactory;
         }
 
         public Step create(Operation operation) {
@@ -51,7 +56,13 @@ public class Step {
                 eventBus.register(socket);
             }
 
-            final Step step = new Step(operation, inputSockets, outputSockets, operation.createData());
+            final Step step = new Step(
+                    operation,
+                    inputSockets,
+                    outputSockets,
+                    operation.createData(),
+                    exceptionWitnessFactory
+            );
             eventBus.register(step);
             for (Socket<?> socket : inputSockets) {
                 socket.setStep(Optional.of(step));
@@ -66,16 +77,22 @@ public class Step {
     }
 
     /**
-     * @param operation     The operation that is performed at this step.
-     * @param inputSockets  The input sockets from the operation.
-     * @param outputSockets The output sockets provided by the operation.
-     * @param data          The data provided by the operation.
+     * @param operation               The operation that is performed at this step.
+     * @param inputSockets            The input sockets from the operation.
+     * @param outputSockets           The output sockets provided by the operation.
+     * @param data                    The data provided by the operation.
+     * @param exceptionWitnessFactory A factory used to create an {@link ExceptionWitness}
      */
-    Step(Operation operation, InputSocket<?>[] inputSockets, OutputSocket<?>[] outputSockets, Optional<?> data) {
+    Step(Operation operation,
+         InputSocket<?>[] inputSockets,
+         OutputSocket<?>[] outputSockets,
+         Optional<?> data,
+         ExceptionWitness.Factory exceptionWitnessFactory) {
         this.operation = operation;
         this.inputSockets = inputSockets;
         this.outputSockets = outputSockets;
         this.data = data;
+        this.witness = exceptionWitnessFactory.create(this);
     }
 
     /**
@@ -115,25 +132,25 @@ public class Step {
      * default values.
      */
     private synchronized void runPerformIfPossible() {
-        try {
-            for (InputSocket<?> inputSocket : inputSockets) {
-                inputSocket.getValue()
-                        .orElseThrow(() -> new NoSuchElementException(
-                                inputSocket.getSocketHint().getIdentifier() + " must have a value to run this step."
-                        ));
+        for (InputSocket<?> inputSocket : inputSockets) {
+            // If there is a socket that isn't present then we have a problem.
+            if (!inputSocket.getValue().isPresent()) {
+                witness.flagWarning(inputSocket.getSocketHint().getIdentifier() + MISSING_SOCKET_MESSAGE_END);
+                resetOutputSockets();
+                return;  /* Only run the perform method if all of the input sockets are present. */
             }
-        } catch (NoSuchElementException e) {
-            //TODO: show warning icon
-            resetOutputSockets();
-            return; /* Only run the perform method if all of the input sockets are present. */
         }
 
         try {
             this.operation.perform(inputSockets, outputSockets, data);
         } catch (Exception e) {
-            logger.log(Level.WARNING, e.getMessage(), e);
+            final String operationFailedMessage = "The " + operation.getName() + " operation did not perform correctly.";
+            logger.log(Level.WARNING, operationFailedMessage, e);
+            witness.flagException(e, operationFailedMessage);
             resetOutputSockets();
+            return;
         }
+        witness.clearException();
     }
 
     @Subscribe
