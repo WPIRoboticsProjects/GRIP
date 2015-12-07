@@ -58,7 +58,7 @@ public class AddSourceView extends HBox {
             // Add a new source for each image .
             imageFiles.forEach(file -> {
                 try {
-                    eventBus.post(new SourceAddedEvent(new ImageFileSource(eventBus, file).start(eventBus)));
+                    eventBus.post(new SourceAddedEvent(new ImageFileSource(eventBus, file)));
                 } catch (IOException e) {
                     eventBus.post(new UnexpectedThrowableEvent(e, "Tried to create an invalid source"));
                 }

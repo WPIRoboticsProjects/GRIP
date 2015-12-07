@@ -7,17 +7,10 @@
     <children>
         <BorderPane VBox.vgrow="NEVER">
             <top>
-                <HBox alignment="CENTER" spacing="2.0" styleClass="source-header-box" BorderPane.alignment="CENTER">
+                <HBox fx:id="controls" alignment="CENTER" spacing="2.0" styleClass="source-header-box" BorderPane.alignment="CENTER">
                     <Button onMouseClicked="#delete" styleClass="delete" text="✕"/>
                     <Label fx:id="name" styleClass="source-name"/>
                     <Pane HBox.hgrow="ALWAYS"/>
-                    <ToggleButton fx:id="startStopButton" styleClass="start-stop" contentDisplay="RIGHT"
-                                  mnemonicParsing="false"
-                                  HBox.hgrow="NEVER">
-                        <tooltip>
-                            <Tooltip fx:id="startStopTooltip"/>
-                        </tooltip>
-                    </ToggleButton>
                 </HBox>
             </top>
             <center>

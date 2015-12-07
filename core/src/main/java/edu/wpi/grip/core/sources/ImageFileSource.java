@@ -33,7 +33,6 @@ public class ImageFileSource extends Source {
     private final SocketHint<Mat> imageOutputHint = SocketHints.Inputs.createMatSocketHint("Image", true);
     private OutputSocket<Mat> outputSocket;
     private EventBus eventBus;
-    private boolean started = false;
 
     /**
      * @param eventBus The event bus for the pipeline.
@@ -84,20 +83,6 @@ public class ImageFileSource extends Source {
         this.initialize(eventBus, path);
     }
 
-    protected void start() throws IOException {
-        this.started = true;
-        loadImage(this.path);
-    }
-
-    @Override
-    public boolean isRunning() {
-        return this.started;
-    }
-
-    @Override
-    public boolean canStopAndStart() {
-        return false;
-    }
 
     /**
      * Loads the image and posts an update to the {@link EventBus}

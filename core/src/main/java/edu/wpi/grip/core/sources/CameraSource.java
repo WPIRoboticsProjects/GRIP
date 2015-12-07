@@ -8,8 +8,8 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
 import edu.wpi.grip.core.OutputSocket;
 import edu.wpi.grip.core.SocketHint;
 import edu.wpi.grip.core.SocketHints;
-import edu.wpi.grip.core.Source;
 import edu.wpi.grip.core.events.UnexpectedThrowableEvent;
+import edu.wpi.grip.core.StopStartSource;
 import edu.wpi.grip.core.events.SourceRemovedEvent;
 import edu.wpi.grip.core.events.SourceStartedEvent;
 import edu.wpi.grip.core.events.SourceStoppedEvent;
@@ -29,7 +29,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * Provides a way to generate a constantly updated {@link Mat} from a camera
  */
 @XStreamAlias(value = "grip:Camera")
-public class CameraSource extends Source {
+public class CameraSource extends StopStartSource {
 
     private final static String DEVICE_NUMBER_PROPERTY = "deviceNumber";
     private final static String ADDRESS_PROPERTY = "address";
@@ -225,11 +225,6 @@ public class CameraSource extends Source {
         synchronized (this) {
             return this.frameThread.isPresent() && this.frameThread.get().isAlive();
         }
-    }
-
-    @Override
-    public boolean canStopAndStart() {
-        return true;
     }
 
     @Subscribe
