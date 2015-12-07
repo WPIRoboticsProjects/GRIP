@@ -103,6 +103,8 @@ public class CameraSource extends Source {
 
     @Override
     public void createFromProperties(EventBus eventBus, Properties properties) throws IOException {
+        this.properties = properties;
+
         final String deviceNumberProperty = properties.getProperty(DEVICE_NUMBER_PROPERTY);
         final String addressProperty = properties.getProperty(ADDRESS_PROPERTY);
 
@@ -167,7 +169,7 @@ public class CameraSource extends Source {
                 frameRateOutputSocket.setValue(1000 / (thisMoment - lastFrame));
                 lastFrame = thisMoment;
             }
-        });
+        }, "Camera");
         frameExecutor.setUncaughtExceptionHandler(
                 (thread, exception) -> {
                     // TODO Pass Exception to the UI.
