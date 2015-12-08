@@ -26,22 +26,6 @@
                 <Tooltip text="Preview Socket"/>
             </tooltip>
         </ToggleButton>
-        <ToggleButton fx:id="publish" styleClass="small-icon-button">
-            <graphic>
-                <ImageView>
-                    <Image url="@../icons/publish.png"/>
-                    <fitWidth>
-                        <DPIUtility fx:constant="SMALL_ICON_SIZE"/>
-                    </fitWidth>
-                    <fitHeight>
-                        <DPIUtility fx:constant="SMALL_ICON_SIZE"/>
-                    </fitHeight>
-                </ImageView>
-            </graphic>
-            <tooltip>
-                <Tooltip text="Publish Socket"/>
-            </tooltip>
-        </ToggleButton>
         <Label fx:id="identifier" contentDisplay="RIGHT" styleClass="socket-identifier">
             <graphic>
                 <Label fx:id="type" opacity=".5"/>

@@ -47,23 +47,6 @@ Label.operation-description {
     -fx-alignment: top-left;
 }
 
-.sink-window {
-    -fx-pref-width: 60.0em;
-    -fx-pref-height: 40.0em;
-}
-
-.sink-window .table-column#identifierColumn{
-    -fx-pref-width: 10em;
-}
-
-.sink-window .table-column#typeColumn{
-    -fx-pref-width: 10em;
-}
-
-.sink-window .table-column#valueColumn {
-    -fx-pref-width: 40em;
-}
-
 .previews, .palette {
     -fx-focus-color: transparent;
     -fx-faint-focus-color: transparent;

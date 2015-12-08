@@ -18,7 +18,7 @@ public class SocketTest {
 
     @Before
     public void initialize() {
-        sh = SocketHints.Inputs.createNumberSliderSocketHint("foo", 0.0, SocketHints.Domain.DOUBLES);
+        sh = SocketHints.Inputs.createNumberSliderSocketHint("foo", 0.0, 0.0, 1.0);
         socket = new OutputSocket<Number>(eventBus, sh);
     }
 
@@ -37,7 +37,7 @@ public class SocketTest {
 
     @Test
     public void testDefaultValue() throws Exception {
-        sh = SocketHints.Inputs.createNumberSliderSocketHint("foo", testValue, SocketHints.Domain.DOUBLES);
+        sh = SocketHints.Inputs.createNumberSliderSocketHint("foo", testValue, 0.0, 1.0);
         socket = new OutputSocket<Number>(eventBus, sh);
         assertEquals(testValue, socket.getValue().get());
 
@@ -111,14 +111,5 @@ public class SocketTest {
         InputSocket socket = new InputSocket(eventBus, sh);
 
         socket.setValue("I am not a Double");
-    }
-
-    @Test
-    public void testNotPublishableSocket() throws Exception {
-        final SocketHint<Number> sh = SocketHints.Outputs.createNumberSocketHint("foo", 0.0);
-        final OutputSocket<Number> socket = new OutputSocket<Number>(eventBus, sh);
-
-        socket.setPublished(true);
-        assertTrue("was not published after being set as published", socket.isPublished());
     }
 }

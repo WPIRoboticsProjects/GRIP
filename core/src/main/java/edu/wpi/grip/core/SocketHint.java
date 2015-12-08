@@ -22,7 +22,6 @@ public class SocketHint<T> {
     private final Optional<Supplier<T>> initialValueSupplier;
     private final View view;
     private final Optional<T[]> domain;
-    private final boolean publishable;
 
     /**
      * @param type                 The type of value held by the socket.
@@ -32,16 +31,13 @@ public class SocketHint<T> {
      * @param domain               A hint at the range of values that this socket can hold.  For numeric types, this
      *                             can consist of two elements that correspond to a minimum and maximum value.  The
      *                             property does not make sense for all types and is left unspecified for some
-     * @param publishable          If this isn't true, the socket won't be able to be set as published, and the GUI
-     *                             should also not show a button to publish it.  This is false by default.
      */
-    private SocketHint(Class<T> type, String identifier, Optional<Supplier<T>> initialValueSupplier, View view, Optional<T[]> domain, boolean publishable) {
+    private SocketHint(Class<T> type, String identifier, Optional<Supplier<T>> initialValueSupplier, View view, Optional<T[]> domain) {
         this.type = type;
         this.identifier = identifier;
         this.initialValueSupplier = initialValueSupplier;
         this.view = view;
         this.domain = domain;
-        this.publishable = publishable;
     }
 
     public String getIdentifier() {
@@ -58,10 +54,6 @@ public class SocketHint<T> {
 
     public Optional<T[]> getDomain() {
         return domain;
-    }
-
-    public boolean isPublishable() {
-        return this.publishable;
     }
 
     public Optional<T> createInitialValue() {
@@ -87,7 +79,6 @@ public class SocketHint<T> {
         private Optional<Supplier<T>> initialValueSupplier = Optional.empty();
         private View view = View.NONE;
         private Optional<T[]> domain = Optional.empty();
-        private Boolean publishable = false;
 
         public Builder(Class<T> type) {
             this.type = type;
@@ -118,11 +109,6 @@ public class SocketHint<T> {
             return this;
         }
 
-        public Builder<T> publishable(boolean publishable) {
-            this.publishable = publishable;
-            return this;
-        }
-
         public SocketHint<T> build() throws NoSuchElementException {
             if (!view.equals(View.NONE)) {
                 initialValueSupplier.orElseThrow(() -> new NoSuchElementException("A View other than `NONE` was supplied but not an initial value"));
@@ -132,8 +118,7 @@ public class SocketHint<T> {
                     identifier.orElseThrow(() -> new NoSuchElementException("The identifier was not supplied")),
                     initialValueSupplier,
                     view,
-                    domain,
-                    publishable
+                    domain
             );
         }
     }
