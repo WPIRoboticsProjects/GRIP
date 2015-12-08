@@ -1,7 +1,7 @@
 package edu.wpi.grip.ui.pipeline;
 
 import com.google.common.eventbus.EventBus;
-import edu.wpi.grip.core.events.FatalErrorEvent;
+import edu.wpi.grip.core.events.UnexpectedThrowableEvent;
 import edu.wpi.grip.core.events.SourceAddedEvent;
 import edu.wpi.grip.core.sources.CameraSource;
 import edu.wpi.grip.core.sources.ImageFileSource;
@@ -51,8 +51,7 @@ public class AddSourceView extends HBox {
                 try {
                     eventBus.post(new SourceAddedEvent(new ImageFileSource(eventBus, file)));
                 } catch (IOException e) {
-                    e.printStackTrace();
-                    eventBus.post(new FatalErrorEvent(e));
+                    eventBus.post(new UnexpectedThrowableEvent(e, "Tried to create an invalid source"));
                 }
             });
         });
@@ -78,8 +77,7 @@ public class AddSourceView extends HBox {
                     final CameraSource source = new CameraSource(eventBus, cameraIndex.getValue());
                     eventBus.post(new SourceAddedEvent(source));
                 } catch (IOException e) {
-                    eventBus.post(new FatalErrorEvent(e));
-                    e.printStackTrace();
+                    eventBus.post(new UnexpectedThrowableEvent(e, "Tried to create an invalid source"));
                 }
             });
         });
@@ -120,8 +118,7 @@ public class AddSourceView extends HBox {
                     final CameraSource source = new CameraSource(eventBus, cameraAddress.getText());
                     eventBus.post(new SourceAddedEvent(source));
                 } catch (IOException e) {
-                    eventBus.post(new FatalErrorEvent(e));
-                    e.printStackTrace();
+                    eventBus.post(new UnexpectedThrowableEvent(e, "Tried to create an invalid source"));
                 }
             });
         });

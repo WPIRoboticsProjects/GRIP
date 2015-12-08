@@ -1,5 +1,6 @@
 package edu.wpi.grip.ui;
 
+import com.google.common.base.Throwables;
 import com.google.common.net.UrlEscapers;
 import javafx.application.HostServices;
 import javafx.application.Platform;
@@ -10,9 +11,6 @@ import javafx.scene.control.*;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.layout.GridPane;
-
-import java.io.PrintWriter;
-import java.io.StringWriter;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -49,11 +47,12 @@ public final class ExceptionAlert extends Alert {
 
     private final String exceptionMessage;
     private final String systemInfoMessage;
+    private final String additionalInfoMessage;
+    private final String message;
     private final Throwable initialCause;
 
     private final ButtonType openGitHubIssuesBtnType = new ButtonType("Open GitHub Issues");
     private final ButtonType copyToClipboardBtnType = new ButtonType("Copy To Clipboard");
-    private final ButtonType closeBtnType = new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
     private final Node initialFocusElement;
 
     /**
@@ -62,17 +61,22 @@ public final class ExceptionAlert extends Alert {
      *                  the issue website.
      * @see <a href="http://code.makery.ch/blog/javafx-dialogs-official/">Inspiration</a>
      */
-    public ExceptionAlert(final Parent root, final Throwable throwable, final HostServices services) {
+    public ExceptionAlert(final Parent root, final Throwable throwable, final String message, boolean isFatal, final HostServices services) {
         super(AlertType.ERROR);
+        checkNotNull(root, "The parent can not be null");
         checkNotNull(throwable, "The Throwable can not be null");
+        this.message = checkNotNull(message, "The message can not be null");
         checkNotNull(services, "HostServices can not be null");
+
+        final ButtonType closeBtnType = new ButtonType(isFatal ? "Quit" : "Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
 
         this.exceptionMessage = generateExceptionMessage(throwable);
         this.systemInfoMessage = generateSystemInfoMessage();
-        this.initialCause = generateInitialCause(throwable);
+        this.additionalInfoMessage = generateAdditionalInfoMessage();
+        this.initialCause = getInitialCause(throwable);
 
         this.setTitle(initialCause.getClass().getSimpleName());
-        this.setHeaderText(initialCause.getMessage());
+        this.setHeaderText((isFatal ? "FATAL: " : "") + message);
 
         // Set stylesheet
         this.getDialogPane().styleProperty().bind(root.styleProperty());
@@ -91,7 +95,7 @@ public final class ExceptionAlert extends Alert {
         final Label issuePasteLabel = new Label(ISSUE_PROMPT_TEXT);
         issuePasteLabel.setWrapText(true);
 
-        final TextArea issueText = new TextArea(stackTrace(throwable));
+        final TextArea issueText = new TextArea(Throwables.getStackTraceAsString(throwable));
         issuePasteLabel.setLabelFor(issueText);
         issueText.setEditable(false);
         issueText.setWrapText(true);
@@ -152,22 +156,16 @@ public final class ExceptionAlert extends Alert {
      * @param throwable The throwable to iterate through.
      * @return The initial throwable
      */
-    private Throwable generateInitialCause(Throwable throwable) {
+    private Throwable getInitialCause(Throwable throwable) {
         if (throwable.getCause() == null) {
             return throwable;
         } else {
-            return generateInitialCause(throwable.getCause());
+            return getInitialCause(throwable.getCause());
         }
     }
 
-    /**
-     * Generates the Throwable's stack trace as a string.
-     */
-    private String stackTrace(Throwable throwable) {
-        final StringWriter sw = new StringWriter();
-        final PrintWriter pw = new PrintWriter(sw);
-        throwable.printStackTrace(pw);
-        return sw.toString();
+    private String generateAdditionalInfoMessage() {
+        return "Message: " + message + "\n";
     }
 
     /**
@@ -177,7 +175,7 @@ public final class ExceptionAlert extends Alert {
      * @return The markdown for the exception.
      */
     private String generateExceptionMessage(Throwable throwable) {
-        return new StringBuilder(stackTrace(throwable)
+        return new StringBuilder(Throwables.getStackTraceAsString(throwable)
                 /* Allow users to maintain anonymity */
                 .replace(System.getProperty("user.home"), "$HOME").replace(System.getProperty("user.name"), "$USER"))
                 .insert(0, "## Stack Trace:\n```java\n").append("\n```").toString();
@@ -203,10 +201,12 @@ public final class ExceptionAlert extends Alert {
      * @return The fully constructed issue text.
      */
     private String issueText() {
-        return new StringBuilder(ISSUE_PROMPT_QUESTION)
-                .append("\n\n\n\n")
-                .append(systemInfoMessage)
-                .append(exceptionMessage).toString();
+        return ISSUE_PROMPT_QUESTION
+                + "\n\n\n\n"
+                + additionalInfoMessage
+                + "\n"
+                + systemInfoMessage
+                + exceptionMessage;
     }
 
 
