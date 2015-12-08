@@ -25,14 +25,12 @@ public class Pipeline {
     private final List<Source> sources;
     private final List<Step> steps;
     private final Set<Connection> connections;
-    private Optional<Sink> sink;
 
     public Pipeline(EventBus eventBus) {
         this.eventBus = eventBus;
         this.sources = new ArrayList<>();
         this.steps = new ArrayList<>();
         this.connections = new HashSet<>();
-        this.sink = Optional.empty();
 
         eventBus.register(this);
     }
@@ -44,7 +42,6 @@ public class Pipeline {
     public void register() {
         this.steps.forEach(this.eventBus::register);
         this.connections.forEach(this.eventBus::register);
-        this.sink.ifPresent(this.eventBus::register);
     }
 
     /**
@@ -87,13 +84,6 @@ public class Pipeline {
     }
 
     /**
-     * @return The sink where published sockets are sent.
-     */
-    public Optional<Sink> getSink() {
-        return this.sink;
-    }
-
-    /**
      * @return true if the step1 is before step2 in the pipeline
      */
     protected synchronized boolean isBefore(Step step1, Step step2) {
@@ -109,9 +99,8 @@ public class Pipeline {
     public void onSourceRemoved(SourceRemovedEvent event) {
         this.sources.remove(event.getSource());
 
-        // Sockets of deleted sources should not be published or previewed
+        // Sockets of deleted sources should not be previewed
         for (OutputSocket<?> socket : event.getSource().getOutputSockets()) {
-            socket.setPublished(false);
             socket.setPreviewed(false);
         }
     }
@@ -130,9 +119,8 @@ public class Pipeline {
         this.steps.remove(event.getStep());
         this.eventBus.unregister(event.getStep());
 
-        // Sockets of deleted steps should not be published or previewed
+        // Sockets of deleted steps should not be previewed
         for (OutputSocket<?> socket : event.getStep().getOutputSockets()) {
-            socket.setPublished(false);
             socket.setPreviewed(false);
         }
     }
@@ -159,14 +147,5 @@ public class Pipeline {
     public void onConnectionRemoved(ConnectionRemovedEvent event) {
         this.connections.remove(event.getConnection());
         this.eventBus.unregister(event.getConnection());
-    }
-
-    @Subscribe
-    public void onSetSinkEvent(SetSinkEvent event) {
-        // If there was previously a sink assigned, make sure to unregister it so it won't receive any more events
-        // and mistakenly keep publishing values.
-        this.sink.ifPresent(this.eventBus::unregister);
-        this.sink = Optional.of(event.getSink());
-        this.eventBus.register(event.getSink());
     }
 }

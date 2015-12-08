@@ -13,8 +13,10 @@ import java.util.Optional;
 
 public class NewPointOperation implements CVOperation {
 
-    private final SocketHint<Number> xHint = SocketHints.Inputs.createNumberSpinnerSocketHint("x", -1, SocketHints.Domain.INTEGERS);
-    private final SocketHint<Number> yHint = SocketHints.Inputs.createNumberSpinnerSocketHint("y", -1, SocketHints.Domain.INTEGERS);
+    private final SocketHint<Number> xHint = SocketHints.Inputs.createNumberSpinnerSocketHint("x", -1,
+            Integer.MIN_VALUE, Integer.MAX_VALUE);
+    private final SocketHint<Number> yHint = SocketHints.Inputs.createNumberSpinnerSocketHint("y", -1,
+            Integer.MIN_VALUE, Integer.MAX_VALUE);
     private final SocketHint<Point> outputHint = SocketHints.Outputs.createPointSocketHint("point");
 
     @Override

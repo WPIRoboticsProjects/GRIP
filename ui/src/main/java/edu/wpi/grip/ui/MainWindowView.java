@@ -3,10 +3,8 @@ package edu.wpi.grip.ui;
 import com.google.common.eventbus.EventBus;
 import edu.wpi.grip.core.Palette;
 import edu.wpi.grip.core.Pipeline;
-import edu.wpi.grip.core.events.SetSinkEvent;
 import edu.wpi.grip.core.operations.Operations;
 import edu.wpi.grip.core.serialization.Project;
-import edu.wpi.grip.core.sinks.DummySink;
 import edu.wpi.grip.generated.CVOperations;
 import edu.wpi.grip.ui.pipeline.PipelineView;
 import edu.wpi.grip.ui.preview.PreviewsView;
@@ -66,10 +64,7 @@ public class MainWindowView extends VBox {
         pipeline.prefHeightProperty().bind(this.bottomPane.heightProperty());
 
         Operations.addOperations(eventBus);
-        // Add all of the auto-generated OpenCV operations
         CVOperations.addOperations(eventBus);
-
-        eventBus.post(new SetSinkEvent(new DummySink()));
 
         this.project = new Project(this.eventBus, this.pipeline.getPipeline(), this.palette.getPalette());
     }

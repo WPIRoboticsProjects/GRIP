@@ -32,9 +32,6 @@ public class OutputSocketView extends HBox implements Initializable {
     private Label type;
 
     @FXML
-    private ToggleButton publish;
-
-    @FXML
     private ToggleButton preview;
 
     @FXML
@@ -68,14 +65,6 @@ public class OutputSocketView extends HBox implements Initializable {
         }
 
         this.handlePane.getChildren().add(this.handle);
-
-        // Show a button to publish the output to the current sink, if the socket is publishable
-        if (this.socket.getSocketHint().isPublishable()) {
-            this.publish.setSelected(this.socket.isPublished());
-            this.publish.selectedProperty().addListener(value -> this.socket.setPublished(this.publish.isSelected()));
-        } else {
-            this.getChildren().remove(this.publish);
-        }
 
         // Show a button to choose if we want to preview the socket or not
         this.preview.setSelected(this.socket.isPreviewed());
