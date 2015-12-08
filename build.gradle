@@ -1,3 +1,10 @@
+buildscript {
+    repositories { jcenter() }
+
+    dependencies {
+        classpath 'com.netflix.nebula:gradle-aggregate-javadocs-plugin:2.2.+'
+    }
+}
 plugins {
     id 'java'
     id 'idea'
@@ -6,6 +13,8 @@ plugins {
     id 'com.google.osdetector' version '1.4.0'
     id 'com.github.johnrengelman.shadow' version '1.2.2'
 }
+apply plugin: 'nebula-aggregate-javadocs'
+
 
 allprojects {
     apply plugin: 'java'
@@ -35,6 +44,7 @@ allprojects {
     tasks.withType(Javadoc) {
         source compileJava.source
         options.addStringOption('Xdoclint:all,-html', '-quiet')
+        failOnError false
     }
 
     // Turn on test results
@@ -60,15 +70,22 @@ project(":core") {
         shadow
     }
 
+    repositories {
+        flatDir {
+            dirs 'libs'
+        }
+    }
+
     dependencies {
         compile group: 'org.bytedeco', name: 'javacv', version: '1.1'
         compile group: 'org.bytedeco.javacpp-presets', name: 'opencv', version: '3.0.0-1.1'
+        compile group: 'org.bytedeco.javacpp-presets', name: 'opencv', version: '3.0.0-1.1', classifier: os
+        compile group: 'org.bytedeco.javacpp-presets', name: 'opencv-3.0.0-1.1', classifier: 'linux-frc'
+        compile group: 'org.bytedeco.javacpp-presets', name: 'videoinput', version: '0.200-1.1', classifier: os
         compile group: 'org.python', name: 'jython', version: '2.7.0'
         compile group: 'com.thoughtworks.xstream', name: 'xstream', version: '1.4.8'
         compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.4'
         compile group: 'com.google.guava', name: 'guava', version: '18.0'
-        testCompile group: 'org.bytedeco.javacpp-presets', name: 'opencv', version: '3.0.0-1.1', classifier: os
-        testCompile group: 'org.bytedeco.javacpp-presets', name: 'videoinput', version: '0.200-1.1', classifier: os
     }
 
     mainClassName = 'edu.wpi.grip.core.Main'
@@ -136,8 +153,6 @@ project(":ui") {
         compile project(path: ':core', configuration: 'shadow')
         ideProvider project(path: ':core', configuration: 'compile')
         compile group: 'org.controlsfx', name: 'controlsfx', version: '8.40.10'
-        compile group: 'org.bytedeco.javacpp-presets', name: 'opencv', version: '3.0.0-1.1', classifier: os
-        compile group: 'org.bytedeco.javacpp-presets', name: 'videoinput', version: '0.200-1.1', classifier: os
         testCompile files(project(':core').sourceSets.test.output.classesDir)
         testCompile group: 'org.testfx', name: 'testfx-core', version: '4.0.+'
         testCompile group: 'org.testfx', name: 'testfx-junit', version: '4.0.+'
@@ -147,7 +162,7 @@ project(":ui") {
     compileTestJava.dependsOn tasks.getByPath(':core:testClasses')
 
     idea.module {
-        scopes.PROVIDED.plus += [ configurations.ideProvider ]
+        scopes.PROVIDED.plus += [configurations.ideProvider]
     }
 
     javafx {
