@@ -3,22 +3,19 @@ package edu.wpi.grip.ui;
 import com.google.common.eventbus.EventBus;
 import edu.wpi.grip.core.Palette;
 import edu.wpi.grip.core.Pipeline;
-import edu.wpi.grip.core.operations.Operations;
 import edu.wpi.grip.core.serialization.Project;
-import edu.wpi.grip.generated.CVOperations;
 import edu.wpi.grip.ui.pipeline.PipelineView;
 import edu.wpi.grip.ui.preview.PreviewsView;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.SplitPane;
-import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 
+import javax.inject.Inject;
 import java.io.File;
 import java.io.IOException;
 import java.util.Optional;
@@ -26,47 +23,24 @@ import java.util.Optional;
 /**
  * The Controller for the application window.
  */
-public class MainWindowView extends VBox {
+public class MainWindowController {
 
-    @FXML
-    private SplitPane topPane;
+    @FXML private Parent root;
+    @FXML private SplitPane topPane;
+    @FXML private ScrollPane bottomPane;
+    @Inject private EventBus eventBus;
+    @Inject private Pipeline pipeline;
+    @Inject private Palette palette;
+    @Inject private Project project;
 
-    @FXML
-    private ScrollPane bottomPane;
+    public void initialize() {
+        PaletteView paletteView = new PaletteView(eventBus, palette);
+        PipelineView pipelineView = new PipelineView(eventBus, pipeline);
+        PreviewsView previewsView = new PreviewsView(eventBus, pipelineView);
 
-    final private EventBus eventBus;
-
-    final private PreviewsView previews;
-    final private PaletteView palette;
-    final private PipelineView pipeline;
-
-    final private Project project;
-
-    public MainWindowView(final EventBus eventBus) {
-        eventBus.register(this);
-        try {
-            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("MainWindow.fxml"));
-            fxmlLoader.setRoot(this);
-            fxmlLoader.setController(this);
-            fxmlLoader.load();
-        } catch (IOException e) {
-            throw new RuntimeException("FXML Failed to load", e);
-        }
-
-        this.eventBus = eventBus;
-
-        this.palette = new PaletteView(eventBus, new Palette(this.eventBus));
-        this.pipeline = new PipelineView(eventBus, new Pipeline(this.eventBus));
-        this.previews = new PreviewsView(eventBus, pipeline);//Pass the pipeline to the PreviewsView to allow proper ordering of the previews
-
-        this.topPane.getItems().addAll(previews, palette);
-        this.bottomPane.setContent(pipeline);
-        pipeline.prefHeightProperty().bind(this.bottomPane.heightProperty());
-
-        Operations.addOperations(eventBus);
-        CVOperations.addOperations(eventBus);
-
-        this.project = new Project(this.eventBus, this.pipeline.getPipeline(), this.palette.getPalette());
+        topPane.getItems().addAll(previewsView, paletteView);
+        bottomPane.setContent(pipelineView);
+        pipelineView.prefHeightProperty().bind(bottomPane.heightProperty());
     }
 
     /**
@@ -75,12 +49,11 @@ public class MainWindowView extends VBox {
      * @return true If the user has not chosen to
      */
     private boolean showConfirmationDialogAndWait() {
-        if (!this.pipeline.getSteps().isEmpty()) {
+        if (!pipeline.getSteps().isEmpty()) {
             final ButtonType save = new ButtonType("Save");
             final ButtonType dontSave = ButtonType.NO;
             final ButtonType cancel = ButtonType.CANCEL;
 
-            final Parent root = this.getScene().getRoot();
             final Dialog<ButtonType> dialog = new Dialog();
             dialog.getDialogPane().getStylesheets().addAll(root.getStylesheets());
             dialog.getDialogPane().setStyle(root.getStyle());
@@ -97,7 +70,7 @@ public class MainWindowView extends VBox {
                 // chance to save the project.
                 if (dialog.getResult().equals(save)) {
                     try {
-                        this.saveProject();
+                        saveProject();
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -115,9 +88,9 @@ public class MainWindowView extends VBox {
      */
     @FXML
     public void newProject() {
-        if (this.showConfirmationDialogAndWait()) {
-            this.pipeline.getPipeline().clear();
-            this.project.setFile(Optional.empty());
+        if (showConfirmationDialogAndWait()) {
+            pipeline.clear();
+            project.setFile(Optional.empty());
         }
     }
 
@@ -130,15 +103,15 @@ public class MainWindowView extends VBox {
      */
     @FXML
     public void openProject() throws IOException {
-        if (this.showConfirmationDialogAndWait()) {
+        if (showConfirmationDialogAndWait()) {
             final FileChooser fileChooser = new FileChooser();
             fileChooser.setTitle("Open Project");
 
-            this.project.getFile().ifPresent(file -> fileChooser.setInitialDirectory(file.getParentFile()));
+            project.getFile().ifPresent(file -> fileChooser.setInitialDirectory(file.getParentFile()));
 
-            final File file = fileChooser.showOpenDialog(this.getScene().getWindow());
+            final File file = fileChooser.showOpenDialog(root.getScene().getWindow());
             if (file != null) {
-                this.project.open(file);
+                project.open(file);
             }
         }
     }
@@ -152,9 +125,9 @@ public class MainWindowView extends VBox {
      */
     @FXML
     public boolean saveProject() throws IOException {
-        if (this.project.getFile().isPresent()) {
+        if (project.getFile().isPresent()) {
             // Immediately save the project to whatever file it was loaded from or last saved to.
-            this.project.save(this.project.getFile().get());
+            project.save(project.getFile().get());
             return true;
         } else {
             return saveProjectAs();
@@ -173,14 +146,14 @@ public class MainWindowView extends VBox {
         final FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Save Project As");
 
-        this.project.getFile().ifPresent(file -> fileChooser.setInitialDirectory(file.getParentFile()));
+        project.getFile().ifPresent(file -> fileChooser.setInitialDirectory(file.getParentFile()));
 
-        final File file = fileChooser.showSaveDialog(this.getScene().getWindow());
+        final File file = fileChooser.showSaveDialog(root.getScene().getWindow());
         if (file == null) {
             return false;
         }
 
-        this.project.save(file);
+        project.save(file);
         return true;
     }
 
