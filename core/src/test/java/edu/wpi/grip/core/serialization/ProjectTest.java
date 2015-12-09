@@ -1,6 +1,8 @@
 package edu.wpi.grip.core.serialization;
 
 import com.google.common.eventbus.EventBus;
+import com.google.inject.Guice;
+import com.google.inject.Injector;
 import edu.wpi.grip.core.*;
 import edu.wpi.grip.core.events.ConnectionAddedEvent;
 import edu.wpi.grip.core.events.OperationAddedEvent;
@@ -17,11 +19,12 @@ import static junit.framework.TestCase.assertEquals;
 import static org.bytedeco.javacpp.opencv_core.*;
 
 public class ProjectTest {
-    private final EventBus eventBus = new EventBus();
 
-    private final Pipeline pipeline = new Pipeline(eventBus);
-    private final Palette palette = new Palette(eventBus);
-    private final Project project = new Project(eventBus, pipeline, palette);
+    private final Injector injector = Guice.createInjector(new GRIPCoreModule());
+
+    private final EventBus eventBus = injector.getInstance(EventBus.class);
+    private final Pipeline pipeline = injector.getInstance(Pipeline.class);
+    private final Project project = injector.getInstance(Project.class);
 
     private final Operation additionOperation, opencvAddOperation, pythonAdditionOperationFromURL,
             pythonAdditionOperationFromSource;

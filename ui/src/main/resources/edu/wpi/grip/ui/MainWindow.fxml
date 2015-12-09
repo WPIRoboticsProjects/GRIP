@@ -100,7 +100,10 @@
         </MenuBar>
         <SplitPane dividerPositions="0.6" orientation="VERTICAL" VBox.vgrow="ALWAYS">
             <items>
-                <SplitPane dividerPositions="1.0" orientation="HORIZONTAL" fx:id="topPane"/>
+                <SplitPane dividerPositions="1.0" orientation="HORIZONTAL">
+                    <fx:include source="preview/Previews.fxml"/>
+                    <fx:include source="Palette.fxml"/>
+                </SplitPane>
                 <ScrollPane fx:id="bottomPane"/>
             </items>
         </SplitPane>

@@ -12,50 +12,27 @@ import edu.wpi.grip.ui.pipeline.StepView;
 import edu.wpi.grip.ui.pipeline.source.SourceView;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
 
-import java.io.IOException;
+import javax.inject.Inject;
+import javax.inject.Singleton;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-
 /**
- * A simple JavaFX container that automatically shows previews of all sockets marked as "previewed".
+ * Controller for a container that automatically shows previews of all sockets marked as "previewed".
  *
  * @see OutputSocket#isPreviewed()
  */
-public class PreviewsView extends VBox {
+@Singleton
+public class PreviewsController {
 
-    @FXML
-    private HBox previewBox;
+    @FXML private HBox previewBox;
+    @Inject private EventBus eventBus;
+    @Inject private PipelineView pipeline;
 
-    private final EventBus eventBus;
-    private final List<OutputSocket<?>> previewedSockets;
-    private final PipelineView pipeline;//This is used to determine the order the previews are shown in.
-
-    public PreviewsView(EventBus eventBus, PipelineView pipeline) {
-        checkNotNull(eventBus);
-        checkNotNull(pipeline);
-
-        this.eventBus = eventBus;
-        this.previewedSockets = new ArrayList<>();
-        this.pipeline = pipeline;
-
-        try {
-            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("Previews.fxml"));
-            fxmlLoader.setRoot(this);
-            fxmlLoader.setController(this);
-            fxmlLoader.load();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-
-        this.eventBus.register(this);
-    }
+    private final List<OutputSocket<?>> previewedSockets = new ArrayList<>();
 
     /**
      * This function is called when a step moves in the pipeline to adjust the positions of any open previews it has
@@ -192,11 +169,11 @@ public class PreviewsView extends VBox {
     /**
      * Find the correct index in the displayed previews for a socket associated with a source (NOT a step socket)
      * by comparing the indices in the pipeline.
-     * Made to be called in {@link PreviewsView#onSocketPreviewChanged}
+     * Made to be called in {@link PreviewsController#onSocketPreviewChanged}
      *
      * @param socket An output socket associated with a source (NOT a step)
      * @return The correct index (an int) in the list of displayed previews for the given <code>socket</code>
-     * @see PreviewsView#onSocketPreviewChanged(SocketPreviewChangedEvent)
+     * @see PreviewsController#onSocketPreviewChanged(SocketPreviewChangedEvent)
      */
     private int getIndexInPreviewsOfASourceSocket(OutputSocket<?> socket) {
         final Source socketSource = socket.getSource().get();//The source socket associated with the socket whose preview has changed
@@ -217,11 +194,11 @@ public class PreviewsView extends VBox {
     /**
      * Find the correct index in the displayed previews for a socket associated with a step (NOT a source socket)
      * by comparing the indices in the pipeline, starting with the first non-source preview displayed.
-     * Made to be called in {@link PreviewsView#onSocketPreviewChanged}
+     * Made to be called in {@link PreviewsController#onSocketPreviewChanged}
      *
      * @param socket An output socket associated with a step (NOT a source)
      * @return The correct index in the list of displayed previews for the given <code>socket</code>
-     * @see PreviewsView#onSocketPreviewChanged(SocketPreviewChangedEvent)
+     * @see PreviewsController#onSocketPreviewChanged(SocketPreviewChangedEvent)
      */
     private int getIndexInPreviewsOfAStepSocket(OutputSocket<?> socket) {
         int numbOfSourcePreviews = getNumbOfSourcePreviews();//Count how many *source* previews (not *step* previews) are currently displayed
@@ -242,11 +219,11 @@ public class PreviewsView extends VBox {
 
     /**
      * Counts how many source previews (NOT step previews) are currently displayed.
-     * Called in  {@link PreviewsView#getIndexInPreviewsOfAStepSocket} and {@link PreviewsView#onPreviewOrderChanged(StepMovedEvent)}
+     * Called in  {@link PreviewsController#getIndexInPreviewsOfAStepSocket} and {@link PreviewsController#onPreviewOrderChanged(StepMovedEvent)}
      *
      * @return The number of source (NOT step) previews that are currently displayed
-     * @see PreviewsView#getIndexInPreviewsOfAStepSocket(OutputSocket)
-     * @see PreviewsView#onPreviewOrderChanged(StepMovedEvent)
+     * @see PreviewsController#getIndexInPreviewsOfAStepSocket(OutputSocket)
+     * @see PreviewsController#onPreviewOrderChanged(StepMovedEvent)
      */
     private int getNumbOfSourcePreviews() {
         //Start at the beginning of the list.

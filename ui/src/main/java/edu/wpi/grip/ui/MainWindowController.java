@@ -5,7 +5,6 @@ import edu.wpi.grip.core.Palette;
 import edu.wpi.grip.core.Pipeline;
 import edu.wpi.grip.core.serialization.Project;
 import edu.wpi.grip.ui.pipeline.PipelineView;
-import edu.wpi.grip.ui.preview.PreviewsView;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.Parent;
@@ -34,11 +33,8 @@ public class MainWindowController {
     @Inject private Project project;
 
     public void initialize() {
-        PaletteView paletteView = new PaletteView(eventBus, palette);
         PipelineView pipelineView = new PipelineView(eventBus, pipeline);
-        PreviewsView previewsView = new PreviewsView(eventBus, pipelineView);
 
-        topPane.getItems().addAll(previewsView, paletteView);
         bottomPane.setContent(pipelineView);
         pipelineView.prefHeightProperty().bind(bottomPane.heightProperty());
     }

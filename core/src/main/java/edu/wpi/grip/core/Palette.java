@@ -4,10 +4,7 @@ import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import edu.wpi.grip.core.events.OperationAddedEvent;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 import static org.python.jline.internal.Preconditions.checkNotNull;
 
@@ -17,7 +14,7 @@ import static org.python.jline.internal.Preconditions.checkNotNull;
 public class Palette {
 
     private final EventBus eventBus;
-    private final Map<String, Operation> operations = new HashMap<>();
+    private final Map<String, Operation> operations = new LinkedHashMap<>();
 
     public Palette(EventBus eventBus) {
         this.eventBus = checkNotNull(eventBus);
