@@ -5,14 +5,10 @@ import com.google.common.base.StandardSystemProperty;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
-import edu.wpi.grip.core.OutputSocket;
-import edu.wpi.grip.core.SocketHint;
-import edu.wpi.grip.core.SocketHints;
-import edu.wpi.grip.core.events.UnexpectedThrowableEvent;
-import edu.wpi.grip.core.StopStartSource;
+import edu.wpi.grip.core.*;
 import edu.wpi.grip.core.events.SourceRemovedEvent;
-import edu.wpi.grip.core.events.SourceStartedEvent;
-import edu.wpi.grip.core.events.SourceStoppedEvent;
+import edu.wpi.grip.core.events.StartedStoppedEvent;
+import edu.wpi.grip.core.events.UnexpectedThrowableEvent;
 import org.bytedeco.javacpp.opencv_core.Mat;
 import org.bytedeco.javacv.*;
 
@@ -29,7 +25,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * Provides a way to generate a constantly updated {@link Mat} from a camera
  */
 @XStreamAlias(value = "grip:Camera")
-public class CameraSource extends StopStartSource {
+public final class CameraSource extends Source implements StartStoppable {
 
     private final static String DEVICE_NUMBER_PROPERTY = "deviceNumber";
     private final static String ADDRESS_PROPERTY = "address";
@@ -126,9 +122,9 @@ public class CameraSource extends StopStartSource {
     }
 
     /**
-     * Starts the video capture from the source device
+     * Starts the video capture from this frame grabber.
      */
-    protected void start() throws IOException, IllegalStateException {
+    public void start() throws IOException, IllegalStateException {
         final OpenCVFrameConverter.ToMat convertToMat = new OpenCVFrameConverter.ToMat();
         synchronized (this) {
             if (this.frameThread.isPresent()) {
@@ -166,10 +162,12 @@ public class CameraSource extends StopStartSource {
 
             frameExecutor.setUncaughtExceptionHandler(
                     (thread, exception) -> {
+                        // TODO: This should use the ExceptionWitness once that has a UI component added for it
                         eventBus.post(new UnexpectedThrowableEvent(exception, "Camera Frame Grabber Thread crashed with uncaught exception"));
                         try {
                             stop();
                         } catch (TimeoutException e) {
+                            // TODO: This should use the ExceptionWitness once that has a UI component added for it
                             eventBus.post(new UnexpectedThrowableEvent(e, "Camera Frame Grabber could not be stopped!"));
                         }
                     }
@@ -177,17 +175,20 @@ public class CameraSource extends StopStartSource {
             frameExecutor.setDaemon(true);
             frameExecutor.start();
             this.frameThread = Optional.of(frameExecutor);
+            // This should only be posted now that it is running
+            eventBus.post(new StartedStoppedEvent(this));
         }
-        eventBus.post(new SourceStartedEvent(this));
     }
 
     /**
-     * Stops the video feed from updating the output socket.
+     * Stops this source.
+     * This will stop the source publishing new socket values after this method returns.
      *
-     * @throws TimeoutException      If the thread running the Webcam fails to join this one after a timeout.
-     * @throws IllegalStateException If the camera was already stopped
+     * @return The source that was stopped
+     * @throws TimeoutException if the thread running the source fails to stop.
+     * @throws IOException If there is a problem stopping the Source
      */
-    public void stop() throws TimeoutException, IllegalStateException {
+    public final void stop() throws TimeoutException, IllegalStateException {
         synchronized (this) {
             if (frameThread.isPresent()) {
                 final Thread ex = frameThread.get();
@@ -197,16 +198,17 @@ public class CameraSource extends StopStartSource {
                     if (ex.isAlive()) {
                         throw new TimeoutException("Unable to terminate video feed from Web Camera");
                     }
+                    // This should only be removed if the thread is successfully killed off
+                    frameThread = Optional.empty();
                 } catch (InterruptedException e) {
                     Thread.currentThread().interrupt();
                     //TODO: Move this into a logging framework
-                    System.out.println("Caught Exception:");
+                    System.err.println("Caught Exception:");
                     e.printStackTrace();
                 } finally {
-                    // Clean up this resource as you can't restart a stopped thread
-                    this.frameThread = Optional.empty();
                     // This will always run even if a timeout exception occurs
                     try {
+                        // Calling this multiple times will have no effect
                         grabber.stop();
                     } catch (FrameGrabber.Exception e) {
                         throw new IllegalStateException("A problem occurred trying to stop the frame grabber", e);
@@ -216,22 +218,20 @@ public class CameraSource extends StopStartSource {
                 throw new IllegalStateException("Tried to stop a Webcam that is already stopped.");
             }
         }
-        eventBus.post(new SourceStoppedEvent(this));
+        eventBus.post(new StartedStoppedEvent(this));
         frameRateOutputSocket.setValue(0);
     }
 
     @Override
-    public boolean isRunning() {
-        synchronized (this) {
-            return this.frameThread.isPresent() && this.frameThread.get().isAlive();
-        }
+    public synchronized boolean isStarted() {
+        return this.frameThread.isPresent() && this.frameThread.get().isAlive();
     }
 
     @Subscribe
     public void onSourceRemovedEvent(SourceRemovedEvent event) throws TimeoutException {
         if (event.getSource() == this) {
             try {
-                if (this.isRunning()) this.stop();
+                if (this.isStarted()) this.stop();
             } finally {
                 this.eventBus.unregister(this);
             }

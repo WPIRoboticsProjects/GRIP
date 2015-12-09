@@ -7,8 +7,7 @@ import edu.wpi.grip.core.OutputSocket;
 import edu.wpi.grip.core.SocketHint;
 import edu.wpi.grip.core.SocketHints;
 import edu.wpi.grip.core.Source;
-import edu.wpi.grip.core.events.SourceStartedEvent;
-import edu.wpi.grip.core.util.OpenCVUtility;
+import edu.wpi.grip.core.util.ImageLoadingUtility;
 import org.bytedeco.javacpp.opencv_core.Mat;
 import org.bytedeco.javacpp.opencv_imgcodecs;
 
@@ -25,7 +24,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * Provides a way to generate a {@link Mat} from an image on the filesystem.
  */
 @XStreamAlias(value = "grip:ImageFile")
-public class ImageFileSource extends Source {
+public final class ImageFileSource extends Source {
 
     private final String PATH_PROPERTY = "path";
 
@@ -96,8 +95,7 @@ public class ImageFileSource extends Source {
 
 
     private void loadImage(String path, final int flags) throws IOException {
-        OpenCVUtility.loadImage(path, flags, this.outputSocket.getValue().get());
+        ImageLoadingUtility.loadImage(path, flags, this.outputSocket.getValue().get());
         this.outputSocket.setValue(this.outputSocket.getValue().get());
-        this.eventBus.post(new SourceStartedEvent(this));
     }
 }

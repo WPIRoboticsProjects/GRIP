@@ -37,14 +37,14 @@ public class MultiImageFileSourceTest {
 
     @Test
     public void testNextValue() throws Exception {
-        source.nextValue();
+        source.next();
         OutputSocket<Mat> outputSocket = source.getOutputSockets()[0];
         gompeiJpegFile.assertSameImage(outputSocket.getValue().get());
     }
 
     @Test
     public void testPreviousValue() throws Exception {
-        source.previousValue();
+        source.previous();
         OutputSocket<Mat> outputSocket = source.getOutputSockets()[0];
         gompeiJpegFile.assertSameImage(outputSocket.getValue().get());
     }

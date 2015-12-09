@@ -14,10 +14,9 @@
                 </HBox>
             </top>
             <center>
-                <VBox fx:id="sockets" styleClass="sockets" BorderPane.alignment="CENTER">
-                    <children>
-                        <Separator orientation="HORIZONTAL"/>
-                    </children>
+                <VBox>
+                    <Separator orientation="HORIZONTAL"/>
+                    <VBox fx:id="sockets" styleClass="sockets" BorderPane.alignment="CENTER"/>
                 </VBox>
             </center>
         </BorderPane>

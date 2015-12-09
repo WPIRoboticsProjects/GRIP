@@ -1,8 +1,8 @@
 package edu.wpi.grip.ui.pipeline;
 
 import com.google.common.eventbus.EventBus;
-import edu.wpi.grip.core.events.UnexpectedThrowableEvent;
 import edu.wpi.grip.core.events.SourceAddedEvent;
+import edu.wpi.grip.core.events.UnexpectedThrowableEvent;
 import edu.wpi.grip.core.sources.CameraSource;
 import edu.wpi.grip.core.sources.ImageFileSource;
 import edu.wpi.grip.core.sources.MultiImageFileSource;
@@ -49,6 +49,7 @@ public class AddSourceView extends HBox {
         private final Text errorText = new Text();
 
         private SourceDialog(final Parent root, Control inputField) {
+            super();
             final GridPane gridContent = new GridPane();
             gridContent.setMaxWidth(Double.MAX_VALUE);
             GridPane.setHgrow(inputField, Priority.ALWAYS);
@@ -69,7 +70,7 @@ public class AddSourceView extends HBox {
 
         this.setFillHeight(true);
 
-        addButton("Add\nImage", getClass().getResource("/edu/wpi/grip/ui/icons/add-image.png"), mouseEvent -> {
+        addButton("Add\nImage(s)", getClass().getResource("/edu/wpi/grip/ui/icons/add-image.png"), mouseEvent -> {
             // Show a file picker so the user can open one or more images from disk
             final FileChooser fileChooser = new FileChooser();
             fileChooser.setTitle("Open an image");
@@ -79,7 +80,7 @@ public class AddSourceView extends HBox {
             if (imageFiles == null) return;
 
             // Add a new source for each image .
-            if(imageFiles.size() == 1) {
+            if (imageFiles.size() == 1) {
                 try {
                     eventBus.post(new SourceAddedEvent(new ImageFileSource(eventBus, imageFiles.get(0))));
                 } catch (IOException e) {
