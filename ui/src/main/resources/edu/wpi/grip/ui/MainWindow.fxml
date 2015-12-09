@@ -10,10 +10,11 @@
 <?import java.net.URL?>
 <?language javascript?>
 
-<fx:root type="javafx.scene.layout.VBox" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"
-         minWidth="-Infinity" styleClass="main-window"
-         xmlns="http://javafx.com/javafx/null"
-         xmlns:fx="http://javafx.com/fxml/1">
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"
+      minWidth="-Infinity" styleClass="main-window"
+      fx:controller="edu.wpi.grip.ui.MainWindowController"
+      fx:id="root"
+      xmlns:fx="http://javafx.com/fxml/1">
     <children>
         <MenuBar>
             <Menu text="File">
@@ -108,5 +109,5 @@
         <URL value="@roboto/Roboto.css"/>
         <URL value="@GRIP.css"/>
     </stylesheets>
-</fx:root>
+</VBox>
 

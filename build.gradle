@@ -83,6 +83,7 @@ project(":core") {
         compile group: 'com.thoughtworks.xstream', name: 'xstream', version: '1.4.8'
         compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.4'
         compile group: 'com.google.guava', name: 'guava', version: '18.0'
+        compile group: 'com.google.inject', name: 'guice', version: '4.0'
     }
 
     mainClassName = 'edu.wpi.grip.core.Main'
