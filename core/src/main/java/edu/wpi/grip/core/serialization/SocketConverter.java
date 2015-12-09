@@ -22,7 +22,7 @@ import java.util.List;
  * Deserializing a socket doesn't create the socket itself - this is done when the step is created.  Instead, this
  * converter is used to reference particular sockets when defining values, previewed flags, and connections.
  */
-class SocketConverter implements Converter {
+public class SocketConverter implements Converter {
 
     final private static String STEP_ATTRIBUTE = "step";
     final private static String SOURCE_ATTRIBUTE = "source";

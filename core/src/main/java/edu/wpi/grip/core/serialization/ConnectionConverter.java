@@ -15,7 +15,7 @@ import edu.wpi.grip.core.events.ConnectionAddedEvent;
  * <p>
  * A marshalled connection stores indexes indicating the output and input sockets it connects.
  */
-class ConnectionConverter implements Converter {
+public class ConnectionConverter implements Converter {
 
     private final EventBus eventBus;
 

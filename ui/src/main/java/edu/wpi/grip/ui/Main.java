@@ -21,7 +21,8 @@ public class Main extends Application {
 
     @Inject private EventBus eventBus;
 
-    private final Injector injector = Guice.createInjector(new GRIPCoreModule());
+    protected final Injector injector = Guice.createInjector(new GRIPCoreModule());
+
     private final Object dialogLock = new Object();
     private Parent root;
 

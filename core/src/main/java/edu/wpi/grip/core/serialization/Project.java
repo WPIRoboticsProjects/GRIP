@@ -1,11 +1,9 @@
 package edu.wpi.grip.core.serialization;
 
-import com.google.common.eventbus.EventBus;
 import com.thoughtworks.xstream.XStream;
-import edu.wpi.grip.core.*;
-import edu.wpi.grip.core.sources.CameraSource;
-import edu.wpi.grip.core.sources.ImageFileSource;
+import edu.wpi.grip.core.Pipeline;
 
+import javax.inject.Inject;
 import java.io.*;
 import java.util.Optional;
 
@@ -14,25 +12,10 @@ import java.util.Optional;
  */
 public class Project {
 
-    private final XStream xstream = new XStream();
-    private final Pipeline pipeline;
+    @Inject private XStream xstream;
+    @Inject private Pipeline pipeline;
+
     private Optional<File> file = Optional.empty();
-
-    public Project(EventBus eventBus, Pipeline pipeline, Palette palette) {
-        this.pipeline = pipeline;
-
-        this.xstream.registerConverter(new StepConverter(eventBus, palette));
-        this.xstream.registerConverter(new SourceConverter(eventBus, xstream.getMapper()));
-        this.xstream.registerConverter(new SocketConverter(xstream.getMapper(), pipeline));
-        this.xstream.registerConverter(new ConnectionConverter(eventBus));
-
-        this.xstream.processAnnotations(new Class[]{
-                Pipeline.class, Step.class, Connection.class, InputSocket.class, OutputSocket.class,
-                ImageFileSource.class, CameraSource.class
-        });
-
-        this.xstream.setMode(XStream.NO_REFERENCES);
-    }
 
     /**
      * @return The file that this project is located in, if it was loaded from/saved to a file

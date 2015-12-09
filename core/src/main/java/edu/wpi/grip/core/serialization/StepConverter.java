@@ -18,7 +18,7 @@ import java.util.Optional;
  * To serialize a step, we just store an attribute with the name of the step.  To deserialize it, we have to look up
  * the operation with that name in the palette.
  */
-class StepConverter implements Converter {
+public class StepConverter implements Converter {
 
     private final static String NAME_ATTRIBUTE = "name";
 
