@@ -15,10 +15,10 @@ plugins {
 }
 apply plugin: 'nebula-aggregate-javadocs'
 
-
 allprojects {
     apply plugin: 'java'
     apply plugin: 'application'
+    apply plugin: 'jacoco'
 
 
     repositories {
@@ -39,6 +39,7 @@ allprojects {
             html.enabled = true
         }
     }
+
     check.dependsOn jacocoTestReport
 
     tasks.withType(Javadoc) {
@@ -169,6 +170,30 @@ project(":ui") {
     }
     mainClassName = javafx.mainClass
 }
+
+/*
+ * This is roughly based upon this post:
+ * https://discuss.gradle.org/t/merge-jacoco-coverage-reports-for-multiproject-setups/12100/6
+ */
+task jacocoRootReport(type: JacocoReport, group: 'Coverage reports') {
+    description = 'Generates an aggregate report from all subprojects'
+    dependsOn(subprojects.test)
+
+    additionalSourceDirs = files(subprojects.sourceSets.main.allSource.srcDirs)
+    sourceDirectories = files(subprojects.sourceSets.main.allSource.srcDirs)
+    classDirectories = files(subprojects.sourceSets.main.output)
+    executionData = files(subprojects.jacocoTestReport.executionData)
+
+    reports {
+        html.enabled = true
+        xml.enabled = true
+    }
+
+    doFirst {
+        executionData = files(executionData.findAll { it.exists() })
+    }
+}
+check.dependsOn jacocoRootReport
 
 task wrapper(type: Wrapper) {
     gradleVersion = '2.9'

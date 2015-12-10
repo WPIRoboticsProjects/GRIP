@@ -19,6 +19,7 @@ addons:
 before_install:
   - export DISPLAY=:99.0
   - sh -e /etc/init.d/xvfb start
+  - pip install --user codecov
 
 install: ./gradlew :ui:assemble --stacktrace
 
@@ -26,7 +27,7 @@ after_failure: #Run again with debug info enabled
   - ./gradlew check  --stacktrace -PprintTestResults
 
 after_success:
-  - bash <(curl -s https://codecov.io/bash) # Code Coverage Reporting
+  - codecov
   - ./gradlew aggregateJavadocs
   - .travis-scripts/push-javadoc-to-gh-pages.sh
   - .travis-scripts/before-deploy.sh
