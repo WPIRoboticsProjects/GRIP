@@ -8,8 +8,8 @@ import edu.wpi.grip.core.Step;
 import edu.wpi.grip.core.events.SocketPreviewChangedEvent;
 import edu.wpi.grip.core.events.StepMovedEvent;
 import edu.wpi.grip.ui.pipeline.PipelineView;
-import edu.wpi.grip.ui.pipeline.SourceView;
 import edu.wpi.grip.ui.pipeline.StepView;
+import edu.wpi.grip.ui.pipeline.source.SourceView;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -56,9 +56,11 @@ public class PreviewsView extends VBox {
 
         this.eventBus.register(this);
     }
+
     @Subscribe
     /**
-     * This function is called when a step moves in the pipeline.
+     * This function is called when a step moves in the pipeline to adjust the positions of any open previews it has
+     * to reflect the new order of the pipeline.
      */
     public synchronized void onPreviewOrderChanged(StepMovedEvent event) {
         Platform.runLater(() -> {//Run this function on the main gui thread
@@ -75,7 +77,7 @@ public class PreviewsView extends VBox {
             Stack<OutputSocket<?>> previewedMovedSockets = new Stack<OutputSocket<?>>();//This will hold the sockets of the step that was moved that are open for preview
 
             for (OutputSocket<?> i : socketsMovedArray) {
-                if (this.previewedSockets.indexOf(i)!= -1){//If this socket is previewed
+                if (this.previewedSockets.indexOf(i) != -1) {//If this socket is previewed
                     previewedMovedSockets.push(i);
                     if (rightmostIndex < this.previewedSockets.indexOf(i))
                         rightmostIndex = this.previewedSockets.indexOf(i);
@@ -85,56 +87,58 @@ public class PreviewsView extends VBox {
             }
 
             //Deal with each previewed socket from the step that was moved in turn
-            while (previewedMovedSockets.size() != 0){ //While there are still sockets to deal with on the stack
+            while (previewedMovedSockets.size() != 0) { //While there are still sockets to deal with on the stack
                 OutputSocket<?> current = previewedMovedSockets.pop();//Grab the top socket on the stack
                 int oldIndex = this.previewedSockets.indexOf(current);//Get the index of this preview so we can remove the correct entry
 
                 int newLocation = 0;//This will hold the new index in the list of previewed sockets for this socket
 
-                if(distanceMoved<0) //If the step moved left....
+                if (distanceMoved < 0) //If the step moved left....
                     newLocation = leftmostIndex + distanceMoved; //Calculate the new index from the leftmost previewed socket of this step
                 else //The step must have moved right....
                     newLocation = rightmostIndex + distanceMoved;//So calculate the new index from the rightmost previewed socket of this step
 
-                if (newLocation <numberOfSourcePreviews){//If the new calculated index would put it in the midst of source previews
+                if (newLocation < numberOfSourcePreviews) {//If the new calculated index would put it in the midst of source previews
                     newLocation = numberOfSourcePreviews;//Make the index the location of the first non-source preview
-                }else{ //The new index is the current location of another step (NOT a source)
+                } else { //The new index is the current location of another step (NOT a source)
 
-                    //So we need to make sure that we jump over groups of previews associated with the same step as a unit
+                    //So we need to make sure that we jump over GROUPS of previews associated with the SAME step as a unit
+                    int count = 0;//This will hold the number of previews open from the same step in sequence, starting from the new location and going in the direction we are moving
 
-                    int count = 0;
-
-                    if(distanceMoved<0) {//If the step moved left....
-                        OutputSocket<?>  nextSocketInDirection = this.previewedSockets.get(newLocation);
-                        while ((nextSocketInDirection.getStep().isPresent())
-                                && (nextSocketInDirection.getStep().get() == this.previewedSockets.get(newLocation).getStep().get())){
-                                count++;
-                                nextSocketInDirection = this.previewedSockets.get(newLocation-count);
+                    if (distanceMoved < 0) {//If the step moved left....
+                        OutputSocket<?> nextSocketInDirection = this.previewedSockets.get(newLocation);//Grab the socket whose preview is open at the new location
+                        boolean zeroReached = false;//We will set this to true if we reach the beginning of the list of previews (there are no source previews open)
+                        while ((!zeroReached) &&
+                                ((nextSocketInDirection.getStep().isPresent())
+                                        && (nextSocketInDirection.getStep().get() == this.previewedSockets.get(newLocation).getStep().get()))) { //While we haven't reached the beginning of the list of previews, the socket at this location is a socket from a step, and it is the SAME step as the step of the socket at the new location...
+                            count++;
+                            if ((newLocation - count) > 0)//If we haven't reached the beginning of the list of open previews...
+                                nextSocketInDirection = this.previewedSockets.get(newLocation - count);//Grab the next previewed socket to examine in the direction we are moving
+                            else
+                                zeroReached = true;//Mark that we've reached the beginning of the list of previews so we know to stop looking for more
                         }
-                        newLocation = newLocation - (count-1);
+                        newLocation = newLocation - (count - 1);//Since the first compare of the while loop will always be true, we subract one from the count when we use it to adjust newLocation
 
-                    }else {//The step must have moved right....
-                        while ((newLocation+count < this.previewedSockets.size())
-                                && (this.previewedSockets.get(newLocation+count).getStep().get() == this.previewedSockets.get(newLocation).getStep().get())) {
+                    } else {//The step must have moved right....
+                        while ((newLocation + count < this.previewedSockets.size())
+                                && (this.previewedSockets.get(newLocation + count).getStep().get() == this.previewedSockets.get(newLocation).getStep().get())) { //While there are still previewed sockets to examine, and the socket being examined is one from the SAME step of the socket at the new location....
                             count++;
                         }
-                        newLocation = newLocation + (count - 1);
+                        newLocation = newLocation + (count - 1);//Since the first compare of the while loop will always be true, we subract one from the count when we use it to adjust newLocation
                     }
-
                 }
 
-                //Remove this socket from the previews
+                //Remove this socket from the old point in the previews
                 this.previewedSockets.remove(oldIndex);
                 this.eventBus.unregister(this.previewBox.getChildren().remove(oldIndex));
 
-                if (newLocation > this.previewedSockets.size())//If the new index is too big for the list of previews
+                if (newLocation > this.previewedSockets.size())//If the new index is now too big for the list of previews
                     newLocation = this.previewedSockets.size();//Make it so it will be added to the end of the list of previews
 
-                this.previewedSockets.add(newLocation, current);//...use this index to add it to the correct location in the list of previews open
+                this.previewedSockets.add(newLocation, current);//...add it to the correct location in the list of previews open
                 this.previewBox.getChildren().add(newLocation, SocketPreviewViewFactory.createPreviewView(this.eventBus, current));//...and display it in the correct location in the list of previews open
             }
         });
-
     }
 
     @Subscribe
@@ -181,7 +185,7 @@ public class PreviewsView extends VBox {
     /**
      * Find the correct index in the displayed previews for a socket associated with a source (NOT a step socket)
      * by comparing the indices in the pipeline.
-     * Called in {@link PreviewsView#onSocketPreviewChanged}
+     * Made to be called in {@link PreviewsView#onSocketPreviewChanged}
      *
      * @param socket An output socket associated with a source (NOT a step)
      * @return The correct index (an int) in the list of displayed previews for the given <code>socket</code>
@@ -206,7 +210,7 @@ public class PreviewsView extends VBox {
     /**
      * Find the correct index in the displayed previews for a socket associated with a step (NOT a source socket)
      * by comparing the indices in the pipeline, starting with the first non-source preview displayed.
-     * Called in {@link PreviewsView#onSocketPreviewChanged}
+     * Made to be called in {@link PreviewsView#onSocketPreviewChanged}
      *
      * @param socket An output socket associated with a step (NOT a source)
      * @return The correct index in the list of displayed previews for the given <code>socket</code>
@@ -231,10 +235,11 @@ public class PreviewsView extends VBox {
 
     /**
      * Counts how many source previews (NOT step previews) are currently displayed.
-     * Called in {@link PreviewsView#getIndexInPreviewsOfAStepSocket}
+     * Called in  {@link PreviewsView#getIndexInPreviewsOfAStepSocket} and {@link PreviewsView#onPreviewOrderChanged(StepMovedEvent)}
      *
      * @return The number of source (NOT step) previews that are currently displayed
      * @see PreviewsView#getIndexInPreviewsOfAStepSocket(OutputSocket)
+     * @see PreviewsView#onPreviewOrderChanged(StepMovedEvent)
      */
     private int getNumbOfSourcePreviews() {
         //Start at the beginning of the list.
