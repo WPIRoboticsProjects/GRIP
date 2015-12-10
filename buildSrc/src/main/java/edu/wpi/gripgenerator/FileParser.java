@@ -139,7 +139,10 @@ public class FileParser {
                 ).addDescription("Apply a Gaussian blur to an image."),
                 new DefinedMethod("Laplacian", "Mat", "Mat"
                 ).addDescription("Find edges by calculating the Laplacian for the given image."),
-                new DefinedMethod("dilate", false, "Mat", "Mat"
+                new DefinedMethod("dilate", false,
+                        new DefinedParamType("Mat"),
+                        new DefinedParamType("Mat"),
+                        new DefinedParamType("Mat").setDefaultValue(new ObjectDefaultValue("Mat"))
                 ).addDescription("Expands areas of higher values in an image."),
                 new DefinedMethod("Canny", false,
                         new DefinedParamType("Mat"),
@@ -162,7 +165,7 @@ public class FileParser {
                 new DefinedMethod("erode", false,
                         new DefinedParamType("Mat"),
                         new DefinedParamType("Mat"),
-                        new DefinedParamType("Mat")
+                        new DefinedParamType("Mat").setDefaultValue(new ObjectDefaultValue("Mat"))
                 ).addDescription("Expands areas of lower values in an image."),
                 new DefinedMethod("cvtColor", false,
                         new DefinedParamType("Mat"),

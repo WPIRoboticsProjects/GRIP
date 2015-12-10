@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<fx:root styleClass="source" type="javafx.scene.layout.VBox" xmlns="http://javafx.com/javafx/8.0.40"
+         xmlns:fx="http://javafx.com/fxml/1">
+    <children>
+        <BorderPane VBox.vgrow="NEVER">
+            <top>
+                <HBox fx:id="controls" alignment="CENTER" spacing="2.0" styleClass="source-header-box" BorderPane.alignment="CENTER">
+                    <Button onMouseClicked="#delete" styleClass="delete" text="✕"/>
+                    <Label fx:id="name" styleClass="source-name"/>
+                    <Pane HBox.hgrow="ALWAYS"/>
+                </HBox>
+            </top>
+            <center>
+                <VBox>
+                    <Separator orientation="HORIZONTAL"/>
+                    <VBox fx:id="sockets" styleClass="sockets" BorderPane.alignment="CENTER"/>
+                </VBox>
+            </center>
+        </BorderPane>
+    </children>
+</fx:root>

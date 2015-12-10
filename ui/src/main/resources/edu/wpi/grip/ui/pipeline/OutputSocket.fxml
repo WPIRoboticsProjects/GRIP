@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ToggleButton?>
+<?import javafx.scene.control.Tooltip?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.*?>
+<?import edu.wpi.grip.ui.util.DPIUtility ?>
+<fx:root styleClass="socket" type="javafx.scene.layout.HBox" xmlns="http://javafx.com/javafx/null"
+         xmlns:fx="http://javafx.com/fxml/1" alignment="CENTER_RIGHT">
+    <children>
+        <ToggleButton fx:id="preview" styleClass="small-icon-button">
+            <graphic>
+                <ImageView>
+                    <Image url="@../icons/preview.png"/>
+                    <fitWidth>
+                        <DPIUtility fx:constant="SMALL_ICON_SIZE"/>
+                    </fitWidth>
+                    <fitHeight>
+                        <DPIUtility fx:constant="SMALL_ICON_SIZE"/>
+                    </fitHeight>
+                </ImageView>
+            </graphic>
+            <tooltip>
+                <Tooltip text="Preview Socket"/>
+            </tooltip>
+        </ToggleButton>
+        <ToggleButton fx:id="publish" styleClass="small-icon-button">
+            <graphic>
+                <ImageView>
+                    <Image url="@../icons/publish.png"/>
+                    <fitWidth>
+                        <DPIUtility fx:constant="SMALL_ICON_SIZE"/>
+                    </fitWidth>
+                    <fitHeight>
+                        <DPIUtility fx:constant="SMALL_ICON_SIZE"/>
+                    </fitHeight>
+                </ImageView>
+            </graphic>
+            <tooltip>
+                <Tooltip text="Publish Socket"/>
+            </tooltip>
+        </ToggleButton>
+        <Label fx:id="identifier" contentDisplay="RIGHT" styleClass="socket-identifier">
+            <graphic>
+                <Label fx:id="type" opacity=".5"/>
+            </graphic>
+        </Label>
+        <StackPane fx:id="handlePane"/>
+    </children>
+</fx:root>

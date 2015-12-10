@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.*?>
+<?import edu.wpi.grip.ui.util.DPIUtility ?>
+
+<fx:root type="javafx.scene.layout.VBox" xmlns="http://javafx.com/javafx/null"
+         xmlns:fx="http://javafx.com/fxml/1" styleClass="step">
+    <children>
+        <HBox>
+            <children>
+                <Button fx:id="deleteButton" onMouseClicked="#deleteStep" styleClass="delete" text="✕"
+                        HBox.hgrow="NEVER">
+                    <tooltip>
+                        <Tooltip text="Delete Step"/>
+                    </tooltip>
+                </Button>
+                <Pane HBox.hgrow="ALWAYS"/>
+                <Button fx:id="moveLeftButton" onMouseClicked="#moveStepLeft" styleClass="move-left"
+                        text="◀" HBox.hgrow="NEVER">
+                    <tooltip>
+                        <Tooltip text="Move Step Left"/>
+                    </tooltip>
+                </Button>
+                <Button fx:id="moveRightButton" onMouseClicked="#moveStepRight" styleClass="move-right"
+                        text="▶" HBox.hgrow="NEVER">
+                    <tooltip>
+                        <Tooltip text="Move Step Right"/>
+                    </tooltip>
+                </Button>
+            </children>
+        </HBox>
+        <Separator orientation="HORIZONTAL"/>
+        <Label fx:id="title" maxWidth="Infinity" styleClass="title">
+            <graphic>
+                <ImageView fx:id="icon">
+                    <fitWidth>
+                        <DPIUtility fx:constant="SMALL_ICON_SIZE"/>
+                    </fitWidth>
+                    <fitHeight>
+                        <DPIUtility fx:constant="SMALL_ICON_SIZE"/>
+                    </fitHeight>
+                </ImageView>
+            </graphic>
+        </Label>
+        <Separator orientation="HORIZONTAL"/>
+        <VBox fx:id="inputs" styleClass="sockets"/>
+        <Separator orientation="HORIZONTAL"/>
+        <VBox fx:id="outputs" styleClass="sockets"/>
+    </children>
+</fx:root>

@@ -1,2 +1,0 @@
-I'm not an image! What a surprise!
-This is for testing reading in text files using loadImage.
