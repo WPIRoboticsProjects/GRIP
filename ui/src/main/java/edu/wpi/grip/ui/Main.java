@@ -6,7 +6,10 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.sun.javafx.application.PlatformImpl;
 import edu.wpi.grip.core.GRIPCoreModule;
+import edu.wpi.grip.core.Palette;
 import edu.wpi.grip.core.events.UnexpectedThrowableEvent;
+import edu.wpi.grip.core.operations.Operations;
+import edu.wpi.grip.generated.CVOperations;
 import edu.wpi.grip.ui.util.DPIUtility;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -20,6 +23,7 @@ import javax.inject.Inject;
 public class Main extends Application {
 
     @Inject private EventBus eventBus;
+    @Inject private Palette palette;
 
     protected final Injector injector = Guice.createInjector(new GRIPCoreModule());
 
@@ -42,6 +46,9 @@ public class Main extends Application {
     public void start(Stage stage) throws Exception {
         root = FXMLLoader.load(Main.class.getResource("MainWindow.fxml"), null, null, injector::getInstance);
         root.setStyle("-fx-font-size: " + DPIUtility.FONT_SIZE + "px");
+
+        Operations.addOperations(eventBus);
+        CVOperations.addOperations(eventBus);
 
         stage.setTitle("GRIP Computer Vision Engine");
         stage.getIcons().add(new Image("/edu/wpi/grip/ui/icons/grip.png"));

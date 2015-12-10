@@ -7,10 +7,10 @@ import com.thoughtworks.xstream.converters.MarshallingContext;
 import com.thoughtworks.xstream.converters.UnmarshallingContext;
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
-import com.thoughtworks.xstream.mapper.Mapper;
 import edu.wpi.grip.core.Source;
 import edu.wpi.grip.core.events.SourceAddedEvent;
 
+import javax.inject.Inject;
 import java.io.IOException;
 import java.util.Properties;
 
@@ -26,13 +26,8 @@ import java.util.Properties;
  */
 public class SourceConverter implements Converter {
 
-    private final EventBus eventBus;
-    private final Mapper mapper;
-
-    public SourceConverter(EventBus eventBus, Mapper mapper) {
-        this.eventBus = eventBus;
-        this.mapper = mapper;
-    }
+    @Inject private EventBus eventBus;
+    @Inject private Project project;
 
     @Override
     public void marshal(Object obj, HierarchicalStreamWriter writer, MarshallingContext context) {
@@ -43,7 +38,7 @@ public class SourceConverter implements Converter {
     @SuppressWarnings("unchecked")
     public Object unmarshal(HierarchicalStreamReader reader, UnmarshallingContext context) {
         try {
-            final Class<Source> sourceClass = (Class<Source>) mapper.realClass(reader.getNodeName());
+            final Class<Source> sourceClass = (Class<Source>) project.xstream.getMapper().realClass(reader.getNodeName());
             final Properties properties = (Properties) context.convertAnother(null, Properties.class);
 
             // Although sources may block briefly upon creation, we intentionally do this in one thread.  This is to

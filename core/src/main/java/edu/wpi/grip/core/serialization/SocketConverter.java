@@ -6,9 +6,9 @@ import com.thoughtworks.xstream.converters.MarshallingContext;
 import com.thoughtworks.xstream.converters.UnmarshallingContext;
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
-import com.thoughtworks.xstream.mapper.Mapper;
 import edu.wpi.grip.core.*;
 
+import javax.inject.Inject;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -29,20 +29,15 @@ public class SocketConverter implements Converter {
     final private static String SOCKET_ATTRIBUTE = "socket";
     final private static String PREVIEWED_ATTRIBUTE = "previewed";
 
-    final private Mapper mapper;
-    final private Pipeline pipeline;
-
-    public SocketConverter(Mapper mapper, Pipeline pipeline) {
-        this.mapper = mapper;
-        this.pipeline = pipeline;
-    }
+    @Inject private Pipeline pipeline;
+    @Inject private Project project;
 
     @Override
     public void marshal(Object obj, HierarchicalStreamWriter writer, MarshallingContext context) {
         final Socket<?> socket = (Socket<?>) obj;
 
         try {
-            writer.startNode(mapper.serializedClass(socket.getClass()));
+            writer.startNode(project.xstream.getMapper().serializedClass(socket.getClass()));
 
             // Save the location of the socket in the pipeline.
             socket.getStep().ifPresent(step -> {
@@ -92,9 +87,9 @@ public class SocketConverter implements Converter {
             final String nodeName = reader.getNodeName();
 
             Socket.Direction direction;
-            if (nodeName.equals(mapper.serializedClass(InputSocket.class))) {
+            if (nodeName.equals(project.xstream.getMapper().serializedClass(InputSocket.class))) {
                 direction = Socket.Direction.INPUT;
-            } else if (nodeName.equals(mapper.serializedClass(OutputSocket.class))) {
+            } else if (nodeName.equals(project.xstream.getMapper().serializedClass(OutputSocket.class))) {
                 direction = Socket.Direction.OUTPUT;
             } else {
                 throw new IllegalArgumentException("Unexpected socket node name: " + nodeName);

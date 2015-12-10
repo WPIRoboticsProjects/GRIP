@@ -1,21 +1,44 @@
 package edu.wpi.grip.core.serialization;
 
+import com.google.common.eventbus.EventBus;
 import com.thoughtworks.xstream.XStream;
-import edu.wpi.grip.core.Pipeline;
+import edu.wpi.grip.core.*;
+import edu.wpi.grip.core.sources.CameraSource;
+import edu.wpi.grip.core.sources.ImageFileSource;
+import edu.wpi.grip.core.sources.MultiImageFileSource;
 
 import javax.inject.Inject;
+import javax.inject.Singleton;
 import java.io.*;
 import java.util.Optional;
 
 /**
  * Helper for saving and loading a processing pipeline to and from a file
  */
+@Singleton
 public class Project {
 
-    @Inject private XStream xstream;
+    @Inject private EventBus eventBus;
     @Inject private Pipeline pipeline;
+    @Inject private Palette palette;
 
+    protected final XStream xstream = new XStream();
     private Optional<File> file = Optional.empty();
+
+    @Inject
+    public void initialize(StepConverter stepConverter,
+                           SourceConverter sourceConverter,
+                           SocketConverter socketConverter,
+                           ConnectionConverter connectionConverter) {
+        xstream.setMode(XStream.NO_REFERENCES);
+        xstream.registerConverter(stepConverter);
+        xstream.registerConverter(sourceConverter);
+        xstream.registerConverter(socketConverter);
+        xstream.registerConverter(connectionConverter);
+        xstream.processAnnotations(new Class[]{Pipeline.class, Step.class, Connection.class, InputSocket.class,
+                OutputSocket.class, ImageFileSource.class, MultiImageFileSource.class, CameraSource.class});
+
+    }
 
     /**
      * @return The file that this project is located in, if it was loaded from/saved to a file

@@ -1,10 +1,13 @@
 package edu.wpi.grip.core;
 
+import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import edu.wpi.grip.core.events.UnexpectedThrowableEvent;
+import edu.wpi.grip.core.operations.Operations;
 import edu.wpi.grip.core.serialization.Project;
+import edu.wpi.grip.generated.CVOperations;
 
 import javax.inject.Inject;
 import java.io.File;
@@ -15,6 +18,7 @@ import java.io.File;
 public class Main {
 
     @Inject private Project project;
+    @Inject private EventBus eventBus;
 
     public static void main(String[] args) throws Exception {
         final Injector injector = Guice.createInjector(new GRIPCoreModule());
@@ -26,6 +30,9 @@ public class Main {
             System.err.println("Usage: GRIP.jar project.grip");
             return;
         }
+
+        Operations.addOperations(eventBus);
+        CVOperations.addOperations(eventBus);
 
         final String projectPath = args[0];
 

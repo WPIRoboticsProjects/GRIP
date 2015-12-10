@@ -2,10 +2,12 @@ package edu.wpi.grip.core;
 
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
+import com.google.inject.Singleton;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamOmitField;
 import edu.wpi.grip.core.events.*;
 
+import javax.inject.Inject;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -16,33 +18,15 @@ import java.util.stream.Collectors;
  * The pipeline class is responsible for listening for other components of the application (such as the GUI) adding
  * or removing steps and connections, and for registering and unregistering them from the event bus when appropriate.
  */
+@Singleton
 @XStreamAlias(value = "grip:Pipeline")
 public class Pipeline {
 
-    @XStreamOmitField
-    private final EventBus eventBus;
+    @Inject @XStreamOmitField private EventBus eventBus;
 
-    private final List<Source> sources;
-    private final List<Step> steps;
-    private final Set<Connection> connections;
-
-    public Pipeline(EventBus eventBus) {
-        this.eventBus = eventBus;
-        this.sources = new ArrayList<>();
-        this.steps = new ArrayList<>();
-        this.connections = new HashSet<>();
-
-        eventBus.register(this);
-    }
-
-    /**
-     * Register all of the objects composing the pipeline on the event bus.  This should be called if steps,
-     * connections, etc. were added other than through events, i.e. by deserializing a pipeline from a file.
-     */
-    public void register() {
-        this.steps.forEach(this.eventBus::register);
-        this.connections.forEach(this.eventBus::register);
-    }
+    private List<Source> sources = new ArrayList<>();
+    private List<Step> steps = new ArrayList<>();
+    private Set<Connection> connections = new HashSet<>();
 
     /**
      * Remove everything in the pipeline
