@@ -1,6 +1,8 @@
 package edu.wpi.grip.core;
 
 import com.google.common.eventbus.EventBus;
+import com.google.inject.Guice;
+import com.google.inject.Injector;
 import edu.wpi.grip.core.events.*;
 import edu.wpi.grip.core.sources.ImageFileSource;
 import org.junit.Test;
@@ -15,12 +17,14 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 public class PipelineTest {
-    EventBus eventBus = new EventBus();
-    Operation addition = new AdditionOperation();
+
+    private Injector injector = Guice.createInjector(new GRIPCoreModule());
+    private EventBus eventBus = injector.getInstance(EventBus.class);
+    private Pipeline pipeline = injector.getInstance(Pipeline.class);
+    private Operation addition = new AdditionOperation();
 
     @Test
     public void testAddSource() throws URISyntaxException, IOException {
-        Pipeline pipeline = new Pipeline(eventBus);
         Source source = new ImageFileSource(eventBus, new File(getClass().getResource("/edu/wpi/grip/images/GRIP_Logo.png").toURI()));
 
         eventBus.post(new SourceAddedEvent(source));
@@ -30,7 +34,6 @@ public class PipelineTest {
 
     @Test
     public void testRemoveSource() throws URISyntaxException, IOException {
-        Pipeline pipeline = new Pipeline(eventBus);
         Source source = new ImageFileSource(eventBus, new File(getClass().getResource("/edu/wpi/grip/images/GRIP_Logo.png").toURI()));
 
         eventBus.post(new SourceAddedEvent(source));
@@ -42,7 +45,6 @@ public class PipelineTest {
     @Test
     @SuppressWarnings("unchecked")
     public void testAddStep() {
-        Pipeline pipeline = new Pipeline(eventBus);
         Step step = new Step(eventBus, addition);
 
         eventBus.post(new StepAddedEvent(step));
@@ -53,7 +55,6 @@ public class PipelineTest {
     @Test
     @SuppressWarnings("unchecked")
     public void testAddStepAtIndex() {
-        Pipeline pipeline = new Pipeline(eventBus);
         Step step1 = new Step(eventBus, addition);
         Step step2 = new Step(eventBus, addition);
 
@@ -66,7 +67,6 @@ public class PipelineTest {
     @Test
     @SuppressWarnings("unchecked")
     public void testRemoveFirstStep() {
-        Pipeline pipeline = new Pipeline(eventBus);
         Step step1 = new Step(eventBus, addition);
         Step step2 = new Step(eventBus, addition);
 
@@ -80,7 +80,6 @@ public class PipelineTest {
     @Test
     @SuppressWarnings("unchecked")
     public void testRemoveSecondStep() {
-        Pipeline pipeline = new Pipeline(eventBus);
         Step step1 = new Step(eventBus, addition);
         Step step2 = new Step(eventBus, addition);
 
@@ -93,7 +92,6 @@ public class PipelineTest {
 
     @Test
     public void testMoveStep() {
-        Pipeline pipeline = new Pipeline(eventBus);
         Step step1 = new Step(eventBus, addition);
         Step step2 = new Step(eventBus, addition);
         Step step3 = new Step(eventBus, addition);
@@ -108,7 +106,6 @@ public class PipelineTest {
 
     @Test
     public void testMoveStepToBeginning() {
-        Pipeline pipeline = new Pipeline(eventBus);
         Step step1 = new Step(eventBus, addition);
         Step step2 = new Step(eventBus, addition);
         Step step3 = new Step(eventBus, addition);
@@ -123,7 +120,6 @@ public class PipelineTest {
 
     @Test
     public void testMoveStepToEnd() {
-        Pipeline pipeline = new Pipeline(eventBus);
         Step step1 = new Step(eventBus, addition);
         Step step2 = new Step(eventBus, addition);
         Step step3 = new Step(eventBus, addition);
@@ -139,8 +135,6 @@ public class PipelineTest {
     @Test
     @SuppressWarnings("unchecked")
     public void testAddConnection() {
-        Pipeline pipeline = new Pipeline(eventBus);
-
         Step step1 = new Step(eventBus, addition);
         Step step2 = new Step(eventBus, addition);
         eventBus.post(new StepAddedEvent(step1));
@@ -155,8 +149,6 @@ public class PipelineTest {
     @Test
     @SuppressWarnings("unchecked")
     public void testRemoveConnection() {
-        Pipeline pipeline = new Pipeline(eventBus);
-
         Step step1 = new Step(eventBus, addition);
         Step step2 = new Step(eventBus, addition);
         eventBus.post(new StepAddedEvent(step1));
@@ -172,7 +164,6 @@ public class PipelineTest {
     @Test
     @SuppressWarnings("unchecked")
     public void testPipeline() {
-        Pipeline pipeline = new Pipeline(eventBus);
         Step step1 = new Step(eventBus, addition);
         Step step2 = new Step(eventBus, addition);
         InputSocket<Double> a1 = (InputSocket<Double>) step1.getInputSockets()[0];
@@ -203,7 +194,6 @@ public class PipelineTest {
     @Test
     @SuppressWarnings("unchecked")
     public void testPipelineRemoved() {
-        Pipeline pipeline = new Pipeline(eventBus);
         Step step1 = new Step(eventBus, addition);
         Step step2 = new Step(eventBus, addition);
         InputSocket<Double> a1 = (InputSocket<Double>) step1.getInputSockets()[0];
@@ -233,7 +223,6 @@ public class PipelineTest {
     @Test(expected = IllegalArgumentException.class)
     @SuppressWarnings("unchecked")
     public void testCannotConnectBackwards() {
-        Pipeline pipeline = new Pipeline(eventBus);
         Step step1 = new Step(eventBus, addition);
         Step step2 = new Step(eventBus, addition);
         InputSocket<Double> a1 = (InputSocket<Double>) step1.getInputSockets()[0];

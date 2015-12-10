@@ -10,6 +10,8 @@ import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 import edu.wpi.grip.core.*;
 import edu.wpi.grip.core.events.ConnectionAddedEvent;
 
+import javax.inject.Inject;
+
 /**
  * An XStream converter that marshals and unmarshals {@link Connection}s.
  * <p>
@@ -17,11 +19,7 @@ import edu.wpi.grip.core.events.ConnectionAddedEvent;
  */
 public class ConnectionConverter implements Converter {
 
-    private final EventBus eventBus;
-
-    public ConnectionConverter(EventBus eventBus) {
-        this.eventBus = eventBus;
-    }
+    @Inject private EventBus eventBus;
 
     @Override
     public void marshal(Object source, HierarchicalStreamWriter writer, MarshallingContext context) {

@@ -1,6 +1,8 @@
 package edu.wpi.grip.core;
 
 import com.google.common.eventbus.EventBus;
+import com.google.inject.Guice;
+import com.google.inject.Injector;
 import edu.wpi.grip.core.events.OperationAddedEvent;
 import org.junit.Test;
 
@@ -14,8 +16,11 @@ import static org.junit.Assert.assertEquals;
  * Created by tom on 11/15/15.
  */
 public class PaletteTest {
-    final EventBus eventBus = new EventBus();
-    final Palette palette = new Palette(eventBus);
+
+    private Injector injector = Guice.createInjector(new GRIPCoreModule());
+    private EventBus eventBus = injector.getInstance(EventBus.class);
+    private Palette palette = injector.getInstance(Palette.class);
+
     final Operation operation = new Operation() {
         @Override
         public String getName() {

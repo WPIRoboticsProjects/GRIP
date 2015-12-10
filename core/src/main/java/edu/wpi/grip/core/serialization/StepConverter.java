@@ -10,6 +10,7 @@ import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 import edu.wpi.grip.core.*;
 import edu.wpi.grip.core.events.StepAddedEvent;
 
+import javax.inject.Inject;
 import java.util.Optional;
 
 /**
@@ -22,13 +23,8 @@ public class StepConverter implements Converter {
 
     private final static String NAME_ATTRIBUTE = "name";
 
-    private final EventBus eventBus;
-    private final Palette palette;
-
-    public StepConverter(EventBus eventBus, Palette palette) {
-        this.eventBus = eventBus;
-        this.palette = palette;
-    }
+    @Inject private EventBus eventBus;
+    @Inject private Palette palette;
 
     @Override
     public void marshal(Object source, HierarchicalStreamWriter writer, MarshallingContext context) {
