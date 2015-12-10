@@ -2,10 +2,13 @@ package edu.wpi.grip.ui.pipeline;
 
 import com.google.common.collect.Lists;
 import com.google.common.eventbus.EventBus;
+import com.google.inject.Guice;
+import com.google.inject.Injector;
 import edu.wpi.grip.core.*;
 import edu.wpi.grip.core.events.StepAddedEvent;
 import edu.wpi.grip.core.events.StepMovedEvent;
 import edu.wpi.grip.ui.util.StyleClassNameUtility;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.input.MouseButton;
@@ -25,17 +28,17 @@ import static junit.framework.TestCase.fail;
 import static org.testfx.api.FxAssert.verifyThat;
 import static org.testfx.api.FxAssert.verifyThatIter;
 
-public class PipelineViewTest extends ApplicationTest {
-    private EventBus eventBus;
-    private Pipeline pipeline;
+public class PipelineUITest extends ApplicationTest {
+
+    private final Injector injector = Guice.createInjector(new GRIPCoreModule());
+    private final EventBus eventBus = injector.getInstance(EventBus.class);
     private final AdditionOperation additionOperation = new AdditionOperation();
     private final SubtractionOperation subtractionOperation = new SubtractionOperation();
 
     @Override
     public void start(Stage stage) throws Exception {
-        this.eventBus = new EventBus();
-        this.pipeline = new Pipeline(eventBus);
-        final Scene scene = new Scene(new PipelineView(eventBus, pipeline), 800, 600);
+        final Scene scene = new Scene(FXMLLoader.load(getClass().getResource("Pipeline.fxml"), null, null,
+                injector::getInstance), 800, 600);
         stage.setScene(scene);
         stage.show();
     }

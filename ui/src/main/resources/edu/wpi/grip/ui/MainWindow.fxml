@@ -13,8 +13,7 @@
 <VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"
       minWidth="-Infinity" styleClass="main-window"
       fx:controller="edu.wpi.grip.ui.MainWindowController"
-      fx:id="root"
-      xmlns:fx="http://javafx.com/fxml/1">
+      fx:id="root" xmlns:fx="http://javafx.com/fxml/1">
     <children>
         <MenuBar>
             <Menu text="File">
@@ -104,7 +103,9 @@
                     <fx:include source="preview/Previews.fxml"/>
                     <fx:include source="Palette.fxml"/>
                 </SplitPane>
-                <ScrollPane fx:id="bottomPane"/>
+                <ScrollPane fx:id="bottomPane">
+                    <fx:include source="pipeline/Pipeline.fxml" fx:id="pipelineView"/>
+                </ScrollPane>
             </items>
         </SplitPane>
     </children>

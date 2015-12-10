@@ -12,81 +12,40 @@ import javafx.beans.InvalidationListener;
 import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.fxml.Initializable;
 import javafx.geometry.Bounds;
 import javafx.geometry.Point2D;
 import javafx.scene.Group;
 import javafx.scene.Node;
+import javafx.scene.Parent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
-import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
-import javafx.scene.shape.Rectangle;
 
-import java.io.IOException;
-import java.net.URL;
-import java.util.ResourceBundle;
-
-import static com.google.common.base.Preconditions.checkNotNull;
+import javax.inject.Inject;
 
 /**
- * A JavaFX control fro the pipeline.  This control renders a list of steps.
+ * A JavaFX controller for the pipeline.  This controller renders a list of steps.
  */
-public class PipelineView extends StackPane implements Initializable {
-    @FXML
-    private VBox sources;
+public class PipelineController {
 
-    @FXML
-    private Pane addSourcePane;
+    @FXML private Parent root;
+    @FXML private VBox sources;
+    @FXML private Pane addSourcePane;
+    @FXML private HBox steps;
+    @FXML private Group connections;
+    @Inject private EventBus eventBus;
+    @Inject private Pipeline pipeline;
 
-    @FXML
-    private HBox steps;
-
-    @FXML
-    private Group connections;
-
-    private final EventBus eventBus;
-    private final Pipeline pipeline;
-
-    public PipelineView(EventBus eventBus, Pipeline pipeline) {
-        checkNotNull(eventBus);
-        checkNotNull(pipeline);
-
-        this.eventBus = eventBus;
-        this.pipeline = pipeline;
-
-        try {
-            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("Pipeline.fxml"));
-            fxmlLoader.setRoot(this);
-            fxmlLoader.setController(this);
-            fxmlLoader.load();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+    public void initialize() {
+        for (Source source : pipeline.getSources()) {
+            sources.getChildren().add(SourceViewFactory.createSourceView(eventBus, source));
         }
 
-        this.addSourcePane.getChildren().add(new AddSourceView(eventBus));
-
-        this.eventBus.register(this);
-    }
-
-    @Override
-    public void initialize(URL url, ResourceBundle resourceBundle) {
-        for (Source source : this.pipeline.getSources()) {
-            for (OutputSocket<?> socket : source.getOutputSockets()) {
-                this.sources.getChildren().add(new OutputSocketView(eventBus, socket));
-            }
+        for (Step step : pipeline.getSteps()) {
+            steps.getChildren().add(new StepView(eventBus, step));
         }
 
-        for (Step step : this.pipeline.getSteps()) {
-            this.steps.getChildren().add(new StepView(this.eventBus, step));
-        }
-
-        connections.getChildren().add(new Rectangle(0, 0, 1, 1));
-    }
-
-    public Pipeline getPipeline() {
-        return this.pipeline;
+        addSourcePane.getChildren().add(new AddSourceView(eventBus));
     }
 
     /**
@@ -94,7 +53,7 @@ public class PipelineView extends StackPane implements Initializable {
      */
     @SuppressWarnings("unchecked")
     public ObservableList<SourceView> getSources() {
-        return (ObservableList) this.sources.getChildrenUnmodifiable();
+        return (ObservableList) sources.getChildrenUnmodifiable();
     }
 
     /**
@@ -102,7 +61,7 @@ public class PipelineView extends StackPane implements Initializable {
      */
     @SuppressWarnings("unchecked")
     public ObservableList<StepView> getSteps() {
-        return (ObservableList) this.steps.getChildrenUnmodifiable();
+        return (ObservableList) steps.getChildrenUnmodifiable();
     }
 
     /**
@@ -111,14 +70,14 @@ public class PipelineView extends StackPane implements Initializable {
      */
     @SuppressWarnings("unchecked")
     public ObservableList<ConnectionView> getConnections() {
-        return (ObservableList) this.connections.getChildrenUnmodifiable().filtered(node -> node instanceof ConnectionView);
+        return (ObservableList) connections.getChildrenUnmodifiable().filtered(node -> node instanceof ConnectionView);
     }
 
     /**
      * @return The {@link InputSocketView} that corresponds with the given socket
      */
     private InputSocketView findInputSocketView(InputSocket socket) {
-        for (StepView stepView : this.getSteps()) {
+        for (StepView stepView : getSteps()) {
             for (InputSocketView socketView : stepView.getInputSockets()) {
                 if (socketView.getSocket() == socket) {
                     return socketView;
@@ -134,7 +93,7 @@ public class PipelineView extends StackPane implements Initializable {
      * the pipeline or from a source
      */
     private OutputSocketView findOutputSocketView(OutputSocket socket) {
-        for (StepView stepView : this.getSteps()) {
+        for (StepView stepView : getSteps()) {
             for (OutputSocketView socketView : stepView.getOutputSockets()) {
                 if (socketView.getSocket() == socket) {
                     return socketView;
@@ -142,7 +101,7 @@ public class PipelineView extends StackPane implements Initializable {
             }
         }
 
-        for (SourceView<?> sourceView : this.getSources()) {
+        for (SourceView<?> sourceView : getSources()) {
             for (OutputSocketView socketView : sourceView.getOutputSockets()) {
                 if (socketView.getSocket() == socket) {
                     return socketView;
@@ -158,7 +117,7 @@ public class PipelineView extends StackPane implements Initializable {
      */
 
     private SourceView findSourceView(Source source) {
-        for (SourceView sourceView : this.getSources()) {
+        for (SourceView sourceView : getSources()) {
             if (sourceView.getSource() == source) {
                 return sourceView;
             }
@@ -171,7 +130,7 @@ public class PipelineView extends StackPane implements Initializable {
      * @return The {@link StepView} that corresponds with the given step
      */
     private StepView findStepView(Step step) {
-        for (StepView stepView : this.getSteps()) {
+        for (StepView stepView : getSteps()) {
             if (stepView.getStep() == step) {
                 return stepView;
             }
@@ -184,7 +143,7 @@ public class PipelineView extends StackPane implements Initializable {
      * @return The {@link ConnectionView} that corresponds with the given connection
      */
     private ConnectionView findConnectionView(Connection connection) {
-        for (ConnectionView connectionView : this.getConnections()) {
+        for (ConnectionView connectionView : getConnections()) {
             if (connectionView.getConnection() == connection) {
                 return connectionView;
             }
@@ -204,7 +163,7 @@ public class PipelineView extends StackPane implements Initializable {
             final OutputSocketView outputSocketView = findOutputSocketView(connection.getOutputSocket());
             final InputSocketView inputSocketView = findInputSocketView(connection.getInputSocket());
 
-            final ConnectionView connectionView = new ConnectionView(this.eventBus, connection);
+            final ConnectionView connectionView = new ConnectionView(eventBus, connection);
 
             // Re-position the start and end points of the connection whenever one of the handles is moved.  This
             // happens, for example, when a step in the pipeline is deleted, so all of the steps after it shift left.
@@ -212,8 +171,12 @@ public class PipelineView extends StackPane implements Initializable {
                 synchronized (this) {
                     final Node outputHandle = outputSocketView.getHandle();
                     final Node inputHandle = inputSocketView.getHandle();
-                    final Bounds outputSocketBounds = this.sceneToLocal(outputHandle.localToScene(outputHandle.getLayoutBounds()));
-                    final Bounds inputSocketBounds = this.sceneToLocal(inputHandle.localToScene(inputHandle.getLayoutBounds()));
+
+                    final Bounds outputSocketBounds =
+                            root.sceneToLocal(outputHandle.localToScene(outputHandle.getLayoutBounds()));
+                    final Bounds inputSocketBounds =
+                            root.sceneToLocal(inputHandle.localToScene(inputHandle.getLayoutBounds()));
+
                     final double x1 = outputSocketBounds.getMinX() + outputSocketBounds.getWidth() / 2.0;
                     final double y1 = outputSocketBounds.getMinY() + outputSocketBounds.getHeight() / 2.0;
                     final double x2 = inputSocketBounds.getMinX() + inputSocketBounds.getWidth() / 2.0;
@@ -231,28 +194,28 @@ public class PipelineView extends StackPane implements Initializable {
             outputSocketView.localToSceneTransformProperty().addListener(handleListener);
             handleListener.invalidated(inputSocketView.localToSceneTransformProperty());
 
-            this.connections.getChildren().add(connectionView);
+            connections.getChildren().add(connectionView);
         });
     }
 
     @Subscribe
     public void onSourceAdded(SourceAddedEvent event) {
         Platform.runLater(() ->
-                this.sources.getChildren().add(
-                        SourceViewFactory.createSourceControlsView(eventBus, event.getSource())));
+                sources.getChildren().add(
+                        SourceViewFactory.createSourceView(eventBus, event.getSource())));
     }
 
     @Subscribe
     public void onSourceRemoved(SourceRemovedEvent event) {
-        Platform.runLater(() -> this.sources.getChildren().remove(findSourceView(event.getSource())));
+        Platform.runLater(() -> sources.getChildren().remove(findSourceView(event.getSource())));
     }
 
     @Subscribe
     public void onStepAdded(StepAddedEvent event) {
         // Add a new control to the pipelineview for the step that was added
         Platform.runLater(() -> {
-            int index = event.getIndex().or(this.steps.getChildren().size());
-            this.steps.getChildren().add(index, new StepView(this.eventBus, event.getStep()));
+            int index = event.getIndex().or(steps.getChildren().size());
+            steps.getChildren().add(index, new StepView(eventBus, event.getStep()));
         });
     }
 
@@ -261,8 +224,8 @@ public class PipelineView extends StackPane implements Initializable {
         // Remove the control that corresponds with the step that was removed
         Platform.runLater(() -> {
             final StepView stepView = findStepView(event.getStep());
-            this.steps.getChildren().remove(stepView);
-            this.eventBus.unregister(stepView);
+            steps.getChildren().remove(stepView);
+            eventBus.unregister(stepView);
         });
     }
 
@@ -271,12 +234,12 @@ public class PipelineView extends StackPane implements Initializable {
         Platform.runLater(() -> {
             final StepView stepView = findStepView(event.getStep());
 
-            final int oldIndex = this.getSteps().indexOf(stepView);
-            final int newIndex = Math.min(Math.max(oldIndex + event.getDistance(), 0), this.getSteps().size() - 1);
+            final int oldIndex = getSteps().indexOf(stepView);
+            final int newIndex = Math.min(Math.max(oldIndex + event.getDistance(), 0), getSteps().size() - 1);
 
             if (newIndex != oldIndex) {
-                this.steps.getChildren().remove(oldIndex);
-                this.steps.getChildren().add(newIndex, stepView);
+                steps.getChildren().remove(oldIndex);
+                steps.getChildren().add(newIndex, stepView);
             }
         });
     }
@@ -284,7 +247,7 @@ public class PipelineView extends StackPane implements Initializable {
     @Subscribe
     public void onConnectionAdded(ConnectionAddedEvent event) {
         // Add the new connection view
-        Platform.runLater(() -> this.addConnectionView(event.getConnection()));
+        Platform.runLater(() -> addConnectionView(event.getConnection()));
     }
 
     @Subscribe
@@ -292,8 +255,8 @@ public class PipelineView extends StackPane implements Initializable {
         // Remove the control that corresponds with the connection that was removed
         Platform.runLater(() -> {
             final ConnectionView connectionView = findConnectionView(event.getConnection());
-            this.connections.getChildren().remove(connectionView);
-            this.eventBus.unregister(connectionView);
+            connections.getChildren().remove(connectionView);
+            eventBus.unregister(connectionView);
         });
     }
 }

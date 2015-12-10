@@ -19,12 +19,12 @@ public final class SourceViewFactory {
      * @param <S>      The type of the source
      * @return The appropriate SourceView.
      */
-    public static <S extends Source> SourceView<S> createSourceControlsView(EventBus eventBus, S source) {
+    public static <S extends Source> SourceView<S> createSourceView(EventBus eventBus, S source) {
         final SourceView<S> sourceView;
         if (source instanceof CameraSource) {
             sourceView = (SourceView<S>) new CameraSourceView(eventBus, (CameraSource) source);
         } else if (source instanceof MultiImageFileSource) {
-            sourceView =  (SourceView<S>) new MultiImageFileSourceView(eventBus, (MultiImageFileSource) source);
+            sourceView = (SourceView<S>) new MultiImageFileSourceView(eventBus, (MultiImageFileSource) source);
         } else {
             sourceView = new SourceView<S>(eventBus, source) {
             };

@@ -4,14 +4,11 @@ import com.google.common.eventbus.EventBus;
 import edu.wpi.grip.core.Palette;
 import edu.wpi.grip.core.Pipeline;
 import edu.wpi.grip.core.serialization.Project;
-import edu.wpi.grip.ui.pipeline.PipelineView;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.Parent;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.Dialog;
-import javafx.scene.control.ScrollPane;
-import javafx.scene.control.SplitPane;
+import javafx.scene.control.*;
+import javafx.scene.layout.Region;
 import javafx.stage.FileChooser;
 
 import javax.inject.Inject;
@@ -26,16 +23,14 @@ public class MainWindowController {
 
     @FXML private Parent root;
     @FXML private SplitPane topPane;
-    @FXML private ScrollPane bottomPane;
+    @FXML private Region bottomPane;
+    @FXML private Region pipelineView;
     @Inject private EventBus eventBus;
     @Inject private Pipeline pipeline;
     @Inject private Palette palette;
     @Inject private Project project;
 
     public void initialize() {
-        PipelineView pipelineView = new PipelineView(eventBus, pipeline);
-
-        bottomPane.setContent(pipelineView);
         pipelineView.prefHeightProperty().bind(bottomPane.heightProperty());
     }
 
