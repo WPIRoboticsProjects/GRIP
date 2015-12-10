@@ -31,7 +31,7 @@ allprojects {
         testCompile group: 'junit', name: 'junit', version: '4.12'
     }
 
-    version = '0.1.0'
+    version = '0.2.0'
 
     jacocoTestReport {
         reports {
@@ -50,11 +50,8 @@ allprojects {
     // Turn on test results
     test {
         testLogging {
-            afterSuite { desc, result ->
-                if (!desc.parent && project.hasProperty('printTestResults')) {
-                    println "Test results: ${result.resultType} (${result.testCount} tests, ${result.successfulTestCount} passed, ${result.failedTestCount} failed, ${result.skippedTestCount} skipped)"
-                }
-            }
+            events "failed"
+            exceptionFormat "full"
         }
     }
 }

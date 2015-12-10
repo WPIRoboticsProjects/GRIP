@@ -5,6 +5,8 @@ import com.google.common.eventbus.Subscribe;
 import edu.wpi.grip.core.*;
 import edu.wpi.grip.core.events.*;
 import edu.wpi.grip.ui.pipeline.input.InputSocketView;
+import edu.wpi.grip.ui.pipeline.source.SourceView;
+import edu.wpi.grip.ui.pipeline.source.SourceViewFactory;
 import javafx.application.Platform;
 import javafx.beans.InvalidationListener;
 import javafx.beans.property.ReadOnlyObjectProperty;
@@ -140,7 +142,7 @@ public class PipelineView extends StackPane implements Initializable {
             }
         }
 
-        for (SourceView sourceView : this.getSources()) {
+        for (SourceView<?> sourceView : this.getSources()) {
             for (OutputSocketView socketView : sourceView.getOutputSockets()) {
                 if (socketView.getSocket() == socket) {
                     return socketView;
@@ -235,7 +237,9 @@ public class PipelineView extends StackPane implements Initializable {
 
     @Subscribe
     public void onSourceAdded(SourceAddedEvent event) {
-        Platform.runLater(() -> this.sources.getChildren().add(new SourceView(this.eventBus, event.getSource())));
+        Platform.runLater(() ->
+                this.sources.getChildren().add(
+                        SourceViewFactory.createSourceControlsView(eventBus, event.getSource())));
     }
 
     @Subscribe
