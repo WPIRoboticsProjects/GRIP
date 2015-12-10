@@ -11,6 +11,7 @@ public class DPIUtility {
     private final static double HIDPI_SCALE = 2.0;
 
     public final static double FONT_SIZE = 11.0 * (isManualHiDPI() ? HIDPI_SCALE : 1.0);
+    public final static double MINI_ICON_SIZE = 8.0 * (isManualHiDPI() ? HIDPI_SCALE : 1.0);
     public final static double SMALL_ICON_SIZE = 16.0 * (isManualHiDPI() ? HIDPI_SCALE : 1.0);
     public final static double LARGE_ICON_SIZE = 48.0 * (isManualHiDPI() ? HIDPI_SCALE : 1.0);
     public final static double STROKE_WIDTH = 2.0 * (isManualHiDPI() ? HIDPI_SCALE : 1.0);
