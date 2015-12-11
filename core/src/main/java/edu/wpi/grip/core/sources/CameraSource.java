@@ -137,7 +137,7 @@ public final class CameraSource extends Source implements StartStoppable {
             }
 
             final Thread frameExecutor = new Thread(() -> {
-                long lastFrame = System.currentTimeMillis();
+                long lastFrame = System.nanoTime();
                 while (!Thread.interrupted()) {
                     final Frame videoFrame;
                     try {
@@ -154,8 +154,13 @@ public final class CameraSource extends Source implements StartStoppable {
 
                     frameMat.copyTo(frameOutputSocket.getValue().get());
                     frameOutputSocket.setValue(frameOutputSocket.getValue().get());
-                    long thisMoment = System.currentTimeMillis();
-                    frameRateOutputSocket.setValue(1000 / (thisMoment - lastFrame));
+
+                    /*
+                     *
+                     */
+                    final long thisMoment = System.nanoTime();
+                    final long elapsedTime = thisMoment - lastFrame;
+                    if (elapsedTime != 0) frameRateOutputSocket.setValue(1e9 / elapsedTime);
                     lastFrame = thisMoment;
                 }
             }, "Camera");
