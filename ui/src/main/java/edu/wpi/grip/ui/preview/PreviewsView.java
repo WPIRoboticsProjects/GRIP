@@ -79,10 +79,15 @@ public class PreviewsView extends VBox {
             for (OutputSocket<?> i : socketsMovedArray) {
                 if (this.previewedSockets.indexOf(i) != -1) {//If this socket is previewed
                     previewedMovedSockets.push(i);
-                    if (rightmostIndex < this.previewedSockets.indexOf(i))
+
+                    if (rightmostIndex < this.previewedSockets.indexOf(i)){
                         rightmostIndex = this.previewedSockets.indexOf(i);
-                    if (leftmostIndex > this.previewedSockets.indexOf(i))
+                    }
+
+                    if (leftmostIndex > this.previewedSockets.indexOf(i)) {
                         leftmostIndex = this.previewedSockets.indexOf(i);
+                    }
+
                 }
             }
 
@@ -93,10 +98,11 @@ public class PreviewsView extends VBox {
 
                 int newLocation = 0;//This will hold the new index in the list of previewed sockets for this socket
 
-                if (distanceMoved < 0) //If the step moved left....
+                if (distanceMoved < 0) { //If the step moved left....
                     newLocation = leftmostIndex + distanceMoved; //Calculate the new index from the leftmost previewed socket of this step
-                else //The step must have moved right....
+                }else { //The step must have moved right....
                     newLocation = rightmostIndex + distanceMoved;//So calculate the new index from the rightmost previewed socket of this step
+                }
 
                 if (newLocation < numberOfSourcePreviews) {//If the new calculated index would put it in the midst of source previews
                     newLocation = numberOfSourcePreviews;//Make the index the location of the first non-source preview
@@ -112,10 +118,11 @@ public class PreviewsView extends VBox {
                                 ((nextSocketInDirection.getStep().isPresent())
                                         && (nextSocketInDirection.getStep().get() == this.previewedSockets.get(newLocation).getStep().get()))) { //While we haven't reached the beginning of the list of previews, the socket at this location is a socket from a step, and it is the SAME step as the step of the socket at the new location...
                             count++;
-                            if ((newLocation - count) > 0)//If we haven't reached the beginning of the list of open previews...
+                            if ((newLocation - count) > 0) {//If we haven't reached the beginning of the list of open previews...
                                 nextSocketInDirection = this.previewedSockets.get(newLocation - count);//Grab the next previewed socket to examine in the direction we are moving
-                            else
+                            } else {
                                 zeroReached = true;//Mark that we've reached the beginning of the list of previews so we know to stop looking for more
+                            }
                         }
                         newLocation = newLocation - (count - 1);//Since the first compare of the while loop will always be true, we subract one from the count when we use it to adjust newLocation
 
@@ -132,9 +139,9 @@ public class PreviewsView extends VBox {
                 this.previewedSockets.remove(oldIndex);
                 this.eventBus.unregister(this.previewBox.getChildren().remove(oldIndex));
 
-                if (newLocation > this.previewedSockets.size())//If the new index is now too big for the list of previews
+                if (newLocation > this.previewedSockets.size()) {//If the new index is now too big for the list of previews
                     newLocation = this.previewedSockets.size();//Make it so it will be added to the end of the list of previews
-
+                }
                 this.previewedSockets.add(newLocation, current);//...add it to the correct location in the list of previews open
                 this.previewBox.getChildren().add(newLocation, SocketPreviewViewFactory.createPreviewView(this.eventBus, current));//...and display it in the correct location in the list of previews open
             }

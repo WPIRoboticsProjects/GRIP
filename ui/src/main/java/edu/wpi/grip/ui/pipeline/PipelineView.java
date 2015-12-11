@@ -154,9 +154,6 @@ public class PipelineView extends StackPane implements Initializable {
     }
 
     /**
-     * This function is public because it is used by {@link edu.wpi.grip.ui.preview.PreviewsView#onSocketPreviewChanged}
-     * to order the list of previews.
-     *
      * @return The {@link SourceView} that corresponds with the given source
      */
     public SourceView findSourceView(Source source) {
@@ -170,9 +167,6 @@ public class PipelineView extends StackPane implements Initializable {
     }
 
     /**
-     * This function is public because it is used by {@link edu.wpi.grip.ui.preview.PreviewsView#onSocketPreviewChanged}
-     * to order the list of previews.
-     *
      * @return The {@link StepView} that corresponds with the given step
      */
     public StepView findStepView(Step step) {
