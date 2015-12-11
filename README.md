@@ -4,7 +4,7 @@
 [![Build Status](https://travis-ci.org/WPIRoboticsProjects/GRIP.svg?branch=master)](https://travis-ci.org/WPIRoboticsProjects/GRIP)
 [![Build status](https://ci.appveyor.com/api/projects/status/9xl8pggec4l75pqb/branch/master?svg=true)](https://ci.appveyor.com/project/ThomasJClark/grip/branch/master)
 [![codecov.io](http://codecov.io/github/WPIRoboticsProjects/GRIP/coverage.svg?branch=master)](http://codecov.io/github/WPIRoboticsProjects/GRIP?branch=master)
-
+[![Github Releases](https://img.shields.io/github/downloads/WPIRoboticsProjects/GRIP/total.svg)](https://github.com/WPIRoboticsProjects/GRIP/releases/latest)
 
 # GRIP Computer Vision Engine
 
