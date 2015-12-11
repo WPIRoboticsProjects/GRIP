@@ -17,7 +17,7 @@
                 <VBox fx:id="sources" styleClass="sources"/>
             </VBox>
             <Separator orientation="VERTICAL"/>
-            <HBox fx:id="steps" styleClass="steps" fillHeight="false"/>
+            <HBox fx:id="stepBox" styleClass="steps" fillHeight="false"/>
         </HBox>
         <Group fx:id="connections" mouseTransparent="true">
             <StackPane.alignment>TOP_LEFT</StackPane.alignment>
