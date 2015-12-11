@@ -57,7 +57,7 @@ allprojects {
     }
 }
 
-def os = osdetector.classifier.replace("osx", "macosx")
+def os = osdetector.classifier.replace("osx", "macosx").replace("windows-x86_32", "windows-x86")
 
 project(":core") {
     apply plugin: 'java'
