@@ -25,7 +25,7 @@ public class Main extends Application {
     @Inject private EventBus eventBus;
     @Inject private Palette palette;
 
-    protected final Injector injector = Guice.createInjector(new GRIPCoreModule());
+    protected final Injector injector = Guice.createInjector(new GRIPCoreModule(), new GRIPUIModule());
 
     private final Object dialogLock = new Object();
     private Parent root;

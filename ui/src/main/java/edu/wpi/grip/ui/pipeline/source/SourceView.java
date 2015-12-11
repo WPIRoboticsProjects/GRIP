@@ -5,7 +5,7 @@ import edu.wpi.grip.core.OutputSocket;
 import edu.wpi.grip.core.Source;
 import edu.wpi.grip.core.events.SourceRemovedEvent;
 import edu.wpi.grip.ui.pipeline.OutputSocketView;
-import edu.wpi.grip.ui.pipeline.StepView;
+import edu.wpi.grip.ui.pipeline.StepController;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -20,7 +20,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * A JavaFX control that represents a {@link Source}.  <code>SourceView</code>s are somewhat analogous to
- * {@link StepView}s in thatthe pipeline contrains them and they contain some sockets, but <code>SourceView</code>s
+ * {@link StepController}s in thatthe pipeline contrains them and they contain some sockets, but <code>SourceView</code>s
  * only have output sockets, and they show up in a different place.
  *
  * @param <S> The type of Source this view is for.
