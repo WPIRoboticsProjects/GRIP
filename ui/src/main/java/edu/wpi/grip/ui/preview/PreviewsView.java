@@ -80,7 +80,7 @@ public class PreviewsView extends VBox {
                 if (this.previewedSockets.indexOf(i) != -1) {//If this socket is previewed
                     previewedMovedSockets.push(i);
 
-                    if (rightmostIndex < this.previewedSockets.indexOf(i)){
+                    if (rightmostIndex < this.previewedSockets.indexOf(i)) {
                         rightmostIndex = this.previewedSockets.indexOf(i);
                     }
 
@@ -100,7 +100,7 @@ public class PreviewsView extends VBox {
 
                 if (distanceMoved < 0) { //If the step moved left....
                     newLocation = leftmostIndex + distanceMoved; //Calculate the new index from the leftmost previewed socket of this step
-                }else { //The step must have moved right....
+                } else { //The step must have moved right....
                     newLocation = rightmostIndex + distanceMoved;//So calculate the new index from the rightmost previewed socket of this step
                 }
 
