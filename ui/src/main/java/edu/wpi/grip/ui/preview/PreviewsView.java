@@ -57,11 +57,11 @@ public class PreviewsView extends VBox {
         this.eventBus.register(this);
     }
 
-    @Subscribe
     /**
      * This function is called when a step moves in the pipeline to adjust the positions of any open previews it has
      * to reflect the new order of the pipeline.
      */
+    @Subscribe
     public synchronized void onPreviewOrderChanged(StepMovedEvent event) {
         Platform.runLater(() -> {//Run this function on the main gui thread
             final Step movedStep = event.getStep(); //The step whose position in the pipeline has changed
@@ -148,10 +148,10 @@ public class PreviewsView extends VBox {
         });
     }
 
-    @Subscribe
     /**
      * This function is called when a preview button is pushed/triggered
      */
+    @Subscribe
     public synchronized void onSocketPreviewChanged(SocketPreviewChangedEvent event) {
         Platform.runLater(() -> {//Run this function on the main gui thread
 
