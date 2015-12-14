@@ -2,10 +2,8 @@ package edu.wpi.grip.ui.pipeline;
 
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
-import edu.wpi.grip.core.Connection;
-import edu.wpi.grip.core.InputSocket;
-import edu.wpi.grip.core.OutputSocket;
-import edu.wpi.grip.core.Socket;
+import com.google.inject.Inject;
+import edu.wpi.grip.core.*;
 import edu.wpi.grip.core.events.ConnectionAddedEvent;
 import edu.wpi.grip.core.events.ConnectionRemovedEvent;
 import edu.wpi.grip.core.events.SocketConnectedChangedEvent;
@@ -37,6 +35,8 @@ public class SocketHandleView extends Button {
 
     private static Optional<Socket> draggingSocket = Optional.empty();
 
+    @Inject Connection.Factory connectionFactory;
+    @Inject private Pipeline pipeline;
     final private Socket socket;
     final private EventBus eventBus;
 
@@ -116,7 +116,7 @@ public class SocketHandleView extends Button {
                     default:
                         throw new IllegalStateException("The Socket was a type that wasn't expected " + other.getDirection());
                 }
-                final Connection connection = new Connection(eventBus, outputSocket, inputSocket);
+                final Connection connection = connectionFactory.create(outputSocket, inputSocket);
                 eventBus.post(new ConnectionAddedEvent(connection));
             });
         });
@@ -124,7 +124,7 @@ public class SocketHandleView extends Button {
         // Accept a drag event if it's possible to connect the two sockets
         this.setOnDragOver(dragEvent -> {
             draggingSocket.ifPresent(other -> {
-                if (Connection.canConnect(this.socket, other)) {
+                if (pipeline.canConnect(this.socket, other)) {
                     dragEvent.acceptTransferModes(TransferMode.ANY);
                     this.connectingProperty.set(true);
                 }

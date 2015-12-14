@@ -1,6 +1,7 @@
 package edu.wpi.grip.ui.pipeline;
 
 import com.google.common.eventbus.EventBus;
+import com.google.inject.Inject;
 import edu.wpi.grip.core.events.SourceAddedEvent;
 import edu.wpi.grip.core.events.UnexpectedThrowableEvent;
 import edu.wpi.grip.core.sources.CameraSource;
@@ -39,6 +40,9 @@ import static com.google.common.base.Preconditions.checkNotNull;
 public class AddSourceView extends HBox {
 
     private final EventBus eventBus;
+    @Inject private MultiImageFileSource.Factory multiImageSourceFactory;
+    @Inject private ImageFileSource.Factory imageSourceFactory;
+    @Inject private CameraSource.Factory cameraSourceFactory;
 
     @FunctionalInterface
     private interface SupplierWithIO<T> {
@@ -82,13 +86,17 @@ public class AddSourceView extends HBox {
             // Add a new source for each image .
             if (imageFiles.size() == 1) {
                 try {
-                    eventBus.post(new SourceAddedEvent(new ImageFileSource(eventBus, imageFiles.get(0))));
+                    final ImageFileSource imageFileSource = imageSourceFactory.create(imageFiles.get(0));
+                    imageFileSource.load();
+                    eventBus.post(new SourceAddedEvent(imageFileSource));
                 } catch (IOException e) {
                     eventBus.post(new UnexpectedThrowableEvent(e, "The image selected was invalid"));
                 }
             } else {
                 try {
-                    eventBus.post(new SourceAddedEvent(new MultiImageFileSource(eventBus, imageFiles)));
+                    final MultiImageFileSource multiImageFileSource = multiImageSourceFactory.create(imageFiles);
+                    multiImageFileSource.load();
+                    eventBus.post(new SourceAddedEvent(multiImageFileSource));
                 } catch (IOException e) {
                     eventBus.post(new UnexpectedThrowableEvent(e, "One of the images selected was invalid"));
                 }
@@ -108,7 +116,11 @@ public class AddSourceView extends HBox {
 
             // If the user clicks OK, add a new camera source
             loadCamera(dialog,
-                    () -> new CameraSource(eventBus, cameraIndex.getValue()).start(eventBus),
+                    () -> {
+                        final CameraSource cameraSource = cameraSourceFactory.create(cameraIndex.getValue());
+                        cameraSource.start();
+                        return cameraSource;
+                    },
                     e -> {
                         dialog.errorText.setText(e.getMessage());
                     });
@@ -142,7 +154,11 @@ public class AddSourceView extends HBox {
 
             // If the user clicks OK, add a new camera source
             loadCamera(dialog,
-                    () -> new CameraSource(eventBus, cameraAddress.getText()).start(eventBus),
+                    () -> {
+                        final CameraSource cameraSource = cameraSourceFactory.create(cameraAddress.getText());
+                        cameraSource.start();
+                        return cameraSource;
+                    },
                     e -> {
                         dialog.errorText.setText(e.getMessage());
                     });

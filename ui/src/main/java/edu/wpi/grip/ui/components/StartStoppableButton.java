@@ -47,7 +47,7 @@ public final class StartStoppableButton extends ToggleButton {
         addEventFilter(MouseEvent.MOUSE_RELEASED, (event) -> {
             event.consume();
             if (!isSelected()) try {
-                startStoppable.start(eventBus);
+                startStoppable.start();
                 // If this fails then an StartedStoppedEvent will not be posted
             } catch (IOException e) {
                 eventBus.post(new UnexpectedThrowableEvent(e, "Failed to start"));
