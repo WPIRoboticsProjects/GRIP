@@ -3,15 +3,16 @@ package edu.wpi.grip.core;
 import com.google.common.eventbus.EventBus;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
+import com.google.inject.Key;
+import com.google.inject.TypeLiteral;
 import edu.wpi.grip.core.events.*;
-import edu.wpi.grip.core.sources.ImageFileSource;
 import org.junit.Test;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Properties;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -19,13 +20,34 @@ import static org.junit.Assert.assertTrue;
 public class PipelineTest {
 
     private Injector injector = Guice.createInjector(new GRIPCoreModule());
+    private Step.Factory stepFactory = injector.getInstance(Step.Factory.class);
+    private Connection.Factory<Double> connectionFactory =
+            injector.getInstance(Key.get(new TypeLiteral<Connection.Factory<Double>>() {} ));
     private EventBus eventBus = injector.getInstance(EventBus.class);
     private Pipeline pipeline = injector.getInstance(Pipeline.class);
     private Operation addition = new AdditionOperation();
 
+
+    class MockSource extends Source {
+        @Override
+        public String getName() {
+            return null;
+        }
+
+        @Override
+        protected OutputSocket[] createOutputSockets() {
+            return new OutputSocket[0];
+        }
+
+        @Override
+        public Properties getProperties() {
+            return null;
+        }
+    };
+
     @Test
     public void testAddSource() throws URISyntaxException, IOException {
-        Source source = new ImageFileSource(eventBus, new File(getClass().getResource("/edu/wpi/grip/images/GRIP_Logo.png").toURI()));
+        Source source = new MockSource();
 
         eventBus.post(new SourceAddedEvent(source));
 
@@ -34,7 +56,7 @@ public class PipelineTest {
 
     @Test
     public void testRemoveSource() throws URISyntaxException, IOException {
-        Source source = new ImageFileSource(eventBus, new File(getClass().getResource("/edu/wpi/grip/images/GRIP_Logo.png").toURI()));
+        Source source = new MockSource();
 
         eventBus.post(new SourceAddedEvent(source));
         eventBus.post(new SourceRemovedEvent(source));
@@ -45,7 +67,7 @@ public class PipelineTest {
     @Test
     @SuppressWarnings("unchecked")
     public void testAddStep() {
-        Step step = new Step(eventBus, addition);
+        Step step = stepFactory.create(addition);
 
         eventBus.post(new StepAddedEvent(step));
 
@@ -55,8 +77,8 @@ public class PipelineTest {
     @Test
     @SuppressWarnings("unchecked")
     public void testAddStepAtIndex() {
-        Step step1 = new Step(eventBus, addition);
-        Step step2 = new Step(eventBus, addition);
+        Step step1 = stepFactory.create(addition);
+        Step step2 = stepFactory.create(addition);
 
         eventBus.post(new StepAddedEvent(step1));
         eventBus.post(new StepAddedEvent(step2, 0));
@@ -67,8 +89,8 @@ public class PipelineTest {
     @Test
     @SuppressWarnings("unchecked")
     public void testRemoveFirstStep() {
-        Step step1 = new Step(eventBus, addition);
-        Step step2 = new Step(eventBus, addition);
+        Step step1 = stepFactory.create(addition);
+        Step step2 = stepFactory.create(addition);
 
         eventBus.post(new StepAddedEvent(step1));
         eventBus.post(new StepAddedEvent(step2));
@@ -80,8 +102,8 @@ public class PipelineTest {
     @Test
     @SuppressWarnings("unchecked")
     public void testRemoveSecondStep() {
-        Step step1 = new Step(eventBus, addition);
-        Step step2 = new Step(eventBus, addition);
+        Step step1 = stepFactory.create(addition);
+        Step step2 = stepFactory.create(addition);
 
         eventBus.post(new StepAddedEvent(step1));
         eventBus.post(new StepAddedEvent(step2));
@@ -92,9 +114,9 @@ public class PipelineTest {
 
     @Test
     public void testMoveStep() {
-        Step step1 = new Step(eventBus, addition);
-        Step step2 = new Step(eventBus, addition);
-        Step step3 = new Step(eventBus, addition);
+        Step step1 = stepFactory.create(addition);
+        Step step2 = stepFactory.create(addition);
+        Step step3 = stepFactory.create(addition);
 
         eventBus.post(new StepAddedEvent(step1));
         eventBus.post(new StepAddedEvent(step2));
@@ -106,9 +128,9 @@ public class PipelineTest {
 
     @Test
     public void testMoveStepToBeginning() {
-        Step step1 = new Step(eventBus, addition);
-        Step step2 = new Step(eventBus, addition);
-        Step step3 = new Step(eventBus, addition);
+        Step step1 = stepFactory.create(addition);
+        Step step2 = stepFactory.create(addition);
+        Step step3 = stepFactory.create(addition);
 
         eventBus.post(new StepAddedEvent(step1));
         eventBus.post(new StepAddedEvent(step2));
@@ -120,9 +142,9 @@ public class PipelineTest {
 
     @Test
     public void testMoveStepToEnd() {
-        Step step1 = new Step(eventBus, addition);
-        Step step2 = new Step(eventBus, addition);
-        Step step3 = new Step(eventBus, addition);
+        Step step1 = stepFactory.create(addition);
+        Step step2 = stepFactory.create(addition);
+        Step step3 = stepFactory.create(addition);
 
         eventBus.post(new StepAddedEvent(step1));
         eventBus.post(new StepAddedEvent(step2));
@@ -135,12 +157,13 @@ public class PipelineTest {
     @Test
     @SuppressWarnings("unchecked")
     public void testAddConnection() {
-        Step step1 = new Step(eventBus, addition);
-        Step step2 = new Step(eventBus, addition);
+        Step step1 = stepFactory.create(addition);
+        Step step2 = stepFactory.create(addition);
         eventBus.post(new StepAddedEvent(step1));
         eventBus.post(new StepAddedEvent(step2));
 
-        Connection connection = new Connection(eventBus, step1.getOutputSockets()[0], step2.getInputSockets()[0]);
+        Connection connection = connectionFactory
+                .create((OutputSocket)(step1.getOutputSockets()[0]), (InputSocket) step2.getInputSockets()[0]);
         eventBus.post(new ConnectionAddedEvent(connection));
 
         assertEquals(Collections.singleton(connection), pipeline.getConnections());
@@ -149,12 +172,14 @@ public class PipelineTest {
     @Test
     @SuppressWarnings("unchecked")
     public void testRemoveConnection() {
-        Step step1 = new Step(eventBus, addition);
-        Step step2 = new Step(eventBus, addition);
+        Step step1 = stepFactory.create(addition);
+        Step step2 = stepFactory.create(addition);
         eventBus.post(new StepAddedEvent(step1));
         eventBus.post(new StepAddedEvent(step2));
 
-        Connection connection = new Connection(eventBus, step1.getOutputSockets()[0], step2.getInputSockets()[0]);
+        Connection connection = connectionFactory.create(
+                (OutputSocket) step1.getOutputSockets()[0],
+                (InputSocket) step2.getInputSockets()[0]);
         eventBus.post(new ConnectionAddedEvent(connection));
         eventBus.post(new ConnectionRemovedEvent(connection));
 
@@ -164,8 +189,8 @@ public class PipelineTest {
     @Test
     @SuppressWarnings("unchecked")
     public void testPipeline() {
-        Step step1 = new Step(eventBus, addition);
-        Step step2 = new Step(eventBus, addition);
+        Step step1 = stepFactory.create(addition);
+        Step step2 = stepFactory.create(addition);
         InputSocket<Double> a1 = (InputSocket<Double>) step1.getInputSockets()[0];
         InputSocket<Double> b1 = (InputSocket<Double>) step1.getInputSockets()[1];
         OutputSocket<Double> sum1 = (OutputSocket<Double>) step1.getOutputSockets()[0];
@@ -181,7 +206,7 @@ public class PipelineTest {
         eventBus.post(new StepAddedEvent(step1));
         eventBus.post(new StepAddedEvent(step2));
 
-        Connection connection = new Connection(eventBus, sum1, a2);
+        Connection connection = new Connection(eventBus, pipeline, sum1, a2);
         eventBus.post(new ConnectionAddedEvent(connection));
 
         a1.setValue(123.0);
@@ -194,8 +219,8 @@ public class PipelineTest {
     @Test
     @SuppressWarnings("unchecked")
     public void testPipelineRemoved() {
-        Step step1 = new Step(eventBus, addition);
-        Step step2 = new Step(eventBus, addition);
+        Step step1 = stepFactory.create(addition);
+        Step step2 = stepFactory.create(addition);
         InputSocket<Double> a1 = (InputSocket<Double>) step1.getInputSockets()[0];
         InputSocket<Double> b1 = (InputSocket<Double>) step1.getInputSockets()[1];
         OutputSocket<Double> sum1 = (OutputSocket<Double>) step1.getOutputSockets()[0];
@@ -208,7 +233,7 @@ public class PipelineTest {
         eventBus.post(new StepAddedEvent(step1));
         eventBus.post(new StepAddedEvent(step2));
 
-        Connection connection = new Connection(eventBus, sum1, a2);
+        Connection connection = new Connection(eventBus, pipeline, sum1, a2);
         eventBus.post(new ConnectionAddedEvent(connection));
         eventBus.post(new ConnectionRemovedEvent(connection));
 
@@ -223,14 +248,14 @@ public class PipelineTest {
     @Test(expected = IllegalArgumentException.class)
     @SuppressWarnings("unchecked")
     public void testCannotConnectBackwards() {
-        Step step1 = new Step(eventBus, addition);
-        Step step2 = new Step(eventBus, addition);
+        Step step1 = stepFactory.create(addition);
+        Step step2 = stepFactory.create(addition);
         InputSocket<Double> a1 = (InputSocket<Double>) step1.getInputSockets()[0];
         OutputSocket<Double> sum2 = (OutputSocket<Double>) step2.getOutputSockets()[0];
 
         eventBus.post(new StepAddedEvent(step1));
         eventBus.post(new StepAddedEvent(step2));
-        new Connection<>(eventBus, sum2, a1);
+        connectionFactory.create(sum2, a1);
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -239,6 +264,6 @@ public class PipelineTest {
         InputSocket<Number> a = new InputSocket<>(eventBus, SocketHints.createNumberSocketHint("a", 0.0));
         OutputSocket<String> b = new OutputSocket<>(eventBus, new SocketHint.Builder<>(String.class).identifier("b").initialValue("").build());
 
-        new Connection<>(eventBus, (OutputSocket) b, (InputSocket) a);
+        connectionFactory.create((OutputSocket) b, (InputSocket) a);
     }
 }

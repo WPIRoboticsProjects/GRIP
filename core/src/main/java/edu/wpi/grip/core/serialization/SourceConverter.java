@@ -9,6 +9,7 @@ import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 import edu.wpi.grip.core.Source;
 import edu.wpi.grip.core.events.SourceAddedEvent;
+import edu.wpi.grip.core.sources.LoadableSource;
 
 import javax.inject.Inject;
 import java.io.IOException;
@@ -22,12 +23,13 @@ import java.util.Properties;
  * new instance, sources are simply serialized by saving the result of {@link Source#getProperties()}.
  * <p>
  * To deserialize a source, we create a new instance of the appropriate class and then call
- * {@link Source#createFromProperties(EventBus, Properties)} with the deserialized properties.
+ * {@link edu.wpi.grip.core.Source.SourceFactory#create(Class, Properties)} with the deserialized properties.
  */
 public class SourceConverter implements Converter {
 
     @Inject private EventBus eventBus;
     @Inject private Project project;
+    @Inject private Source.SourceFactory sourceFactory;
 
     @Override
     public void marshal(Object obj, HierarchicalStreamWriter writer, MarshallingContext context) {
@@ -44,14 +46,16 @@ public class SourceConverter implements Converter {
             // Although sources may block briefly upon creation, we intentionally do this in one thread.  This is to
             // ensure that other objects being deserialized (such as connections) don't try to access sources that
             // are in the process of loading.
-            final Source source = sourceClass.newInstance();
-            source.createFromProperties(eventBus, properties);
+            final Source source = sourceFactory.create(sourceClass, properties);
+            if (source instanceof LoadableSource) {
+                ((LoadableSource) source).load();
+            }
 
             // Instead of returning the source, post it to the event bus so both the core and GUI classes know it
             // exists.
             eventBus.post(new SourceAddedEvent(source));
             return null;
-        } catch (InstantiationException | IllegalAccessException | IOException e) {
+        } catch (IOException | RuntimeException e) {
             throw new ConversionException("Error deserializing source", e);
         }
     }

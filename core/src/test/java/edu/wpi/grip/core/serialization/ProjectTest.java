@@ -3,11 +3,17 @@ package edu.wpi.grip.core.serialization;
 import com.google.common.eventbus.EventBus;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
+import com.google.inject.Key;
+import com.google.inject.TypeLiteral;
 import edu.wpi.grip.core.*;
 import edu.wpi.grip.core.events.ConnectionAddedEvent;
 import edu.wpi.grip.core.events.OperationAddedEvent;
+import edu.wpi.grip.core.events.SourceAddedEvent;
 import edu.wpi.grip.core.events.StepAddedEvent;
 import edu.wpi.grip.core.operations.PythonScriptOperation;
+import edu.wpi.grip.core.sources.ImageFileSource;
+import edu.wpi.grip.util.Files;
+import org.junit.Before;
 import org.junit.Test;
 
 import java.io.Reader;
@@ -20,16 +26,29 @@ import static org.bytedeco.javacpp.opencv_core.*;
 
 public class ProjectTest {
 
-    private final Injector injector = Guice.createInjector(new GRIPCoreModule());
+    private Injector injector;
 
-    private final EventBus eventBus = injector.getInstance(EventBus.class);
-    private final Pipeline pipeline = injector.getInstance(Pipeline.class);
-    private final Project project = injector.getInstance(Project.class);
+    private Connection.Factory<Number> connectionFactory;
+    private ImageFileSource.Factory imageSourceFactory;
+    private EventBus eventBus;
+    private Pipeline pipeline;
+    private Project project;
 
-    private final Operation additionOperation, opencvAddOperation, pythonAdditionOperationFromURL,
+    private Operation additionOperation, opencvAddOperation, pythonAdditionOperationFromURL,
             pythonAdditionOperationFromSource;
 
-    public ProjectTest() throws Exception {
+    @Before
+    public void setUp() throws Exception {
+        injector = Guice.createInjector(new GRIPCoreModule());
+        connectionFactory = injector
+                .getInstance(Key.get(new TypeLiteral<Connection.Factory<Number>>() {}));
+        imageSourceFactory = injector
+                .getInstance(ImageFileSource.Factory.class);
+        eventBus = injector.getInstance(EventBus.class);
+        pipeline = injector.getInstance(Pipeline.class);
+        project = injector.getInstance(Project.class);
+
+
         additionOperation = new AdditionOperation();
         pythonAdditionOperationFromURL = new PythonScriptOperation(
                 ProjectTest.class.getResource("/edu/wpi/grip/scripts/addition.py"));
@@ -96,7 +115,7 @@ public class ProjectTest {
 
         eventBus.post(new StepAddedEvent(step1));
         eventBus.post(new StepAddedEvent(step2));
-        eventBus.post(new ConnectionAddedEvent(new Connection<Number>(eventBus, sum1, a2)));
+        eventBus.post(new ConnectionAddedEvent(connectionFactory.create(sum1, a2)));
 
         serializeAndDeserialize();
 
@@ -158,8 +177,11 @@ public class ProjectTest {
         Step step2 = new Step(eventBus, pythonAdditionOperationFromSource);
         eventBus.post(new StepAddedEvent(step1));
         eventBus.post(new StepAddedEvent(step2));
-        eventBus.post(new ConnectionAddedEvent(new Connection(eventBus, step1.getOutputSockets()[0],
-                step2.getInputSockets()[0])));
+        eventBus.post(new ConnectionAddedEvent(
+                connectionFactory.create(
+                        (OutputSocket) step1.getOutputSockets()[0],
+                        (InputSocket) step2.getInputSockets()[0]
+                )));
         serializeAndDeserialize();
 
         InputSocket<Number> a1 = (InputSocket<Number>) pipeline.getSteps().get(0).getInputSockets()[0];
@@ -193,4 +215,17 @@ public class ProjectTest {
         assertEquals("Deserialized pipeline with Mat operations did not produce the expected sum.",
                 0, countNonZero(diff));
     }
+
+    @Test
+    public void testSerializePipelineWithSource() throws Exception {
+        final ImageFileSource source = imageSourceFactory.create(Files.gompeiJpegFile.file);
+        source.load();
+        eventBus.post(new SourceAddedEvent(source));
+
+        serializeAndDeserialize();
+
+        final ImageFileSource sourceDeserialized = (ImageFileSource) pipeline.getSources().get(0);
+        Files.gompeiJpegFile.assertSameImage((Mat) sourceDeserialized.createOutputSockets()[0].getValue().get());
+    }
+
 }

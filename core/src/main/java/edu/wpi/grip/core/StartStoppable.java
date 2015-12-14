@@ -12,18 +12,6 @@ import java.util.concurrent.TimeoutException;
 public interface StartStoppable {
 
     /**
-     * Starts this StartStoppable
-     *
-     * @return Itself
-     * @throws IOException If cleaning up some system resource fails
-     */
-    default <T extends StartStoppable> T start(EventBus eventBus) throws IOException {
-        start();
-        eventBus.register(this);
-        return (T) this;
-    }
-
-    /**
      * Any method that overrides this method should post a {@link edu.wpi.grip.core.events.StartedStoppedEvent}
      * to the {@link EventBus} if is successfully starts.
      *

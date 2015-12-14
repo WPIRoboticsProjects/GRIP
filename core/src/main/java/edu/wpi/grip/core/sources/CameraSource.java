@@ -4,6 +4,8 @@ package edu.wpi.grip.core.sources;
 import com.google.common.base.StandardSystemProperty;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
+import com.google.inject.assistedinject.Assisted;
+import com.google.inject.assistedinject.AssistedInject;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import edu.wpi.grip.core.*;
 import edu.wpi.grip.core.events.SourceRemovedEvent;
@@ -13,6 +15,7 @@ import org.bytedeco.javacpp.opencv_core.Mat;
 import org.bytedeco.javacv.*;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Optional;
 import java.util.Properties;
@@ -20,8 +23,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
-import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * Provides a way to generate a constantly updated {@link Mat} from a camera
@@ -33,17 +34,25 @@ public final class CameraSource extends Source implements StartStoppable {
     private final static String ADDRESS_PROPERTY = "address";
     private static Logger logger =  Logger.getLogger(CameraSource.class.getName());
 
-    private EventBus eventBus;
-    private String name;
+    private final EventBus eventBus;
+    private final String name;
 
-    private Properties properties = new Properties();
+    private final Properties properties;
 
     private final SocketHint<Mat> imageOutputHint = SocketHints.Inputs.createMatSocketHint("Image", true);
     private final SocketHint<Number> frameRateOutputHint = SocketHints.createNumberSocketHint("Frame Rate", 0);
-    private OutputSocket<Mat> frameOutputSocket;
-    private OutputSocket<Number> frameRateOutputSocket;
+    private final OutputSocket<Mat> frameOutputSocket;
+    private final OutputSocket<Number> frameRateOutputSocket;
+    private final FrameGrabber grabber;
     private Optional<Thread> frameThread;
-    private FrameGrabber grabber;
+
+
+
+    public interface Factory {
+        CameraSource create(int deviceNumber) throws IOException;
+        CameraSource create(String address) throws IOException;
+        CameraSource create(Properties properties) throws IOException;
+    }
 
     /**
      * Creates a camera source that can be used as an input to a pipeline
@@ -51,10 +60,9 @@ public final class CameraSource extends Source implements StartStoppable {
      * @param eventBus     The EventBus to attach to
      * @param deviceNumber The device number of the webcam
      */
-    public CameraSource(EventBus eventBus, int deviceNumber) throws IOException {
-        this();
-        this.properties.setProperty(DEVICE_NUMBER_PROPERTY, Integer.toString(deviceNumber));
-        this.createFromProperties(eventBus, this.properties);
+    @AssistedInject
+    CameraSource(EventBus eventBus, @Assisted int deviceNumber) throws IOException {
+        this(eventBus, createProperties(deviceNumber));
     }
 
     /**
@@ -63,25 +71,44 @@ public final class CameraSource extends Source implements StartStoppable {
      * @param eventBus The EventBus to attach to
      * @param address  A URL to stream video from an IP camera
      */
-    public CameraSource(EventBus eventBus, String address) throws IOException {
-        this();
-        this.properties.setProperty(ADDRESS_PROPERTY, address);
-        this.createFromProperties(eventBus, this.properties);
+    @AssistedInject
+    CameraSource(EventBus eventBus, @Assisted String address) throws IOException {
+        this(eventBus, createProperties(address));
     }
 
     /**
      * Used for serialization
      */
-    public CameraSource() {
+    @AssistedInject
+    CameraSource(EventBus eventBus, @Assisted Properties properties) throws MalformedURLException {
         this.frameThread = Optional.empty();
-    }
-
-    private void initialize(EventBus eventBus, FrameGrabber frameGrabber, String name) throws IOException {
-        this.eventBus = checkNotNull(eventBus, "Event Bus was null.");
-        this.name = name;
+        this.eventBus = eventBus;
         this.frameOutputSocket = new OutputSocket<>(eventBus, imageOutputHint);
         this.frameRateOutputSocket = new OutputSocket<>(eventBus, frameRateOutputHint);
-        this.grabber = frameGrabber;
+        this.properties = properties;
+
+
+        final String deviceNumberProperty = properties.getProperty(DEVICE_NUMBER_PROPERTY);
+        final String addressProperty = properties.getProperty(ADDRESS_PROPERTY);
+
+        if (deviceNumberProperty != null) {
+            final int deviceNumber = Integer.valueOf(deviceNumberProperty);
+            this.name = "Webcam " + deviceNumber;
+
+            // On Windows, videoInput is much more reliable for webcam capture.  On other platforms, OpenCV's frame
+            // grabber class works fine.
+            if (StandardSystemProperty.OS_NAME.value().contains("Windows")) {
+                this.grabber = new VideoInputFrameGrabber(deviceNumber);
+            } else {
+                this.grabber = new OpenCVFrameGrabber(deviceNumber);
+            }
+        } else if (addressProperty != null) {
+            this.name = "IP Camera " + new URL(addressProperty).getHost();
+            this.grabber = new IPCameraFrameGrabber(addressProperty);
+        } else {
+            throw new IllegalArgumentException("Cannot initialize CameraSource without either a device number or " +
+                    "address");
+        }
     }
 
     @Override
@@ -97,31 +124,6 @@ public final class CameraSource extends Source implements StartStoppable {
     @Override
     public Properties getProperties() {
         return this.properties;
-    }
-
-    @Override
-    public void createFromProperties(EventBus eventBus, Properties properties) throws IOException {
-        this.properties = properties;
-
-        final String deviceNumberProperty = properties.getProperty(DEVICE_NUMBER_PROPERTY);
-        final String addressProperty = properties.getProperty(ADDRESS_PROPERTY);
-
-        if (deviceNumberProperty != null) {
-            final int deviceNumber = Integer.valueOf(deviceNumberProperty);
-
-            // On Windows, videoInput is much more reliable for webcam capture.  On other platforms, OpenCV's frame
-            // grabber class works fine.
-            if (StandardSystemProperty.OS_NAME.value().contains("Windows")) {
-                this.initialize(eventBus, new VideoInputFrameGrabber(deviceNumber), "Webcam " + deviceNumber);
-            } else {
-                this.initialize(eventBus, new OpenCVFrameGrabber(deviceNumber), "Webcam " + deviceNumber);
-            }
-        } else if (addressProperty != null) {
-            this.initialize(eventBus, new IPCameraFrameGrabber(addressProperty), "IP Camera " + new URL(addressProperty).getHost());
-        } else {
-            throw new IllegalArgumentException("Cannot initialize CameraSource without either a device number or " +
-                    "address");
-        }
     }
 
     /**
@@ -242,6 +244,18 @@ public final class CameraSource extends Source implements StartStoppable {
                 this.eventBus.unregister(this);
             }
         }
+    }
+
+    private static Properties createProperties(String address) {
+        final Properties properties = new Properties();
+        properties.setProperty(ADDRESS_PROPERTY, address);
+        return properties;
+    }
+
+    private static Properties createProperties(int deviceNumber) {
+        final Properties properties = new Properties();
+        properties.setProperty(DEVICE_NUMBER_PROPERTY, "" + deviceNumber);
+        return properties;
     }
 
 }

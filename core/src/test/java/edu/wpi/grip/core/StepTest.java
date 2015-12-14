@@ -22,6 +22,7 @@ public class StepTest {
     @Test
     public void testStep() {
         Step step = new Step(eventBus, addition);
+        eventBus.register(step);
         Socket<Double> a = (Socket<Double>) step.getInputSockets()[0];
         Socket<Double> b = (Socket<Double>) step.getInputSockets()[1];
         Socket<Double> c = (Socket<Double>) step.getOutputSockets()[0];

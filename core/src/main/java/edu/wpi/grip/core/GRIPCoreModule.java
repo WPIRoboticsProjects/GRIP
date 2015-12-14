@@ -4,12 +4,17 @@ import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.SubscriberExceptionContext;
 import com.google.inject.AbstractModule;
 import com.google.inject.TypeLiteral;
+import com.google.inject.assistedinject.FactoryModuleBuilder;
 import com.google.inject.matcher.Matchers;
 import com.google.inject.spi.InjectionListener;
 import com.google.inject.spi.TypeEncounter;
 import com.google.inject.spi.TypeListener;
 import edu.wpi.grip.core.events.UnexpectedThrowableEvent;
 import edu.wpi.grip.core.serialization.Project;
+import edu.wpi.grip.core.sources.CameraSource;
+import edu.wpi.grip.core.sources.ImageFileSource;
+import edu.wpi.grip.core.sources.MultiImageFileSource;
+import edu.wpi.grip.core.util.ExceptionWitness;
 
 /**
  * A Guice {@link com.google.inject.Module} for GRIP's core package.  This is where instances of {@link Pipeline},
@@ -34,6 +39,27 @@ public class GRIPCoreModule extends AbstractModule {
         });
 
         bind(EventBus.class).toInstance(eventBus);
+
+        install(new FactoryModuleBuilder().build(Step.Factory.class));
+
+
+        install(new FactoryModuleBuilder().build(new TypeLiteral<Connection.Factory<Number>>(){}));
+        install(new FactoryModuleBuilder().build(new TypeLiteral<Connection.Factory<Double>>(){}));
+        install(new FactoryModuleBuilder().build(new TypeLiteral<Connection.Factory<Object>>(){}));
+
+
+        bind(Source.SourceFactory.class).to(Source.SourceFactoryImpl.class);
+        install(new FactoryModuleBuilder()
+                .implement(CameraSource.class, CameraSource.class)
+                .build(CameraSource.Factory.class));
+        install(new FactoryModuleBuilder()
+                .implement(ImageFileSource.class, ImageFileSource.class)
+                .build(ImageFileSource.Factory.class));
+        install(new FactoryModuleBuilder()
+                .implement(MultiImageFileSource.class, MultiImageFileSource.class)
+                .build(MultiImageFileSource.Factory.class));
+
+        install(new FactoryModuleBuilder().build(ExceptionWitness.Factory.class));
     }
 
     private void onSubscriberException(Throwable exception, SubscriberExceptionContext context) {

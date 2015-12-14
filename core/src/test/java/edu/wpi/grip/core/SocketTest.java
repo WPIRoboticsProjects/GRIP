@@ -20,6 +20,7 @@ public class SocketTest {
     public void initialize() {
         sh = SocketHints.Inputs.createNumberSliderSocketHint("foo", 0.0, 0.0, 1.0);
         socket = new OutputSocket<Number>(eventBus, sh);
+        eventBus.register(socket);
     }
 
     @Test

@@ -17,9 +17,10 @@ import javax.inject.Inject;
  * <p>
  * A marshalled connection stores indexes indicating the output and input sockets it connects.
  */
-public class ConnectionConverter implements Converter {
+public class ConnectionConverter<T> implements Converter {
 
     @Inject private EventBus eventBus;
+    @Inject private Connection.Factory<Object> connectionFactory;
 
     @Override
     public void marshal(Object source, HierarchicalStreamWriter writer, MarshallingContext context) {
@@ -30,16 +31,16 @@ public class ConnectionConverter implements Converter {
 
     @Override
     public Object unmarshal(HierarchicalStreamReader reader, UnmarshallingContext context) {
-        OutputSocket<?> outputSocket = null;
-        InputSocket<?> inputSocket = null;
+        OutputSocket<Object> outputSocket = null;
+        InputSocket<Object> inputSocket = null;
 
         // Read the child nodes of this connection. An output socket and an input socket should be defined.
         while (reader.hasMoreChildren()) {
             Socket<?> tmp = (Socket<?>) context.convertAnother(null, Socket.class);
             if (tmp.getDirection() == Socket.Direction.INPUT) {
-                inputSocket = (InputSocket<?>) tmp;
+                inputSocket = (InputSocket<Object>) tmp;
             } else {
-                outputSocket = (OutputSocket<?>) tmp;
+                outputSocket = (OutputSocket<Object>) tmp;
             }
         }
 
@@ -49,7 +50,7 @@ public class ConnectionConverter implements Converter {
 
         // Send the new connection as an event, so the GUI and other classes can listen for new connections even if regardless
         // of if they came from a serialized file or not.
-        this.eventBus.post(new ConnectionAddedEvent(new Connection(this.eventBus, outputSocket, inputSocket)));
+        this.eventBus.post(new ConnectionAddedEvent(connectionFactory.create(outputSocket, inputSocket)));
         return null;
     }
 

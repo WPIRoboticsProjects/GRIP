@@ -68,9 +68,55 @@ public class Pipeline {
     }
 
     /**
+     * @return true if a connection can be made from the given output socket to the given input socket
+     */
+    @SuppressWarnings("unchecked")
+    public boolean canConnect(Socket socket1, Socket socket2) {
+        final OutputSocket<?> outputSocket;
+        final InputSocket<?> inputSocket;
+
+        // One socket must be an input and one must be an output
+        if (socket1.getDirection() == socket2.getDirection()) {
+            return false;
+        }
+
+        if (socket1.getDirection().equals(Socket.Direction.OUTPUT)) {
+            outputSocket = (OutputSocket) socket1;
+            inputSocket = (InputSocket) socket2;
+        } else {
+            inputSocket = (InputSocket) socket1;
+            outputSocket = (OutputSocket) socket2;
+        }
+
+        final SocketHint outputHint = socket1.getSocketHint();
+        final SocketHint inputHint = socket2.getSocketHint();
+
+        // The input socket must be able to hold the type of value that the output socket contains
+        if (!inputHint.getType().isAssignableFrom(outputHint.getType())) {
+            return false;
+        }
+
+        // Input sockets can only be connected to one thing
+        if (!inputSocket.getConnections().isEmpty()) {
+            return false;
+        }
+
+        // If both sockets are in steps, the output must be before the input in the pipeline.  This prevents "backwards"
+        // connections, which both enforces a well-organized pipeline and prevents feedback loops.
+        final boolean[] backwards = {false};
+        outputSocket.getStep().ifPresent(outputStep -> inputSocket.getStep().ifPresent(inputStep -> {
+            if (!isBefore(outputStep, inputStep)) {
+                backwards[0] = true;
+            }
+        }));
+
+        return !backwards[0];
+    }
+
+    /**
      * @return true if the step1 is before step2 in the pipeline
      */
-    protected synchronized boolean isBefore(Step step1, Step step2) {
+    private synchronized boolean isBefore(Step step1, Step step2) {
         return this.steps.indexOf(step1) < this.steps.indexOf(step2);
     }
 
@@ -92,7 +138,6 @@ public class Pipeline {
     @Subscribe
     public synchronized void onStepAdded(StepAddedEvent event) {
         final Step step = event.getStep();
-        step.setPipeline(this);
 
         this.steps.add(event.getIndex().or(this.steps.size()), step);
         this.eventBus.register(event.getStep());
@@ -132,4 +177,6 @@ public class Pipeline {
         this.connections.remove(event.getConnection());
         this.eventBus.unregister(event.getConnection());
     }
+
+
 }

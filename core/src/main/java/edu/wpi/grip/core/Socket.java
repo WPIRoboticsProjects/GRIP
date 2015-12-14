@@ -47,8 +47,6 @@ public abstract class Socket<T> {
         this.socketHint = checkNotNull(socketHint, "Socket Hint can not be null");
         this.value = socketHint.createInitialValue();
         this.direction = checkNotNull(direction, "Direction can not be null");
-
-        this.eventBus.register(this);
     }
 
     /**

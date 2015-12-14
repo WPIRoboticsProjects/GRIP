@@ -58,8 +58,7 @@ public class MultiImageFileSourceTest {
     @Test
     public void testLoadFromProperties() throws Exception {
         final Properties properties = sourceWithIndexSet.getProperties();
-        final MultiImageFileSource newSource = new MultiImageFileSource();
-        newSource.createFromProperties(new EventBus(), properties);
+        final MultiImageFileSource newSource = new MultiImageFileSource(new EventBus(), properties);
         OutputSocket<Mat> outputSocket = newSource.getOutputSockets()[0];
         gompeiJpegFile.assertSameImage(outputSocket.getValue().get());
     }

@@ -2,6 +2,8 @@ package edu.wpi.grip.core;
 
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
+import com.google.inject.Inject;
+import com.google.inject.assistedinject.Assisted;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import edu.wpi.grip.core.events.SocketChangedEvent;
 
@@ -18,18 +20,22 @@ import static com.google.common.base.Preconditions.checkNotNull;
  */
 @XStreamAlias(value = "grip:Step")
 public class Step {
-    private static final Logger logger =  Logger.getLogger(Step.class.getName());
+    private final Logger logger =  Logger.getLogger(Step.class.getName());
     private Operation operation;
     private InputSocket<?>[] inputSockets;
     private OutputSocket<?>[] outputSockets;
     private Optional<?> data;
-    private Pipeline pipeline;
+
+    interface Factory {
+        Step create(Operation operation);
+    }
 
     /**
      * @param eventBus  The Guava {@link EventBus} used by the application.
      * @param operation The operation that is performed at this step.
      */
-    public Step(EventBus eventBus, Operation operation) {
+    @Inject
+    public Step(EventBus eventBus, @Assisted Operation operation) {
         this.operation = operation;
 
         checkNotNull(eventBus);
@@ -39,18 +45,18 @@ public class Step {
         inputSockets = operation.createInputSockets(eventBus);
         for (Socket<?> socket : inputSockets) {
             socket.setStep(Optional.of(this));
+            eventBus.register(socket);
         }
 
         outputSockets = operation.createOutputSockets(eventBus);
         for (Socket<?> socket : outputSockets) {
             socket.setStep(Optional.of(this));
+            eventBus.register(socket);
         }
 
         data = operation.createData();
 
         runPerformIfPossible();
-
-        eventBus.register(this);
     }
 
     /**
@@ -72,14 +78,6 @@ public class Step {
      */
     public OutputSocket<?>[] getOutputSockets() {
         return outputSockets;
-    }
-
-    protected void setPipeline(Pipeline pipeline) {
-        this.pipeline = pipeline;
-    }
-
-    protected Pipeline getPipeline() {
-        return this.pipeline;
     }
 
     /**
