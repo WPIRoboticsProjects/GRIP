@@ -164,7 +164,7 @@ public class AddSourceView extends HBox {
             } catch (IOException e) {
                 // This will run it again with the new values retrieved by the supplier
                 failureCallback.accept(e);
-                Platform.runLater(() -> loadCamera(dialog, cameraSourceSupplier, failureCallback));
+                loadCamera(dialog, cameraSourceSupplier, failureCallback);
             }
         });
     }
