@@ -55,7 +55,7 @@ public class PointSizeSocketPreviewView extends SocketPreviewView<IntPointer> {
     }
 
     private void updateTextFields() {
-        this.x.setText("" + this.getSocket().getValue().get().get(0));
-        this.y.setText("" + this.getSocket().getValue().get().get(1));
+        this.x.setText(Integer.toString(this.getSocket().getValue().get().get(0)));
+        this.y.setText(Integer.toString(this.getSocket().getValue().get().get(1)));
     }
 }

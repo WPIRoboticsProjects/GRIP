@@ -50,7 +50,7 @@ public final class CameraSource extends Source implements StartStoppable {
      */
     public CameraSource(EventBus eventBus, int deviceNumber) throws IOException {
         this();
-        this.properties.setProperty(DEVICE_NUMBER_PROPERTY, "" + deviceNumber);
+        this.properties.setProperty(DEVICE_NUMBER_PROPERTY, Integer.toString(deviceNumber));
         this.createFromProperties(eventBus, this.properties);
     }
 
