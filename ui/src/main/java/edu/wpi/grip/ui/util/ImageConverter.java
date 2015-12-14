@@ -35,9 +35,6 @@ public class ImageConverter {
         final int height = mat.rows();
         final int channels = mat.channels();
 
-        assert channels == 3 || channels == 1 :
-                "Only 3-channel BGR images or single-channel grayscale images can be converted";
-
         assert mat.depth() == CV_8U || mat.depth() == CV_8S :
                 "Only images with 8 bits per channel can be previewed";
 
@@ -81,6 +78,11 @@ public class ImageConverter {
                 }
 
                 break;
+            default:
+                throw new IllegalArgumentException(
+                        "Invalid number of channels: "
+                                + channels
+                                + ". Only 3-channel BGR images or single-channel grayscale images can be converted");
         }
 
         final PixelFormat<IntBuffer> argb = PixelFormat.getIntArgbInstance();
