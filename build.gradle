@@ -25,6 +25,10 @@ allprojects {
         mavenCentral()
         jcenter()
     }
+    jacoco {
+        toolVersion = "0.7.5.201505241946"
+    }
+
 
     dependencies {
         testCompile group: 'org.hamcrest', name: 'hamcrest-all', version: '1.3'
