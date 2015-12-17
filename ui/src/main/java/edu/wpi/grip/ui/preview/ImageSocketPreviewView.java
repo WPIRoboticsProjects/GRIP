@@ -1,9 +1,9 @@
 package edu.wpi.grip.ui.preview;
 
-import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import edu.wpi.grip.core.OutputSocket;
 import edu.wpi.grip.core.events.SocketChangedEvent;
+import edu.wpi.grip.ui.util.GRIPPlatform;
 import edu.wpi.grip.ui.util.ImageConverter;
 import javafx.application.Platform;
 import javafx.scene.image.Image;
@@ -20,17 +20,17 @@ public class ImageSocketPreviewView extends SocketPreviewView<Mat> {
     private final ImageView imageView;
 
     /**
-     * @param eventBus The EventBus used by the application
      * @param socket   An output socket to preview
      */
-    public ImageSocketPreviewView(EventBus eventBus, OutputSocket<Mat> socket) {
-        super(eventBus, socket);
+    ImageSocketPreviewView(OutputSocket<Mat> socket) {
+        super(socket);
 
         this.imageConverter = new ImageConverter();
         this.imageView = new ImageView();
         this.setContent(imageView);
 
-        this.convertImage();
+        assert Platform.isFxApplicationThread() : "Must be in FX Thread to create this or you will be exposing constructor to another thread!";
+        convertImage();
     }
 
     @Subscribe
@@ -43,12 +43,9 @@ public class ImageSocketPreviewView extends SocketPreviewView<Mat> {
     private void convertImage() {
         synchronized (this) {
             this.getSocket().getValue().ifPresent(mat -> {
-
                 final Image image = this.imageConverter.convert(mat);
-                Platform.runLater(() -> {
-                    synchronized (this) {
-                        this.imageView.setImage(image);
-                    }
+                GRIPPlatform.runAndWait(() -> {
+                    this.imageView.setImage(image);
                 });
 
             });

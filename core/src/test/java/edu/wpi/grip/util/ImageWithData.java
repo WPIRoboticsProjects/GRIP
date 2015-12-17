@@ -24,4 +24,12 @@ public class ImageWithData {
         assertEquals("Matrix from loaded image did not have expected number of cols.", this.cols, image.cols());
     }
 
+    public int getRows() {
+        return rows;
+    }
+
+    public int getCols() {
+        return cols;
+    }
+
 }

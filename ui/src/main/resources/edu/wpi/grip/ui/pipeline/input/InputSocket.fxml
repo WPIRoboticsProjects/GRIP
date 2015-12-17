@@ -2,12 +2,14 @@
 
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.*?>
-<?import javafx.scene.text.Text?>
-<?import javafx.scene.text.TextFlow?>
-<fx:root styleClass="socket" type="javafx.scene.layout.GridPane" xmlns="http://javafx.com/javafx/null"
-         xmlns:fx="http://javafx.com/fxml/1">
+<GridPane styleClass="socket"
+          fx:controller="edu.wpi.grip.ui.pipeline.input.InputSocketController"
+          fx:id="root"
+          xmlns="http://javafx.com/javafx/null"
+          xmlns:fx="http://javafx.com/fxml/1">
     <children>
-        <Label fx:id="identifier" contentDisplay="RIGHT" styleClass="socket-identifier" GridPane.rowIndex="0" GridPane.columnIndex="1">
+        <Label fx:id="identifier" contentDisplay="RIGHT" styleClass="socket-identifier" GridPane.rowIndex="0"
+               GridPane.columnIndex="1">
             <graphic>
                 <Label fx:id="type" opacity=".5"/>
             </graphic>
@@ -15,4 +17,4 @@
         <StackPane fx:id="contentPane" styleClass="socket-control" GridPane.rowIndex="1"
                    GridPane.columnIndex="1"/>
     </children>
-</fx:root>
+</GridPane>

@@ -1,15 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import edu.wpi.grip.ui.util.DPIUtility?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.image.Image?>
-<?import javafx.scene.image.ImageView?>
-<?import javafx.scene.input.KeyCodeCombination?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.VBox?>
-<?import java.net.URL?>
 <?language javascript?>
 
+<?import edu.wpi.grip.ui.util.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.input.*?>
+<?import javafx.scene.layout.VBox?>
+<?import java.net.URL?>
 <VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"
       minWidth="-Infinity" styleClass="main-window"
       fx:controller="edu.wpi.grip.ui.MainWindowController"

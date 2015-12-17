@@ -1,16 +1,12 @@
 package edu.wpi.grip.ui.preview;
 
-import com.google.common.eventbus.EventBus;
 import edu.wpi.grip.core.OutputSocket;
 import edu.wpi.grip.core.operations.composite.BlobsReport;
 import edu.wpi.grip.core.operations.composite.ContoursReport;
 import edu.wpi.grip.core.operations.composite.LinesReport;
 import org.bytedeco.javacpp.IntPointer;
 
-import static org.bytedeco.javacpp.opencv_core.Mat;
-
-import static org.bytedeco.javacpp.opencv_core.Point;
-import static org.bytedeco.javacpp.opencv_core.Size;
+import static org.bytedeco.javacpp.opencv_core.*;
 
 
 /**
@@ -24,19 +20,19 @@ public class SocketPreviewViewFactory {
      * out what control to use to render a given socket.
      */
     @SuppressWarnings("unchecked")
-    public static <T> SocketPreviewView<T> createPreviewView(EventBus eventBus, OutputSocket<T> socket) {
+    public static <T> SocketPreviewView<T> createPreviewView(OutputSocket<T> socket) {
         if (socket.getSocketHint().getType() == Mat.class) {
-            return (SocketPreviewView) new ImageSocketPreviewView(eventBus, (OutputSocket<Mat>) socket);
+            return (SocketPreviewView) new ImageSocketPreviewView((OutputSocket<Mat>) socket);
         } else if (socket.getSocketHint().getType() == Point.class || socket.getSocketHint().getType() == Size.class) {
-            return (SocketPreviewView) new PointSizeSocketPreviewView(eventBus, (OutputSocket<IntPointer>) socket);
+            return (SocketPreviewView) new PointSizeSocketPreviewView((OutputSocket<IntPointer>) socket);
         } else if (socket.getSocketHint().getType() == ContoursReport.class) {
-            return (SocketPreviewView) new ContoursSocketPreviewView(eventBus, (OutputSocket<ContoursReport>) socket);
+            return (SocketPreviewView) new ContoursSocketPreviewView((OutputSocket<ContoursReport>) socket);
         } else if (socket.getSocketHint().getType() == LinesReport.class) {
-            return (SocketPreviewView) new LinesSocketPreviewView(eventBus, (OutputSocket<LinesReport>) socket);
+            return (SocketPreviewView) new LinesSocketPreviewView((OutputSocket<LinesReport>) socket);
         } else if (socket.getSocketHint().getType() == BlobsReport.class) {
-            return (SocketPreviewView) new BlobsSocketPreviewView(eventBus, (OutputSocket<BlobsReport>) socket);
+            return (SocketPreviewView) new BlobsSocketPreviewView((OutputSocket<BlobsReport>) socket);
         } else {
-            return new TextAreaSocketPreviewView<>(eventBus, socket);
+            return new TextAreaSocketPreviewView<>(socket);
         }
     }
 }

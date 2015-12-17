@@ -58,6 +58,12 @@ allprojects {
             events "failed"
             exceptionFormat "full"
         }
+        doFirst {
+            filter.includePatterns.each {
+                include "${it.replaceAll('\\.', "\\${File.separator}")}.class"
+            }
+            filter.setIncludePatterns('*')
+        }
     }
 }
 
@@ -175,6 +181,7 @@ project(":ui") {
         ideProvider project(path: ':core', configuration: 'compile')
         compile group: 'org.controlsfx', name: 'controlsfx', version: '8.40.10'
         testCompile files(project(':core').sourceSets.test.output.classesDir)
+        testCompile files(project(':core').sourceSets.test.output.resourcesDir)
         testCompile group: 'org.testfx', name: 'testfx-core', version: '4.0.+'
         testCompile group: 'org.testfx', name: 'testfx-junit', version: '4.0.+'
     }

@@ -14,7 +14,7 @@ import static org.bytedeco.javacpp.opencv_core.*;
  * Utility class for creating a JavaFX image from an OpenCV image.  This used by the preview views to render an image
  * in the GUI.
  */
-public class ImageConverter {
+public final class ImageConverter {
     private WritableImage image;
     private IntBuffer pixels;
 

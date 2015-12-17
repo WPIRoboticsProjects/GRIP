@@ -1,10 +1,14 @@
 package edu.wpi.grip.ui.pipeline.input;
 
-import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
+import com.google.inject.Inject;
+import com.google.inject.assistedinject.Assisted;
 import edu.wpi.grip.core.InputSocket;
 import edu.wpi.grip.core.events.SocketChangedEvent;
+import edu.wpi.grip.ui.pipeline.SocketHandleView;
+import edu.wpi.grip.ui.util.GRIPPlatform;
 import javafx.beans.InvalidationListener;
+import javafx.fxml.FXML;
 import javafx.scene.control.Spinner;
 import javafx.scene.control.SpinnerValueFactory;
 import javafx.util.StringConverter;
@@ -12,22 +16,26 @@ import javafx.util.StringConverter;
 import static com.google.common.base.Preconditions.checkArgument;
 
 /**
- * An {@link InputSocketView} that lets the user set the value of a number with a {@link Spinner}
+ * An {@link InputSocketController} that lets the user set the value of a number with a {@link Spinner}
  */
-public class NumberSpinnerInputSocketView extends InputSocketView<Number> {
+public class NumberSpinnerInputSocketController extends InputSocketController<Number> {
 
     private final static Number[] DEFAULT_DOMAIN = new Double[]{-Double.MAX_VALUE, Double.MAX_VALUE};
 
     private final SpinnerValueFactory<Double> valueFactory;
     private final InvalidationListener updateSocketFromSpinner;
 
+    public interface Factory {
+        NumberSpinnerInputSocketController create(InputSocket<Number> socket);
+    }
+
     /**
      * @param socket An <code>InputSocket</code> with a domain containing two <code>Number</code>s (the min and max
      *               slider values), or no domain at all.
      */
-    public NumberSpinnerInputSocketView(EventBus eventBus, InputSocket<Number> socket) {
-        super(eventBus, socket);
-
+    @Inject
+    NumberSpinnerInputSocketController(SocketHandleView.Factory socketHandleViewFactory, @Assisted InputSocket<Number> socket) {
+        super(socketHandleViewFactory, socket);
 
         final Number[] domain = socket.getSocketHint().getDomain().orElse(DEFAULT_DOMAIN);
 
@@ -36,11 +44,14 @@ public class NumberSpinnerInputSocketView extends InputSocketView<Number> {
         final double min = domain[0].doubleValue();
         final double max = domain[1].doubleValue();
         final double initialValue = socket.getValue().get().doubleValue();
-
         this.valueFactory = new SpinnerValueFactory.DoubleSpinnerValueFactory(min, max, initialValue);
         this.updateSocketFromSpinner = o -> this.getSocket().setValue(this.valueFactory.getValue());
         this.valueFactory.valueProperty().addListener(this.updateSocketFromSpinner);
+    }
 
+    @FXML
+    public void initialize(){
+        super.initialize();
         final Spinner<Double> spinner = new Spinner<>(this.valueFactory);
         spinner.setEditable(true);
         spinner.disableProperty().bind(this.getHandle().connectedProperty());
@@ -54,14 +65,16 @@ public class NumberSpinnerInputSocketView extends InputSocketView<Number> {
     @Subscribe
     public void updateSpinnerFromSocket(SocketChangedEvent event) {
         if (event.getSocket() == this.getSocket()) {
-            // Remove the invalidation listener when we set the value.  This listener is useful for updating the socket value
-            // when the user changes the spinner, but since we're setting the spinner value from the socket value, calling it
-            // here would not only be redundant, but would create an infinite loop.
-            synchronized (this.valueFactory) {
-                this.valueFactory.valueProperty().removeListener(updateSocketFromSpinner);
-                this.valueFactory.setValue(this.getSocket().getValue().get().doubleValue());
-                this.valueFactory.valueProperty().addListener(updateSocketFromSpinner);
-            }
+            GRIPPlatform.runAndWait(() ->{
+                // Remove the invalidation listener when we set the value.  This listener is useful for updating the socket value
+                // when the user changes the spinner, but since we're setting the spinner value from the socket value, calling it
+                // here would not only be redundant, but would create an infinite loop.
+                synchronized (this.valueFactory) {
+                    this.valueFactory.valueProperty().removeListener(updateSocketFromSpinner);
+                    this.valueFactory.setValue(this.getSocket().getValue().get().doubleValue());
+                    this.valueFactory.valueProperty().addListener(updateSocketFromSpinner);
+                }
+            });
         }
     }
 

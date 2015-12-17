@@ -56,6 +56,7 @@ public class StartStoppableButtonTest extends ApplicationTest {
         eventBus = new EventBus();
         startStoppable = new MockStartStoppable(eventBus, false);
         startStoppableButton = new StartStoppableButton(eventBus, startStoppable);
+        eventBus.register(startStoppableButton);
         Scene scene = new Scene(startStoppableButton, 800, 600);
         stage.setScene(scene);
         stage.show();

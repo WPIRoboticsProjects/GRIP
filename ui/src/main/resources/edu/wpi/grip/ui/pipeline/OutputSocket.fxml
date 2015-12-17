@@ -7,8 +7,11 @@
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.*?>
 <?import edu.wpi.grip.ui.util.DPIUtility ?>
-<fx:root styleClass="socket" type="javafx.scene.layout.HBox" xmlns="http://javafx.com/javafx/null"
-         xmlns:fx="http://javafx.com/fxml/1" alignment="CENTER_RIGHT">
+<HBox styleClass="socket"
+      fx:controller="edu.wpi.grip.ui.OperationController"
+      fx:id="root"
+      xmlns="http://javafx.com/javafx/null"
+      xmlns:fx="http://javafx.com/fxml/1" alignment="CENTER_RIGHT">
     <children>
         <ToggleButton fx:id="preview" styleClass="small-icon-button">
             <graphic>
@@ -33,4 +36,4 @@
         </Label>
         <StackPane fx:id="handlePane"/>
     </children>
-</fx:root>
+</HBox>

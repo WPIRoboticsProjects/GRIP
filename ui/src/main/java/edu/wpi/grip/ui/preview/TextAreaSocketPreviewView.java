@@ -1,10 +1,10 @@
 package edu.wpi.grip.ui.preview;
 
-import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import edu.wpi.grip.core.OutputSocket;
 import edu.wpi.grip.core.Socket;
 import edu.wpi.grip.core.events.SocketChangedEvent;
+import edu.wpi.grip.ui.util.GRIPPlatform;
 import javafx.scene.control.TextArea;
 
 /**
@@ -16,11 +16,10 @@ public class TextAreaSocketPreviewView<T> extends SocketPreviewView<T> {
     private final TextArea text;
 
     /**
-     * @param eventBus The EventBus used by the application
      * @param socket   An output socket to preview
      */
-    public TextAreaSocketPreviewView(EventBus eventBus, OutputSocket<T> socket) {
-        super(eventBus, socket);
+    public TextAreaSocketPreviewView(OutputSocket<T> socket) {
+        super(socket);
 
         this.setStyle("-fx-pref-width: 20em;");
 
@@ -33,9 +32,10 @@ public class TextAreaSocketPreviewView<T> extends SocketPreviewView<T> {
     @Subscribe
     public void onSocketChanged(SocketChangedEvent event) {
         final Socket socket = event.getSocket();
-
         if (socket == this.getSocket()) {
-            this.text.setText(socket.getValue().orElse("").toString());
+            GRIPPlatform.runAndWait(() ->{
+                this.text.setText(socket.getValue().orElse("").toString());
+            });
         }
     }
 }

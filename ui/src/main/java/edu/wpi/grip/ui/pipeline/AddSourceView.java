@@ -30,8 +30,6 @@ import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-
 /**
  * A box of buttons that let the user add different kinds of {@link edu.wpi.grip.core.Source Source}s.  Depending on which button is pressed,
  * a different dialog is presented for the user to construct that source.  As an example, the image file source results
@@ -40,9 +38,9 @@ import static com.google.common.base.Preconditions.checkNotNull;
 public class AddSourceView extends HBox {
 
     private final EventBus eventBus;
-    @Inject private MultiImageFileSource.Factory multiImageSourceFactory;
-    @Inject private ImageFileSource.Factory imageSourceFactory;
-    @Inject private CameraSource.Factory cameraSourceFactory;
+    private final MultiImageFileSource.Factory multiImageSourceFactory;
+    private final ImageFileSource.Factory imageSourceFactory;
+    private final CameraSource.Factory cameraSourceFactory;
 
     @FunctionalInterface
     private interface SupplierWithIO<T> {
@@ -69,8 +67,19 @@ public class AddSourceView extends HBox {
         }
     }
 
-    public AddSourceView(EventBus eventBus) {
-        this.eventBus = checkNotNull(eventBus, "Event Bus can not be null");
+    public interface Factory {
+        AddSourceView create();
+    }
+
+    @Inject
+    AddSourceView(EventBus eventBus,
+                  MultiImageFileSource.Factory multiImageSourceFactory,
+                  ImageFileSource.Factory imageSourceFactory,
+                  CameraSource.Factory cameraSourceFactory) {
+        this.eventBus = eventBus;
+        this.multiImageSourceFactory = multiImageSourceFactory;
+        this.imageSourceFactory = imageSourceFactory;
+        this.cameraSourceFactory = cameraSourceFactory;
 
         this.setFillHeight(true);
 

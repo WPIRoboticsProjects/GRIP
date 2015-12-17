@@ -16,7 +16,6 @@ import javafx.scene.input.MouseButton;
 import javafx.stage.Stage;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.testfx.framework.junit.ApplicationTest;
 import org.testfx.matcher.base.NodeMatchers;
@@ -32,17 +31,24 @@ import static org.testfx.api.FxAssert.verifyThatIter;
 
 public class PipelineUITest extends ApplicationTest {
 
-    private final Injector injector = Guice.createInjector(new GRIPCoreModule(), new GRIPUIModule());
-    private final EventBus eventBus = injector.getInstance(EventBus.class);
-    private final AdditionOperation additionOperation = new AdditionOperation();
-    private final SubtractionOperation subtractionOperation = new SubtractionOperation();
+    private Injector injector;
+    private EventBus eventBus;
+    private AdditionOperation additionOperation;
+    private SubtractionOperation subtractionOperation;
+    private PipelineController pipelineController;
 
     @Override
     public void start(Stage stage) throws Exception {
+        injector = Guice.createInjector(new GRIPCoreModule(), new GRIPUIModule());
+        eventBus = injector.getInstance(EventBus.class);
+        additionOperation = new AdditionOperation();
+        subtractionOperation = new SubtractionOperation();
         final Scene scene = new Scene(FXMLLoader.load(getClass().getResource("Pipeline.fxml"), null, null,
                 injector::getInstance), 800, 600);
         stage.setScene(scene);
         stage.show();
+
+        pipelineController = injector.getInstance(PipelineController.class);
     }
 
     @Test
@@ -66,12 +72,11 @@ public class PipelineUITest extends ApplicationTest {
 
     }
 
-    @Ignore(value = "Casts nodes to step controllers, which is not longer valid")
     @Test
     public void testMoveOperation() {
-        final Step step1 = new Step(eventBus, additionOperation);
-        final Step step2 = new Step(eventBus, additionOperation);
-        final Step step3 = new Step(eventBus, additionOperation);
+        final Step step1 = new MockStep();
+        final Step step2 = new MockStep();
+        final Step step3 = new MockStep();
 
         eventBus.post(new StepAddedEvent(step1));
         eventBus.post(new StepAddedEvent(step2));
@@ -84,13 +89,13 @@ public class PipelineUITest extends ApplicationTest {
             @Override
             public boolean matches(Object item) {
                 @SuppressWarnings("unchecked")
-                final List<StepController> steps = Lists.newArrayList((Iterable<StepController>) item);
+                final List<Node> stepsNodes = Lists.newArrayList((Iterable<Node>) item);
 
-                assertEquals("Moving a step resulting in the number of steps changing", 3, steps.size());
+                assertEquals("Moving a step resulting in the number of steps changing", 3, stepsNodes.size());
 
-                return steps.get(0).getStep() == step1
-                        && steps.get(1).getStep() == step3
-                        && steps.get(2).getStep() == step2;
+                return pipelineController.findStepController(step1).getRoot().equals(stepsNodes.get(0))
+                        && pipelineController.findStepController(step3).getRoot().equals(stepsNodes.get(1))
+                        && pipelineController.findStepController(step2).getRoot().equals(stepsNodes.get(2));
             }
 
             @Override
@@ -121,7 +126,7 @@ public class PipelineUITest extends ApplicationTest {
     }
 
     private Step addOperation(int count, Operation operation) {
-        final Step step = new Step(eventBus, operation);
+        final Step step = new MockStep(eventBus, operation);
         eventBus.post(new StepAddedEvent(step));
 
         // Wait for the event to propagate to the UI

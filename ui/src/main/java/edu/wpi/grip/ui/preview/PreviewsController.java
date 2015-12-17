@@ -3,14 +3,15 @@ package edu.wpi.grip.ui.preview;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import edu.wpi.grip.core.OutputSocket;
+import edu.wpi.grip.core.Pipeline;
 import edu.wpi.grip.core.Source;
 import edu.wpi.grip.core.Step;
 import edu.wpi.grip.core.events.SocketPreviewChangedEvent;
 import edu.wpi.grip.core.events.StepMovedEvent;
-import edu.wpi.grip.ui.pipeline.PipelineView;
-import edu.wpi.grip.ui.pipeline.StepView;
-import edu.wpi.grip.ui.pipeline.source.SourceView;
-import javafx.application.Platform;
+import edu.wpi.grip.ui.pipeline.PipelineController;
+import edu.wpi.grip.ui.pipeline.StepController;
+import edu.wpi.grip.ui.pipeline.source.SourceController;
+import edu.wpi.grip.ui.util.GRIPPlatform;
 import javafx.fxml.FXML;
 import javafx.scene.layout.HBox;
 
@@ -28,9 +29,14 @@ import java.util.Stack;
 @Singleton
 public class PreviewsController {
 
-    @FXML private HBox previewBox;
-    @Inject private EventBus eventBus;
-    @Inject private PipelineView pipeline;
+    @FXML
+    private HBox previewBox;
+    @Inject
+    private EventBus eventBus;
+    @Inject
+    private PipelineController pipelineController;
+    @Inject
+    private Pipeline pipeline;
 
     private final List<OutputSocket<?>> previewedSockets = new ArrayList<>();
 
@@ -40,7 +46,7 @@ public class PreviewsController {
      */
     @Subscribe
     public synchronized void onPreviewOrderChanged(StepMovedEvent event) {
-        Platform.runLater(() -> {//Run this function on the main gui thread
+        GRIPPlatform.runAndWait(() -> {//Run this function on the main gui thread
             final Step movedStep = event.getStep(); //The step whose position in the pipeline has changed
             final int distanceMoved = event.getDistance(); //The number of indices (positive or negative) the step has been moved by
             final int numberOfSourcePreviews = getNumbOfSourcePreviews();//The number of previews opened that are displaying sources (NOT steps)
@@ -120,7 +126,7 @@ public class PreviewsController {
                     newLocation = this.previewedSockets.size();//Make it so it will be added to the end of the list of previews
                 }
                 this.previewedSockets.add(newLocation, current);//...add it to the correct location in the list of previews open
-                this.previewBox.getChildren().add(newLocation, SocketPreviewViewFactory.createPreviewView(this.eventBus, current));//...and display it in the correct location in the list of previews open
+                this.previewBox.getChildren().add(newLocation, SocketPreviewViewFactory.createPreviewView(current));//...and display it in the correct location in the list of previews open
             }
         });
     }
@@ -130,7 +136,7 @@ public class PreviewsController {
      */
     @Subscribe
     public synchronized void onSocketPreviewChanged(SocketPreviewChangedEvent event) {
-        Platform.runLater(() -> {//Run this function on the main gui thread
+        GRIPPlatform.runAndWait(() -> {//Run this function on the main gui thread
 
             final OutputSocket<?> socket = event.getSocket(); //The socket whose preview has changed
 
@@ -144,7 +150,7 @@ public class PreviewsController {
                         int indexInPreviews = getIndexInPreviewsOfAStepSocket(socket);
 
                         this.previewedSockets.add(indexInPreviews, socket);//...use this index to add it to the correct location in the list of previews open
-                        this.previewBox.getChildren().add(indexInPreviews, SocketPreviewViewFactory.createPreviewView(this.eventBus, socket));//...and display it in the correct location in the list of previews open in the gui
+                        this.previewBox.getChildren().add(indexInPreviews, SocketPreviewViewFactory.createPreviewView(socket));//...and display it in the correct location in the list of previews open in the gui
 
                     } else {//This is a socket associated with a source and not a pipeline step...
 
@@ -152,7 +158,7 @@ public class PreviewsController {
                         int indexInSourcePreviews = getIndexInPreviewsOfASourceSocket(socket);
 
                         this.previewedSockets.add(indexInSourcePreviews, socket);//Add the preview to the appropriate place in the list of previewed sockets
-                        this.previewBox.getChildren().add(indexInSourcePreviews, SocketPreviewViewFactory.createPreviewView(this.eventBus, socket));//Display the preview in the appropriate place
+                        this.previewBox.getChildren().add(indexInSourcePreviews, SocketPreviewViewFactory.createPreviewView(socket));//Display the preview in the appropriate place
                     }
                 }
             } else {//The socket was already previewed, so the user must be requesting to not show this preview (remove both it and the corresponding control)
@@ -177,7 +183,7 @@ public class PreviewsController {
      */
     private int getIndexInPreviewsOfASourceSocket(OutputSocket<?> socket) {
         final Source socketSource = socket.getSource().get();//The source socket associated with the socket whose preview has changed
-        final SourceView sourceView = this.pipeline.findSourceView(socketSource);//The gui object that displays the socketSource
+        final SourceController sourceView = this.pipelineController.findSourceView(socketSource);//The gui object that displays the socketSource
         int indexOfSource = this.pipeline.getSources().indexOf(sourceView); //The index of the source that has the socket in the pipeline
 
         //Start with the first socket in the list of previewed sockets
@@ -185,7 +191,7 @@ public class PreviewsController {
         //Find the correct index in the displayed source previews by comparing the indices
         while (((this.previewedSockets.size() > indexInSourcePreviews)//If there are previews still to be examined AND
                 && (this.previewedSockets.get(indexInSourcePreviews).getSource().isPresent()))//AND If the preview at this index is a source...
-                && ((this.pipeline.getSources().indexOf(this.pipeline.findSourceView(this.previewedSockets.get(indexInSourcePreviews).getSource().get()))) < indexOfSource)) {//AND the preview at this index is a source with an index in the list of sources less than this source
+                && ((this.pipeline.getSources().indexOf(this.pipelineController.findSourceView(this.previewedSockets.get(indexInSourcePreviews).getSource().get()))) < indexOfSource)) {//AND the preview at this index is a source with an index in the list of sources less than this source
             indexInSourcePreviews++;
         }
         return indexInSourcePreviews;
@@ -204,14 +210,14 @@ public class PreviewsController {
         int numbOfSourcePreviews = getNumbOfSourcePreviews();//Count how many *source* previews (not *step* previews) are currently displayed
 
         final Step socketStep = socket.getStep().get();//The pipeline step associated with the socket whose preview has changed
-        final StepView stepView = this.pipeline.findStepView(socketStep);//The gui object that displays the socketStep
+        final StepController stepView = this.pipelineController.findStepController(socketStep);//The gui object that displays the socketStep
         int indexOfStep = this.pipeline.getSteps().indexOf(stepView); //The index of the step that has the socket in the pipeline
 
         //Start at the first non-source socket in the list of previewed sockets
         int indexInPreviews = numbOfSourcePreviews;
 
         while ((this.previewedSockets.size() > indexInPreviews)//While there are sockets in the list of previewed sockets yet to be examined
-                && ((this.pipeline.getSteps().indexOf(this.pipeline.findStepView(this.previewedSockets.get(indexInPreviews).getStep().get()))) < indexOfStep)) {//...AND the socket at this index in the list of displayed sockets has an index in the pipeline less than the socket passed in as "socket"
+                && ((this.pipeline.getSteps().indexOf(this.pipelineController.findStepController(this.previewedSockets.get(indexInPreviews).getStep().get()))) < indexOfStep)) {//...AND the socket at this index in the list of displayed sockets has an index in the pipeline less than the socket passed in as "socket"
             indexInPreviews++;
         }
         return indexInPreviews;

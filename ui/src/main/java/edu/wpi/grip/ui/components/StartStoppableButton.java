@@ -3,6 +3,8 @@ package edu.wpi.grip.ui.components;
 
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
+import com.google.inject.Inject;
+import com.google.inject.assistedinject.Assisted;
 import edu.wpi.grip.core.StartStoppable;
 import edu.wpi.grip.core.events.StartedStoppedEvent;
 import edu.wpi.grip.core.events.UnexpectedThrowableEvent;
@@ -36,7 +38,12 @@ public final class StartStoppableButton extends ToggleButton {
 
     private final StartStoppable startStoppable;
 
-    public StartStoppableButton(final EventBus eventBus, final StartStoppable startStoppable) {
+    public interface Factory {
+        StartStoppableButton create(StartStoppable startStoppable);
+    }
+
+    @Inject
+    StartStoppableButton(final EventBus eventBus, @Assisted final StartStoppable startStoppable) {
         super(null, pickGraphic(startStoppable));
         this.startStoppable = checkNotNull(startStoppable, "StartStoppable can not be null");
         this.startStopTooltip = new Tooltip(getButtonActionString());
@@ -64,8 +71,6 @@ public final class StartStoppableButton extends ToggleButton {
             setAllFromState();
         });
         HBox.setHgrow(this, Priority.NEVER);
-
-        eventBus.register(this);
     }
 
     private void setAllFromState() {

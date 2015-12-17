@@ -1,27 +1,29 @@
 package edu.wpi.grip.ui;
 
 import com.google.common.eventbus.EventBus;
+import com.google.inject.Inject;
+import com.google.inject.assistedinject.Assisted;
 import edu.wpi.grip.core.Operation;
 import edu.wpi.grip.core.Step;
 import edu.wpi.grip.core.events.StepAddedEvent;
+import edu.wpi.grip.ui.annotations.ParametrizedController;
 import edu.wpi.grip.ui.util.StyleClassNameUtility;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 
-import java.io.IOException;
-
-import static com.google.common.base.Preconditions.checkNotNull;
-
 /**
  * A JavaFX control that renders information about an {@link Operation}.  This is used in the palette view to present
  * the user with information on the various operations to choose from.
  */
-public class OperationView extends GridPane {
+@ParametrizedController(url = "Operation.fxml")
+public class OperationController implements Controller {
+
+    @FXML
+    private GridPane root;
 
     @FXML
     private Label name;
@@ -33,46 +35,46 @@ public class OperationView extends GridPane {
     private ImageView icon;
 
     private final EventBus eventBus;
+    private final Step.Factory stepFactory;
     private final Operation operation;
 
-    public OperationView(EventBus eventBus, Operation operation) {
-        checkNotNull(eventBus);
-        checkNotNull(operation);
+    public interface Factory {
+        OperationController create(Operation operation);
+    }
 
+    @Inject
+    OperationController(EventBus eventBus, Step.Factory stepFactory, @Assisted Operation operation) {
         this.eventBus = eventBus;
+        this.stepFactory = stepFactory;
         this.operation = operation;
+    }
 
-        try {
-            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("Operation.fxml"));
-            fxmlLoader.setRoot(this);
-            fxmlLoader.setController(this);
-            fxmlLoader.load();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-
-        this.eventBus.register(this);
-
-        this.setId(StyleClassNameUtility.idNameFor(this.operation));
+    @FXML
+    public void initialize() {
+        root.setId(StyleClassNameUtility.idNameFor(this.operation));
         this.name.setText(this.operation.getName());
         this.description.setText(this.operation.getDescription());
 
         final Tooltip tooltip = new Tooltip(this.operation.getDescription());
         tooltip.setPrefWidth(400.0);
         tooltip.setWrapText(true);
-        Tooltip.install(this, tooltip);
+        Tooltip.install(root, tooltip);
 
         this.description.setAccessibleHelp(this.operation.getDescription());
 
         this.operation.getIcon().ifPresent(icon -> this.icon.setImage(new Image(icon)));
 
         // Ensures that when this element is hidden that it also removes its size calculations
-        this.managedProperty().bind(this.visibleProperty());
+        root.managedProperty().bind(root.visibleProperty());
     }
 
     @FXML
     public void addStep() {
-        this.eventBus.post(new StepAddedEvent(new Step(this.eventBus, this.operation)));
+        this.eventBus.post(new StepAddedEvent(stepFactory.create(this.operation)));
+    }
+
+    public GridPane getRoot() {
+        return root;
     }
 
     public Operation getOperation() {

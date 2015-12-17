@@ -1,6 +1,5 @@
 package edu.wpi.grip.ui.pipeline;
 
-import com.google.common.eventbus.EventBus;
 import edu.wpi.grip.core.Connection;
 import edu.wpi.grip.ui.util.DPIUtility;
 import edu.wpi.grip.ui.util.StyleClassNameUtility;
@@ -17,16 +16,12 @@ import static com.google.common.base.Preconditions.checkNotNull;
  */
 public class ConnectionView extends CubicCurve {
 
-    private final EventBus eventBus;
     private final Connection connection;
     private final ObjectProperty<Point2D> outputHandle = new SimpleObjectProperty<>(this, "outputHandle", new Point2D(0.0, 0.0));
     private final ObjectProperty<Point2D> inputHandle = new SimpleObjectProperty<>(this, "inputHandle", new Point2D(0.0, 0.0));
 
-    public ConnectionView(EventBus eventBus, Connection connection) {
-        checkNotNull(eventBus);
-
-        this.eventBus = eventBus;
-        this.connection = connection;
+    public ConnectionView(Connection connection) {
+        this.connection = checkNotNull(connection, "The connection can not be null");
 
         this.setStrokeWidth(DPIUtility.STROKE_WIDTH);
         this.getStyleClass().addAll("connection", StyleClassNameUtility.classNameFor(connection));
@@ -45,8 +40,6 @@ public class ConnectionView extends CubicCurve {
             this.setEndX(this.inputHandle.get().getX());
             this.setEndY(this.inputHandle.get().getY());
         });
-
-        this.eventBus.register(this);
     }
 
     public ObjectProperty<Point2D> outputHandleProperty() {

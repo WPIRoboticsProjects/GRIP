@@ -26,7 +26,7 @@ public class Step {
     private OutputSocket<?>[] outputSockets;
     private Optional<?> data;
 
-    interface Factory {
+    public interface Factory {
         Step create(Operation operation);
     }
 
@@ -35,7 +35,7 @@ public class Step {
      * @param operation The operation that is performed at this step.
      */
     @Inject
-    public Step(EventBus eventBus, @Assisted Operation operation) {
+    Step(EventBus eventBus, @Assisted Operation operation) {
         this.operation = operation;
 
         checkNotNull(eventBus);

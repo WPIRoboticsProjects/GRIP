@@ -1,9 +1,12 @@
 package edu.wpi.grip.ui.pipeline.input;
 
-import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
+import com.google.inject.Inject;
+import com.google.inject.assistedinject.Assisted;
 import edu.wpi.grip.core.InputSocket;
 import edu.wpi.grip.core.events.SocketChangedEvent;
+import edu.wpi.grip.ui.pipeline.SocketHandleView;
+import javafx.fxml.FXML;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
@@ -14,18 +17,23 @@ import java.util.List;
 import static com.google.common.base.Preconditions.checkArgument;
 
 /**
- * An {@link InputSocketView} that lets the user set a high and low value in a two-element list
+ * An {@link InputSocketController} that lets the user set a high and low value in a two-element list
  */
-public class RangeInputSocketView extends InputSocketView<List<Number>> {
+public class RangeInputSocketController extends InputSocketController<List<Number>> {
 
     private final RangeSlider slider;
+
+    public interface Factory {
+        RangeInputSocketController create(InputSocket<List<Number>> socket);
+    }
 
     /**
      * @param socket An <code>InputSocket</code> with a domain containing two <code>Number</code>s (the min and max
      *               slider values)
      */
-    public RangeInputSocketView(EventBus eventBus, InputSocket<List<Number>> socket) {
-        super(eventBus, socket);
+    @Inject
+    RangeInputSocketController(SocketHandleView.Factory socketHandleViewFactory, @Assisted InputSocket<List<Number>> socket) {
+        super(socketHandleViewFactory, socket);
 
         final Object[] domain = socket.getSocketHint().getDomain().get();
         final List<Number> initialValue = socket.getValue().get();
@@ -65,20 +73,30 @@ public class RangeInputSocketView extends InputSocketView<List<Number>> {
             range.set(1, slider.getHighValue());
             socket.setValue(range);
         });
+    }
 
-        this.slider.disableProperty().bind(this.getHandle().connectedProperty());
+    @FXML
+    @Override
+    public void initialize() {
+        super.initialize();
 
         // Add a label under the slider to show the exact range
-        final Label label = new Label(String.format("%.0f - %.0f", initialLow, initialHigh));
+        final Label label = new Label(getLowHighLabelText());
         label.setMaxWidth(Double.MAX_VALUE);
         label.setAlignment(Pos.CENTER);
         this.slider.lowValueProperty().addListener(observable ->
-                label.setText(String.format("%.0f - %.0f", this.slider.getLowValue(), this.slider.getHighValue())));
+                label.setText(getLowHighLabelText()));
         this.slider.highValueProperty().addListener(observable ->
-                label.setText(String.format("%.0f - %.0f", this.slider.getLowValue(), this.slider.getHighValue())));
+                label.setText(getLowHighLabelText()));
 
 
         this.setContent(new VBox(this.slider, label));
+
+        this.slider.disableProperty().bind(this.getHandle().connectedProperty());
+    }
+
+    private String getLowHighLabelText() {
+        return String.format("%.0f - %.0f", this.slider.getLowValue(), this.slider.getHighValue());
     }
 
     @Subscribe

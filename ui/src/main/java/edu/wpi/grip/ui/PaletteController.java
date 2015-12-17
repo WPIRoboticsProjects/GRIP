@@ -5,10 +5,12 @@ import com.google.common.eventbus.Subscribe;
 import edu.wpi.grip.core.Operation;
 import edu.wpi.grip.core.Palette;
 import edu.wpi.grip.core.events.OperationAddedEvent;
+import edu.wpi.grip.ui.util.NodeControllerObservableListMap;
 import edu.wpi.grip.ui.util.SearchUtility;
 import javafx.beans.InvalidationListener;
 import javafx.beans.property.ObjectProperty;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
 import org.controlsfx.control.textfield.CustomTextField;
@@ -27,13 +29,24 @@ import java.lang.reflect.Method;
 @Singleton
 public class PaletteController {
 
-    @FXML private VBox root;
-    @FXML private VBox operations;
-    @FXML private CustomTextField operationSearch;
-    @Inject private EventBus eventBus;
-    @Inject private Palette palette;
+    @FXML
+    private VBox root;
+    @FXML
+    private VBox operations;
+    @FXML
+    private CustomTextField operationSearch;
+    @Inject
+    private OperationController.Factory operationControllerFactory;
+    @Inject
+    private EventBus eventBus;
+    @Inject
+    private Palette palette;
+    private NodeControllerObservableListMap<OperationController, Node> operationsMapManager;
 
+    @FXML
     public void initialize() {
+        operationsMapManager = new NodeControllerObservableListMap<>(operations.getChildren());
+
         // Make the search box have a "clear" button. This is the only way to do this unfortunately.
         // https://bitbucket.org/controlsfx/controlsfx/issues/330/making-textfieldssetupclearbuttonfield
         try {
@@ -45,15 +58,18 @@ public class PaletteController {
         }
 
         for (Operation operation : palette.getOperations()) {
-            operations.getChildren().add(new OperationView(eventBus, operation));
+            OperationController operationController = operationControllerFactory.create(operation);
+            operations.getChildren().add(operationController.getRoot());
+            //root.getChildren()
         }
 
         final InvalidationListener filterOperations = observable -> {
-            operations.getChildren().forEach(node -> {
-                final Operation operation = ((OperationView) node).getOperation();
+            operationsMapManager.keySet().forEach(operationController -> {
+                final Operation operation = operationController.getOperation();
                 final String searchText = operationSearch.getText();
-                node.setVisible(SearchUtility.fuzzyContains(operation.getName(), searchText)
-                        || SearchUtility.fuzzyContains(operation.getDescription(), searchText));
+                operationsMapManager.get(operationController)
+                        .setVisible(SearchUtility.fuzzyContains(operation.getName(), searchText)
+                                || SearchUtility.fuzzyContains(operation.getDescription(), searchText));
             });
         };
 
@@ -69,12 +85,12 @@ public class PaletteController {
      * Remove all operations in the palette.  Used for tests.
      */
     public void clearOperations() {
-        operations.getChildren().clear();
+        operationsMapManager.clear();
     }
 
     @Subscribe
     public void onOperationAdded(OperationAddedEvent event) {
-        OperationView view = new OperationView(eventBus, event.getOperation());
-        operations.getChildren().add(view);
+        final OperationController operationController = operationControllerFactory.create(event.getOperation());
+        operationsMapManager.add(operationController);
     }
 }

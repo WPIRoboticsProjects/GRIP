@@ -1,19 +1,21 @@
 package edu.wpi.grip.ui.pipeline;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
-import com.google.inject.Injector;
+import com.google.inject.Singleton;
 import com.sun.javafx.application.PlatformImpl;
 import edu.wpi.grip.core.*;
 import edu.wpi.grip.core.events.*;
-import edu.wpi.grip.ui.pipeline.input.InputSocketView;
-import edu.wpi.grip.ui.pipeline.source.SourceView;
-import edu.wpi.grip.ui.pipeline.source.SourceViewFactory;
+import edu.wpi.grip.ui.pipeline.input.InputSocketController;
+import edu.wpi.grip.ui.pipeline.source.SourceController;
+import edu.wpi.grip.ui.pipeline.source.SourceControllerFactory;
+import edu.wpi.grip.ui.util.GRIPPlatform;
+import edu.wpi.grip.ui.util.NodeControllerObservableListMap;
 import javafx.beans.InvalidationListener;
 import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.geometry.Bounds;
 import javafx.geometry.Point2D;
 import javafx.scene.Group;
@@ -24,51 +26,65 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 
 import javax.inject.Inject;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Collection;
 
 /**
  * A JavaFX controller for the pipeline.  This controller renders a list of steps.
  */
-public class PipelineController {
+@Singleton
+public final class PipelineController {
 
-    @FXML private Parent root;
-    @FXML private VBox sources;
-    @FXML private Pane addSourcePane;
-    @FXML private HBox stepBox;
-    @FXML private Group connections;
-    @Inject private EventBus eventBus;
-    @Inject private Pipeline pipeline;
-    @Inject private StepController.Factory stepControllerFactory;
-    @Inject private Injector injector;
+    @FXML
+    private Parent root;
+    @FXML
+    private VBox sourcesBox;
+    @FXML
+    private Pane addSourcePane;
+    @FXML
+    private HBox stepBox;
+    @FXML
+    private Group connections;
 
-    private List<StepController> steps = new ArrayList<>();
+    @Inject
+    private EventBus eventBus;
+    @Inject
+    private Pipeline pipeline;
+    @Inject
+    private SourceControllerFactory sourceControllerFactory;
+    @Inject
+    private StepController.Factory stepControllerFactory;
+    @Inject
+    private AddSourceView addSourceView;
+
+    private NodeControllerObservableListMap<StepController, Node> stepsMapManager;
+    private NodeControllerObservableListMap<SourceController, Node> sourceMapManager;
 
     /**
      * Add initial views for the stuff in the pipeline at the time this controller is created
      */
     public void initialize() throws Exception {
+        stepsMapManager = new NodeControllerObservableListMap<>(stepBox.getChildren());
+        sourceMapManager = new NodeControllerObservableListMap<>(sourcesBox.getChildren());
+
         for (Source source : pipeline.getSources()) {
-            sources.getChildren().add(SourceViewFactory.createSourceView(eventBus, source));
+            SourceController sourceController = sourceControllerFactory.create(source);
+            sourceMapManager.add(sourceController);
         }
 
         // Create a new controller and view for each initial step (see onStepAdded)
         for (Step step : pipeline.getSteps()) {
             final StepController stepController = stepControllerFactory.create(step);
-            stepBox.getChildren().add(FXMLLoader.load(getClass().getResource("Step.fxml"), null, null, c -> stepController));
-            steps.add(stepController);
+            stepsMapManager.add(stepController);
         }
 
-        addSourcePane.getChildren().add(new AddSourceView(eventBus));
+        addSourcePane.getChildren().add(addSourceView);
     }
 
     /**
-     * @return An unmodifiable list of {@link SourceView} corresponding to all of the sources in the pipeline
+     * @return An unmodifiable list of {@link SourceController} corresponding to all of the sources in the pipeline
      */
-    @SuppressWarnings("unchecked")
-    public ObservableList<SourceView> getSources() {
-        return (ObservableList) sources.getChildrenUnmodifiable();
+    public Collection<SourceController> getSources() {
+        return sourceMapManager.keySet();
     }
 
     /**
@@ -76,40 +92,39 @@ public class PipelineController {
      * pipeline
      */
     @SuppressWarnings("unchecked")
-    public ObservableList<ConnectionView> getConnections() {
+    public Collection<ConnectionView> getConnections() {
         return (ObservableList) connections.getChildrenUnmodifiable().filtered(node -> node instanceof ConnectionView);
     }
 
     /**
-     * @return The {@link InputSocketView} that corresponds with the given socket
+     * @return The {@link InputSocketController} that corresponds with the given socket
      */
-    private InputSocketView findInputSocketView(InputSocket socket) {
-        for (StepController stepController : steps) {
-            for (InputSocketView socketView : stepController.getInputSockets()) {
+    private InputSocketController findInputSocketView(InputSocket socket) {
+        for (StepController stepController : stepsMapManager.keySet()) {
+            for (InputSocketController socketView : stepController.getInputSockets()) {
                 if (socketView.getSocket() == socket) {
                     return socketView;
                 }
             }
         }
-
         throw new IllegalArgumentException("input socket view does not exist in pipeline: " + socket);
     }
 
     /**
-     * @return The {@link OutputSocketView} that corresponds with the given socket, either from one of the steps in
+     * @return The {@link OutputSocketController} that corresponds with the given socket, either from one of the steps in
      * the pipeline or from a source
      */
-    private OutputSocketView findOutputSocketView(OutputSocket socket) {
-        for (StepController stepController : steps) {
-            for (OutputSocketView socketView : stepController.getOutputSockets()) {
+    private OutputSocketController findOutputSocketView(OutputSocket socket) {
+        for (StepController stepController : stepsMapManager.keySet()) {
+            for (OutputSocketController socketView : stepController.getOutputSockets()) {
                 if (socketView.getSocket() == socket) {
                     return socketView;
                 }
             }
         }
 
-        for (SourceView<?> sourceView : getSources()) {
-            for (OutputSocketView socketView : sourceView.getOutputSockets()) {
+        for (SourceController<?> sourceView : getSources()) {
+            for (OutputSocketController socketView : sourceView.getOutputSockets()) {
                 if (socketView.getSocket() == socket) {
                     return socketView;
                 }
@@ -120,10 +135,10 @@ public class PipelineController {
     }
 
     /**
-     * @return The {@link SourceView} that corresponds with the given source
+     * @return The {@link SourceController} that corresponds with the given source
      */
-    public SourceView findSourceView(Source source) {
-        for (SourceView sourceView : this.getSources()) {
+    public SourceController findSourceView(Source source) {
+        for (SourceController sourceView : getSources()) {
             if (sourceView.getSource() == source) {
                 return sourceView;
             }
@@ -135,8 +150,8 @@ public class PipelineController {
     /**
      * @return The {@link StepController} that corresponds with the given step
      */
-    private StepController findStepController(Step step) {
-        for (StepController stepController : steps) {
+    public StepController findStepController(Step step) {
+        for (StepController stepController : stepsMapManager.keySet()) {
             if (stepController.getStep() == step) {
                 return stepController;
             }
@@ -163,20 +178,20 @@ public class PipelineController {
      * details of adding the connection.
      */
     private void addConnectionView(Connection connection) {
-        PlatformImpl.runAndWait(() -> {
+        GRIPPlatform.runAndWait(() -> {
             // Before adding a connection control, we have to look up the controls for both sockets in the connection so
             // we know where to position it.
-            final OutputSocketView outputSocketView = findOutputSocketView(connection.getOutputSocket());
-            final InputSocketView inputSocketView = findInputSocketView(connection.getInputSocket());
+            final OutputSocketController outputSocketView = findOutputSocketView(connection.getOutputSocket());
+            final InputSocketController inputSocketController = findInputSocketView(connection.getInputSocket());
 
-            final ConnectionView connectionView = new ConnectionView(eventBus, connection);
+            final ConnectionView connectionView = new ConnectionView(connection);
 
             // Re-position the start and end points of the connection whenever one of the handles is moved.  This
             // happens, for example, when a step in the pipeline is deleted, so all of the steps after it shift left.
             final InvalidationListener handleListener = observable -> {
                 synchronized (this) {
                     final Node outputHandle = outputSocketView.getHandle();
-                    final Node inputHandle = inputSocketView.getHandle();
+                    final Node inputHandle = inputSocketController.getHandle();
 
                     final Bounds outputSocketBounds =
                             root.sceneToLocal(outputHandle.localToScene(outputHandle.getLayoutBounds()));
@@ -196,9 +211,9 @@ public class PipelineController {
                 }
             };
 
-            inputSocketView.localToSceneTransformProperty().addListener(handleListener);
-            outputSocketView.localToSceneTransformProperty().addListener(handleListener);
-            handleListener.invalidated(inputSocketView.localToSceneTransformProperty());
+            inputSocketController.getRoot().localToSceneTransformProperty().addListener(handleListener);
+            outputSocketView.getRoot().localToSceneTransformProperty().addListener(handleListener);
+            handleListener.invalidated(inputSocketController.getRoot().localToSceneTransformProperty());
 
             connections.getChildren().add(connectionView);
         });
@@ -206,73 +221,64 @@ public class PipelineController {
 
     @Subscribe
     public void onSourceAdded(SourceAddedEvent event) {
-        PlatformImpl.runAndWait(() ->
-                sources.getChildren().add(
-                        SourceViewFactory.createSourceView(eventBus, event.getSource())));
+        GRIPPlatform.runAndWait(() -> {
+            final SourceController sourceController = sourceControllerFactory.create(event.getSource());
+            sourceMapManager.add(sourceController);
+        });
     }
 
     @Subscribe
     public void onSourceRemoved(SourceRemovedEvent event) {
-        PlatformImpl.runAndWait(() -> sources.getChildren().remove(findSourceView(event.getSource())));
+        GRIPPlatform.runAndWait(() -> {
+            final SourceController sourceController = findSourceView(event.getSource());
+            sourceMapManager.remove(sourceController);
+            eventBus.unregister(sourceController);
+        });
     }
 
     @Subscribe
     public void onStepAdded(StepAddedEvent event) {
         // Add a new view to the pipeline for the step that was added
-        PlatformImpl.runAndWait(() -> {
+        GRIPPlatform.runAndWait(() -> {
             final int index = event.getIndex().or(stepBox.getChildren().size());
             final Step step = event.getStep();
 
-            try {
-                // Create a new controller for the step.  Doing this with our factory method instead of with JavaFX's
-                // default controller factory lets us pass in a parameter - the step.
-                final StepController stepController = stepControllerFactory.create(step);
-                steps.add(stepController);
-                stepBox.getChildren().add(index,
-                        FXMLLoader.load(getClass().getResource("Step.fxml"), null, null, c -> stepController));
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
+            // Create a new controller for the step.  Doing this with our factory method instead of with JavaFX's
+            // default controller factory lets us pass in a parameter - the step.
+            final StepController stepController = stepControllerFactory.create(step);
+            stepsMapManager.add(index, stepController);
         });
     }
 
     @Subscribe
     public void onStepRemoved(StepRemovedEvent event) {
         // Remove the control that corresponds with the step that was removed
-        PlatformImpl.runAndWait(() -> {
+        GRIPPlatform.runAndWait(() -> {
             final StepController stepController = findStepController(event.getStep());
 
-            steps.remove(stepController);
+            stepsMapManager.remove(stepController);
             eventBus.unregister(stepController);
-
-            stepBox.getChildren().remove(stepController.getRoot());
-            eventBus.unregister(stepController.getRoot());
         });
     }
 
     @Subscribe
     public void onStepMoved(StepMovedEvent event) {
-        PlatformImpl.runAndWait(() -> {
-            final Node stepView = findStepController(event.getStep()).getRoot();
-            final int oldIndex = stepBox.getChildren().indexOf(stepView);
-            final int newIndex = Math.min(Math.max(oldIndex + event.getDistance(), 0), steps.size() - 1);
-            if (newIndex != oldIndex) {
-                stepBox.getChildren().remove(oldIndex);
-                stepBox.getChildren().add(newIndex, stepView);
-            }
+        GRIPPlatform.runAndWait(() -> {
+            final StepController stepController = findStepController(event.getStep());
+            stepsMapManager.moveByDistance(stepController, event.getDistance());
         });
     }
 
     @Subscribe
     public void onConnectionAdded(ConnectionAddedEvent event) {
         // Add the new connection view
-        PlatformImpl.runAndWait(() -> addConnectionView(event.getConnection()));
+        GRIPPlatform.runAndWait(() -> addConnectionView(event.getConnection()));
     }
 
     @Subscribe
     public void onConnectionRemoved(ConnectionRemovedEvent event) {
         // Remove the control that corresponds with the connection that was removed
-        PlatformImpl.runAndWait(() -> {
+        GRIPPlatform.runAndWait(() -> {
             final ConnectionView connectionView = findConnectionView(event.getConnection());
             connections.getChildren().remove(connectionView);
             eventBus.unregister(connectionView);

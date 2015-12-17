@@ -14,7 +14,7 @@
                 <Label styleClass="pane-title" text="Sources" maxWidth="Infinity"/>
                 <Separator orientation="HORIZONTAL"/>
                 <Pane fx:id="addSourcePane"/>
-                <VBox fx:id="sources" styleClass="sources"/>
+                <VBox fx:id="sourcesBox" styleClass="sources"/>
             </VBox>
             <Separator orientation="VERTICAL"/>
             <HBox fx:id="stepBox" styleClass="steps" fillHeight="false"/>

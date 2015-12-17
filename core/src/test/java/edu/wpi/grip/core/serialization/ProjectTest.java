@@ -84,9 +84,9 @@ public class ProjectTest {
 
     @Test
     public void testSerializePipelineWithSteps() throws Exception {
-        eventBus.post(new StepAddedEvent(new Step(eventBus, additionOperation)));
-        eventBus.post(new StepAddedEvent(new Step(eventBus, pythonAdditionOperationFromSource)));
-        eventBus.post(new StepAddedEvent(new Step(eventBus, pythonAdditionOperationFromURL)));
+        eventBus.post(new StepAddedEvent(new MockStep(eventBus, additionOperation)));
+        eventBus.post(new StepAddedEvent(new MockStep(eventBus, pythonAdditionOperationFromSource)));
+        eventBus.post(new StepAddedEvent(new MockStep(eventBus, pythonAdditionOperationFromURL)));
 
         serializeAndDeserialize();
 
@@ -99,12 +99,12 @@ public class ProjectTest {
     @Test
     @SuppressWarnings("unchecked")
     public void testSerializePipelineWithStepsAndConnections() throws Exception {
-        Step step1 = new Step(eventBus, pythonAdditionOperationFromSource);
+        Step step1 = new MockStep(eventBus, pythonAdditionOperationFromSource);
         InputSocket<Number> a1 = (InputSocket<Number>) step1.getInputSockets()[0];
         InputSocket<Number> b1 = (InputSocket<Number>) step1.getInputSockets()[1];
         OutputSocket<Number> sum1 = (OutputSocket<Number>) step1.getOutputSockets()[0];
 
-        Step step2 = new Step(eventBus, pythonAdditionOperationFromURL);
+        Step step2 = new MockStep(eventBus, pythonAdditionOperationFromURL);
         InputSocket<Number> a2 = (InputSocket<Number>) step2.getInputSockets()[0];
         InputSocket<Number> b2 = (InputSocket<Number>) step2.getInputSockets()[1];
         OutputSocket<Number> sum2 = (OutputSocket<Number>) step2.getOutputSockets()[0];
@@ -128,7 +128,7 @@ public class ProjectTest {
     @Test
     @SuppressWarnings("unchecked")
     public void testPerformSerializedStep() throws Exception {
-        eventBus.post(new StepAddedEvent(new Step(eventBus, additionOperation)));
+        eventBus.post(new StepAddedEvent(new MockStep(eventBus, additionOperation)));
         serializeAndDeserialize();
 
         InputSocket<Number> a = (InputSocket<Number>) pipeline.getSteps().get(0).getInputSockets()[0];
@@ -143,7 +143,7 @@ public class ProjectTest {
     @Test
     @SuppressWarnings("unchecked")
     public void testPerformSerializedPythonStepFromURL() throws Exception {
-        eventBus.post(new StepAddedEvent(new Step(eventBus, pythonAdditionOperationFromURL)));
+        eventBus.post(new StepAddedEvent(new MockStep(eventBus, pythonAdditionOperationFromURL)));
         serializeAndDeserialize();
 
         InputSocket<Number> a = (InputSocket<Number>) pipeline.getSteps().get(0).getInputSockets()[0];
@@ -158,7 +158,7 @@ public class ProjectTest {
     @Test
     @SuppressWarnings("unchecked")
     public void testPerformSerializedPythonStepFromSource() throws Exception {
-        eventBus.post(new StepAddedEvent(new Step(eventBus, pythonAdditionOperationFromSource)));
+        eventBus.post(new StepAddedEvent(new MockStep(eventBus, pythonAdditionOperationFromSource)));
         serializeAndDeserialize();
 
         InputSocket<Number> a = (InputSocket<Number>) pipeline.getSteps().get(0).getInputSockets()[0];
@@ -173,8 +173,8 @@ public class ProjectTest {
     @Test
     @SuppressWarnings("unchecked")
     public void testPerformSerializedPipeline() throws Exception {
-        Step step1 = new Step(eventBus, pythonAdditionOperationFromURL);
-        Step step2 = new Step(eventBus, pythonAdditionOperationFromSource);
+        Step step1 = new MockStep(eventBus, pythonAdditionOperationFromURL);
+        Step step2 = new MockStep(eventBus, pythonAdditionOperationFromSource);
         eventBus.post(new StepAddedEvent(step1));
         eventBus.post(new StepAddedEvent(step2));
         eventBus.post(new ConnectionAddedEvent(
@@ -198,7 +198,7 @@ public class ProjectTest {
     @Test
     @SuppressWarnings("unchecked")
     public void testPerformSerializedPipelineWithMats() throws Exception {
-        eventBus.post(new StepAddedEvent(new Step(eventBus, opencvAddOperation)));
+        eventBus.post(new StepAddedEvent(new MockStep(eventBus, opencvAddOperation)));
         serializeAndDeserialize();
 
         Step step1 = pipeline.getSteps().get(0);
