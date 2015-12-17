@@ -28,11 +28,13 @@ public class MultiImageFileSourceTest {
         sourceWithIndexSet = new MultiImageFileSource(
                 new EventBus(),
                 Arrays.asList(imageFile.file, gompeiJpegFile.file), 1);
+        source.load();
+        sourceWithIndexSet.load();
     }
 
     @Test(expected = IOException.class)
     public void createMultiImageFileSourceWithTextFile() throws IOException {
-        new MultiImageFileSource(new EventBus(), Arrays.asList(imageFile.file, gompeiJpegFile.file, textFile));
+        new MultiImageFileSource(new EventBus(), Arrays.asList(imageFile.file, gompeiJpegFile.file, textFile)).load();
     }
 
     @Test
@@ -59,6 +61,7 @@ public class MultiImageFileSourceTest {
     public void testLoadFromProperties() throws Exception {
         final Properties properties = sourceWithIndexSet.getProperties();
         final MultiImageFileSource newSource = new MultiImageFileSource(new EventBus(), properties);
+        newSource.load();
         OutputSocket<Mat> outputSocket = newSource.getOutputSockets()[0];
         gompeiJpegFile.assertSameImage(outputSocket.getValue().get());
     }

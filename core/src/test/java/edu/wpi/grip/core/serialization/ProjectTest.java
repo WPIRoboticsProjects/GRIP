@@ -30,6 +30,7 @@ public class ProjectTest {
 
     private Connection.Factory<Number> connectionFactory;
     private ImageFileSource.Factory imageSourceFactory;
+    private Step.Factory stepFactory;
     private EventBus eventBus;
     private Pipeline pipeline;
     private Project project;
@@ -47,6 +48,7 @@ public class ProjectTest {
         eventBus = injector.getInstance(EventBus.class);
         pipeline = injector.getInstance(Pipeline.class);
         project = injector.getInstance(Project.class);
+        stepFactory = injector.getInstance(Step.Factory.class);
 
 
         additionOperation = new AdditionOperation();
@@ -84,9 +86,9 @@ public class ProjectTest {
 
     @Test
     public void testSerializePipelineWithSteps() throws Exception {
-        eventBus.post(new StepAddedEvent(new MockStep(eventBus, additionOperation)));
-        eventBus.post(new StepAddedEvent(new MockStep(eventBus, pythonAdditionOperationFromSource)));
-        eventBus.post(new StepAddedEvent(new MockStep(eventBus, pythonAdditionOperationFromURL)));
+        eventBus.post(new StepAddedEvent(stepFactory.create(additionOperation)));
+        eventBus.post(new StepAddedEvent(stepFactory.create(pythonAdditionOperationFromSource)));
+        eventBus.post(new StepAddedEvent(stepFactory.create(pythonAdditionOperationFromURL)));
 
         serializeAndDeserialize();
 
@@ -99,12 +101,12 @@ public class ProjectTest {
     @Test
     @SuppressWarnings("unchecked")
     public void testSerializePipelineWithStepsAndConnections() throws Exception {
-        Step step1 = new MockStep(eventBus, pythonAdditionOperationFromSource);
+        Step step1 = stepFactory.create(pythonAdditionOperationFromSource);
         InputSocket<Number> a1 = (InputSocket<Number>) step1.getInputSockets()[0];
         InputSocket<Number> b1 = (InputSocket<Number>) step1.getInputSockets()[1];
         OutputSocket<Number> sum1 = (OutputSocket<Number>) step1.getOutputSockets()[0];
 
-        Step step2 = new MockStep(eventBus, pythonAdditionOperationFromURL);
+        Step step2 = stepFactory.create(pythonAdditionOperationFromURL);
         InputSocket<Number> a2 = (InputSocket<Number>) step2.getInputSockets()[0];
         InputSocket<Number> b2 = (InputSocket<Number>) step2.getInputSockets()[1];
         OutputSocket<Number> sum2 = (OutputSocket<Number>) step2.getOutputSockets()[0];
@@ -128,7 +130,7 @@ public class ProjectTest {
     @Test
     @SuppressWarnings("unchecked")
     public void testPerformSerializedStep() throws Exception {
-        eventBus.post(new StepAddedEvent(new MockStep(eventBus, additionOperation)));
+        eventBus.post(new StepAddedEvent(stepFactory.create(additionOperation)));
         serializeAndDeserialize();
 
         InputSocket<Number> a = (InputSocket<Number>) pipeline.getSteps().get(0).getInputSockets()[0];
@@ -143,7 +145,7 @@ public class ProjectTest {
     @Test
     @SuppressWarnings("unchecked")
     public void testPerformSerializedPythonStepFromURL() throws Exception {
-        eventBus.post(new StepAddedEvent(new MockStep(eventBus, pythonAdditionOperationFromURL)));
+        eventBus.post(new StepAddedEvent(stepFactory.create(pythonAdditionOperationFromURL)));
         serializeAndDeserialize();
 
         InputSocket<Number> a = (InputSocket<Number>) pipeline.getSteps().get(0).getInputSockets()[0];
@@ -158,7 +160,7 @@ public class ProjectTest {
     @Test
     @SuppressWarnings("unchecked")
     public void testPerformSerializedPythonStepFromSource() throws Exception {
-        eventBus.post(new StepAddedEvent(new MockStep(eventBus, pythonAdditionOperationFromSource)));
+        eventBus.post(new StepAddedEvent(stepFactory.create(pythonAdditionOperationFromSource)));
         serializeAndDeserialize();
 
         InputSocket<Number> a = (InputSocket<Number>) pipeline.getSteps().get(0).getInputSockets()[0];
@@ -173,8 +175,8 @@ public class ProjectTest {
     @Test
     @SuppressWarnings("unchecked")
     public void testPerformSerializedPipeline() throws Exception {
-        Step step1 = new MockStep(eventBus, pythonAdditionOperationFromURL);
-        Step step2 = new MockStep(eventBus, pythonAdditionOperationFromSource);
+        Step step1 = stepFactory.create(pythonAdditionOperationFromURL);
+        Step step2 = stepFactory.create(pythonAdditionOperationFromSource);
         eventBus.post(new StepAddedEvent(step1));
         eventBus.post(new StepAddedEvent(step2));
         eventBus.post(new ConnectionAddedEvent(
@@ -198,7 +200,7 @@ public class ProjectTest {
     @Test
     @SuppressWarnings("unchecked")
     public void testPerformSerializedPipelineWithMats() throws Exception {
-        eventBus.post(new StepAddedEvent(new MockStep(eventBus, opencvAddOperation)));
+        eventBus.post(new StepAddedEvent(stepFactory.create(opencvAddOperation)));
         serializeAndDeserialize();
 
         Step step1 = pipeline.getSteps().get(0);

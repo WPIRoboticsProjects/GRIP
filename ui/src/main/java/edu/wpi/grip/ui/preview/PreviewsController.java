@@ -37,6 +37,8 @@ public class PreviewsController {
     private PipelineController pipelineController;
     @Inject
     private Pipeline pipeline;
+    @Inject
+    private SocketPreviewViewFactory previewViewFactory;
 
     private final List<OutputSocket<?>> previewedSockets = new ArrayList<>();
 
@@ -126,7 +128,7 @@ public class PreviewsController {
                     newLocation = this.previewedSockets.size();//Make it so it will be added to the end of the list of previews
                 }
                 this.previewedSockets.add(newLocation, current);//...add it to the correct location in the list of previews open
-                this.previewBox.getChildren().add(newLocation, SocketPreviewViewFactory.createPreviewView(current));//...and display it in the correct location in the list of previews open
+                this.previewBox.getChildren().add(newLocation, previewViewFactory.create(current));//...and display it in the correct location in the list of previews open
             }
         });
     }
@@ -150,7 +152,7 @@ public class PreviewsController {
                         int indexInPreviews = getIndexInPreviewsOfAStepSocket(socket);
 
                         this.previewedSockets.add(indexInPreviews, socket);//...use this index to add it to the correct location in the list of previews open
-                        this.previewBox.getChildren().add(indexInPreviews, SocketPreviewViewFactory.createPreviewView(socket));//...and display it in the correct location in the list of previews open in the gui
+                        this.previewBox.getChildren().add(indexInPreviews, previewViewFactory.create(socket));//...and display it in the correct location in the list of previews open in the gui
 
                     } else {//This is a socket associated with a source and not a pipeline step...
 
@@ -158,7 +160,7 @@ public class PreviewsController {
                         int indexInSourcePreviews = getIndexInPreviewsOfASourceSocket(socket);
 
                         this.previewedSockets.add(indexInSourcePreviews, socket);//Add the preview to the appropriate place in the list of previewed sockets
-                        this.previewBox.getChildren().add(indexInSourcePreviews, SocketPreviewViewFactory.createPreviewView(socket));//Display the preview in the appropriate place
+                        this.previewBox.getChildren().add(indexInSourcePreviews, previewViewFactory.create(socket));//Display the preview in the appropriate place
                     }
                 }
             } else {//The socket was already previewed, so the user must be requesting to not show this preview (remove both it and the corresponding control)
