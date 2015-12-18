@@ -15,10 +15,10 @@ plugins {
 }
 apply plugin: 'nebula-aggregate-javadocs'
 
-
 allprojects {
     apply plugin: 'java'
     apply plugin: 'application'
+    apply plugin: 'jacoco'
 
 
     repositories {
@@ -31,7 +31,7 @@ allprojects {
         testCompile group: 'junit', name: 'junit', version: '4.12'
     }
 
-    version = '0.1.0'
+    version = '0.2.1'
 
     jacocoTestReport {
         reports {
@@ -39,6 +39,7 @@ allprojects {
             html.enabled = true
         }
     }
+
     check.dependsOn jacocoTestReport
 
     tasks.withType(Javadoc) {
@@ -50,16 +51,13 @@ allprojects {
     // Turn on test results
     test {
         testLogging {
-            afterSuite { desc, result ->
-                if (!desc.parent && project.hasProperty('printTestResults')) {
-                    println "Test results: ${result.resultType} (${result.testCount} tests, ${result.successfulTestCount} passed, ${result.failedTestCount} failed, ${result.skippedTestCount} skipped)"
-                }
-            }
+            events "failed"
+            exceptionFormat "full"
         }
     }
 }
 
-def os = osdetector.classifier.replace("osx", "macosx")
+def os = osdetector.classifier.replace("osx", "macosx").replace("windows-x86_32", "windows-x86")
 
 project(":core") {
     apply plugin: 'java'
@@ -172,6 +170,30 @@ project(":ui") {
     }
     mainClassName = javafx.mainClass
 }
+
+/*
+ * This is roughly based upon this post:
+ * https://discuss.gradle.org/t/merge-jacoco-coverage-reports-for-multiproject-setups/12100/6
+ */
+task jacocoRootReport(type: JacocoReport, group: 'Coverage reports') {
+    description = 'Generates an aggregate report from all subprojects'
+    dependsOn(subprojects.test)
+
+    additionalSourceDirs = files(subprojects.sourceSets.main.allSource.srcDirs)
+    sourceDirectories = files(subprojects.sourceSets.main.allSource.srcDirs)
+    classDirectories = files(subprojects.sourceSets.main.output)
+    executionData = files(subprojects.jacocoTestReport.executionData)
+
+    reports {
+        html.enabled = true
+        xml.enabled = true
+    }
+
+    doFirst {
+        executionData = files(executionData.findAll { it.exists() })
+    }
+}
+check.dependsOn jacocoRootReport
 
 task wrapper(type: Wrapper) {
     gradleVersion = '2.9'
