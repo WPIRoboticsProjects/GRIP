@@ -11,6 +11,9 @@ import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
+import java.io.IOException;
+import java.util.logging.*;
+
 public class Main extends Application {
     private final EventBus eventBus = new EventBus((exception, context) -> {
         this.triggerUnexpectedThrowableEvent(new UnexpectedThrowableEvent(exception, "An Event Bus subscriber threw an uncaught exception"));
@@ -20,6 +23,30 @@ public class Main extends Application {
     private Parent root;
 
     public static void main(String[] args) {
+        Logger globalLogger = LogManager.getLogManager().getLogger("");
+        Handler[] handlers = globalLogger.getHandlers();
+        for(Handler handler : handlers) {
+            globalLogger.removeHandler(handler);
+        }
+        Handler fileHandler  = null;
+
+        try{
+            //Creating consoleHandler and fileHandler
+            fileHandler  = new FileHandler("./GRIPlogger.log");
+
+            globalLogger.addHandler(fileHandler);
+
+            //Setting levels to handlers and LOGGER
+            fileHandler.setLevel(Level.ALL);
+            globalLogger.setLevel(Level.ALL);
+
+            globalLogger.config("Configuration done.");
+
+
+            globalLogger.log(Level.FINE, "Finer logged");
+        }catch(IOException exception){
+            globalLogger.log(Level.SEVERE, "Error occur in FileHandler.", exception);
+        }
         launch(args);
     }
 
