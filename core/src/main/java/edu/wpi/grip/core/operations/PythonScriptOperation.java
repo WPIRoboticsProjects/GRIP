@@ -10,7 +10,10 @@ import java.io.InputStream;
 import java.net.URL;
 import java.util.Optional;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.Properties;
+
 
 /**
  * A class that implements an operation using Jython.  This enables users to write plugins for the application as
@@ -53,6 +56,7 @@ public class PythonScriptOperation implements Operation {
 
     private static final String DEFAULT_NAME = "Python Operation";
     private static final String DEFAULT_DESCRIPTION = "";
+    private static Logger logger =  Logger.getLogger(PythonScriptOperation.class.getName());
 
 
     // Either a URL or a String of literal source code is stored in this field.  This allows a PythonScriptOperation to
@@ -215,9 +219,9 @@ public class PythonScriptOperation implements Operation {
             /* Exceptions can happen if there's a mistake in a Python script, so just print a stack trace and leave the
              * current state of the output sockets alone.
              *
-             * TODO: This method should not throw (since it's an event handler), but it should somehow communicate the
-             * error to the GUI. */
-            e.printStackTrace();
+             * TODO: communicate the error to the GUI.
+             */
+            logger.log(Level.INFO, e.getMessage(), e);
         }
     }
 

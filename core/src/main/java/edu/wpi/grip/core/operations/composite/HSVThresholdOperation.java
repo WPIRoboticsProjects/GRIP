@@ -10,6 +10,8 @@ import org.bytedeco.javacpp.opencv_core.Scalar;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import static org.bytedeco.javacpp.opencv_core.inRange;
 import static org.bytedeco.javacpp.opencv_imgproc.COLOR_BGR2HSV;
@@ -20,6 +22,7 @@ import static org.bytedeco.javacpp.opencv_imgproc.cvtColor;
  */
 public class HSVThresholdOperation extends ThresholdOperation {
 
+    private static Logger logger =  Logger.getLogger(HSVThresholdOperation.class.getName());
     private final SocketHint<Mat> inputHint = SocketHints.Inputs.createMatSocketHint("Input", false);
     private final SocketHint<List> hueHint = SocketHints.Inputs.createNumberListRangeSocketHint("Hue", 0.0, 180.0);
     private final SocketHint<List> saturationHint = SocketHints.Inputs.createNumberListRangeSocketHint("Saturation", 0.0, 255.0);
@@ -85,7 +88,7 @@ public class HSVThresholdOperation extends ThresholdOperation {
             inRange(hsv, low, high, output);
             outputSocket.setValue(output);
         } catch (RuntimeException e) {
-            e.printStackTrace(); // TODO: Report OpenCV errors
+            logger.log(Level.INFO, e.getMessage(), e);
         }
     }
 }

@@ -9,6 +9,9 @@ import org.bytedeco.javacpp.opencv_core;
 import org.bytedeco.javacpp.opencv_core.Mat;
 import org.bytedeco.javacpp.opencv_core.Point;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 /** Operation to call {@link opencv_core#minMaxLoc} */
 public class MinMaxLoc implements CVOperation {
 
@@ -23,6 +26,7 @@ public class MinMaxLoc implements CVOperation {
     private final SocketHint<Point>
             minLocOutputHint = SocketHints.Outputs.createPointSocketHint("Min Loc"),
             maxLocOutputHint = SocketHints.Outputs.createPointSocketHint("Max Loc");
+    private static Logger logger =  Logger.getLogger(MinMaxLoc.class.getName());
 
     @Override
     public String getName() {
@@ -68,8 +72,7 @@ public class MinMaxLoc implements CVOperation {
             ((OutputSocket) outputs[2]).setValue(outputs[2].getValue().get());
             ((OutputSocket) outputs[3]).setValue(outputs[3].getValue().get());
         } catch (final Exception e) {
-            //TODO Add socket error parsing
-            e.printStackTrace();
+            logger.log(Level.INFO, e.getMessage(), e);
         }
     }
 }

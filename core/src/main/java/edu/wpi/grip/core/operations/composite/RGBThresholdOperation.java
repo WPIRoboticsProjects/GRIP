@@ -5,6 +5,8 @@ import edu.wpi.grip.core.*;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import static org.bytedeco.javacpp.opencv_core.*;
 
@@ -13,6 +15,7 @@ import static org.bytedeco.javacpp.opencv_core.*;
  */
 public class RGBThresholdOperation extends ThresholdOperation {
 
+    private static Logger logger =  Logger.getLogger(RGBThresholdOperation.class.getName());
     private final SocketHint<Mat> inputHint = SocketHints.Inputs.createMatSocketHint("Input", false);
     private final SocketHint<List> redHint = SocketHints.Inputs.createNumberListRangeSocketHint("Red", 0.0, 255.0);
     private final SocketHint<List> greenHint = SocketHints.Inputs.createNumberListRangeSocketHint("Green", 0.0, 255.0);
@@ -84,7 +87,7 @@ public class RGBThresholdOperation extends ThresholdOperation {
 
             outputSocket.setValue(output);
         } catch (RuntimeException e) {
-            e.printStackTrace(); // TODO: Report OpenCV errors
+            logger.log(Level.INFO, e.getMessage(), e);
         }
     }
 }
