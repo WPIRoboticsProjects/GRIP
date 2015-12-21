@@ -18,6 +18,8 @@ import java.util.Optional;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -29,6 +31,7 @@ public final class CameraSource extends Source implements StartStoppable {
 
     private final static String DEVICE_NUMBER_PROPERTY = "deviceNumber";
     private final static String ADDRESS_PROPERTY = "address";
+    private static Logger logger =  Logger.getLogger(CameraSource.class.getName());
 
     private EventBus eventBus;
     private String name;
@@ -207,9 +210,7 @@ public final class CameraSource extends Source implements StartStoppable {
                     frameThread = Optional.empty();
                 } catch (InterruptedException e) {
                     Thread.currentThread().interrupt();
-                    //TODO: Move this into a logging framework
-                    System.err.println("Caught Exception:");
-                    e.printStackTrace();
+                    logger.log(Level.WARNING, e.getMessage(), e);
                 } finally {
                     // This will always run even if a timeout exception occurs
                     try {
