@@ -7,6 +7,8 @@ import edu.wpi.grip.core.events.SocketChangedEvent;
 
 import java.util.NoSuchElementException;
 import java.util.Optional;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -16,6 +18,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
  */
 @XStreamAlias(value = "grip:Step")
 public class Step {
+    private static Logger logger =  Logger.getLogger(Step.class.getName());
     private Operation operation;
     private InputSocket<?>[] inputSockets;
     private OutputSocket<?>[] outputSockets;
@@ -103,7 +106,7 @@ public class Step {
                         ));
             }
         } catch (NoSuchElementException e) {
-            e.printStackTrace();
+            logger.log(Level.WARNING, e.getMessage(), e);
             resetOutputSockets();
             return; /* Only run the perform method if all of the input sockets are present. */
         }
@@ -111,7 +114,7 @@ public class Step {
         try {
             this.operation.perform(inputSockets, outputSockets, data);
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.log(Level.WARNING, e.getMessage(), e);
             resetOutputSockets();
         }
     }
