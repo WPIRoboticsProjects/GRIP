@@ -106,7 +106,7 @@ public class Step {
                         ));
             }
         } catch (NoSuchElementException e) {
-            logger.log(Level.INFO, e.getMessage(), e);
+            logger.log(Level.WARNING, e.getMessage(), e);
             resetOutputSockets();
             return; /* Only run the perform method if all of the input sockets are present. */
         }
@@ -114,7 +114,7 @@ public class Step {
         try {
             this.operation.perform(inputSockets, outputSockets, data);
         } catch (Exception e) {
-            logger.log(Level.INFO, e.getMessage(), e);
+            logger.log(Level.WARNING, e.getMessage(), e);
             resetOutputSockets();
         }
     }

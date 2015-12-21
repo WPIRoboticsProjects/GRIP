@@ -88,7 +88,7 @@ public class HSVThresholdOperation extends ThresholdOperation {
             inRange(hsv, low, high, output);
             outputSocket.setValue(output);
         } catch (RuntimeException e) {
-            logger.log(Level.INFO, e.getMessage(), e);
+            logger.log(Level.WARNING, e.getMessage(), e);
         }
     }
 }

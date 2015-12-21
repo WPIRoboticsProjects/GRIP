@@ -210,7 +210,7 @@ public final class CameraSource extends Source implements StartStoppable {
                     frameThread = Optional.empty();
                 } catch (InterruptedException e) {
                     Thread.currentThread().interrupt();
-                    logger.log(Level.INFO, e.getMessage(), e);
+                    logger.log(Level.WARNING, e.getMessage(), e);
                 } finally {
                     // This will always run even if a timeout exception occurs
                     try {

@@ -72,7 +72,7 @@ public class MinMaxLoc implements CVOperation {
             ((OutputSocket) outputs[2]).setValue(outputs[2].getValue().get());
             ((OutputSocket) outputs[3]).setValue(outputs[3].getValue().get());
         } catch (final Exception e) {
-            logger.log(Level.INFO, e.getMessage(), e);
+            logger.log(Level.WARNING, e.getMessage(), e);
         }
     }
 }

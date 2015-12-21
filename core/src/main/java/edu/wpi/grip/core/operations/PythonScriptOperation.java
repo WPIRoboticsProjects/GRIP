@@ -221,7 +221,7 @@ public class PythonScriptOperation implements Operation {
              *
              * TODO: communicate the error to the GUI.
              */
-            logger.log(Level.INFO, e.getMessage(), e);
+            logger.log(Level.WARNING, e.getMessage(), e);
         }
     }
 

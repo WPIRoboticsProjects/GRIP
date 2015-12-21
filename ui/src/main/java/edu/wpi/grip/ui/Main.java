@@ -23,35 +23,40 @@ public class Main extends Application {
     private Parent root;
 
     public static void main(String[] args) {
-        Logger globalLogger = LogManager.getLogManager().getLogger("");
-        Handler[] handlers = globalLogger.getHandlers();
-        for(Handler handler : handlers) {
-            globalLogger.removeHandler(handler);
-        }
-        Handler fileHandler  = null;
-
-        try{
-            //Creating consoleHandler and fileHandler
-            fileHandler  = new FileHandler("./GRIPlogger.log");
-
-            globalLogger.addHandler(fileHandler);
-
-            //Setting levels to handlers and LOGGER
-            fileHandler.setLevel(Level.ALL);
-            globalLogger.setLevel(Level.ALL);
-
-            globalLogger.config("Configuration done.");
-
-
-            globalLogger.log(Level.FINE, "Finer logged");
-        }catch(IOException exception){
-            globalLogger.log(Level.SEVERE, "Error occur in FileHandler.", exception);
-        }
         launch(args);
     }
 
     @Override
     public void start(Stage stage) {
+
+        //Set up the global level logger. This handles IO for all loggers.
+        Logger globalLogger = LogManager.getLogManager().getLogger("");//This is our global logger
+
+        //Remove the default handler(s) so we can add our own
+        Handler[] handlers = globalLogger.getHandlers();
+        for(Handler handler : handlers) {
+            globalLogger.removeHandler(handler);
+        }
+
+        Handler fileHandler  = null;//This will be our handler for the global logger
+
+        try{
+            fileHandler  = new FileHandler("./GRIPlogger.log");//Log to the file "GRIPlogger.log"
+
+            globalLogger.addHandler(fileHandler);//Add the handler to the global logger
+
+            fileHandler.setFormatter(new SimpleFormatter());//log in text, not xml
+
+            //Set level to handler and logger
+            fileHandler.setLevel(Level.FINE);
+            globalLogger.setLevel(Level.FINE);
+
+            globalLogger.config("Configuration done.");//Log that we are done setting up the logger
+
+        }catch(IOException exception){//Something happened setting up file IO
+            globalLogger.log(Level.SEVERE, "Error occured setting up FileHandler for logger.", exception);
+        }
+
         this.eventBus.register(this);
         this.root = new MainWindowView(eventBus);
         /**
