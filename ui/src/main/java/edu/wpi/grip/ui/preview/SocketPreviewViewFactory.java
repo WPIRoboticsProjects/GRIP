@@ -7,6 +7,7 @@ import edu.wpi.grip.core.OutputSocket;
 import edu.wpi.grip.core.operations.composite.BlobsReport;
 import edu.wpi.grip.core.operations.composite.ContoursReport;
 import edu.wpi.grip.core.operations.composite.LinesReport;
+import edu.wpi.grip.ui.util.GRIPPlatform;
 import org.bytedeco.javacpp.IntPointer;
 
 import static org.bytedeco.javacpp.opencv_core.*;
@@ -21,6 +22,9 @@ public class SocketPreviewViewFactory {
     @Inject
     private EventBus eventBus;
 
+    @Inject
+    private GRIPPlatform platform;
+
     SocketPreviewViewFactory() {/* no-op */}
 
     /**
@@ -32,17 +36,17 @@ public class SocketPreviewViewFactory {
     public <T> SocketPreviewView<T> create(OutputSocket<T> socket) {
         final SocketPreviewView<T> previewView;
         if (socket.getSocketHint().getType() == Mat.class) {
-            previewView = (SocketPreviewView) new ImageSocketPreviewView((OutputSocket<Mat>) socket);
+            previewView = (SocketPreviewView) new ImageSocketPreviewView(platform, (OutputSocket<Mat>) socket);
         } else if (socket.getSocketHint().getType() == Point.class || socket.getSocketHint().getType() == Size.class) {
-            previewView = (SocketPreviewView) new PointSizeSocketPreviewView((OutputSocket<IntPointer>) socket);
+            previewView = (SocketPreviewView) new PointSizeSocketPreviewView(platform, (OutputSocket<IntPointer>) socket);
         } else if (socket.getSocketHint().getType() == ContoursReport.class) {
-            previewView = (SocketPreviewView) new ContoursSocketPreviewView((OutputSocket<ContoursReport>) socket);
+            previewView = (SocketPreviewView) new ContoursSocketPreviewView(platform, (OutputSocket<ContoursReport>) socket);
         } else if (socket.getSocketHint().getType() == LinesReport.class) {
-            previewView = (SocketPreviewView) new LinesSocketPreviewView((OutputSocket<LinesReport>) socket);
+            previewView = (SocketPreviewView) new LinesSocketPreviewView(platform, (OutputSocket<LinesReport>) socket);
         } else if (socket.getSocketHint().getType() == BlobsReport.class) {
-            previewView = (SocketPreviewView) new BlobsSocketPreviewView((OutputSocket<BlobsReport>) socket);
+            previewView = (SocketPreviewView) new BlobsSocketPreviewView(platform, (OutputSocket<BlobsReport>) socket);
         } else {
-            previewView = new TextAreaSocketPreviewView<>(socket);
+            previewView = new TextAreaSocketPreviewView<>(platform, socket);
         }
         eventBus.register(previewView);
         return previewView;

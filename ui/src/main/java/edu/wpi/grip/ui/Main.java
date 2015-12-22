@@ -11,6 +11,7 @@ import edu.wpi.grip.core.events.UnexpectedThrowableEvent;
 import edu.wpi.grip.core.operations.Operations;
 import edu.wpi.grip.generated.CVOperations;
 import edu.wpi.grip.ui.util.DPIUtility;
+import edu.wpi.grip.ui.util.GRIPPlatform;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -24,11 +25,13 @@ import java.util.logging.*;
 
 public class Main extends Application {
 
-
     @Inject
     private EventBus eventBus;
     @Inject
     private Palette palette;
+    @Inject
+    private GRIPPlatform platform;
+
 
     protected final Injector injector = Guice.createInjector(new GRIPCoreModule(), new GRIPUIModule());
 
@@ -48,6 +51,7 @@ public class Main extends Application {
     }
 
     @Override
+    @SuppressWarnings("PMD.SignatureDeclareThrowsException")
     public void start(Stage stage) throws Exception {
 
         //Set up the global level logger. This handles IO for all loggers.
@@ -88,7 +92,9 @@ public class Main extends Application {
     public final void onUnexpectedThrowableEvent(UnexpectedThrowableEvent event) {
         // Print throwable before showing the exception so that errors are in order in the console
         event.getThrowable().printStackTrace();
+        // This should still use PlatformImpl
         PlatformImpl.runAndWait(() -> {
+            // WARNING! Do not post any events from within this! It could result in a deadlock!
             synchronized (this.dialogLock) {
                 try {
                     // Don't create more than one exception dialog at the same time

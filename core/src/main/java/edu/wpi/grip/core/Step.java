@@ -3,7 +3,7 @@ package edu.wpi.grip.core;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import com.google.inject.Inject;
-import com.google.inject.assistedinject.Assisted;
+import com.google.inject.Singleton;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import edu.wpi.grip.core.events.SocketChangedEvent;
 
@@ -20,43 +20,62 @@ import static com.google.common.base.Preconditions.checkNotNull;
  */
 @XStreamAlias(value = "grip:Step")
 public class Step {
-    private final Logger logger =  Logger.getLogger(Step.class.getName());
-    private Operation operation;
-    private InputSocket<?>[] inputSockets;
-    private OutputSocket<?>[] outputSockets;
-    private Optional<?> data;
 
-    public interface Factory {
-        Step create(Operation operation);
+    private final Logger logger =  Logger.getLogger(Step.class.getName());
+
+    private final Operation operation;
+    private final InputSocket<?>[] inputSockets;
+    private final OutputSocket<?>[] outputSockets;
+    private final Optional<?> data;
+
+    @Singleton
+    public static class Factory {
+        private final EventBus eventBus;
+
+        @Inject
+        public Factory(EventBus eventBus) {
+            this.eventBus = eventBus;
+        }
+
+        public Step create(Operation operation) {
+            checkNotNull(operation, "The operation can not be null");
+            // Create the list of input and output sockets, and mark this step as their owner.
+            final InputSocket<?>[] inputSockets = operation.createInputSockets(eventBus);
+
+            for (Socket<?> socket : inputSockets) {
+                eventBus.register(socket);
+            }
+
+            final OutputSocket<?>[] outputSockets = operation.createOutputSockets(eventBus);
+            for (Socket<?> socket : outputSockets) {
+                eventBus.register(socket);
+            }
+
+            final Step step = new Step(operation, inputSockets, outputSockets, operation.createData());
+            eventBus.register(step);
+            for (Socket<?> socket : inputSockets) {
+                socket.setStep(Optional.of(step));
+            }
+            for (Socket<?> socket : outputSockets) {
+                socket.setStep(Optional.of(step));
+            }
+
+            step.runPerformIfPossible();
+            return step;
+        }
     }
 
     /**
-     * @param eventBus  The Guava {@link EventBus} used by the application.
-     * @param operation The operation that is performed at this step.
+     * @param operation     The operation that is performed at this step.
+     * @param inputSockets  The input sockets from the operation.
+     * @param outputSockets The output sockets provided by the operation.
+     * @param data          The data provided by the operation.
      */
-    @Inject
-    Step(EventBus eventBus, @Assisted Operation operation) {
+    Step(Operation operation, InputSocket<?>[] inputSockets, OutputSocket<?>[] outputSockets, Optional<?> data) {
         this.operation = operation;
-
-        checkNotNull(eventBus);
-        checkNotNull(operation);
-
-        // Create the list of input and output sockets, and mark this step as their owner.
-        inputSockets = operation.createInputSockets(eventBus);
-        for (Socket<?> socket : inputSockets) {
-            socket.setStep(Optional.of(this));
-            eventBus.register(socket);
-        }
-
-        outputSockets = operation.createOutputSockets(eventBus);
-        for (Socket<?> socket : outputSockets) {
-            socket.setStep(Optional.of(this));
-            eventBus.register(socket);
-        }
-
-        data = operation.createData();
-
-        runPerformIfPossible();
+        this.inputSockets = inputSockets;
+        this.outputSockets = outputSockets;
+        this.data = data;
     }
 
     /**

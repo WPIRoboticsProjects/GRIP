@@ -16,15 +16,16 @@ import static org.bytedeco.javacpp.opencv_core.Mat;
  */
 public class ImageSocketPreviewView extends SocketPreviewView<Mat> {
 
+    private final GRIPPlatform platform;
     private final ImageConverter imageConverter;
     private final ImageView imageView;
 
     /**
      * @param socket   An output socket to preview
      */
-    ImageSocketPreviewView(OutputSocket<Mat> socket) {
+    ImageSocketPreviewView(GRIPPlatform platform, OutputSocket<Mat> socket) {
         super(socket);
-
+        this.platform = platform;
         this.imageConverter = new ImageConverter();
         this.imageView = new ImageView();
         this.setContent(imageView);
@@ -44,7 +45,7 @@ public class ImageSocketPreviewView extends SocketPreviewView<Mat> {
         synchronized (this) {
             this.getSocket().getValue().ifPresent(mat -> {
                 final Image image = this.imageConverter.convert(mat);
-                GRIPPlatform.runAndWait(() -> {
+                platform.runAsSoonAsPossible(() -> {
                     this.imageView.setImage(image);
                 });
 

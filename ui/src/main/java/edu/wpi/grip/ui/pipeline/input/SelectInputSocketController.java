@@ -22,6 +22,7 @@ public class SelectInputSocketController<T> extends InputSocketController<T> {
 
     private final ChoiceBox<T> choiceBox;
     private final InvalidationListener updateSocketFromChoiceBox;
+    private final GRIPPlatform platform;
 
     public interface Factory<T> {
         SelectInputSocketController<T> create(InputSocket<T> socket);
@@ -31,8 +32,9 @@ public class SelectInputSocketController<T> extends InputSocketController<T> {
      * @param socket an input socket where the domain contains all of the possible values to choose from
      */
     @Inject
-    SelectInputSocketController(SocketHandleView.Factory socketHandleViewFactory, @Assisted InputSocket<T> socket) {
+    SelectInputSocketController(SocketHandleView.Factory socketHandleViewFactory, GRIPPlatform platform, @Assisted InputSocket<T> socket) {
         super(socketHandleViewFactory, socket);
+        this.platform = platform;
 
         final Object[] domain = socket.getSocketHint().getDomain().get();
 
@@ -59,7 +61,7 @@ public class SelectInputSocketController<T> extends InputSocketController<T> {
     @Subscribe
     public void updateChoiceBoxFromSocket(SocketChangedEvent event) {
         if (event.getSocket() == this.getSocket()) {
-            GRIPPlatform.runAndWait(() -> {
+            platform.runAsSoonAsPossible(() -> {
                 // Remove the invalidation listener when we set the value.  This listener is useful for updating the socket value
                 // when the user changes the spinner, but since we're setting the spinner value from the socket value, calling it
                 // here would not only be redundant, but would create an infinite loop.

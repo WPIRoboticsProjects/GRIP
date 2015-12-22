@@ -14,11 +14,12 @@ import javafx.scene.control.TextArea;
 public class TextAreaSocketPreviewView<T> extends SocketPreviewView<T> {
 
     private final TextArea text;
+    private GRIPPlatform platform;
 
     /**
      * @param socket   An output socket to preview
      */
-    public TextAreaSocketPreviewView(OutputSocket<T> socket) {
+    public TextAreaSocketPreviewView(GRIPPlatform platform, OutputSocket<T> socket) {
         super(socket);
 
         this.setStyle("-fx-pref-width: 20em;");
@@ -33,7 +34,7 @@ public class TextAreaSocketPreviewView<T> extends SocketPreviewView<T> {
     public void onSocketChanged(SocketChangedEvent event) {
         final Socket socket = event.getSocket();
         if (socket == this.getSocket()) {
-            GRIPPlatform.runAndWait(() ->{
+            platform.runAsSoonAsPossible(() ->{
                 this.text.setText(socket.getValue().orElse("").toString());
             });
         }

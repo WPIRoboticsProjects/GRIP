@@ -9,7 +9,7 @@ import edu.wpi.grip.core.events.StepAddedEvent;
 import edu.wpi.grip.core.events.StepMovedEvent;
 import edu.wpi.grip.ui.GRIPUIModule;
 import edu.wpi.grip.ui.util.StyleClassNameUtility;
-import javafx.fxml.FXMLLoader;
+import edu.wpi.grip.ui.util.TestAnnotationFXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.input.MouseButton;
@@ -19,6 +19,7 @@ import org.hamcrest.Description;
 import org.junit.Test;
 import org.testfx.framework.junit.ApplicationTest;
 import org.testfx.matcher.base.NodeMatchers;
+import org.testfx.util.WaitForAsyncUtils;
 
 import java.util.List;
 import java.util.Optional;
@@ -43,12 +44,10 @@ public class PipelineUITest extends ApplicationTest {
         eventBus = injector.getInstance(EventBus.class);
         additionOperation = new AdditionOperation();
         subtractionOperation = new SubtractionOperation();
-        final Scene scene = new Scene(FXMLLoader.load(getClass().getResource("Pipeline.fxml"), null, null,
-                injector::getInstance), 800, 600);
+        pipelineController = injector.getInstance(PipelineController.class);
+        final Scene scene = new Scene(TestAnnotationFXMLLoader.load(pipelineController), 800, 600);
         stage.setScene(scene);
         stage.show();
-
-        pipelineController = injector.getInstance(PipelineController.class);
     }
 
     @Test
@@ -74,16 +73,17 @@ public class PipelineUITest extends ApplicationTest {
 
     @Test
     public void testMoveOperation() {
-        final Step step1 = new MockStep();
-        final Step step2 = new MockStep();
-        final Step step3 = new MockStep();
+        final Step step1 = MockStep.createMockStepWithOperation();
+        final Step step2 = MockStep.createMockStepWithOperation();
+        final Step step3 = MockStep.createMockStepWithOperation();
 
         eventBus.post(new StepAddedEvent(step1));
         eventBus.post(new StepAddedEvent(step2));
         eventBus.post(new StepAddedEvent(step3));
         eventBus.post(new StepMovedEvent(step2, +1));
 
-        sleep(1, TimeUnit.SECONDS);
+        //sleep(1, TimeUnit.SECONDS);
+        WaitForAsyncUtils.waitForFxEvents();
 
         verifyThatIter(".step", new BaseMatcher<Iterable<Node>>() {
             @Override
@@ -126,7 +126,7 @@ public class PipelineUITest extends ApplicationTest {
     }
 
     private Step addOperation(int count, Operation operation) {
-        final Step step = new MockStep(eventBus, operation);
+        final Step step = new Step.Factory(eventBus).create(operation);
         eventBus.post(new StepAddedEvent(step));
 
         // Wait for the event to propagate to the UI

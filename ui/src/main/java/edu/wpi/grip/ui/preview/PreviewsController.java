@@ -17,9 +17,8 @@ import javafx.scene.layout.HBox;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Stack;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Controller for a container that automatically shows previews of all sockets marked as "previewed".
@@ -39,8 +38,27 @@ public class PreviewsController {
     private Pipeline pipeline;
     @Inject
     private SocketPreviewViewFactory previewViewFactory;
+    @Inject
+    private GRIPPlatform platform;
 
     private final List<OutputSocket<?>> previewedSockets = new ArrayList<>();
+
+    private Collection<SocketPreviewView<?>> getPreviewsForStep(Step step) {
+        return previewBox.getChildren()
+                .stream()
+                .map(p -> (SocketPreviewView<?>) p)
+                .filter(p -> Arrays.asList(step.getOutputSockets())
+                        .stream()
+                        .anyMatch(outputSocket -> outputSocket.equals(p.getSocket())))
+                .collect(Collectors.toList());
+    }
+
+    private OptionalInt getFirstPreviewOf(Step step) {
+        return getPreviewsForStep(step).stream()
+                .mapToInt(previewView -> previewBox.getChildren().indexOf(previewView))
+                .filter(i -> i != -1)
+                .min();
+    }
 
     /**
      * This function is called when a step moves in the pipeline to adjust the positions of any open previews it has
@@ -48,7 +66,7 @@ public class PreviewsController {
      */
     @Subscribe
     public synchronized void onPreviewOrderChanged(StepMovedEvent event) {
-        GRIPPlatform.runAndWait(() -> {//Run this function on the main gui thread
+        platform.runAsSoonAsPossible(() -> {//Run this function on the main gui thread
             final Step movedStep = event.getStep(); //The step whose position in the pipeline has changed
             final int distanceMoved = event.getDistance(); //The number of indices (positive or negative) the step has been moved by
             final int numberOfSourcePreviews = getNumbOfSourcePreviews();//The number of previews opened that are displaying sources (NOT steps)
@@ -138,7 +156,7 @@ public class PreviewsController {
      */
     @Subscribe
     public synchronized void onSocketPreviewChanged(SocketPreviewChangedEvent event) {
-        GRIPPlatform.runAndWait(() -> {//Run this function on the main gui thread
+        platform.runAsSoonAsPossible(() -> {//Run this function on the main gui thread
 
             final OutputSocket<?> socket = event.getSocket(); //The socket whose preview has changed
 

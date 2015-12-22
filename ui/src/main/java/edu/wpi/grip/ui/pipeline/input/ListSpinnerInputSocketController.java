@@ -26,6 +26,7 @@ public class ListSpinnerInputSocketController extends InputSocketController<List
 
     private final SpinnerValueFactory<List> valueFactory;
     private final InvalidationListener updateSocketFromSpinner;
+    private final GRIPPlatform platform;
 
     public interface Factory {
         ListSpinnerInputSocketController create(InputSocket<List> socket);
@@ -35,8 +36,9 @@ public class ListSpinnerInputSocketController extends InputSocketController<List
      * @param socket an input socket where the domain contains all of the possible values to choose from
      */
     @Inject
-    ListSpinnerInputSocketController(EventBus eventBus, SocketHandleView.Factory socketHandleViewFactory, @Assisted InputSocket<List> socket) {
+    ListSpinnerInputSocketController(EventBus eventBus, SocketHandleView.Factory socketHandleViewFactory, GRIPPlatform platform, @Assisted InputSocket<List> socket) {
         super(socketHandleViewFactory, socket);
+        this.platform = platform;
 
         final Object[] domain = socket.getSocketHint().getDomain().get();
 
@@ -68,7 +70,7 @@ public class ListSpinnerInputSocketController extends InputSocketController<List
     @Subscribe
     public void updateSpinnerFromSocket(SocketChangedEvent event) {
         if (event.getSocket() == this.getSocket()) {
-            GRIPPlatform.runAndWait(() -> {
+            platform.runAsSoonAsPossible(() -> {
                 // Remove the invalidation listener when we set the value.  This listener is useful for updating the socket value
                 // when the user changes the spinner, but since we're setting the spinner value from the socket value, calling it
                 // here would not only be redundant, but would create an infinite loop.

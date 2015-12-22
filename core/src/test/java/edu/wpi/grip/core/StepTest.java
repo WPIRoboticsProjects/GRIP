@@ -1,28 +1,29 @@
 package edu.wpi.grip.core;
 
 import com.google.common.eventbus.EventBus;
+import org.junit.Before;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
 
 public class StepTest {
-    EventBus eventBus = new EventBus();
-    Operation addition = new AdditionOperation();
+    private EventBus eventBus;
+    private Operation addition;
 
-    @Test(expected = NullPointerException.class)
-    public void testEventBusNotNull() {
-        new Step(null, addition);
+    @Before
+    public void setUp() {
+        this.eventBus = new EventBus();
+        this.addition = new AdditionOperation();
     }
 
     @Test(expected = NullPointerException.class)
     public void testOperationNotNull() {
-        new Step(eventBus, null);
+        new Step.Factory(eventBus).create(null);
     }
 
     @Test
     public void testStep() {
-        Step step = new Step(eventBus, addition);
-        eventBus.register(step);
+        Step step = new Step.Factory(eventBus).create(addition);
         Socket<Double> a = (Socket<Double>) step.getInputSockets()[0];
         Socket<Double> b = (Socket<Double>) step.getInputSockets()[1];
         Socket<Double> c = (Socket<Double>) step.getOutputSockets()[0];
@@ -36,7 +37,7 @@ public class StepTest {
 
     @Test
     public void testSocketDirection() {
-        Step step = new Step(eventBus, addition);
+        Step step = new Step.Factory(eventBus).create(addition);
         Socket<Double> a = (Socket<Double>) step.getInputSockets()[0];
         Socket<Double> b = (Socket<Double>) step.getInputSockets()[1];
         Socket<Double> c = (Socket<Double>) step.getOutputSockets()[0];
@@ -48,7 +49,7 @@ public class StepTest {
 
     @Test
     public void testGetOperation() {
-        Step step = new Step(eventBus, addition);
+        Step step = new Step.Factory(eventBus).create(addition);
 
         assertEquals(addition, step.getOperation());
     }

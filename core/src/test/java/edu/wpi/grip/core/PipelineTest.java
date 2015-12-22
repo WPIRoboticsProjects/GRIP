@@ -3,9 +3,8 @@ package edu.wpi.grip.core;
 import com.google.common.eventbus.EventBus;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
-import com.google.inject.Key;
-import com.google.inject.TypeLiteral;
 import edu.wpi.grip.core.events.*;
+import org.junit.Before;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -14,21 +13,18 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Properties;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 public class PipelineTest {
 
-    private Injector injector = Guice.createInjector(new GRIPCoreModule());
-    private Step.Factory stepFactory = injector.getInstance(Step.Factory.class);
-    private Connection.Factory<Double> connectionFactory =
-            injector.getInstance(Key.get(new TypeLiteral<Connection.Factory<Double>>() {} ));
-    private EventBus eventBus = injector.getInstance(EventBus.class);
-    private Pipeline pipeline = injector.getInstance(Pipeline.class);
-    private Operation addition = new AdditionOperation();
+    private Injector injector;
+    private Step.Factory stepFactory;
+    private EventBus eventBus;
+    private Pipeline pipeline;
+    private Operation addition;
 
 
-    class MockSource extends Source {
+    private class MockSource extends Source {
         @Override
         public String getName() {
             return null;
@@ -43,7 +39,27 @@ public class PipelineTest {
         public Properties getProperties() {
             return null;
         }
-    };
+    }
+
+    private class MockConnection extends Connection {
+
+        /**
+         * @param eventBus
+         * @param pipeline     The pipeline to create the connection inside of.
+         */
+        public MockConnection(EventBus eventBus, Pipeline pipeline) {
+            super(eventBus, pipeline, new MockOutputSocket("Whatever output"), new MockInputSocket("Whatever input"));
+        }
+    }
+
+    @Before
+    public void setUp () {
+        injector = Guice.createInjector(new GRIPCoreModule());
+        stepFactory = injector.getInstance(Step.Factory.class);
+        eventBus = injector.getInstance(EventBus.class);
+        pipeline = injector.getInstance(Pipeline.class);
+        addition = new AdditionOperation();
+    }
 
     @Test
     public void testAddSource() throws URISyntaxException, IOException {
@@ -67,7 +83,7 @@ public class PipelineTest {
     @Test
     @SuppressWarnings("unchecked")
     public void testAddStep() {
-        Step step = stepFactory.create(addition);
+        Step step = new MockStep();
 
         eventBus.post(new StepAddedEvent(step));
 
@@ -77,8 +93,8 @@ public class PipelineTest {
     @Test
     @SuppressWarnings("unchecked")
     public void testAddStepAtIndex() {
-        Step step1 = stepFactory.create(addition);
-        Step step2 = stepFactory.create(addition);
+        Step step1 = new MockStep();
+        Step step2 = new MockStep();
 
         eventBus.post(new StepAddedEvent(step1));
         eventBus.post(new StepAddedEvent(step2, 0));
@@ -89,8 +105,8 @@ public class PipelineTest {
     @Test
     @SuppressWarnings("unchecked")
     public void testRemoveFirstStep() {
-        Step step1 = stepFactory.create(addition);
-        Step step2 = stepFactory.create(addition);
+        Step step1 = new MockStep();
+        Step step2 = new MockStep();
 
         eventBus.post(new StepAddedEvent(step1));
         eventBus.post(new StepAddedEvent(step2));
@@ -102,8 +118,8 @@ public class PipelineTest {
     @Test
     @SuppressWarnings("unchecked")
     public void testRemoveSecondStep() {
-        Step step1 = stepFactory.create(addition);
-        Step step2 = stepFactory.create(addition);
+        Step step1 = new MockStep();
+        Step step2 = new MockStep();
 
         eventBus.post(new StepAddedEvent(step1));
         eventBus.post(new StepAddedEvent(step2));
@@ -114,9 +130,9 @@ public class PipelineTest {
 
     @Test
     public void testMoveStep() {
-        Step step1 = stepFactory.create(addition);
-        Step step2 = stepFactory.create(addition);
-        Step step3 = stepFactory.create(addition);
+        Step step1 = new MockStep();
+        Step step2 = new MockStep();
+        Step step3 = new MockStep();
 
         eventBus.post(new StepAddedEvent(step1));
         eventBus.post(new StepAddedEvent(step2));
@@ -128,62 +144,49 @@ public class PipelineTest {
 
     @Test
     public void testMoveStepToBeginning() {
-        Step step1 = stepFactory.create(addition);
-        Step step2 = stepFactory.create(addition);
-        Step step3 = stepFactory.create(addition);
+        Step step1 = new MockStep();
+        Step step2 = new MockStep();
+        Step step3 = new MockStep();
 
         eventBus.post(new StepAddedEvent(step1));
         eventBus.post(new StepAddedEvent(step2));
         eventBus.post(new StepAddedEvent(step3));
         eventBus.post(new StepMovedEvent(step2, -10));
 
-        assertEquals(Arrays.asList(step2, step1, step3), pipeline.getSteps());
+        assertEquals("The step was not moved to the beginning of the pipeline", Arrays.asList(step2, step1, step3), pipeline.getSteps());
     }
 
     @Test
     public void testMoveStepToEnd() {
-        Step step1 = stepFactory.create(addition);
-        Step step2 = stepFactory.create(addition);
-        Step step3 = stepFactory.create(addition);
+        Step step1 = new MockStep();
+        Step step2 = new MockStep();
+        Step step3 = new MockStep();
 
         eventBus.post(new StepAddedEvent(step1));
         eventBus.post(new StepAddedEvent(step2));
         eventBus.post(new StepAddedEvent(step3));
         eventBus.post(new StepMovedEvent(step2, +10));
 
-        assertEquals(Arrays.asList(step1, step3, step2), pipeline.getSteps());
+        assertEquals("The step was not moved to the end of the pipeline", Arrays.asList(step1, step3, step2), pipeline.getSteps());
     }
 
     @Test
     @SuppressWarnings("unchecked")
     public void testAddConnection() {
-        Step step1 = stepFactory.create(addition);
-        Step step2 = stepFactory.create(addition);
-        eventBus.post(new StepAddedEvent(step1));
-        eventBus.post(new StepAddedEvent(step2));
-
-        Connection connection = connectionFactory
-                .create((OutputSocket)(step1.getOutputSockets()[0]), (InputSocket) step2.getInputSockets()[0]);
+        Connection connection = new MockConnection(eventBus, pipeline);
         eventBus.post(new ConnectionAddedEvent(connection));
 
-        assertEquals(Collections.singleton(connection), pipeline.getConnections());
+        assertEquals("The connection was not added to the pipeline", Collections.singleton(connection), pipeline.getConnections());
     }
 
     @Test
     @SuppressWarnings("unchecked")
     public void testRemoveConnection() {
-        Step step1 = stepFactory.create(addition);
-        Step step2 = stepFactory.create(addition);
-        eventBus.post(new StepAddedEvent(step1));
-        eventBus.post(new StepAddedEvent(step2));
-
-        Connection connection = connectionFactory.create(
-                (OutputSocket) step1.getOutputSockets()[0],
-                (InputSocket) step2.getInputSockets()[0]);
+        Connection connection = new MockConnection(eventBus, pipeline);
         eventBus.post(new ConnectionAddedEvent(connection));
         eventBus.post(new ConnectionRemovedEvent(connection));
 
-        assertTrue(pipeline.getConnections().isEmpty());
+        assertTrue("The pipeline was not empty", pipeline.getConnections().isEmpty());
     }
 
     @Test
@@ -207,6 +210,7 @@ public class PipelineTest {
         eventBus.post(new StepAddedEvent(step2));
 
         Connection connection = new Connection(eventBus, pipeline, sum1, a2);
+        eventBus.register(connection);
         eventBus.post(new ConnectionAddedEvent(connection));
 
         a1.setValue(123.0);
@@ -245,7 +249,7 @@ public class PipelineTest {
         assertEquals((Double) 789.0, sum2.getValue().get());
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     @SuppressWarnings("unchecked")
     public void testCannotConnectBackwards() {
         Step step1 = stepFactory.create(addition);
@@ -255,15 +259,15 @@ public class PipelineTest {
 
         eventBus.post(new StepAddedEvent(step1));
         eventBus.post(new StepAddedEvent(step2));
-        connectionFactory.create(sum2, a1);
+        assertFalse("Should not be able to connect backwards", pipeline.canConnect(a1, sum2));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     @SuppressWarnings("unchecked")
     public void testCannotConnectIncompatibleTypes() {
         InputSocket<Number> a = new InputSocket<>(eventBus, SocketHints.createNumberSocketHint("a", 0.0));
         OutputSocket<String> b = new OutputSocket<>(eventBus, new SocketHint.Builder<>(String.class).identifier("b").initialValue("").build());
 
-        connectionFactory.create((OutputSocket) b, (InputSocket) a);
+        assertFalse("Should not be able to connect incompatible types", pipeline.canConnect((OutputSocket) b, (InputSocket) a));
     }
 }

@@ -12,16 +12,16 @@ import java.util.Arrays;
 
 import static org.junit.Assert.assertEquals;
 
-public class NodeControllerObservableListMapTest extends ApplicationTest {
+public class NodeControllerManagerTest extends ApplicationTest {
 
     private MockPane mockPane;
 
     private class MockPane extends Pane {
 
-        private final NodeControllerObservableListMap nodeControllerObservableListMap;
+        private final NodeControllerManager nodeControllerManager;
 
         public MockPane() {
-            nodeControllerObservableListMap = new NodeControllerObservableListMap(this.getChildren());
+            nodeControllerManager = new NodeControllerManager(this.getChildren());
         }
 
     }
@@ -48,9 +48,9 @@ public class NodeControllerObservableListMapTest extends ApplicationTest {
     public void testRemoveWithController() throws Exception {
         interact(() -> {
             final MockController mockController = new MockController();
-            mockPane.nodeControllerObservableListMap.add(mockController);
-            mockPane.nodeControllerObservableListMap.removeWithController(mockController);
-            assertEquals("The size of the controller was not 0 after removed with pane", 0, mockPane.nodeControllerObservableListMap.size());
+            mockPane.nodeControllerManager.add(mockController);
+            mockPane.nodeControllerManager.removeWithController(mockController);
+            assertEquals("The size of the controller was not 0 after removed with pane", 0, mockPane.nodeControllerManager.size());
         });
     }
 
@@ -58,33 +58,33 @@ public class NodeControllerObservableListMapTest extends ApplicationTest {
     public void testRemoveWithPane() throws Exception {
         interact(() -> {
             final MockController mockController = new MockController();
-            mockPane.nodeControllerObservableListMap.add(mockController);
-            mockPane.nodeControllerObservableListMap.removeWithNode(mockController.getRoot());
-            assertEquals("The size of the controller was not 0 after removed with pane", 0, mockPane.nodeControllerObservableListMap.size());
+            mockPane.nodeControllerManager.add(mockController);
+            mockPane.nodeControllerManager.removeWithNode(mockController.getRoot());
+            assertEquals("The size of the controller was not 0 after removed with pane", 0, mockPane.nodeControllerManager.size());
         });
     }
 
     @Test
     public void testAdd() throws Exception {
         interact(() -> {
-            mockPane.nodeControllerObservableListMap.add(new MockController());
-            assertEquals("The size of the controller was not the same", 1, mockPane.nodeControllerObservableListMap.size());
+            mockPane.nodeControllerManager.add(new MockController());
+            assertEquals("The size of the controller was not the same", 1, mockPane.nodeControllerManager.size());
         });
     }
 
     @Test
     public void testAddAll() throws Exception {
         interact(() -> {
-            mockPane.nodeControllerObservableListMap.addAll(new MockController(), new MockController());
-            assertEquals("The size of the controller was not the same", 2, mockPane.nodeControllerObservableListMap.size());
+            mockPane.nodeControllerManager.addAll(new MockController(), new MockController());
+            assertEquals("The size of the controller was not the same", 2, mockPane.nodeControllerManager.size());
         });
     }
 
     @Test
     public void testAddAll1() throws Exception {
         interact(() -> {
-            mockPane.nodeControllerObservableListMap.addAll(Arrays.asList(new MockController(), new MockController()));
-            assertEquals("The size of the controller was not the same", 2, mockPane.nodeControllerObservableListMap.size());
+            mockPane.nodeControllerManager.addAll(Arrays.asList(new MockController(), new MockController()));
+            assertEquals("The size of the controller was not the same", 2, mockPane.nodeControllerManager.size());
         });
     }
 
@@ -92,9 +92,9 @@ public class NodeControllerObservableListMapTest extends ApplicationTest {
     public void testGetWithPane() throws Exception {
         interact(() -> {
             final MockController mockController = new MockController();
-            mockPane.nodeControllerObservableListMap.add(mockController);
+            mockPane.nodeControllerManager.add(mockController);
             assertEquals("The size of the controller was not the same",
-                    mockController, mockPane.nodeControllerObservableListMap.getWithPane(mockController.getRoot()));
+                    mockController, mockPane.nodeControllerManager.getWithNode(mockController.getRoot()));
         });
     }
 
@@ -108,7 +108,7 @@ public class NodeControllerObservableListMapTest extends ApplicationTest {
                 Thread.currentThread().setUncaughtExceptionHandler((t, e) -> exception[0] = e);
 
                 final MockController mockController = new MockController();
-                mockPane.nodeControllerObservableListMap.add(mockController);
+                mockPane.nodeControllerManager.add(mockController);
                 mockPane.getChildren().remove(0);
                 if (exception[0] != null) {
                     // Reset this after this test.

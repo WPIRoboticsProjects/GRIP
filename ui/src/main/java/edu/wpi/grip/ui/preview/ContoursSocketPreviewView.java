@@ -27,6 +27,7 @@ public final class ContoursSocketPreviewView extends SocketPreviewView<ContoursR
     private final Label infoLabel = new Label();
     private final CheckBox colorContours;
     private final Mat tmp = new Mat();
+    private final GRIPPlatform platform;
 
     private final static Scalar[] CONTOUR_COLORS = new Scalar[]{
             Scalar.RED,
@@ -40,8 +41,9 @@ public final class ContoursSocketPreviewView extends SocketPreviewView<ContoursR
     /**
      * @param socket   An output socket to preview
      */
-    public ContoursSocketPreviewView(OutputSocket<ContoursReport> socket) {
+    public ContoursSocketPreviewView(GRIPPlatform platform, OutputSocket<ContoursReport> socket) {
         super(socket);
+        this.platform = platform;
         this.colorContours = new CheckBox("Color Contours");
         this.colorContours.setSelected(false);
 
@@ -84,7 +86,7 @@ public final class ContoursSocketPreviewView extends SocketPreviewView<ContoursR
 
             final Image image = this.imageConverter.convert(tmp);
             final long finalNumContours = numContours;
-            GRIPPlatform.runAndWait(() -> {
+            platform.runAsSoonAsPossible(() -> {
                 this.imageView.setImage(image);
                 this.infoLabel.setText("Found " + finalNumContours + " contours");
             });

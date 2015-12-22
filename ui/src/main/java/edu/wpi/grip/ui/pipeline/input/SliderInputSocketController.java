@@ -22,6 +22,7 @@ public class SliderInputSocketController extends InputSocketController<Number> {
 
     private final Slider slider;
     private final Label label;
+    private final GRIPPlatform platform;
 
     public interface Factory {
         SliderInputSocketController create(InputSocket<Number> socket);
@@ -32,8 +33,9 @@ public class SliderInputSocketController extends InputSocketController<Number> {
      *               slider values)
      */
     @Inject
-    SliderInputSocketController(SocketHandleView.Factory socketHandleViewFactory, @Assisted InputSocket<Number> socket) {
+    SliderInputSocketController(SocketHandleView.Factory socketHandleViewFactory, GRIPPlatform platform, @Assisted InputSocket<Number> socket) {
         super(socketHandleViewFactory, socket);
+        this.platform = platform;
 
         final Number[] domain = socket.getSocketHint().getDomain().get();
 
@@ -69,7 +71,7 @@ public class SliderInputSocketController extends InputSocketController<Number> {
     @Subscribe
     public void updateSliderValue(SocketChangedEvent event) {
         if (event.getSocket() == this.getSocket()) {
-            GRIPPlatform.runAndWait(()-> this.slider.setValue(this.getSocket().getValue().get().doubleValue()));
+            platform.runAsSoonAsPossible(()-> this.slider.setValue(this.getSocket().getValue().get().doubleValue()));
         }
     }
 }

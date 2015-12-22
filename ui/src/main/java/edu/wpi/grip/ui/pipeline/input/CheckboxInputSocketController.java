@@ -19,14 +19,16 @@ import java.util.Optional;
 public class CheckboxInputSocketController extends InputSocketController<Boolean> {
 
     private final CheckBox checkBox;
+    private final GRIPPlatform platform;
 
     public interface Factory {
         CheckboxInputSocketController create(InputSocket<Boolean> socket);
     }
 
     @Inject
-    CheckboxInputSocketController(SocketHandleView.Factory socketHandleViewFactory, @Assisted InputSocket<Boolean> socket) {
+    CheckboxInputSocketController(SocketHandleView.Factory socketHandleViewFactory, GRIPPlatform platform, @Assisted InputSocket<Boolean> socket) {
         super(socketHandleViewFactory, socket);
+        this.platform = platform;
         this.checkBox = new CheckBox();
     }
 
@@ -52,7 +54,7 @@ public class CheckboxInputSocketController extends InputSocketController<Boolean
     @Subscribe
     public void updateCheckboxFromSocket(SocketChangedEvent event) {
         if (event.getSocket() == this.getSocket()) {
-            GRIPPlatform.runAndWait(() -> assignSocketValue(event.getSocket().getValue()));
+            platform.runAsSoonAsPossible(() -> assignSocketValue(event.getSocket().getValue()));
         }
     }
 }

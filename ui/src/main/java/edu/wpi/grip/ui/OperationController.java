@@ -1,11 +1,10 @@
 package edu.wpi.grip.ui;
 
-import com.google.common.eventbus.EventBus;
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 import edu.wpi.grip.core.Operation;
+import edu.wpi.grip.core.Pipeline;
 import edu.wpi.grip.core.Step;
-import edu.wpi.grip.core.events.StepAddedEvent;
 import edu.wpi.grip.ui.annotations.ParametrizedController;
 import edu.wpi.grip.ui.util.StyleClassNameUtility;
 import javafx.fxml.FXML;
@@ -34,7 +33,7 @@ public class OperationController implements Controller {
     @FXML
     private ImageView icon;
 
-    private final EventBus eventBus;
+    private final Pipeline pipeline;
     private final Step.Factory stepFactory;
     private final Operation operation;
 
@@ -43,8 +42,8 @@ public class OperationController implements Controller {
     }
 
     @Inject
-    OperationController(EventBus eventBus, Step.Factory stepFactory, @Assisted Operation operation) {
-        this.eventBus = eventBus;
+    OperationController(Pipeline pipeline, Step.Factory stepFactory, @Assisted Operation operation) {
+        this.pipeline = pipeline;
         this.stepFactory = stepFactory;
         this.operation = operation;
     }
@@ -70,7 +69,7 @@ public class OperationController implements Controller {
 
     @FXML
     public void addStep() {
-        this.eventBus.post(new StepAddedEvent(stepFactory.create(this.operation)));
+        this.pipeline.addStep(stepFactory.create(this.operation));
     }
 
     public GridPane getRoot() {

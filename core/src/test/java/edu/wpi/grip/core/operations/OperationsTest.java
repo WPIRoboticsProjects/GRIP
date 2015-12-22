@@ -3,8 +3,8 @@ package edu.wpi.grip.core.operations;
 import com.google.common.base.Throwables;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
-import edu.wpi.grip.core.MockStep;
 import edu.wpi.grip.core.Operation;
+import edu.wpi.grip.core.Step;
 import edu.wpi.grip.core.events.OperationAddedEvent;
 import edu.wpi.grip.generated.CVOperations;
 import org.junit.After;
@@ -48,7 +48,7 @@ public class OperationsTest {
     public void testCreateAllCVSteps() {
         CVOperations.addOperations(eventBus);
         for (Operation operation : operationList) {
-            new MockStep(eventBus, operation);
+            new Step.Factory(eventBus).create(operation);
         }
     }
 
@@ -56,7 +56,7 @@ public class OperationsTest {
     public void testCreateAllCoreSteps() {
         Operations.addOperations(eventBus);
         for (Operation operation : operationList) {
-            new MockStep(eventBus, operation);
+            new Step.Factory(eventBus).create(operation);
         }
     }
 }

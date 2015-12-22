@@ -5,7 +5,7 @@ import com.google.common.eventbus.Subscribe;
 import edu.wpi.grip.core.Operation;
 import edu.wpi.grip.core.Palette;
 import edu.wpi.grip.core.events.OperationAddedEvent;
-import edu.wpi.grip.ui.util.NodeControllerObservableListMap;
+import edu.wpi.grip.ui.util.NodeControllerManager;
 import edu.wpi.grip.ui.util.SearchUtility;
 import javafx.beans.InvalidationListener;
 import javafx.beans.property.ObjectProperty;
@@ -41,11 +41,11 @@ public class PaletteController {
     private EventBus eventBus;
     @Inject
     private Palette palette;
-    private NodeControllerObservableListMap<OperationController, Node> operationsMapManager;
+    private NodeControllerManager<OperationController, Node> operationsMapManager;
 
     @FXML
     public void initialize() {
-        operationsMapManager = new NodeControllerObservableListMap<>(operations.getChildren());
+        operationsMapManager = new NodeControllerManager<>(operations.getChildren());
 
         // Make the search box have a "clear" button. This is the only way to do this unfortunately.
         // https://bitbucket.org/controlsfx/controlsfx/issues/330/making-textfieldssetupclearbuttonfield

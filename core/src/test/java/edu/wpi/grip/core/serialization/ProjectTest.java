@@ -26,9 +26,7 @@ import static org.bytedeco.javacpp.opencv_core.*;
 
 public class ProjectTest {
 
-    private Injector injector;
-
-    private Connection.Factory<Number> connectionFactory;
+    private Connection.Factory<Object> connectionFactory;
     private ImageFileSource.Factory imageSourceFactory;
     private Step.Factory stepFactory;
     private EventBus eventBus;
@@ -40,9 +38,9 @@ public class ProjectTest {
 
     @Before
     public void setUp() throws Exception {
-        injector = Guice.createInjector(new GRIPCoreModule());
+        final Injector injector = Guice.createInjector(new GRIPCoreModule());
         connectionFactory = injector
-                .getInstance(Key.get(new TypeLiteral<Connection.Factory<Number>>() {}));
+                .getInstance(Key.get(new TypeLiteral<Connection.Factory<Object>>() {}));
         imageSourceFactory = injector
                 .getInstance(ImageFileSource.Factory.class);
         eventBus = injector.getInstance(EventBus.class);
@@ -117,7 +115,7 @@ public class ProjectTest {
 
         eventBus.post(new StepAddedEvent(step1));
         eventBus.post(new StepAddedEvent(step2));
-        eventBus.post(new ConnectionAddedEvent(connectionFactory.create(sum1, a2)));
+        eventBus.post(new ConnectionAddedEvent(connectionFactory.create(sum1, (InputSocket) a2)));
 
         serializeAndDeserialize();
 
@@ -219,6 +217,7 @@ public class ProjectTest {
     }
 
     @Test
+    @SuppressWarnings("PMD.SingularField")
     public void testSerializePipelineWithSource() throws Exception {
         final ImageFileSource source = imageSourceFactory.create(Files.gompeiJpegFile.file);
         source.load();

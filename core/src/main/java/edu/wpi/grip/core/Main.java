@@ -19,15 +19,18 @@ import java.util.logging.*;
  */
 public class Main {
 
-    @Inject private Project project;
-    @Inject private EventBus eventBus;
+    @Inject
+    private Project project;
+    @Inject
+    private EventBus eventBus;
 
+    @SuppressWarnings("PMD.SignatureDeclareThrowsException")
     public static void main(String[] args) throws Exception {
         final Injector injector = Guice.createInjector(new GRIPCoreModule());
         injector.getInstance(Main.class).start(args);
     }
 
-    public void start(String[] args) throws Exception {
+    public void start(String[] args) throws IOException, InterruptedException {
         if (args.length != 1) {
             System.err.println("Usage: GRIP.jar project.grip");
             return;

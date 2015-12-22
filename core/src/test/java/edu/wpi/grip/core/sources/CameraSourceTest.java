@@ -1,6 +1,7 @@
 package edu.wpi.grip.core.sources;
 
 
+import com.google.common.base.Throwables;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import com.google.inject.Guice;
@@ -34,6 +35,7 @@ public class CameraSourceTest {
         private final Frame frame;
         private final Indexer frameIdx;
         private boolean shouldThrowAtStart = false;
+        private boolean shouldThrowAtStop = false;
 
         MockFrameGrabber() {
             this.frame = new Frame(640 + 1, 480, Frame.DEPTH_SHORT, 3);
@@ -56,7 +58,9 @@ public class CameraSourceTest {
 
         @Override
         public void stop() throws Exception {
-
+            if(shouldThrowAtStop) {
+                throw new FrameGrabber.Exception("Throwing on stop was enabled");
+            }
         }
 
         @Override
@@ -76,6 +80,9 @@ public class CameraSourceTest {
 
         public void setShouldThrowAtStart(boolean shouldThrowAtStart){
             this.shouldThrowAtStart = shouldThrowAtStart;
+        }
+        public void setShouldThrowAtStop(boolean shouldThrowAtStop) {
+            this.shouldThrowAtStop = shouldThrowAtStop;
         }
     }
 
@@ -134,6 +141,20 @@ public class CameraSourceTest {
         mockFrameGrabberFactory.frameGrabber.setShouldThrowAtStart(true);
         cameraSourceWithMockGrabber.start();
         fail("Should have thrown an IOException");
+    }
+
+    @Test(expected = IOException.class)
+    public void testStopRethrowsIfFailure() throws Exception {
+        mockFrameGrabberFactory.frameGrabber.setShouldThrowAtStop(true);
+        cameraSourceWithMockGrabber.start();
+
+        try{
+            cameraSourceWithMockGrabber.stop();
+        } catch (IOException e) {
+            assertFalse(cameraSourceWithMockGrabber.isStarted());
+            Throwables.propagateIfInstanceOf(e, IOException.class);
+        }
+        fail("This should have thrown an IOException");
     }
 
     @Test(expected = IllegalStateException.class)

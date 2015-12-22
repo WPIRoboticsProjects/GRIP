@@ -57,6 +57,7 @@ public final class CameraSource extends Source implements StartStoppable {
 
     public interface FrameGrabberFactory {
         FrameGrabber create(int deviceNumber);
+
         FrameGrabber create(String addressProperty) throws MalformedURLException;
     }
 
@@ -192,7 +193,7 @@ public final class CameraSource extends Source implements StartStoppable {
                         eventBus.post(new UnexpectedThrowableEvent(exception, "Camera Frame Grabber Thread crashed with uncaught exception"));
                         try {
                             stop();
-                        } catch (TimeoutException e) {
+                        } catch (TimeoutException | IOException e) {
                             // TODO: This should use the ExceptionWitness once that has a UI component added for it
                             eventBus.post(new UnexpectedThrowableEvent(e, "Camera Frame Grabber could not be stopped!"));
                         }
@@ -211,10 +212,11 @@ public final class CameraSource extends Source implements StartStoppable {
      * This will stop the source publishing new socket values after this method returns.
      *
      * @return The source that was stopped
-     * @throws TimeoutException if the thread running the source fails to stop.
-     * @throws IOException      If there is a problem stopping the Source
+     * @throws TimeoutException      If the thread running the source fails to stop.
+     * @throws IOException           If there is a problem stopping the Source
+     * @throws IllegalStateException If the camera is already stopped.
      */
-    public final void stop() throws TimeoutException, IllegalStateException {
+    public final void stop() throws TimeoutException, IOException {
         synchronized (this) {
             if (frameThread.isPresent()) {
                 final Thread ex = frameThread.get();
@@ -235,7 +237,7 @@ public final class CameraSource extends Source implements StartStoppable {
                         // Calling this multiple times will have no effect
                         grabber.stop();
                     } catch (FrameGrabber.Exception e) {
-                        throw new IllegalStateException("A problem occurred trying to stop the frame grabber", e);
+                        throw new IOException("A problem occurred trying to stop the frame grabber", e);
                     }
                 }
             } else {
@@ -252,7 +254,7 @@ public final class CameraSource extends Source implements StartStoppable {
     }
 
     @Subscribe
-    public void onSourceRemovedEvent(SourceRemovedEvent event) throws TimeoutException {
+    public void onSourceRemovedEvent(SourceRemovedEvent event) throws TimeoutException, IOException {
         if (event.getSource() == this) {
             try {
                 if (this.isStarted()) this.stop();
@@ -270,7 +272,7 @@ public final class CameraSource extends Source implements StartStoppable {
 
     private static Properties createProperties(int deviceNumber) {
         final Properties properties = new Properties();
-        properties.setProperty(DEVICE_NUMBER_PROPERTY, "" + deviceNumber);
+        properties.setProperty(DEVICE_NUMBER_PROPERTY, Integer.toString(deviceNumber));
         return properties;
     }
 

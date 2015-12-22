@@ -5,10 +5,7 @@ import com.google.common.eventbus.Subscribe;
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
-import edu.wpi.grip.core.events.ConnectionRemovedEvent;
-import edu.wpi.grip.core.events.SocketChangedEvent;
-import edu.wpi.grip.core.events.SourceRemovedEvent;
-import edu.wpi.grip.core.events.StepRemovedEvent;
+import edu.wpi.grip.core.events.*;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
@@ -38,7 +35,6 @@ public class Connection<T> {
         this.outputSocket = outputSocket;
         this.inputSocket = inputSocket;
         checkArgument(pipeline.canConnect(outputSocket, inputSocket), "Cannot connect sockets");
-        inputSocket.setValueOptional(outputSocket.getValue());
     }
 
     public OutputSocket<? extends T> getOutputSocket() {
@@ -49,10 +45,21 @@ public class Connection<T> {
         return this.inputSocket;
     }
 
+    private void runConnection() {
+        inputSocket.setValueOptional(outputSocket.getValue());
+    }
+
+    @Subscribe
+    public void onConnectionAdded(ConnectionAddedEvent event) {
+        if (event.getConnection().equals(this)) {
+            runConnection();
+        }
+    }
+
     @Subscribe
     public void onOutputChanged(SocketChangedEvent e) {
         if (e.getSocket() == outputSocket) {
-            inputSocket.setValueOptional(outputSocket.getValue());
+            runConnection();
         }
     }
 

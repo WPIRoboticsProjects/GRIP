@@ -31,13 +31,15 @@ public class LinesSocketPreviewView extends SocketPreviewView<LinesReport> {
     private final ImageView imageView = new ImageView();
     private final Label infoLabel = new Label();
     private final Mat tmp = new Mat();
+    private final GRIPPlatform platform;
     private boolean showInputImage = false;
 
     /**
      * @param socket   An output socket to preview
      */
-    public LinesSocketPreviewView(OutputSocket<LinesReport> socket) {
+    public LinesSocketPreviewView(GRIPPlatform platform, OutputSocket<LinesReport> socket) {
         super(socket);
+        this.platform = platform;
 
         // Add a checkbox to set if the preview should just show the lines, or also the input image
         final CheckBox show = new CheckBox("Show Input Image");
@@ -96,7 +98,7 @@ public class LinesSocketPreviewView extends SocketPreviewView<LinesReport> {
             final Image image = this.imageConverter.convert(input);
             final int numLines = lines.size();
 
-            GRIPPlatform.runAndWait(() -> {
+            platform.runAsSoonAsPossible(() -> {
                 this.imageView.setImage(image);
                 this.infoLabel.setText("Found " + numLines + " lines");
             });

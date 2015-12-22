@@ -10,7 +10,7 @@ import edu.wpi.grip.ui.Controller;
 import edu.wpi.grip.ui.annotations.ParametrizedController;
 import edu.wpi.grip.ui.pipeline.OutputSocketController;
 import edu.wpi.grip.ui.pipeline.StepController;
-import edu.wpi.grip.ui.util.NodeControllerObservableListMap;
+import edu.wpi.grip.ui.util.NodeControllerManager;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
@@ -44,7 +44,7 @@ public class SourceController<S extends Source> implements Controller {
     private final EventBus eventBus;
     private final OutputSocketController.Factory outputSocketControllerFactory;
     private final S source;
-    private NodeControllerObservableListMap<OutputSocketController, Node> outputSocketMapManager;
+    private NodeControllerManager<OutputSocketController, Node> outputSocketMapManager;
 
     public interface BaseSourceControllerFactory<S extends Source> {
         SourceController<S> create(S source);
@@ -59,7 +59,7 @@ public class SourceController<S extends Source> implements Controller {
 
     @FXML
     public void initialize() throws Exception {
-        outputSocketMapManager = new NodeControllerObservableListMap<>(sockets.getChildren());
+        outputSocketMapManager = new NodeControllerManager<>(sockets.getChildren());
         this.name.setText(source.getName());
 
         for (OutputSocket<?> socket : source.getOutputSockets()) {

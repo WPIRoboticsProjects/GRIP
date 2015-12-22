@@ -1,10 +1,6 @@
 package edu.wpi.grip.core;
 
 import com.google.common.eventbus.EventBus;
-import com.google.inject.Guice;
-import com.google.inject.Injector;
-import com.google.inject.Key;
-import com.google.inject.TypeLiteral;
 import edu.wpi.grip.core.events.ConnectionRemovedEvent;
 import org.junit.Before;
 import org.junit.Test;
@@ -14,21 +10,18 @@ import static org.junit.Assert.assertEquals;
 public class ConnectionTest {
     private static final Number testValue = Double.valueOf(12345.6789);
 
-    private Injector injector;
     private EventBus eventBus;
-    private Connection.Factory<Number> connectionFactory;
     private SocketHint<Number> fooHint;
     private SocketHint<Number> barHint;
 
     private OutputSocket<Number> foo;
     private InputSocket<Number> bar;
 
+    private class MockPipeline extends Pipeline {}
+
     @Before
     public void setUp() {
-        injector = Guice.createInjector(new GRIPCoreModule());
-        eventBus = injector.getInstance(EventBus.class);
-        connectionFactory = injector.getInstance(Key.get(new TypeLiteral<Connection.Factory<Number>>() {
-        }));
+        eventBus = new EventBus();
 
         fooHint = SocketHints.createNumberSocketHint("foo", 0.0);
         barHint = SocketHints.createNumberSocketHint("bar", 0.0);
@@ -43,7 +36,8 @@ public class ConnectionTest {
 
     @Test
     public void testInputSocketChanges() {
-        final Connection<Number> connection = connectionFactory.create(foo, bar);
+        final Connection<Number> connection = new Connection(eventBus, new MockPipeline(), foo, bar);
+        eventBus.register(connection);
 
         foo.setValue(testValue);
         assertEquals(testValue, bar.getValue().get());
@@ -53,7 +47,7 @@ public class ConnectionTest {
 
     @Test
     public void testInputSocketResets() {
-        final Connection<Number> connection = connectionFactory.create(foo, bar);
+        final Connection<Number> connection = new Connection<>(eventBus, new MockPipeline(), foo, bar);
 
         foo.setValue(testValue);
         eventBus.post(new ConnectionRemovedEvent(connection));

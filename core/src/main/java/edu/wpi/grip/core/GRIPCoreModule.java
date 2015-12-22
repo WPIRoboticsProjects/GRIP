@@ -40,11 +40,6 @@ public class GRIPCoreModule extends AbstractModule {
 
         bind(EventBus.class).toInstance(eventBus);
 
-        install(new FactoryModuleBuilder().build(Step.Factory.class));
-
-
-        install(new FactoryModuleBuilder().build(new TypeLiteral<Connection.Factory<Number>>(){}));
-        install(new FactoryModuleBuilder().build(new TypeLiteral<Connection.Factory<Double>>(){}));
         install(new FactoryModuleBuilder().build(new TypeLiteral<Connection.Factory<Object>>(){}));
 
 

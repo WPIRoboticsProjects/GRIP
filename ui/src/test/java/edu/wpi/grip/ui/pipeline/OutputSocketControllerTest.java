@@ -1,8 +1,7 @@
 package edu.wpi.grip.ui.pipeline;
 
 import com.google.common.eventbus.EventBus;
-import edu.wpi.grip.core.OutputSocket;
-import edu.wpi.grip.core.SocketHints;
+import edu.wpi.grip.core.MockOutputSocket;
 import edu.wpi.grip.ui.util.TestAnnotationFXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.layout.GridPane;
@@ -21,13 +20,6 @@ public class OutputSocketControllerTest extends ApplicationTest {
     private InitiallyPreviewedOutputSocket initiallyPreviewedOutputSocket;
     private OutputSocketController defaultOutputSocketController;
     private OutputSocketController initiallyPreviewedOutputSocketController;
-
-    private class MockOutputSocket extends OutputSocket<Boolean> {
-        public MockOutputSocket(String socketName) {
-            super(new EventBus(), SocketHints.Outputs.createBooleanSocketHint(socketName, false));
-        }
-    }
-
 
     private class InitiallyPreviewedOutputSocket extends MockOutputSocket {
         public InitiallyPreviewedOutputSocket(String socketName) {

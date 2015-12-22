@@ -24,6 +24,7 @@ public class NumberSpinnerInputSocketController extends InputSocketController<Nu
 
     private final SpinnerValueFactory<Double> valueFactory;
     private final InvalidationListener updateSocketFromSpinner;
+    private final GRIPPlatform platform;
 
     public interface Factory {
         NumberSpinnerInputSocketController create(InputSocket<Number> socket);
@@ -34,8 +35,9 @@ public class NumberSpinnerInputSocketController extends InputSocketController<Nu
      *               slider values), or no domain at all.
      */
     @Inject
-    NumberSpinnerInputSocketController(SocketHandleView.Factory socketHandleViewFactory, @Assisted InputSocket<Number> socket) {
+    NumberSpinnerInputSocketController(SocketHandleView.Factory socketHandleViewFactory, GRIPPlatform platform, @Assisted InputSocket<Number> socket) {
         super(socketHandleViewFactory, socket);
+        this.platform = platform;
 
         final Number[] domain = socket.getSocketHint().getDomain().orElse(DEFAULT_DOMAIN);
 
@@ -65,7 +67,7 @@ public class NumberSpinnerInputSocketController extends InputSocketController<Nu
     @Subscribe
     public void updateSpinnerFromSocket(SocketChangedEvent event) {
         if (event.getSocket() == this.getSocket()) {
-            GRIPPlatform.runAndWait(() ->{
+            platform.runAsSoonAsPossible(() ->{
                 // Remove the invalidation listener when we set the value.  This listener is useful for updating the socket value
                 // when the user changes the spinner, but since we're setting the spinner value from the socket value, calling it
                 // here would not only be redundant, but would create an infinite loop.

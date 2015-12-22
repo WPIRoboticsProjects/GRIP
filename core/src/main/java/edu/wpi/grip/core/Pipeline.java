@@ -11,6 +11,9 @@ import javax.inject.Inject;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
+
 /**
  * Pipeline has the list of steps in a computer vision algorithm, as well as the set of connections between the inputs
  * and outputs of different steps.
@@ -135,41 +138,45 @@ public class Pipeline {
         }
     }
 
-    @Subscribe
-    public synchronized void onStepAdded(StepAddedEvent event) {
-        final Step step = event.getStep();
-
-        this.steps.add(event.getIndex().or(this.steps.size()), step);
-        this.eventBus.register(event.getStep());
+    public synchronized void addStep(Step step, int index) {
+        checkNotNull(step, "The step can not be null");
+        this.steps.add(index, step);
+        this.eventBus.register(step);
+        this.eventBus.post(new StepAddedEvent(step, index));
     }
 
-    @Subscribe
-    public synchronized void onStepRemoved(StepRemovedEvent event) {
-        this.steps.remove(event.getStep());
-        this.eventBus.unregister(event.getStep());
+    public synchronized  void addStep(Step step) {
+        addStep(step, this.steps.size());
+    }
 
+    public synchronized void removeStep(Step step) {
+        checkNotNull(step, "The step can not be null");
+        this.steps.remove(step);
         // Sockets of deleted steps should not be previewed
-        for (OutputSocket<?> socket : event.getStep().getOutputSockets()) {
+        for (OutputSocket<?> socket : step.getOutputSockets()) {
             socket.setPreviewed(false);
         }
+        this.eventBus.post(new StepRemovedEvent(step));
+        this.eventBus.unregister(step);
     }
 
-    @Subscribe
-    public synchronized void onStepMoved(StepMovedEvent event) {
-        final Step step = event.getStep();
+    public synchronized void moveStep(Step step, int delta) {
+        checkNotNull(step, "The step can not be null");
+        checkArgument(this.steps.contains(step), "The step must exist in the pipeline to be moved");
 
         final int oldIndex = this.steps.indexOf(step);
         this.steps.remove(oldIndex);
 
         // Compute the new index of the step, clamping to the beginning or end of pipeline if it goes past either end
-        final int newIndex = Math.min(Math.max(oldIndex + event.getDistance(), 0), this.steps.size());
+        final int newIndex = Math.min(Math.max(oldIndex + delta, 0), this.steps.size());
         this.steps.add(newIndex, step);
+        eventBus.post(new StepMovedEvent(step, delta));
     }
 
     @Subscribe
     public void onConnectionAdded(ConnectionAddedEvent event) {
-        this.connections.add(event.getConnection());
-        this.eventBus.register(event.getConnection());
+        final Connection connection = event.getConnection();
+        this.connections.add(connection);
     }
 
     @Subscribe
@@ -177,6 +184,4 @@ public class Pipeline {
         this.connections.remove(event.getConnection());
         this.eventBus.unregister(event.getConnection());
     }
-
-
 }

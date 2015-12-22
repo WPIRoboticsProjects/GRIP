@@ -19,12 +19,14 @@ import static org.bytedeco.javacpp.opencv_core.Size;
 public class PointSizeSocketPreviewView extends SocketPreviewView<IntPointer> {
 
     private final TextField x, y;
+    private GRIPPlatform platform;
 
     /**
      * @param socket   An output socket to preview
      */
-    PointSizeSocketPreviewView(OutputSocket<IntPointer> socket) {
+    PointSizeSocketPreviewView(GRIPPlatform platform, OutputSocket<IntPointer> socket) {
         super(socket);
+        this.platform = platform;
 
         x = new TextField();
         x.setEditable(false);
@@ -57,7 +59,7 @@ public class PointSizeSocketPreviewView extends SocketPreviewView<IntPointer> {
     }
 
     private void updateTextFields() {
-        GRIPPlatform.runAndWait(() -> {
+        platform.runAsSoonAsPossible(() -> {
             this.x.setText(Integer.toString(this.getSocket().getValue().get().get(0)));
             this.y.setText(Integer.toString(this.getSocket().getValue().get().get(1)));
         });

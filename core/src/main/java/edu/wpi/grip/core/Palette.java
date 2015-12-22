@@ -17,7 +17,12 @@ import java.util.Optional;
 @Singleton
 public class Palette {
 
-    @Inject private EventBus eventBus;
+    private final EventBus eventBus;
+
+    @Inject
+    Palette(EventBus eventBus) {
+        this.eventBus = eventBus;
+    }
 
     private final Map<String, Operation> operations = new LinkedHashMap<>();
 

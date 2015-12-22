@@ -8,7 +8,6 @@ import com.thoughtworks.xstream.converters.UnmarshallingContext;
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 import edu.wpi.grip.core.*;
-import edu.wpi.grip.core.events.StepAddedEvent;
 
 import javax.inject.Inject;
 import java.util.Optional;
@@ -25,6 +24,7 @@ public class StepConverter implements Converter {
 
     @Inject private EventBus eventBus;
     @Inject private Palette palette;
+    @Inject private Pipeline pipeline;
     @Inject private Step.Factory stepFactory;
 
     @Override
@@ -54,7 +54,7 @@ public class StepConverter implements Converter {
 
         // Instead of simply returning the step and having XStream insert it into the pipeline using reflection, send a
         // StepAddedEvent.  This allows other interested classes (such as PipelineView) to also know when steps are added.
-        this.eventBus.post(new StepAddedEvent(stepFactory.create(operation.get())));
+        pipeline.addStep(stepFactory.create(operation.get()));
 
         while (reader.hasMoreChildren()) {
             context.convertAnother(this, Socket.class);

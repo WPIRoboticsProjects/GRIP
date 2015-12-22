@@ -28,14 +28,15 @@ public class BlobsSocketPreviewView extends SocketPreviewView<BlobsReport> {
     private final ImageView imageView = new ImageView();
     private final Label infoLabel = new Label();
     private final Mat tmp = new Mat();
+    private final GRIPPlatform platform;
     private boolean showInputImage = false;
 
     /**
      * @param socket   An output socket to preview
      */
-    public BlobsSocketPreviewView(OutputSocket<BlobsReport> socket) {
+    public BlobsSocketPreviewView(GRIPPlatform platform, OutputSocket<BlobsReport> socket) {
         super(socket);
-
+        this.platform = platform;
         final CheckBox show = new CheckBox("Show Input Image");
         show.setSelected(this.showInputImage);
         show.selectedProperty().addListener(observable -> {
@@ -89,7 +90,7 @@ public class BlobsSocketPreviewView extends SocketPreviewView<BlobsReport> {
             final Image image = this.imageConverter.convert(input);
             final int numBlobs = blobsReport.getBlobs().size();
 
-            GRIPPlatform.runAndWait(() -> {
+            platform.runAsSoonAsPossible(() -> {
                 this.imageView.setImage(image);
                 this.infoLabel.setText("Found " + numBlobs + " blobs");
             });

@@ -14,6 +14,7 @@ import static org.testfx.api.FxAssert.verifyThat;
 public class MainWindowTest extends ApplicationTest {
 
     @Override
+    @SuppressWarnings("PMD.SignatureDeclareThrowsException")
     public void start(Stage stage) throws Exception {
         final Main main = new Main();
         main.start(stage);
