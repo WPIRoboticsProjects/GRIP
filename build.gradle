@@ -100,6 +100,23 @@ project(":core") {
                 builtBy shadowJar
             }
         }
+
+        /* The icudt54b directory in Jython takes up 9 megabytes and doesn't seem to do anything useful. */
+        exclude 'org/python/icu/impl/data/icudt54b/'
+
+        /* We don't use all of the OpenCV libraries, and they seem to take up a lot of space.  If we ever decide to
+        use any more of these (or perhaps just include them for people to use from Python scripts), the following lines
+        should be changed, but for now this saves us a lot of space. */
+        exclude 'org/bytedeco/javacpp/*/*calib3d*'
+        exclude 'org/bytedeco/javacpp/*/*face*'
+        exclude 'org/bytedeco/javacpp/*/*objdetect*'
+        exclude 'org/bytedeco/javacpp/*/*optflow*'
+        exclude 'org/bytedeco/javacpp/*/*photo*'
+        exclude 'org/bytedeco/javacpp/*/*shape*'
+        exclude 'org/bytedeco/javacpp/*/*stitching*'
+        exclude 'org/bytedeco/javacpp/*/*superres*'
+        exclude 'org/bytedeco/javacpp/*/*videostab*'
+        exclude 'org/bytedeco/javacpp/*/*xfeatures2d*'
     }
 
     sourceSets {
