@@ -28,7 +28,7 @@ public class RangeInputSocketView extends InputSocketView<List<Number>> {
         super(eventBus, socket);
 
         final Object[] domain = socket.getSocketHint().getDomain().get();
-        final List<Number> value = socket.getValue().get();
+        final List<Number> initialValue = socket.getValue().get();
 
         checkArgument(domain.length == 1 && domain[0] instanceof List,
                 "Sliders must have a domain with a list of two numbers (min and max)");
@@ -38,12 +38,12 @@ public class RangeInputSocketView extends InputSocketView<List<Number>> {
         checkArgument(extremes.size() == 2 && extremes.get(0) instanceof Number && extremes.get(1) instanceof Number,
                 "Sliders must have a domain with a list of two numbers (min and max)");
 
-        checkArgument(value.size() == 2, "Range sliders must contain two values (low and high)");
+        checkArgument(initialValue.size() == 2, "Range sliders must contain two values (low and high)");
 
         final double min = extremes.get(0).doubleValue();
         final double max = extremes.get(1).doubleValue();
-        final double initialLow = value.get(0).doubleValue();
-        final double initialHigh = value.get(1).doubleValue();
+        final double initialLow = initialValue.get(0).doubleValue();
+        final double initialHigh = initialValue.get(1).doubleValue();
 
         this.slider = new RangeSlider(min, max, initialLow, initialHigh);
         this.slider.setShowTickMarks(true);
@@ -52,17 +52,18 @@ public class RangeInputSocketView extends InputSocketView<List<Number>> {
 
         // Set the socket values whenever the range changes
         this.slider.lowValueProperty().addListener(o -> {
-            value.set(0, this.slider.getLowValue());
-
             // If the high value is also changing simultaneously, don't call setValue() twice
             if (!this.slider.isHighValueChanging()) {
-                this.getSocket().setValue(value);
+                List<Number> value = socket.getValue().get();
+                value.set(0, slider.getLowValue());
+                socket.setValue(value);
             }
         });
 
         this.slider.highValueProperty().addListener(o -> {
-            value.set(1, this.slider.getHighValue());
-            this.getSocket().setValue(value);
+            List<Number> range = socket.getValue().get();
+            range.set(1, slider.getHighValue());
+            socket.setValue(range);
         });
 
         this.slider.disableProperty().bind(this.getHandle().connectedProperty());
