@@ -2,6 +2,7 @@ package edu.wpi.grip.ui.preview;
 
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
+import com.google.common.math.IntMath;
 import edu.wpi.grip.core.OutputSocket;
 import edu.wpi.grip.core.Pipeline;
 import edu.wpi.grip.core.Source;
@@ -9,7 +10,6 @@ import edu.wpi.grip.core.Step;
 import edu.wpi.grip.core.events.SocketPreviewChangedEvent;
 import edu.wpi.grip.core.events.StepMovedEvent;
 import edu.wpi.grip.ui.pipeline.PipelineController;
-import edu.wpi.grip.ui.pipeline.StepController;
 import edu.wpi.grip.ui.pipeline.source.SourceController;
 import edu.wpi.grip.ui.util.GRIPPlatform;
 import javafx.fxml.FXML;
@@ -17,8 +17,9 @@ import javafx.scene.layout.HBox;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Stack;
 
 /**
  * Controller for a container that automatically shows previews of all sockets marked as "previewed".
@@ -42,23 +43,6 @@ public class PreviewsController {
     private GRIPPlatform platform;
 
     private final List<OutputSocket<?>> previewedSockets = new ArrayList<>();
-
-    private Collection<SocketPreviewView<?>> getPreviewsForStep(Step step) {
-        return previewBox.getChildren()
-                .stream()
-                .map(p -> (SocketPreviewView<?>) p)
-                .filter(p -> Arrays.asList(step.getOutputSockets())
-                        .stream()
-                        .anyMatch(outputSocket -> outputSocket.equals(p.getSocket())))
-                .collect(Collectors.toList());
-    }
-
-    private OptionalInt getFirstPreviewOf(Step step) {
-        return getPreviewsForStep(step).stream()
-                .mapToInt(previewView -> previewBox.getChildren().indexOf(previewView))
-                .filter(i -> i != -1)
-                .min();
-    }
 
     /**
      * This function is called when a step moves in the pipeline to adjust the positions of any open previews it has
@@ -230,17 +214,13 @@ public class PreviewsController {
         int numbOfSourcePreviews = getNumbOfSourcePreviews();//Count how many *source* previews (not *step* previews) are currently displayed
 
         final Step socketStep = socket.getStep().get();//The pipeline step associated with the socket whose preview has changed
-        final StepController stepView = this.pipelineController.findStepController(socketStep);//The gui object that displays the socketStep
-        int indexOfStep = this.pipeline.getSteps().indexOf(stepView); //The index of the step that has the socket in the pipeline
+        int indexOfStep = this.pipeline.getSteps().indexOf(socketStep); //The index of the step that has the socket in the pipeline
 
         //Start at the first non-source socket in the list of previewed sockets
-        int indexInPreviews = numbOfSourcePreviews;
-
-        while ((this.previewedSockets.size() > indexInPreviews)//While there are sockets in the list of previewed sockets yet to be examined
-                && ((this.pipeline.getSteps().indexOf(this.pipelineController.findStepController(this.previewedSockets.get(indexInPreviews).getStep().get()))) < indexOfStep)) {//...AND the socket at this index in the list of displayed sockets has an index in the pipeline less than the socket passed in as "socket"
-            indexInPreviews++;
-        }
-        return indexInPreviews;
+        long indexInPreviews =
+                // The socket at this index in the list of displayed sockets has an index in the pipeline less than the socket passed in as "socket"
+                this.previewedSockets.stream().filter(outSocket -> this.pipeline.getSteps().indexOf(outSocket.getStep().get()) < indexOfStep).count();
+        return IntMath.checkedAdd(Math.toIntExact(indexInPreviews), numbOfSourcePreviews);
     }
 
     /**
