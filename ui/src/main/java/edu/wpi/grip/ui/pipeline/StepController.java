@@ -1,6 +1,5 @@
 package edu.wpi.grip.ui.pipeline;
 
-import com.google.common.eventbus.EventBus;
 import com.google.inject.assistedinject.Assisted;
 import edu.wpi.grip.core.InputSocket;
 import edu.wpi.grip.core.OutputSocket;
@@ -35,7 +34,6 @@ public class StepController implements Controller {
     @FXML private VBox inputs;
     @FXML private VBox outputs;
 
-    private final EventBus eventBus;
     private final Pipeline pipeline;
     private final InputSocketControllerFactory inputSocketControllerFactory;
     private final OutputSocketController.Factory outputSocketControllerFactory;
@@ -54,15 +52,15 @@ public class StepController implements Controller {
     }
 
     @Inject
-    StepController(EventBus eventBus, Pipeline pipeline, InputSocketControllerFactory inputSocketControllerFactory, OutputSocketController.Factory outputSocketControllerFactory, @Assisted Step step) {
-        this.eventBus = eventBus;
+    StepController(Pipeline pipeline, InputSocketControllerFactory inputSocketControllerFactory, OutputSocketController.Factory outputSocketControllerFactory, @Assisted Step step) {
         this.pipeline = pipeline;
         this.inputSocketControllerFactory = inputSocketControllerFactory;
         this.outputSocketControllerFactory = outputSocketControllerFactory;
         this.step = step;
     }
 
-    public void initialize() {
+    @FXML
+    private void initialize() {
         inputSocketMapManager = new NodeControllerManager<>(inputs.getChildren());
         outputSocketMapManager = new NodeControllerManager<>(outputs.getChildren());
 
@@ -83,7 +81,6 @@ public class StepController implements Controller {
     /**
      * @return An unmodifiable collection of {@link InputSocketController}s corresponding to the input sockets of this step
      */
-    @SuppressWarnings("unchecked")
     public Collection<InputSocketController> getInputSockets() {
         return inputSocketMapManager.keySet();
     }
@@ -91,7 +88,6 @@ public class StepController implements Controller {
     /**
      * @return An unmodifiable collection of {@link InputSocketController}s corresponding to the output sockets of this step
      */
-    @SuppressWarnings("unchecked")
     public Collection<OutputSocketController> getOutputSockets() {
         return outputSocketMapManager.keySet();
     }

@@ -9,7 +9,6 @@ import edu.wpi.grip.core.*;
 import edu.wpi.grip.core.events.ConnectionAddedEvent;
 import edu.wpi.grip.core.events.OperationAddedEvent;
 import edu.wpi.grip.core.events.SourceAddedEvent;
-import edu.wpi.grip.core.events.StepAddedEvent;
 import edu.wpi.grip.core.operations.PythonScriptOperation;
 import edu.wpi.grip.core.sources.ImageFileSource;
 import edu.wpi.grip.util.Files;
@@ -84,9 +83,9 @@ public class ProjectTest {
 
     @Test
     public void testSerializePipelineWithSteps() throws Exception {
-        eventBus.post(new StepAddedEvent(stepFactory.create(additionOperation)));
-        eventBus.post(new StepAddedEvent(stepFactory.create(pythonAdditionOperationFromSource)));
-        eventBus.post(new StepAddedEvent(stepFactory.create(pythonAdditionOperationFromURL)));
+        pipeline.addStep(stepFactory.create(additionOperation));
+        pipeline.addStep(stepFactory.create(pythonAdditionOperationFromSource));
+        pipeline.addStep(stepFactory.create(pythonAdditionOperationFromURL));
 
         serializeAndDeserialize();
 
@@ -113,8 +112,8 @@ public class ProjectTest {
         b1.setValue(34);
         b2.setValue(56);
 
-        eventBus.post(new StepAddedEvent(step1));
-        eventBus.post(new StepAddedEvent(step2));
+        pipeline.addStep(step1);
+        pipeline.addStep(step2);
         eventBus.post(new ConnectionAddedEvent(connectionFactory.create(sum1, (InputSocket) a2)));
 
         serializeAndDeserialize();
@@ -128,7 +127,7 @@ public class ProjectTest {
     @Test
     @SuppressWarnings("unchecked")
     public void testPerformSerializedStep() throws Exception {
-        eventBus.post(new StepAddedEvent(stepFactory.create(additionOperation)));
+        pipeline.addStep(stepFactory.create(additionOperation));
         serializeAndDeserialize();
 
         InputSocket<Number> a = (InputSocket<Number>) pipeline.getSteps().get(0).getInputSockets()[0];
@@ -143,7 +142,7 @@ public class ProjectTest {
     @Test
     @SuppressWarnings("unchecked")
     public void testPerformSerializedPythonStepFromURL() throws Exception {
-        eventBus.post(new StepAddedEvent(stepFactory.create(pythonAdditionOperationFromURL)));
+        pipeline.addStep(stepFactory.create(pythonAdditionOperationFromURL));
         serializeAndDeserialize();
 
         InputSocket<Number> a = (InputSocket<Number>) pipeline.getSteps().get(0).getInputSockets()[0];
@@ -158,7 +157,7 @@ public class ProjectTest {
     @Test
     @SuppressWarnings("unchecked")
     public void testPerformSerializedPythonStepFromSource() throws Exception {
-        eventBus.post(new StepAddedEvent(stepFactory.create(pythonAdditionOperationFromSource)));
+        pipeline.addStep(stepFactory.create(pythonAdditionOperationFromSource));
         serializeAndDeserialize();
 
         InputSocket<Number> a = (InputSocket<Number>) pipeline.getSteps().get(0).getInputSockets()[0];
@@ -175,8 +174,8 @@ public class ProjectTest {
     public void testPerformSerializedPipeline() throws Exception {
         Step step1 = stepFactory.create(pythonAdditionOperationFromURL);
         Step step2 = stepFactory.create(pythonAdditionOperationFromSource);
-        eventBus.post(new StepAddedEvent(step1));
-        eventBus.post(new StepAddedEvent(step2));
+        pipeline.addStep(step1);
+        pipeline.addStep(step2);
         eventBus.post(new ConnectionAddedEvent(
                 connectionFactory.create(
                         (OutputSocket) step1.getOutputSockets()[0],
@@ -198,7 +197,7 @@ public class ProjectTest {
     @Test
     @SuppressWarnings("unchecked")
     public void testPerformSerializedPipelineWithMats() throws Exception {
-        eventBus.post(new StepAddedEvent(stepFactory.create(opencvAddOperation)));
+        pipeline.addStep(stepFactory.create(opencvAddOperation));
         serializeAndDeserialize();
 
         Step step1 = pipeline.getSteps().get(0);

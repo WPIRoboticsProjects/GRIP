@@ -65,6 +65,7 @@ public final class PipelineController {
     /**
      * Add initial views for the stuff in the pipeline at the time this controller is created
      */
+    @FXML
     public void initialize() throws Exception {
         stepsMapManager = new NodeControllerManager<>(stepBox.getChildren());
         sourceMapManager = new NodeControllerManager<>(sourcesBox.getChildren());

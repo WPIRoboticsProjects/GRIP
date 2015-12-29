@@ -5,8 +5,6 @@ import com.google.common.eventbus.EventBus;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import edu.wpi.grip.core.*;
-import edu.wpi.grip.core.events.StepAddedEvent;
-import edu.wpi.grip.core.events.StepMovedEvent;
 import edu.wpi.grip.ui.GRIPUIModule;
 import edu.wpi.grip.ui.util.StyleClassNameUtility;
 import edu.wpi.grip.ui.util.TestAnnotationFXMLLoader;
@@ -37,11 +35,13 @@ public class PipelineUITest extends ApplicationTest {
     private AdditionOperation additionOperation;
     private SubtractionOperation subtractionOperation;
     private PipelineController pipelineController;
+    private Pipeline pipeline;
 
     @Override
     public void start(Stage stage) throws Exception {
         injector = Guice.createInjector(new GRIPCoreModule(), new GRIPUIModule());
         eventBus = injector.getInstance(EventBus.class);
+        pipeline = injector.getInstance(Pipeline.class);
         additionOperation = new AdditionOperation();
         subtractionOperation = new SubtractionOperation();
         pipelineController = injector.getInstance(PipelineController.class);
@@ -77,10 +77,10 @@ public class PipelineUITest extends ApplicationTest {
         final Step step2 = MockStep.createMockStepWithOperation();
         final Step step3 = MockStep.createMockStepWithOperation();
 
-        eventBus.post(new StepAddedEvent(step1));
-        eventBus.post(new StepAddedEvent(step2));
-        eventBus.post(new StepAddedEvent(step3));
-        eventBus.post(new StepMovedEvent(step2, +1));
+        pipeline.addStep(step1);
+        pipeline.addStep(step2);
+        pipeline.addStep(step3);
+        pipeline.moveStep(step2, +1);
 
         //sleep(1, TimeUnit.SECONDS);
         WaitForAsyncUtils.waitForFxEvents();
@@ -127,7 +127,7 @@ public class PipelineUITest extends ApplicationTest {
 
     private Step addOperation(int count, Operation operation) {
         final Step step = new Step.Factory(eventBus).create(operation);
-        eventBus.post(new StepAddedEvent(step));
+        pipeline.addStep(step);
 
         // Wait for the event to propagate to the UI
         sleep(1, TimeUnit.SECONDS);

@@ -35,6 +35,10 @@ public class SocketHandleView extends Button {
     private static final PseudoClass CONNECTING_PSEUDO_CLASS = PseudoClass.getPseudoClass("connecting");
     private static final PseudoClass CONNECTED_PSEUDO_CLASS = PseudoClass.getPseudoClass("connected");
 
+    /**
+     * Provides a singleton object to assign the socket being dragged from during dragging to allow for a
+     * connection to be made.
+     */
     @Singleton
     protected static final class SocketHandleDraggingSocketService {
         private Optional<Socket> draggingSocket = Optional.empty();

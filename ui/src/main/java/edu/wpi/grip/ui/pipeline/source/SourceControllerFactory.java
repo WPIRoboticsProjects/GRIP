@@ -1,6 +1,7 @@
 package edu.wpi.grip.ui.pipeline.source;
 
 import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import edu.wpi.grip.core.Source;
 import edu.wpi.grip.core.sources.CameraSource;
 import edu.wpi.grip.core.sources.MultiImageFileSource;
@@ -8,7 +9,8 @@ import edu.wpi.grip.core.sources.MultiImageFileSource;
 /**
  * BaseSourceControllerFactory for creating views to control sources.
  */
-public final class SourceControllerFactory {
+@Singleton
+public class SourceControllerFactory {
     @Inject private CameraSourceController.Factory cameraControllerFactory;
     @Inject private MultiImageFileSourceController.Factory multiImageFileSourceControllerFactory;
     @Inject private SourceController.BaseSourceControllerFactory<Source> baseSourceControllerFactory;

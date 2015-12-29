@@ -37,10 +37,7 @@ public class Pipeline {
     public void clear() {
         // These streams are both collected into lists because streams cannot modify their source.  Sending a
         // StepRemovedEvent or SourceRemovedEvent modifies this.steps or this.sources.
-        this.steps.stream()
-                .map(StepRemovedEvent::new)
-                .collect(Collectors.toList())
-                .forEach(this.eventBus::post);
+        this.steps.stream().collect(Collectors.toList()).forEach(this::removeStep);
 
         this.sources.stream()
                 .map(SourceRemovedEvent::new)
@@ -138,7 +135,7 @@ public class Pipeline {
         }
     }
 
-    public synchronized void addStep(Step step, int index) {
+    public synchronized void addStep(int index, Step step) {
         checkNotNull(step, "The step can not be null");
         this.steps.add(index, step);
         this.eventBus.register(step);
@@ -146,7 +143,7 @@ public class Pipeline {
     }
 
     public synchronized  void addStep(Step step) {
-        addStep(step, this.steps.size());
+        addStep(this.steps.size(), step);
     }
 
     public synchronized void removeStep(Step step) {

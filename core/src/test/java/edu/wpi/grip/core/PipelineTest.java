@@ -85,7 +85,7 @@ public class PipelineTest {
     public void testAddStep() {
         Step step = new MockStep();
 
-        eventBus.post(new StepAddedEvent(step));
+        pipeline.addStep(step);
 
         assertEquals(Collections.singletonList(step), pipeline.getSteps());
     }
@@ -96,8 +96,8 @@ public class PipelineTest {
         Step step1 = new MockStep();
         Step step2 = new MockStep();
 
-        eventBus.post(new StepAddedEvent(step1));
-        eventBus.post(new StepAddedEvent(step2, 0));
+        pipeline.addStep(step1);
+        pipeline.addStep(0, step2);
 
         assertEquals(Arrays.asList(step2, step1), pipeline.getSteps());
     }
@@ -108,9 +108,9 @@ public class PipelineTest {
         Step step1 = new MockStep();
         Step step2 = new MockStep();
 
-        eventBus.post(new StepAddedEvent(step1));
-        eventBus.post(new StepAddedEvent(step2));
-        eventBus.post(new StepRemovedEvent(step1));
+        pipeline.addStep(step1);
+        pipeline.addStep(step2);
+        pipeline.removeStep(step1);
 
         assertEquals(Collections.singletonList(step2), pipeline.getSteps());
     }
@@ -121,9 +121,9 @@ public class PipelineTest {
         Step step1 = new MockStep();
         Step step2 = new MockStep();
 
-        eventBus.post(new StepAddedEvent(step1));
-        eventBus.post(new StepAddedEvent(step2));
-        eventBus.post(new StepRemovedEvent(step2));
+        pipeline.addStep(step1);
+        pipeline.addStep(step2);
+        pipeline.removeStep(step2);
 
         assertEquals(Collections.singletonList(step1), pipeline.getSteps());
     }
@@ -134,10 +134,10 @@ public class PipelineTest {
         Step step2 = new MockStep();
         Step step3 = new MockStep();
 
-        eventBus.post(new StepAddedEvent(step1));
-        eventBus.post(new StepAddedEvent(step2));
-        eventBus.post(new StepAddedEvent(step3));
-        eventBus.post(new StepMovedEvent(step1, +1));
+        pipeline.addStep(step1);
+        pipeline.addStep(step2);
+        pipeline.addStep(step3);
+        pipeline.moveStep(step1, +1);
 
         assertEquals(Arrays.asList(step2, step1, step3), pipeline.getSteps());
     }
@@ -148,10 +148,10 @@ public class PipelineTest {
         Step step2 = new MockStep();
         Step step3 = new MockStep();
 
-        eventBus.post(new StepAddedEvent(step1));
-        eventBus.post(new StepAddedEvent(step2));
-        eventBus.post(new StepAddedEvent(step3));
-        eventBus.post(new StepMovedEvent(step2, -10));
+        pipeline.addStep(step1);
+        pipeline.addStep(step2);
+        pipeline.addStep(step3);
+        pipeline.moveStep(step2, -10);
 
         assertEquals("The step was not moved to the beginning of the pipeline", Arrays.asList(step2, step1, step3), pipeline.getSteps());
     }
@@ -162,10 +162,10 @@ public class PipelineTest {
         Step step2 = new MockStep();
         Step step3 = new MockStep();
 
-        eventBus.post(new StepAddedEvent(step1));
-        eventBus.post(new StepAddedEvent(step2));
-        eventBus.post(new StepAddedEvent(step3));
-        eventBus.post(new StepMovedEvent(step2, +10));
+        pipeline.addStep(step1);
+        pipeline.addStep(step2);
+        pipeline.addStep(step3);
+        pipeline.moveStep(step2, +10);
 
         assertEquals("The step was not moved to the end of the pipeline", Arrays.asList(step1, step3, step2), pipeline.getSteps());
     }
@@ -206,8 +206,8 @@ public class PipelineTest {
         //      sum2 = a2+b2
         //      a2 = sum1
         // So, sum2 will be equal to a1+b1+b2
-        eventBus.post(new StepAddedEvent(step1));
-        eventBus.post(new StepAddedEvent(step2));
+        pipeline.addStep(step1);
+        pipeline.addStep(step2);
 
         Connection connection = new Connection(eventBus, pipeline, sum1, a2);
         eventBus.register(connection);
@@ -234,8 +234,8 @@ public class PipelineTest {
 
         a2.setValue(0.0);
 
-        eventBus.post(new StepAddedEvent(step1));
-        eventBus.post(new StepAddedEvent(step2));
+        pipeline.addStep(step1);
+        pipeline.addStep(step2);
 
         Connection connection = new Connection(eventBus, pipeline, sum1, a2);
         eventBus.post(new ConnectionAddedEvent(connection));
@@ -257,8 +257,8 @@ public class PipelineTest {
         InputSocket<Double> a1 = (InputSocket<Double>) step1.getInputSockets()[0];
         OutputSocket<Double> sum2 = (OutputSocket<Double>) step2.getOutputSockets()[0];
 
-        eventBus.post(new StepAddedEvent(step1));
-        eventBus.post(new StepAddedEvent(step2));
+        pipeline.addStep(step1);
+        pipeline.addStep(step2);
         assertFalse("Should not be able to connect backwards", pipeline.canConnect(a1, sum2));
     }
 
