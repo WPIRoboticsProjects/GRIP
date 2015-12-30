@@ -27,6 +27,13 @@ import static com.google.common.base.Preconditions.checkNotNull;
 @XStreamAlias(value = "grip:Camera")
 public final class CameraSource extends Source implements StartStoppable {
 
+    /**
+     * The path that Axis cameras stream MJPEG videos from.  Although any URL can be supplied
+     * {@link #CameraSource(EventBus, String)}, allowing this to work with basically any network video stream, this
+     * default path allows the Axis M1011 cameras used in FRC to work when only an IP address is supplied.
+     */
+    public final static String DEFAULT_IP_CAMERA_PATH = "/mjpg/video.mjpg";
+
     private final static String DEVICE_NUMBER_PROPERTY = "deviceNumber";
     private final static String ADDRESS_PROPERTY = "address";
 
@@ -62,6 +69,13 @@ public final class CameraSource extends Source implements StartStoppable {
      */
     public CameraSource(EventBus eventBus, String address) throws IOException {
         this();
+
+        // If no path was specified in the URL (ie: it was something like http://10.1.90.11/), use the default path
+        // for Axis M1011 cameras.
+        if (new URL(address).getPath().length() <= 1) {
+            address += DEFAULT_IP_CAMERA_PATH;
+        }
+
         this.properties.setProperty(ADDRESS_PROPERTY, address);
         this.createFromProperties(eventBus, this.properties);
     }
@@ -191,7 +205,7 @@ public final class CameraSource extends Source implements StartStoppable {
      *
      * @return The source that was stopped
      * @throws TimeoutException if the thread running the source fails to stop.
-     * @throws IOException If there is a problem stopping the Source
+     * @throws IOException      If there is a problem stopping the Source
      */
     public final void stop() throws TimeoutException, IllegalStateException {
         synchronized (this) {
