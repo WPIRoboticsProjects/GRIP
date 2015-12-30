@@ -3,7 +3,6 @@ package edu.wpi.grip.ui.pipeline;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import com.google.inject.Singleton;
-import com.sun.javafx.application.PlatformImpl;
 import edu.wpi.grip.core.*;
 import edu.wpi.grip.core.events.*;
 import edu.wpi.grip.ui.annotations.ParametrizedController;
@@ -12,6 +11,7 @@ import edu.wpi.grip.ui.pipeline.source.SourceController;
 import edu.wpi.grip.ui.pipeline.source.SourceControllerFactory;
 import edu.wpi.grip.ui.util.GRIPPlatform;
 import edu.wpi.grip.ui.util.NodeControllerManager;
+import javafx.application.Platform;
 import javafx.beans.InvalidationListener;
 import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.collections.ObservableList;
@@ -207,7 +207,9 @@ public final class PipelineController {
                     final double x2 = inputSocketBounds.getMinX() + inputSocketBounds.getWidth() / 2.0;
                     final double y2 = inputSocketBounds.getMinY() + inputSocketBounds.getHeight() / 2.0;
 
-                    PlatformImpl.runAndWait(() -> {
+                    // This can run whenever. Don't wait for it to complete.
+                    // This should be Platform.runLater
+                    Platform.runLater(() -> {
                         connectionView.inputHandleProperty().setValue(new Point2D(x1, y1));
                         connectionView.outputHandleProperty().setValue(new Point2D(x2, y2));
                         ((ReadOnlyObjectProperty) observable).get();
