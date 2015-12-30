@@ -106,7 +106,7 @@ public class Step {
                         ));
             }
         } catch (NoSuchElementException e) {
-            logger.log(Level.WARNING, e.getMessage(), e);
+            //TODO: show warning icon
             resetOutputSockets();
             return; /* Only run the perform method if all of the input sockets are present. */
         }

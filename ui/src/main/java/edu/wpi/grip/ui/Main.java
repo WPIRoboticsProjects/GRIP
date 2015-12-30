@@ -22,21 +22,13 @@ public class Main extends Application {
     private final Object dialogLock = new Object();
     private Parent root;
 
-    public static void main(String[] args) {
-        launch(args);
-    }
+    public static void main(String[] args) { launch(args); }
 
     @Override
     public void start(Stage stage) {
 
         //Set up the global level logger. This handles IO for all loggers.
         Logger globalLogger = LogManager.getLogManager().getLogger("");//This is our global logger
-
-        //Remove the default handler(s) so we can add our own
-        Handler[] handlers = globalLogger.getHandlers();
-        for(Handler handler : handlers) {
-            globalLogger.removeHandler(handler);
-        }
 
         Handler fileHandler  = null;//This will be our handler for the global logger
 
