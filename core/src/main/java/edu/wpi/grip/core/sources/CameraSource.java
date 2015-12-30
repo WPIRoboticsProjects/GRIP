@@ -30,6 +30,13 @@ import java.util.logging.Logger;
 @XStreamAlias(value = "grip:Camera")
 public class CameraSource extends Source implements StartStoppable {
 
+    /**
+     * The path that Axis cameras stream MJPEG videos from.  Although any URL can be supplied
+     * {@link CameraSource.Factory#create(String)}, allowing this to work with basically any network video stream, this
+     * default path allows the Axis M1011 cameras used in FRC to work when only an IP address is supplied.
+     */
+    public final static String DEFAULT_IP_CAMERA_PATH = "/mjpg/video.mjpg";
+
     private final static String DEVICE_NUMBER_PROPERTY = "deviceNumber";
     private final static String ADDRESS_PROPERTY = "address";
     private static Logger logger =  Logger.getLogger(CameraSource.class.getName());
@@ -75,6 +82,11 @@ public class CameraSource extends Source implements StartStoppable {
         }
 
         public FrameGrabber create(String addressProperty) throws MalformedURLException {
+            // If no path was specified in the URL (ie: it was something like http://10.1.90.11/), use the default path
+            // for Axis M1011 cameras.
+            if (new URL(addressProperty).getPath().length() <= 1) {
+                addressProperty += DEFAULT_IP_CAMERA_PATH;
+            }
             return new IPCameraFrameGrabber(addressProperty);
         }
     }
