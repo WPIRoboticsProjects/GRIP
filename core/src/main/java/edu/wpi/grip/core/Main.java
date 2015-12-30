@@ -6,6 +6,8 @@ import edu.wpi.grip.core.serialization.Project;
 import edu.wpi.grip.generated.CVOperations;
 
 import java.io.File;
+import java.io.IOException;
+import java.util.logging.*;
 
 /**
  * Main driver class for headless mode
@@ -15,6 +17,28 @@ public class Main {
         if (args.length != 1) {
             System.err.println("Usage: GRIP.jar project.grip");
             return;
+        }
+
+        //Set up the global level logger. This handles IO for all loggers.
+        Logger globalLogger = LogManager.getLogManager().getLogger("");//This is our global logger
+
+        Handler fileHandler = null;//This will be our handler for the global logger
+
+        try {
+            fileHandler = new FileHandler("./GRIP.log");//Log to the file "GRIPlogger.log"
+
+            globalLogger.addHandler(fileHandler);//Add the handler to the global logger
+
+            fileHandler.setFormatter(new SimpleFormatter());//log in text, not xml
+
+            //Set level to handler and logger
+            fileHandler.setLevel(Level.FINE);
+            globalLogger.setLevel(Level.FINE);
+
+            globalLogger.config("Configuration done.");//Log that we are done setting up the logger
+
+        } catch (IOException exception) {//Something happened setting up file IO
+            throw new IllegalStateException(exception);
         }
 
         final String projectPath = args[0];

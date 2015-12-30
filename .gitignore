@@ -87,3 +87,6 @@ bower_components
 #Generated files should be ignored as the are regenerated as a build step
 */src/generated
 /bin/
+
+#Logging output file
+/ui/GRIP.log

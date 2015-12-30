@@ -11,6 +11,9 @@ import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
+import java.io.IOException;
+import java.util.logging.*;
+
 public class Main extends Application {
     private final EventBus eventBus = new EventBus((exception, context) -> {
         this.triggerUnexpectedThrowableEvent(new UnexpectedThrowableEvent(exception, "An Event Bus subscriber threw an uncaught exception"));
@@ -25,6 +28,29 @@ public class Main extends Application {
 
     @Override
     public void start(Stage stage) {
+
+        //Set up the global level logger. This handles IO for all loggers.
+        Logger globalLogger = LogManager.getLogManager().getLogger("");//This is our global logger
+
+        Handler fileHandler = null;//This will be our handler for the global logger
+
+        try {
+            fileHandler = new FileHandler("./GRIP.log");//Log to the file "GRIPlogger.log"
+
+            globalLogger.addHandler(fileHandler);//Add the handler to the global logger
+
+            fileHandler.setFormatter(new SimpleFormatter());//log in text, not xml
+
+            //Set level to handler and logger
+            fileHandler.setLevel(Level.FINE);
+            globalLogger.setLevel(Level.FINE);
+
+            globalLogger.config("Configuration done.");//Log that we are done setting up the logger
+
+        } catch (IOException exception) {//Something happened setting up file IO
+            throw new IllegalStateException(exception);
+        }
+
         this.eventBus.register(this);
         this.root = new MainWindowView(eventBus);
         /**
@@ -66,7 +92,7 @@ public class Main extends Application {
             }
         });
 
-        if(event.isFatal()) {
+        if (event.isFatal()) {
             System.err.println("Original fatal exception");
             event.getThrowable().printStackTrace();
             System.exit(1);
