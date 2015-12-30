@@ -189,6 +189,7 @@ public final class ExceptionAlert extends Alert {
     private String generateSystemInfoMessage() {
         final StringBuilder systemInfo = new StringBuilder("## System Info:\n\n");
         systemInfo.append("Property Name | Property \n ----- | -----\n");
+        systemInfo.append("GRIP Version | " + edu.wpi.grip.core.Main.class.getPackage().getImplementationVersion() + "\n");
         for (String option : systemOptions) {
             systemInfo.append(option).append(" | ").append(System.getProperty(option)).append("\n");
         }
