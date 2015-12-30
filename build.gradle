@@ -33,6 +33,10 @@ allprojects {
 
     version = '0.2.1'
 
+    compileJava {
+        options.compilerArgs << "-g"
+    }
+
     jacocoTestReport {
         reports {
             xml.enabled = true
@@ -184,6 +188,13 @@ project(":ui") {
         appID = 'GRIP'
         appName = 'GRIP'
         mainClass = "edu.wpi.grip.ui.Main"
+
+        // This prevents the JIT from eating stack traces that get thrown a lot
+        // This is slower but means we actually get the stack traces instead of
+        // having them become one line like `java.lang.ArrayIndexOutOfBoundsException`
+        // and as such, would be useless.
+        // See: https://plumbr.eu/blog/java/on-a-quest-for-missing-stacktraces
+        jvmArgs = ["-XX:-OmitStackTraceInFastThrow"]
     }
     mainClassName = javafx.mainClass
 }
