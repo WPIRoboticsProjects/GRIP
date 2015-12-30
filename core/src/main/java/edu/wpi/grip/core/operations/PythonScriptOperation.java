@@ -56,7 +56,7 @@ public class PythonScriptOperation implements Operation {
 
     private static final String DEFAULT_NAME = "Python Operation";
     private static final String DEFAULT_DESCRIPTION = "";
-    private static Logger logger =  Logger.getLogger(PythonScriptOperation.class.getName());
+    private static final Logger logger =  Logger.getLogger(PythonScriptOperation.class.getName());
 
 
     // Either a URL or a String of literal source code is stored in this field.  This allows a PythonScriptOperation to

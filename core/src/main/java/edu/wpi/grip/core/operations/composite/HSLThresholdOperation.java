@@ -20,7 +20,7 @@ import static org.bytedeco.javacpp.opencv_imgproc.cvtColor;
  * An {@link edu.wpi.grip.core.Operation} that converts a color image into a binary image based on the HSL threshold ranges
  */
 public class HSLThresholdOperation extends ThresholdOperation {
-    private static Logger logger =  Logger.getLogger(HSLThresholdOperation.class.getName());
+    private static final Logger logger =  Logger.getLogger(HSLThresholdOperation.class.getName());
     private final SocketHint<Mat> inputHint = SocketHints.Inputs.createMatSocketHint("Input", false);
     private final SocketHint<List> hueHint = SocketHints.Inputs.createNumberListRangeSocketHint("Hue", 0.0, 180.0);
     private final SocketHint<List> saturationHint = SocketHints.Inputs.createNumberListRangeSocketHint("Saturation", 0.0, 255.0);

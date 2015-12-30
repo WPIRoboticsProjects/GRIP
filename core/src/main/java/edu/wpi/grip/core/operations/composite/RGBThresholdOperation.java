@@ -15,7 +15,7 @@ import static org.bytedeco.javacpp.opencv_core.*;
  */
 public class RGBThresholdOperation extends ThresholdOperation {
 
-    private static Logger logger =  Logger.getLogger(RGBThresholdOperation.class.getName());
+    private static final Logger logger =  Logger.getLogger(RGBThresholdOperation.class.getName());
     private final SocketHint<Mat> inputHint = SocketHints.Inputs.createMatSocketHint("Input", false);
     private final SocketHint<List> redHint = SocketHints.Inputs.createNumberListRangeSocketHint("Red", 0.0, 255.0);
     private final SocketHint<List> greenHint = SocketHints.Inputs.createNumberListRangeSocketHint("Green", 0.0, 255.0);

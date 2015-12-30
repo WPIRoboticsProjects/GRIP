@@ -18,7 +18,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
  */
 @XStreamAlias(value = "grip:Step")
 public class Step {
-    private static Logger logger =  Logger.getLogger(Step.class.getName());
+    private static final Logger logger =  Logger.getLogger(Step.class.getName());
     private Operation operation;
     private InputSocket<?>[] inputSockets;
     private OutputSocket<?>[] outputSockets;

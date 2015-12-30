@@ -54,7 +54,7 @@ public class Main extends Application {
             globalLogger.config("Configuration done.");//Log that we are done setting up the logger
 
         }catch(IOException exception){//Something happened setting up file IO
-            globalLogger.log(Level.SEVERE, "Error occured setting up FileHandler for logger.", exception);
+            throw new IllegalStateException(exception);
         }
 
         this.eventBus.register(this);
