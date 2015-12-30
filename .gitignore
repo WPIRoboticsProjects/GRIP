@@ -89,4 +89,4 @@ bower_components
 /bin/
 
 #Logging output file
-/ui/GRIPlogger.log
+/ui/GRIP.log

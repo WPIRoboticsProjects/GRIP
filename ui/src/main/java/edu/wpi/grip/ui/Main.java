@@ -22,7 +22,9 @@ public class Main extends Application {
     private final Object dialogLock = new Object();
     private Parent root;
 
-    public static void main(String[] args) { launch(args); }
+    public static void main(String[] args) {
+        launch(args);
+    }
 
     @Override
     public void start(Stage stage) {
@@ -30,10 +32,10 @@ public class Main extends Application {
         //Set up the global level logger. This handles IO for all loggers.
         Logger globalLogger = LogManager.getLogManager().getLogger("");//This is our global logger
 
-        Handler fileHandler  = null;//This will be our handler for the global logger
+        Handler fileHandler = null;//This will be our handler for the global logger
 
-        try{
-            fileHandler  = new FileHandler("./GRIPlogger.log");//Log to the file "GRIPlogger.log"
+        try {
+            fileHandler = new FileHandler("./GRIP.log");//Log to the file "GRIPlogger.log"
 
             globalLogger.addHandler(fileHandler);//Add the handler to the global logger
 
@@ -45,7 +47,7 @@ public class Main extends Application {
 
             globalLogger.config("Configuration done.");//Log that we are done setting up the logger
 
-        }catch(IOException exception){//Something happened setting up file IO
+        } catch (IOException exception) {//Something happened setting up file IO
             throw new IllegalStateException(exception);
         }
 
@@ -90,7 +92,7 @@ public class Main extends Application {
             }
         });
 
-        if(event.isFatal()) {
+        if (event.isFatal()) {
             System.err.println("Original fatal exception");
             event.getThrowable().printStackTrace();
             System.exit(1);
