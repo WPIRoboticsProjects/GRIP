@@ -35,8 +35,7 @@ public class Main extends Application {
         Handler fileHandler = null;//This will be our handler for the global logger
 
         try {
-            String filename = System.getProperty("user.home")+System.getProperty("file.separator")+"GRIP"+System.getProperty("file.separator")+"GRIP.log";
-            fileHandler = new FileHandler(filename);//Log to the file "GRIPlogger.log"
+            fileHandler = new FileHandler("%h/GRIP.log");//Log to the file "GRIP.log"
 
             globalLogger.addHandler(fileHandler);//Add the handler to the global logger
 
