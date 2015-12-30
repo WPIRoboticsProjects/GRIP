@@ -28,7 +28,7 @@ import java.util.logging.Logger;
  * Provides a way to generate a constantly updated {@link Mat} from a camera
  */
 @XStreamAlias(value = "grip:Camera")
-public final class CameraSource extends Source implements StartStoppable {
+public class CameraSource extends Source implements StartStoppable {
 
     private final static String DEVICE_NUMBER_PROPERTY = "deviceNumber";
     private final static String ADDRESS_PROPERTY = "address";
@@ -216,7 +216,7 @@ public final class CameraSource extends Source implements StartStoppable {
      * @throws IOException           If there is a problem stopping the Source
      * @throws IllegalStateException If the camera is already stopped.
      */
-    public final void stop() throws TimeoutException, IOException {
+    public void stop() throws TimeoutException, IOException {
         synchronized (this) {
             if (frameThread.isPresent()) {
                 final Thread ex = frameThread.get();
