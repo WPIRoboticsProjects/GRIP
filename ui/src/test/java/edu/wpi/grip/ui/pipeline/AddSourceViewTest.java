@@ -64,7 +64,7 @@ public class AddSourceViewTest {
         }
 
         @Override
-        public void start(Stage stage) throws Exception {
+        public void start(Stage stage) {
             this.eventBus = new EventBus("Test Event Bus");
             this.mockCameraSourceFactory = new MockCameraSourceFactory(eventBus);
 
@@ -83,6 +83,7 @@ public class AddSourceViewTest {
 
 
         @Test
+        @SuppressWarnings("PMD.JUnitTestsShouldIncludeAssert")
         public void testClickOnCreateWebCameraOpensDialog() throws Exception {
             clickOn(addSourceView.getWebcamButton());
             WaitForAsyncUtils.waitForFxEvents();
@@ -90,6 +91,7 @@ public class AddSourceViewTest {
         }
 
         @Test
+        @SuppressWarnings("PMD.JUnitTestsShouldIncludeAssert")
         public void testClickOnCreateIPCameraOpensDialog() throws Exception {
             clickOn(addSourceView.getIpcamButton());
             WaitForAsyncUtils.waitForFxEvents();
@@ -162,7 +164,7 @@ public class AddSourceViewTest {
         }
 
         @Override
-        public void start(Stage stage) throws Exception {
+        public void start(Stage stage) {
             this.eventBus = new EventBus("Test Event Bus");
             this.mockCameraSourceFactory = new MockCameraSourceFactory(eventBus);
 
@@ -180,6 +182,7 @@ public class AddSourceViewTest {
         }
 
         @Test
+        @SuppressWarnings("PMD.JUnitTestsShouldIncludeAssert")
         public void testWhenStartFailsDialogDoesNotClose() throws Exception {
             // When
             clickOn(addSourceView.getWebcamButton());

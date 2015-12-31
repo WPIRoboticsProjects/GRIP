@@ -19,13 +19,14 @@ import static org.bytedeco.javacpp.opencv_core.*;
 @Singleton
 public class SocketPreviewViewFactory {
 
-    @Inject
-    private EventBus eventBus;
+    private final EventBus eventBus;
+    private final GRIPPlatform platform;
 
     @Inject
-    private GRIPPlatform platform;
-
-    SocketPreviewViewFactory() {/* no-op */}
+    SocketPreviewViewFactory(EventBus eventBus, GRIPPlatform gripPlatform) {
+        this.eventBus = eventBus;
+        this.platform = gripPlatform;
+    }
 
     /**
      * Create an instance of {@link SocketPreviewView} appropriate for the given socket.  Sockets of different types

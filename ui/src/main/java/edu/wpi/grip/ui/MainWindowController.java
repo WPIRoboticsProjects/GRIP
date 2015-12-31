@@ -7,7 +7,9 @@ import edu.wpi.grip.core.serialization.Project;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.Parent;
-import javafx.scene.control.*;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.Dialog;
+import javafx.scene.control.SplitPane;
 import javafx.scene.layout.Region;
 import javafx.stage.FileChooser;
 
@@ -21,14 +23,22 @@ import java.util.Optional;
  */
 public class MainWindowController {
 
-    @FXML private Parent root;
-    @FXML private SplitPane topPane;
-    @FXML private Region bottomPane;
-    @FXML private Region pipelineView;
-    @Inject private EventBus eventBus;
-    @Inject private Pipeline pipeline;
-    @Inject private Palette palette;
-    @Inject private Project project;
+    @FXML
+    private Parent root;
+    @FXML
+    private SplitPane topPane;
+    @FXML
+    private Region bottomPane;
+    @FXML
+    private Region pipelineView;
+    @Inject
+    private EventBus eventBus;
+    @Inject
+    private Pipeline pipeline;
+    @Inject
+    private Palette palette;
+    @Inject
+    private Project project;
 
     public void initialize() {
         pipelineView.prefHeightProperty().bind(bottomPane.heightProperty());

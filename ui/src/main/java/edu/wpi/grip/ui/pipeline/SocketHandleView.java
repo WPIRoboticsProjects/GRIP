@@ -23,8 +23,6 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-
 /**
  * The bubble next to each socket that connections go in and out of
  * <p>
@@ -35,6 +33,9 @@ public class SocketHandleView extends Button {
     private static final PseudoClass CONNECTING_PSEUDO_CLASS = PseudoClass.getPseudoClass("connecting");
     private static final PseudoClass CONNECTED_PSEUDO_CLASS = PseudoClass.getPseudoClass("connected");
 
+    private final EventBus eventBus;
+    private final Socket socket;
+
     /**
      * Provides a singleton object to assign the socket being dragged from during dragging to allow for a
      * connection to be made.
@@ -44,11 +45,6 @@ public class SocketHandleView extends Button {
         private Optional<Socket> draggingSocket = Optional.empty();
     }
 
-    @Inject Connection.Factory<Object> connectionFactory;
-    @Inject private Pipeline pipeline;
-    final private Socket socket;
-    final private EventBus eventBus;
-
     final private BooleanProperty connectingProperty = new SimpleBooleanProperty(this, "connecting", false);
     final private BooleanProperty connectedProperty = new SimpleBooleanProperty(this, "connected", false);
 
@@ -57,9 +53,13 @@ public class SocketHandleView extends Button {
     }
 
     @Inject
-    SocketHandleView(EventBus eventBus, SocketHandleDraggingSocketService draggingSocketService, @Assisted Socket socket) {
-        this.eventBus = checkNotNull(eventBus);
-        this.socket = checkNotNull(socket);
+    SocketHandleView(EventBus eventBus,
+                     Pipeline pipeline,
+                     Connection.Factory<Object> connectionFactory,
+                     SocketHandleDraggingSocketService draggingSocketService,
+                     @Assisted Socket socket) {
+        this.eventBus = eventBus;
+        this.socket = socket;
 
         this.setTooltip(new Tooltip("Drag to connect"));
 
@@ -72,8 +72,6 @@ public class SocketHandleView extends Button {
                 this.pseudoClassStateChanged(CONNECTED_PSEUDO_CLASS, isConnected));
 
         this.connectedProperty().set(!this.socket.getConnections().isEmpty());
-
-        this.eventBus.register(this);
 
         // When the user clicks on a socket, remove any connections associated with that socket.
         this.setOnMouseClicked(mouseEvent -> {

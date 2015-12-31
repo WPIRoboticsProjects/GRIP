@@ -62,7 +62,7 @@ public class AddOperationTest {
 
         //When
         long startTime = System.currentTimeMillis();
-        for(int i = 0; i<1000; i++){
+        for (int i = 0; i < 1000; i++) {
             addition.perform(inputs, outputs);
         }
         long endTime = System.currentTimeMillis();

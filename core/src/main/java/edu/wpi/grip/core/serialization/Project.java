@@ -18,9 +18,12 @@ import java.util.Optional;
 @Singleton
 public class Project {
 
-    @Inject private EventBus eventBus;
-    @Inject private Pipeline pipeline;
-    @Inject private Palette palette;
+    @Inject
+    private EventBus eventBus;
+    @Inject
+    private Pipeline pipeline;
+    @Inject
+    private Palette palette;
 
     protected final XStream xstream = new XStream();
     private Optional<File> file = Optional.empty();

@@ -29,12 +29,12 @@ public class OutputSocketControllerTest extends ApplicationTest {
     }
 
     @Override
-    public void start(Stage stage) throws Exception {
+    public void start(Stage stage) {
         outputSocket = new MockOutputSocket("Mock Output");
         initiallyPreviewedOutputSocket = new InitiallyPreviewedOutputSocket("Initially previewed");
 
         final SocketHandleView.Factory socketHandleFactory
-                = socket -> new SocketHandleView(new EventBus(), new SocketHandleView.SocketHandleDraggingSocketService(), socket);
+                = socket -> new SocketHandleView(new EventBus(), null, null, new SocketHandleView.SocketHandleDraggingSocketService(), socket);
         defaultOutputSocketController =
                 new OutputSocketController(socketHandleFactory, outputSocket);
         initiallyPreviewedOutputSocketController =

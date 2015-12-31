@@ -24,9 +24,9 @@ public abstract class Source {
 
         @Override
         public Source create(Class type, Properties properties) throws IOException {
-            if(type.isAssignableFrom(CameraSource.class)) return cameraFactory.create(properties);
-            else if(type.isAssignableFrom(ImageFileSource.class)) return imageFactory.create(properties);
-            else if(type.isAssignableFrom(MultiImageFileSource.class)) return multiImageFactory.create(properties);
+            if (type.isAssignableFrom(CameraSource.class)) return cameraFactory.create(properties);
+            else if (type.isAssignableFrom(ImageFileSource.class)) return imageFactory.create(properties);
+            else if (type.isAssignableFrom(MultiImageFileSource.class)) return multiImageFactory.create(properties);
             else throw new IllegalArgumentException(type + " was not a valid type");
         }
     }

@@ -18,9 +18,7 @@ import org.junit.Test;
 import java.io.IOException;
 import java.net.MalformedURLException;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 
 public class CameraSourceTest {
     private Injector injector;
@@ -51,14 +49,14 @@ public class CameraSourceTest {
 
         @Override
         public void start() throws Exception {
-            if(shouldThrowAtStart) {
+            if (shouldThrowAtStart) {
                 throw new FrameGrabber.Exception("Throwing on start was enabled!");
             }
         }
 
         @Override
         public void stop() throws Exception {
-            if(shouldThrowAtStop) {
+            if (shouldThrowAtStop) {
                 throw new FrameGrabber.Exception("Throwing on stop was enabled");
             }
         }
@@ -78,9 +76,10 @@ public class CameraSourceTest {
             this.frameIdx.release();
         }
 
-        public void setShouldThrowAtStart(boolean shouldThrowAtStart){
+        public void setShouldThrowAtStart(boolean shouldThrowAtStart) {
             this.shouldThrowAtStart = shouldThrowAtStart;
         }
+
         public void setShouldThrowAtStop(boolean shouldThrowAtStop) {
             this.shouldThrowAtStop = shouldThrowAtStop;
         }
@@ -88,6 +87,7 @@ public class CameraSourceTest {
 
     class MockFrameGrabberFactory implements CameraSource.FrameGrabberFactory {
         private MockFrameGrabber frameGrabber = new MockFrameGrabber();
+
         @Override
         public FrameGrabber create(int deviceNumber) {
             return frameGrabber;
@@ -148,7 +148,7 @@ public class CameraSourceTest {
         mockFrameGrabberFactory.frameGrabber.setShouldThrowAtStop(true);
         cameraSourceWithMockGrabber.start();
 
-        try{
+        try {
             cameraSourceWithMockGrabber.stop();
         } catch (IOException e) {
             assertFalse(cameraSourceWithMockGrabber.isStarted());
@@ -162,7 +162,7 @@ public class CameraSourceTest {
         try {
             try {
                 cameraSourceWithMockGrabber.start();
-            } catch(RuntimeException e) {
+            } catch (RuntimeException e) {
                 fail("This should not have failed");
             }
             cameraSourceWithMockGrabber.start();

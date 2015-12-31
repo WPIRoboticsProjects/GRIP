@@ -3,7 +3,7 @@ package edu.wpi.grip.core;
 import com.google.common.eventbus.EventBus;
 import org.junit.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 public class OperationTest {
     EventBus eventBus = new EventBus();

@@ -7,7 +7,10 @@ import com.thoughtworks.xstream.converters.MarshallingContext;
 import com.thoughtworks.xstream.converters.UnmarshallingContext;
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
-import edu.wpi.grip.core.*;
+import edu.wpi.grip.core.Connection;
+import edu.wpi.grip.core.InputSocket;
+import edu.wpi.grip.core.OutputSocket;
+import edu.wpi.grip.core.Socket;
 import edu.wpi.grip.core.events.ConnectionAddedEvent;
 
 import javax.inject.Inject;
@@ -19,8 +22,10 @@ import javax.inject.Inject;
  */
 public class ConnectionConverter<T> implements Converter {
 
-    @Inject private EventBus eventBus;
-    @Inject private Connection.Factory<Object> connectionFactory;
+    @Inject
+    private EventBus eventBus;
+    @Inject
+    private Connection.Factory<Object> connectionFactory;
 
     @Override
     public void marshal(Object source, HierarchicalStreamWriter writer, MarshallingContext context) {

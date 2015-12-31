@@ -10,7 +10,7 @@ import edu.wpi.grip.ui.pipeline.input.InputSocketController;
 import edu.wpi.grip.ui.pipeline.source.SourceController;
 import edu.wpi.grip.ui.pipeline.source.SourceControllerFactory;
 import edu.wpi.grip.ui.util.GRIPPlatform;
-import edu.wpi.grip.ui.util.NodeControllerManager;
+import edu.wpi.grip.ui.util.ControllerMap;
 import javafx.application.Platform;
 import javafx.beans.InvalidationListener;
 import javafx.beans.property.ReadOnlyObjectProperty;
@@ -59,16 +59,16 @@ public final class PipelineController {
     @Inject
     private GRIPPlatform platform;
 
-    private NodeControllerManager<StepController, Node> stepsMapManager;
-    private NodeControllerManager<SourceController, Node> sourceMapManager;
+    private ControllerMap<StepController, Node> stepsMapManager;
+    private ControllerMap<SourceController, Node> sourceMapManager;
 
     /**
      * Add initial views for the stuff in the pipeline at the time this controller is created
      */
     @FXML
     public void initialize() throws Exception {
-        stepsMapManager = new NodeControllerManager<>(stepBox.getChildren());
-        sourceMapManager = new NodeControllerManager<>(sourcesBox.getChildren());
+        stepsMapManager = new ControllerMap<>(stepBox.getChildren());
+        sourceMapManager = new ControllerMap<>(sourcesBox.getChildren());
 
         for (Source source : pipeline.getSources()) {
             SourceController sourceController = sourceControllerFactory.create(source);

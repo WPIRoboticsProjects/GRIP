@@ -38,7 +38,7 @@ public class PipelineUITest extends ApplicationTest {
     private Pipeline pipeline;
 
     @Override
-    public void start(Stage stage) throws Exception {
+    public void start(Stage stage) {
         injector = Guice.createInjector(new GRIPCoreModule(), new GRIPUIModule());
         eventBus = injector.getInstance(EventBus.class);
         pipeline = injector.getInstance(Pipeline.class);

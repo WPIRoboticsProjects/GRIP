@@ -31,7 +31,7 @@ public class ImageConverterTest {
     @Test
     public void testConvertImage() throws Exception {
         Mat mat = new Mat();
-        ImageLoadingUtility.loadImage( URLDecoder.decode(Paths.get(gompeiImage.file.toURI()).toString()), mat);
+        ImageLoadingUtility.loadImage(URLDecoder.decode(Paths.get(gompeiImage.file.toURI()).toString()), mat);
         Image javaFXImage = converter.convert(mat);
         assertSameImage(gompeiImage, javaFXImage);
     }

@@ -3,7 +3,10 @@ package edu.wpi.grip.core;
 import com.google.common.eventbus.EventBus;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
-import edu.wpi.grip.core.events.*;
+import edu.wpi.grip.core.events.ConnectionAddedEvent;
+import edu.wpi.grip.core.events.ConnectionRemovedEvent;
+import edu.wpi.grip.core.events.SourceAddedEvent;
+import edu.wpi.grip.core.events.SourceRemovedEvent;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -45,7 +48,7 @@ public class PipelineTest {
 
         /**
          * @param eventBus
-         * @param pipeline     The pipeline to create the connection inside of.
+         * @param pipeline The pipeline to create the connection inside of.
          */
         public MockConnection(EventBus eventBus, Pipeline pipeline) {
             super(eventBus, pipeline, new MockOutputSocket("Whatever output"), new MockInputSocket("Whatever input"));
@@ -53,7 +56,7 @@ public class PipelineTest {
     }
 
     @Before
-    public void setUp () {
+    public void setUp() {
         injector = Guice.createInjector(new GRIPCoreModule());
         stepFactory = injector.getInstance(Step.Factory.class);
         eventBus = injector.getInstance(EventBus.class);

@@ -39,7 +39,8 @@ public class ProjectTest {
     public void setUp() throws Exception {
         final Injector injector = Guice.createInjector(new GRIPCoreModule());
         connectionFactory = injector
-                .getInstance(Key.get(new TypeLiteral<Connection.Factory<Object>>() {}));
+                .getInstance(Key.get(new TypeLiteral<Connection.Factory<Object>>() {
+                }));
         imageSourceFactory = injector
                 .getInstance(ImageFileSource.Factory.class);
         eventBus = injector.getInstance(EventBus.class);
@@ -216,7 +217,7 @@ public class ProjectTest {
     }
 
     @Test
-    @SuppressWarnings("PMD.SingularField")
+    @SuppressWarnings("PMD.JUnitTestsShouldIncludeAssert")
     public void testSerializePipelineWithSource() throws Exception {
         final ImageFileSource source = imageSourceFactory.create(Files.gompeiJpegFile.file);
         source.load();

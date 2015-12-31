@@ -27,7 +27,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * @param <C> The Controller type for ever node in this list
  * @param <N> The type of the Node being mapped to a Controller.
  */
-public final class NodeControllerManager<C extends Controller, N extends Node> implements Map<C, N> {
+public final class ControllerMap<C extends Controller, N extends Node> implements Map<C, N> {
 
     private final ObservableList<N> nodesList;
     private final BiMap<C, N> controllerNodeMap;
@@ -43,7 +43,7 @@ public final class NodeControllerManager<C extends Controller, N extends Node> i
     /**
      * @param nodesList The list that that will be managed.
      */
-    public NodeControllerManager(ObservableList<N> nodesList) {
+    public ControllerMap(ObservableList<N> nodesList) {
         this.controllerNodeMap = HashBiMap.create();
         this.nodesList = nodesList;
         nodesList.addListener(listChangeListener);

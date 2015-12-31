@@ -23,6 +23,8 @@ public class Main {
     private Project project;
     @Inject
     private EventBus eventBus;
+    @Inject
+    private Logger logger;
 
     @SuppressWarnings("PMD.SignatureDeclareThrowsException")
     public static void main(String[] args) throws Exception {
@@ -74,15 +76,11 @@ public class Main {
     }
 
     /**
-     * When an unexpected error happens in headless mode, print a stack trace and exit.  Obviously we cannot show
-     * a dialog here, so this will have to do until we have proper logging.
-     * <p>
-     * TODO: put actual logging in this method
+     * When an unexpected error happens in headless mode, print a stack trace and exit.
      */
     @Subscribe
     public final void onUnexpectedThrowableEvent(UnexpectedThrowableEvent event) {
-        System.out.println(event.getMessage());
-        event.getThrowable().printStackTrace();
+        logger.log(Level.SEVERE, "UnexpectedThrowableEvent", event.getThrowable());
         if (event.isFatal()) {
             System.exit(1);
         }

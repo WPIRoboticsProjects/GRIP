@@ -25,11 +25,13 @@ import static com.google.common.base.Preconditions.checkNotNull;
 @XStreamAlias(value = "grip:Pipeline")
 public class Pipeline {
 
-    @Inject @XStreamOmitField private EventBus eventBus;
+    @Inject
+    @XStreamOmitField
+    private EventBus eventBus;
 
-    private List<Source> sources = new ArrayList<>();
-    private List<Step> steps = new ArrayList<>();
-    private Set<Connection> connections = new HashSet<>();
+    private final List<Source> sources = new ArrayList<>();
+    private final List<Step> steps = new ArrayList<>();
+    private final Set<Connection> connections = new HashSet<>();
 
     /**
      * Remove everything in the pipeline
@@ -142,7 +144,7 @@ public class Pipeline {
         this.eventBus.post(new StepAddedEvent(step, index));
     }
 
-    public synchronized  void addStep(Step step) {
+    public synchronized void addStep(Step step) {
         addStep(this.steps.size(), step);
     }
 

@@ -27,9 +27,12 @@ import java.util.Properties;
  */
 public class SourceConverter implements Converter {
 
-    @Inject private EventBus eventBus;
-    @Inject private Project project;
-    @Inject private Source.SourceFactory sourceFactory;
+    @Inject
+    private EventBus eventBus;
+    @Inject
+    private Project project;
+    @Inject
+    private Source.SourceFactory sourceFactory;
 
     @Override
     public void marshal(Object obj, HierarchicalStreamWriter writer, MarshallingContext context) {

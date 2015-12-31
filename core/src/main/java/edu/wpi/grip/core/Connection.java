@@ -45,21 +45,17 @@ public class Connection<T> {
         return this.inputSocket;
     }
 
-    private void runConnection() {
-        inputSocket.setValueOptional(outputSocket.getValue());
-    }
-
     @Subscribe
     public void onConnectionAdded(ConnectionAddedEvent event) {
         if (event.getConnection().equals(this)) {
-            runConnection();
+            inputSocket.setValueOptional(outputSocket.getValue());
         }
     }
 
     @Subscribe
     public void onOutputChanged(SocketChangedEvent e) {
         if (e.getSocket() == outputSocket) {
-            runConnection();
+            inputSocket.setValueOptional(outputSocket.getValue());
         }
     }
 

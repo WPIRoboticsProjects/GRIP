@@ -52,7 +52,7 @@ public class ImageFileSourceTest {
 
     @Test(expected = IOException.class)
     public void testReadInFileWithoutExtension() throws MalformedURLException, IOException {
-        final File testFile = new File("temp" + File.separator +"fdkajdl3eaf");
+        final File testFile = new File("temp" + File.separator + "fdkajdl3eaf");
 
         final ImageFileSource fileSource = new ImageFileSource(eventBus, testFile);
         fileSource.load();

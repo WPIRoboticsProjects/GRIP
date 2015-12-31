@@ -12,16 +12,20 @@ import java.util.Arrays;
 
 import static org.junit.Assert.assertEquals;
 
-public class NodeControllerManagerTest extends ApplicationTest {
+public class ControllerMapTest extends ApplicationTest {
+
+    private static final String SIZE_OF_CONTROLLER_NOT_SAME_STRING =
+            "The size of the controller was not the same";
 
     private MockPane mockPane;
 
     private class MockPane extends Pane {
 
-        private final NodeControllerManager nodeControllerManager;
+        private final ControllerMap controllerMap;
 
         public MockPane() {
-            nodeControllerManager = new NodeControllerManager(this.getChildren());
+            super();
+            controllerMap = new ControllerMap(this.getChildren());
         }
 
     }
@@ -37,7 +41,7 @@ public class NodeControllerManagerTest extends ApplicationTest {
     }
 
     @Override
-    public void start(Stage stage) throws Exception {
+    public void start(Stage stage) {
         mockPane = new MockPane();
         final Scene scene = new Scene(mockPane, 800, 600);
         stage.setScene(scene);
@@ -48,9 +52,9 @@ public class NodeControllerManagerTest extends ApplicationTest {
     public void testRemoveWithController() throws Exception {
         interact(() -> {
             final MockController mockController = new MockController();
-            mockPane.nodeControllerManager.add(mockController);
-            mockPane.nodeControllerManager.removeWithController(mockController);
-            assertEquals("The size of the controller was not 0 after removed with pane", 0, mockPane.nodeControllerManager.size());
+            mockPane.controllerMap.add(mockController);
+            mockPane.controllerMap.removeWithController(mockController);
+            assertEquals("The size of the controller was not 0 after removed with pane", 0, mockPane.controllerMap.size());
         });
     }
 
@@ -58,33 +62,33 @@ public class NodeControllerManagerTest extends ApplicationTest {
     public void testRemoveWithPane() throws Exception {
         interact(() -> {
             final MockController mockController = new MockController();
-            mockPane.nodeControllerManager.add(mockController);
-            mockPane.nodeControllerManager.removeWithNode(mockController.getRoot());
-            assertEquals("The size of the controller was not 0 after removed with pane", 0, mockPane.nodeControllerManager.size());
+            mockPane.controllerMap.add(mockController);
+            mockPane.controllerMap.removeWithNode(mockController.getRoot());
+            assertEquals("The size of the controller was not 0 after removed with pane", 0, mockPane.controllerMap.size());
         });
     }
 
     @Test
     public void testAdd() throws Exception {
         interact(() -> {
-            mockPane.nodeControllerManager.add(new MockController());
-            assertEquals("The size of the controller was not the same", 1, mockPane.nodeControllerManager.size());
+            mockPane.controllerMap.add(new MockController());
+            assertEquals(SIZE_OF_CONTROLLER_NOT_SAME_STRING, 1, mockPane.controllerMap.size());
         });
     }
 
     @Test
     public void testAddAll() throws Exception {
         interact(() -> {
-            mockPane.nodeControllerManager.addAll(new MockController(), new MockController());
-            assertEquals("The size of the controller was not the same", 2, mockPane.nodeControllerManager.size());
+            mockPane.controllerMap.addAll(new MockController(), new MockController());
+            assertEquals(SIZE_OF_CONTROLLER_NOT_SAME_STRING, 2, mockPane.controllerMap.size());
         });
     }
 
     @Test
     public void testAddAll1() throws Exception {
         interact(() -> {
-            mockPane.nodeControllerManager.addAll(Arrays.asList(new MockController(), new MockController()));
-            assertEquals("The size of the controller was not the same", 2, mockPane.nodeControllerManager.size());
+            mockPane.controllerMap.addAll(Arrays.asList(new MockController(), new MockController()));
+            assertEquals(SIZE_OF_CONTROLLER_NOT_SAME_STRING, 2, mockPane.controllerMap.size());
         });
     }
 
@@ -92,9 +96,9 @@ public class NodeControllerManagerTest extends ApplicationTest {
     public void testGetWithPane() throws Exception {
         interact(() -> {
             final MockController mockController = new MockController();
-            mockPane.nodeControllerManager.add(mockController);
-            assertEquals("The size of the controller was not the same",
-                    mockController, mockPane.nodeControllerManager.getWithNode(mockController.getRoot()));
+            mockPane.controllerMap.add(mockController);
+            assertEquals(SIZE_OF_CONTROLLER_NOT_SAME_STRING,
+                    mockController, mockPane.controllerMap.getWithNode(mockController.getRoot()));
         });
     }
 
@@ -108,7 +112,7 @@ public class NodeControllerManagerTest extends ApplicationTest {
                 Thread.currentThread().setUncaughtExceptionHandler((t, e) -> exception[0] = e);
 
                 final MockController mockController = new MockController();
-                mockPane.nodeControllerManager.add(mockController);
+                mockPane.controllerMap.add(mockController);
                 mockPane.getChildren().remove(0);
                 if (exception[0] != null) {
                     // Reset this after this test.

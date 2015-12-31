@@ -54,7 +54,8 @@ public class GRIPUIModule extends AbstractModule {
                 .build(StepController.Factory.class));
 
         // Source Factories
-        install(new FactoryModuleBuilder().build(new TypeLiteral<SourceController.BaseSourceControllerFactory<Source>>(){}));
+        install(new FactoryModuleBuilder().build(new TypeLiteral<SourceController.BaseSourceControllerFactory<Source>>() {
+        }));
         install(new FactoryModuleBuilder().build(MultiImageFileSourceController.Factory.class));
         install(new FactoryModuleBuilder().build(CameraSourceController.Factory.class));
         // END Source Factories
@@ -70,11 +71,13 @@ public class GRIPUIModule extends AbstractModule {
         // End arbitrary controllers
 
         // InputSocketController Factories
-        install(new FactoryModuleBuilder().build(new TypeLiteral<InputSocketController.BaseInputSocketControllerFactory<Object>>(){}));
+        install(new FactoryModuleBuilder().build(new TypeLiteral<InputSocketController.BaseInputSocketControllerFactory<Object>>() {
+        }));
         install(new FactoryModuleBuilder().build(CheckboxInputSocketController.Factory.class));
         install(new FactoryModuleBuilder().build(ListSpinnerInputSocketController.Factory.class));
         install(new FactoryModuleBuilder().build(RangeInputSocketController.Factory.class));
-        install(new FactoryModuleBuilder().build(new TypeLiteral<SelectInputSocketController.Factory<Object>>(){}));
+        install(new FactoryModuleBuilder().build(new TypeLiteral<SelectInputSocketController.Factory<Object>>() {
+        }));
         install(new FactoryModuleBuilder().build(NumberSpinnerInputSocketController.Factory.class));
         install(new FactoryModuleBuilder().build(SliderInputSocketController.Factory.class));
         // END Input Socket Controller Factories

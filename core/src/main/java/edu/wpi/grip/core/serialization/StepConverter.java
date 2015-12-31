@@ -22,10 +22,14 @@ public class StepConverter implements Converter {
 
     private final static String NAME_ATTRIBUTE = "name";
 
-    @Inject private EventBus eventBus;
-    @Inject private Palette palette;
-    @Inject private Pipeline pipeline;
-    @Inject private Step.Factory stepFactory;
+    @Inject
+    private EventBus eventBus;
+    @Inject
+    private Palette palette;
+    @Inject
+    private Pipeline pipeline;
+    @Inject
+    private Step.Factory stepFactory;
 
     @Override
     public void marshal(Object source, HierarchicalStreamWriter writer, MarshallingContext context) {

@@ -17,7 +17,8 @@ public class ConnectionTest {
     private OutputSocket<Number> foo;
     private InputSocket<Number> bar;
 
-    private class MockPipeline extends Pipeline {}
+    private class MockPipeline extends Pipeline {
+    }
 
     @Before
     public void setUp() {
@@ -25,7 +26,6 @@ public class ConnectionTest {
 
         fooHint = SocketHints.createNumberSocketHint("foo", 0.0);
         barHint = SocketHints.createNumberSocketHint("bar", 0.0);
-
 
 
         foo = new OutputSocket<>(eventBus, fooHint);

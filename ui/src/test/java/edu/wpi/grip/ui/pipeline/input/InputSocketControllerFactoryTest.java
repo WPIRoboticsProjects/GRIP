@@ -25,7 +25,7 @@ import static org.testfx.api.FxAssert.verifyThat;
 @RunWith(Parameterized.class)
 public class InputSocketControllerFactoryTest extends ApplicationTest {
 
-    @Parameters(name = "{index}: operation({0})={1}" )
+    @Parameters(name = "{index}: operation({0})={1}")
     public static Collection<Object[]> data() {
         Injector injector = Guice.createInjector(new GRIPCoreModule());
         final Palette palette = injector.getInstance(Palette.class);
@@ -52,18 +52,16 @@ public class InputSocketControllerFactoryTest extends ApplicationTest {
     private final String name;
 
     /**
-     *
      * @param operation The operation under test
-     * @param name The name. This is used for logging if the tests fail
+     * @param name      The name. This is used for logging if the tests fail
      */
-    public InputSocketControllerFactoryTest(Operation operation, String name){
+    public InputSocketControllerFactoryTest(Operation operation, String name) {
         this.operation = operation;
         this.name = name;
-        System.out.println(operation);
     }
 
     @Override
-    public void start(Stage stage) throws Exception {
+    public void start(Stage stage) {
         Injector injector = Guice.createInjector(new GRIPCoreModule(), new GRIPUIModule());
         inputSocketControllerFactory = injector.getInstance(InputSocketControllerFactory.class);
         stepFactory = injector.getInstance(Step.Factory.class);
@@ -77,7 +75,7 @@ public class InputSocketControllerFactoryTest extends ApplicationTest {
     @Test
     public void testCreateAllKnownInputSocketControllers() throws Exception {
         final Step step = stepFactory.create(operation);
-        interact(() ->{
+        interact(() -> {
             for (int i = 0; i < step.getInputSockets().length; i++) {
                 final InputSocket<?> inputSocket = step.getInputSockets()[i];
                 InputSocketController controller = inputSocketControllerFactory.create(inputSocket);

@@ -9,6 +9,7 @@ import java.net.URISyntaxException;
 public class Files {
     public static final ImageWithData imageFile, gompeiJpegFile;
     public static final File textFile;
+
     static {
         try {
             textFile = new File(Files.class.getResource("/edu/wpi/grip/images/NotAnImage.txt").toURI());

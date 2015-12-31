@@ -52,7 +52,7 @@ public class NumberSpinnerInputSocketController extends InputSocketController<Nu
     }
 
     @FXML
-    public void initialize(){
+    public void initialize() {
         super.initialize();
         final Spinner<Double> spinner = new Spinner<>(this.valueFactory);
         spinner.setEditable(true);
@@ -67,7 +67,7 @@ public class NumberSpinnerInputSocketController extends InputSocketController<Nu
     @Subscribe
     public void updateSpinnerFromSocket(SocketChangedEvent event) {
         if (event.getSocket() == this.getSocket()) {
-            platform.runAsSoonAsPossible(() ->{
+            platform.runAsSoonAsPossible(() -> {
                 // Remove the invalidation listener when we set the value.  This listener is useful for updating the socket value
                 // when the user changes the spinner, but since we're setting the spinner value from the socket value, calling it
                 // here would not only be redundant, but would create an infinite loop.

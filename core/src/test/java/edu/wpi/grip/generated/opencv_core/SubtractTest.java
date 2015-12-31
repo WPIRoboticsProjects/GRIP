@@ -46,9 +46,9 @@ public class SubtractTest {
     }
 
     @Test
-    public void testSubtract(){
-        InputSocket<Mat>[] inputs = (InputSocket<Mat>[])subtractOperation.createInputSockets(eventBus);
-        OutputSocket<Mat>[] outputs = (OutputSocket<Mat>[])subtractOperation.createOutputSockets(eventBus);
+    public void testSubtract() {
+        InputSocket<Mat>[] inputs = (InputSocket<Mat>[]) subtractOperation.createInputSockets(eventBus);
+        OutputSocket<Mat>[] outputs = (OutputSocket<Mat>[]) subtractOperation.createOutputSockets(eventBus);
 
         int sz[] = {256, 256};
 

@@ -12,19 +12,19 @@ import java.util.List;
 public final class InputSocketControllerFactory {
 
     @Inject
-    InputSocketController.BaseInputSocketControllerFactory<Object> baseInputSocketControllerFactory;
+    private InputSocketController.BaseInputSocketControllerFactory<Object> baseInputSocketControllerFactory;
     @Inject
-    CheckboxInputSocketController.Factory checkboxInputSocketControllerFactory;
+    private CheckboxInputSocketController.Factory checkboxInputSocketControllerFactory;
     @Inject
-    NumberSpinnerInputSocketController.Factory numberInputSocketControllerFactory;
+    private NumberSpinnerInputSocketController.Factory numberInputSocketControllerFactory;
     @Inject
-    ListSpinnerInputSocketController.Factory listInputSocketControllerFactory;
+    private ListSpinnerInputSocketController.Factory listInputSocketControllerFactory;
     @Inject
-    SliderInputSocketController.Factory sliderInputSocketControllerFactory;
+    private SliderInputSocketController.Factory sliderInputSocketControllerFactory;
     @Inject
-    RangeInputSocketController.Factory rangeInputSocketControllerFactory;
+    private RangeInputSocketController.Factory rangeInputSocketControllerFactory;
     @Inject
-    SelectInputSocketController.Factory<Object> selectInputSocketControllerFactory;
+    private SelectInputSocketController.Factory<Object> selectInputSocketControllerFactory;
 
     /**
      * Create an instance of {@link InputSocketController} appropriate for the given socket.

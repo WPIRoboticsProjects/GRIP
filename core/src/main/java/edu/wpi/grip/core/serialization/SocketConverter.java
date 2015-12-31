@@ -29,8 +29,10 @@ public class SocketConverter implements Converter {
     final private static String SOCKET_ATTRIBUTE = "socket";
     final private static String PREVIEWED_ATTRIBUTE = "previewed";
 
-    @Inject private Pipeline pipeline;
-    @Inject private Project project;
+    @Inject
+    private Pipeline pipeline;
+    @Inject
+    private Project project;
 
     @Override
     public void marshal(Object obj, HierarchicalStreamWriter writer, MarshallingContext context) {

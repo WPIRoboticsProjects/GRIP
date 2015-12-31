@@ -1,11 +1,12 @@
 package edu.wpi.grip.ui;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import edu.wpi.grip.core.Operation;
 import edu.wpi.grip.core.Palette;
 import edu.wpi.grip.core.events.OperationAddedEvent;
-import edu.wpi.grip.ui.util.NodeControllerManager;
+import edu.wpi.grip.ui.util.ControllerMap;
 import edu.wpi.grip.ui.util.SearchUtility;
 import javafx.beans.InvalidationListener;
 import javafx.beans.property.ObjectProperty;
@@ -41,11 +42,11 @@ public class PaletteController {
     private EventBus eventBus;
     @Inject
     private Palette palette;
-    private NodeControllerManager<OperationController, Node> operationsMapManager;
+    private ControllerMap<OperationController, Node> operationsMapManager;
 
     @FXML
     public void initialize() {
-        operationsMapManager = new NodeControllerManager<>(operations.getChildren());
+        operationsMapManager = new ControllerMap<>(operations.getChildren());
 
         // Make the search box have a "clear" button. This is the only way to do this unfortunately.
         // https://bitbucket.org/controlsfx/controlsfx/issues/330/making-textfieldssetupclearbuttonfield
@@ -60,7 +61,6 @@ public class PaletteController {
         for (Operation operation : palette.getOperations()) {
             OperationController operationController = operationControllerFactory.create(operation);
             operations.getChildren().add(operationController.getRoot());
-            //root.getChildren()
         }
 
         final InvalidationListener filterOperations = observable -> {
@@ -84,7 +84,8 @@ public class PaletteController {
     /**
      * Remove all operations in the palette.  Used for tests.
      */
-    public void clearOperations() {
+    @VisibleForTesting
+    void clearOperations() {
         operationsMapManager.clear();
     }
 

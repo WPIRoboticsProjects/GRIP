@@ -9,7 +9,7 @@ import edu.wpi.grip.ui.Controller;
 import edu.wpi.grip.ui.annotations.ParametrizedController;
 import edu.wpi.grip.ui.pipeline.input.InputSocketController;
 import edu.wpi.grip.ui.pipeline.input.InputSocketControllerFactory;
-import edu.wpi.grip.ui.util.NodeControllerManager;
+import edu.wpi.grip.ui.util.ControllerMap;
 import edu.wpi.grip.ui.util.StyleClassNameUtility;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
@@ -39,8 +39,8 @@ public class StepController implements Controller {
     private final OutputSocketController.Factory outputSocketControllerFactory;
     private final Step step;
 
-    private NodeControllerManager<InputSocketController, Node> inputSocketMapManager;
-    private NodeControllerManager<OutputSocketController, Node> outputSocketMapManager;
+    private ControllerMap<InputSocketController, Node> inputSocketMapManager;
+    private ControllerMap<OutputSocketController, Node> outputSocketMapManager;
 
     /**
      * Used for assisted injects.  Guice will automatically create an instance of this interface so we can create
@@ -61,8 +61,8 @@ public class StepController implements Controller {
 
     @FXML
     private void initialize() {
-        inputSocketMapManager = new NodeControllerManager<>(inputs.getChildren());
-        outputSocketMapManager = new NodeControllerManager<>(outputs.getChildren());
+        inputSocketMapManager = new ControllerMap<>(inputs.getChildren());
+        outputSocketMapManager = new ControllerMap<>(outputs.getChildren());
 
         root.getStyleClass().add(StyleClassNameUtility.classNameFor(step));
         title.setText(step.getOperation().getName());

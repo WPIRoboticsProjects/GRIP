@@ -1,5 +1,6 @@
 package edu.wpi.grip.ui.util;
 
+import com.google.common.eventbus.AsyncEventBus;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import com.google.inject.Inject;
@@ -8,7 +9,10 @@ import javafx.application.Platform;
 
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
+import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
@@ -18,6 +22,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 public class GRIPPlatform {
 
     private final EventBus eventBus;
+    private final Logger logger;
 
     private class JavaFXRunnerEvent {
         private final Runnable action;
@@ -32,9 +37,10 @@ public class GRIPPlatform {
     }
 
     @Inject
-    GRIPPlatform(EventBus eventBus) {
-        //checkArgument(!(eventBus instanceof AsyncEventBus), "This class is not designed to work with the AsyncEventBus");
+    GRIPPlatform(EventBus eventBus, Logger logger) {
+        checkArgument(!(eventBus instanceof AsyncEventBus), "This class has not been tested to work with the AsyncEventBus");
         this.eventBus = eventBus;
+        this.logger = logger;
     }
 
 
@@ -78,7 +84,7 @@ public class GRIPPlatform {
 
         try {
             while (!doneLatch.await(500, TimeUnit.MILLISECONDS)) {
-                System.out.println("POTENTIAL DEADLOCK!");
+                logger.log(Level.WARNING, "POTENTIAL DEADLOCK!");
             }
         } catch (InterruptedException e) {
             // ignore exception
