@@ -6,7 +6,6 @@ import com.google.common.eventbus.Subscribe;
 import edu.wpi.grip.core.events.SetSinkEvent;
 import edu.wpi.grip.core.events.SocketPublishedEvent;
 import edu.wpi.grip.core.events.StepAddedEvent;
-import edu.wpi.grip.core.operations.PythonScriptOperation;
 import edu.wpi.grip.core.sinks.DummySink;
 import org.junit.After;
 import org.junit.Before;
@@ -18,19 +17,19 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 
 public class SinkTest {
-    private final static class MockSink implements Sink {
-        public Integer publishedValue;
-
-        @Subscribe
-        public void onSocketPublished(SocketPublishedEvent event) {
-            publishedValue = (Integer) event.getSocket().getValue().get();
-        }
-    }
-
     private Optional<Throwable> throwableOptional;
     private EventBus eventBus;
     private InputSocket<Integer> a, b;
     private OutputSocket<Integer> sum;
+
+    private final static class MockSink implements Sink {
+        public Double publishedValue;
+
+        @Subscribe
+        public void onSocketPublished(SocketPublishedEvent event) {
+            publishedValue = (Double) event.getSocket().getValue().get();
+        }
+    }
 
     @Before
     @SuppressWarnings("unchecked")
@@ -39,17 +38,7 @@ public class SinkTest {
         this.eventBus = new EventBus((exception, context) -> throwableOptional = Optional.of(exception));
         final Pipeline pipeLine = new Pipeline(eventBus);
 
-        final Step step = new Step(eventBus, new PythonScriptOperation(
-                "import edu.wpi.grip.core as grip\n" +
-                "import java.lang.Number\n" +
-                "inputs = [\n" +
-                "    grip.SocketHints.createNumberSocketHint('a', 0),\n" +
-                "    grip.SocketHints.createNumberSocketHint('b', 0),\n" +
-                "]\n" +
-                "outputs = [\n" +
-                "    grip.SocketHints.Outputs.createNumberSocketHint('sum', 0.0),\n" +
-                "]\n" +
-                "def perform(a, b): return a + b\n"));
+        final Step step = new Step(eventBus, new AdditionOperation());
 
         this.eventBus.post(new StepAddedEvent(step));
 
@@ -74,7 +63,7 @@ public class SinkTest {
         this.a.setValue(123);
         this.b.setValue(456);
 
-        assertEquals((Integer) (123 + 456), sink.publishedValue);
+        assertEquals(Double.valueOf(123 + 456), sink.publishedValue);
     }
 
     @Test
@@ -86,7 +75,7 @@ public class SinkTest {
         this.b.setValue(456);
         this.sum.setPublished(true);
 
-        assertEquals((Integer) (123 + 456), sink.publishedValue);
+        assertEquals(Double.valueOf(123 + 456), sink.publishedValue);
     }
 
     @Test
@@ -99,6 +88,6 @@ public class SinkTest {
         this.b.setValue(456);
         this.sum.setPublished(true);
 
-        assertNotEquals((Integer) (123 + 456), sink.publishedValue);
+        assertNotEquals((123 + 456), sink.publishedValue);
     }
 }
