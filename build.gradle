@@ -57,6 +57,10 @@ allprojects {
         failOnError false
     }
 
+    tasks.withType(JavaExec) {
+        enableAssertions = true
+    }
+
     // Turn on test results
     test {
         testLogging {
