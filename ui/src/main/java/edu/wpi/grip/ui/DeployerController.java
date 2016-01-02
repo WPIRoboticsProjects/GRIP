@@ -50,6 +50,7 @@ public class DeployerController {
         private final TextArea outputArea;
 
         public StreamToTextArea(TextArea outputArea) {
+            super();
             this.outputArea = outputArea;
         }
 
@@ -76,6 +77,7 @@ public class DeployerController {
     }
 
     @FXML
+    @SuppressWarnings("PMD.UnusedPrivateMethod")
     private void initialize() {
         final Supplier<OutputStream> out = () ->
                 new PrintStream(new StreamToTextArea(stdOutStreamTextArea).reset(), false);
@@ -89,6 +91,10 @@ public class DeployerController {
                         .collect(Collectors.toList()));
     }
 
+    /**
+     * Calls {@link DeployedInstanceManager#deploy()} and displays the result to the UI.
+     * @param manager The manager to call deploy on
+     */
     private void onDeploy(DeployedInstanceManager manager) {
         Platform.runLater(() -> {
             progressIndicator.setProgress(0);

@@ -28,6 +28,8 @@ import java.net.URLDecoder;
 import java.nio.file.Paths;
 import java.util.Optional;
 import java.util.function.Supplier;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -36,6 +38,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
  */
 public class DeployedInstanceManager implements StartStoppable {
 
+    private final Logger logger = Logger.getLogger(DeployedInstanceManager.class.getName());
     private final EventBus eventBus;
     private final File coreJar;
     private final File projectFile;
@@ -125,7 +128,7 @@ public class DeployedInstanceManager implements StartStoppable {
 
         return deferred.when(new DeferredCallable<DeployedInstanceManager, Double>() {
             @Override
-            public DeployedInstanceManager call() throws Exception {
+            public DeployedInstanceManager call() throws IOException {
                 notify(0.2);
                 scpFileToTarget(coreJar);
                 notify(0.5);
@@ -209,15 +212,18 @@ public class DeployedInstanceManager implements StartStoppable {
                 wait(50);
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
-                //TODO: Move this into a logging framework
-                System.err.println("Caught Exception:");
-                e.printStackTrace();
+                logger.log(Level.WARNING, "Wait interrupted", e);
             }
             runStop();
         } while (isStarted() && !Thread.interrupted());
         eventBus.post(new StartedStoppedEvent(this));
     }
 
+    /**
+     * Makes an SSH connection to the remote and runs the kill command.
+     * Should block until the command has executed.
+     * @throws IOException If the shell fails.
+     */
     private void runStop() throws IOException {
         final Shell.Plain gripShell = new Shell.Plain(new Shell.Safe(details.createSSHShell()));
         gripShell.exec(deploymentCommands.getKillCommand(coreJar.getName()));

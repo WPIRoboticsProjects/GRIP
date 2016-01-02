@@ -19,6 +19,10 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.util.function.Consumer;
 
+/**
+ * A simple UI component that can be used to display options for deploying to a remote device using
+ * asynchronous callbacks.
+ */
 @ParametrizedController(url = "DeploymentOptions.fxml")
 public abstract class DeploymentOptionsController {
 
@@ -59,6 +63,7 @@ public abstract class DeploymentOptionsController {
     protected abstract Promise<DeployedInstanceManager, String, String> onDeploy();
 
     @FXML
+    @SuppressWarnings("PMD.UnusedPrivateMethod")
     private void deploy() {
         deploySpinner.setVisible(true);
         deployButton.setDisable(true);
@@ -99,15 +104,21 @@ public abstract class DeploymentOptionsController {
         return root;
     }
 
-    protected static Promise<InetAddress, Throwable, String> checkInetAddressReachable(SupplierWithIO<InetAddress> address){
+    /**
+     * Checks that an InetAddress is reachable asynchronously
+     *
+     * @param address The address supplier to check
+     * @return A promise that is resolved when the InetAddress is determined to be reachable.
+     */
+    protected static Promise<InetAddress, Throwable, String> checkInetAddressReachable(SupplierWithIO<InetAddress> address) {
         final DeferredManager checkAddressDeferred = new DefaultDeferredManager();
         return checkAddressDeferred.when(new DeferredCallable<InetAddress, String>() {
             @Override
-            public InetAddress call() throws Exception {
+            public InetAddress call() throws IOException {
                 final InetAddress inetAddress = address.getWithIO();
                 final int attemptCount = 5;
                 for (int i = 0; i < attemptCount; i++) {
-                    if(inetAddress.isReachable(1000)) {
+                    if (inetAddress.isReachable(1000)) {
                         return inetAddress;
                     } else {
                         notify("Attempt " + i + "/" + attemptCount + " failed");

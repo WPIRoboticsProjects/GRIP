@@ -43,6 +43,7 @@ public class FRCDeploymentOptionsController extends DeploymentOptionsController 
     }
 
     @Override
+    @SuppressWarnings("PMD.IfElseStmtsMustUseBraces")
     protected void postInit() {
         final Label label = new Label("Team Number");
         final SpinnerValueFactory.IntegerSpinnerValueFactory spinnerValueFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, Integer.MAX_VALUE, 190);
@@ -50,7 +51,7 @@ public class FRCDeploymentOptionsController extends DeploymentOptionsController 
         this.teamNumberSpinner.setEditable(true);
         // Ensure the value entered is only a number
         this.teamNumberSpinner.getEditor().textProperty().addListener((observable, oldValue, newValue) -> {
-            if (newValue.equals("")) {
+            if ("".equals(newValue)) {
                 teamNumberSpinner.getEditor().setText(Integer.toString(0));
             } else try {
                 int value = Integer.parseInt(newValue);

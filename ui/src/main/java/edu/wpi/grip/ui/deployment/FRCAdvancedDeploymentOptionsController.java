@@ -50,7 +50,7 @@ public class FRCAdvancedDeploymentOptionsController extends DeploymentOptionsCon
         this.address.textProperty().addListener((observable, oldValue, newValue) -> {
             // Enable the "Deploy" button only if the user has entered something.
             // Note: InetAddresses.isInetAddress only works for IP address not mdns names
-            if (newValue.equals("")) {
+            if ("".equals(newValue)) {
                 getDeployButton().setDisable(true);
             } else {
                 getDeployButton().setDisable(false);
