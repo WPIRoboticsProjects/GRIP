@@ -5,10 +5,10 @@ edu.wpi.grip.core.operations.composite
 edu.wpi.grip.core.operations.opencv
 edu.wpi.grip.core.operations.opencv.enumeration
 edu.wpi.grip.core.serialization
-edu.wpi.grip.core.sinks
 edu.wpi.grip.core.sources
 edu.wpi.grip.core.util
 edu.wpi.grip.ui
+edu.wpi.grip.ui.annotations
 edu.wpi.grip.ui.components
 edu.wpi.grip.ui.pipeline
 edu.wpi.grip.ui.pipeline.input
