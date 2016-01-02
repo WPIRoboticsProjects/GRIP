@@ -1,10 +1,10 @@
 package edu.wpi.grip.ui.deployment;
 
+import edu.wpi.grip.ui.annotations.ParametrizedController;
 import edu.wpi.grip.ui.util.SupplierWithIO;
 import edu.wpi.grip.ui.util.deployment.DeployedInstanceManager;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressIndicator;
@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.util.function.Consumer;
 
+@ParametrizedController(url = "DeploymentOptions.fxml")
 public abstract class DeploymentOptionsController {
 
     @FXML
@@ -39,14 +40,9 @@ public abstract class DeploymentOptionsController {
     private final String title;
     private final Consumer<DeployedInstanceManager> onDeployCallback;
 
-    protected DeploymentOptionsController(String title, Consumer<DeployedInstanceManager> onDeployCallback) {
+    DeploymentOptionsController(String title, Consumer<DeployedInstanceManager> onDeployCallback) {
         this.title = title;
         this.onDeployCallback = onDeployCallback;
-        try {
-            FXMLLoader.load(DeploymentOptionsController.class.getResource("DeploymentOptions.fxml"), null, null, c -> this);
-        } catch (IOException e) {
-            throw new IllegalStateException("Could not load FXML", e);
-        }
     }
 
     @FXML

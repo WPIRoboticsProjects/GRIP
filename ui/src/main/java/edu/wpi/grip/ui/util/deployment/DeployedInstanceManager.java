@@ -2,6 +2,8 @@ package edu.wpi.grip.ui.util.deployment;
 
 
 import com.google.common.eventbus.EventBus;
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import com.jcabi.ssh.Shell;
 import com.jcraft.jsch.JSch;
 import edu.wpi.grip.core.StartStoppable;
@@ -43,6 +45,7 @@ public class DeployedInstanceManager implements StartStoppable {
     private final Supplier<OutputStream> stdErr;
     private Optional<Thread> sshThread;
 
+    @Singleton
     public static class Factory {
         private final EventBus eventBus;
         private final File coreJAR;
@@ -50,7 +53,12 @@ public class DeployedInstanceManager implements StartStoppable {
         private final SecureShellDetails.Factory secureShellDetailsFactory;
         private final DeploymentCommands.Factory deploymentCommandsFactory;
 
-        public Factory(EventBus eventBus, Project project, SecureShellDetails.Factory secureShellDetailsFactory, DeploymentCommands.Factory deploymentCommandsFactory) {
+        @Inject
+        public Factory(
+                EventBus eventBus,
+                Project project,
+                SecureShellDetails.Factory secureShellDetailsFactory,
+                DeploymentCommands.Factory deploymentCommandsFactory) {
             this.eventBus = eventBus;
             try {
                 this.coreJAR = new File(edu.wpi.grip.core.Main.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath());
@@ -60,10 +68,6 @@ public class DeployedInstanceManager implements StartStoppable {
             this.project = project;
             this.secureShellDetailsFactory = secureShellDetailsFactory;
             this.deploymentCommandsFactory = deploymentCommandsFactory;
-        }
-
-        public Factory(EventBus eventBus, Project project) {
-            this(eventBus, project, new SecureShellDetails.Factory(), new DeploymentCommands.Factory());
         }
 
         public DeployedInstanceManager createFRC(InetAddress address) {
@@ -93,7 +97,7 @@ public class DeployedInstanceManager implements StartStoppable {
      * @param stdOut             Supplies the stream to be used for the standard output from the ssh command
      * @param stdErr             Supplies the stream to be used for the standard error from the ssh command
      */
-    public DeployedInstanceManager(EventBus eventBus,
+    private DeployedInstanceManager(EventBus eventBus,
                                    File coreJar,
                                    File projectFile,
                                    SecureShellDetails details,

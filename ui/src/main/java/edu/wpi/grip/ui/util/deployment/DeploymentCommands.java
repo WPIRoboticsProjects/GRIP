@@ -1,6 +1,8 @@
 package edu.wpi.grip.ui.util.deployment;
 
 
+import com.google.inject.Singleton;
+
 import java.util.function.Function;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -17,8 +19,8 @@ public class DeploymentCommands {
     private final String javaCommand;
     private final Function<String, String> killByNameCommand;
 
+    @Singleton
     public static class Factory {
-
         public DeploymentCommands createFRC() {
             return new DeploymentCommands("/usr/local/frc/JRE/bin/java", DEFAULT_KILL_BY_NAME);
         }

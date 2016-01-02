@@ -1,5 +1,7 @@
 package edu.wpi.grip.ui.deployment;
 
+import com.google.inject.Inject;
+import com.google.inject.assistedinject.Assisted;
 import edu.wpi.grip.ui.util.deployment.DeployedInstanceManager;
 import javafx.scene.control.Label;
 import javafx.scene.control.Spinner;
@@ -21,10 +23,19 @@ public class FRCDeploymentOptionsController extends DeploymentOptionsController 
     private final DeployedInstanceManager.Factory deployedInstanceManagerFactor;
     private final Supplier<OutputStream> stdOut, stdErr;
 
-    protected FRCDeploymentOptionsController(DeployedInstanceManager.Factory deployedInstanceManagerFactor,
-                                             Consumer<DeployedInstanceManager> onDeployCallback,
-                                             Supplier<OutputStream> stdOut,
-                                             Supplier<OutputStream> stdErr) {
+    public interface Factory {
+        FRCDeploymentOptionsController create(
+                Consumer<DeployedInstanceManager> onDeployCallback,
+                @Assisted("stdOut") Supplier<OutputStream> stdOut,
+                @Assisted("stdErr") Supplier<OutputStream> stdErr
+            );
+    }
+
+    @Inject
+    FRCDeploymentOptionsController(DeployedInstanceManager.Factory deployedInstanceManagerFactor,
+                                   @Assisted Consumer<DeployedInstanceManager> onDeployCallback,
+                                   @Assisted("stdOut") Supplier<OutputStream> stdOut,
+                                   @Assisted("stdErr") Supplier<OutputStream> stdErr) {
         super("FRC", onDeployCallback);
         this.deployedInstanceManagerFactor = deployedInstanceManagerFactor;
         this.stdOut = stdOut;

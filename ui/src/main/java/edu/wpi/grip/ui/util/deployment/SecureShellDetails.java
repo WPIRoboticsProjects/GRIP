@@ -1,5 +1,6 @@
 package edu.wpi.grip.ui.util.deployment;
 
+import com.google.inject.Singleton;
 import com.jcabi.ssh.SSHByPassword;
 import com.jcabi.ssh.Shell;
 import org.apache.tools.ant.Project;
@@ -23,6 +24,7 @@ public class SecureShellDetails {
     private final Optional<String> remoteDir;
     private final int port;
 
+    @Singleton
     public static class Factory {
         SecureShellDetails createFRC(InetAddress address) {
             return new SecureShellDetails("lvuser", address.getHostAddress());

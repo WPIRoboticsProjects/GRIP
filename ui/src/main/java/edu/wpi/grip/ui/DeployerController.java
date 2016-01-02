@@ -2,9 +2,7 @@ package edu.wpi.grip.ui;
 
 
 import com.google.common.base.Throwables;
-import com.google.common.eventbus.EventBus;
 import com.google.inject.Inject;
-import com.google.inject.Singleton;
 import edu.wpi.grip.ui.annotations.ParametrizedController;
 import edu.wpi.grip.ui.components.StartStoppableButton;
 import edu.wpi.grip.ui.deployment.DeploymentOptionsController;
@@ -24,7 +22,6 @@ import java.io.PrintStream;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
-@Singleton
 @ParametrizedController(url = "DeployerPane.fxml")
 public class DeployerController {
 
@@ -46,7 +43,6 @@ public class DeployerController {
     @FXML
     private ProgressBar progressIndicator;
 
-    private final EventBus eventBus;
     private final StartStoppableButton.Factory startStopButtonFactory;
     private final DeploymentOptionsControllersFactory optionsControllersFactory;
 
@@ -74,8 +70,7 @@ public class DeployerController {
     }
 
     @Inject
-    DeployerController(EventBus eventBus, StartStoppableButton.Factory startStopButtonFactory, DeploymentOptionsControllersFactory optionsControllersFactory) {
-        this.eventBus = eventBus;
+    DeployerController(StartStoppableButton.Factory startStopButtonFactory, DeploymentOptionsControllersFactory optionsControllersFactory) {
         this.startStopButtonFactory = startStopButtonFactory;
         this.optionsControllersFactory = optionsControllersFactory;
     }

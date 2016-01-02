@@ -1,5 +1,7 @@
 package edu.wpi.grip.ui.deployment;
 
+import com.google.inject.Inject;
+import com.google.inject.assistedinject.Assisted;
 import edu.wpi.grip.ui.util.deployment.DeployedInstanceManager;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
@@ -12,7 +14,7 @@ import java.net.InetAddress;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
-public class FRCAdvancedDeployment extends DeploymentOptionsController {
+public class FRCAdvancedDeploymentOptionsController extends DeploymentOptionsController {
 
 
     private final DeployedInstanceManager.Factory deployedInstanceManagerFactor;
@@ -20,10 +22,19 @@ public class FRCAdvancedDeployment extends DeploymentOptionsController {
 
     private TextField address;
 
-    protected FRCAdvancedDeployment(DeployedInstanceManager.Factory deployedInstanceManagerFactor,
-                                    Consumer<DeployedInstanceManager> onDeployCallback,
-                                    Supplier<OutputStream> stdOut,
-                                    Supplier<OutputStream> stdErr) {
+    public interface Factory {
+        FRCAdvancedDeploymentOptionsController create(
+                Consumer<DeployedInstanceManager> onDeployCallback,
+                @Assisted("stdOut") Supplier<OutputStream> stdOut,
+                @Assisted("stdErr") Supplier<OutputStream> stdErr
+        );
+    }
+
+    @Inject
+    FRCAdvancedDeploymentOptionsController(DeployedInstanceManager.Factory deployedInstanceManagerFactor,
+                                           @Assisted Consumer<DeployedInstanceManager> onDeployCallback,
+                                           @Assisted("stdOut") Supplier<OutputStream> stdOut,
+                                           @Assisted("stdErr") Supplier<OutputStream> stdErr) {
         super("FRC Advanced", onDeployCallback);
         this.deployedInstanceManagerFactor = deployedInstanceManagerFactor;
         this.stdOut = stdOut;
