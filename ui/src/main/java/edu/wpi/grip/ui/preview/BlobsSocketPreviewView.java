@@ -87,10 +87,10 @@ public class BlobsSocketPreviewView extends SocketPreviewView<BlobsReport> {
                 }
             }
 
-            final Image image = this.imageConverter.convert(input);
+            final Mat inputToConvert = input;
             final int numBlobs = blobsReport.getBlobs().size();
-
             platform.runAsSoonAsPossible(() -> {
+                final Image image = this.imageConverter.convert(inputToConvert);
                 this.imageView.setImage(image);
                 this.infoLabel.setText("Found " + numBlobs + " blobs");
             });

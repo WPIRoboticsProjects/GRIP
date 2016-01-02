@@ -1,6 +1,7 @@
 package edu.wpi.grip.ui.util;
 
 import com.google.common.primitives.UnsignedBytes;
+import javafx.application.Platform;
 import javafx.scene.image.Image;
 import javafx.scene.image.PixelFormat;
 import javafx.scene.image.WritableImage;
@@ -31,6 +32,16 @@ public final class ImageConverter {
      * @return A JavaFX image, or null for empty
      */
     public Image convert(Mat mat) {
+        /*
+         * IMPORTANT!
+         * The {@link ImageConverter#image} is a component that may be actively part of the UI
+         * If we are changing it while it is being rendered by the UI thread this could cause
+         * a problem in the UI thread.
+         */
+        if(!Platform.isFxApplicationThread()) {
+            throw new IllegalStateException("This modifies an FX object. This must be run in the UI Thread");
+        }
+
         final int width = mat.cols();
         final int height = mat.rows();
         final int channels = mat.channels();

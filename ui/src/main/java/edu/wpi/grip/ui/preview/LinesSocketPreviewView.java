@@ -94,11 +94,10 @@ public class LinesSocketPreviewView extends SocketPreviewView<LinesReport> {
                     circle(input, endPoint, 2, Scalar.WHITE, 2, LINE_8, 0);
                 }
             }
-
-            final Image image = this.imageConverter.convert(input);
+            final Mat convertInput = input;
             final int numLines = lines.size();
-
             platform.runAsSoonAsPossible(() -> {
+                final Image image = this.imageConverter.convert(convertInput);
                 this.imageView.setImage(image);
                 this.infoLabel.setText("Found " + numLines + " lines");
             });
