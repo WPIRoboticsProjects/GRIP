@@ -1,10 +1,15 @@
 package edu.wpi.grip.core;
 
 import com.google.common.eventbus.EventBus;
+import com.google.common.eventbus.Subscribe;
+import com.google.inject.Guice;
+import com.google.inject.Injector;
+import edu.wpi.grip.core.events.UnexpectedThrowableEvent;
 import edu.wpi.grip.core.operations.Operations;
 import edu.wpi.grip.core.serialization.Project;
 import edu.wpi.grip.generated.CVOperations;
 
+import javax.inject.Inject;
 import java.io.File;
 import java.io.IOException;
 import java.util.logging.*;
@@ -13,7 +18,21 @@ import java.util.logging.*;
  * Main driver class for headless mode
  */
 public class Main {
+
+    @Inject
+    private Project project;
+    @Inject
+    private EventBus eventBus;
+    @Inject
+    private Logger logger;
+
+    @SuppressWarnings("PMD.SignatureDeclareThrowsException")
     public static void main(String[] args) throws Exception {
+        final Injector injector = Guice.createInjector(new GRIPCoreModule());
+        injector.getInstance(Main.class).start(args);
+    }
+
+    public void start(String[] args) throws IOException, InterruptedException {
         if (args.length != 1) {
             System.err.println("Usage: GRIP.jar project.grip");
             return;
@@ -41,15 +60,11 @@ public class Main {
             throw new IllegalStateException(exception);
         }
 
-        final String projectPath = args[0];
-
-        final EventBus eventBus = new EventBus((exception, context) -> exception.printStackTrace());
-        final Pipeline pipeline = new Pipeline(eventBus);
-        final Palette palette = new Palette(eventBus);
-        final Project project = new Project(eventBus, pipeline, palette);
 
         Operations.addOperations(eventBus);
         CVOperations.addOperations(eventBus);
+
+        final String projectPath = args[0];
 
         // Open a project from a .grip file specified on the command line
         project.open(new File(projectPath));
@@ -57,6 +72,17 @@ public class Main {
         // There's nothing more to do in the main thread since we're in headless mode - sleep forever
         for (; ; ) {
             Thread.sleep(Integer.MAX_VALUE);
+        }
+    }
+
+    /**
+     * When an unexpected error happens in headless mode, print a stack trace and exit.
+     */
+    @Subscribe
+    public final void onUnexpectedThrowableEvent(UnexpectedThrowableEvent event) {
+        logger.log(Level.SEVERE, "UnexpectedThrowableEvent", event.getThrowable());
+        if (event.isFatal()) {
+            System.exit(1);
         }
     }
 }

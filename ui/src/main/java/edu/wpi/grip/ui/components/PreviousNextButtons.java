@@ -1,7 +1,6 @@
 package edu.wpi.grip.ui.components;
 
 import edu.wpi.grip.core.PreviousNext;
-import edu.wpi.grip.ui.pipeline.source.CameraSourceView;
 import edu.wpi.grip.ui.util.DPIUtility;
 import javafx.scene.Node;
 import javafx.scene.control.ToggleButton;
@@ -21,8 +20,8 @@ public final class PreviousNextButtons extends SegmentedButton {
             PREVIOUS_BUTTON_STYLE_CLASS = "previous-button";
 
     private static final Image
-            nextImage = new Image(CameraSourceView.class.getResourceAsStream("/edu/wpi/grip/ui/icons/next.png")),
-            previousImage = new Image(CameraSourceView.class.getResourceAsStream("/edu/wpi/grip/ui/icons/previous.png"));
+            nextImage = new Image(PreviousNextButtons.class.getResourceAsStream("/edu/wpi/grip/ui/icons/next.png")),
+            previousImage = new Image(PreviousNextButtons.class.getResourceAsStream("/edu/wpi/grip/ui/icons/previous.png"));
 
     private final ToggleButton previousButton;
     private final ToggleButton nextButton;

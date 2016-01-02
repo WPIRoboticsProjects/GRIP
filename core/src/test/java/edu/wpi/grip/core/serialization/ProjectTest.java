@@ -1,11 +1,18 @@
 package edu.wpi.grip.core.serialization;
 
 import com.google.common.eventbus.EventBus;
+import com.google.inject.Guice;
+import com.google.inject.Injector;
+import com.google.inject.Key;
+import com.google.inject.TypeLiteral;
 import edu.wpi.grip.core.*;
 import edu.wpi.grip.core.events.ConnectionAddedEvent;
 import edu.wpi.grip.core.events.OperationAddedEvent;
-import edu.wpi.grip.core.events.StepAddedEvent;
+import edu.wpi.grip.core.events.SourceAddedEvent;
 import edu.wpi.grip.core.operations.PythonScriptOperation;
+import edu.wpi.grip.core.sources.ImageFileSource;
+import edu.wpi.grip.util.Files;
+import org.junit.Before;
 import org.junit.Test;
 
 import java.io.Reader;
@@ -17,16 +24,31 @@ import static junit.framework.TestCase.assertEquals;
 import static org.bytedeco.javacpp.opencv_core.*;
 
 public class ProjectTest {
-    private final EventBus eventBus = new EventBus();
 
-    private final Pipeline pipeline = new Pipeline(eventBus);
-    private final Palette palette = new Palette(eventBus);
-    private final Project project = new Project(eventBus, pipeline, palette);
+    private Connection.Factory<Object> connectionFactory;
+    private ImageFileSource.Factory imageSourceFactory;
+    private Step.Factory stepFactory;
+    private EventBus eventBus;
+    private Pipeline pipeline;
+    private Project project;
 
-    private final Operation additionOperation, opencvAddOperation, pythonAdditionOperationFromURL,
+    private Operation additionOperation, opencvAddOperation, pythonAdditionOperationFromURL,
             pythonAdditionOperationFromSource;
 
-    public ProjectTest() throws Exception {
+    @Before
+    public void setUp() throws Exception {
+        final Injector injector = Guice.createInjector(new GRIPCoreModule());
+        connectionFactory = injector
+                .getInstance(Key.get(new TypeLiteral<Connection.Factory<Object>>() {
+                }));
+        imageSourceFactory = injector
+                .getInstance(ImageFileSource.Factory.class);
+        eventBus = injector.getInstance(EventBus.class);
+        pipeline = injector.getInstance(Pipeline.class);
+        project = injector.getInstance(Project.class);
+        stepFactory = injector.getInstance(Step.Factory.class);
+
+
         additionOperation = new AdditionOperation();
         pythonAdditionOperationFromURL = new PythonScriptOperation(
                 ProjectTest.class.getResource("/edu/wpi/grip/scripts/addition.py"));
@@ -62,9 +84,9 @@ public class ProjectTest {
 
     @Test
     public void testSerializePipelineWithSteps() throws Exception {
-        eventBus.post(new StepAddedEvent(new Step(eventBus, additionOperation)));
-        eventBus.post(new StepAddedEvent(new Step(eventBus, pythonAdditionOperationFromSource)));
-        eventBus.post(new StepAddedEvent(new Step(eventBus, pythonAdditionOperationFromURL)));
+        pipeline.addStep(stepFactory.create(additionOperation));
+        pipeline.addStep(stepFactory.create(pythonAdditionOperationFromSource));
+        pipeline.addStep(stepFactory.create(pythonAdditionOperationFromURL));
 
         serializeAndDeserialize();
 
@@ -77,12 +99,12 @@ public class ProjectTest {
     @Test
     @SuppressWarnings("unchecked")
     public void testSerializePipelineWithStepsAndConnections() throws Exception {
-        Step step1 = new Step(eventBus, pythonAdditionOperationFromSource);
+        Step step1 = stepFactory.create(pythonAdditionOperationFromSource);
         InputSocket<Number> a1 = (InputSocket<Number>) step1.getInputSockets()[0];
         InputSocket<Number> b1 = (InputSocket<Number>) step1.getInputSockets()[1];
         OutputSocket<Number> sum1 = (OutputSocket<Number>) step1.getOutputSockets()[0];
 
-        Step step2 = new Step(eventBus, pythonAdditionOperationFromURL);
+        Step step2 = stepFactory.create(pythonAdditionOperationFromURL);
         InputSocket<Number> a2 = (InputSocket<Number>) step2.getInputSockets()[0];
         InputSocket<Number> b2 = (InputSocket<Number>) step2.getInputSockets()[1];
         OutputSocket<Number> sum2 = (OutputSocket<Number>) step2.getOutputSockets()[0];
@@ -91,9 +113,9 @@ public class ProjectTest {
         b1.setValue(34);
         b2.setValue(56);
 
-        eventBus.post(new StepAddedEvent(step1));
-        eventBus.post(new StepAddedEvent(step2));
-        eventBus.post(new ConnectionAddedEvent(new Connection<Number>(eventBus, sum1, a2)));
+        pipeline.addStep(step1);
+        pipeline.addStep(step2);
+        eventBus.post(new ConnectionAddedEvent(connectionFactory.create(sum1, (InputSocket) a2)));
 
         serializeAndDeserialize();
 
@@ -106,7 +128,7 @@ public class ProjectTest {
     @Test
     @SuppressWarnings("unchecked")
     public void testPerformSerializedStep() throws Exception {
-        eventBus.post(new StepAddedEvent(new Step(eventBus, additionOperation)));
+        pipeline.addStep(stepFactory.create(additionOperation));
         serializeAndDeserialize();
 
         InputSocket<Number> a = (InputSocket<Number>) pipeline.getSteps().get(0).getInputSockets()[0];
@@ -121,7 +143,7 @@ public class ProjectTest {
     @Test
     @SuppressWarnings("unchecked")
     public void testPerformSerializedPythonStepFromURL() throws Exception {
-        eventBus.post(new StepAddedEvent(new Step(eventBus, pythonAdditionOperationFromURL)));
+        pipeline.addStep(stepFactory.create(pythonAdditionOperationFromURL));
         serializeAndDeserialize();
 
         InputSocket<Number> a = (InputSocket<Number>) pipeline.getSteps().get(0).getInputSockets()[0];
@@ -136,7 +158,7 @@ public class ProjectTest {
     @Test
     @SuppressWarnings("unchecked")
     public void testPerformSerializedPythonStepFromSource() throws Exception {
-        eventBus.post(new StepAddedEvent(new Step(eventBus, pythonAdditionOperationFromSource)));
+        pipeline.addStep(stepFactory.create(pythonAdditionOperationFromSource));
         serializeAndDeserialize();
 
         InputSocket<Number> a = (InputSocket<Number>) pipeline.getSteps().get(0).getInputSockets()[0];
@@ -151,12 +173,15 @@ public class ProjectTest {
     @Test
     @SuppressWarnings("unchecked")
     public void testPerformSerializedPipeline() throws Exception {
-        Step step1 = new Step(eventBus, pythonAdditionOperationFromURL);
-        Step step2 = new Step(eventBus, pythonAdditionOperationFromSource);
-        eventBus.post(new StepAddedEvent(step1));
-        eventBus.post(new StepAddedEvent(step2));
-        eventBus.post(new ConnectionAddedEvent(new Connection(eventBus, step1.getOutputSockets()[0],
-                step2.getInputSockets()[0])));
+        Step step1 = stepFactory.create(pythonAdditionOperationFromURL);
+        Step step2 = stepFactory.create(pythonAdditionOperationFromSource);
+        pipeline.addStep(step1);
+        pipeline.addStep(step2);
+        eventBus.post(new ConnectionAddedEvent(
+                connectionFactory.create(
+                        (OutputSocket) step1.getOutputSockets()[0],
+                        (InputSocket) step2.getInputSockets()[0]
+                )));
         serializeAndDeserialize();
 
         InputSocket<Number> a1 = (InputSocket<Number>) pipeline.getSteps().get(0).getInputSockets()[0];
@@ -173,7 +198,7 @@ public class ProjectTest {
     @Test
     @SuppressWarnings("unchecked")
     public void testPerformSerializedPipelineWithMats() throws Exception {
-        eventBus.post(new StepAddedEvent(new Step(eventBus, opencvAddOperation)));
+        pipeline.addStep(stepFactory.create(opencvAddOperation));
         serializeAndDeserialize();
 
         Step step1 = pipeline.getSteps().get(0);
@@ -190,4 +215,18 @@ public class ProjectTest {
         assertEquals("Deserialized pipeline with Mat operations did not produce the expected sum.",
                 0, countNonZero(diff));
     }
+
+    @Test
+    @SuppressWarnings("PMD.JUnitTestsShouldIncludeAssert")
+    public void testSerializePipelineWithSource() throws Exception {
+        final ImageFileSource source = imageSourceFactory.create(Files.gompeiJpegFile.file);
+        source.load();
+        eventBus.post(new SourceAddedEvent(source));
+
+        serializeAndDeserialize();
+
+        final ImageFileSource sourceDeserialized = (ImageFileSource) pipeline.getSources().get(0);
+        Files.gompeiJpegFile.assertSameImage((Mat) sourceDeserialized.createOutputSockets()[0].getValue().get());
+    }
+
 }

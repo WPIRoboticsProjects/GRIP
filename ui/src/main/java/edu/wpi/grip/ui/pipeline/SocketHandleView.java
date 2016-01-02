@@ -2,10 +2,10 @@ package edu.wpi.grip.ui.pipeline;
 
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
-import edu.wpi.grip.core.Connection;
-import edu.wpi.grip.core.InputSocket;
-import edu.wpi.grip.core.OutputSocket;
-import edu.wpi.grip.core.Socket;
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
+import com.google.inject.assistedinject.Assisted;
+import edu.wpi.grip.core.*;
 import edu.wpi.grip.core.events.ConnectionAddedEvent;
 import edu.wpi.grip.core.events.ConnectionRemovedEvent;
 import edu.wpi.grip.core.events.SocketConnectedChangedEvent;
@@ -23,8 +23,6 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-
 /**
  * The bubble next to each socket that connections go in and out of
  * <p>
@@ -35,22 +33,35 @@ public class SocketHandleView extends Button {
     private static final PseudoClass CONNECTING_PSEUDO_CLASS = PseudoClass.getPseudoClass("connecting");
     private static final PseudoClass CONNECTED_PSEUDO_CLASS = PseudoClass.getPseudoClass("connected");
 
-    private static Optional<Socket> draggingSocket = Optional.empty();
+    private final EventBus eventBus;
+    private final Socket socket;
 
-    final private Socket socket;
-    final private EventBus eventBus;
+    /**
+     * Provides a singleton object to assign the socket being dragged from during dragging to allow for a
+     * connection to be made.
+     */
+    @Singleton
+    protected static final class SocketHandleDraggingSocketService {
+        private Optional<Socket> draggingSocket = Optional.empty();
+    }
 
     final private BooleanProperty connectingProperty = new SimpleBooleanProperty(this, "connecting", false);
     final private BooleanProperty connectedProperty = new SimpleBooleanProperty(this, "connected", false);
 
-    public SocketHandleView(EventBus eventBus, Socket socket) {
-        checkNotNull(eventBus);
-        checkNotNull(socket);
+    public interface Factory {
+        SocketHandleView create(Socket socket);
+    }
+
+    @Inject
+    SocketHandleView(EventBus eventBus,
+                     Pipeline pipeline,
+                     Connection.Factory<Object> connectionFactory,
+                     SocketHandleDraggingSocketService draggingSocketService,
+                     @Assisted Socket socket) {
+        this.eventBus = eventBus;
+        this.socket = socket;
 
         this.setTooltip(new Tooltip("Drag to connect"));
-
-        this.socket = socket;
-        this.eventBus = eventBus;
 
         this.getStyleClass().addAll("socket-handle", socket.getDirection().toString().toLowerCase());
 
@@ -61,8 +72,6 @@ public class SocketHandleView extends Button {
                 this.pseudoClassStateChanged(CONNECTED_PSEUDO_CLASS, isConnected));
 
         this.connectedProperty().set(!this.socket.getConnections().isEmpty());
-
-        this.eventBus.register(this);
 
         // When the user clicks on a socket, remove any connections associated with that socket.
         this.setOnMouseClicked(mouseEvent -> {
@@ -83,7 +92,7 @@ public class SocketHandleView extends Button {
             mouseEvent.consume();
 
             this.connectingProperty.set(true);
-            draggingSocket = Optional.of(this.socket);
+            draggingSocketService.draggingSocket = Optional.of(this.socket);
         });
 
         // Remove the "connecting" property (which changes the appearance of the handle) when the user moves the cursor
@@ -91,12 +100,12 @@ public class SocketHandleView extends Button {
         // connecting property if it's not the socket that the user started dragging from, since that one is supposed
         // to be dragged away.
         this.setOnDragExited(dragEvent ->
-                draggingSocket.ifPresent(other -> this.connectingProperty.set(this.socket == other)));
+                draggingSocketService.draggingSocket.ifPresent(other -> this.connectingProperty.set(this.socket == other)));
         this.setOnDragDone(dragEvent -> this.connectingProperty.set(false));
 
         // When the user drops the connection onto another socket, add a new connection.
         this.setOnDragDropped(dragEvent -> {
-            draggingSocket.ifPresent(other -> {
+            draggingSocketService.draggingSocket.ifPresent(other -> {
                 InputSocket inputSocket;
                 OutputSocket outputSocket;
 
@@ -116,15 +125,15 @@ public class SocketHandleView extends Button {
                     default:
                         throw new IllegalStateException("The Socket was a type that wasn't expected " + other.getDirection());
                 }
-                final Connection connection = new Connection(eventBus, outputSocket, inputSocket);
+                final Connection connection = connectionFactory.create(outputSocket, inputSocket);
                 eventBus.post(new ConnectionAddedEvent(connection));
             });
         });
 
         // Accept a drag event if it's possible to connect the two sockets
         this.setOnDragOver(dragEvent -> {
-            draggingSocket.ifPresent(other -> {
-                if (Connection.canConnect(this.socket, other)) {
+            draggingSocketService.draggingSocket.ifPresent(other -> {
+                if (pipeline.canConnect(this.socket, other)) {
                     dragEvent.acceptTransferModes(TransferMode.ANY);
                     this.connectingProperty.set(true);
                 }

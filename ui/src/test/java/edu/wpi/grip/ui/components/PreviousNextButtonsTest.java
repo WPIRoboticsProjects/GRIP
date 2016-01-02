@@ -38,7 +38,7 @@ public class PreviousNextButtonsTest extends ApplicationTest {
     }
 
     @Override
-    public void start(Stage stage) throws Exception {
+    public void start(Stage stage) {
         previousNext = new MockPreviousNext();
         previousNextButtons = new PreviousNextButtons(previousNext);
         Scene scene = new Scene(previousNextButtons, 800, 600);

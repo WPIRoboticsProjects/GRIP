@@ -1,12 +1,12 @@
 package edu.wpi.grip.core.util;
 
 import com.google.common.eventbus.EventBus;
+import com.google.inject.Inject;
+import com.google.inject.assistedinject.Assisted;
 import edu.wpi.grip.core.events.ExceptionClearedEvent;
 import edu.wpi.grip.core.events.ExceptionEvent;
 
 import java.util.concurrent.atomic.AtomicBoolean;
-
-import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * Witnesses and reports exception. <b>This class is not suitable to handle {@link Error Errors}.</b><br />
@@ -35,9 +35,14 @@ public final class ExceptionWitness {
     private final Object origin;
     private final AtomicBoolean isExceptionState = new AtomicBoolean(false);
 
-    public ExceptionWitness(final EventBus eventBus, final Object origin) {
-        this.eventBus = checkNotNull(eventBus, "The event bus can not be null");
-        this.origin = checkNotNull(origin, "The origin can not be null");
+    public interface Factory {
+        ExceptionWitness create(Object origin);
+    }
+
+    @Inject
+    ExceptionWitness(final EventBus eventBus, @Assisted final Object origin) {
+        this.eventBus = eventBus;
+        this.origin = origin;
     }
 
     /**

@@ -1,19 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import edu.wpi.grip.ui.util.DPIUtility?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.image.Image?>
-<?import javafx.scene.image.ImageView?>
-<?import javafx.scene.input.KeyCodeCombination?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.VBox?>
-<?import java.net.URL?>
 <?language javascript?>
 
-<fx:root type="javafx.scene.layout.VBox" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"
-         minWidth="-Infinity" styleClass="main-window"
-         xmlns="http://javafx.com/javafx/null"
-         xmlns:fx="http://javafx.com/fxml/1">
+<?import edu.wpi.grip.ui.util.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.input.*?>
+<?import javafx.scene.layout.VBox?>
+<?import java.net.URL?>
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"
+      minWidth="-Infinity" styleClass="main-window"
+      fx:controller="edu.wpi.grip.ui.MainWindowController"
+      fx:id="root" xmlns:fx="http://javafx.com/fxml/1">
     <children>
         <MenuBar>
             <Menu text="File">
@@ -99,8 +97,13 @@
         </MenuBar>
         <SplitPane dividerPositions="0.6" orientation="VERTICAL" VBox.vgrow="ALWAYS">
             <items>
-                <SplitPane dividerPositions="1.0" orientation="HORIZONTAL" fx:id="topPane"/>
-                <ScrollPane fx:id="bottomPane"/>
+                <SplitPane dividerPositions="1.0" orientation="HORIZONTAL">
+                    <fx:include source="preview/Previews.fxml"/>
+                    <fx:include source="Palette.fxml"/>
+                </SplitPane>
+                <ScrollPane fx:id="bottomPane">
+                    <fx:include source="pipeline/Pipeline.fxml" fx:id="pipelineView"/>
+                </ScrollPane>
             </items>
         </SplitPane>
     </children>
@@ -108,5 +111,5 @@
         <URL value="@roboto/Roboto.css"/>
         <URL value="@GRIP.css"/>
     </stylesheets>
-</fx:root>
+</VBox>
 

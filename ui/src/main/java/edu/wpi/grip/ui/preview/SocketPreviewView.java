@@ -1,6 +1,5 @@
 package edu.wpi.grip.ui.preview;
 
-import com.google.common.eventbus.EventBus;
 import edu.wpi.grip.core.OutputSocket;
 import javafx.scene.control.TitledPane;
 
@@ -11,21 +10,13 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * feedback on an algorithm.
  */
 public abstract class SocketPreviewView<T> extends TitledPane {
-    private final EventBus eventBus;
     private final OutputSocket<T> socket;
 
     /**
-     * @param eventBus The EventBus used by the application
      * @param socket   An output socket to preview
      */
-    public SocketPreviewView(EventBus eventBus, OutputSocket<T> socket) {
-        checkNotNull(eventBus);
-        checkNotNull(socket);
-
-        this.eventBus = eventBus;
-        this.socket = socket;
-
-        this.eventBus.register(this);
+    protected SocketPreviewView(OutputSocket<T> socket) {
+        this.socket = checkNotNull(socket);
 
         this.setText(this.getTitle());
         this.getStyleClass().add("socket-preview");
@@ -51,4 +42,5 @@ public abstract class SocketPreviewView<T> extends TitledPane {
     public OutputSocket<T> getSocket() {
         return this.socket;
     }
+
 }

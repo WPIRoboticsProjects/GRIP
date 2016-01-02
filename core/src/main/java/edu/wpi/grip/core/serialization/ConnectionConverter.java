@@ -7,21 +7,25 @@ import com.thoughtworks.xstream.converters.MarshallingContext;
 import com.thoughtworks.xstream.converters.UnmarshallingContext;
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
-import edu.wpi.grip.core.*;
+import edu.wpi.grip.core.Connection;
+import edu.wpi.grip.core.InputSocket;
+import edu.wpi.grip.core.OutputSocket;
+import edu.wpi.grip.core.Socket;
 import edu.wpi.grip.core.events.ConnectionAddedEvent;
+
+import javax.inject.Inject;
 
 /**
  * An XStream converter that marshals and unmarshals {@link Connection}s.
  * <p>
  * A marshalled connection stores indexes indicating the output and input sockets it connects.
  */
-class ConnectionConverter implements Converter {
+public class ConnectionConverter<T> implements Converter {
 
-    private final EventBus eventBus;
-
-    public ConnectionConverter(EventBus eventBus) {
-        this.eventBus = eventBus;
-    }
+    @Inject
+    private EventBus eventBus;
+    @Inject
+    private Connection.Factory<Object> connectionFactory;
 
     @Override
     public void marshal(Object source, HierarchicalStreamWriter writer, MarshallingContext context) {
@@ -32,16 +36,16 @@ class ConnectionConverter implements Converter {
 
     @Override
     public Object unmarshal(HierarchicalStreamReader reader, UnmarshallingContext context) {
-        OutputSocket<?> outputSocket = null;
-        InputSocket<?> inputSocket = null;
+        OutputSocket<Object> outputSocket = null;
+        InputSocket<Object> inputSocket = null;
 
         // Read the child nodes of this connection. An output socket and an input socket should be defined.
         while (reader.hasMoreChildren()) {
             Socket<?> tmp = (Socket<?>) context.convertAnother(null, Socket.class);
             if (tmp.getDirection() == Socket.Direction.INPUT) {
-                inputSocket = (InputSocket<?>) tmp;
+                inputSocket = (InputSocket<Object>) tmp;
             } else {
-                outputSocket = (OutputSocket<?>) tmp;
+                outputSocket = (OutputSocket<Object>) tmp;
             }
         }
 
@@ -51,7 +55,7 @@ class ConnectionConverter implements Converter {
 
         // Send the new connection as an event, so the GUI and other classes can listen for new connections even if regardless
         // of if they came from a serialized file or not.
-        this.eventBus.post(new ConnectionAddedEvent(new Connection(this.eventBus, outputSocket, inputSocket)));
+        this.eventBus.post(new ConnectionAddedEvent(connectionFactory.create(outputSocket, inputSocket)));
         return null;
     }
 

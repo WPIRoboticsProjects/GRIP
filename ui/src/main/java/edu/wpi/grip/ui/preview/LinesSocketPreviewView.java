@@ -1,10 +1,10 @@
 package edu.wpi.grip.ui.preview;
 
-import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import edu.wpi.grip.core.OutputSocket;
 import edu.wpi.grip.core.events.SocketChangedEvent;
 import edu.wpi.grip.core.operations.composite.LinesReport;
+import edu.wpi.grip.ui.util.GRIPPlatform;
 import edu.wpi.grip.ui.util.ImageConverter;
 import javafx.application.Platform;
 import javafx.geometry.Orientation;
@@ -31,14 +31,15 @@ public class LinesSocketPreviewView extends SocketPreviewView<LinesReport> {
     private final ImageView imageView = new ImageView();
     private final Label infoLabel = new Label();
     private final Mat tmp = new Mat();
+    private final GRIPPlatform platform;
     private boolean showInputImage = false;
 
     /**
-     * @param eventBus The EventBus used by the application
      * @param socket   An output socket to preview
      */
-    public LinesSocketPreviewView(EventBus eventBus, OutputSocket<LinesReport> socket) {
-        super(eventBus, socket);
+    public LinesSocketPreviewView(GRIPPlatform platform, OutputSocket<LinesReport> socket) {
+        super(socket);
+        this.platform = platform;
 
         // Add a checkbox to set if the preview should just show the lines, or also the input image
         final CheckBox show = new CheckBox("Show Input Image");
@@ -52,7 +53,8 @@ public class LinesSocketPreviewView extends SocketPreviewView<LinesReport> {
         content.getStyleClass().add("preview-box");
         this.setContent(content);
 
-        this.convertImage();
+        assert Platform.isFxApplicationThread() : "Must be in FX Thread to create this or you will be exposing constructor to another thread!";
+        convertImage();
     }
 
     @Subscribe
@@ -96,11 +98,9 @@ public class LinesSocketPreviewView extends SocketPreviewView<LinesReport> {
             final Image image = this.imageConverter.convert(input);
             final int numLines = lines.size();
 
-            Platform.runLater(() -> {
-                synchronized (this) {
-                    this.imageView.setImage(image);
-                    this.infoLabel.setText("Found " + numLines + " lines");
-                }
+            platform.runAsSoonAsPossible(() -> {
+                this.imageView.setImage(image);
+                this.infoLabel.setText("Found " + numLines + " lines");
             });
         }
     }

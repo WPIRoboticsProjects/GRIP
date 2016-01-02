@@ -3,6 +3,8 @@ package edu.wpi.grip.core.sources;
 
 import com.google.common.eventbus.EventBus;
 import com.google.common.math.IntMath;
+import com.google.inject.assistedinject.Assisted;
+import com.google.inject.assistedinject.AssistedInject;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import edu.wpi.grip.core.*;
 import edu.wpi.grip.core.util.ImageLoadingUtility;
@@ -12,31 +14,37 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URLDecoder;
 import java.nio.file.Paths;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 import static com.google.common.base.Preconditions.checkElementIndex;
-import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * A Source that supports multiple images. They can be toggled using {@link MultiImageFileSource#next()} and
  * {@link MultiImageFileSource#previous()}
  */
 @XStreamAlias(value = "grip:MultiImageFile")
-public final class MultiImageFileSource extends Source implements PreviousNext {
+public final class MultiImageFileSource extends LoadableSource implements PreviousNext {
     private static final String INDEX_PROPERTY = "index";
     private static final String SIZE_PROPERTY = "numImages";
 
     private final SocketHint<Mat> imageOutputHint = SocketHints.Inputs.createMatSocketHint("Image", true);
-    private OutputSocket<Mat> outputSocket;
+    private final OutputSocket<Mat> outputSocket;
 
-    private EventBus eventBus;
-    private List<String> paths;
+    private final List<String> paths;
+    private final AtomicInteger index;
     private Mat[] images;
-    private AtomicInteger index;
+
+    public interface Factory {
+        MultiImageFileSource create(List<File> files, int index);
+
+        MultiImageFileSource create(List<File> files);
+
+        MultiImageFileSource create(Properties properties);
+    }
 
     /**
      * @param eventBus The event bus.
@@ -44,32 +52,35 @@ public final class MultiImageFileSource extends Source implements PreviousNext {
      * @param index    The index to use as the first file that is in the socket.
      * @throws IOException If the source fails to load any of the images
      */
-    public MultiImageFileSource(final EventBus eventBus, final List<File> files, int index) throws IOException {
-        super();
-        this.initialize(eventBus, files.stream()
-                .map(file -> URLDecoder.decode(Paths.get(file.toURI()).toString()))
-                .collect(Collectors.toList()), index);
+    @AssistedInject
+    MultiImageFileSource(final EventBus eventBus, @Assisted final List<File> files, @Assisted int index) throws IOException {
+        this(eventBus, files.stream()
+                        .map(file -> URLDecoder.decode(Paths.get(file.toURI()).toString()))
+                        .collect(Collectors.toList()).toArray(new String[files.size()]), index);
     }
 
-    public MultiImageFileSource(final EventBus eventBus, final List<File> files) throws IOException {
+    @AssistedInject
+    MultiImageFileSource(final EventBus eventBus, @Assisted final List<File> files) throws IOException {
         this(eventBus, files, 0);
     }
 
     /**
      * Used only for serialization
      */
-    public MultiImageFileSource() {
-        super();
+    @AssistedInject
+    MultiImageFileSource(final EventBus eventBus, @Assisted Properties properties) throws IOException {
+        this(eventBus, pathsFromProperties(properties), indexFromProperties(properties));
     }
 
-
-    @SuppressWarnings("unchecked")
-    private void initialize(final EventBus eventBus, final List<String> paths, int index) throws IOException {
-        this.eventBus = checkNotNull(eventBus, "Event bus can not be null");
-        this.paths = checkNotNull(paths, "The paths can not be null");
+    private MultiImageFileSource(final EventBus eventBus, final String[] paths, int index) throws IOException {
         this.outputSocket = new OutputSocket(eventBus, imageOutputHint);
-        this.index = new AtomicInteger(checkElementIndex(index, paths.size(), "File List Index"));
-        this.images = createImagesArray(paths);
+        this.index = new AtomicInteger(checkElementIndex(index, paths.length, "File List Index"));
+        this.paths = Arrays.asList(paths);
+    }
+
+    @Override
+    public void load() throws IOException {
+        this.images = createImagesArray(this.paths);
         this.outputSocket.setValue(addIndexAndGetImageByOffset(0));
     }
 
@@ -94,17 +105,6 @@ public final class MultiImageFileSource extends Source implements PreviousNext {
             properties.setProperty(getPathProperty(i), paths.get(i));
         }
         return properties;
-    }
-
-    @Override
-    public void createFromProperties(EventBus eventBus, Properties properties) throws IOException {
-        final int index = Integer.valueOf(properties.getProperty(INDEX_PROPERTY));
-        final int size = Integer.valueOf(properties.getProperty(SIZE_PROPERTY));
-        final List<String> paths = new ArrayList<>(size);
-        for (int i = 0; i < size; i++) {
-            paths.add(properties.getProperty(getPathProperty(i)));
-        }
-        this.initialize(eventBus, paths, index);
     }
 
     /**
@@ -163,5 +163,22 @@ public final class MultiImageFileSource extends Source implements PreviousNext {
             images[i] = image;
         }
         return images;
+    }
+
+    private static int sizeFromProperties(Properties properties) {
+        return Integer.valueOf(properties.getProperty(SIZE_PROPERTY));
+    }
+
+    private static int indexFromProperties(Properties properties) {
+        return Integer.valueOf(properties.getProperty(INDEX_PROPERTY));
+    }
+
+    private static String[] pathsFromProperties(Properties properties) {
+        final int size = sizeFromProperties(properties);
+        final String[] paths = new String[size];
+        for (int i = 0; i < size; i++) {
+            paths[i] = (properties.getProperty(getPathProperty(i)));
+        }
+        return paths;
     }
 }

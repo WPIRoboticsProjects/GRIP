@@ -8,8 +8,8 @@ import com.thoughtworks.xstream.converters.UnmarshallingContext;
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 import edu.wpi.grip.core.*;
-import edu.wpi.grip.core.events.StepAddedEvent;
 
+import javax.inject.Inject;
 import java.util.Optional;
 
 /**
@@ -18,17 +18,18 @@ import java.util.Optional;
  * To serialize a step, we just store an attribute with the name of the step.  To deserialize it, we have to look up
  * the operation with that name in the palette.
  */
-class StepConverter implements Converter {
+public class StepConverter implements Converter {
 
     private final static String NAME_ATTRIBUTE = "name";
 
-    private final EventBus eventBus;
-    private final Palette palette;
-
-    public StepConverter(EventBus eventBus, Palette palette) {
-        this.eventBus = eventBus;
-        this.palette = palette;
-    }
+    @Inject
+    private EventBus eventBus;
+    @Inject
+    private Palette palette;
+    @Inject
+    private Pipeline pipeline;
+    @Inject
+    private Step.Factory stepFactory;
 
     @Override
     public void marshal(Object source, HierarchicalStreamWriter writer, MarshallingContext context) {
@@ -57,7 +58,7 @@ class StepConverter implements Converter {
 
         // Instead of simply returning the step and having XStream insert it into the pipeline using reflection, send a
         // StepAddedEvent.  This allows other interested classes (such as PipelineView) to also know when steps are added.
-        this.eventBus.post(new StepAddedEvent(new Step(this.eventBus, operation.get())));
+        pipeline.addStep(stepFactory.create(operation.get()));
 
         while (reader.hasMoreChildren()) {
             context.convertAnother(this, Socket.class);

@@ -2,22 +2,38 @@ package edu.wpi.grip.ui;
 
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
+import com.google.inject.Guice;
+import com.google.inject.Injector;
 import com.sun.javafx.application.PlatformImpl;
+import edu.wpi.grip.core.GRIPCoreModule;
+import edu.wpi.grip.core.Palette;
 import edu.wpi.grip.core.events.UnexpectedThrowableEvent;
+import edu.wpi.grip.core.operations.Operations;
+import edu.wpi.grip.generated.CVOperations;
 import edu.wpi.grip.ui.util.DPIUtility;
+import edu.wpi.grip.ui.util.GRIPPlatform;
 import javafx.application.Application;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
+import javax.inject.Inject;
 import java.io.IOException;
 import java.util.logging.*;
 
 public class Main extends Application {
-    private final EventBus eventBus = new EventBus((exception, context) -> {
-        this.triggerUnexpectedThrowableEvent(new UnexpectedThrowableEvent(exception, "An Event Bus subscriber threw an uncaught exception"));
-    });
+
+    @Inject
+    private EventBus eventBus;
+    @Inject
+    private Palette palette;
+    @Inject
+    private GRIPPlatform platform;
+
+
+    protected final Injector injector = Guice.createInjector(new GRIPCoreModule(), new GRIPUIModule());
 
     private final Object dialogLock = new Object();
     private Parent root;
@@ -26,8 +42,17 @@ public class Main extends Application {
         launch(args);
     }
 
+    /**
+     * JavaFX insists on creating the main application with its own reflection code, so we can't create with the
+     * Guice and do automatic field injection. However, we can inject it after the fact.
+     */
+    public Main() {
+        injector.injectMembers(this);
+    }
+
     @Override
-    public void start(Stage stage) {
+    @SuppressWarnings("PMD.SignatureDeclareThrowsException")
+    public void start(Stage stage) throws Exception {
 
         //Set up the global level logger. This handles IO for all loggers.
         Logger globalLogger = LogManager.getLogManager().getLogger("");//This is our global logger
@@ -51,16 +76,11 @@ public class Main extends Application {
             throw new IllegalStateException(exception);
         }
 
-        this.eventBus.register(this);
-        this.root = new MainWindowView(eventBus);
-        /**
-         * Any exceptions thrown by the UI will be caught here and an exception dialog will be displayed
-         */
-        Thread.currentThread().setUncaughtExceptionHandler((thread, throwable) -> {
-            this.eventBus.post(new UnexpectedThrowableEvent(throwable, "The UI Thread threw an uncaught exception"));
-        });
-
+        root = FXMLLoader.load(Main.class.getResource("MainWindow.fxml"), null, null, injector::getInstance);
         root.setStyle("-fx-font-size: " + DPIUtility.FONT_SIZE + "px");
+
+        Operations.addOperations(eventBus);
+        CVOperations.addOperations(eventBus);
 
         stage.setTitle("GRIP Computer Vision Engine");
         stage.getIcons().add(new Image("/edu/wpi/grip/ui/icons/grip.png"));
@@ -68,15 +88,13 @@ public class Main extends Application {
         stage.show();
     }
 
-    private void triggerUnexpectedThrowableEvent(UnexpectedThrowableEvent event) {
-        eventBus.post(event);
-    }
-
     @Subscribe
     public final void onUnexpectedThrowableEvent(UnexpectedThrowableEvent event) {
         // Print throwable before showing the exception so that errors are in order in the console
         event.getThrowable().printStackTrace();
+        // This should still use PlatformImpl
         PlatformImpl.runAndWait(() -> {
+            // WARNING! Do not post any events from within this! It could result in a deadlock!
             synchronized (this.dialogLock) {
                 try {
                     // Don't create more than one exception dialog at the same time

@@ -14,10 +14,12 @@ import static org.testfx.api.FxAssert.verifyThat;
 public class MainWindowTest extends ApplicationTest {
 
     @Override
+    @SuppressWarnings("PMD.SignatureDeclareThrowsException")
     public void start(Stage stage) throws Exception {
-        new Main().start(stage);
+        final Main main = new Main();
+        main.start(stage);
 
-        final PaletteView palette = lookup(".palette").<PaletteView>queryFirst();
+        final PaletteController palette = main.injector.getInstance(PaletteController.class);
         palette.clearOperations();
         palette.onOperationAdded(new OperationAddedEvent(new AdditionOperation()));
     }

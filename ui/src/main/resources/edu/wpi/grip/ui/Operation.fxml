@@ -1,12 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import edu.wpi.grip.ui.util.DPIUtility?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.*?>
-<?import edu.wpi.grip.ui.util.DPIUtility ?>
-<fx:root maxHeight="-Infinity" maxWidth="Infinity" minHeight="-Infinity" minWidth="NaN" styleClass="operation"
-         type="javafx.scene.layout.GridPane" xmlns="http://javafx.com/javafx/null" onMouseClicked="#addStep"
-         xmlns:fx="http://javafx.com/fxml/1">
+<GridPane maxHeight="-Infinity" maxWidth="Infinity" minHeight="-Infinity" minWidth="NaN" styleClass="operation"
+          fx:controller="edu.wpi.grip.ui.OperationController"
+          fx:id="root"
+          onMouseClicked="#addStep"
+          xmlns:fx="http://javafx.com/fxml/1">
     <children>
         <ImageView fx:id="icon" styleClass="operation-icon" GridPane.columnIndex="0" GridPane.rowSpan="2">
             <fitWidth>
@@ -30,4 +32,4 @@
     <rowConstraints>
         <RowConstraints/>
     </rowConstraints>
-</fx:root>
+</GridPane>

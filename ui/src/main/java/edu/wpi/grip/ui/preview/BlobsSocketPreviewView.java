@@ -1,10 +1,10 @@
 package edu.wpi.grip.ui.preview;
 
-import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import edu.wpi.grip.core.OutputSocket;
 import edu.wpi.grip.core.events.SocketChangedEvent;
 import edu.wpi.grip.core.operations.composite.BlobsReport;
+import edu.wpi.grip.ui.util.GRIPPlatform;
 import edu.wpi.grip.ui.util.ImageConverter;
 import javafx.application.Platform;
 import javafx.geometry.Orientation;
@@ -28,15 +28,15 @@ public class BlobsSocketPreviewView extends SocketPreviewView<BlobsReport> {
     private final ImageView imageView = new ImageView();
     private final Label infoLabel = new Label();
     private final Mat tmp = new Mat();
+    private final GRIPPlatform platform;
     private boolean showInputImage = false;
 
     /**
-     * @param eventBus The EventBus used by the application
      * @param socket   An output socket to preview
      */
-    public BlobsSocketPreviewView(EventBus eventBus, OutputSocket<BlobsReport> socket) {
-        super(eventBus, socket);
-
+    public BlobsSocketPreviewView(GRIPPlatform platform, OutputSocket<BlobsReport> socket) {
+        super(socket);
+        this.platform = platform;
         final CheckBox show = new CheckBox("Show Input Image");
         show.setSelected(this.showInputImage);
         show.selectedProperty().addListener(observable -> {
@@ -48,8 +48,10 @@ public class BlobsSocketPreviewView extends SocketPreviewView<BlobsReport> {
         content.getStyleClass().add("preview-box");
         this.setContent(content);
 
-        this.convertImage();
+        assert Platform.isFxApplicationThread() : "Must be in FX Thread to create this or you will be exposing constructor to another thread!";
+        convertImage();
     }
+
 
     @Subscribe
     public void onSocketChanged(SocketChangedEvent event) {
@@ -88,11 +90,9 @@ public class BlobsSocketPreviewView extends SocketPreviewView<BlobsReport> {
             final Image image = this.imageConverter.convert(input);
             final int numBlobs = blobsReport.getBlobs().size();
 
-            Platform.runLater(() -> {
-                synchronized (this) {
-                    this.imageView.setImage(image);
-                    this.infoLabel.setText("Found " + numBlobs + " blobs");
-                }
+            platform.runAsSoonAsPossible(() -> {
+                this.imageView.setImage(image);
+                this.infoLabel.setText("Found " + numBlobs + " blobs");
             });
         }
     }

@@ -13,7 +13,7 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertTrue;
 
 /**
  *
@@ -33,6 +33,7 @@ public class ImageFileSourceTest {
         // Given above setup
         // When
         final ImageFileSource fileSource = new ImageFileSource(eventBus, this.imageFile.file);
+        fileSource.load();
         OutputSocket<Mat> outputSocket = fileSource.getOutputSockets()[0];
 
         // Then
@@ -44,16 +45,25 @@ public class ImageFileSourceTest {
     @Test(expected = IOException.class)
     public void testReadInTextFile() throws IOException {
         final ImageFileSource fileSource = new ImageFileSource(eventBus, this.textFile);
+        fileSource.load();
         OutputSocket<Mat> outputSocket = fileSource.getOutputSockets()[0];
         assertTrue("No matrix should have been returned.", outputSocket.getValue().get().empty());
     }
 
     @Test(expected = IOException.class)
     public void testReadInFileWithoutExtension() throws MalformedURLException, IOException {
-        final File testFile = new File("temp" + File.separator +"fdkajdl3eaf");
+        final File testFile = new File("temp" + File.separator + "fdkajdl3eaf");
 
         final ImageFileSource fileSource = new ImageFileSource(eventBus, testFile);
+        fileSource.load();
         OutputSocket<Mat> outputSocket = fileSource.getOutputSockets()[0];
         assertTrue("No matrix should have been returned.", outputSocket.getValue().get().empty());
+    }
+
+    @Test(expected = IllegalStateException.class)
+    public void testNotCallingLoadThrowsIllegalState() {
+        final ImageFileSource source = new ImageFileSource(eventBus, this.imageFile.file);
+        // Calling this before loading the image should throw an exception
+        source.getOutputSockets();
     }
 }

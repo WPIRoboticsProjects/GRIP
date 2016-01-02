@@ -52,10 +52,11 @@ public class StartStoppableButtonTest extends ApplicationTest {
     }
 
     @Override
-    public void start(Stage stage) throws Exception {
+    public void start(Stage stage) {
         eventBus = new EventBus();
         startStoppable = new MockStartStoppable(eventBus, false);
         startStoppableButton = new StartStoppableButton(eventBus, startStoppable);
+        eventBus.register(startStoppableButton);
         Scene scene = new Scene(startStoppableButton, 800, 600);
         stage.setScene(scene);
         stage.show();

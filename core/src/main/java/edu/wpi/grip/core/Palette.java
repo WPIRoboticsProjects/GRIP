@@ -4,25 +4,27 @@ import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import edu.wpi.grip.core.events.OperationAddedEvent;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
 import java.util.Collection;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
-
-import static org.python.jline.internal.Preconditions.checkNotNull;
 
 /**
  * The palette is a library of operations that can be added as steps in the {@link Pipeline}
  */
+@Singleton
 public class Palette {
 
     private final EventBus eventBus;
-    private final Map<String, Operation> operations = new HashMap<>();
 
-    public Palette(EventBus eventBus) {
-        this.eventBus = checkNotNull(eventBus);
-        eventBus.register(this);
+    @Inject
+    Palette(EventBus eventBus) {
+        this.eventBus = eventBus;
     }
+
+    private final Map<String, Operation> operations = new LinkedHashMap<>();
 
     @Subscribe
     public void onOperationAdded(OperationAddedEvent event) {

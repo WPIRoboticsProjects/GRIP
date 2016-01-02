@@ -4,21 +4,24 @@
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.Group?>
 <?import javafx.scene.layout.*?>
-<fx:root type="javafx.scene.layout.StackPane" maxWidth="Infinity" maxHeight="Infinity" xmlns:fx="http://javafx.com/fxml"
-         styleClass="pipeline">
+<?import javafx.scene.shape.Rectangle?>
+<StackPane maxWidth="Infinity" maxHeight="Infinity" fx:id="root"
+           fx:controller="edu.wpi.grip.ui.pipeline.PipelineController"
+           styleClass="pipeline" xmlns:fx="http://javafx.com/fxml/1">
     <children>
         <HBox>
             <VBox fillWidth="true">
                 <Label styleClass="pane-title" text="Sources" maxWidth="Infinity"/>
                 <Separator orientation="HORIZONTAL"/>
                 <Pane fx:id="addSourcePane"/>
-                <VBox fx:id="sources" styleClass="sources"/>
+                <VBox fx:id="sourcesBox" styleClass="sources"/>
             </VBox>
             <Separator orientation="VERTICAL"/>
-            <HBox fx:id="steps" styleClass="steps" fillHeight="false"/>
+            <HBox fx:id="stepBox" styleClass="steps" fillHeight="false"/>
         </HBox>
         <Group fx:id="connections" mouseTransparent="true">
             <StackPane.alignment>TOP_LEFT</StackPane.alignment>
+            <Rectangle x="0" y="0" width="1" height="1" opacity="0"/>
         </Group>
     </children>
-</fx:root>
+</StackPane>

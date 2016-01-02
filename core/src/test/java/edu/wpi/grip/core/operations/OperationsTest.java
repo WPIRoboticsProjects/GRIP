@@ -48,7 +48,7 @@ public class OperationsTest {
     public void testCreateAllCVSteps() {
         CVOperations.addOperations(eventBus);
         for (Operation operation : operationList) {
-            new Step(eventBus, operation);
+            new Step.Factory(eventBus).create(operation);
         }
     }
 
@@ -56,7 +56,7 @@ public class OperationsTest {
     public void testCreateAllCoreSteps() {
         Operations.addOperations(eventBus);
         for (Operation operation : operationList) {
-            new Step(eventBus, operation);
+            new Step.Factory(eventBus).create(operation);
         }
     }
 }

@@ -2,12 +2,17 @@ package edu.wpi.grip.core;
 
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
+import com.google.inject.Singleton;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamOmitField;
 import edu.wpi.grip.core.events.*;
 
+import javax.inject.Inject;
 import java.util.*;
 import java.util.stream.Collectors;
+
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * Pipeline has the list of steps in a computer vision algorithm, as well as the set of connections between the inputs
@@ -16,36 +21,17 @@ import java.util.stream.Collectors;
  * The pipeline class is responsible for listening for other components of the application (such as the GUI) adding
  * or removing steps and connections, and for registering and unregistering them from the event bus when appropriate.
  */
+@Singleton
 @XStreamAlias(value = "grip:Pipeline")
 public class Pipeline {
 
+    @Inject
     @XStreamOmitField
-    private final EventBus eventBus;
+    private EventBus eventBus;
 
-    private final List<Source> sources;
-    private final List<Step> steps;
-    private final Set<Connection> connections;
-    private Optional<Sink> sink;
-
-    public Pipeline(EventBus eventBus) {
-        this.eventBus = eventBus;
-        this.sources = new ArrayList<>();
-        this.steps = new ArrayList<>();
-        this.connections = new HashSet<>();
-        this.sink = Optional.empty();
-
-        eventBus.register(this);
-    }
-
-    /**
-     * Register all of the objects composing the pipeline on the event bus.  This should be called if steps,
-     * connections, etc. were added other than through events, i.e. by deserializing a pipeline from a file.
-     */
-    public void register() {
-        this.steps.forEach(this.eventBus::register);
-        this.connections.forEach(this.eventBus::register);
-        this.sink.ifPresent(this.eventBus::register);
-    }
+    private final List<Source> sources = new ArrayList<>();
+    private final List<Step> steps = new ArrayList<>();
+    private final Set<Connection> connections = new HashSet<>();
 
     /**
      * Remove everything in the pipeline
@@ -53,10 +39,7 @@ public class Pipeline {
     public void clear() {
         // These streams are both collected into lists because streams cannot modify their source.  Sending a
         // StepRemovedEvent or SourceRemovedEvent modifies this.steps or this.sources.
-        this.steps.stream()
-                .map(StepRemovedEvent::new)
-                .collect(Collectors.toList())
-                .forEach(this.eventBus::post);
+        this.steps.stream().collect(Collectors.toList()).forEach(this::removeStep);
 
         this.sources.stream()
                 .map(SourceRemovedEvent::new)
@@ -87,16 +70,55 @@ public class Pipeline {
     }
 
     /**
-     * @return The sink where published sockets are sent.
+     * @return true if a connection can be made from the given output socket to the given input socket
      */
-    public Optional<Sink> getSink() {
-        return this.sink;
+    @SuppressWarnings("unchecked")
+    public boolean canConnect(Socket socket1, Socket socket2) {
+        final OutputSocket<?> outputSocket;
+        final InputSocket<?> inputSocket;
+
+        // One socket must be an input and one must be an output
+        if (socket1.getDirection() == socket2.getDirection()) {
+            return false;
+        }
+
+        if (socket1.getDirection().equals(Socket.Direction.OUTPUT)) {
+            outputSocket = (OutputSocket) socket1;
+            inputSocket = (InputSocket) socket2;
+        } else {
+            inputSocket = (InputSocket) socket1;
+            outputSocket = (OutputSocket) socket2;
+        }
+
+        final SocketHint outputHint = socket1.getSocketHint();
+        final SocketHint inputHint = socket2.getSocketHint();
+
+        // The input socket must be able to hold the type of value that the output socket contains
+        if (!inputHint.getType().isAssignableFrom(outputHint.getType())) {
+            return false;
+        }
+
+        // Input sockets can only be connected to one thing
+        if (!inputSocket.getConnections().isEmpty()) {
+            return false;
+        }
+
+        // If both sockets are in steps, the output must be before the input in the pipeline.  This prevents "backwards"
+        // connections, which both enforces a well-organized pipeline and prevents feedback loops.
+        final boolean[] backwards = {false};
+        outputSocket.getStep().ifPresent(outputStep -> inputSocket.getStep().ifPresent(inputStep -> {
+            if (!isBefore(outputStep, inputStep)) {
+                backwards[0] = true;
+            }
+        }));
+
+        return !backwards[0];
     }
 
     /**
      * @return true if the step1 is before step2 in the pipeline
      */
-    protected synchronized boolean isBefore(Step step1, Step step2) {
+    private synchronized boolean isBefore(Step step1, Step step2) {
         return this.steps.indexOf(step1) < this.steps.indexOf(step2);
     }
 
@@ -109,64 +131,56 @@ public class Pipeline {
     public void onSourceRemoved(SourceRemovedEvent event) {
         this.sources.remove(event.getSource());
 
-        // Sockets of deleted sources should not be published or previewed
+        // Sockets of deleted sources should not be previewed
         for (OutputSocket<?> socket : event.getSource().getOutputSockets()) {
-            socket.setPublished(false);
             socket.setPreviewed(false);
         }
     }
 
-    @Subscribe
-    public synchronized void onStepAdded(StepAddedEvent event) {
-        final Step step = event.getStep();
-        step.setPipeline(this);
-
-        this.steps.add(event.getIndex().or(this.steps.size()), step);
-        this.eventBus.register(event.getStep());
+    public synchronized void addStep(int index, Step step) {
+        checkNotNull(step, "The step can not be null");
+        this.steps.add(index, step);
+        this.eventBus.register(step);
+        this.eventBus.post(new StepAddedEvent(step, index));
     }
 
-    @Subscribe
-    public synchronized void onStepRemoved(StepRemovedEvent event) {
-        this.steps.remove(event.getStep());
-        this.eventBus.unregister(event.getStep());
+    public synchronized void addStep(Step step) {
+        addStep(this.steps.size(), step);
+    }
 
-        // Sockets of deleted steps should not be published or previewed
-        for (OutputSocket<?> socket : event.getStep().getOutputSockets()) {
-            socket.setPublished(false);
+    public synchronized void removeStep(Step step) {
+        checkNotNull(step, "The step can not be null");
+        this.steps.remove(step);
+        // Sockets of deleted steps should not be previewed
+        for (OutputSocket<?> socket : step.getOutputSockets()) {
             socket.setPreviewed(false);
         }
+        this.eventBus.post(new StepRemovedEvent(step));
+        this.eventBus.unregister(step);
     }
 
-    @Subscribe
-    public synchronized void onStepMoved(StepMovedEvent event) {
-        final Step step = event.getStep();
+    public synchronized void moveStep(Step step, int delta) {
+        checkNotNull(step, "The step can not be null");
+        checkArgument(this.steps.contains(step), "The step must exist in the pipeline to be moved");
 
         final int oldIndex = this.steps.indexOf(step);
         this.steps.remove(oldIndex);
 
         // Compute the new index of the step, clamping to the beginning or end of pipeline if it goes past either end
-        final int newIndex = Math.min(Math.max(oldIndex + event.getDistance(), 0), this.steps.size());
+        final int newIndex = Math.min(Math.max(oldIndex + delta, 0), this.steps.size());
         this.steps.add(newIndex, step);
+        eventBus.post(new StepMovedEvent(step, delta));
     }
 
     @Subscribe
     public void onConnectionAdded(ConnectionAddedEvent event) {
-        this.connections.add(event.getConnection());
-        this.eventBus.register(event.getConnection());
+        final Connection connection = event.getConnection();
+        this.connections.add(connection);
     }
 
     @Subscribe
     public void onConnectionRemoved(ConnectionRemovedEvent event) {
         this.connections.remove(event.getConnection());
         this.eventBus.unregister(event.getConnection());
-    }
-
-    @Subscribe
-    public void onSetSinkEvent(SetSinkEvent event) {
-        // If there was previously a sink assigned, make sure to unregister it so it won't receive any more events
-        // and mistakenly keep publishing values.
-        this.sink.ifPresent(this.eventBus::unregister);
-        this.sink = Optional.of(event.getSink());
-        this.eventBus.register(event.getSink());
     }
 }

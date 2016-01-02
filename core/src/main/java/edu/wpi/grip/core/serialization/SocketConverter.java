@@ -6,9 +6,9 @@ import com.thoughtworks.xstream.converters.MarshallingContext;
 import com.thoughtworks.xstream.converters.UnmarshallingContext;
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
-import com.thoughtworks.xstream.mapper.Mapper;
 import edu.wpi.grip.core.*;
 
+import javax.inject.Inject;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -17,33 +17,29 @@ import java.util.List;
 /**
  * An XStream converter for serializing and deserializing sockets.  Socket elements include indexes to indicate where
  * in the pipeline they are.  Input sockets can include values if specified, and output sockets can include boolean
- * attributes indicating if they are published and/or previewed.
+ * attributes indicating if they are previewed.
  * <p>
  * Deserializing a socket doesn't create the socket itself - this is done when the step is created.  Instead, this
- * converter is used to reference particular sockets when defining values, published/previewed flags, and connections.
+ * converter is used to reference particular sockets when defining values, previewed flags, and connections.
  */
-class SocketConverter implements Converter {
+public class SocketConverter implements Converter {
 
     final private static String STEP_ATTRIBUTE = "step";
     final private static String SOURCE_ATTRIBUTE = "source";
     final private static String SOCKET_ATTRIBUTE = "socket";
-    final private static String PUBLISHED_ATTRIBUTE = "published";
     final private static String PREVIEWED_ATTRIBUTE = "previewed";
 
-    final private Mapper mapper;
-    final private Pipeline pipeline;
-
-    public SocketConverter(Mapper mapper, Pipeline pipeline) {
-        this.mapper = mapper;
-        this.pipeline = pipeline;
-    }
+    @Inject
+    private Pipeline pipeline;
+    @Inject
+    private Project project;
 
     @Override
     public void marshal(Object obj, HierarchicalStreamWriter writer, MarshallingContext context) {
         final Socket<?> socket = (Socket<?>) obj;
 
         try {
-            writer.startNode(mapper.serializedClass(socket.getClass()));
+            writer.startNode(project.xstream.getMapper().serializedClass(socket.getClass()));
 
             // Save the location of the socket in the pipeline.
             socket.getStep().ifPresent(step -> {
@@ -59,9 +55,8 @@ class SocketConverter implements Converter {
                 writer.addAttribute(SOCKET_ATTRIBUTE, String.valueOf(Arrays.asList(sockets).indexOf(socket)));
             });
 
-            // Save whether or not output sockets are published and previewed
+            // Save whether or not output sockets are previewed
             if (socket.getDirection() == Socket.Direction.OUTPUT) {
-                writer.addAttribute(PUBLISHED_ATTRIBUTE, String.valueOf(((OutputSocket) socket).isPublished()));
                 writer.addAttribute(PREVIEWED_ATTRIBUTE, String.valueOf(((OutputSocket) socket).isPreviewed()));
             }
 
@@ -72,7 +67,7 @@ class SocketConverter implements Converter {
                 writer.startNode("value");
                 if (List.class.isAssignableFrom(socket.getSocketHint().getType()) && socket.getValue().isPresent()) {
                     // XStream doesn't have a built-in converter for lists other than ArrayList
-                    context.convertAnother(new ArrayList<>((List) socket.getValue().get()));
+                    context.convertAnother(new ArrayList<>((List<?>) socket.getValue().get()));
                 } else {
                     context.convertAnother(socket.getValue().get());
                 }
@@ -86,6 +81,7 @@ class SocketConverter implements Converter {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public Object unmarshal(HierarchicalStreamReader reader, UnmarshallingContext context) {
         try {
             reader.moveDown();
@@ -93,9 +89,9 @@ class SocketConverter implements Converter {
             final String nodeName = reader.getNodeName();
 
             Socket.Direction direction;
-            if (nodeName.equals(mapper.serializedClass(InputSocket.class))) {
+            if (nodeName.equals(project.xstream.getMapper().serializedClass(InputSocket.class))) {
                 direction = Socket.Direction.INPUT;
-            } else if (nodeName.equals(mapper.serializedClass(OutputSocket.class))) {
+            } else if (nodeName.equals(project.xstream.getMapper().serializedClass(OutputSocket.class))) {
                 direction = Socket.Direction.OUTPUT;
             } else {
                 throw new IllegalArgumentException("Unexpected socket node name: " + nodeName);
@@ -122,7 +118,6 @@ class SocketConverter implements Converter {
             }
 
             if (socket.getDirection() == Socket.Direction.OUTPUT) {
-                ((OutputSocket) socket).setPublished(Boolean.valueOf(reader.getAttribute(PUBLISHED_ATTRIBUTE)));
                 ((OutputSocket) socket).setPreviewed(Boolean.valueOf(reader.getAttribute(PREVIEWED_ATTRIBUTE)));
             }
 
@@ -145,7 +140,6 @@ class SocketConverter implements Converter {
     }
 
     /**
-     * @param socket
      * @return The type to convert a serialized socket value into when deserializing.  This can't always be the type in
      * the socket, since sockets very often hold interfaces, and any number of classes may implement that interface.
      */

@@ -1,10 +1,10 @@
 package edu.wpi.grip.ui.preview;
 
-import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import edu.wpi.grip.core.OutputSocket;
 import edu.wpi.grip.core.events.SocketChangedEvent;
 import edu.wpi.grip.core.operations.composite.ContoursReport;
+import edu.wpi.grip.ui.util.GRIPPlatform;
 import edu.wpi.grip.ui.util.ImageConverter;
 import javafx.application.Platform;
 import javafx.scene.control.CheckBox;
@@ -25,8 +25,9 @@ public final class ContoursSocketPreviewView extends SocketPreviewView<ContoursR
     private final ImageConverter imageConverter = new ImageConverter();
     private final ImageView imageView = new ImageView();
     private final Label infoLabel = new Label();
-    private final CheckBox colorContours = new CheckBox("Color Contours");
+    private final CheckBox colorContours;
     private final Mat tmp = new Mat();
+    private final GRIPPlatform platform;
 
     private final static Scalar[] CONTOUR_COLORS = new Scalar[]{
             Scalar.RED,
@@ -38,17 +39,20 @@ public final class ContoursSocketPreviewView extends SocketPreviewView<ContoursR
     };
 
     /**
-     * @param eventBus The EventBus used by the application
      * @param socket   An output socket to preview
      */
-    public ContoursSocketPreviewView(EventBus eventBus, OutputSocket<ContoursReport> socket) {
-        super(eventBus, socket);
+    public ContoursSocketPreviewView(GRIPPlatform platform, OutputSocket<ContoursReport> socket) {
+        super(socket);
+        this.platform = platform;
+        this.colorContours = new CheckBox("Color Contours");
+        this.colorContours.setSelected(false);
 
         this.setContent(new VBox(this.imageView, this.infoLabel, this.colorContours));
-        this.render();
 
         this.colorContours.selectedProperty().addListener(observable -> this.render());
-        this.colorContours.setSelected(false);
+
+        assert Platform.isFxApplicationThread() : "Must be in FX Thread to create this or you will be exposing constructor to another thread!";
+        render();
     }
 
     @Subscribe
@@ -82,11 +86,9 @@ public final class ContoursSocketPreviewView extends SocketPreviewView<ContoursR
 
             final Image image = this.imageConverter.convert(tmp);
             final long finalNumContours = numContours;
-            Platform.runLater(() -> {
-                synchronized (this) {
-                    this.imageView.setImage(image);
-                    this.infoLabel.setText("Found " + finalNumContours + " contours");
-                }
+            platform.runAsSoonAsPossible(() -> {
+                this.imageView.setImage(image);
+                this.infoLabel.setText("Found " + finalNumContours + " contours");
             });
         }
     }

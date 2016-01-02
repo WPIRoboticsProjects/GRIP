@@ -5,33 +5,42 @@ import com.thoughtworks.xstream.XStream;
 import edu.wpi.grip.core.*;
 import edu.wpi.grip.core.sources.CameraSource;
 import edu.wpi.grip.core.sources.ImageFileSource;
+import edu.wpi.grip.core.sources.MultiImageFileSource;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
 import java.io.*;
 import java.util.Optional;
 
 /**
  * Helper for saving and loading a processing pipeline to and from a file
  */
+@Singleton
 public class Project {
 
-    private final XStream xstream = new XStream();
-    private final Pipeline pipeline;
+    @Inject
+    private EventBus eventBus;
+    @Inject
+    private Pipeline pipeline;
+    @Inject
+    private Palette palette;
+
+    protected final XStream xstream = new XStream();
     private Optional<File> file = Optional.empty();
 
-    public Project(EventBus eventBus, Pipeline pipeline, Palette palette) {
-        this.pipeline = pipeline;
+    @Inject
+    public void initialize(StepConverter stepConverter,
+                           SourceConverter sourceConverter,
+                           SocketConverter socketConverter,
+                           ConnectionConverter connectionConverter) {
+        xstream.setMode(XStream.NO_REFERENCES);
+        xstream.registerConverter(stepConverter);
+        xstream.registerConverter(sourceConverter);
+        xstream.registerConverter(socketConverter);
+        xstream.registerConverter(connectionConverter);
+        xstream.processAnnotations(new Class[]{Pipeline.class, Step.class, Connection.class, InputSocket.class,
+                OutputSocket.class, ImageFileSource.class, MultiImageFileSource.class, CameraSource.class});
 
-        this.xstream.registerConverter(new StepConverter(eventBus, palette));
-        this.xstream.registerConverter(new SourceConverter(eventBus, xstream.getMapper()));
-        this.xstream.registerConverter(new SocketConverter(xstream.getMapper(), pipeline));
-        this.xstream.registerConverter(new ConnectionConverter(eventBus));
-
-        this.xstream.processAnnotations(new Class[]{
-                Pipeline.class, Step.class, Connection.class, InputSocket.class, OutputSocket.class,
-                ImageFileSource.class, CameraSource.class
-        });
-
-        this.xstream.setMode(XStream.NO_REFERENCES);
     }
 
     /**

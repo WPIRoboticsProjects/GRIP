@@ -47,8 +47,6 @@ public abstract class Socket<T> {
         this.socketHint = checkNotNull(socketHint, "Socket Hint can not be null");
         this.value = socketHint.createInitialValue();
         this.direction = checkNotNull(direction, "Direction can not be null");
-
-        this.eventBus.register(this);
     }
 
     /**
@@ -122,8 +120,8 @@ public abstract class Socket<T> {
     }
 
     /**
-     * @return <code>INPUT</code> if this is the input to a step or sink, <code>OUTPUT</code> if this is the output of
-     * a step or source
+     * @return <code>INPUT</code> if this is the input to a step, <code>OUTPUT</code> if this is the output of a step
+     * or source.
      */
     public Direction getDirection() {
         return this.direction;
