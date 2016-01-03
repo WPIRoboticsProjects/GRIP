@@ -82,6 +82,7 @@ public class GRIPUIModule extends AbstractModule {
         }));
         install(new FactoryModuleBuilder().build(NumberSpinnerInputSocketController.Factory.class));
         install(new FactoryModuleBuilder().build(SliderInputSocketController.Factory.class));
+        install(new FactoryModuleBuilder().build(TextFieldInputSocketController.Factory.class));
         // END Input Socket Controller Factories
 
     }
