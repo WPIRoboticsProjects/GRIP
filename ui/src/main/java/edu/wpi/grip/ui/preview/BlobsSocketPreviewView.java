@@ -63,34 +63,31 @@ public class BlobsSocketPreviewView extends SocketPreviewView<BlobsReport> {
     private void convertImage() {
         synchronized (this) {
             final BlobsReport blobsReport = this.getSocket().getValue().get();
-            Mat input = blobsReport.getInput();
+            final Mat input = blobsReport.getInput();
+
+            if (input.channels() == 3) {
+                input.copyTo(tmp);
+            } else {
+                cvtColor(input, tmp, CV_GRAY2BGR);
+            }
+            // If we don't want to see the background image, set it to black
+            if (!this.showInputImage) {
+                bitwise_xor(tmp, tmp, tmp);
+            }
 
             // If there were lines found, draw them on the image before displaying it
             if (!blobsReport.getBlobs().isEmpty()) {
-                if (input.channels() == 3) {
-                    input.copyTo(tmp);
-                } else {
-                    cvtColor(input, tmp, CV_GRAY2BGR);
-                }
-
-                input = tmp;
-
-                // If we don't want to see the background image, set it to black
-                if (!this.showInputImage) {
-                    bitwise_xor(tmp, tmp, tmp);
-                }
-
                 // For each line in the report, draw a line along with the starting and ending points
                 for (BlobsReport.Blob blob : blobsReport.getBlobs()) {
                     final Point point = new Point((int) blob.x, (int) blob.y);
-                    circle(input, point, (int) (blob.size / 2), Scalar.WHITE, 2, LINE_8, 0);
+                    circle(tmp, point, (int) (blob.size / 2), Scalar.WHITE, 2, LINE_8, 0);
                 }
             }
 
-            final Mat inputToConvert = input;
+            final Mat output = tmp;
             final int numBlobs = blobsReport.getBlobs().size();
             platform.runAsSoonAsPossible(() -> {
-                final Image image = this.imageConverter.convert(inputToConvert);
+                final Image image = this.imageConverter.convert(output);
                 this.imageView.setImage(image);
                 this.infoLabel.setText("Found " + numBlobs + " blobs");
             });
