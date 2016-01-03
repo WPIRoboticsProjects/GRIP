@@ -208,6 +208,8 @@ public class CameraSource extends Source implements StartStoppable {
                         } catch (TimeoutException | IOException e) {
                             // TODO: This should use the ExceptionWitness once that has a UI component added for it
                             eventBus.post(new UnexpectedThrowableEvent(e, "Camera Frame Grabber could not be stopped!"));
+                        } catch (InterruptedException e) {
+                            Thread.currentThread().interrupt();
                         }
                     }
             );
@@ -228,13 +230,13 @@ public class CameraSource extends Source implements StartStoppable {
      * @throws IOException           If there is a problem stopping the Source
      * @throws IllegalStateException If the camera is already stopped.
      */
-    public void stop() throws TimeoutException, IOException {
+    public void stop() throws InterruptedException, TimeoutException, IOException {
         synchronized (this) {
             if (frameThread.isPresent()) {
                 final Thread ex = frameThread.get();
                 ex.interrupt();
                 try {
-                    ex.join(TimeUnit.SECONDS.toMillis(500));
+                    ex.join(TimeUnit.SECONDS.toMillis(10));
                     if (ex.isAlive()) {
                         throw new TimeoutException("Unable to terminate video feed from Web Camera");
                     }
@@ -243,6 +245,7 @@ public class CameraSource extends Source implements StartStoppable {
                 } catch (InterruptedException e) {
                     Thread.currentThread().interrupt();
                     logger.log(Level.WARNING, e.getMessage(), e);
+                    throw e;
                 } finally {
                     // This will always run even if a timeout exception occurs
                     try {
@@ -266,7 +269,7 @@ public class CameraSource extends Source implements StartStoppable {
     }
 
     @Subscribe
-    public void onSourceRemovedEvent(SourceRemovedEvent event) throws TimeoutException, IOException {
+    public void onSourceRemovedEvent(SourceRemovedEvent event) throws InterruptedException, TimeoutException, IOException {
         if (event.getSource() == this) {
             try {
                 if (this.isStarted()) this.stop();
