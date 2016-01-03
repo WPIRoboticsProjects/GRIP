@@ -15,10 +15,10 @@ public class DPIUtility {
     public final static double SMALL_ICON_SIZE = 16.0 * (isManualHiDPI() ? HIDPI_SCALE : 1.0);
     public final static double LARGE_ICON_SIZE = 48.0 * (isManualHiDPI() ? HIDPI_SCALE : 1.0);
     public final static double STROKE_WIDTH = 2.0 * (isManualHiDPI() ? HIDPI_SCALE : 1.0);
-    public final static double SETTINGS_DIALOG_SIZE = 400.0 * (isManualHiDPI() ? HIDPI_SCALE : 1.0);
 
     private static boolean isManualHiDPI() {
-        // We need to do manual size adjustments for HiDPI on Linux.  JavaFX automatically does this on Windows and OSX
+        // We need to do manual size adjustments for HiDPI on Linux.  JavaFX automatically does this on Windows.
+        // TODO: test on OS X on a Retina display
         final String osName = StandardSystemProperty.OS_NAME.value();
         return Screen.getPrimary().getDpi() >= 192.0 && "Linux".equals(osName);
     }

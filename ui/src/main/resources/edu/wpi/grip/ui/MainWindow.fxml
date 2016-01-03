@@ -94,23 +94,6 @@
                     </accelerator>
                 </MenuItem>
             </Menu>
-            <Menu text="Tools">
-                <MenuItem text="Settings" onAction="#showProjectSettingsEditor">
-                    <graphic>
-                        <ImageView styleClass="menu-graphic">
-                            <fitWidth>
-                                <DPIUtility fx:constant="SMALL_ICON_SIZE"/>
-                            </fitWidth>
-                            <fitHeight>
-                                <DPIUtility fx:constant="SMALL_ICON_SIZE"/>
-                            </fitHeight>
-                            <image>
-                                <Image url="@icons/settings.png"/>
-                            </image>
-                        </ImageView>
-                    </graphic>
-                </MenuItem>
-            </Menu>
         </MenuBar>
         <SplitPane dividerPositions="0.6" orientation="VERTICAL" VBox.vgrow="ALWAYS">
             <items>
