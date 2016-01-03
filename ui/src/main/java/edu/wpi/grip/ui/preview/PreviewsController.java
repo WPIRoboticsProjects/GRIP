@@ -219,7 +219,7 @@ public class PreviewsController {
         //Start at the first non-source socket in the list of previewed sockets
         long indexInPreviews =
                 // The socket at this index in the list of displayed sockets has an index in the pipeline less than the socket passed in as "socket"
-                this.previewedSockets.stream().filter(outSocket -> this.pipeline.getSteps().indexOf(outSocket.getStep().get()) < indexOfStep).count();
+                this.previewedSockets.stream().filter(outSocket -> outSocket.getStep().isPresent() && this.pipeline.getSteps().indexOf(outSocket.getStep().get()) < indexOfStep).count();
         return IntMath.checkedAdd(Math.toIntExact(indexInPreviews), numbOfSourcePreviews);
     }
 
