@@ -38,7 +38,6 @@ public class Project {
         xstream.registerConverter(sourceConverter);
         xstream.registerConverter(socketConverter);
         xstream.registerConverter(connectionConverter);
-        xstream.registerConverter(new ProjectSettingsConverter(xstream.getMapper(), eventBus));
         xstream.processAnnotations(new Class[]{Pipeline.class, Step.class, Connection.class, InputSocket.class,
                 OutputSocket.class, ImageFileSource.class, MultiImageFileSource.class, CameraSource.class});
 

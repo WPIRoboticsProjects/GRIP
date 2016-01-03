@@ -32,7 +32,6 @@ public class Pipeline {
     private final List<Source> sources = new ArrayList<>();
     private final List<Step> steps = new ArrayList<>();
     private final Set<Connection> connections = new HashSet<>();
-    private ProjectSettings settings = new ProjectSettings();
 
     /**
      * Remove everything in the pipeline
@@ -40,10 +39,7 @@ public class Pipeline {
     public void clear() {
         // These streams are both collected into lists because streams cannot modify their source.  Sending a
         // StepRemovedEvent or SourceRemovedEvent modifies this.steps or this.sources.
-        this.steps.stream()
-                .map(StepRemovedEvent::new)
-                .collect(Collectors.toList())
-                .forEach(this.eventBus::post);
+        this.steps.stream().collect(Collectors.toList()).forEach(this::removeStep);
 
         this.sources.stream()
                 .map(SourceRemovedEvent::new)
@@ -71,15 +67,6 @@ public class Pipeline {
      */
     public Set<Connection> getConnections() {
         return Collections.unmodifiableSet(this.connections);
-    }
-
-    /*
-     * @return The current per-project settings.  This object may become out of date if the settings are edited
-     * by the user, so objects requiring a preference value should also subscribe to {@link ProjectSettingsChangedEvent}
-     * to get updates.
-     */
-    public ProjectSettings getProjectSettings() {
-        return settings;
     }
 
     /**
@@ -195,10 +182,5 @@ public class Pipeline {
     public void onConnectionRemoved(ConnectionRemovedEvent event) {
         this.connections.remove(event.getConnection());
         this.eventBus.unregister(event.getConnection());
-    }
-
-    @Subscribe
-    public void onProjectSettingsChanged(ProjectSettingsChangedEvent event) {
-        this.settings = event.getProjectSettings();
     }
 }
