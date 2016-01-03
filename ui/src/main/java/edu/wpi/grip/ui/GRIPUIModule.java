@@ -9,6 +9,7 @@ import com.google.inject.spi.TypeEncounter;
 import com.google.inject.spi.TypeListener;
 import edu.wpi.grip.core.Source;
 import edu.wpi.grip.ui.annotations.ParametrizedController;
+import edu.wpi.grip.ui.components.ExceptionWitnessResponderButton;
 import edu.wpi.grip.ui.components.StartStoppableButton;
 import edu.wpi.grip.ui.pipeline.OutputSocketController;
 import edu.wpi.grip.ui.pipeline.SocketHandleView;
@@ -62,6 +63,7 @@ public class GRIPUIModule extends AbstractModule {
 
         // Components
         install(new FactoryModuleBuilder().build(StartStoppableButton.Factory.class));
+        install(new FactoryModuleBuilder().build(ExceptionWitnessResponderButton.Factory.class));
         // End Components
 
         // Controllers

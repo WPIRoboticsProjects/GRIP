@@ -6,6 +6,7 @@ import com.google.common.eventbus.Subscribe;
 import edu.wpi.grip.core.Operation;
 import edu.wpi.grip.core.Step;
 import edu.wpi.grip.core.events.OperationAddedEvent;
+import edu.wpi.grip.core.util.MockExceptionWitness;
 import edu.wpi.grip.generated.CVOperations;
 import org.junit.After;
 import org.junit.Before;
@@ -48,7 +49,7 @@ public class OperationsTest {
     public void testCreateAllCVSteps() {
         CVOperations.addOperations(eventBus);
         for (Operation operation : operationList) {
-            new Step.Factory(eventBus).create(operation);
+            new Step.Factory(eventBus, (origin) -> new MockExceptionWitness(eventBus, origin)).create(operation);
         }
     }
 
@@ -56,7 +57,7 @@ public class OperationsTest {
     public void testCreateAllCoreSteps() {
         Operations.addOperations(eventBus);
         for (Operation operation : operationList) {
-            new Step.Factory(eventBus).create(operation);
+            new Step.Factory(eventBus, (origin) -> new MockExceptionWitness(eventBus, origin)).create(operation);
         }
     }
 }

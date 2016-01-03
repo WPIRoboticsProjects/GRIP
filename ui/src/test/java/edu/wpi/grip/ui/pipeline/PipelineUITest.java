@@ -5,6 +5,7 @@ import com.google.common.eventbus.EventBus;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import edu.wpi.grip.core.*;
+import edu.wpi.grip.core.util.MockExceptionWitness;
 import edu.wpi.grip.ui.GRIPUIModule;
 import edu.wpi.grip.ui.util.StyleClassNameUtility;
 import edu.wpi.grip.ui.util.TestAnnotationFXMLLoader;
@@ -126,7 +127,7 @@ public class PipelineUITest extends ApplicationTest {
     }
 
     private Step addOperation(int count, Operation operation) {
-        final Step step = new Step.Factory(eventBus).create(operation);
+        final Step step = new Step.Factory(eventBus, origin -> new MockExceptionWitness(eventBus, origin)).create(operation);
         pipeline.addStep(step);
 
         // Wait for the event to propagate to the UI

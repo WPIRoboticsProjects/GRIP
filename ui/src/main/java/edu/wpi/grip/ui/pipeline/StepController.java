@@ -7,6 +7,7 @@ import edu.wpi.grip.core.Pipeline;
 import edu.wpi.grip.core.Step;
 import edu.wpi.grip.ui.Controller;
 import edu.wpi.grip.ui.annotations.ParametrizedController;
+import edu.wpi.grip.ui.components.ExceptionWitnessResponderButton;
 import edu.wpi.grip.ui.pipeline.input.InputSocketController;
 import edu.wpi.grip.ui.pipeline.input.InputSocketControllerFactory;
 import edu.wpi.grip.ui.util.ControllerMap;
@@ -16,6 +17,7 @@ import javafx.scene.Node;
 import javafx.scene.control.Labeled;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
 import javax.inject.Inject;
@@ -28,15 +30,23 @@ import java.util.Collection;
 @ParametrizedController(url = "Step.fxml")
 public class StepController implements Controller {
 
-    @FXML private VBox root;
-    @FXML private Labeled title;
-    @FXML private ImageView icon;
-    @FXML private VBox inputs;
-    @FXML private VBox outputs;
+    @FXML
+    private VBox root;
+    @FXML
+    private Labeled title;
+    @FXML
+    private ImageView icon;
+    @FXML
+    private HBox buttons;
+    @FXML
+    private VBox inputs;
+    @FXML
+    private VBox outputs;
 
     private final Pipeline pipeline;
     private final InputSocketControllerFactory inputSocketControllerFactory;
     private final OutputSocketController.Factory outputSocketControllerFactory;
+    private final ExceptionWitnessResponderButton.Factory exceptionWitnessResponderButtonFactory;
     private final Step step;
 
     private ControllerMap<InputSocketController, Node> inputSocketMapManager;
@@ -52,10 +62,16 @@ public class StepController implements Controller {
     }
 
     @Inject
-    StepController(Pipeline pipeline, InputSocketControllerFactory inputSocketControllerFactory, OutputSocketController.Factory outputSocketControllerFactory, @Assisted Step step) {
+    StepController(
+            Pipeline pipeline,
+            InputSocketControllerFactory inputSocketControllerFactory,
+            OutputSocketController.Factory outputSocketControllerFactory,
+            ExceptionWitnessResponderButton.Factory exceptionWitnessResponderButtonFactory,
+            @Assisted Step step) {
         this.pipeline = pipeline;
         this.inputSocketControllerFactory = inputSocketControllerFactory;
         this.outputSocketControllerFactory = outputSocketControllerFactory;
+        this.exceptionWitnessResponderButtonFactory = exceptionWitnessResponderButtonFactory;
         this.step = step;
     }
 
@@ -67,6 +83,7 @@ public class StepController implements Controller {
         root.getStyleClass().add(StyleClassNameUtility.classNameFor(step));
         title.setText(step.getOperation().getName());
         step.getOperation().getIcon().ifPresent(icon -> this.icon.setImage(new Image(icon)));
+        buttons.getChildren().add(0, exceptionWitnessResponderButtonFactory.create(step, "Step Error"));
 
         // Add a SocketControlView for each input socket and output socket
         for (InputSocket<?> inputSocket : step.getInputSockets()) {
