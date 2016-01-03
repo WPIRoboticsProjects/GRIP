@@ -8,10 +8,12 @@ import com.google.inject.TypeLiteral;
 import edu.wpi.grip.core.*;
 import edu.wpi.grip.core.events.ConnectionAddedEvent;
 import edu.wpi.grip.core.events.OperationAddedEvent;
+import edu.wpi.grip.core.events.ProjectSettingsChangedEvent;
 import edu.wpi.grip.core.events.SourceAddedEvent;
 import edu.wpi.grip.core.operations.PythonScriptOperation;
 import edu.wpi.grip.core.sources.ImageFileSource;
 import edu.wpi.grip.util.Files;
+import junit.framework.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -229,4 +231,16 @@ public class ProjectTest {
         Files.gompeiJpegFile.assertSameImage((Mat) sourceDeserialized.createOutputSockets()[0].getValue().get());
     }
 
+    @Test
+    public void testSerializedProjectSettings() {
+        ProjectSettings projectSettings = new ProjectSettings();
+        projectSettings.setTeamNumber(190);
+        projectSettings.setNetworkProtocol(ProjectSettings.NetworkProtocol.NETWORK_TABLES);
+        eventBus.post(new ProjectSettingsChangedEvent(projectSettings));
+
+        serializeAndDeserialize();
+
+        assertEquals(190, pipeline.getProjectSettings().getTeamNumber());
+        assertEquals(ProjectSettings.NetworkProtocol.NETWORK_TABLES, pipeline.getProjectSettings().getNetworkProtocol());
+    }
 }

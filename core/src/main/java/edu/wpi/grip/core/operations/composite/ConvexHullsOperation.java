@@ -60,6 +60,6 @@ public class ConvexHullsOperation implements Operation {
 
         final OutputSocket<ContoursReport> outputSocket = (OutputSocket<ContoursReport>) outputs[0];
         outputSocket.setValue(new ContoursReport(outputContours,
-                inputSocket.getValue().get().getRows(), inputSocket.getValue().get().getRows()));
+                inputSocket.getValue().get().getRows(), inputSocket.getValue().get().getCols()));
     }
 }

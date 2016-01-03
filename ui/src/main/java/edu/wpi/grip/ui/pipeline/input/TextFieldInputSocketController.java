@@ -17,8 +17,6 @@ import javax.inject.Inject;
  */
 public class TextFieldInputSocketController extends InputSocketController<String> {
 
-    @Inject private EventBus eventBus;
-
     private TextField textField;
 
     public interface Factory {
@@ -26,7 +24,7 @@ public class TextFieldInputSocketController extends InputSocketController<String
     }
 
     @Inject
-    public TextFieldInputSocketController(SocketHandleView.Factory socketHandleViewFactory,
+    TextFieldInputSocketController(SocketHandleView.Factory socketHandleViewFactory,
                                           @Assisted InputSocket<String> socket) {
         super(socketHandleViewFactory, socket);
     }

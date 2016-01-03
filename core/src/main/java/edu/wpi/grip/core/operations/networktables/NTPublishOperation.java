@@ -59,7 +59,7 @@ public class NTPublishOperation<T extends NTPublishable> implements Operation {
 
         NetworkTable.shutdown();
         if (projectSettings.getNetworkProtocol() == ProjectSettings.NetworkProtocol.NETWORK_TABLES) {
-            NetworkTable.setIPAddress("roborio-frc-" + projectSettings.getTeamNumber() + ".local");
+            NetworkTable.setIPAddress("roborio-" + projectSettings.getTeamNumber() + "-frc.local");
             NetworkTable.initialize();
         }
     }
