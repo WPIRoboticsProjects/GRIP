@@ -44,8 +44,8 @@ public class ImageSocketPreviewView extends SocketPreviewView<Mat> {
     private void convertImage() {
         synchronized (this) {
             this.getSocket().getValue().ifPresent(mat -> {
-                final Image image = this.imageConverter.convert(mat);
                 platform.runAsSoonAsPossible(() -> {
+                    final Image image = this.imageConverter.convert(mat);
                     this.imageView.setImage(image);
                 });
 
