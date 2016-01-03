@@ -84,9 +84,10 @@ public final class ContoursSocketPreviewView extends SocketPreviewView<ContoursR
                 }
             }
 
-            final Image image = this.imageConverter.convert(tmp);
             final long finalNumContours = numContours;
+            final Mat convertInput = tmp;
             platform.runAsSoonAsPossible(() -> {
+                final Image image = this.imageConverter.convert(convertInput);
                 this.imageView.setImage(image);
                 this.infoLabel.setText("Found " + finalNumContours + " contours");
             });
