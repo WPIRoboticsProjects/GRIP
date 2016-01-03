@@ -45,28 +45,28 @@ public class PrimitiveDefaultValue extends DefaultValue {
                 );
                 break;
             case Int:
-                this.viewValue = "SPINNER";
+                this.viewValue = "TEXT";
                 this.domainValue = createDomainValueExpression(
                         new IntegerLiteralExpr("Integer.MIN_VALUE"),
                         new IntegerLiteralExpr("Integer.MAX_VALUE")
                 );
                 break;
             case Float:
-                this.viewValue = "SPINNER";
+                this.viewValue = "TEXT";
                 this.domainValue = createDomainValueExpression(
                         new DoubleLiteralExpr("-Float.MAX_VALUE"),
                         new DoubleLiteralExpr("Float.MAX_VALUE")
                 );
                 break;
             case Double:
-                this.viewValue = "SPINNER";
+                this.viewValue = "TEXT";
                 this.domainValue = createDomainValueExpression(
                         new DoubleLiteralExpr("-Double.MAX_VALUE"),
                         new DoubleLiteralExpr("Double.MAX_VALUE")
                 );
                 break;
             case Char:
-                this.viewValue = "SPINNER";
+                this.viewValue = "TEXT";
                 this.domainValue = createDomainValueExpression(
                         new CharLiteralExpr(Character.toString(Character.MIN_VALUE)),
                         new CharLiteralExpr(Character.toString(Character.MAX_VALUE))
