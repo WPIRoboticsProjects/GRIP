@@ -64,6 +64,9 @@ public final class StartStoppableButton extends ToggleButton {
                 // If this fails then an StartedStoppedEvent will not be posted
             } catch (TimeoutException | IOException e) {
                 eventBus.post(new UnexpectedThrowableEvent(e, "Failed to stop"));
+            } catch (InterruptedException e) {
+                // Unfortunately we have to eat the exception here because we can't rethrow it
+                Thread.currentThread().interrupt();
             }
         });
 
