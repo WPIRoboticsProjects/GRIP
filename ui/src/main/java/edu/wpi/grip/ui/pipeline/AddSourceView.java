@@ -99,7 +99,7 @@ public class AddSourceView extends HBox {
             // Show a file picker so the user can open one or more images from disk
             final FileChooser fileChooser = new FileChooser();
             fileChooser.setTitle("Open an image");
-            fileChooser.getExtensionFilters().add(
+            fileChooser.getExtensionFilters().addAll(
                 new ExtensionFilter("Image Files",
                     "*.bmp", "*.dib",           // Windows bitmaps
                     "*.jpeg", "*.jpg", "*.jpe", // JPEG files
@@ -109,7 +109,8 @@ public class AddSourceView extends HBox {
                     "*.pbm", "*.pgm", "*.ppm",  // Portable image format
                     "*.sr", "*.ras",            // Sun rasters
                     "*.tiff", "*.tif"           // TIFF files
-                    ));
+                    ),
+                new ExtensionFilter("All Files", "*.*"));
 
             final List<File> imageFiles = fileChooser.showOpenMultipleDialog(this.getScene().getWindow());
 
