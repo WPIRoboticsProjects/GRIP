@@ -220,7 +220,7 @@ public class ProjectTest {
     @SuppressWarnings("PMD.JUnitTestsShouldIncludeAssert")
     public void testSerializePipelineWithSource() throws Exception {
         final ImageFileSource source = imageSourceFactory.create(Files.gompeiJpegFile.file);
-        source.load();
+        source.initialize();
         eventBus.post(new SourceAddedEvent(source));
 
         serializeAndDeserialize();

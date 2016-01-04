@@ -8,6 +8,7 @@ import edu.wpi.grip.core.Source;
 import edu.wpi.grip.core.events.SourceRemovedEvent;
 import edu.wpi.grip.ui.Controller;
 import edu.wpi.grip.ui.annotations.ParametrizedController;
+import edu.wpi.grip.ui.components.ExceptionWitnessResponderButton;
 import edu.wpi.grip.ui.pipeline.OutputSocketController;
 import edu.wpi.grip.ui.pipeline.StepController;
 import edu.wpi.grip.ui.util.ControllerMap;
@@ -43,6 +44,7 @@ public class SourceController<S extends Source> implements Controller {
 
     private final EventBus eventBus;
     private final OutputSocketController.Factory outputSocketControllerFactory;
+    private final ExceptionWitnessResponderButton.Factory exceptionWitnessResponderButtonFactory;
     private final S source;
     private ControllerMap<OutputSocketController, Node> outputSocketMapManager;
 
@@ -51,9 +53,14 @@ public class SourceController<S extends Source> implements Controller {
     }
 
     @Inject
-    SourceController(EventBus eventBus, OutputSocketController.Factory outputSocketControllerFactory, @Assisted S source) {
+    SourceController(
+            final EventBus eventBus,
+            final OutputSocketController.Factory outputSocketControllerFactory,
+            final ExceptionWitnessResponderButton.Factory exceptionWitnessResponderButtonFactory,
+            @Assisted final S source) {
         this.eventBus = eventBus;
         this.outputSocketControllerFactory = outputSocketControllerFactory;
+        this.exceptionWitnessResponderButtonFactory = exceptionWitnessResponderButtonFactory;
         this.source = source;
     }
 
@@ -61,6 +68,8 @@ public class SourceController<S extends Source> implements Controller {
     public void initialize() throws Exception {
         outputSocketMapManager = new ControllerMap<>(sockets.getChildren());
         this.name.setText(source.getName());
+
+        addControls(exceptionWitnessResponderButtonFactory.create(source, source.getClass().getSimpleName() + " Error"));
 
         for (OutputSocket<?> socket : source.getOutputSockets()) {
             outputSocketMapManager.add(outputSocketControllerFactory.create(socket));

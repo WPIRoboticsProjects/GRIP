@@ -8,6 +8,7 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 import edu.wpi.grip.core.GRIPCoreModule;
 import edu.wpi.grip.core.events.UnexpectedThrowableEvent;
+import edu.wpi.grip.core.util.MockExceptionWitness;
 import org.bytedeco.javacpp.indexer.Indexer;
 import org.bytedeco.javacv.Frame;
 import org.bytedeco.javacv.FrameGrabber;
@@ -114,7 +115,11 @@ public class CameraSourceTest {
         }
         this.eventBus.register(new UnhandledExceptionWitness());
         this.mockFrameGrabberFactory = new MockFrameGrabberFactory();
-        this.cameraSourceWithMockGrabber = new CameraSource(eventBus, mockFrameGrabberFactory, 0);
+        this.cameraSourceWithMockGrabber = new CameraSource(
+                eventBus,
+                mockFrameGrabberFactory,
+                origin -> new MockExceptionWitness(eventBus, origin),
+                0);
     }
 
     @After

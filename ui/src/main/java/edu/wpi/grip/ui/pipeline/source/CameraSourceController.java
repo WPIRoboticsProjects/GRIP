@@ -4,6 +4,7 @@ import com.google.common.eventbus.EventBus;
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 import edu.wpi.grip.core.sources.CameraSource;
+import edu.wpi.grip.ui.components.ExceptionWitnessResponderButton;
 import edu.wpi.grip.ui.components.StartStoppableButton;
 import edu.wpi.grip.ui.pipeline.OutputSocketController;
 import javafx.fxml.FXML;
@@ -20,8 +21,13 @@ public final class CameraSourceController extends SourceController<CameraSource>
     }
 
     @Inject
-    CameraSourceController(EventBus eventBus, OutputSocketController.Factory outputSocketControllerFactory, StartStoppableButton.Factory startStoppableButtonFactory, @Assisted CameraSource cameraSource) {
-        super(eventBus, outputSocketControllerFactory, cameraSource);
+    CameraSourceController(
+            final EventBus eventBus,
+            final OutputSocketController.Factory outputSocketControllerFactory,
+            final StartStoppableButton.Factory startStoppableButtonFactory,
+            final ExceptionWitnessResponderButton.Factory exceptionWitnessResponderButtonFactory,
+            @Assisted final CameraSource cameraSource) {
+        super(eventBus, outputSocketControllerFactory, exceptionWitnessResponderButtonFactory, cameraSource);
         this.startStoppableButtonFactory = startStoppableButtonFactory;
     }
 

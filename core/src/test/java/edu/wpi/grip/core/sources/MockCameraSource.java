@@ -24,11 +24,11 @@ public class MockCameraSource extends CameraSource {
     }
 
     public MockCameraSource(EventBus eventBus, String address) throws IOException {
-        super(eventBus, new FrameGrabberFactory(), address);
+        super(eventBus, new FrameGrabberFactory(), origin -> null, address);
     }
 
     public MockCameraSource(EventBus eventBus, int deviceNumber) throws IOException {
-        super(eventBus, new FrameGrabberFactory(), deviceNumber);
+        super(eventBus, new FrameGrabberFactory(), origin -> null, deviceNumber);
     }
 
     @Override

@@ -7,6 +7,7 @@ import com.google.inject.assistedinject.Assisted;
 import com.google.inject.assistedinject.AssistedInject;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import edu.wpi.grip.core.*;
+import edu.wpi.grip.core.util.ExceptionWitness;
 import edu.wpi.grip.core.util.ImageLoadingUtility;
 import org.bytedeco.javacpp.opencv_core.Mat;
 
@@ -27,7 +28,7 @@ import static com.google.common.base.Preconditions.checkElementIndex;
  * {@link MultiImageFileSource#previous()}
  */
 @XStreamAlias(value = "grip:MultiImageFile")
-public final class MultiImageFileSource extends LoadableSource implements PreviousNext {
+public final class MultiImageFileSource extends Source implements PreviousNext {
     private static final String INDEX_PROPERTY = "index";
     private static final String SIZE_PROPERTY = "numImages";
 
@@ -47,39 +48,53 @@ public final class MultiImageFileSource extends LoadableSource implements Previo
     }
 
     /**
-     * @param eventBus The event bus.
-     * @param files    A list of files to be loaded.
-     * @param index    The index to use as the first file that is in the socket.
-     * @throws IOException If the source fails to load any of the images
+     * @param eventBus                The event bus.
+     * @param exceptionWitnessFactory Factory to create the exceptionWitness
+     * @param files                   A list of files to be loaded.
+     * @param index                   The index to use as the first file that is in the socket.
      */
     @AssistedInject
-    MultiImageFileSource(final EventBus eventBus, @Assisted final List<File> files, @Assisted int index) throws IOException {
-        this(eventBus, files.stream()
-                        .map(file -> URLDecoder.decode(Paths.get(file.toURI()).toString()))
-                        .collect(Collectors.toList()).toArray(new String[files.size()]), index);
+    MultiImageFileSource(
+            final EventBus eventBus,
+            final ExceptionWitness.Factory exceptionWitnessFactory,
+            @Assisted final List<File> files,
+            @Assisted final int index) {
+        this(eventBus, exceptionWitnessFactory, files.stream()
+                .map(file -> URLDecoder.decode(Paths.get(file.toURI()).toString()))
+                .collect(Collectors.toList()).toArray(new String[files.size()]), index);
     }
 
     @AssistedInject
-    MultiImageFileSource(final EventBus eventBus, @Assisted final List<File> files) throws IOException {
-        this(eventBus, files, 0);
+    MultiImageFileSource(
+            final EventBus eventBus,
+            final ExceptionWitness.Factory exceptionWitnessFactory,
+            @Assisted final List<File> files) {
+        this(eventBus, exceptionWitnessFactory, files, 0);
     }
 
     /**
      * Used only for serialization
      */
     @AssistedInject
-    MultiImageFileSource(final EventBus eventBus, @Assisted Properties properties) throws IOException {
-        this(eventBus, pathsFromProperties(properties), indexFromProperties(properties));
+    MultiImageFileSource(final EventBus eventBus,
+                         final ExceptionWitness.Factory exceptionWitnessFactory,
+                         @Assisted final Properties properties) {
+        this(eventBus, exceptionWitnessFactory, pathsFromProperties(properties), indexFromProperties(properties));
     }
 
-    private MultiImageFileSource(final EventBus eventBus, final String[] paths, int index) throws IOException {
+    private MultiImageFileSource(
+            final EventBus eventBus,
+            final ExceptionWitness.Factory exceptionWitnessFactory,
+            final String[] paths,
+            final int index) {
+        super(exceptionWitnessFactory);
         this.outputSocket = new OutputSocket(eventBus, imageOutputHint);
         this.index = new AtomicInteger(checkElementIndex(index, paths.length, "File List Index"));
         this.paths = Arrays.asList(paths);
     }
 
     @Override
-    public void load() throws IOException {
+    public void initialize() throws IOException {
         this.images = createImagesArray(this.paths);
         this.outputSocket.setValue(addIndexAndGetImageByOffset(0));
     }

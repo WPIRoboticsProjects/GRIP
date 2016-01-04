@@ -14,6 +14,7 @@ import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 /**
  *
@@ -32,8 +33,8 @@ public class ImageFileSourceTest {
     public void testLoadImageToMat() throws IOException {
         // Given above setup
         // When
-        final ImageFileSource fileSource = new ImageFileSource(eventBus, this.imageFile.file);
-        fileSource.load();
+        final ImageFileSource fileSource = new ImageFileSource(eventBus, origin -> null, this.imageFile.file);
+        fileSource.initialize();
         OutputSocket<Mat> outputSocket = fileSource.getOutputSockets()[0];
 
         // Then
@@ -44,8 +45,8 @@ public class ImageFileSourceTest {
 
     @Test(expected = IOException.class)
     public void testReadInTextFile() throws IOException {
-        final ImageFileSource fileSource = new ImageFileSource(eventBus, this.textFile);
-        fileSource.load();
+        final ImageFileSource fileSource = new ImageFileSource(eventBus, origin -> null, this.textFile);
+        fileSource.initialize();
         OutputSocket<Mat> outputSocket = fileSource.getOutputSockets()[0];
         assertTrue("No matrix should have been returned.", outputSocket.getValue().get().empty());
     }
@@ -54,15 +55,14 @@ public class ImageFileSourceTest {
     public void testReadInFileWithoutExtension() throws MalformedURLException, IOException {
         final File testFile = new File("temp" + File.separator + "fdkajdl3eaf");
 
-        final ImageFileSource fileSource = new ImageFileSource(eventBus, testFile);
-        fileSource.load();
-        OutputSocket<Mat> outputSocket = fileSource.getOutputSockets()[0];
-        assertTrue("No matrix should have been returned.", outputSocket.getValue().get().empty());
+        final ImageFileSource fileSource = new ImageFileSource(eventBus, origin -> null, testFile);
+        fileSource.initialize();
+        fail("initialize() should have thrown an IOException");
     }
 
     @Test(expected = IllegalStateException.class)
     public void testNotCallingLoadThrowsIllegalState() {
-        final ImageFileSource source = new ImageFileSource(eventBus, this.imageFile.file);
+        final ImageFileSource source = new ImageFileSource(eventBus, origin -> null, this.imageFile.file);
         // Calling this before loading the image should throw an exception
         source.getOutputSockets();
     }

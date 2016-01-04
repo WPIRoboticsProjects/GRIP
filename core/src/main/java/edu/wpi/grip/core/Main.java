@@ -4,6 +4,8 @@ import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
+import edu.wpi.grip.core.events.ExceptionClearedEvent;
+import edu.wpi.grip.core.events.ExceptionEvent;
 import edu.wpi.grip.core.events.UnexpectedThrowableEvent;
 import edu.wpi.grip.core.operations.Operations;
 import edu.wpi.grip.core.serialization.Project;
@@ -76,6 +78,21 @@ public class Main {
         for (; ; ) {
             Thread.sleep(Integer.MAX_VALUE);
         }
+    }
+
+    @Subscribe
+    public final void onExceptionEvent(ExceptionEvent event) {
+        Logger.getLogger(event.getOrigin().getClass().getName()).log(
+                Level.SEVERE,
+                event.getMessage(),
+                // The throwable can be null
+                event.getException().orElse(null)
+        );
+    }
+
+    @Subscribe
+    public final void onExceptionClearedEvent(ExceptionClearedEvent event) {
+        Logger.getLogger(event.getOrigin().getClass().getName()).log(Level.INFO, "Exception Cleared Event");
     }
 
     /**
