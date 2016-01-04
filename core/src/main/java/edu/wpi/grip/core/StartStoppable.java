@@ -26,7 +26,7 @@ public interface StartStoppable {
      * @throws TimeoutException If the thread fails to stop in a timely manner
      * @throws IOException      If cleaning up some system resource fails.
      */
-    void stop() throws TimeoutException, IOException;
+    void stop() throws InterruptedException, TimeoutException, IOException;
 
     /**
      * Used to indicate if the source is running or stopped

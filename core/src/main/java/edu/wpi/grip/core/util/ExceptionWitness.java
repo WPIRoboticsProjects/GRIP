@@ -48,10 +48,16 @@ public class ExceptionWitness {
     /**
      * Indicates to the witness that an exception has occurred. This will also post an {@link ExceptionEvent} to the {@link EventBus}
      *
-     * @param exception The exception that this is reporting
+     * @param exception The exception that this is reporting.
+     *                  If the Exception is an InterruptedException then this will not post an exception, instead,
+     *                  it will set the threads interrupted state and return.
      * @param message   Any additional details that should be associated with this message.
      */
     public final void flagException(final Exception exception, final String message) {
+        if (exception instanceof InterruptedException) {
+            Thread.currentThread().interrupt();
+            return;
+        }
         isExceptionState.set(true);
         this.eventBus.post(new ExceptionEvent(origin, exception, message));
     }

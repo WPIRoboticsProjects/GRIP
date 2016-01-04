@@ -143,7 +143,9 @@ public class Step {
 
         try {
             this.operation.perform(inputSockets, outputSockets, data);
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
+            // We do not want to catch all exceptions, only runtime exceptions.
+            // This is especially important when it comes to InterruptedExceptions
             final String operationFailedMessage = "The " + operation.getName() + " operation did not perform correctly.";
             logger.log(Level.WARNING, operationFailedMessage, e);
             witness.flagException(e, operationFailedMessage);
