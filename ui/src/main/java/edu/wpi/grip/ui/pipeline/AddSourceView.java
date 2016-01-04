@@ -21,6 +21,7 @@ import javafx.scene.layout.Priority;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.FileChooser;
+import javafx.stage.FileChooser.ExtensionFilter;
 
 import java.io.File;
 import java.io.IOException;
@@ -98,6 +99,17 @@ public class AddSourceView extends HBox {
             // Show a file picker so the user can open one or more images from disk
             final FileChooser fileChooser = new FileChooser();
             fileChooser.setTitle("Open an image");
+            fileChooser.getExtensionFilters().add(
+                new ExtensionFilter("Image Files",
+                    "*.bmp", "*.dib",           // Windows bitmaps
+                    "*.jpeg", "*.jpg", "*.jpe", // JPEG files
+                    "*.jp2",                    // JPEG 2000 files
+                    "*.png",                    // Portable Network Graphics
+                    "*.webp",                   // WebP
+                    "*.pbm", "*.pgm", "*.ppm",  // Portable image format
+                    "*.sr", "*.ras",            // Sun rasters
+                    "*.tiff", "*.tif"           // TIFF files
+                    ));
 
             final List<File> imageFiles = fileChooser.showOpenMultipleDialog(this.getScene().getWindow());
 
