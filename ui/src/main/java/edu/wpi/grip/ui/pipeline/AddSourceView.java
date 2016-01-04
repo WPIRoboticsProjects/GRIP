@@ -9,6 +9,7 @@ import edu.wpi.grip.core.sources.CameraSource;
 import edu.wpi.grip.core.sources.ImageFileSource;
 import edu.wpi.grip.core.sources.MultiImageFileSource;
 import edu.wpi.grip.ui.util.DPIUtility;
+import edu.wpi.grip.ui.util.SupplierWithIO;
 import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.scene.Parent;
@@ -21,6 +22,7 @@ import javafx.scene.layout.Priority;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.FileChooser;
+import javafx.stage.FileChooser.ExtensionFilter;
 
 import java.io.File;
 import java.io.IOException;
@@ -49,11 +51,6 @@ public class AddSourceView extends HBox {
     private final Button webcamButton;
     private final Button ipcamButton;
     private Optional<Dialog> activeDialog = Optional.empty();
-
-    @FunctionalInterface
-    private interface SupplierWithIO<T> {
-        T getWithIO() throws IOException;
-    }
 
     private static class SourceDialog extends Dialog<ButtonType> {
         private final Text errorText = new Text();
@@ -98,6 +95,18 @@ public class AddSourceView extends HBox {
             // Show a file picker so the user can open one or more images from disk
             final FileChooser fileChooser = new FileChooser();
             fileChooser.setTitle("Open an image");
+            fileChooser.getExtensionFilters().addAll(
+                new ExtensionFilter("Image Files",
+                    "*.bmp", "*.dib",           // Windows bitmaps
+                    "*.jpeg", "*.jpg", "*.jpe", // JPEG files
+                    "*.jp2",                    // JPEG 2000 files
+                    "*.png",                    // Portable Network Graphics
+                    "*.webp",                   // WebP
+                    "*.pbm", "*.pgm", "*.ppm",  // Portable image format
+                    "*.sr", "*.ras",            // Sun rasters
+                    "*.tiff", "*.tif"           // TIFF files
+                    ),
+                new ExtensionFilter("All Files", "*.*"));
 
             final List<File> imageFiles = fileChooser.showOpenMultipleDialog(this.getScene().getWindow());
 

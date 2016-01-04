@@ -7,6 +7,8 @@
 <?import javafx.scene.image.*?>
 <?import javafx.scene.input.*?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.paint.Color?>
+<?import org.controlsfx.glyphfont.Glyph?>
 <?import java.net.URL?>
 <VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"
       minWidth="-Infinity" styleClass="main-window"
@@ -92,6 +94,13 @@
                     <accelerator>
                         <KeyCodeCombination alt="UP" code="Q" control="DOWN" meta="UP" shift="UP" shortcut="UP"/>
                     </accelerator>
+                </MenuItem>
+            </Menu>
+            <Menu text="Deploy">
+                <MenuItem text="FRC" onAction="#deployFRC">
+                    <graphic>
+                        <Glyph fontFamily="FontAwesome" icon="UPLOAD" style="-fx-text-fill: black;"/>
+                    </graphic>
                 </MenuItem>
             </Menu>
         </MenuBar>

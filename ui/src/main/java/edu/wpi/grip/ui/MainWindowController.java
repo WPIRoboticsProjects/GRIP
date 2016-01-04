@@ -7,6 +7,7 @@ import edu.wpi.grip.core.serialization.Project;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.Parent;
+import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.SplitPane;
@@ -39,6 +40,8 @@ public class MainWindowController {
     private Palette palette;
     @Inject
     private Project project;
+    @Inject
+    private DeployerController.Factory deployerControllerFactoy;
 
     public void initialize() {
         pipelineView.prefHeightProperty().bind(bottomPane.heightProperty());
@@ -163,6 +166,22 @@ public class MainWindowController {
         if (showConfirmationDialogAndWait()) {
             Platform.exit();
         }
+    }
+
+    @FXML
+    public void deployFRC() {
+        if (project.getFile().isPresent()) {
+            final DeployerController deployerController = deployerControllerFactoy.create();
+            final Dialog<ButtonType> dialog = new Dialog();
+            dialog.setDialogPane(deployerController.getRoot());
+            dialog.setResizable(true);
+            dialog.showAndWait();
+        } else {
+            final Alert alert = new Alert(Alert.AlertType.INFORMATION,
+                    "You must have saved your project before it can be deployed to a remote device.");
+            alert.showAndWait();
+        }
+
     }
 }
 

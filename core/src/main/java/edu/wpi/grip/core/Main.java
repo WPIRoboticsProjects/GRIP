@@ -26,12 +26,12 @@ public class Main {
     @Inject
     private Logger logger;
 
-    @SuppressWarnings("PMD.SignatureDeclareThrowsException")
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args) throws IOException, InterruptedException {
         final Injector injector = Guice.createInjector(new GRIPCoreModule());
         injector.getInstance(Main.class).start(args);
     }
 
+    @SuppressWarnings("PMD.SystemPrintln")
     public void start(String[] args) throws IOException, InterruptedException {
         if (args.length != 1) {
             System.err.println("Usage: GRIP.jar project.grip");
@@ -69,6 +69,9 @@ public class Main {
         // Open a project from a .grip file specified on the command line
         project.open(new File(projectPath));
 
+
+        // This is done in order to indicate to the user using the deployment UI that this is running
+        System.out.println("SUCCESS! The project is running in headless mode!");
         // There's nothing more to do in the main thread since we're in headless mode - sleep forever
         for (; ; ) {
             Thread.sleep(Integer.MAX_VALUE);
