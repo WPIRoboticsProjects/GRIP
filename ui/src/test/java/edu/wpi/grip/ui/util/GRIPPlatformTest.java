@@ -14,6 +14,7 @@ import org.testfx.framework.junit.ApplicationTest;
 
 import java.util.logging.Logger;
 
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 public class GRIPPlatformTest extends ApplicationTest {
@@ -74,6 +75,17 @@ public class GRIPPlatformTest extends ApplicationTest {
             waiter.resume();
         });
         waiter.await();
+    }
+
+    @Test
+    public void testRunAsSoonAsPossibleWillNotCallIfInterrupted() throws Exception {
+        final boolean hasRun [] = {false};
+
+        Thread.currentThread().interrupt();
+        platform.runAsSoonAsPossible(() -> {
+            hasRun[0] = true;
+        });
+        assertFalse("runAsSoonAsPossible ran when interrupted", hasRun[0]);
     }
 
 }

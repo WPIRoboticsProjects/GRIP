@@ -92,28 +92,35 @@ public class Main extends Application {
     public final void onUnexpectedThrowableEvent(UnexpectedThrowableEvent event) {
         // Print throwable before showing the exception so that errors are in order in the console
         event.getThrowable().printStackTrace();
-        // This should still use PlatformImpl
-        PlatformImpl.runAndWait(() -> {
-            // WARNING! Do not post any events from within this! It could result in a deadlock!
-            synchronized (this.dialogLock) {
-                try {
-                    // Don't create more than one exception dialog at the same time
-                    final ExceptionAlert exceptionAlert = new ExceptionAlert(root, event.getThrowable(), event.getMessage(), event.isFatal(), getHostServices());
-                    exceptionAlert.setInitialFocus();
-                    exceptionAlert.showAndWait();
-                } catch (Throwable e) {
-                    // Well in this case something has gone very, very wrong
-                    // We don't want to create a feedback loop either.
-                    e.printStackTrace();
-                    System.exit(1); // Ensure we shut down the application if we get an exception
-                }
-            }
-        });
 
-        if (event.isFatal()) {
-            System.err.println("Original fatal exception");
-            event.getThrowable().printStackTrace();
-            System.exit(1);
+        try {
+            // If this is an interrupted exception then don't show an error.
+            // We should exit as fast as possible.
+            if (!(event.getThrowable() instanceof InterruptedException)) {
+                // This should still use PlatformImpl
+                PlatformImpl.runAndWait(() -> {
+                    // WARNING! Do not post any events from within this! It could result in a deadlock!
+                    synchronized (this.dialogLock) {
+                        try {
+                            // Don't create more than one exception dialog at the same time
+                            final ExceptionAlert exceptionAlert = new ExceptionAlert(root, event.getThrowable(), event.getMessage(), event.isFatal(), getHostServices());
+                            exceptionAlert.setInitialFocus();
+                            exceptionAlert.showAndWait();
+                        } catch (Throwable e) {
+                            // Well in this case something has gone very, very wrong
+                            // We don't want to create a feedback loop either.
+                            e.printStackTrace();
+                            System.exit(1); // Ensure we shut down the application if we get an exception
+                        }
+                    }
+                });
+            }
+        } finally {
+            if (event.isFatal()) {
+                System.err.println("Original fatal exception");
+                event.getThrowable().printStackTrace();
+                System.exit(1);
+            }
         }
     }
 }

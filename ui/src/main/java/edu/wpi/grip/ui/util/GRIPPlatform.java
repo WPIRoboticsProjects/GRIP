@@ -49,6 +49,7 @@ public class GRIPPlatform {
      * JavaFX application thread. If we are already on the JavaFX application thread
      * then this will be run immediately. Otherwise, it will be run as an event
      * inside of the event bus.
+     * If
      * If {@link #runAsSoonAsPossible(Runnable)} is called within itself it will always run
      * immediately because the runnable will always be run in the JavaFX thread.
      *
@@ -69,25 +70,28 @@ public class GRIPPlatform {
     }
 
     @Subscribe
-    public void onJavaFXRunnerEvent(JavaFXRunnerEvent event) {
+    public void onJavaFXRunnerEvent(JavaFXRunnerEvent event) throws InterruptedException {
         assert !Platform.isFxApplicationThread() : "This should never be run on the application thread. This can cause a deadlock!";
+        final Thread callingThread = Thread.currentThread();
+        if (Thread.interrupted()) {
+            throw new InterruptedException("Interrupted in onJavaFXRunnerEvent");
+        }
 
         // queue on JavaFX thread and wait for completion
         final CountDownLatch doneLatch = new CountDownLatch(1);
         Platform.runLater(() -> {
             try {
-                event.getAction().run();
+                // If the calling thread was interrupted then don't run this event.
+                if(!callingThread.isInterrupted()) {
+                    event.getAction().run();
+                }
             } finally {
                 doneLatch.countDown();
             }
         });
 
-        try {
-            while (!doneLatch.await(500, TimeUnit.MILLISECONDS)) {
-                logger.log(Level.WARNING, "POTENTIAL DEADLOCK!");
-            }
-        } catch (InterruptedException e) {
-            // ignore exception
+        while (!doneLatch.await(500, TimeUnit.MILLISECONDS)) {
+            logger.log(Level.WARNING, "POTENTIAL DEADLOCK!");
         }
     }
 

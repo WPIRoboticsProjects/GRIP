@@ -16,11 +16,15 @@ import edu.wpi.grip.core.sources.ImageFileSource;
 import edu.wpi.grip.core.sources.MultiImageFileSource;
 import edu.wpi.grip.core.util.ExceptionWitness;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 /**
  * A Guice {@link com.google.inject.Module} for GRIP's core package.  This is where instances of {@link Pipeline},
  * {@link Palette}, {@link Project}, etc... are created.
  */
 public class GRIPCoreModule extends AbstractModule {
+    private final Logger logger = Logger.getLogger(GRIPCoreModule.class.getName());
 
     private final EventBus eventBus = new EventBus(this::onSubscriberException);
 
@@ -60,10 +64,20 @@ public class GRIPCoreModule extends AbstractModule {
     }
 
     private void onSubscriberException(Throwable exception, SubscriberExceptionContext context) {
-        eventBus.post(new UnexpectedThrowableEvent(exception, "An event subscriber threw an exception"));
+        if (exception instanceof InterruptedException) {
+            logger.log(Level.FINE, "EventBus Subscriber threw InterruptedException", exception);
+            Thread.currentThread().interrupt();
+        } else {
+            eventBus.post(new UnexpectedThrowableEvent(exception, "An event subscriber threw an exception"));
+        }
     }
 
     private void onThreadException(Thread thread, Throwable exception) {
-        eventBus.post(new UnexpectedThrowableEvent(exception, thread + " threw an exception"));
+        if (exception instanceof InterruptedException) {
+            logger.log(Level.FINE, "InterruptedException from thread " + thread, exception);
+            Thread.currentThread().interrupt();
+        } else {
+            eventBus.post(new UnexpectedThrowableEvent(exception, thread + " threw an exception"));
+        }
     }
 }
