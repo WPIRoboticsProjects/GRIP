@@ -180,6 +180,7 @@ public class DeployedInstanceManager implements StartStoppable {
                 synchronized (this) {
                     sshThread = Optional.empty();
                 }
+                eventBus.post(new StartedStoppedEvent(this));
             }
         }, "SSH Monitor Thread");
         launcher.setUncaughtExceptionHandler((thread, exception) -> {
@@ -216,7 +217,6 @@ public class DeployedInstanceManager implements StartStoppable {
             }
             runStop();
         } while (isStarted() && !Thread.interrupted());
-        eventBus.post(new StartedStoppedEvent(this));
     }
 
     /**

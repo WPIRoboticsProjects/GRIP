@@ -20,8 +20,6 @@ import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
 import javax.inject.Inject;
-import java.io.IOException;
-import java.util.logging.*;
 
 public class Main extends Application {
 
@@ -53,29 +51,6 @@ public class Main extends Application {
     @Override
     @SuppressWarnings("PMD.SignatureDeclareThrowsException")
     public void start(Stage stage) throws Exception {
-
-        //Set up the global level logger. This handles IO for all loggers.
-        Logger globalLogger = LogManager.getLogManager().getLogger("");//This is our global logger
-
-        Handler fileHandler = null;//This will be our handler for the global logger
-
-        try {
-            fileHandler = new FileHandler("%h/GRIP.log");//Log to the file "GRIP.log"
-
-            globalLogger.addHandler(fileHandler);//Add the handler to the global logger
-
-            fileHandler.setFormatter(new SimpleFormatter());//log in text, not xml
-
-            //Set level to handler and logger
-            fileHandler.setLevel(Level.FINE);
-            globalLogger.setLevel(Level.FINE);
-
-            globalLogger.config("Configuration done.");//Log that we are done setting up the logger
-
-        } catch (IOException exception) {//Something happened setting up file IO
-            throw new IllegalStateException(exception);
-        }
-
         root = FXMLLoader.load(Main.class.getResource("MainWindow.fxml"), null, null, injector::getInstance);
         root.setStyle("-fx-font-size: " + DPIUtility.FONT_SIZE + "px");
 
