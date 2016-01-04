@@ -9,7 +9,6 @@ import edu.wpi.grip.core.sources.CameraSource;
 import edu.wpi.grip.core.sources.ImageFileSource;
 import edu.wpi.grip.core.sources.MultiImageFileSource;
 import edu.wpi.grip.ui.util.DPIUtility;
-import edu.wpi.grip.ui.util.SupplierWithIO;
 import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.scene.Parent;
@@ -51,6 +50,11 @@ public class AddSourceView extends HBox {
     private final Button webcamButton;
     private final Button ipcamButton;
     private Optional<Dialog> activeDialog = Optional.empty();
+
+    @FunctionalInterface
+    private interface SupplierWithIO<T> {
+        T getWithIO() throws IOException;
+    }
 
     private static class SourceDialog extends Dialog<ButtonType> {
         private final Text errorText = new Text();
