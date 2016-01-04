@@ -116,7 +116,7 @@ public class AddSourceView extends HBox {
             if (imageFiles.size() == 1) {
                 try {
                     final ImageFileSource imageFileSource = imageSourceFactory.create(imageFiles.get(0));
-                    imageFileSource.load();
+                    imageFileSource.initialize();
                     eventBus.post(new SourceAddedEvent(imageFileSource));
                 } catch (IOException e) {
                     eventBus.post(new UnexpectedThrowableEvent(e, "The image selected was invalid"));
@@ -124,7 +124,7 @@ public class AddSourceView extends HBox {
             } else {
                 try {
                     final MultiImageFileSource multiImageFileSource = multiImageSourceFactory.create(imageFiles);
-                    multiImageFileSource.load();
+                    multiImageFileSource.initialize();
                     eventBus.post(new SourceAddedEvent(multiImageFileSource));
                 } catch (IOException e) {
                     eventBus.post(new UnexpectedThrowableEvent(e, "One of the images selected was invalid"));
@@ -149,7 +149,7 @@ public class AddSourceView extends HBox {
             loadCamera(dialog,
                     () -> {
                         final CameraSource cameraSource = cameraSourceFactory.create(cameraIndex.getValue());
-                        cameraSource.start();
+                        cameraSource.initialize();
                         return cameraSource;
                     },
                     e -> {
@@ -187,7 +187,7 @@ public class AddSourceView extends HBox {
             loadCamera(dialog,
                     () -> {
                         final CameraSource cameraSource = cameraSourceFactory.create(cameraAddress.getText());
-                        cameraSource.start();
+                        cameraSource.initialize();
                         return cameraSource;
                     },
                     e -> {
