@@ -10,8 +10,10 @@ edu.wpi.grip.core.util
 edu.wpi.grip.ui
 edu.wpi.grip.ui.annotations
 edu.wpi.grip.ui.components
+edu.wpi.grip.ui.deployment
 edu.wpi.grip.ui.pipeline
 edu.wpi.grip.ui.pipeline.input
 edu.wpi.grip.ui.pipeline.source
 edu.wpi.grip.ui.preview
 edu.wpi.grip.ui.util
+edu.wpi.grip.ui.util.deployment
