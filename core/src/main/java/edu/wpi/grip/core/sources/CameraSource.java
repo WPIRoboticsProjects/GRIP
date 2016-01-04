@@ -11,6 +11,7 @@ import edu.wpi.grip.core.*;
 import edu.wpi.grip.core.events.SourceRemovedEvent;
 import edu.wpi.grip.core.events.StartedStoppedEvent;
 import edu.wpi.grip.core.events.UnexpectedThrowableEvent;
+import edu.wpi.grip.core.util.ExceptionWitness;
 import org.bytedeco.javacpp.opencv_core.Mat;
 import org.bytedeco.javacv.*;
 
@@ -39,7 +40,7 @@ public class CameraSource extends Source implements StartStoppable {
 
     private final static String DEVICE_NUMBER_PROPERTY = "deviceNumber";
     private final static String ADDRESS_PROPERTY = "address";
-    private static Logger logger =  Logger.getLogger(CameraSource.class.getName());
+    private static Logger logger = Logger.getLogger(CameraSource.class.getName());
 
     private final EventBus eventBus;
     private final String name;
@@ -98,8 +99,12 @@ public class CameraSource extends Source implements StartStoppable {
      * @param deviceNumber The device number of the webcam
      */
     @AssistedInject
-    CameraSource(EventBus eventBus, FrameGrabberFactory grabberFactory, @Assisted int deviceNumber) throws IOException {
-        this(eventBus, grabberFactory, createProperties(deviceNumber));
+    CameraSource(
+            final EventBus eventBus,
+            final FrameGrabberFactory grabberFactory,
+            final ExceptionWitness.Factory exceptionWitnessFactory,
+            @Assisted final int deviceNumber) throws IOException {
+        this(eventBus, grabberFactory, exceptionWitnessFactory, createProperties(deviceNumber));
     }
 
     /**
@@ -109,15 +114,24 @@ public class CameraSource extends Source implements StartStoppable {
      * @param address  A URL to stream video from an IP camera
      */
     @AssistedInject
-    CameraSource(EventBus eventBus, FrameGrabberFactory grabberFactory, @Assisted String address) throws IOException {
-        this(eventBus, grabberFactory, createProperties(address));
+    CameraSource(
+            final EventBus eventBus,
+            final FrameGrabberFactory grabberFactory,
+            final ExceptionWitness.Factory exceptionWitnessFactory,
+            @Assisted final String address) throws IOException {
+        this(eventBus, grabberFactory, exceptionWitnessFactory, createProperties(address));
     }
 
     /**
      * Used for serialization
      */
     @AssistedInject
-    CameraSource(EventBus eventBus, FrameGrabberFactory grabberFactory, @Assisted Properties properties) throws MalformedURLException {
+    CameraSource(
+            final EventBus eventBus,
+            final FrameGrabberFactory grabberFactory,
+            final ExceptionWitness.Factory exceptionWitnessFactory,
+            @Assisted final Properties properties) throws MalformedURLException {
+        super(exceptionWitnessFactory);
         this.frameThread = Optional.empty();
         this.eventBus = eventBus;
         this.frameOutputSocket = new OutputSocket<>(eventBus, imageOutputHint);
@@ -153,6 +167,11 @@ public class CameraSource extends Source implements StartStoppable {
     @Override
     public Properties getProperties() {
         return this.properties;
+    }
+
+    @Override
+    public void initialize() throws IOException {
+        start();
     }
 
     /**
@@ -196,6 +215,7 @@ public class CameraSource extends Source implements StartStoppable {
                     final long elapsedTime = thisMoment - lastFrame;
                     if (elapsedTime != 0) frameRateOutputSocket.setValue(1e9 / elapsedTime);
                     lastFrame = thisMoment;
+                    getExceptionWitness().clearException();
                 }
             }, "Camera");
 

@@ -28,6 +28,11 @@ public class PipelineTest {
 
 
     private class MockSource extends Source {
+
+        protected MockSource() {
+            super(origin -> null);
+        }
+
         @Override
         public String getName() {
             return null;
@@ -41,6 +46,11 @@ public class PipelineTest {
         @Override
         public Properties getProperties() {
             return null;
+        }
+
+        @Override
+        public void initialize() throws IOException {
+
         }
     }
 

@@ -4,15 +4,20 @@ import com.google.inject.Inject;
 import edu.wpi.grip.core.sources.CameraSource;
 import edu.wpi.grip.core.sources.ImageFileSource;
 import edu.wpi.grip.core.sources.MultiImageFileSource;
+import edu.wpi.grip.core.util.ExceptionWitness;
 
 import java.io.IOException;
 import java.util.Optional;
 import java.util.Properties;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Base class for an input into the pipeline.
  */
 public abstract class Source {
+    private final Logger logger = Logger.getLogger(getClass().getName());
+    private final ExceptionWitness exceptionWitness;
 
     public static class SourceFactoryImpl implements SourceFactory {
         @Inject
@@ -33,6 +38,13 @@ public abstract class Source {
 
     public interface SourceFactory {
         Source create(Class<?> type, Properties properties) throws IOException;
+    }
+
+    /**
+     * @param exceptionWitnessFactory Factory to create the exceptionWitness
+     */
+    protected Source(ExceptionWitness.Factory exceptionWitnessFactory) {
+        this.exceptionWitness = exceptionWitnessFactory.create(this);
     }
 
     /**
@@ -62,4 +74,33 @@ public abstract class Source {
      * serialization/deserialization.
      */
     public abstract Properties getProperties();
+
+    protected ExceptionWitness getExceptionWitness() {
+        return this.exceptionWitness;
+    }
+
+    /**
+     * Initializes the source. This should not try to handle initialization exceptions. Instead, the
+     * {@link #initializeSafely()} should report the problem with initializing to the exception witness.
+     *
+     * @throws IOException
+     */
+    public abstract void initialize() throws IOException;
+
+    /**
+     * Initializes the source in a safe way such that the exception caused by initializing will be reported to
+     * the {@link ExceptionWitness}.
+     * This method should be used by the deserializer to ensure that a source that is invalid can display
+     * this info to the UI and allow the user to modify the save file.
+     */
+    public final void initializeSafely() {
+        try {
+            initialize();
+        } catch (IOException e) {
+            final String message = "Failed to initialize " + getClass().getSimpleName();
+            logger.log(Level.WARNING, message, e);
+            getExceptionWitness().flagException(e, message);
+        }
+    }
+
 }

@@ -9,7 +9,6 @@ import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 import edu.wpi.grip.core.Source;
 import edu.wpi.grip.core.events.SourceAddedEvent;
-import edu.wpi.grip.core.sources.LoadableSource;
 
 import javax.inject.Inject;
 import java.io.IOException;
@@ -50,13 +49,16 @@ public class SourceConverter implements Converter {
             // ensure that other objects being deserialized (such as connections) don't try to access sources that
             // are in the process of loading.
             final Source source = sourceFactory.create(sourceClass, properties);
-            if (source instanceof LoadableSource) {
-                ((LoadableSource) source).load();
-            }
 
             // Instead of returning the source, post it to the event bus so both the core and GUI classes know it
             // exists.
             eventBus.post(new SourceAddedEvent(source));
+
+            // Now that the source has been added it needs to be initialized
+            // We do it safely here in case the source has changed in some way out
+            // of our control. For example, if a webcam is no longer available.
+            source.initializeSafely();
+
             return null;
         } catch (IOException | RuntimeException e) {
             throw new ConversionException("Error deserializing source", e);
