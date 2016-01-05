@@ -3,6 +3,8 @@ package edu.wpi.grip.ui;
 import com.google.common.eventbus.EventBus;
 import edu.wpi.grip.core.Palette;
 import edu.wpi.grip.core.Pipeline;
+import edu.wpi.grip.core.ProjectSettings;
+import edu.wpi.grip.core.events.ProjectSettingsChangedEvent;
 import edu.wpi.grip.core.serialization.Project;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -164,6 +166,18 @@ public class MainWindowController {
 
         project.save(file);
         return true;
+    }
+
+    @FXML
+    public void showProjectSettingsEditor() {
+        final ProjectSettings projectSettings = pipeline.getProjectSettings().clone();
+
+        ProjectSettingsEditor projectSettingsEditor = new ProjectSettingsEditor(root, projectSettings);
+        projectSettingsEditor.showAndWait().ifPresent(buttonType -> {
+            if (buttonType == ButtonType.OK) {
+                eventBus.post(new ProjectSettingsChangedEvent(projectSettings));
+            }
+        });
     }
 
     @FXML

@@ -43,16 +43,24 @@ public final class SocketHints {
 
         public static SocketHint<Number> createNumberSpinnerSocketHint(final String identifier, final Number number,
                                                                        final Number low, final Number high) {
-            return createNumberSocketHintBuilder(identifier, number, new Number[]{low, high}).view(SocketHint.View.SPINNER).build();
+            return createNumberSocketHintBuilder(identifier, number, new Number[]{low, high}).view(SocketHint.View.TEXT).build();
         }
 
         public static SocketHint<Number> createNumberSpinnerSocketHint(final String identifier, final Number number) {
-            return createNumberSocketHintBuilder(identifier, number).view(SocketHint.View.SPINNER).build();
+            return createNumberSocketHintBuilder(identifier, number).view(SocketHint.View.TEXT).build();
         }
 
         public static SocketHint<List> createNumberListRangeSocketHint(final String identifier, final Number low, final Number high) {
             return createNumberListSocketHintBuilder(identifier, new Number[]{low, high})
                     .view(SocketHint.View.RANGE)
+                    .build();
+        }
+
+        public static SocketHint<String> createTextSocketHint(final String identifier, final String str) {
+            return new SocketHint.Builder<>(String.class)
+                    .identifier(identifier)
+                    .initialValue(str)
+                    .view(SocketHint.View.TEXT)
                     .build();
         }
     }
@@ -84,7 +92,6 @@ public final class SocketHints {
         }
     }
 
-    @SuppressWarnings("unchecked")
     public static <T extends Enum<T>> SocketHint<T> createEnumSocketHint(final String identifier,
                                                                          final T defaultValue) {
         return new SocketHint.Builder(defaultValue.getClass())
