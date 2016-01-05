@@ -55,13 +55,13 @@ public class DeployerController {
         }
 
         public StreamToTextArea reset() {
-            outputArea.clear();
+            Platform.runLater(outputArea::clear);
             return this;
         }
 
         @Override
         public void write(int i) throws IOException {
-            outputArea.appendText(String.valueOf((char) i));
+            Platform.runLater(()-> outputArea.appendText(String.valueOf((char) i)));
         }
     }
 

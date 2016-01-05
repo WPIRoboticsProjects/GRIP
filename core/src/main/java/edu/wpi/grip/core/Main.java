@@ -28,7 +28,9 @@ public class Main {
     @Inject
     private Logger logger;
 
+    @SuppressWarnings("PMD.SystemPrintln")
     public static void main(String[] args) throws IOException, InterruptedException {
+        System.out.println("Loading Dependency Injection Framework");
         final Injector injector = Guice.createInjector(new GRIPCoreModule());
         injector.getInstance(Main.class).start(args);
     }
@@ -38,30 +40,9 @@ public class Main {
         if (args.length != 1) {
             System.err.println("Usage: GRIP.jar project.grip");
             return;
+        } else {
+            logger.log(Level.INFO, "Loading file " + args[0]);
         }
-
-        //Set up the global level logger. This handles IO for all loggers.
-        Logger globalLogger = LogManager.getLogManager().getLogger("");//This is our global logger
-
-        Handler fileHandler = null;//This will be our handler for the global logger
-
-        try {
-            fileHandler = new FileHandler("%h/GRIP.log");//Log to the file "GRIPlogger.log"
-
-            globalLogger.addHandler(fileHandler);//Add the handler to the global logger
-
-            fileHandler.setFormatter(new SimpleFormatter());//log in text, not xml
-
-            //Set level to handler and logger
-            fileHandler.setLevel(Level.FINE);
-            globalLogger.setLevel(Level.FINE);
-
-            globalLogger.config("Configuration done.");//Log that we are done setting up the logger
-
-        } catch (IOException exception) {//Something happened setting up file IO
-            throw new IllegalStateException(exception);
-        }
-
 
         Operations.addOperations(eventBus);
         CVOperations.addOperations(eventBus);
@@ -73,7 +54,7 @@ public class Main {
 
 
         // This is done in order to indicate to the user using the deployment UI that this is running
-        System.out.println("SUCCESS! The project is running in headless mode!");
+        logger.log(Level.INFO, "SUCCESS! The project is running in headless mode!");
         // There's nothing more to do in the main thread since we're in headless mode - sleep forever
         for (; ; ) {
             Thread.sleep(Integer.MAX_VALUE);

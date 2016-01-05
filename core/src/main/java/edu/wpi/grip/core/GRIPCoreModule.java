@@ -16,8 +16,8 @@ import edu.wpi.grip.core.sources.ImageFileSource;
 import edu.wpi.grip.core.sources.MultiImageFileSource;
 import edu.wpi.grip.core.util.ExceptionWitness;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.io.IOException;
+import java.util.logging.*;
 
 /**
  * A Guice {@link com.google.inject.Module} for GRIP's core package.  This is where instances of {@link Pipeline},
@@ -29,6 +29,47 @@ public class GRIPCoreModule extends AbstractModule {
     private final EventBus eventBus = new EventBus(this::onSubscriberException);
 
     public GRIPCoreModule() {
+        //Set up the global level logger. This handles IO for all loggers.
+        final Logger globalLogger = LogManager.getLogManager().getLogger("");//This is our global logger
+
+        try {
+            // Remove the default handlers that stream to System.err
+            for(Handler handler : globalLogger.getHandlers()) {
+                globalLogger.removeHandler(handler);
+            }
+
+            final Handler fileHandler = new FileHandler("%h/GRIP.log");//Log to the file "GRIPlogger.log"
+
+            //Set level to handler and logger
+            fileHandler.setLevel(Level.FINE);
+            globalLogger.setLevel(Level.FINE);
+
+            // We need to stream to System.out instead of System.err
+            final StreamHandler sh = new StreamHandler(System.out,  new SimpleFormatter()) {
+
+                @Override
+                public synchronized void publish(final LogRecord record) {
+                    super.publish(record);
+                    // For some reason this doesn't happen automatically.
+                    // This will ensure we get all of the logs printed to the console immediately
+                    // when running on a remote device.
+                    flush();
+                }
+            };
+            sh.setLevel(Level.CONFIG);
+
+            globalLogger.addHandler(sh); // Add stream handler
+
+            globalLogger.addHandler(fileHandler);//Add the handler to the global logger
+
+            fileHandler.setFormatter(new SimpleFormatter());//log in text, not xml
+
+            globalLogger.config("Configuration done.");//Log that we are done setting up the logger
+
+        } catch (IOException exception) {//Something happened setting up file IO
+            throw new IllegalStateException("Failed to configure the Logger", exception);
+        }
+
         Thread.setDefaultUncaughtExceptionHandler(this::onThreadException);
     }
 
@@ -68,6 +109,7 @@ public class GRIPCoreModule extends AbstractModule {
             logger.log(Level.FINE, "EventBus Subscriber threw InterruptedException", exception);
             Thread.currentThread().interrupt();
         } else {
+            logger.log(Level.SEVERE, "An event subscriber threw an exception", exception);
             eventBus.post(new UnexpectedThrowableEvent(exception, "An event subscriber threw an exception"));
         }
     }
@@ -77,6 +119,8 @@ public class GRIPCoreModule extends AbstractModule {
             logger.log(Level.FINE, "InterruptedException from thread " + thread, exception);
             Thread.currentThread().interrupt();
         } else {
+            // This can potentially happen before the main class has even been loaded to handle these exceptions
+            logger.log(Level.SEVERE, "Uncaught Exception on thread " + thread, exception);
             eventBus.post(new UnexpectedThrowableEvent(exception, thread + " threw an exception"));
         }
     }
