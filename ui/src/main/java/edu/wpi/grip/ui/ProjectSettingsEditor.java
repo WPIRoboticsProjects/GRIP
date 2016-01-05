@@ -16,14 +16,10 @@ import org.controlsfx.property.BeanPropertyUtils;
  */
 public class ProjectSettingsEditor extends Dialog<ButtonType> {
 
-    private final ProjectSettings projectSettings;
-    private final PropertySheet propertySheet;
-
     public ProjectSettingsEditor(Parent root, ProjectSettings projectSettings) {
         super();
-        this.projectSettings = projectSettings;
 
-        propertySheet = new PropertySheet(BeanPropertyUtils.getProperties(projectSettings));
+        PropertySheet propertySheet = new PropertySheet(BeanPropertyUtils.getProperties(projectSettings));
         propertySheet.setMode(PropertySheet.Mode.NAME);
         propertySheet.setModeSwitcherVisible(false);
         propertySheet.setSearchBoxVisible(false);
@@ -35,9 +31,13 @@ public class ProjectSettingsEditor extends Dialog<ButtonType> {
         pane.getStylesheets().addAll(root.getStylesheets());
         pane.setPrefSize(DPIUtility.SETTINGS_DIALOG_SIZE, DPIUtility.SETTINGS_DIALOG_SIZE);
 
+        ImageView graphic = new ImageView(new Image(getClass().getResourceAsStream("icons/settings.png")));
+        graphic.setFitWidth(DPIUtility.SMALL_ICON_SIZE);
+        graphic.setFitHeight(DPIUtility.SMALL_ICON_SIZE);
+
         setTitle("Settings");
         setHeaderText("Settings");
-        setGraphic(new ImageView(new Image(getClass().getResourceAsStream("icons/settings.png"))));
+        setGraphic(graphic);
         setResizable(true);
     }
 }

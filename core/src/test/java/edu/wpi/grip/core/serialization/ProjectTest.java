@@ -13,7 +13,6 @@ import edu.wpi.grip.core.events.SourceAddedEvent;
 import edu.wpi.grip.core.operations.PythonScriptOperation;
 import edu.wpi.grip.core.sources.ImageFileSource;
 import edu.wpi.grip.util.Files;
-import junit.framework.Assert;
 import org.junit.Before;
 import org.junit.Test;
 

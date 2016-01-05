@@ -1,6 +1,5 @@
 package edu.wpi.grip.ui.pipeline.input;
 
-import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import com.google.inject.assistedinject.Assisted;
 import edu.wpi.grip.core.InputSocket;
