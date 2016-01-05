@@ -97,9 +97,19 @@
                 </MenuItem>
             </Menu>
             <Menu text="Tools">
-                <MenuItem text="Deploy FRC" onAction="#deployFRC">
+                <MenuItem text="FRC Deploy" onAction="#deployFRC">
                     <graphic>
-                        <Glyph fontFamily="FontAwesome" icon="UPLOAD" style="-fx-text-fill: black;"/>
+                        <ImageView styleClass="menu-graphic">
+                            <fitWidth>
+                                <DPIUtility fx:constant="SMALL_ICON_SIZE"/>
+                            </fitWidth>
+                            <fitHeight>
+                                <DPIUtility fx:constant="SMALL_ICON_SIZE"/>
+                            </fitHeight>
+                            <image>
+                                <Image url="@icons/first.png"/>
+                            </image>
+                        </ImageView>
                     </graphic>
                 </MenuItem>
                 <MenuItem text="Settings" onAction="#showProjectSettingsEditor">
