@@ -13,6 +13,7 @@ import javafx.scene.control.Dialog;
 import javafx.scene.control.SplitPane;
 import javafx.scene.layout.Region;
 import javafx.stage.FileChooser;
+import javafx.stage.FileChooser.ExtensionFilter;
 
 import javax.inject.Inject;
 import java.io.File;
@@ -149,6 +150,7 @@ public class MainWindowController {
     public boolean saveProjectAs() throws IOException {
         final FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Save Project As");
+        fileChooser.getExtensionFilters().add(new ExtensionFilter("GRIP File", "*.grip"));
 
         project.getFile().ifPresent(file -> fileChooser.setInitialDirectory(file.getParentFile()));
 
@@ -184,4 +186,3 @@ public class MainWindowController {
 
     }
 }
-
