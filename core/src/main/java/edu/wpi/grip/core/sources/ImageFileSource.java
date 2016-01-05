@@ -33,10 +33,9 @@ public final class ImageFileSource extends Source {
 
     private final String name;
     private final String path;
-    private final SocketHint<Mat> imageOutputHint = SocketHints.Inputs.createMatSocketHint("Image", true);
+    private final SocketHint<Mat> imageOutputHint = SocketHints.Outputs.createMatSocketHint("Image");
     private final OutputSocket<Mat> outputSocket;
     private final EventBus eventBus;
-    private boolean loaded = false;
 
     public interface Factory {
         ImageFileSource create(File file);
@@ -85,7 +84,6 @@ public final class ImageFileSource extends Source {
     @Override
     public void initialize() throws IOException {
         this.loadImage(path);
-        this.loaded = true;
     }
 
 
@@ -96,9 +94,6 @@ public final class ImageFileSource extends Source {
 
     @Override
     public OutputSocket[] createOutputSockets() {
-        if (!loaded) {
-            throw new IllegalStateException("The images were never loaded from the filesystem. Must call `loadImage` first.");
-        }
         return new OutputSocket[]{this.outputSocket};
     }
 
