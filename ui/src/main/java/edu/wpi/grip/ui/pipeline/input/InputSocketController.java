@@ -64,7 +64,7 @@ public class InputSocketController<T> implements Controller {
     @FXML
     public void initialize() {
         this.identifier.setText(this.socket.getSocketHint().getIdentifier());
-        if (!(this.socket.getSocketHint().getType().getSimpleName().contains("Enum"))) {
+        if (!(this.socket.getSocketHint().getType().isEnum())) {
             this.type.setText(this.socket.getSocketHint().getType().getSimpleName());
         }
         this.handle = socketHandleViewFactory.create(this.socket);
