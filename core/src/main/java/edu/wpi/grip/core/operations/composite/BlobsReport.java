@@ -5,7 +5,6 @@ import com.google.common.base.MoreObjects;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static org.bytedeco.javacpp.opencv_core.Mat;
 
@@ -35,21 +34,20 @@ public class BlobsReport {
         }
     }
 
-    @Override
-    public String toString() {
-        return this.blobs.stream().map(Blob::toString).collect(Collectors.joining("\n"));
+    /**
+     * Create an empty blob report.  This is used as the default value for sockets
+     */
+    public BlobsReport() {
+        this(new Mat(), Collections.emptyList());
     }
 
-    public void setBlobs(List<Blob> blobs) {
+    public BlobsReport(Mat input, List<Blob> blobs) {
+        this.input = input;
         this.blobs = blobs;
     }
 
     public List<Blob> getBlobs() {
         return Collections.unmodifiableList(this.blobs);
-    }
-
-    public void setInput(Mat input) {
-        this.input = input;
     }
 
     /**
@@ -58,4 +56,10 @@ public class BlobsReport {
     public Mat getInput() {
         return this.input;
     }
+
+    @Override
+    public String toString() {
+        return blobs.toString();
+    }
+
 }

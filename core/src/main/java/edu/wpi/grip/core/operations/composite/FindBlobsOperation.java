@@ -64,14 +64,6 @@ public class FindBlobsOperation implements Operation {
         final List<Number> circularity = (List<Number>) inputs[2].getValue().get();
         final Boolean darkBlobs = (Boolean) inputs[3].getValue().get();
 
-        final OutputSocket<BlobsReport> blobsReportSocket = (OutputSocket<BlobsReport>) outputs[0];
-        final BlobsReport blobsReport = blobsReportSocket.getValue().get();
-
-        final List<BlobsReport.Blob> blobs = new ArrayList<>();
-
-        blobsReport.setInput(input);
-        blobsReport.setBlobs(blobs);
-
 
         final SimpleBlobDetector blobDetector = SimpleBlobDetector.create(new SimpleBlobDetector.Params()
                 .filterByArea(true)
@@ -89,11 +81,12 @@ public class FindBlobsOperation implements Operation {
         final KeyPointVector keyPointVector = new KeyPointVector();
         blobDetector.detect(input, keyPointVector);
 
+        final List<BlobsReport.Blob> blobs = new ArrayList<>();
         for (int i = 0; i < keyPointVector.size(); i++) {
             final KeyPoint keyPoint = keyPointVector.get(i);
             blobs.add(new BlobsReport.Blob(keyPoint.pt().x(), keyPoint.pt().y(), keyPoint.size()));
         }
 
-        blobsReportSocket.setValue(blobsReport);
+        ((OutputSocket<BlobsReport>) outputs[0]).setValue(new BlobsReport(input, blobs));
     }
 }
