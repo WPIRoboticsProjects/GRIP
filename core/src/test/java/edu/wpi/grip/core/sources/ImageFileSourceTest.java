@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -60,10 +61,13 @@ public class ImageFileSourceTest {
         fail("initialize() should have thrown an IOException");
     }
 
-    @Test(expected = IllegalStateException.class)
-    public void testNotCallingLoadThrowsIllegalState() {
+    @Test
+    public void testCallingInitializeAfterGetOutputSocketUpdatesOutputSocket() throws IOException {
         final ImageFileSource source = new ImageFileSource(eventBus, origin -> null, this.imageFile.file);
         // Calling this before loading the image should throw an exception
-        source.getOutputSockets();
+        final OutputSocket<Mat> imageSource = source.getOutputSockets()[0];
+        assertTrue("The value should not be present if the source hasn't been initialized", imageSource.getValue().get().empty());
+        source.initialize();
+        assertFalse("The value should now be present since the source has been initialized", imageSource.getValue().get().empty());
     }
 }
