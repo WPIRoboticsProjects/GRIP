@@ -19,6 +19,7 @@ allprojects {
     apply plugin: 'java'
     apply plugin: 'application'
     apply plugin: 'jacoco'
+    apply plugin: 'checkstyle'
 
 
     repositories {
@@ -28,9 +29,13 @@ allprojects {
     jacoco {
         toolVersion = "0.7.5.201505241946"
     }
-
+    checkstyle {
+        configFile = file("${project.rootDir}/google_checks.xml")
+        reportsDir = file("${project.rootDir}/build/reports/checkstyle/")
+    }
 
     dependencies {
+        compile checkstyle('com.puppycrawl.tools:checkstyle:6.14')
         testCompile group: 'net.jodah', name: 'concurrentunit', version: '0.4.2'
         testCompile group: 'org.hamcrest', name: 'hamcrest-all', version: '1.3'
         testCompile group: 'junit', name: 'junit', version: '4.12'
