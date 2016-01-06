@@ -32,5 +32,6 @@ public final class Operations {
         eventBus.post(new OperationAddedEvent(new NewSizeOperation()));
         eventBus.post(new OperationAddedEvent(new MatFieldAccessor()));
         eventBus.post(new OperationAddedEvent(new NTPublishOperation<>(ContoursReport.class)));
+        eventBus.post(new OperationAddedEvent(new NTPublishOperation<>(BlobsReport.class)));
     }
 }

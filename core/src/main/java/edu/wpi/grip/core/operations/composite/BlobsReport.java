@@ -1,6 +1,8 @@
 package edu.wpi.grip.core.operations.composite;
 
 import com.google.common.base.MoreObjects;
+import edu.wpi.grip.core.operations.networktables.NTPublishable;
+import edu.wpi.grip.core.operations.networktables.NTValue;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -11,7 +13,7 @@ import static org.bytedeco.javacpp.opencv_core.Mat;
 /**
  * This class is used as the output of operations that detect blobs in an image
  */
-public class BlobsReport {
+public class BlobsReport implements NTPublishable {
     private Mat input = new Mat();
     private List<Blob> blobs = new ArrayList<>();
 
@@ -55,6 +57,33 @@ public class BlobsReport {
      */
     public Mat getInput() {
         return this.input;
+    }
+
+    @NTValue(key = "x")
+    public double[] getX() {
+        final double[] x = new double[blobs.size()];
+        for (int i = 0; i < blobs.size(); i++) {
+            x[i] = blobs.get(i).x;
+        }
+        return x;
+    }
+
+    @NTValue(key = "y")
+    public double[] getY() {
+        final double[] y = new double[blobs.size()];
+        for (int i = 0; i < blobs.size(); i++) {
+            y[i] = blobs.get(i).y;
+        }
+        return y;
+    }
+
+    @NTValue(key = "size")
+    public double[] getSize() {
+        final double[] sizes = new double[blobs.size()];
+        for (int i = 0; i < blobs.size(); i++) {
+            sizes[i] = blobs.get(i).size;
+        }
+        return sizes;
     }
 
     @Override
