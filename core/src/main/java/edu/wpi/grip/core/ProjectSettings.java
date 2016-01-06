@@ -23,6 +23,7 @@ public class ProjectSettings implements Cloneable {
 
     private NetworkProtocol networkProtocol = NetworkProtocol.NETWORK_TABLES;
     private int teamNumber = 0;
+    private String networkTablesServer = "";
 
     public void setNetworkProtocol(NetworkProtocol networkProtocol) {
         this.networkProtocol = checkNotNull(networkProtocol, "Network protocol cannot be null");
@@ -39,6 +40,26 @@ public class ProjectSettings implements Cloneable {
 
     public int getTeamNumber() {
         return teamNumber;
+    }
+
+    public void setNetworkTablesServer(String networkTablesServer) {
+        this.networkTablesServer = networkTablesServer;
+    }
+
+    public String getNetworkTablesServer() {
+        return networkTablesServer;
+    }
+
+    /**
+     * @return The address of the machine that the NetworkTables server is running on.  If
+     * {@link #setNetworkTablesServer} is specified, that is returned, otherwise this is based on the team number.
+     */
+    public String computeNetworkTablesServer() {
+        if (networkTablesServer.isEmpty()) {
+            return "roboio-" + teamNumber + "-frc.local";
+        } else {
+            return networkTablesServer;
+        }
     }
 
     @Override
