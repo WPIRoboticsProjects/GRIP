@@ -1,6 +1,7 @@
 package edu.wpi.grip.core.operations.composite;
 
 import com.google.common.base.MoreObjects;
+import edu.wpi.grip.core.NoSocketTypeLabel;
 import edu.wpi.grip.core.operations.networktables.NTPublishable;
 import edu.wpi.grip.core.operations.networktables.NTValue;
 
@@ -12,6 +13,7 @@ import static org.bytedeco.javacpp.opencv_core.Mat;
 /**
  * This class is used as the output of operations that detect blobs in an image
  */
+@NoSocketTypeLabel
 public class BlobsReport implements NTPublishable {
     private final Mat input;
     private final List<Blob> blobs;
