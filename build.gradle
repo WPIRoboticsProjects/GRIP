@@ -113,6 +113,7 @@ project(":core") {
         compile group: 'com.google.inject', name: 'guice', version: '4.0', classifier: 'no_aop'
         compile group: 'com.google.inject.extensions', name: 'guice-assistedinject', version: '4.0'
         compile group: 'edu.wpi.first.wpilib.networktables.java', name: 'NetworkTables', version: '3.0.0-SNAPSHOT', classifier: 'desktop'
+        compile group: 'edu.wpi.first.wpilib.networktables.java', name: 'NetworkTables', version: '3.0.0-SNAPSHOT', classifier: 'arm'
     }
 
     mainClassName = 'edu.wpi.grip.core.Main'
