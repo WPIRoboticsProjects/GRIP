@@ -161,7 +161,11 @@ public class CameraSource extends Source implements StartStoppable {
 
     @Override
     public OutputSocket[] createOutputSockets() {
-        return new OutputSocket[]{frameOutputSocket, frameRateOutputSocket};
+        final OutputSocket<?>[] outputSockets = new OutputSocket[]{frameOutputSocket, frameRateOutputSocket};
+        for (OutputSocket<?> socket : outputSockets) {
+            eventBus.register(socket);
+        }
+        return outputSockets;
     }
 
     @Override

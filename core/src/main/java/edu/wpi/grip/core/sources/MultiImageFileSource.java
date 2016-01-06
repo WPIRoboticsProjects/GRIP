@@ -1,6 +1,5 @@
 package edu.wpi.grip.core.sources;
 
-
 import com.google.common.eventbus.EventBus;
 import com.google.common.math.IntMath;
 import com.google.inject.assistedinject.Assisted;
@@ -22,6 +21,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 import static com.google.common.base.Preconditions.checkElementIndex;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * A Source that supports multiple images. They can be toggled using {@link MultiImageFileSource#next()} and
@@ -34,6 +34,7 @@ public final class MultiImageFileSource extends Source implements PreviousNext {
 
     private final SocketHint<Mat> imageOutputHint = SocketHints.Inputs.createMatSocketHint("Image", true);
     private final OutputSocket<Mat> outputSocket;
+    private final EventBus eventBus;
 
     private final List<String> paths;
     private final AtomicInteger index;
@@ -88,6 +89,7 @@ public final class MultiImageFileSource extends Source implements PreviousNext {
             final String[] paths,
             final int index) {
         super(exceptionWitnessFactory);
+        this.eventBus = checkNotNull(eventBus, "Event Bus was null.");
         this.outputSocket = new OutputSocket(eventBus, imageOutputHint);
         this.index = new AtomicInteger(checkElementIndex(index, paths.length, "File List Index"));
         this.paths = Arrays.asList(paths);
@@ -106,9 +108,11 @@ public final class MultiImageFileSource extends Source implements PreviousNext {
 
     @Override
     protected OutputSocket[] createOutputSockets() {
-        return new OutputSocket[]{
-                outputSocket
-        };
+        final OutputSocket<?>[] outputSockets = new OutputSocket[]{this.outputSocket};
+        for (OutputSocket<?> socket : outputSockets) {
+            eventBus.register(socket);
+        }
+        return outputSockets;
     }
 
     @Override

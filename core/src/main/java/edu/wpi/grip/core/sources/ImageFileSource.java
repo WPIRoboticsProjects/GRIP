@@ -94,7 +94,11 @@ public final class ImageFileSource extends Source {
 
     @Override
     public OutputSocket[] createOutputSockets() {
-        return new OutputSocket[]{this.outputSocket};
+        final OutputSocket<?>[] outputSockets = new OutputSocket[]{this.outputSocket};
+        for (OutputSocket<?> socket : outputSockets) {
+            eventBus.register(socket);
+        }
+        return outputSockets;
     }
 
     @Override
