@@ -6,6 +6,7 @@ import com.google.inject.Singleton;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamOmitField;
 import edu.wpi.grip.core.events.*;
+import edu.wpi.grip.core.operations.networktables.NTManager;
 
 import javax.inject.Inject;
 import java.util.*;
@@ -28,6 +29,10 @@ public class Pipeline {
     @Inject
     @XStreamOmitField
     private EventBus eventBus;
+
+    @Inject
+    @XStreamOmitField
+    private NTManager ntManager;
 
     private final List<Source> sources = new ArrayList<>();
     private final List<Step> steps = new ArrayList<>();

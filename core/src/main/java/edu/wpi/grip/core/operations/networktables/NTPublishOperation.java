@@ -2,11 +2,9 @@ package edu.wpi.grip.core.operations.networktables;
 
 import com.google.common.base.Throwables;
 import com.google.common.eventbus.EventBus;
-import com.google.common.eventbus.Subscribe;
 import edu.wpi.first.wpilibj.networktables.NetworkTable;
 import edu.wpi.first.wpilibj.tables.ITable;
 import edu.wpi.grip.core.*;
-import edu.wpi.grip.core.events.ProjectSettingsChangedEvent;
 
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
@@ -25,10 +23,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
  */
 public class NTPublishOperation<T extends NTPublishable> implements Operation {
 
-    static {
-        NetworkTable.setClientMode();
-    }
-
     private final NetworkTable table;
     private final Class<T> type;
     private final List<Method> ntValueMethods = new ArrayList<>();
@@ -46,20 +40,6 @@ public class NTPublishOperation<T extends NTPublishable> implements Operation {
 
                 ntValueMethods.add(method);
             }
-        }
-    }
-
-    /**
-     * Change the server address according to the project setting.
-     */
-    @Subscribe
-    public void updateSettings(ProjectSettingsChangedEvent event) {
-        final ProjectSettings projectSettings = event.getProjectSettings();
-
-        NetworkTable.shutdown();
-        if (projectSettings.getNetworkProtocol() == ProjectSettings.NetworkProtocol.NETWORK_TABLES) {
-            NetworkTable.setIPAddress(projectSettings.computeNetworkTablesServer());
-            NetworkTable.initialize();
         }
     }
 

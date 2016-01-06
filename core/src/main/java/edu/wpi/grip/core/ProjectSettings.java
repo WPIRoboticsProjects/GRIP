@@ -43,7 +43,8 @@ public class ProjectSettings implements Cloneable {
     }
 
     public void setNetworkTablesServer(String networkTablesServer) {
-        this.networkTablesServer = networkTablesServer;
+        this.networkTablesServer =
+                checkNotNull(networkTablesServer, "NetworkTables server cannot be null");
     }
 
     public String getNetworkTablesServer() {
