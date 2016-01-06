@@ -138,6 +138,7 @@ public abstract class Socket<T> {
      * @param connection The connection to add to this socket.
      */
     public void addConnection(Connection connection) {
+        checkNotNull(connection, "Can not remove null connection");
         this.connections.add(connection);
 
         if (this.connections.size() == 1) {
@@ -149,12 +150,20 @@ public abstract class Socket<T> {
      * @param connection The connection to remove from this socket.
      */
     public void removeConnection(Connection connection) {
+        checkNotNull(connection, "Can not remove null connection");
         this.connections.remove(connection);
 
         if (this.connections.isEmpty()) {
             this.eventBus.post(new SocketConnectedChangedEvent(this));
         }
     }
+
+    /**
+     * Reset the socket to its default value when it's no longer connected to anything.  This prevents removed
+     * connections from continuing to have an effect on steps because they still hold references to the values they
+     * were connected to.
+     */
+    public void onDisconnected() {}
 
     @Override
     public String toString() {

@@ -48,9 +48,9 @@ public class Connection<T> {
     @Subscribe
     public void onConnectionAdded(ConnectionAddedEvent event) {
         if (event.getConnection().equals(this)) {
-            inputSocket.setValueOptional(outputSocket.getValue());
             inputSocket.addConnection(this);
             outputSocket.addConnection(this);
+            inputSocket.setValueOptional(outputSocket.getValue());
         }
     }
 
@@ -62,18 +62,26 @@ public class Connection<T> {
     }
 
     @Subscribe
+    public void onConnectionRemoved(ConnectionRemovedEvent e) {
+        if (e.getConnection() == this) {
+            inputSocket.removeConnection(this);
+            outputSocket.removeConnection(this);
+        }
+    }
+
+    @Subscribe
     public void removeConnection(StepRemovedEvent e) {
         // Remove this connection if one of the steps it was connected to was removed
         for (Socket socket : e.getStep().getOutputSockets()) {
             if (socket == this.inputSocket || socket == this.outputSocket) {
-                socket.removeConnection(this);
+                this.eventBus.post(new ConnectionRemovedEvent(this));
                 return;
             }
         }
 
         for (Socket socket : e.getStep().getInputSockets()) {
             if (socket == this.inputSocket || socket == this.outputSocket) {
-                socket.removeConnection(this);
+                this.eventBus.post(new ConnectionRemovedEvent(this));
                 return;
             }
         }

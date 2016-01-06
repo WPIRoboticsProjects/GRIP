@@ -34,7 +34,6 @@ public final class MultiImageFileSource extends Source implements PreviousNext {
 
     private final SocketHint<Mat> imageOutputHint = SocketHints.Inputs.createMatSocketHint("Image", true);
     private final OutputSocket<Mat> outputSocket;
-    private final EventBus eventBus;
 
     private final List<String> paths;
     private final AtomicInteger index;
@@ -89,7 +88,6 @@ public final class MultiImageFileSource extends Source implements PreviousNext {
             final String[] paths,
             final int index) {
         super(exceptionWitnessFactory);
-        this.eventBus = checkNotNull(eventBus, "Event Bus was null.");
         this.outputSocket = new OutputSocket(eventBus, imageOutputHint);
         this.index = new AtomicInteger(checkElementIndex(index, paths.length, "File List Index"));
         this.paths = Arrays.asList(paths);

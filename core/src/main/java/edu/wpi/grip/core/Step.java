@@ -46,15 +46,7 @@ public class Step {
             checkNotNull(operation, "The operation can not be null");
             // Create the list of input and output sockets, and mark this step as their owner.
             final InputSocket<?>[] inputSockets = operation.createInputSockets(eventBus);
-
-            for (Socket<?> socket : inputSockets) {
-                eventBus.register(socket);
-            }
-
             final OutputSocket<?>[] outputSockets = operation.createOutputSockets(eventBus);
-            for (Socket<?> socket : outputSockets) {
-                eventBus.register(socket);
-            }
 
             final Step step = new Step(
                     operation,
