@@ -239,7 +239,9 @@ public class ProjectTest {
 
         serializeAndDeserialize();
 
-        assertEquals(190, pipeline.getProjectSettings().getTeamNumber());
-        assertEquals(ProjectSettings.NetworkProtocol.NETWORK_TABLES, pipeline.getProjectSettings().getNetworkProtocol());
+        assertEquals("Team number was not serialized/deserialized",
+                190, pipeline.getProjectSettings().getTeamNumber());
+        assertEquals("Network protocol was not serialized/deserialized",
+                ProjectSettings.NetworkProtocol.NETWORK_TABLES, pipeline.getProjectSettings().getNetworkProtocol());
     }
 }

@@ -72,6 +72,7 @@ public class ProjectSettings implements Cloneable {
     }
 
     @Override
+    @SuppressWarnings("PMD.CloneThrowsCloneNotSupportedException")
     public ProjectSettings clone() {
         try {
             return (ProjectSettings) super.clone();

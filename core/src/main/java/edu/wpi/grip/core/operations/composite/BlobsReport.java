@@ -4,7 +4,6 @@ import com.google.common.base.MoreObjects;
 import edu.wpi.grip.core.operations.networktables.NTPublishable;
 import edu.wpi.grip.core.operations.networktables.NTValue;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -14,8 +13,8 @@ import static org.bytedeco.javacpp.opencv_core.Mat;
  * This class is used as the output of operations that detect blobs in an image
  */
 public class BlobsReport implements NTPublishable {
-    private Mat input = new Mat();
-    private List<Blob> blobs = new ArrayList<>();
+    private final Mat input;
+    private final List<Blob> blobs;
 
     public static class Blob {
         public final double x, y, size;
