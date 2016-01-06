@@ -191,6 +191,8 @@ public class MainWindowController {
     public void deployFRC() {
         if (project.getFile().isPresent()) {
             final DeployerController deployerController = deployerControllerFactoy.create();
+            deployerController.getRoot().getStylesheets().addAll(root.getStylesheets());
+            deployerController.getRoot().setStyle(root.getStyle());
             final Dialog<ButtonType> dialog = new Dialog();
             dialog.setDialogPane(deployerController.getRoot());
             dialog.setResizable(true);
@@ -198,6 +200,9 @@ public class MainWindowController {
         } else {
             final Alert alert = new Alert(Alert.AlertType.INFORMATION,
                     "You must have saved your project before it can be deployed to a remote device.");
+            alert.setResizable(true);
+            alert.getDialogPane().getStylesheets().addAll(root.getStylesheets());
+            alert.getDialogPane().setStyle(root.getStyle());
             alert.showAndWait();
         }
 
