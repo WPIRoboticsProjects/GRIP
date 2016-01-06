@@ -108,11 +108,7 @@ public final class MultiImageFileSource extends Source implements PreviousNext {
 
     @Override
     protected OutputSocket[] createOutputSockets() {
-        final OutputSocket<?>[] outputSockets = new OutputSocket[]{this.outputSocket};
-        for (OutputSocket<?> socket : outputSockets) {
-            eventBus.register(socket);
-        }
-        return outputSockets;
+        return new OutputSocket[]{outputSocket};
     }
 
     @Override

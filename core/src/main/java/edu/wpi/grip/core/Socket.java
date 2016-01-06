@@ -134,26 +134,25 @@ public abstract class Socket<T> {
         return ImmutableSet.copyOf(this.connections);
     }
 
+    /**
+     * @param connection The connection to add to this socket.
+     */
+    public void addConnection(Connection connection) {
+        this.connections.add(connection);
 
-    @Subscribe
-    public void onConnectionAdded(ConnectionAddedEvent event) {
-        if (event.getConnection().getInputSocket() == this || event.getConnection().getOutputSocket() == this) {
-            this.connections.add(event.getConnection());
-
-            if (this.connections.size() == 1) {
-                this.eventBus.post(new SocketConnectedChangedEvent(this));
-            }
+        if (this.connections.size() == 1) {
+            this.eventBus.post(new SocketConnectedChangedEvent(this));
         }
     }
 
-    @Subscribe
-    public void onConnectionRemoved(ConnectionRemovedEvent event) {
-        if (event.getConnection().getInputSocket() == this || event.getConnection().getOutputSocket() == this) {
-            this.connections.remove(event.getConnection());
+    /**
+     * @param connection The connection to remove from this socket.
+     */
+    public void removeConnection(Connection connection) {
+        this.connections.remove(connection);
 
-            if (this.connections.isEmpty()) {
-                this.eventBus.post(new SocketConnectedChangedEvent(this));
-            }
+        if (this.connections.isEmpty()) {
+            this.eventBus.post(new SocketConnectedChangedEvent(this));
         }
     }
 
