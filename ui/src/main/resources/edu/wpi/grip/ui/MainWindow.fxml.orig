@@ -96,22 +96,13 @@
                     </accelerator>
                 </MenuItem>
             </Menu>
-            <Menu text="Tools">
-                <MenuItem text="FRC Deploy" onAction="#deployFRC">
+<<<<<<< HEAD
+            <Menu text="Deploy">
+                <MenuItem text="FRC" onAction="#deployFRC">
                     <graphic>
-                        <ImageView styleClass="menu-graphic">
-                            <fitWidth>
-                                <DPIUtility fx:constant="SMALL_ICON_SIZE"/>
-                            </fitWidth>
-                            <fitHeight>
-                                <DPIUtility fx:constant="SMALL_ICON_SIZE"/>
-                            </fitHeight>
-                            <image>
-                                <Image url="@icons/first.png"/>
-                            </image>
-                        </ImageView>
-                    </graphic>
-                </MenuItem>
+                        <Glyph fontFamily="FontAwesome" icon="UPLOAD" style="-fx-text-fill: black;"/>
+=======
+            <Menu text="Tools">
                 <MenuItem text="Settings" onAction="#showProjectSettingsEditor">
                     <graphic>
                         <ImageView styleClass="menu-graphic">
@@ -125,6 +116,7 @@
                                 <Image url="@icons/settings.png"/>
                             </image>
                         </ImageView>
+>>>>>>> ebf1ecf... NetworkTables
                     </graphic>
                 </MenuItem>
             </Menu>
