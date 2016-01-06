@@ -2,25 +2,26 @@ package edu.wpi.grip.core.serialization;
 
 import com.google.common.eventbus.EventBus;
 import com.thoughtworks.xstream.converters.UnmarshallingContext;
-import com.thoughtworks.xstream.converters.javabean.JavaBeanConverter;
+import com.thoughtworks.xstream.converters.reflection.ReflectionConverter;
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;
-import com.thoughtworks.xstream.mapper.Mapper;
 import edu.wpi.grip.core.ProjectSettings;
 import edu.wpi.grip.core.events.ProjectSettingsChangedEvent;
+
+import javax.inject.Inject;
 
 /**
  * XStream converter for {@link ProjectSettings}.
  * <p>
- * Settings are serialized using XStream's built-in JavaBean serialization. The only catch is that a
+ * Settings are serialized using XStream's built-in reflection serialization. The only catch is that a
  * {@link ProjectSettingsChangedEvent} must be posted after new settings are loaded.
  */
-public class ProjectSettingsConverter extends JavaBeanConverter {
+public class ProjectSettingsConverter extends ReflectionConverter {
 
-    private final EventBus eventBus;
+    @Inject private EventBus eventBus;
 
-    public ProjectSettingsConverter(Mapper mapper, EventBus eventBus) {
-        super(mapper, ProjectSettings.class);
-        this.eventBus = eventBus;
+    @Inject
+    public ProjectSettingsConverter(Project project) {
+        super(project.xstream.getMapper(), project.xstream.getReflectionProvider(), ProjectSettings.class);
     }
 
     @Override
