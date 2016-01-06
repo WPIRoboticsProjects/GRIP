@@ -3,11 +3,13 @@ package edu.wpi.grip.core;
 import com.google.common.base.MoreObjects;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.function.Supplier;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static org.bytedeco.javacpp.opencv_core.Mat;
 
 /**
  * A <code>SocketHint</code> is a descriptor that gives some information about one of the inputs or outputs of an
@@ -54,6 +56,22 @@ public class SocketHint<T> {
 
     public Optional<T[]> getDomain() {
         return domain;
+    }
+
+    /**
+     * @return A user-presentable string to represent the type of this socket.  This may be empty.
+     */
+    public String getTypeLabel() {
+        if (type.getAnnotation(NoSocketTypeLabel.class) != null || type.isEnum() || type.equals(List.class)) {
+            // Enums labels are kind of redundant, and Lists actually represent ranges
+            return "";
+        } else if (Mat.class.equals(type)) {
+            // "Mats" represent images
+            return "Image";
+        } else {
+            // For any other type, just use the name of the class
+            return type.getSimpleName();
+        }
     }
 
     public Optional<T> createInitialValue() {
