@@ -61,7 +61,6 @@ public interface Operation {
         perform(inputs, outputs);
     }
 
-    @Deprecated
     default void perform(InputSocket<?>[] inputs, OutputSocket<?>[] outputs) {
         throw new UnsupportedOperationException("Perform was not overridden");
     }
