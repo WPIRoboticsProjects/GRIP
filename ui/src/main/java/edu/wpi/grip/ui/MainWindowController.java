@@ -115,7 +115,7 @@ public class MainWindowController {
             fileChooser.setTitle("Open Project");
             fileChooser.getExtensionFilters().addAll(
                 new ExtensionFilter("GRIP File", "*.grip"),
-                new ExtensionFilter("All Files", "*.*"));
+                new ExtensionFilter("All Files", "*", "*.*"));
 
             project.getFile().ifPresent(file -> fileChooser.setInitialDirectory(file.getParentFile()));
 
