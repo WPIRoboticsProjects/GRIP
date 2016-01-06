@@ -62,8 +62,6 @@ public class FindContoursOperation implements Operation {
         final Mat input = ((InputSocket<Mat>) inputs[0]).getValue().get();
         final Mat tmp = ((Optional<Mat>) data).get();
         final boolean externalOnly = ((InputSocket<Boolean>) inputs[1]).getValue().get();
-        final OutputSocket<ContoursReport> contoursSocket = (OutputSocket<ContoursReport>) outputs[0];
-        final ContoursReport contours = contoursSocket.getValue().get();
 
         if (input.empty()) {
             return;
@@ -75,11 +73,11 @@ public class FindContoursOperation implements Operation {
         // OpenCV has a few different things it can return from findContours, but for now we only use EXTERNAL and LIST.
         // The other ones involve hierarchies of contours, which might be useful in some situations, but probably only
         // when processing the contours manually in code (so, not in a graphical pipeline).
-        findContours(tmp, contours.getContours(), externalOnly ? CV_RETR_EXTERNAL : CV_RETR_LIST,
+        MatVector contours = new MatVector();
+        findContours(tmp, contours, externalOnly ? CV_RETR_EXTERNAL : CV_RETR_LIST,
                 CV_CHAIN_APPROX_TC89_KCOS);
 
-        contours.setRows(input.rows());
-        contours.setCols(input.cols());
-        contoursSocket.setValue(contours);
+        final OutputSocket<ContoursReport> contoursSocket = (OutputSocket<ContoursReport>) outputs[0];
+        contoursSocket.setValue(new ContoursReport(contours, input.rows(), input.cols()));
     }
 }
