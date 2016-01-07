@@ -22,8 +22,12 @@ public class InputSocket<T> extends Socket<T> {
         super(eventBus, socketHint, Direction.INPUT);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public void onDisconnected() {
+    protected void onDisconnected() {
+        super.onDisconnected();
         if (this.getConnections().isEmpty()) {
             this.setValue(this.getSocketHint().createInitialValue().orElse(null));
         }

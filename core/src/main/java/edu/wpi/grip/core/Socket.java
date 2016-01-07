@@ -13,7 +13,6 @@ import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 
-import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 
 /**
@@ -151,6 +150,7 @@ public abstract class Socket<T> {
      */
     public void removeConnection(Connection connection) {
         checkNotNull(connection, "Can not remove null connection");
+        onDisconnected();
         this.connections.remove(connection);
 
         if (this.connections.isEmpty()) {
@@ -163,7 +163,7 @@ public abstract class Socket<T> {
      * connections from continuing to have an effect on steps because they still hold references to the values they
      * were connected to.
      */
-    public void onDisconnected() {}
+    protected void onDisconnected() {}
 
     @Override
     public String toString() {
