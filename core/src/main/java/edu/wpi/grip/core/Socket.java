@@ -14,6 +14,7 @@ import java.util.Optional;
 import java.util.Set;
 
 import static com.google.common.base.Preconditions.checkState;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * A Socket is an abstract wrapper for a value that can be updated and passed around operations.  Sockets contain a set of hints
