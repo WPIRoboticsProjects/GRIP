@@ -3,6 +3,7 @@ package edu.wpi.grip.ui.pipeline;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.eventbus.EventBus;
 import com.google.inject.Inject;
+import com.google.common.net.InetAddresses;
 import edu.wpi.grip.core.events.SourceAddedEvent;
 import edu.wpi.grip.core.events.UnexpectedThrowableEvent;
 import edu.wpi.grip.core.sources.CameraSource;
@@ -170,7 +171,13 @@ public class AddSourceView extends HBox {
 
                 try {
                     new URL(cameraAddress.getText()).toURI();
-                } catch (MalformedURLException | URISyntaxException e) {
+                } catch (MalformedURLException e) {
+                    validURL = false;
+                    if (InetAddresses.isInetAddress(cameraAddress.getText()) || cameraAddress.getText().endsWith(".local")) {
+                        cameraAddress.setText("http://" + cameraAddress.getText());
+                        validURL = true;
+                    }
+                } catch (URISyntaxException e) {
                     validURL = false;
                 }
 

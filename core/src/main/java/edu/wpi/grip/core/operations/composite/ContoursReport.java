@@ -1,5 +1,6 @@
 package edu.wpi.grip.core.operations.composite;
 
+import edu.wpi.grip.core.NoSocketTypeLabel;
 import edu.wpi.grip.core.operations.networktables.NTPublishable;
 import edu.wpi.grip.core.operations.networktables.NTValue;
 
@@ -15,6 +16,7 @@ import static org.bytedeco.javacpp.opencv_imgproc.contourArea;
  * OpenCV objects, as well as the width and height of the image that the contours are from, to give context to the
  * points.
  */
+@NoSocketTypeLabel
 public final class ContoursReport implements NTPublishable {
     private final int rows, cols;
     private final MatVector contours;

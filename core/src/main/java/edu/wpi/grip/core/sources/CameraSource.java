@@ -21,7 +21,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Optional;
 import java.util.Properties;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -185,61 +184,73 @@ public class CameraSource extends Source implements StartStoppable {
                 throw new IllegalStateException("The video retrieval thread has already been started.");
             }
             try {
-                grabber.start();
+                // If the thread shutdown because of an exception the grabber may still be running
+                // This will allow us to make sure that everything is cleaned up correctly.
+                grabber.restart();
             } catch (FrameGrabber.Exception e) {
                 throw new IOException("A problem occurred trying to start the frame grabber for " + this.name, e);
             }
 
             final Thread frameExecutor = new Thread(() -> {
-                long lastFrame = System.nanoTime();
-                while (!Thread.interrupted()) {
-                    final Frame videoFrame;
-                    try {
-                        videoFrame = grabber.grab();
-                    } catch (FrameGrabber.Exception e) {
-                        throw new IllegalStateException("Failed to grab image", e);
+                try {
+                    long lastFrame = System.nanoTime();
+                    while (!Thread.currentThread().isInterrupted()) {
+                        final Frame videoFrame;
+                        try {
+                            videoFrame = grabber.grab();
+                        } catch (FrameGrabber.Exception e) {
+                            throw new IllegalStateException("Failed to grab image", e);
+                        }
+
+                        final Mat frameMat = convertToMat.convert(videoFrame);
+
+                        if (frameMat == null || frameMat.isNull()) {
+                            getExceptionWitness().flagWarning("The camera returned a null frame Mat");
+                            continue; // Do not update the camera frame.
+                        }
+
+                        frameMat.copyTo(frameOutputSocket.getValue().get());
+                        frameOutputSocket.setValue(frameOutputSocket.getValue().get());
+
+                        final long thisMoment = System.nanoTime();
+                        final long elapsedTime = thisMoment - lastFrame;
+                        if (elapsedTime != 0) frameRateOutputSocket.setValue(1e9 / elapsedTime);
+                        lastFrame = thisMoment;
+                        getExceptionWitness().clearException();
                     }
-
-                    final Mat frameMat = convertToMat.convert(videoFrame);
-
-                    if (frameMat == null || frameMat.isNull()) {
-                        throw new IllegalStateException("The camera returned a null frame Mat");
+                } finally {
+                    // Calling frameGrabber.stop here will deadlock the program.
+                    synchronized (this) {
+                        // This has to be synchronized or both threads could be modifying it at the same time.
+                        this.frameThread = Optional.empty();
                     }
-
-                    frameMat.copyTo(frameOutputSocket.getValue().get());
-                    frameOutputSocket.setValue(frameOutputSocket.getValue().get());
-
-                    /*
-                     *
-                     */
-                    final long thisMoment = System.nanoTime();
-                    final long elapsedTime = thisMoment - lastFrame;
-                    if (elapsedTime != 0) frameRateOutputSocket.setValue(1e9 / elapsedTime);
-                    lastFrame = thisMoment;
-                    getExceptionWitness().clearException();
+                    // If this thread was interrupted than exit without doing this cleanup step
+                    if (!Thread.currentThread().isInterrupted()) {
+                        eventBus.post(new StartedStoppedEvent(this));
+                        frameRateOutputSocket.setValue(0);
+                    }
                 }
             }, "Camera");
 
             frameExecutor.setUncaughtExceptionHandler(
                     (thread, exception) -> {
-                        // TODO: This should use the ExceptionWitness once that has a UI component added for it
-                        eventBus.post(new UnexpectedThrowableEvent(exception, "Camera Frame Grabber Thread crashed with uncaught exception"));
-                        try {
-                            stop();
-                        } catch (TimeoutException | IOException e) {
-                            // TODO: This should use the ExceptionWitness once that has a UI component added for it
-                            eventBus.post(new UnexpectedThrowableEvent(e, "Camera Frame Grabber could not be stopped!"));
-                        } catch (InterruptedException e) {
-                            Thread.currentThread().interrupt();
+                        final String exceptionMessage = this.name + " Frame Grabber Thread crashed with uncaught exception";
+                        // The FrameGrabber also uses an exception class named "Exception" so this is clearer
+                        if (exception instanceof java.lang.Exception) {
+                            getExceptionWitness().flagException((java.lang.Exception) exception, exceptionMessage);
+                        } else {
+                            eventBus.post(new UnexpectedThrowableEvent(exception, exceptionMessage));
                         }
                     }
             );
             frameExecutor.setDaemon(true);
-            frameExecutor.start();
+            // This should happen before start is called in case
+            // the frameThread crashes immediately and removes itself.
             this.frameThread = Optional.of(frameExecutor);
-            // This should only be posted now that it is running
-            eventBus.post(new StartedStoppedEvent(this));
+            frameExecutor.start();
         }
+        // This should only be posted now that it is running
+        eventBus.post(new StartedStoppedEvent(this));
     }
 
     /**
@@ -257,12 +268,17 @@ public class CameraSource extends Source implements StartStoppable {
                 final Thread ex = frameThread.get();
                 ex.interrupt();
                 try {
-                    ex.join(TimeUnit.SECONDS.toMillis(10));
-                    if (ex.isAlive()) {
-                        throw new TimeoutException("Unable to terminate video feed from Web Camera");
+                    for (int i = 0; i < 1000 && ex.isAlive(); i++) {
+                        // We have to wait for the frame thread to be removed.
+                        // This is done in a synchronized block in the finally block
+                        wait(10);
+                        ex.join(10);
                     }
-                    // This should only be removed if the thread is successfully killed off
-                    frameThread = Optional.empty();
+                    // The frame thread should be removed at this point
+                    if (ex.isAlive()) {
+                        throw new TimeoutException("Unable to terminate video feed from " + this.name);
+                    }
+                    // The thread being interrupted should handle its own death by setting the frameThread to empty
                 } catch (InterruptedException e) {
                     Thread.currentThread().interrupt();
                     logger.log(Level.WARNING, e.getMessage(), e);
@@ -273,11 +289,11 @@ public class CameraSource extends Source implements StartStoppable {
                         // Calling this multiple times will have no effect
                         grabber.stop();
                     } catch (FrameGrabber.Exception e) {
-                        throw new IOException("A problem occurred trying to stop the frame grabber", e);
+                        throw new IOException("A problem occurred trying to stop the frame grabber for " + this.name, e);
                     }
                 }
             } else {
-                throw new IllegalStateException("Tried to stop a Webcam that is already stopped.");
+                throw new IllegalStateException("Tried to stop " + this.name + " but it is already stopped.");
             }
         }
         eventBus.post(new StartedStoppedEvent(this));

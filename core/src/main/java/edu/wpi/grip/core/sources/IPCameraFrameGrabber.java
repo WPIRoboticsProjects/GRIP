@@ -44,6 +44,8 @@ import java.util.Map;
 import static org.bytedeco.javacpp.opencv_core.*;
 import static org.bytedeco.javacpp.opencv_imgcodecs.cvDecodeImage;
 
+// This is here because FrameGrabber has an exception called Exception which triggers PMD
+@SuppressWarnings("PMD.AvoidThrowingRawExceptionTypes")
 public class IPCameraFrameGrabber extends FrameGrabber {
 
     /*
@@ -82,7 +84,7 @@ public class IPCameraFrameGrabber extends FrameGrabber {
     }
 
     @Override
-    public void start() {
+    public void start() throws Exception {
 
         try {
             connection = url.openConnection();
@@ -99,22 +101,28 @@ public class IPCameraFrameGrabber extends FrameGrabber {
             }
             input = connection.getInputStream();
         } catch (IOException e) {
-            e.printStackTrace();
+            // Make sure we rethrow the IO exception https://github.com/bytedeco/javacv/pull/300
+            throw new Exception(e.getMessage(), e);
         }
     }
 
     @Override
     public void stop() throws Exception {
-        try {
-            input.close();
-            input = null;
-            connection = null;
-            url = null;
-            if (decoded != null) {
-                cvReleaseImage(decoded);
+        // Our fix. This ensures that restart doesn't null pointer.
+        // https://github.com/bytedeco/javacv/issues/299
+        if(input != null) {
+            try {
+                input.close();
+                input = null;
+                connection = null;
+                // Don't set url to null
+                // https://github.com/bytedeco/javacv/pull/300
+                if (decoded != null) {
+                    cvReleaseImage(decoded);
+                }
+            } catch (IOException e) {
+                throw new Exception(e.getMessage(), e);
             }
-        } catch (IOException e) {
-            throw new Exception(e.getMessage(), e);
         }
     }
 
