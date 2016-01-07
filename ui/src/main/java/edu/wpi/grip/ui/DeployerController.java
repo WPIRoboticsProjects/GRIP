@@ -22,7 +22,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.util.function.Supplier;
-import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 @ParametrizedController(url = "DeployerPane.fxml")
@@ -48,8 +47,7 @@ public class DeployerController {
 
     private final StartStoppableButton.Factory startStopButtonFactory;
     private final DeploymentOptionsControllersFactory optionsControllersFactory;
-    private EventBus eventBus;
-    private final Logger logger = Logger.getLogger(DeployerController.class.getName());
+    private final EventBus eventBus;
 
     private class StreamToTextArea extends OutputStream {
         private final TextArea outputArea;
