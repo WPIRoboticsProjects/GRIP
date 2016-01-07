@@ -21,7 +21,7 @@ public class ProjectSettings implements Cloneable {
         NONE
     }
 
-    private NetworkProtocol networkProtocol = NetworkProtocol.NETWORK_TABLES;
+    private NetworkProtocol networkProtocol = NetworkProtocol.NONE;
     private int teamNumber = 0;
     private String networkTablesServer = "";
 
