@@ -1,6 +1,6 @@
 package edu.wpi.grip.ui;
 
-import edu.wpi.grip.core.ProjectSettings;
+import edu.wpi.grip.core.settings.ProjectSettings;
 import edu.wpi.grip.ui.util.DPIUtility;
 import javafx.scene.Parent;
 import javafx.scene.control.ButtonType;

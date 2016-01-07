@@ -4,7 +4,7 @@ import com.google.common.eventbus.Subscribe;
 import com.google.inject.Singleton;
 import edu.wpi.first.wpilibj.networktables.NetworkTable;
 import edu.wpi.first.wpilibj.networktables.NetworkTablesJNI;
-import edu.wpi.grip.core.ProjectSettings;
+import edu.wpi.grip.core.settings.ProjectSettings;
 import edu.wpi.grip.core.events.ProjectSettingsChangedEvent;
 
 import javax.inject.Inject;
