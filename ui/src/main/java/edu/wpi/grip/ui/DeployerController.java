@@ -12,11 +12,9 @@ import edu.wpi.grip.ui.deployment.DeploymentOptionsControllersFactory;
 import edu.wpi.grip.ui.util.deployment.DeployedInstanceManager;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
-import javafx.scene.control.Accordion;
-import javafx.scene.control.DialogPane;
-import javafx.scene.control.ProgressBar;
-import javafx.scene.control.TextArea;
+import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -122,9 +120,17 @@ public class DeployerController {
                 })
                 .done(deployedManager -> {
                     Platform.runLater(() -> {
-                        controlsBox.getChildren().add(startStopButtonFactory.create(deployedManager));
+                        final Label startStopLabel = new Label("Start / Stop Deployed Instance: ");
+                        startStopLabel.setMaxWidth(Double.MAX_VALUE);
+                        startStopLabel.setMaxHeight(Double.MAX_VALUE);
+                        HBox.setHgrow(startStopLabel, Priority.SOMETIMES);
+                        final StartStoppableButton startStoppableButton = startStopButtonFactory.create(deployedManager);
+                        startStopLabel.setLabelFor(startStoppableButton);
+                        controlsBox.getChildren().addAll(startStopLabel, startStoppableButton);
                         deploymentMethods.setDisable(true);
                         progressIndicator.setProgress(-1);
+                        // Resize window to accommodate the added label
+                        getRoot().getScene().getWindow().sizeToScene();
                     });
                 });
 

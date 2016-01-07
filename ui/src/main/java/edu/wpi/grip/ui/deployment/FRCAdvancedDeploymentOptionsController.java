@@ -2,6 +2,7 @@ package edu.wpi.grip.ui.deployment;
 
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
+import edu.wpi.grip.core.Pipeline;
 import edu.wpi.grip.ui.util.deployment.DeployedInstanceManager;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
@@ -21,6 +22,7 @@ public class FRCAdvancedDeploymentOptionsController extends DeploymentOptionsCon
     private final Supplier<OutputStream> stdOut, stdErr;
 
     private TextField address;
+    private final String projectAddress;
 
     public interface Factory {
         FRCAdvancedDeploymentOptionsController create(
@@ -32,11 +34,13 @@ public class FRCAdvancedDeploymentOptionsController extends DeploymentOptionsCon
 
     @Inject
     FRCAdvancedDeploymentOptionsController(DeployedInstanceManager.Factory deployedInstanceManagerFactor,
+                                           Pipeline pipeline,
                                            @Assisted Consumer<DeployedInstanceManager> onDeployCallback,
                                            @Assisted("stdOut") Supplier<OutputStream> stdOut,
                                            @Assisted("stdErr") Supplier<OutputStream> stdErr) {
         super("FRC Advanced", onDeployCallback);
         this.deployedInstanceManagerFactor = deployedInstanceManagerFactor;
+        this.projectAddress = pipeline.getProjectSettings().computeDeployAddresss();
         this.stdOut = stdOut;
         this.stdErr = stdErr;
 
@@ -45,6 +49,7 @@ public class FRCAdvancedDeploymentOptionsController extends DeploymentOptionsCon
     @Override
     protected void postInit() {
         this.address = new TextField();
+        this.address.setText(projectAddress);
         this.address.setPromptText("roborio-[team number]-frc.local");
 
         this.address.textProperty().addListener((observable, oldValue, newValue) -> {
