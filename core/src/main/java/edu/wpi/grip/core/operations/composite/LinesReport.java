@@ -1,5 +1,7 @@
 package edu.wpi.grip.core.operations.composite;
 
+import edu.wpi.grip.core.NoSocketTypeLabel;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,6 +17,7 @@ import static org.bytedeco.javacpp.opencv_imgproc.createLineSegmentDetector;
  * and line filtering operations) to have a type-safe way of operating on line detection results and not just any
  * random matrix.
  */
+@NoSocketTypeLabel
 public class LinesReport {
     private Mat input = new Mat();
     private List<Line> lines = new ArrayList<>();
