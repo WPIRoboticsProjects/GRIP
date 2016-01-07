@@ -10,6 +10,7 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
 import edu.wpi.grip.core.*;
 import edu.wpi.grip.core.events.SourceRemovedEvent;
 import edu.wpi.grip.core.events.StartedStoppedEvent;
+import edu.wpi.grip.core.events.StopPipelineEvent;
 import edu.wpi.grip.core.events.UnexpectedThrowableEvent;
 import edu.wpi.grip.core.util.ExceptionWitness;
 import org.bytedeco.javacpp.opencv_core.Mat;
@@ -309,6 +310,23 @@ public class CameraSource extends Source implements StartStoppable {
         final Properties properties = new Properties();
         properties.setProperty(DEVICE_NUMBER_PROPERTY, Integer.toString(deviceNumber));
         return properties;
+    }
+
+    /**
+     * This stops the camera when a "StopPipelineEvent" is encountered.
+     * @param event
+     */
+    @Subscribe
+    public synchronized void onStopPipeline(StopPipelineEvent event){
+        try {
+            this.stop();
+        } catch (InterruptedException e) {
+            logger.log(Level.WARNING, e.getMessage(), e);
+        } catch (TimeoutException e) {
+            logger.log(Level.WARNING, e.getMessage(), e);
+        } catch (IOException e) {
+            logger.log(Level.WARNING, e.getMessage(), e);
+        }
     }
 
 }

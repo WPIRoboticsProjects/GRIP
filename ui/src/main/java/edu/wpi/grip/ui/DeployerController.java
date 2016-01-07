@@ -2,7 +2,9 @@ package edu.wpi.grip.ui;
 
 
 import com.google.common.base.Throwables;
+import com.google.common.eventbus.EventBus;
 import com.google.inject.Inject;
+import edu.wpi.grip.core.events.StopPipelineEvent;
 import edu.wpi.grip.ui.annotations.ParametrizedController;
 import edu.wpi.grip.ui.components.StartStoppableButton;
 import edu.wpi.grip.ui.deployment.DeploymentOptionsController;
@@ -20,6 +22,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.util.function.Supplier;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 @ParametrizedController(url = "DeployerPane.fxml")
@@ -45,6 +48,8 @@ public class DeployerController {
 
     private final StartStoppableButton.Factory startStopButtonFactory;
     private final DeploymentOptionsControllersFactory optionsControllersFactory;
+    private EventBus eventBus;
+    private final Logger logger = Logger.getLogger(DeployerController.class.getName());
 
     private class StreamToTextArea extends OutputStream {
         private final TextArea outputArea;
@@ -61,7 +66,7 @@ public class DeployerController {
 
         @Override
         public void write(int i) throws IOException {
-            Platform.runLater(()-> outputArea.appendText(String.valueOf((char) i)));
+            Platform.runLater(() -> outputArea.appendText(String.valueOf((char) i)));
         }
     }
 
@@ -71,9 +76,10 @@ public class DeployerController {
     }
 
     @Inject
-    DeployerController(StartStoppableButton.Factory startStopButtonFactory, DeploymentOptionsControllersFactory optionsControllersFactory) {
+    DeployerController(StartStoppableButton.Factory startStopButtonFactory, DeploymentOptionsControllersFactory optionsControllersFactory, EventBus eventBus) {
         this.startStopButtonFactory = startStopButtonFactory;
         this.optionsControllersFactory = optionsControllersFactory;
+        this.eventBus = eventBus;
     }
 
     @FXML
@@ -93,6 +99,7 @@ public class DeployerController {
 
     /**
      * Calls {@link DeployedInstanceManager#deploy()} and displays the result to the UI.
+     *
      * @param manager The manager to call deploy on
      */
     private void onDeploy(DeployedInstanceManager manager) {
@@ -100,6 +107,9 @@ public class DeployerController {
             progressIndicator.setProgress(0);
             deploymentMethods.setDisable(true);
         });
+
+        eventBus.post(new StopPipelineEvent());
+
         manager.deploy()
                 .fail(throwable -> {
                     Platform.runLater(() -> {
