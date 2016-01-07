@@ -188,3 +188,8 @@ VBox.sockets {
 .error-pop-over .titled-pane > .title > .arrow-button .arrow  {
     -fx-background-color: grey;
 }
+
+.property-sheet .property-pane {
+    -fx-hgap: 4em;
+    -fx-vgap: 1em;
+}

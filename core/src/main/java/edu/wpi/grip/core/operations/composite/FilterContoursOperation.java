@@ -33,13 +33,13 @@ public class FilterContoursOperation implements Operation {
             SocketHints.Inputs.createNumberSpinnerSocketHint("Min Width", 0, 0, Integer.MAX_VALUE);
 
     private final SocketHint<Number> maxWidthHint =
-            SocketHints.Inputs.createNumberSpinnerSocketHint("Max Width", 0, 0, Integer.MAX_VALUE);
+            SocketHints.Inputs.createNumberSpinnerSocketHint("Max Width", 1000, 0, Integer.MAX_VALUE);
 
     private final SocketHint<Number> minHeightHint =
             SocketHints.Inputs.createNumberSpinnerSocketHint("Min Height", 0, 0, Integer.MAX_VALUE);
 
     private final SocketHint<Number> maxHeightHint =
-            SocketHints.Inputs.createNumberSpinnerSocketHint("Max Height", 0, 0, Integer.MAX_VALUE);
+            SocketHints.Inputs.createNumberSpinnerSocketHint("Max Height", 1000, 0, Integer.MAX_VALUE);
 
     @Override
     public String getName() {
@@ -106,9 +106,7 @@ public class FilterContoursOperation implements Operation {
         outputContours.resize(filteredContourCount);
 
         final OutputSocket<ContoursReport> outputSocket = (OutputSocket<ContoursReport>) outputs[0];
-        outputSocket.getValue().get().setRows(inputSocket.getValue().get().getRows());
-        outputSocket.getValue().get().setCols(inputSocket.getValue().get().getCols());
-        outputSocket.getValue().get().setContours(outputContours);
-        outputSocket.setValueOptional(outputSocket.getValue());
+        outputSocket.setValue(new ContoursReport(outputContours,
+                inputSocket.getValue().get().getRows(), inputSocket.getValue().get().getCols()));
     }
 }

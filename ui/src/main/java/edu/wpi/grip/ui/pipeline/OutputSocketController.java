@@ -76,7 +76,7 @@ public class OutputSocketController implements Controller {
 
         // Set the label on the control based on the identifier from the socket hint
         this.identifier.setText(socketHint.getIdentifier());
-        this.type.setText(socketHint.getType().getSimpleName());
+        this.type.setText(this.socket.getSocketHint().getTypeLabel());
     }
 
     public Socket getSocket() {

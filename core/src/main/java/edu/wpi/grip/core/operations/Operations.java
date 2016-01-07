@@ -3,6 +3,7 @@ package edu.wpi.grip.core.operations;
 import com.google.common.eventbus.EventBus;
 import edu.wpi.grip.core.events.OperationAddedEvent;
 import edu.wpi.grip.core.operations.composite.*;
+import edu.wpi.grip.core.operations.networktables.NTPublishOperation;
 import edu.wpi.grip.core.operations.opencv.MatFieldAccessor;
 import edu.wpi.grip.core.operations.opencv.MinMaxLoc;
 import edu.wpi.grip.core.operations.opencv.NewPointOperation;
@@ -30,5 +31,7 @@ public final class Operations {
         eventBus.post(new OperationAddedEvent(new NewPointOperation()));
         eventBus.post(new OperationAddedEvent(new NewSizeOperation()));
         eventBus.post(new OperationAddedEvent(new MatFieldAccessor()));
+        eventBus.post(new OperationAddedEvent(new NTPublishOperation<>(ContoursReport.class)));
+        eventBus.post(new OperationAddedEvent(new NTPublishOperation<>(BlobsReport.class)));
     }
 }
