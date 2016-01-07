@@ -13,8 +13,8 @@ import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 
-import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * A Socket is an abstract wrapper for a value that can be updated and passed around operations.  Sockets contain a set of hints
@@ -134,28 +134,37 @@ public abstract class Socket<T> {
         return ImmutableSet.copyOf(this.connections);
     }
 
+    /**
+     * @param connection The connection to add to this socket.
+     */
+    public void addConnection(Connection connection) {
+        checkNotNull(connection, "Can not remove null connection");
+        this.connections.add(connection);
 
-    @Subscribe
-    public void onConnectionAdded(ConnectionAddedEvent event) {
-        if (event.getConnection().getInputSocket() == this || event.getConnection().getOutputSocket() == this) {
-            this.connections.add(event.getConnection());
-
-            if (this.connections.size() == 1) {
-                this.eventBus.post(new SocketConnectedChangedEvent(this));
-            }
+        if (this.connections.size() == 1) {
+            this.eventBus.post(new SocketConnectedChangedEvent(this));
         }
     }
 
-    @Subscribe
-    public void onConnectionRemoved(ConnectionRemovedEvent event) {
-        if (event.getConnection().getInputSocket() == this || event.getConnection().getOutputSocket() == this) {
-            this.connections.remove(event.getConnection());
+    /**
+     * @param connection The connection to remove from this socket.
+     */
+    public void removeConnection(Connection connection) {
+        checkNotNull(connection, "Can not remove null connection");
+        onDisconnected();
+        this.connections.remove(connection);
 
-            if (this.connections.isEmpty()) {
-                this.eventBus.post(new SocketConnectedChangedEvent(this));
-            }
+        if (this.connections.isEmpty()) {
+            this.eventBus.post(new SocketConnectedChangedEvent(this));
         }
     }
+
+    /**
+     * Reset the socket to its default value when it's no longer connected to anything.  This prevents removed
+     * connections from continuing to have an effect on steps because they still hold references to the values they
+     * were connected to.
+     */
+    protected void onDisconnected() {}
 
     @Override
     public String toString() {

@@ -38,6 +38,8 @@ public class NTManager {
 
     @Inject
     public NTManager(Logger logger) {
+        // We may have another instance of this method lying around
+        NetworkTable.shutdown();
         // Redirect NetworkTables log messages to our own log files.  This gets rid of console spam, and it also lets
         // us grep through NetworkTables messages just like any other messages.
         NetworkTablesJNI.setLogger((level, file, line, msg) -> {
@@ -47,6 +49,7 @@ public class NTManager {
 
         NetworkTable.setClientMode();
     }
+
 
     /**
      * Change the server address according to the project setting.
