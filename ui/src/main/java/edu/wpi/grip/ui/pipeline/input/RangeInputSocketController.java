@@ -60,10 +60,11 @@ public class RangeInputSocketController extends InputSocketController<List<Numbe
 
         // Set the socket values whenever the range changes
         this.slider.lowValueProperty().addListener(o -> {
+            List<Number> value = socket.getValue().get();
+            value.set(0, slider.getLowValue());
+
             // If the high value is also changing simultaneously, don't call setValue() twice
             if (!this.slider.isHighValueChanging()) {
-                List<Number> value = socket.getValue().get();
-                value.set(0, slider.getLowValue());
                 socket.setValue(value);
             }
         });
