@@ -11,6 +11,7 @@ import edu.wpi.grip.core.events.OperationAddedEvent;
 import edu.wpi.grip.core.events.ProjectSettingsChangedEvent;
 import edu.wpi.grip.core.events.SourceAddedEvent;
 import edu.wpi.grip.core.operations.PythonScriptOperation;
+import edu.wpi.grip.core.settings.ProjectSettings;
 import edu.wpi.grip.core.sources.ImageFileSource;
 import edu.wpi.grip.util.Files;
 import org.junit.Before;
