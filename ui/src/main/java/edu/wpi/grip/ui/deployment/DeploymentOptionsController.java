@@ -77,6 +77,7 @@ public abstract class DeploymentOptionsController {
                     });
                 })
                 .done((t) -> {
+                    setErrorText("Success! Waiting for start.");
                     onDeployCallback.accept(t);
                     Platform.runLater(() -> {
                         deploySpinner.setVisible(false);
@@ -89,6 +90,7 @@ public abstract class DeploymentOptionsController {
         Platform.runLater(() -> {
             deployErrorText.setText(text);
             root.requestLayout();
+            root.getScene().getWindow().sizeToScene();
         });
     }
 
@@ -121,7 +123,8 @@ public abstract class DeploymentOptionsController {
                     if (inetAddress.isReachable(1000)) {
                         return inetAddress;
                     } else {
-                        notify("Attempt " + i + "/" + attemptCount + " failed");
+                        // i + 1 so that the attempt counter is zero based.
+                        notify("Attempt " + i + 1 + "/" + attemptCount + " failed");
                     }
                 }
                 throw new IOException("Failed to connect");
