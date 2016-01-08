@@ -27,6 +27,7 @@ import java.net.URISyntaxException;
 import java.net.URLDecoder;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.Optional;
 import java.util.function.Supplier;
 import java.util.logging.Level;
@@ -68,7 +69,7 @@ public class DeployedInstanceManager implements StartStoppable {
             try {
                 final File coreJarInSource = new File(edu.wpi.grip.core.Main.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath());
                 final File newJarInTempDir = new File(new File(System.getProperty("java.io.tmpdir")), DEPLOYED_GRIP_FILE_NAME);
-                Files.copy(coreJarInSource.toPath(), newJarInTempDir.toPath());
+                Files.copy(coreJarInSource.toPath(), newJarInTempDir.toPath(),  StandardCopyOption.REPLACE_EXISTING);
                 this.coreJAR = newJarInTempDir;
             } catch (URISyntaxException e) {
                 throw new IllegalStateException("Could not find the main class jar file", e);

@@ -2,7 +2,7 @@ install:
   - choco install -y InnoSetup
 
 build_script:
-  - gradlew.bat --stacktrace
+  - gradlew.bat :ui:assemble --stacktrace -PprintTestResults
 
 # to run your custom scripts instead of automatic tests
 test_script:
@@ -14,8 +14,6 @@ platform:
 artifacts:
   - path: ui\build\distributions\*.exe
 
-before_deploy:
-  - gradlew.bat :ui:assemble --stacktrace -PprintTestResults
 
 deploy:
   provider: GitHub
