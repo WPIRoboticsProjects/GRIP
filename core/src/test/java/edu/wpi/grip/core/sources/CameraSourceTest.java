@@ -114,8 +114,9 @@ public class CameraSourceTest {
         class UnhandledExceptionWitness {
             @Subscribe
             public void onUnexpectedThrowableEvent(UnexpectedThrowableEvent event) {
-                System.err.println(event.getMessage());
-                event.getThrowable().printStackTrace();
+                event.handleSafely((throwable, message, isFatal) -> {
+                    throwable.printStackTrace();
+                });
             }
         }
         this.eventBus.register(new UnhandledExceptionWitness());

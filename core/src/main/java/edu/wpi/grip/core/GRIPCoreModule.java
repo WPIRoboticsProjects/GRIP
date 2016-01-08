@@ -34,7 +34,7 @@ public class GRIPCoreModule extends AbstractModule {
 
         try {
             // Remove the default handlers that stream to System.err
-            for(Handler handler : globalLogger.getHandlers()) {
+            for (Handler handler : globalLogger.getHandlers()) {
                 globalLogger.removeHandler(handler);
             }
 
@@ -45,7 +45,7 @@ public class GRIPCoreModule extends AbstractModule {
             globalLogger.setLevel(Level.FINE);
 
             // We need to stream to System.out instead of System.err
-            final StreamHandler sh = new StreamHandler(System.out,  new SimpleFormatter()) {
+            final StreamHandler sh = new StreamHandler(System.out, new SimpleFormatter()) {
 
                 @Override
                 public synchronized void publish(final LogRecord record) {
@@ -114,14 +114,36 @@ public class GRIPCoreModule extends AbstractModule {
         }
     }
 
+    /*
+     * We intentionally catch the throwable because we can't be sure what will happen.
+     * We drop the last throwable because we clearly have a problem beyond our control.
+     */
+    @SuppressWarnings({"PMD.AvoidCatchingThrowable", "PMD.EmptyCatchBlock"})
     private void onThreadException(Thread thread, Throwable exception) {
-        if (exception instanceof InterruptedException) {
-            logger.log(Level.FINE, "InterruptedException from thread " + thread, exception);
-            Thread.currentThread().interrupt();
-        } else {
-            // This can potentially happen before the main class has even been loaded to handle these exceptions
-            logger.log(Level.SEVERE, "Uncaught Exception on thread " + thread, exception);
-            eventBus.post(new UnexpectedThrowableEvent(exception, thread + " threw an exception"));
+        // Don't do anything outside of a try catch block when dealing with thread death
+        try {
+            if (exception instanceof Error && !(exception instanceof AssertionError)) {
+                // Try, this may not work. but its worth a shot.
+                logger.log(Level.SEVERE, "Error from " + thread, exception);
+            } else if (exception instanceof InterruptedException) {
+                logger.log(Level.FINE, "InterruptedException from thread " + thread, exception);
+                Thread.currentThread().interrupt();
+            } else {
+                // This can potentially happen before the main class has even been loaded to handle these exceptions
+                logger.log(Level.SEVERE, "Uncaught Exception on thread " + thread, exception);
+                final UnexpectedThrowableEvent event = new UnexpectedThrowableEvent(exception, thread + " threw an exception");
+                eventBus.post(event);
+                // It is possible that the event was never handled.
+                // If it wasn't we want to perform the shutdown hook here.
+                event.shutdownIfFatal();
+            }
+        } catch (Throwable throwable) {
+            try {
+                logger.log(Level.SEVERE, "Failed to handle thread exception", throwable);
+            } catch (Throwable throwable1) {
+                // Seriously, just give up at this point.
+            }
         }
+        // Don't do anything outside of a try catch block when dealing with thread death
     }
 }
