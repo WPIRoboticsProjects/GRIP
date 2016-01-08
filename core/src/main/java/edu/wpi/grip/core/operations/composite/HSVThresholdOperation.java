@@ -22,7 +22,7 @@ import static org.bytedeco.javacpp.opencv_imgproc.cvtColor;
  */
 public class HSVThresholdOperation extends ThresholdOperation {
 
-    private static final Logger logger =  Logger.getLogger(HSVThresholdOperation.class.getName());
+    private static final Logger logger = Logger.getLogger(HSVThresholdOperation.class.getName());
     private final SocketHint<Mat> inputHint = SocketHints.Inputs.createMatSocketHint("Input", false);
     private final SocketHint<List> hueHint = SocketHints.Inputs.createNumberListRangeSocketHint("Hue", 0.0, 180.0);
     private final SocketHint<List> saturationHint = SocketHints.Inputs.createNumberListRangeSocketHint("Saturation", 0.0, 255.0);
@@ -66,6 +66,10 @@ public class HSVThresholdOperation extends ThresholdOperation {
         final List<Number> channel1 = ((InputSocket<List<Number>>) inputs[1]).getValue().get();
         final List<Number> channel2 = ((InputSocket<List<Number>>) inputs[2]).getValue().get();
         final List<Number> channel3 = ((InputSocket<List<Number>>) inputs[3]).getValue().get();
+
+        if (input.channels() != 3) {
+            throw new IllegalArgumentException("HSV Threshold needs a 3-channel input");
+        }
 
         final OutputSocket<Mat> outputSocket = (OutputSocket<Mat>) outputs[0];
         final Mat output = outputSocket.getValue().get();
