@@ -78,6 +78,7 @@
         <module name="ModifierOrder"/>
         <module name="EmptyLineSeparator">
             <property name="allowNoEmptyLineBetweenFields" value="true"/>
+            <property name="allowMultipleEmptyLines" value="false"/>
         </module>
         <module name="SeparatorWrap">
             <property name="tokens" value="DOT"/>
