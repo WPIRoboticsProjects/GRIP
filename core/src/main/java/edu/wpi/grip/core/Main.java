@@ -6,7 +6,6 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 import edu.wpi.grip.core.events.ExceptionClearedEvent;
 import edu.wpi.grip.core.events.ExceptionEvent;
-import edu.wpi.grip.core.events.UnexpectedThrowableEvent;
 import edu.wpi.grip.core.operations.Operations;
 import edu.wpi.grip.core.serialization.Project;
 import edu.wpi.grip.generated.CVOperations;
@@ -14,7 +13,8 @@ import edu.wpi.grip.generated.CVOperations;
 import javax.inject.Inject;
 import java.io.File;
 import java.io.IOException;
-import java.util.logging.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Main driver class for headless mode
@@ -76,14 +76,4 @@ public class Main {
         Logger.getLogger(event.getOrigin().getClass().getName()).log(Level.INFO, "Exception Cleared Event");
     }
 
-    /**
-     * When an unexpected error happens in headless mode, print a stack trace and exit.
-     */
-    @Subscribe
-    public final void onUnexpectedThrowableEvent(UnexpectedThrowableEvent event) {
-        logger.log(Level.SEVERE, "UnexpectedThrowableEvent", event.getThrowable());
-        if (event.isFatal()) {
-            System.exit(1);
-        }
-    }
 }
