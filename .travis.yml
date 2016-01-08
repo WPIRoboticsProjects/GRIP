@@ -21,14 +21,15 @@ before_install:
   - sh -e /etc/init.d/xvfb start
   - pip install --user codecov
 
-install: ./gradlew :ui:assemble --stacktrace
+# Only do an assemble when we aren't building a pull request
+install:
+  - '[ "${TRAVIS_PULL_REQUEST}" = "false" ] && ./gradlew :ui:assemble --stacktrace || ./gradlew --stacktrace '
 
-after_failure: #Run again with debug info enabled
-  - ./gradlew check  --stacktrace -PprintTestResults
+script:
+  - ./gradlew check --stacktrace -PprintTestResults
 
 after_success:
   - codecov
-  - ./gradlew aggregateJavadocs
   - .travis-scripts/push-javadoc-to-gh-pages.sh
   - .travis-scripts/before-deploy.sh
 

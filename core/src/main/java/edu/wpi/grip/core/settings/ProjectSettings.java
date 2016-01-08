@@ -1,4 +1,4 @@
-package edu.wpi.grip.core;
+package edu.wpi.grip.core.settings;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Throwables;
@@ -21,8 +21,14 @@ public class ProjectSettings implements Cloneable {
         NONE
     }
 
-    private NetworkProtocol networkProtocol = NetworkProtocol.NETWORK_TABLES;
+    @Setting(label = "Network Protocol", description = "The protocol to use to publish results")
+    private NetworkProtocol networkProtocol = NetworkProtocol.NONE;
+
+    @Setting(label = "FRC Team Number", description = "The team number, if used for FRC")
     private int teamNumber = 0;
+
+    @Setting(label = "NetworkTables Server", description = "The host that runs the NetworkTables server.  If not " +
+            "specified but NetworkTables is enabled, the hostname is derived from the team number.")
     private String networkTablesServer = "";
 
     public void setNetworkProtocol(NetworkProtocol networkProtocol) {
@@ -67,6 +73,7 @@ public class ProjectSettings implements Cloneable {
     public String toString() {
         return MoreObjects.toStringHelper(this)
                 .add("networkProtocol", networkProtocol)
+                .add("networkTablesServer", networkTablesServer)
                 .add("teamNumber", teamNumber)
                 .toString();
     }

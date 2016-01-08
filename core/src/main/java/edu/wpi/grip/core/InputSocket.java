@@ -23,13 +23,12 @@ public class InputSocket<T> extends Socket<T> {
     }
 
     /**
-     * Reset the socket to its default value when it's no longer connected to anything.  This prevents removed
-     * connections from continuing to have an effect on steps because they still hold references to the values they
-     * were connected to.
+     * {@inheritDoc}
      */
-    @Subscribe
-    public void onDisconnected(SocketConnectedChangedEvent event) {
-        if (event.getSocket() == this && this.getConnections().isEmpty()) {
+    @Override
+    protected void onDisconnected() {
+        super.onDisconnected();
+        if (this.getConnections().isEmpty()) {
             this.setValue(this.getSocketHint().createInitialValue().orElse(null));
         }
     }

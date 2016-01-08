@@ -48,6 +48,8 @@ public class Connection<T> {
     @Subscribe
     public void onConnectionAdded(ConnectionAddedEvent event) {
         if (event.getConnection().equals(this)) {
+            inputSocket.addConnection(this);
+            outputSocket.addConnection(this);
             inputSocket.setValueOptional(outputSocket.getValue());
         }
     }
@@ -56,6 +58,14 @@ public class Connection<T> {
     public void onOutputChanged(SocketChangedEvent e) {
         if (e.getSocket() == outputSocket) {
             inputSocket.setValueOptional(outputSocket.getValue());
+        }
+    }
+
+    @Subscribe
+    public void onConnectionRemoved(ConnectionRemovedEvent e) {
+        if (e.getConnection() == this) {
+            inputSocket.removeConnection(this);
+            outputSocket.removeConnection(this);
         }
     }
 

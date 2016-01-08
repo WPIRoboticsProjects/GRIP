@@ -1,6 +1,5 @@
 package edu.wpi.grip.core.sources;
 
-
 import com.google.common.eventbus.EventBus;
 import com.google.common.math.IntMath;
 import com.google.inject.assistedinject.Assisted;
@@ -106,9 +105,7 @@ public final class MultiImageFileSource extends Source implements PreviousNext {
 
     @Override
     protected OutputSocket[] createOutputSockets() {
-        return new OutputSocket[]{
-                outputSocket
-        };
+        return new OutputSocket[]{outputSocket};
     }
 
     @Override

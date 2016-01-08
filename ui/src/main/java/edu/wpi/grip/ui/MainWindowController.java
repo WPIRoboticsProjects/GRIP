@@ -3,7 +3,7 @@ package edu.wpi.grip.ui;
 import com.google.common.eventbus.EventBus;
 import edu.wpi.grip.core.Palette;
 import edu.wpi.grip.core.Pipeline;
-import edu.wpi.grip.core.ProjectSettings;
+import edu.wpi.grip.core.settings.ProjectSettings;
 import edu.wpi.grip.core.events.ProjectSettingsChangedEvent;
 import edu.wpi.grip.core.serialization.Project;
 import javafx.application.Platform;
