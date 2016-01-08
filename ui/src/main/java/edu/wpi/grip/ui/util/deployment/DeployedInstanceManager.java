@@ -73,7 +73,7 @@ public class DeployedInstanceManager implements StartStoppable {
             } catch (URISyntaxException e) {
                 throw new IllegalStateException("Could not find the main class jar file", e);
             } catch (IOException e) {
-                throw new IllegalStateException("Could not copy core jar to temporary directory");
+                throw new IllegalStateException("Could not copy core jar to temporary directory", e);
             }
             this.project = project;
             this.secureShellDetailsFactory = secureShellDetailsFactory;
