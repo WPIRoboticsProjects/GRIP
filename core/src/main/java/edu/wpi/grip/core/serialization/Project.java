@@ -76,7 +76,22 @@ public class Project {
         this.file = Optional.of(file);
     }
 
-    public void save(Writer writer) {
+    public void save(Writer writer) throws IOException {
         this.xstream.toXML(this.pipeline, writer);
+
+        //The following is a work-around to make sure the previews are all recorded as closed
+        //because sometimes the "desaturate" step can feed back into others when both previews are
+        //opened at the same time (it's a race condition that we can't pin down)
+        File file = this.file.get();
+        BufferedReader reader = new BufferedReader(new FileReader(file));
+        String line = "", oldtext = "";
+        while ((line = reader.readLine()) != null) {
+            oldtext += line + "\r\n";
+        }
+        reader.close();
+        String newtext = oldtext.replaceAll("previewed=\"true\"", "previewed=\"false\"");
+        FileWriter writer2 = new FileWriter(file);
+        writer2.write(newtext);
+        writer2.close();
     }
 }
