@@ -60,7 +60,7 @@ public class NTManager {
 
         NetworkTable.shutdown();
         if (projectSettings.getNetworkProtocol() == ProjectSettings.NetworkProtocol.NETWORK_TABLES) {
-            NetworkTable.setIPAddress(projectSettings.computeNetworkProtocolServerAddress());
+            NetworkTable.setIPAddress(projectSettings.computePublishAddress());
             NetworkTable.initialize();
         }
     }

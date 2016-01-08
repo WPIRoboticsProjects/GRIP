@@ -40,7 +40,7 @@ public class FRCAdvancedDeploymentOptionsController extends DeploymentOptionsCon
                                            @Assisted("stdErr") Supplier<OutputStream> stdErr) {
         super("FRC Advanced", onDeployCallback);
         this.deployedInstanceManagerFactor = deployedInstanceManagerFactor;
-        this.projectAddress = pipeline.getProjectSettings().computeDeployAddresss();
+        this.projectAddress = pipeline.getProjectSettings().computeDeployAddress();
         this.stdOut = stdOut;
         this.stdErr = stdErr;
 
