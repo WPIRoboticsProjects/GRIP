@@ -14,7 +14,9 @@ import org.bytedeco.javacv.Frame;
 import org.bytedeco.javacv.FrameGrabber;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.Timeout;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -28,6 +30,9 @@ public class CameraSourceTest {
     private EventBus eventBus;
     private CameraSource cameraSourceWithMockGrabber;
     private MockFrameGrabberFactory mockFrameGrabberFactory;
+
+    @Rule
+    public final Timeout timeout = Timeout.seconds(3);
 
 
     class MockFrameGrabber extends FrameGrabber {
@@ -109,8 +114,9 @@ public class CameraSourceTest {
         class UnhandledExceptionWitness {
             @Subscribe
             public void onUnexpectedThrowableEvent(UnexpectedThrowableEvent event) {
-                System.err.println(event.getMessage());
-                event.getThrowable().printStackTrace();
+                event.handleSafely((throwable, message, isFatal) -> {
+                    throwable.printStackTrace();
+                });
             }
         }
         this.eventBus.register(new UnhandledExceptionWitness());
@@ -134,11 +140,14 @@ public class CameraSourceTest {
     }
 
     @Test
-    public void testCanStopAndStart() throws Exception {
-        cameraSourceWithMockGrabber.start();
-        assertTrue("The camera source was not started after calling start", cameraSourceWithMockGrabber.isStarted());
-        cameraSourceWithMockGrabber.stop();
-        assertFalse("The camera was not stopped after calling stop", cameraSourceWithMockGrabber.isStarted());
+    public void testCallingStopAndStartDoesNotDeadlock() throws Exception {
+        // Run this a hundred time to ensure that there isn't a situation where this can deadlock
+        for(int i = 0; i < 100; i++) {
+            cameraSourceWithMockGrabber.start();
+            assertTrue("The camera source was not started after calling start", cameraSourceWithMockGrabber.isStarted());
+            cameraSourceWithMockGrabber.stop();
+            assertFalse("The camera was not stopped after calling stop", cameraSourceWithMockGrabber.isStarted());
+        }
     }
 
     @Test(expected = IOException.class)

@@ -2,7 +2,9 @@ package edu.wpi.grip.ui;
 
 
 import com.google.common.base.Throwables;
+import com.google.common.eventbus.EventBus;
 import com.google.inject.Inject;
+import edu.wpi.grip.core.events.StopPipelineEvent;
 import edu.wpi.grip.ui.annotations.ParametrizedController;
 import edu.wpi.grip.ui.components.StartStoppableButton;
 import edu.wpi.grip.ui.deployment.DeploymentOptionsController;
@@ -10,11 +12,9 @@ import edu.wpi.grip.ui.deployment.DeploymentOptionsControllersFactory;
 import edu.wpi.grip.ui.util.deployment.DeployedInstanceManager;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
-import javafx.scene.control.Accordion;
-import javafx.scene.control.DialogPane;
-import javafx.scene.control.ProgressBar;
-import javafx.scene.control.TextArea;
+import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -45,6 +45,7 @@ public class DeployerController {
 
     private final StartStoppableButton.Factory startStopButtonFactory;
     private final DeploymentOptionsControllersFactory optionsControllersFactory;
+    private final EventBus eventBus;
 
     private class StreamToTextArea extends OutputStream {
         private final TextArea outputArea;
@@ -61,7 +62,7 @@ public class DeployerController {
 
         @Override
         public void write(int i) throws IOException {
-            Platform.runLater(()-> outputArea.appendText(String.valueOf((char) i)));
+            Platform.runLater(() -> outputArea.appendText(String.valueOf((char) i)));
         }
     }
 
@@ -71,9 +72,10 @@ public class DeployerController {
     }
 
     @Inject
-    DeployerController(StartStoppableButton.Factory startStopButtonFactory, DeploymentOptionsControllersFactory optionsControllersFactory) {
+    DeployerController(StartStoppableButton.Factory startStopButtonFactory, DeploymentOptionsControllersFactory optionsControllersFactory, EventBus eventBus) {
         this.startStopButtonFactory = startStopButtonFactory;
         this.optionsControllersFactory = optionsControllersFactory;
+        this.eventBus = eventBus;
     }
 
     @FXML
@@ -93,6 +95,7 @@ public class DeployerController {
 
     /**
      * Calls {@link DeployedInstanceManager#deploy()} and displays the result to the UI.
+     *
      * @param manager The manager to call deploy on
      */
     private void onDeploy(DeployedInstanceManager manager) {
@@ -100,6 +103,9 @@ public class DeployerController {
             progressIndicator.setProgress(0);
             deploymentMethods.setDisable(true);
         });
+
+        eventBus.post(new StopPipelineEvent());
+
         manager.deploy()
                 .fail(throwable -> {
                     Platform.runLater(() -> {
@@ -114,9 +120,17 @@ public class DeployerController {
                 })
                 .done(deployedManager -> {
                     Platform.runLater(() -> {
-                        controlsBox.getChildren().add(startStopButtonFactory.create(deployedManager));
+                        final Label startStopLabel = new Label("Start / Stop Deployed Instance: ");
+                        startStopLabel.setMaxWidth(Double.MAX_VALUE);
+                        startStopLabel.setMaxHeight(Double.MAX_VALUE);
+                        HBox.setHgrow(startStopLabel, Priority.SOMETIMES);
+                        final StartStoppableButton startStoppableButton = startStopButtonFactory.create(deployedManager);
+                        startStopLabel.setLabelFor(startStoppableButton);
+                        controlsBox.getChildren().addAll(startStopLabel, startStoppableButton);
                         deploymentMethods.setDisable(true);
                         progressIndicator.setProgress(-1);
+                        // Resize window to accommodate the added label
+                        getRoot().getScene().getWindow().sizeToScene();
                     });
                 });
 

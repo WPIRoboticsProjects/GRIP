@@ -11,8 +11,8 @@ import edu.wpi.grip.core.events.UnexpectedThrowableEvent;
 import edu.wpi.grip.core.operations.Operations;
 import edu.wpi.grip.generated.CVOperations;
 import edu.wpi.grip.ui.util.DPIUtility;
-import edu.wpi.grip.ui.util.GRIPPlatform;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -20,6 +20,8 @@ import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
 import javax.inject.Inject;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class Main extends Application {
 
@@ -28,7 +30,9 @@ public class Main extends Application {
     @Inject
     private Palette palette;
     @Inject
-    private GRIPPlatform platform;
+    private Logger logger;
+
+    private volatile boolean stopping = false;
 
 
     protected final Injector injector = Guice.createInjector(new GRIPCoreModule(), new GRIPUIModule());
@@ -57,45 +61,50 @@ public class Main extends Application {
         Operations.addOperations(eventBus);
         CVOperations.addOperations(eventBus);
 
+        stage.setOnCloseRequest((event) -> {
+            Platform.exit();
+            System.exit(0);
+        });
+
         stage.setTitle("GRIP Computer Vision Engine");
         stage.getIcons().add(new Image("/edu/wpi/grip/ui/icons/grip.png"));
         stage.setScene(new Scene(root));
         stage.show();
+
+    }
+
+    public void stop() {
+        stopping = true;
     }
 
     @Subscribe
+    @SuppressWarnings("PMD.AvoidCatchingThrowable")
     public final void onUnexpectedThrowableEvent(UnexpectedThrowableEvent event) {
-        // Print throwable before showing the exception so that errors are in order in the console
-        event.getThrowable().printStackTrace();
-
-        try {
-            // If this is an interrupted exception then don't show an error.
-            // We should exit as fast as possible.
-            if (!(event.getThrowable() instanceof InterruptedException)) {
-                // This should still use PlatformImpl
+        event.handleSafely((throwable, message, isFatal) -> {
+            // This should still use PlatformImpl
+            if (!stopping) {
                 PlatformImpl.runAndWait(() -> {
                     // WARNING! Do not post any events from within this! It could result in a deadlock!
                     synchronized (this.dialogLock) {
                         try {
                             // Don't create more than one exception dialog at the same time
-                            final ExceptionAlert exceptionAlert = new ExceptionAlert(root, event.getThrowable(), event.getMessage(), event.isFatal(), getHostServices());
+                            final ExceptionAlert exceptionAlert = new ExceptionAlert(root, throwable, message, isFatal, getHostServices());
                             exceptionAlert.setInitialFocus();
                             exceptionAlert.showAndWait();
                         } catch (Throwable e) {
                             // Well in this case something has gone very, very wrong
                             // We don't want to create a feedback loop either.
-                            e.printStackTrace();
-                            System.exit(1); // Ensure we shut down the application if we get an exception
+                            try {
+                                logger.log(Level.SEVERE, "Failed to show exception alert", e);
+                            } finally {
+                                System.exit(1); // Ensure we shut down the application if we get an exception
+                            }
                         }
                     }
                 });
+            } else {
+                logger.log(Level.INFO, "Did not display exception because UI was stopping", throwable);
             }
-        } finally {
-            if (event.isFatal()) {
-                System.err.println("Original fatal exception");
-                event.getThrowable().printStackTrace();
-                System.exit(1);
-            }
-        }
+        });
     }
 }

@@ -1,6 +1,6 @@
 package edu.wpi.grip.core.events;
 
-import edu.wpi.grip.core.ProjectSettings;
+import edu.wpi.grip.core.settings.ProjectSettings;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
