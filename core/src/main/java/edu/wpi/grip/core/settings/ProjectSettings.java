@@ -27,12 +27,13 @@ public class ProjectSettings implements Cloneable {
     @Setting(label = "FRC Team Number", description = "The team number, if used for FRC")
     private int teamNumber = 0;
 
-    @Setting(label = "NetworkTables Server Address", description = "The host that runs the Network Protocol server.  If not " +
-            "specified and Network Tables is specified as the protocol, the hostname is derived from the team number.")
-    private String networkProtocolServerAddress = "";
+    @Setting(label = "NetworkTables Server Address", description = "The host that runs the Network Protocol server. " +
+            "If not specified and NetworkTables is specified as the protocol, the hostname is derived from the team " +
+            "number.")
+    private String publishAddress = "";
 
-    @Setting(label = "Deploy Address", description = "The remote host that grip should be remotely deployed to. If not " +
-            "specified and Network Tables is specified as the protocol, the hostname is derived from the team number.")
+    @Setting(label = "Deploy Address", description = "The remote host that grip should be remotely deployed to. If " +
+            "not specified, the hostname is derived from the team number.")
     private String deployAddress = "";
 
     public void setNetworkProtocol(NetworkProtocol networkProtocol) {
@@ -52,13 +53,13 @@ public class ProjectSettings implements Cloneable {
         return teamNumber;
     }
 
-    public void setNetworkProtocolServerAddress(String networkProtocolServerAddress) {
-        this.networkProtocolServerAddress =
-                checkNotNull(networkProtocolServerAddress, "Network Protocol Server Address cannot be null");
+    public void setPublishAddress(String publishAddress) {
+        this.publishAddress =
+                checkNotNull(publishAddress, "Network Protocol Server Address cannot be null");
     }
 
-    public String getNetworkProtocolServerAddress() {
-        return networkProtocolServerAddress;
+    public String getPublishAddress() {
+        return publishAddress;
     }
 
     public void setDeployAddress(String deployAddress) {
@@ -71,21 +72,22 @@ public class ProjectSettings implements Cloneable {
 
     /**
      * @return The address of the machine that the NetworkTables server is running on.  If
-     * {@link #setNetworkProtocolServerAddress} is specified, that is returned, otherwise this is based on the team number.
+     * {@link #setPublishAddress} is specified, that is returned, otherwise this is based on the team
+     * number.
      */
-    public String computeNetworkProtocolServerAddress() {
-        if (networkProtocolServerAddress.isEmpty()) {
-            return "roboio-" + teamNumber + "-frc.local";
+    public String computePublishAddress() {
+        if (publishAddress == null || publishAddress.isEmpty()) {
+            return "roborio-" + teamNumber + "-frc.local";
         } else {
-            return networkProtocolServerAddress;
+            return publishAddress;
         }
     }
 
-    public String computeDeployAddresss() {
-        if (networkProtocolServerAddress.isEmpty()) {
-            return "roboio-" + teamNumber + "-frc.local";
+    public String computeDeployAddress() {
+        if (deployAddress == null || deployAddress.isEmpty()) {
+            return "roborio-" + teamNumber + "-frc.local";
         } else {
-            return networkProtocolServerAddress;
+            return publishAddress;
         }
     }
 
@@ -93,7 +95,8 @@ public class ProjectSettings implements Cloneable {
     public String toString() {
         return MoreObjects.toStringHelper(this)
                 .add("networkProtocol", networkProtocol)
-                .add("networkProtocolServerAddress", networkProtocolServerAddress)
+                .add("publishAddress", publishAddress)
+                .add("deployAddress", deployAddress)
                 .add("teamNumber", teamNumber)
                 .toString();
     }
