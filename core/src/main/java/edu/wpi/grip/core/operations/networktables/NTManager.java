@@ -1,11 +1,14 @@
 package edu.wpi.grip.core.operations.networktables;
 
 import com.google.common.eventbus.Subscribe;
+import com.google.inject.Provider;
 import com.google.inject.Singleton;
 import edu.wpi.first.wpilibj.networktables.NetworkTable;
 import edu.wpi.first.wpilibj.networktables.NetworkTablesJNI;
-import edu.wpi.grip.core.settings.ProjectSettings;
+import edu.wpi.first.wpilibj.tables.ITable;
+import edu.wpi.grip.core.Pipeline;
 import edu.wpi.grip.core.events.ProjectSettingsChangedEvent;
+import edu.wpi.grip.core.settings.ProjectSettings;
 
 import javax.inject.Inject;
 import java.util.HashMap;
@@ -18,7 +21,7 @@ import java.util.logging.Logger;
  */
 @Singleton
 public class NTManager {
-
+    private final Provider<Pipeline> pipelineProvider;
     /**
      * Information from:
      * https://github.com/PeterJohnson/ntcore/blob/master/src/Log.h
@@ -37,7 +40,8 @@ public class NTManager {
     }};
 
     @Inject
-    public NTManager(Logger logger) {
+    public NTManager(Logger logger, Provider<Pipeline> pipelineProvider) {
+        this.pipelineProvider = pipelineProvider;
         // We may have another instance of this method lying around
         NetworkTable.shutdown();
         // Redirect NetworkTables log messages to our own log files.  This gets rid of console spam, and it also lets
@@ -48,6 +52,19 @@ public class NTManager {
         }, 0);
 
         NetworkTable.setClientMode();
+    }
+
+    /**
+     * Gets a new instance of the base "GRIP" network table.
+     *
+     * @return The "GRIP" network table
+     * @throws IllegalStateException If the project's network protocol isn't set to be network tables.
+     */
+    public ITable getBaseTable() throws IllegalStateException {
+        if (pipelineProvider.get().getProjectSettings().getNetworkProtocol() == ProjectSettings.NetworkProtocol.NETWORK_TABLES) {
+            return NetworkTable.getTable("GRIP");
+        }
+        throw new IllegalStateException("NetworkTables was not set as the network protocol");
     }
 
 

@@ -1,19 +1,27 @@
 package edu.wpi.grip.core.operations;
 
 import com.google.common.eventbus.EventBus;
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import edu.wpi.grip.core.events.OperationAddedEvent;
 import edu.wpi.grip.core.operations.composite.*;
+import edu.wpi.grip.core.operations.networktables.NTManager;
 import edu.wpi.grip.core.operations.networktables.NTPublishOperation;
 import edu.wpi.grip.core.operations.opencv.MatFieldAccessor;
 import edu.wpi.grip.core.operations.opencv.MinMaxLoc;
 import edu.wpi.grip.core.operations.opencv.NewPointOperation;
 import edu.wpi.grip.core.operations.opencv.NewSizeOperation;
 
-public final class Operations {
+@Singleton
+public class Operations {
 
-    private Operations() { /* no op */}
+    private final NTManager ntManager;
+    @Inject
+    Operations(NTManager ntManager) {
+        this.ntManager = ntManager;
+    }
 
-    public static void addOperations(EventBus eventBus) {
+    public void addOperations(EventBus eventBus) {
         // Add the default built-in operations to the palette
         eventBus.post(new OperationAddedEvent(new BlurOperation()));
         eventBus.post(new OperationAddedEvent(new DesaturateOperation()));
@@ -31,8 +39,8 @@ public final class Operations {
         eventBus.post(new OperationAddedEvent(new NewPointOperation()));
         eventBus.post(new OperationAddedEvent(new NewSizeOperation()));
         eventBus.post(new OperationAddedEvent(new MatFieldAccessor()));
-        eventBus.post(new OperationAddedEvent(new NTPublishOperation<>(ContoursReport.class)));
-        eventBus.post(new OperationAddedEvent(new NTPublishOperation<>(BlobsReport.class)));
-        eventBus.post(new OperationAddedEvent(new NTPublishOperation<>(LinesReport.class)));
+        eventBus.post(new OperationAddedEvent(new NTPublishOperation<>(ContoursReport.class, ntManager::getBaseTable)));
+        eventBus.post(new OperationAddedEvent(new NTPublishOperation<>(BlobsReport.class, ntManager::getBaseTable)));
+        eventBus.post(new OperationAddedEvent(new NTPublishOperation<>(LinesReport.class, ntManager::getBaseTable)));
     }
 }

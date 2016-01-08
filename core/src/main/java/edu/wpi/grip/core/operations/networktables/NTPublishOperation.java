@@ -1,8 +1,8 @@
 package edu.wpi.grip.core.operations.networktables;
 
+import com.google.common.base.Supplier;
 import com.google.common.base.Throwables;
 import com.google.common.eventbus.EventBus;
-import edu.wpi.first.wpilibj.networktables.NetworkTable;
 import edu.wpi.first.wpilibj.tables.ITable;
 import edu.wpi.grip.core.*;
 
@@ -23,13 +23,13 @@ import static com.google.common.base.Preconditions.checkNotNull;
  */
 public class NTPublishOperation<T extends NTPublishable> implements Operation {
 
-    private final NetworkTable table;
     private final Class<T> type;
+    private final Supplier<ITable> baseGripTableProvider;
     private final List<Method> ntValueMethods = new ArrayList<>();
 
-    public NTPublishOperation(Class<T> type) {
-        this.table = NetworkTable.getTable("GRIP");
+    public NTPublishOperation(Class<T> type, Supplier<ITable> baseGripTableProvider) {
         this.type = checkNotNull(type, "Type was null");
+        this.baseGripTableProvider = baseGripTableProvider;
 
         // Any accessor method with an @NTValue annotation can be published to NetworkTables.
         for (Method method : type.getDeclaredMethods()) {
@@ -99,7 +99,8 @@ public class NTPublishOperation<T extends NTPublishable> implements Operation {
 
         // Get a subtable to put the values in.  Each NTPublishable has multiple properties that are published (such as
         // x, y, width, height, etc...), so they're grouped together in a subtable.
-        final ITable subtable = table.getSubTable(subtableName);
+        final ITable gripTable = baseGripTableProvider.get(); // This can throw illegal state if wrong network type selected
+        final ITable subtable = gripTable.getSubTable(subtableName);
 
         // For each NTValue method in the object being published, put it in the table if the the corresponding
         // checkbox is selected.
