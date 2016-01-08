@@ -32,15 +32,16 @@ public class Project {
     public void initialize(StepConverter stepConverter,
                            SourceConverter sourceConverter,
                            SocketConverter socketConverter,
-                           ConnectionConverter connectionConverter) {
+                           ConnectionConverter connectionConverter,
+                           ProjectSettingsConverter projectSettingsConverter) {
         xstream.setMode(XStream.NO_REFERENCES);
         xstream.registerConverter(stepConverter);
         xstream.registerConverter(sourceConverter);
         xstream.registerConverter(socketConverter);
         xstream.registerConverter(connectionConverter);
+        xstream.registerConverter(projectSettingsConverter);
         xstream.processAnnotations(new Class[]{Pipeline.class, Step.class, Connection.class, InputSocket.class,
                 OutputSocket.class, ImageFileSource.class, MultiImageFileSource.class, CameraSource.class});
-
     }
 
     /**

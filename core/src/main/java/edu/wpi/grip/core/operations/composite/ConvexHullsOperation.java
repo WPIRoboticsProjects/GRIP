@@ -9,6 +9,7 @@ import edu.wpi.grip.core.SocketHint;
 import java.io.InputStream;
 import java.util.Optional;
 
+import static org.bytedeco.javacpp.opencv_core.MatVector;
 import static org.bytedeco.javacpp.opencv_imgproc.convexHull;
 
 /**
@@ -49,18 +50,16 @@ public class ConvexHullsOperation implements Operation {
     @SuppressWarnings("unchecked")
     public void perform(InputSocket<?>[] inputs, OutputSocket<?>[] outputs) {
         final InputSocket<ContoursReport> inputSocket = (InputSocket<ContoursReport>) inputs[0];
-        final OutputSocket<ContoursReport> outputSocket = (OutputSocket<ContoursReport>) outputs[0];
 
-        final ContoursReport inputContours = inputSocket.getValue().get();
-        final ContoursReport outputContours = outputSocket.getValue().get();
-        outputContours.getContours().resize(inputContours.getContours().size());
+        final MatVector inputContours = inputSocket.getValue().get().getContours();
+        final MatVector outputContours = new MatVector(inputContours.size());
 
-        for (int i = 0; i < inputContours.getContours().size(); i++) {
-            convexHull(inputContours.getContours().get(i), outputContours.getContours().get(i));
+        for (int i = 0; i < inputContours.size(); i++) {
+            convexHull(inputContours.get(i), outputContours.get(i));
         }
 
-        outputContours.setRows(inputContours.getRows());
-        outputContours.setCols(inputContours.getCols());
-        outputSocket.setValue(outputContours);
+        final OutputSocket<ContoursReport> outputSocket = (OutputSocket<ContoursReport>) outputs[0];
+        outputSocket.setValue(new ContoursReport(outputContours,
+                inputSocket.getValue().get().getRows(), inputSocket.getValue().get().getCols()));
     }
 }

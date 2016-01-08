@@ -3,14 +3,13 @@ package edu.wpi.grip.ui;
 import com.google.common.eventbus.EventBus;
 import edu.wpi.grip.core.Palette;
 import edu.wpi.grip.core.Pipeline;
+import edu.wpi.grip.core.settings.ProjectSettings;
+import edu.wpi.grip.core.events.ProjectSettingsChangedEvent;
 import edu.wpi.grip.core.serialization.Project;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.Parent;
-import javafx.scene.control.Alert;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.Dialog;
-import javafx.scene.control.SplitPane;
+import javafx.scene.control.*;
 import javafx.scene.layout.Region;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
@@ -112,8 +111,8 @@ public class MainWindowController {
             final FileChooser fileChooser = new FileChooser();
             fileChooser.setTitle("Open Project");
             fileChooser.getExtensionFilters().addAll(
-                new ExtensionFilter("GRIP File", "*.grip"),
-                new ExtensionFilter("All Files", "*.*"));
+                    new ExtensionFilter("GRIP File", "*.grip"),
+                    new ExtensionFilter("All Files", "*", "*.*"));
 
             project.getFile().ifPresent(file -> fileChooser.setInitialDirectory(file.getParentFile()));
 
@@ -167,6 +166,18 @@ public class MainWindowController {
     }
 
     @FXML
+    public void showProjectSettingsEditor() {
+        final ProjectSettings projectSettings = pipeline.getProjectSettings().clone();
+
+        ProjectSettingsEditor projectSettingsEditor = new ProjectSettingsEditor(root, projectSettings);
+        projectSettingsEditor.showAndWait().ifPresent(buttonType -> {
+            if (buttonType == ButtonType.OK) {
+                eventBus.post(new ProjectSettingsChangedEvent(projectSettings));
+            }
+        });
+    }
+
+    @FXML
     public void quit() {
         if (showConfirmationDialogAndWait()) {
             Platform.exit();
@@ -177,6 +188,8 @@ public class MainWindowController {
     public void deployFRC() {
         if (project.getFile().isPresent()) {
             final DeployerController deployerController = deployerControllerFactoy.create();
+            deployerController.getRoot().getStylesheets().addAll(root.getStylesheets());
+            deployerController.getRoot().setStyle(root.getStyle());
             final Dialog<ButtonType> dialog = new Dialog();
             dialog.setDialogPane(deployerController.getRoot());
             dialog.setResizable(true);
@@ -184,6 +197,13 @@ public class MainWindowController {
         } else {
             final Alert alert = new Alert(Alert.AlertType.INFORMATION,
                     "You must have saved your project before it can be deployed to a remote device.");
+            alert.getDialogPane().getStylesheets().addAll(root.getStylesheets());
+            alert.getDialogPane().setStyle(root.getStyle());
+
+            // Workaround for JavaFX's default Alert styling causing text to get cut off
+            Label alertLabel = (Label) alert.getDialogPane().getChildren().filtered(node -> node instanceof Label).get(0);
+            alertLabel.setMinHeight(Region.USE_PREF_SIZE);
+
             alert.showAndWait();
         }
 

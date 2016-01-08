@@ -25,7 +25,9 @@ import java.io.OutputStream;
 import java.net.InetAddress;
 import java.net.URISyntaxException;
 import java.net.URLDecoder;
+import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.Optional;
 import java.util.function.Supplier;
 import java.util.logging.Level;
@@ -37,6 +39,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * Controls an instance of GRIP running on a remote device.
  */
 public class DeployedInstanceManager implements StartStoppable {
+    private static final String DEPLOYED_GRIP_FILE_NAME = "grip.jar";
 
     private final Logger logger = Logger.getLogger(DeployedInstanceManager.class.getName());
     private final EventBus eventBus;
@@ -64,9 +67,14 @@ public class DeployedInstanceManager implements StartStoppable {
                 DeploymentCommands.Factory deploymentCommandsFactory) {
             this.eventBus = eventBus;
             try {
-                this.coreJAR = new File(edu.wpi.grip.core.Main.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath());
+                final File coreJarInSource = new File(edu.wpi.grip.core.Main.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath());
+                final File newJarInTempDir = new File(new File(System.getProperty("java.io.tmpdir")), DEPLOYED_GRIP_FILE_NAME);
+                Files.copy(coreJarInSource.toPath(), newJarInTempDir.toPath(),  StandardCopyOption.REPLACE_EXISTING);
+                this.coreJAR = newJarInTempDir;
             } catch (URISyntaxException e) {
                 throw new IllegalStateException("Could not find the main class jar file", e);
+            } catch (IOException e) {
+                throw new IllegalStateException("Could not copy core jar to temporary directory", e);
             }
             this.project = project;
             this.secureShellDetailsFactory = secureShellDetailsFactory;

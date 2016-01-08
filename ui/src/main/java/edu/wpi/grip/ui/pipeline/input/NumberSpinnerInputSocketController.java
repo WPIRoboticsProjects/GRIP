@@ -7,11 +7,11 @@ import edu.wpi.grip.core.InputSocket;
 import edu.wpi.grip.core.events.SocketChangedEvent;
 import edu.wpi.grip.ui.pipeline.SocketHandleView;
 import edu.wpi.grip.ui.util.GRIPPlatform;
+import edu.wpi.grip.ui.util.Spinners;
 import javafx.beans.InvalidationListener;
 import javafx.fxml.FXML;
 import javafx.scene.control.Spinner;
 import javafx.scene.control.SpinnerValueFactory;
-import javafx.util.StringConverter;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
@@ -55,12 +55,9 @@ public class NumberSpinnerInputSocketController extends InputSocketController<Nu
     public void initialize() {
         super.initialize();
         final Spinner<Double> spinner = new Spinner<>(this.valueFactory);
-        spinner.setEditable(true);
+        Spinners.makeEditableSafely(spinner, Double::valueOf);
         spinner.disableProperty().bind(this.getHandle().connectedProperty());
-        spinner.focusedProperty().addListener((s, ov, nv) -> {// Code found at http://stackoverflow.com/questions/32340476/manually-typing-in-text-in-javafx-spinner-is-not-updating-the-value-unless-user
-            if (nv) return;
-            commitEditorText(spinner);
-        });
+
         this.setContent(spinner);
     }
 
@@ -80,17 +77,4 @@ public class NumberSpinnerInputSocketController extends InputSocketController<Nu
         }
     }
 
-    // Code found at http://stackoverflow.com/questions/32340476/manually-typing-in-text-in-javafx-spinner-is-not-updating-the-value-unless-user
-    private <T> void commitEditorText(Spinner<T> spinner) {
-        if (!spinner.isEditable()) return;
-        String text = spinner.getEditor().getText();
-        SpinnerValueFactory<T> valueFactory = spinner.getValueFactory();
-        if (valueFactory != null) {
-            StringConverter<T> converter = valueFactory.getConverter();
-            if (converter != null) {
-                T value = converter.fromString(text);
-                valueFactory.setValue(value);
-            }
-        }
-    }
 }

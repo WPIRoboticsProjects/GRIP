@@ -41,7 +41,7 @@ allprojects {
         testCompile group: 'junit', name: 'junit', version: '4.12'
     }
 
-    version = '0.3.0'
+    version = '1.0.0-rc4'
 
     compileJava {
         options.compilerArgs << "-g"
@@ -96,6 +96,9 @@ project(":core") {
     repositories {
         flatDir {
             dirs 'libs'
+            maven {
+                url = "http://first.wpi.edu/FRC/roborio/maven/development"
+            }
         }
     }
 
@@ -114,6 +117,8 @@ project(":core") {
         // https://github.com/google/guice/wiki/OptionalAOP
         compile group: 'com.google.inject', name: 'guice', version: '4.0', classifier: 'no_aop'
         compile group: 'com.google.inject.extensions', name: 'guice-assistedinject', version: '4.0'
+        compile group: 'edu.wpi.first.wpilib.networktables.java', name: 'NetworkTables', version: '3.0.0-SNAPSHOT', classifier: 'desktop'
+        compile group: 'edu.wpi.first.wpilib.networktables.java', name: 'NetworkTables', version: '3.0.0-SNAPSHOT', classifier: 'arm'
     }
 
     mainClassName = 'edu.wpi.grip.core.Main'
