@@ -28,11 +28,8 @@ public class NTPublishOperation<T extends NTPublishable> implements Operation {
     private final List<Method> ntValueMethods = new ArrayList<>();
 
     public NTPublishOperation(Class<T> type) {
+        this.table = NetworkTable.getTable("GRIP");
         this.type = checkNotNull(type, "Type was null");
-
-        // NetworkTables automatically initializes itself when we get a table.  We don't want this behavior.
-        table = NetworkTable.getTable("GRIP");
-        NetworkTable.shutdown();
 
         // Any accessor method with an @NTValue annotation can be published to NetworkTables.
         for (Method method : type.getDeclaredMethods()) {
