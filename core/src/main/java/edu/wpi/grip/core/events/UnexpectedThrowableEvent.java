@@ -1,5 +1,7 @@
 package edu.wpi.grip.core.events;
 
+import edu.wpi.grip.core.util.SafeShutdown;
+
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -50,7 +52,7 @@ public final class UnexpectedThrowableEvent {
             try {
                 logger.log(Level.SEVERE, "Failed to handle safely", throwable);
             } finally {
-                System.exit(1);
+                SafeShutdown.exit(1);
             }
         } finally {
             shutdownIfFatal();
@@ -67,7 +69,7 @@ public final class UnexpectedThrowableEvent {
                 logger.log(Level.SEVERE, "Shutting down from error", throwable);
             } finally {
                 // If all else fails then shutdown
-                System.exit(1);
+                SafeShutdown.exit(1);
             }
         }
     }
