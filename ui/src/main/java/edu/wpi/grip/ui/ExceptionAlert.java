@@ -1,7 +1,6 @@
 package edu.wpi.grip.ui;
 
 import com.google.common.base.Throwables;
-import com.google.common.net.UrlEscapers;
 import javafx.application.HostServices;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
@@ -11,6 +10,7 @@ import javafx.scene.control.*;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Priority;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -20,39 +20,20 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * Also, provides links with quick access to the githup issue page.
  */
 public final class ExceptionAlert extends Alert {
-    private static final String
-            PROJECT_ISSUE_LINK = "https://github.com/WPIRoboticsProjects/GRIP/issues/new",
-            ISSUE_PROMPT_QUESTION = "What were the actions performed prior to this error appearing?",
-            ISSUE_PROMPT_TEXT = "An exception occurred!  Please open an issue on the project GitHub.\n"
-                    + "We value your feedback and want to hear about the problems you encounter.";
+    private static final String PROJECT_ISSUE_LINK = "https://github.com/WPIRoboticsProjects/GRIP/issues/new?body=Ple" +
+            "ase%20describe%20what%20actions%20we%20can%20take%20to%20reproduce%20the%20bug%20you%20found%2C%20includ" +
+            "ing%20the%20error%20message.";
 
-    private static final String systemOptions[] = {
-            "javafx.version",
-            "java.runtime.name",
-            "java.vm.version",
-            "java.vm.vendor",
-            "java.vm.name",
-            "java.runtime.version",
-            "java.awt.graphicsenv",
-            "javafx.runtime.version",
-            "os.name",
-            "os.version",
-            "os.arch",
-            "file.encoding",
-            "java.vm.info",
-            "java.version",
-            "sun.arch.data.model",
-            "sun.cpu.endian"
+    private static final String ISSUE_PROMPT_TEXT = "An exception occurred!  Please open an issue on the project " +
+            "GitHub.\nWe value your feedback and want to hear about the problems you encounter.";
+
+    private static final String systemProperties[] = {
+            "java.version", "javafx.version", "os.name", "os.version", "os.arch",
     };
 
-    private final String exceptionMessage;
-    private final String systemInfoMessage;
-    private final String additionalInfoMessage;
-    private final String message;
-    private final Throwable initialCause;
+    private static final ButtonType COPY = new ButtonType("Copy to Clipboard");
+    private static final ButtonType GITHUB = new ButtonType("Open GitHub Issues");
 
-    private final ButtonType openGitHubIssuesBtnType = new ButtonType("Open GitHub Issues");
-    private final ButtonType copyToClipboardBtnType = new ButtonType("Copy To Clipboard");
     private final Node initialFocusElement;
 
     /**
@@ -65,29 +46,29 @@ public final class ExceptionAlert extends Alert {
         super(AlertType.ERROR);
         checkNotNull(root, "The parent can not be null");
         checkNotNull(throwable, "The Throwable can not be null");
-        this.message = checkNotNull(message, "The message can not be null");
         checkNotNull(services, "HostServices can not be null");
 
         final ButtonType closeBtnType = new ButtonType(isFatal ? "Quit" : "Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
 
-        this.exceptionMessage = generateExceptionMessage(throwable);
-        this.systemInfoMessage = generateSystemInfoMessage();
-        this.additionalInfoMessage = generateAdditionalInfoMessage();
-        this.initialCause = getInitialCause(throwable);
+        String exceptionMessage = generateExceptionMessage(throwable);
+        String systemInfoMessage = generateSystemInfoMessage();
 
-        this.setTitle(initialCause.getClass().getSimpleName());
+        this.setTitle(getInitialCause(throwable).getClass().getSimpleName());
         this.setHeaderText((isFatal ? "FATAL: " : "") + message);
 
         // Set stylesheet
         this.getDialogPane().styleProperty().bind(root.styleProperty());
         this.getDialogPane().getStylesheets().addAll(root.getStylesheets());
 
+        this.setResizable(true);
+
         // Add two additional buttons
         this.getButtonTypes().removeIf((buttonType) -> buttonType.equals(ButtonType.OK));
-        this.getButtonTypes().addAll(openGitHubIssuesBtnType, copyToClipboardBtnType, closeBtnType);
+        this.getButtonTypes().addAll(COPY, closeBtnType, GITHUB);
 
 
         final GridPane dialogContent = new GridPane();
+        dialogContent.getStyleClass().add("exception-pane");
         dialogContent.setMaxWidth(Double.MAX_VALUE);
         dialogContent.setMaxHeight(Double.MAX_VALUE);
 
@@ -95,47 +76,34 @@ public final class ExceptionAlert extends Alert {
         final Label issuePasteLabel = new Label(ISSUE_PROMPT_TEXT);
         issuePasteLabel.setWrapText(true);
 
-        final TextArea issueText = new TextArea(Throwables.getStackTraceAsString(throwable));
+        final TextArea issueText = new TextArea(message + "\n" + exceptionMessage + "\n" + systemInfoMessage);
+        issueText.getStyleClass().add("exception-text");
         issuePasteLabel.setLabelFor(issueText);
         issueText.setEditable(false);
-        issueText.setWrapText(true);
 
         issueText.setMaxWidth(Double.MAX_VALUE);
         issueText.setMaxHeight(Double.MAX_VALUE);
 
         dialogContent.add(issuePasteLabel, 0, 0);
         dialogContent.add(issueText, 0, 1);
+        GridPane.setHgrow(issueText, Priority.ALWAYS);
+        GridPane.setVgrow(issueText, Priority.ALWAYS);
         this.getDialogPane().setContent(dialogContent);
 
-
-        // Prevent these two buttons from causing the alert to close
-        final Button copyToClipboardBtn = (Button) this.getDialogPane().lookupButton(copyToClipboardBtnType);
-        copyToClipboardBtn.addEventFilter(ActionEvent.ACTION, event -> {
+        final Button copyBtn = (Button) this.getDialogPane().lookupButton(COPY);
+        copyBtn.addEventFilter(ActionEvent.ACTION, event -> {
             final ClipboardContent content = new ClipboardContent();
-            content.putString(issueText());
+            content.putString(issueText.getText());
             Clipboard.getSystemClipboard().setContent(content);
-            // Prevent the dialog from closing
-            event.consume();
+            issueText.requestFocus();
+            issueText.selectAll();
+            event.consume(); // Prevent the dialog from closing
         });
 
-
-        final Button openGitHubIssueBtn = (Button) this.getDialogPane().lookupButton(openGitHubIssuesBtnType);
+        final Button openGitHubIssueBtn = (Button) this.getDialogPane().lookupButton(GITHUB);
         openGitHubIssueBtn.addEventFilter(ActionEvent.ACTION, event -> {
-            final StringBuilder URL_STRING = new StringBuilder(PROJECT_ISSUE_LINK)
-                    .append("?title=")
-                    .append(
-                            UrlEscapers.urlFormParameterEscaper().escape(
-                                    initialCause.getClass().getSimpleName() + ": " + initialCause.getMessage()
-                            )
-                    ).append("&body=")
-                    .append(UrlEscapers.urlFormParameterEscaper().escape(
-                            issueText()
-                    ));
-
-
-            services.showDocument(URL_STRING.toString());
-            // Prevent the dialog from closing
-            event.consume();
+            services.showDocument(PROJECT_ISSUE_LINK);
+            event.consume(); // Prevent the dialog from closing
         });
 
         // Set the initial focus to the input box so the cursor goes there first
@@ -147,7 +115,7 @@ public final class ExceptionAlert extends Alert {
      * This is not done in the constructor so that the object is not exposed to any other threads from within the objects constructor
      */
     public final void setInitialFocus() {
-        Platform.runLater(() -> initialFocusElement.requestFocus());
+        Platform.runLater(initialFocusElement::requestFocus);
     }
 
     /**
@@ -162,10 +130,6 @@ public final class ExceptionAlert extends Alert {
         } else {
             return getInitialCause(throwable.getCause());
         }
-    }
-
-    private String generateAdditionalInfoMessage() {
-        return "Message: " + message + "\n";
     }
 
     /**
@@ -190,25 +154,9 @@ public final class ExceptionAlert extends Alert {
         final StringBuilder systemInfo = new StringBuilder("## System Info:\n\n");
         systemInfo.append("Property Name | Property \n ----- | -----\n");
         systemInfo.append("GRIP Version | " + edu.wpi.grip.core.Main.class.getPackage().getImplementationVersion() + "\n");
-        for (String option : systemOptions) {
+        for (String option : systemProperties) {
             systemInfo.append(option).append(" | ").append(System.getProperty(option)).append("\n");
         }
         return systemInfo.append("\n").toString();
     }
-
-    /**
-     * Creates the text that gets pasted into the new github issue.
-     *
-     * @return The fully constructed issue text.
-     */
-    private String issueText() {
-        return ISSUE_PROMPT_QUESTION
-                + "\n\n\n\n"
-                + additionalInfoMessage
-                + "\n"
-                + systemInfoMessage
-                + exceptionMessage;
-    }
-
-
 }

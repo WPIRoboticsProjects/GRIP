@@ -193,3 +193,11 @@ VBox.sockets {
     -fx-hgap: 4em;
     -fx-vgap: 1em;
 }
+
+.exception-pane {
+    -fx-vgap: 1em;
+}
+
+.exception-text {
+    -fx-font-family: "Monospace";
+}
