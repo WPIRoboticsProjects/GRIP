@@ -13,6 +13,8 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Spinner;
 import javafx.scene.control.SpinnerValueFactory;
 
+import java.text.NumberFormat;
+
 import static com.google.common.base.Preconditions.checkArgument;
 
 /**
@@ -55,7 +57,8 @@ public class NumberSpinnerInputSocketController extends InputSocketController<Nu
     public void initialize() {
         super.initialize();
         final Spinner<Double> spinner = new Spinner<>(this.valueFactory);
-        Spinners.makeEditableSafely(spinner, Double::valueOf);
+        Spinners.makeEditableSafely(spinner, NumberFormat.getNumberInstance(),
+                getSocket().getSocketHint().createInitialValue().get().doubleValue());
         spinner.disableProperty().bind(this.getHandle().connectedProperty());
 
         this.setContent(spinner);
