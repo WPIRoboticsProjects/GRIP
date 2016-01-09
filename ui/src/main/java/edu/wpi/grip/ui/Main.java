@@ -9,6 +9,7 @@ import edu.wpi.grip.core.GRIPCoreModule;
 import edu.wpi.grip.core.Palette;
 import edu.wpi.grip.core.events.UnexpectedThrowableEvent;
 import edu.wpi.grip.core.operations.Operations;
+import edu.wpi.grip.core.util.SafeShutdown;
 import edu.wpi.grip.generated.CVOperations;
 import edu.wpi.grip.ui.util.DPIUtility;
 import javafx.application.Application;
@@ -31,9 +32,6 @@ public class Main extends Application {
     private Palette palette;
     @Inject
     private Logger logger;
-
-    private volatile boolean stopping = false;
-
 
     protected final Injector injector = Guice.createInjector(new GRIPCoreModule(), new GRIPUIModule());
 
@@ -62,8 +60,9 @@ public class Main extends Application {
         CVOperations.addOperations(eventBus);
 
         stage.setOnCloseRequest((event) -> {
-            Platform.exit();
-            System.exit(0);
+            // If this isn't here this can cause a deadlock on windows
+            // See issue #297
+            SafeShutdown.exit(0, Platform::exit);
         });
 
         stage.setTitle("GRIP Computer Vision Engine");
@@ -74,30 +73,35 @@ public class Main extends Application {
     }
 
     public void stop() {
-        stopping = true;
+        SafeShutdown.flagStopping();
     }
 
     @Subscribe
     @SuppressWarnings("PMD.AvoidCatchingThrowable")
     public final void onUnexpectedThrowableEvent(UnexpectedThrowableEvent event) {
         event.handleSafely((throwable, message, isFatal) -> {
-            // This should still use PlatformImpl
-            if (!stopping) {
+            // Check this so we can avoid entering the the platform wait
+            // if the program is shutting down.
+            if (!SafeShutdown.isStopping()) {
+                // This should still use PlatformImpl
                 PlatformImpl.runAndWait(() -> {
                     // WARNING! Do not post any events from within this! It could result in a deadlock!
                     synchronized (this.dialogLock) {
-                        try {
-                            // Don't create more than one exception dialog at the same time
-                            final ExceptionAlert exceptionAlert = new ExceptionAlert(root, throwable, message, isFatal, getHostServices());
-                            exceptionAlert.setInitialFocus();
-                            exceptionAlert.showAndWait();
-                        } catch (Throwable e) {
-                            // Well in this case something has gone very, very wrong
-                            // We don't want to create a feedback loop either.
+                        // Check again because the value could have been changed while waiting for the javafx thread to run.
+                        if (!SafeShutdown.isStopping()) {
                             try {
-                                logger.log(Level.SEVERE, "Failed to show exception alert", e);
-                            } finally {
-                                System.exit(1); // Ensure we shut down the application if we get an exception
+                                // Don't create more than one exception dialog at the same time
+                                final ExceptionAlert exceptionAlert = new ExceptionAlert(root, throwable, message, isFatal, getHostServices());
+                                exceptionAlert.setInitialFocus();
+                                exceptionAlert.showAndWait();
+                            } catch (Throwable e) {
+                                // Well in this case something has gone very, very wrong
+                                // We don't want to create a feedback loop either.
+                                try {
+                                    logger.log(Level.SEVERE, "Failed to show exception alert", e);
+                                } finally {
+                                    SafeShutdown.exit(1); // Ensure we shut down the application if we get an exception
+                                }
                             }
                         }
                     }
