@@ -179,6 +179,10 @@ public final class PipelineController {
      * details of adding the connection.
      */
     private void addConnectionView(Connection connection) {
+        // runAndWait() is used here because we don't want the main thread to resume, possibly causing more actions
+        // that manipulate the list of connections, until the GUI component is added.  This prevents rendering issues.
+        // Since the code in here JUST manipulates JavaFX components and doesn't post stuff to the EventBus, it's safe
+        // to put in runAndWait() without fear of deadlock.
         PlatformImpl.runAndWait(() -> {
             // Before adding a connection control, we have to look up the controls for both sockets in the connection so
             // we know where to position it.
