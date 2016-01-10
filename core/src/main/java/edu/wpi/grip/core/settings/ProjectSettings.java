@@ -76,18 +76,18 @@ public class ProjectSettings implements Cloneable {
      * number.
      */
     public String computePublishAddress() {
-        if (publishAddress == null || publishAddress.isEmpty()) {
-            return "roborio-" + teamNumber + "-frc.local";
-        } else {
-            return publishAddress;
-        }
+        return computeFRCAddress(publishAddress);
     }
 
     public String computeDeployAddress() {
-        if (deployAddress == null || deployAddress.isEmpty()) {
+        return computeFRCAddress(deployAddress);
+    }
+
+    private String computeFRCAddress(String address) {
+        if (address == null || address.isEmpty()) {
             return "roborio-" + teamNumber + "-frc.local";
         } else {
-            return publishAddress;
+            return address;
         }
     }
 
