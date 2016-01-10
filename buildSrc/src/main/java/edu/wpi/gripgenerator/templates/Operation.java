@@ -96,7 +96,7 @@ public class Operation {
         );
         BlockStmt methodBody = new BlockStmt(
                 Collections.singletonList(new ReturnStmt(
-                        new StringLiteralExpr(definedMethod.getMethodName())))
+                        new StringLiteralExpr("CV " + definedMethod.getMethodName())))
         );
         getName.setBody(methodBody);
         return getName;
