@@ -107,8 +107,13 @@ public final class ExceptionWitnessResponderButton extends Button {
             errorMessage.setText(errorMessageText);
             if (event.getException().isPresent()) {
                 final Exception exception = event.getException().get();
-                stackTrace.setText(Throwables.getStackTraceAsString(exception));
-                stackTrace.setVisible(true);
+                final String exceptionMessage = Throwables.getStackTraceAsString(exception);
+                // Otherwise it is impossible to scroll the text field because it is updated so frequently
+                if (!exceptionMessage.equals(stackTrace.getText())) {
+                    stackTrace.setText(exceptionMessage);
+                }
+
+                stackTracePane.setVisible(true);
             } else {
                 stackTracePane.setVisible(false);
                 stackTrace.setText("");
