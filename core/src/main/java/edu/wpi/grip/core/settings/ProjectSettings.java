@@ -12,18 +12,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
  */
 public class ProjectSettings implements Cloneable {
 
-    /**
-     * What protocol to use to publish values.  Only NetworkTables is supported right now, but in the future we may
-     * make the publish operations work with other protocols like ROS.
-     */
-    public enum NetworkProtocol {
-        NETWORK_TABLES,
-        NONE
-    }
-
-    @Setting(label = "Network Protocol", description = "The protocol to use to publish results")
-    private NetworkProtocol networkProtocol = NetworkProtocol.NONE;
-
     @Setting(label = "FRC Team Number", description = "The team number, if used for FRC")
     private int teamNumber = 0;
 
@@ -35,14 +23,6 @@ public class ProjectSettings implements Cloneable {
     @Setting(label = "Deploy Address", description = "The remote host that grip should be remotely deployed to. If " +
             "not specified, the hostname is derived from the team number.")
     private String deployAddress = "";
-
-    public void setNetworkProtocol(NetworkProtocol networkProtocol) {
-        this.networkProtocol = checkNotNull(networkProtocol, "Network protocol cannot be null");
-    }
-
-    public NetworkProtocol getNetworkProtocol() {
-        return networkProtocol;
-    }
 
     public void setTeamNumber(int teamNumber) {
         checkArgument(teamNumber >= 0, "Team number cannot be negative");
@@ -94,7 +74,6 @@ public class ProjectSettings implements Cloneable {
     @Override
     public String toString() {
         return MoreObjects.toStringHelper(this)
-                .add("networkProtocol", networkProtocol)
                 .add("publishAddress", publishAddress)
                 .add("deployAddress", deployAddress)
                 .add("teamNumber", teamNumber)

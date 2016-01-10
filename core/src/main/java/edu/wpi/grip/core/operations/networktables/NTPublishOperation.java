@@ -23,12 +23,10 @@ import static com.google.common.base.Preconditions.checkNotNull;
  */
 public class NTPublishOperation<T extends NTPublishable> implements Operation {
 
-    private final NetworkTable table;
     private final Class<T> type;
     private final List<Method> ntValueMethods = new ArrayList<>();
 
     public NTPublishOperation(Class<T> type) {
-        this.table = NetworkTable.getTable("GRIP");
         this.type = checkNotNull(type, "Type was null");
 
         // Any accessor method with an @NTValue annotation can be published to NetworkTables.
@@ -99,7 +97,10 @@ public class NTPublishOperation<T extends NTPublishable> implements Operation {
 
         // Get a subtable to put the values in.  Each NTPublishable has multiple properties that are published (such as
         // x, y, width, height, etc...), so they're grouped together in a subtable.
-        final ITable subtable = table.getSubTable(subtableName);
+        final ITable subtable;
+        synchronized (NetworkTable.class) {
+            subtable = NetworkTable.getTable("GRIP").getSubTable(subtableName);
+        }
 
         // For each NTValue method in the object being published, put it in the table if the the corresponding
         // checkbox is selected.

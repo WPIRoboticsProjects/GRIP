@@ -235,14 +235,14 @@ public class ProjectTest {
     public void testSerializedProjectSettings() {
         ProjectSettings projectSettings = new ProjectSettings();
         projectSettings.setTeamNumber(190);
-        projectSettings.setNetworkProtocol(ProjectSettings.NetworkProtocol.NETWORK_TABLES);
+        projectSettings.setDeployAddress("roborio-191-frc.local");
         eventBus.post(new ProjectSettingsChangedEvent(projectSettings));
 
         serializeAndDeserialize();
 
         assertEquals("Team number was not serialized/deserialized",
                 190, pipeline.getProjectSettings().getTeamNumber());
-        assertEquals("Network protocol was not serialized/deserialized",
-                ProjectSettings.NetworkProtocol.NETWORK_TABLES, pipeline.getProjectSettings().getNetworkProtocol());
+        assertEquals("Deploy address was not serialized/deserialized",
+                "roborio-191-frc.local", pipeline.getProjectSettings().getDeployAddress());
     }
 }
