@@ -4,7 +4,9 @@ import com.google.common.eventbus.Subscribe;
 import com.google.inject.Singleton;
 import edu.wpi.first.wpilibj.networktables.NetworkTable;
 import edu.wpi.first.wpilibj.networktables.NetworkTablesJNI;
+import edu.wpi.grip.core.Pipeline;
 import edu.wpi.grip.core.events.ProjectSettingsChangedEvent;
+import edu.wpi.grip.core.events.StepRemovedEvent;
 import edu.wpi.grip.core.settings.ProjectSettings;
 
 import javax.inject.Inject;
@@ -37,6 +39,8 @@ public class NTManager {
         put(6, Level.FINEST);
     }};
 
+    @Inject Pipeline pipeline;
+
     @Inject
     public NTManager(Logger logger) {
         // We may have another instance of this method lying around
@@ -51,7 +55,6 @@ public class NTManager {
         NetworkTable.setClientMode();
     }
 
-
     /**
      * Change the server address according to the project setting.
      */
@@ -59,10 +62,19 @@ public class NTManager {
     public void updateSettings(ProjectSettingsChangedEvent event) {
         final ProjectSettings projectSettings = event.getProjectSettings();
 
-        NetworkTable.shutdown();
-        if (projectSettings.getNetworkProtocol() == ProjectSettings.NetworkProtocol.NETWORK_TABLES) {
+        synchronized (NetworkTable.class) {
+            NetworkTable.shutdown();
             NetworkTable.setIPAddress(projectSettings.computePublishAddress());
-            NetworkTable.initialize();
+        }
+    }
+
+    /**
+     * If there are no NTPublishOperation steps, we can shut down NetworkTables
+     */
+    @Subscribe
+    public void disableNetworkTables(StepRemovedEvent event) {
+        if (!pipeline.getSteps().stream().anyMatch(step -> step.getOperation() instanceof NTPublishOperation)) {
+            NetworkTable.shutdown();
         }
     }
 }

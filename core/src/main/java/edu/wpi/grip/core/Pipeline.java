@@ -169,8 +169,8 @@ public class Pipeline {
         for (OutputSocket<?> socket : step.getOutputSockets()) {
             socket.setPreviewed(false);
         }
-        this.eventBus.post(new StepRemovedEvent(step));
         this.eventBus.unregister(step);
+        this.eventBus.post(new StepRemovedEvent(step));
     }
 
     public synchronized void moveStep(Step step, int delta) {
