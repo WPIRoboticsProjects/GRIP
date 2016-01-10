@@ -27,6 +27,8 @@ public class Main {
     private EventBus eventBus;
     @Inject
     private Logger logger;
+    @Inject
+    private Operations operations;
 
     @SuppressWarnings("PMD.SystemPrintln")
     public static void main(String[] args) throws IOException, InterruptedException {
@@ -44,7 +46,7 @@ public class Main {
             logger.log(Level.INFO, "Loading file " + args[0]);
         }
 
-        Operations.addOperations(eventBus);
+        operations.addOperations(eventBus);
         CVOperations.addOperations(eventBus);
 
         final String projectPath = args[0];

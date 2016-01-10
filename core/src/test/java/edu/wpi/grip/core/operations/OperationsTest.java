@@ -6,6 +6,7 @@ import com.google.common.eventbus.Subscribe;
 import edu.wpi.grip.core.Operation;
 import edu.wpi.grip.core.Step;
 import edu.wpi.grip.core.events.OperationAddedEvent;
+import edu.wpi.grip.core.operations.networktables.MockNTManager;
 import edu.wpi.grip.core.util.MockExceptionWitness;
 import edu.wpi.grip.generated.CVOperations;
 import org.junit.After;
@@ -20,6 +21,12 @@ public class OperationsTest {
     private List<Operation> operationList;
     private Optional<Throwable> throwableOptional;
     private EventBus eventBus;
+
+    public static class OperationsWithMockNTManager extends Operations {
+        public OperationsWithMockNTManager() {
+            super(new MockNTManager());
+        }
+    }
 
     private class OperationGrabber {
         @Subscribe
@@ -55,7 +62,7 @@ public class OperationsTest {
 
     @Test
     public void testCreateAllCoreSteps() {
-        Operations.addOperations(eventBus);
+        new OperationsWithMockNTManager().addOperations(eventBus);
         for (Operation operation : operationList) {
             new Step.Factory(eventBus, (origin) -> new MockExceptionWitness(eventBus, origin)).create(operation);
         }

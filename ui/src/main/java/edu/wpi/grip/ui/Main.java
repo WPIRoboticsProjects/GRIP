@@ -12,6 +12,7 @@ import edu.wpi.grip.core.operations.Operations;
 import edu.wpi.grip.core.util.SafeShutdown;
 import edu.wpi.grip.generated.CVOperations;
 import edu.wpi.grip.ui.util.DPIUtility;
+import edu.wpi.grip.ui.util.GRIPPlatform;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
@@ -32,6 +33,10 @@ public class Main extends Application {
     private Palette palette;
     @Inject
     private Logger logger;
+    @Inject
+    private GRIPPlatform platform;
+    @Inject
+    private Operations operations;
 
     protected final Injector injector = Guice.createInjector(new GRIPCoreModule(), new GRIPUIModule());
 
@@ -56,7 +61,7 @@ public class Main extends Application {
         root = FXMLLoader.load(Main.class.getResource("MainWindow.fxml"), null, null, injector::getInstance);
         root.setStyle("-fx-font-size: " + DPIUtility.FONT_SIZE + "px");
 
-        Operations.addOperations(eventBus);
+        operations.addOperations(eventBus);
         CVOperations.addOperations(eventBus);
 
         stage.setOnCloseRequest((event) -> {

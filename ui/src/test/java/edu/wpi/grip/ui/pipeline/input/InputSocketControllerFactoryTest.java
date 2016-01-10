@@ -4,7 +4,7 @@ import com.google.common.eventbus.EventBus;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import edu.wpi.grip.core.*;
-import edu.wpi.grip.core.operations.Operations;
+import edu.wpi.grip.core.operations.OperationsTest;
 import edu.wpi.grip.generated.CVOperations;
 import edu.wpi.grip.ui.GRIPUIModule;
 import javafx.scene.Scene;
@@ -30,7 +30,7 @@ public class InputSocketControllerFactoryTest extends ApplicationTest {
         Injector injector = Guice.createInjector(new GRIPCoreModule());
         final Palette palette = injector.getInstance(Palette.class);
         final EventBus eventBus = injector.getInstance(EventBus.class);
-        Operations.addOperations(eventBus);
+        new OperationsTest.OperationsWithMockNTManager().addOperations(eventBus);
         CVOperations.addOperations(eventBus);
         Collection<Operation> operations = palette.getOperations();
 
