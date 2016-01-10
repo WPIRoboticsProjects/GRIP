@@ -9,8 +9,8 @@
 # GRIP Computer Vision Engine
 
 GRIP (the Graphically Represented Image Processing engine) is a program for rapidly prototyping and deploying computer
-vision algorithms, primarily for robotics applications.  **It is currently in an early state of development**,
-should be ready in time for the 2016 FIRST Robotics Competition.
+vision algorithms, primarily for robotics applications.  It has been released with features designed for the 
+2016 FIRST Robotics Competition Season.
 
 ## Getting Started
 
@@ -25,3 +25,9 @@ Check out the release notes and [the wiki](https://github.com/WPIRoboticsProject
 To build and run, use the included Gradle wrapper script.
 
     ./gradlew :ui:run
+
+
+## Thanks
+
+Thanks to [TravisCI](https://travis-ci.org/) and [AppVeyor](https://www.appveyor.com/) for providing their continuous integration 
+servers to open source projects for free.
