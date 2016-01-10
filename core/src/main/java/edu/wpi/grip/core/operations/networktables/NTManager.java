@@ -4,10 +4,11 @@ import com.google.common.eventbus.Subscribe;
 import com.google.inject.Singleton;
 import edu.wpi.first.wpilibj.networktables.NetworkTable;
 import edu.wpi.first.wpilibj.networktables.NetworkTablesJNI;
-import edu.wpi.grip.core.settings.ProjectSettings;
 import edu.wpi.grip.core.events.ProjectSettingsChangedEvent;
+import edu.wpi.grip.core.settings.ProjectSettings;
 
 import javax.inject.Inject;
+import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
@@ -43,8 +44,8 @@ public class NTManager {
         // Redirect NetworkTables log messages to our own log files.  This gets rid of console spam, and it also lets
         // us grep through NetworkTables messages just like any other messages.
         NetworkTablesJNI.setLogger((level, file, line, msg) -> {
-            String fileName = "ntcore/" + file.substring(file.indexOf("src/"));
-            logger.log(ntLogLevels.get(level), String.format("%s:%d %s", fileName, line, msg));
+            String filename = new File(file).getName();
+            logger.log(ntLogLevels.get(level), String.format("NetworkTables: %s:%d %s", filename, line, msg));
         }, 0);
 
         NetworkTable.setClientMode();
