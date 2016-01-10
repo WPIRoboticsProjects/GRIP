@@ -15,7 +15,7 @@ import static org.bytedeco.javacpp.opencv_core.*;
  */
 public class RGBThresholdOperation extends ThresholdOperation {
 
-    private static final Logger logger =  Logger.getLogger(RGBThresholdOperation.class.getName());
+    private static final Logger logger = Logger.getLogger(RGBThresholdOperation.class.getName());
     private final SocketHint<Mat> inputHint = SocketHints.Inputs.createMatSocketHint("Input", false);
     private final SocketHint<List> redHint = SocketHints.Inputs.createNumberListRangeSocketHint("Red", 0.0, 255.0);
     private final SocketHint<List> greenHint = SocketHints.Inputs.createNumberListRangeSocketHint("Green", 0.0, 255.0);
@@ -64,6 +64,10 @@ public class RGBThresholdOperation extends ThresholdOperation {
         final List<Number> channel1 = ((InputSocket<List<Number>>) inputs[1]).getValue().get();
         final List<Number> channel2 = ((InputSocket<List<Number>>) inputs[2]).getValue().get();
         final List<Number> channel3 = ((InputSocket<List<Number>>) inputs[3]).getValue().get();
+
+        if (input.channels() != 3) {
+            throw new IllegalArgumentException("RGB Threshold needs a 3-channel input");
+        }
 
         final OutputSocket<Mat> outputSocket = (OutputSocket<Mat>) outputs[0];
         final Mat output = outputSocket.getValue().get();

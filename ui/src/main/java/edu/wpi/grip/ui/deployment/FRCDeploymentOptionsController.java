@@ -14,6 +14,7 @@ import org.jdeferred.impl.DeferredObject;
 
 import java.io.OutputStream;
 import java.net.InetAddress;
+import java.text.NumberFormat;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
@@ -31,7 +32,7 @@ public class FRCDeploymentOptionsController extends DeploymentOptionsController 
                 Consumer<DeployedInstanceManager> onDeployCallback,
                 @Assisted("stdOut") Supplier<OutputStream> stdOut,
                 @Assisted("stdErr") Supplier<OutputStream> stdErr
-            );
+        );
     }
 
     @Inject
@@ -53,12 +54,11 @@ public class FRCDeploymentOptionsController extends DeploymentOptionsController 
         final SpinnerValueFactory.IntegerSpinnerValueFactory spinnerValueFactory =
                 new SpinnerValueFactory.IntegerSpinnerValueFactory(0, Integer.MAX_VALUE, teamNumber);
         this.teamNumberSpinner = new Spinner(spinnerValueFactory);
-        Spinners.makeEditableSafely(teamNumberSpinner, Integer::valueOf);
+        Spinners.makeEditableSafely(teamNumberSpinner, NumberFormat.getIntegerInstance(), 0);
         label.setLabelFor(teamNumberSpinner);
 
         getOptionsGrid().addRow(0, label, this.teamNumberSpinner);
     }
-
 
 
     @Override
