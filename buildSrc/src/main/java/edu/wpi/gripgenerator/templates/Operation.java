@@ -190,39 +190,38 @@ public class Operation {
         List<Statement> performStatement = expressionList.stream().map(ExpressionStmt::new).collect(Collectors.toList());
         final String exceptionVariable = "e";
         final String outputSocketForEachVariableId = "outputSocket";
-        final TryStmt performTry = new TryStmt(
-                new BlockStmt(
-                        Arrays.asList(
+
+        performStatement.addAll(
+                Arrays.asList(
                                 /* Make the operation function call */
-                                new ExpressionStmt(
-                                        getFunctionCallExpression()
-                                ),
+                        new ExpressionStmt(
+                                getFunctionCallExpression()
+                        ),
                                 /*
                                  * Afterwards iterate over all of the output sockets and call setValue using the value
                                  * stored.
                                  */
-                                new ForeachStmt(
-                                        new VariableDeclarationExpr(
-                                                0,
-                                                ASTHelper.createReferenceType("OutputSocket", 0),
-                                                Collections.singletonList(
-                                                        new VariableDeclarator(
-                                                                new VariableDeclaratorId(outputSocketForEachVariableId)
-                                                        )
+                        new ForeachStmt(
+                                new VariableDeclarationExpr(
+                                        0,
+                                        ASTHelper.createReferenceType("OutputSocket", 0),
+                                        Collections.singletonList(
+                                                new VariableDeclarator(
+                                                        new VariableDeclaratorId(outputSocketForEachVariableId)
                                                 )
-                                        ),
-                                        new NameExpr(outputParamId),
-                                        new BlockStmt(
-                                                Collections.singletonList(
-                                                        new ExpressionStmt(
-                                                                new MethodCallExpr(
-                                                                        new NameExpr(outputSocketForEachVariableId),
-                                                                        "setValueOptional",
-                                                                        Collections.singletonList(
-                                                                                new MethodCallExpr(
-                                                                                        new NameExpr(outputSocketForEachVariableId),
-                                                                                        "getValue"
-                                                                                )
+                                        )
+                                ),
+                                new NameExpr(outputParamId),
+                                new BlockStmt(
+                                        Collections.singletonList(
+                                                new ExpressionStmt(
+                                                        new MethodCallExpr(
+                                                                new NameExpr(outputSocketForEachVariableId),
+                                                                "setValueOptional",
+                                                                Collections.singletonList(
+                                                                        new MethodCallExpr(
+                                                                                new NameExpr(outputSocketForEachVariableId),
+                                                                                "getValue"
                                                                         )
                                                                 )
                                                         )
@@ -230,36 +229,10 @@ public class Operation {
                                         )
                                 )
                         )
-                ),
-                Collections.singletonList(
-                        new CatchClause(
-                                new MultiTypeParameter(
-                                        ModifierSet.FINAL,
-                                        null,
-                                        Collections.singletonList(
-                                                ASTHelper.createReferenceType("Exception", 0)
-                                        ),
-                                        new VariableDeclaratorId(exceptionVariable)
-                                ),
-                                new BlockStmt(
-                                        // TODO: Add some sort of indication that an error has occurred
-                                        Collections.singletonList(
-                                                new ExpressionStmt(
-                                                        new MethodCallExpr(
-                                                                new NameExpr(exceptionVariable),
-                                                                "printStackTrace"
-                                                        )
-                                                )
-                                        )
-                                )
-                        )
-                ),
-                null
+                )
         );
-        // This is needed to prevent a null pointer
-        performTry.setResources(Collections.emptyList());
 
-        performStatement.add(performTry);
+
         return performStatement;
     }
 
