@@ -32,7 +32,7 @@ public final class ExceptionAlert extends Alert {
     };
 
     private static final ButtonType COPY = new ButtonType("Copy to Clipboard");
-    private static final ButtonType GITHUB = new ButtonType("Open GitHub Issues");
+    private static final ButtonType REPORT = new ButtonType("Report Issue");
 
     private final Node initialFocusElement;
 
@@ -63,8 +63,7 @@ public final class ExceptionAlert extends Alert {
         this.setResizable(true);
 
         // Add two additional buttons
-        this.getButtonTypes().removeIf((buttonType) -> buttonType.equals(ButtonType.OK));
-        this.getButtonTypes().addAll(COPY, closeBtnType, GITHUB);
+        this.getButtonTypes().setAll(COPY, closeBtnType, REPORT);
 
 
         final GridPane dialogContent = new GridPane();
@@ -100,7 +99,7 @@ public final class ExceptionAlert extends Alert {
             event.consume(); // Prevent the dialog from closing
         });
 
-        final Button openGitHubIssueBtn = (Button) this.getDialogPane().lookupButton(GITHUB);
+        final Button openGitHubIssueBtn = (Button) this.getDialogPane().lookupButton(REPORT);
         openGitHubIssueBtn.addEventFilter(ActionEvent.ACTION, event -> {
             services.showDocument(PROJECT_ISSUE_LINK);
             event.consume(); // Prevent the dialog from closing
