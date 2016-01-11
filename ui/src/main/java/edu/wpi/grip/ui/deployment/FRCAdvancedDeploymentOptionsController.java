@@ -61,7 +61,7 @@ public class FRCAdvancedDeploymentOptionsController extends DeploymentOptionsCon
                 getDeployButton().setDisable(false);
             }
         });
-        getDeployButton().setDisable(true);
+        getDeployButton().setDisable(false);
 
         final Label textFieldInput = new Label("Address/IP:");
         textFieldInput.setLabelFor(this.address);
