@@ -17,10 +17,7 @@ import edu.wpi.grip.util.Files;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.io.Reader;
-import java.io.StringReader;
-import java.io.StringWriter;
-import java.io.Writer;
+import java.io.*;
 
 import static junit.framework.TestCase.assertEquals;
 import static org.bytedeco.javacpp.opencv_core.*;
@@ -66,7 +63,7 @@ public class ProjectTest {
         eventBus.post(new OperationAddedEvent(opencvAddOperation));
     }
 
-    private void serializeAndDeserialize() {
+    private void serializeAndDeserialize() throws IOException {
         final Writer writer = new StringWriter();
         project.save(writer);
 
@@ -232,7 +229,7 @@ public class ProjectTest {
     }
 
     @Test
-    public void testSerializedProjectSettings() {
+    public void testSerializedProjectSettings() throws IOException {
         ProjectSettings projectSettings = new ProjectSettings();
         projectSettings.setTeamNumber(190);
         projectSettings.setDeployAddress("roborio-191-frc.local");
