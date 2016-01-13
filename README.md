@@ -26,6 +26,9 @@ To build and run, use the included Gradle wrapper script.
 
     ./gradlew :ui:run
 
+## Contributing
+
+See the guide on [setting up build tools](https://github.com/WPIRoboticsProjects/GRIP/wiki/Setting-up-build-tools) in the wiki.
 
 ## Thanks
 
