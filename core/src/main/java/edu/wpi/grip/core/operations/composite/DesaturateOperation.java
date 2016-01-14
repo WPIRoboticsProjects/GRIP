@@ -54,7 +54,7 @@ public class DesaturateOperation implements Operation {
         switch (input.channels()) {
             case 1:
                 // If the input is already one channel, it's already desaturated
-                output = input;
+                input.copyTo(output);
                 break;
 
             case 3:
