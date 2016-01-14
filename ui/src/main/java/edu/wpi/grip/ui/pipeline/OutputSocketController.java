@@ -1,13 +1,16 @@
 package edu.wpi.grip.ui.pipeline;
 
 import com.google.common.annotations.VisibleForTesting;
+import com.google.common.eventbus.Subscribe;
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 import edu.wpi.grip.core.OutputSocket;
 import edu.wpi.grip.core.Socket;
 import edu.wpi.grip.core.SocketHint;
+import edu.wpi.grip.core.events.SocketPreviewChangedEvent;
 import edu.wpi.grip.ui.Controller;
 import edu.wpi.grip.ui.annotations.ParametrizedController;
+import javafx.beans.InvalidationListener;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
@@ -40,7 +43,8 @@ public class OutputSocketController implements Controller {
     @FXML
     private StackPane handlePane;
 
-    private SocketHandleView.Factory socketHandleFactory;
+    private final SocketHandleView.Factory socketHandleFactory;
+    private final InvalidationListener previewListener;
 
     /**
      * The "handle" is a simple shape next ot the socket identifier that shows whether or not there is a connection
@@ -59,6 +63,7 @@ public class OutputSocketController implements Controller {
     OutputSocketController(SocketHandleView.Factory socketHandleFactory, @Assisted OutputSocket socket) {
         this.socketHandleFactory = checkNotNull(socketHandleFactory, "Socket Handle factory can not be null");
         this.socket = checkNotNull(socket, "The output socket can not be null");
+        this.previewListener = value -> this.socket.setPreviewed(this.preview.isSelected());
     }
 
     @FXML
@@ -70,7 +75,7 @@ public class OutputSocketController implements Controller {
 
         // Show a button to choose if we want to preview the socket or not
         this.preview.setSelected(this.socket.isPreviewed());
-        this.preview.selectedProperty().addListener(value -> this.socket.setPreviewed(this.preview.isSelected()));
+        this.preview.selectedProperty().addListener(previewListener);
 
         SocketHint<?> socketHint = this.socket.getSocketHint();
 
@@ -85,6 +90,19 @@ public class OutputSocketController implements Controller {
 
     public SocketHandleView getHandle() {
         return this.handle;
+    }
+
+    @Subscribe
+    public void onSocketPreviewChangedEvent(SocketPreviewChangedEvent event) {
+        if (event.getSocket().equals(socket)) {
+            // Only try to update the button if the two aren't the same
+            // This really should only happen we deserialize the pipeline
+            if (event.getSocket().isPreviewed() != preview.isSelected()) {
+                preview.selectedProperty().removeListener(previewListener);
+                preview.setSelected(event.getSocket().isPreviewed());
+                preview.selectedProperty().addListener(previewListener);
+            }
+        }
     }
 
     @VisibleForTesting
