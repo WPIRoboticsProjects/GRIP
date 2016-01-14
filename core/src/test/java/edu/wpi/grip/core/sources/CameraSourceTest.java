@@ -7,6 +7,7 @@ import com.google.common.eventbus.Subscribe;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import edu.wpi.grip.core.GRIPCoreModule;
+import edu.wpi.grip.core.events.StopPipelineEvent;
 import edu.wpi.grip.core.events.UnexpectedThrowableEvent;
 import edu.wpi.grip.core.util.MockExceptionWitness;
 import org.bytedeco.javacpp.indexer.Indexer;
@@ -184,6 +185,13 @@ public class CameraSourceTest {
             cameraSourceWithMockGrabber.stop();
         }
         fail("The test should have failed with an IllegalStateException");
+    }
+
+
+    @Test
+    public void testStopPipelineEventDoesntThrowWhenCameraStopped() throws Exception {
+        cameraSourceWithMockGrabber.onStopPipeline(new StopPipelineEvent());
+        assertFalse("The camera source should not be running", cameraSourceWithMockGrabber.isStarted());
     }
 
 }
