@@ -23,14 +23,17 @@ import java.util.logging.*;
  * A Guice {@link com.google.inject.Module} for GRIP's core package.  This is where instances of {@link Pipeline},
  * {@link Palette}, {@link Project}, etc... are created.
  */
+@SuppressWarnings("PMD.MoreThanOneLogger")
 public class GRIPCoreModule extends AbstractModule {
     private final Logger logger = Logger.getLogger(GRIPCoreModule.class.getName());
 
     private final EventBus eventBus = new EventBus(this::onSubscriberException);
 
-    public GRIPCoreModule() {
+    // This is in a static initialization block so that we don't create a ton of
+    // log files when running tests
+    static {
         //Set up the global level logger. This handles IO for all loggers.
-        final Logger globalLogger = LogManager.getLogManager().getLogger("");//This is our global logger
+        final Logger globalLogger = LogManager.getLogManager().getLogger("");
 
         try {
             // Remove the default handlers that stream to System.err
@@ -69,7 +72,10 @@ public class GRIPCoreModule extends AbstractModule {
         } catch (IOException exception) {//Something happened setting up file IO
             throw new IllegalStateException("Failed to configure the Logger", exception);
         }
+    }
 
+    public GRIPCoreModule() {
+        // TODO: HACK! Don't assign the global thread handler to an instance method. Creates global state.
         Thread.setDefaultUncaughtExceptionHandler(this::onThreadException);
     }
 
