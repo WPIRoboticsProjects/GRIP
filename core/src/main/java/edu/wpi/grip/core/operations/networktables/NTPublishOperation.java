@@ -12,6 +12,7 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Function;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -21,16 +22,35 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * To be publishable, a type should have one or more accessor methods annotated with {@link NTValue}.  This is done
  * with annotations instead of methods
  */
-public class NTPublishOperation<T extends NTPublishable> implements Operation {
+public class NTPublishOperation<S, T extends NTPublishable> implements Operation {
 
-    private final Class<T> type;
+    private final Class<S> type;
+    private final Function<S, T> converter;
     private final List<Method> ntValueMethods = new ArrayList<>();
 
+    /**
+     * Create a new publish operation for a socket type that implements {@link NTPublishable} directly
+     */
+    @SuppressWarnings("unchecked")
     public NTPublishOperation(Class<T> type) {
-        this.type = checkNotNull(type, "Type was null");
+        this((Class<S>) type, type, value -> (T) value);
+    }
+
+    /**
+     * Create a new publish operation where the socket type and NTPublishable type are different.  This is useful for
+     * classes that we don't create, such as JavaCV's {@link org.bytedeco.javacpp.opencv_core.Size} class, since we
+     * can't make them implement additional interfaces.
+     *
+     * @param socketType The type of socket that can be connected to this step
+     * @param reportType A class implementing {@link NTPublishable} that determines what data is sent to NetworkTables
+     * @param converter  A function to convert socket values into publishable values
+     */
+    public NTPublishOperation(Class<S> socketType, Class<T> reportType, Function<S, T> converter) {
+        this.type = checkNotNull(socketType, "Type was null");
+        this.converter = checkNotNull(converter, "Converter was null");
 
         // Any accessor method with an @NTValue annotation can be published to NetworkTables.
-        for (Method method : type.getDeclaredMethods()) {
+        for (Method method : reportType.getDeclaredMethods()) {
             if (method.getAnnotation(NTValue.class) != null) {
                 if (method.getParameters().length > 0) {
                     throw new IllegalArgumentException("@NTValue method must have 0 parameters: " + method);
@@ -88,7 +108,7 @@ public class NTPublishOperation<T extends NTPublishable> implements Operation {
     public void perform(InputSocket<?>[] inputs, OutputSocket<?>[] outputs) {
         int i = 0;
 
-        final NTPublishable value = (NTPublishable) inputs[i++].getValue().get();
+        final NTPublishable value = converter.apply((S) inputs[i++].getValue().get());
         final String subtableName = (String) inputs[i++].getValue().get();
 
         if (subtableName.isEmpty()) {
