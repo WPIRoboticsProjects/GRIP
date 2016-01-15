@@ -334,8 +334,10 @@ public class CameraSource extends Source implements StartStoppable {
      * @param event
      */
     @Subscribe
-    public synchronized void onStopPipeline(StopPipelineEvent event) throws InterruptedException, IOException, TimeoutException {
-        this.stop();
+    public void onStopPipeline(StopPipelineEvent event) throws InterruptedException, IOException, TimeoutException {
+        if (this.isStarted()) {
+            this.stop();
+        }
     }
 
 }
