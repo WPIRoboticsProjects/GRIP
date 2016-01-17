@@ -3,13 +3,19 @@ package edu.wpi.grip.ui;
 import com.google.common.eventbus.EventBus;
 import edu.wpi.grip.core.Palette;
 import edu.wpi.grip.core.Pipeline;
-import edu.wpi.grip.core.settings.ProjectSettings;
 import edu.wpi.grip.core.events.ProjectSettingsChangedEvent;
 import edu.wpi.grip.core.serialization.Project;
+import edu.wpi.grip.core.settings.ProjectSettings;
+import edu.wpi.grip.ui.util.DPIUtility;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.Parent;
-import javafx.scene.control.*;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.Dialog;
+import javafx.scene.control.SplitPane;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
@@ -32,6 +38,8 @@ public class MainWindowController {
     private Region bottomPane;
     @FXML
     private Region pipelineView;
+    @FXML
+    private Pane deployPane;
     @Inject
     private EventBus eventBus;
     @Inject
@@ -40,8 +48,6 @@ public class MainWindowController {
     private Palette palette;
     @Inject
     private Project project;
-    @Inject
-    private DeployerController.Factory deployerControllerFactoy;
 
     public void initialize() {
         pipelineView.prefHeightProperty().bind(bottomPane.heightProperty());
@@ -185,27 +191,20 @@ public class MainWindowController {
     }
 
     @FXML
-    public void deployFRC() {
-        if (project.getFile().isPresent()) {
-            final DeployerController deployerController = deployerControllerFactoy.create();
-            deployerController.getRoot().getStylesheets().addAll(root.getStylesheets());
-            deployerController.getRoot().setStyle(root.getStyle());
-            final Dialog<ButtonType> dialog = new Dialog();
-            dialog.setDialogPane(deployerController.getRoot());
-            dialog.setResizable(true);
-            dialog.showAndWait();
-        } else {
-            final Alert alert = new Alert(Alert.AlertType.INFORMATION,
-                    "You must have saved your project before it can be deployed to a remote device.");
-            alert.getDialogPane().getStylesheets().addAll(root.getStylesheets());
-            alert.getDialogPane().setStyle(root.getStyle());
+    public void deploy() {
+        ImageView graphic = new ImageView(new Image("/edu/wpi/grip/ui/icons/first.png"));
+        graphic.setFitWidth(DPIUtility.SMALL_ICON_SIZE);
+        graphic.setFitHeight(DPIUtility.SMALL_ICON_SIZE);
 
-            // Workaround for JavaFX's default Alert styling causing text to get cut off
-            Label alertLabel = (Label) alert.getDialogPane().getChildren().filtered(node -> node instanceof Label).get(0);
-            alertLabel.setMinHeight(Region.USE_PREF_SIZE);
-
-            alert.showAndWait();
-        }
-
+        Dialog<ButtonType> dialog = new Dialog<>();
+        dialog.setTitle("Deploy");
+        dialog.setHeaderText("Deploy");
+        dialog.setGraphic(graphic);
+        dialog.getDialogPane().getButtonTypes().setAll(ButtonType.CLOSE);
+        dialog.getDialogPane().styleProperty().bind(root.styleProperty());
+        dialog.getDialogPane().getStylesheets().setAll(root.getStylesheets());
+        dialog.getDialogPane().setContent(deployPane);
+        dialog.setResizable(true);
+        dialog.showAndWait();
     }
 }

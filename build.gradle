@@ -199,9 +199,7 @@ project(":ui") {
         compile project(path: ':core', configuration: 'shadow')
         ideProvider project(path: ':core', configuration: 'compile')
         compile group: 'org.controlsfx', name: 'controlsfx', version: '8.40.10'
-        compile group: 'org.apache.ant', name: 'ant-jsch', version: '1.8.1'
-        compile group: 'com.jcabi', name: 'jcabi-ssh', version: '1.5'
-        compile group: 'org.jdeferred', name: 'jdeferred-core', version: '1.2.4'
+        compile group: 'com.hierynomus', name: 'sshj', version: '0.15.0'
         testCompile files(project(':core').sourceSets.test.output.classesDir)
         testCompile files(project(':core').sourceSets.test.output.resourcesDir)
         testCompile group: 'org.testfx', name: 'testfx-core', version: '4.0.+'

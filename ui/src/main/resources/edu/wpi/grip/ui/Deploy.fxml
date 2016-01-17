@@ -1,0 +1,49 @@
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?language javascript ?>
+<GridPane maxWidth="Infinity" fx:controller="edu.wpi.grip.ui.DeployController" styleClass="deploy-pane"
+          xmlns:fx="http://javafx.com/fxml/1">
+    <rowConstraints>
+        <RowConstraints vgrow="NEVER"/>
+        <RowConstraints vgrow="NEVER"/>
+        <RowConstraints vgrow="NEVER"/>
+        <RowConstraints vgrow="NEVER"/>
+        <RowConstraints vgrow="NEVER"/>
+        <RowConstraints vgrow="NEVER"/>
+        <RowConstraints vgrow="ALWAYS"/>
+        <RowConstraints vgrow="NEVER"/>
+    </rowConstraints>
+
+    <columnConstraints>
+        <ColumnConstraints hgrow="SOMETIMES"/>
+        <ColumnConstraints hgrow="ALWAYS"/>
+    </columnConstraints>
+
+    <children>
+        <Label text="Address" disable="${address.disabled}" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+        <TextField fx:id="address" promptText="Address" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+
+        <Label text="User" disable="${user.disabled}" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+        <TextField fx:id="user" promptText="User" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+
+        <Label text="Password" disable="${password.disabled}" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
+        <PasswordField fx:id="password" promptText="Password" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+
+        <Label text="Java Home" disable="${javaHome.disabled}" GridPane.columnIndex="0" GridPane.rowIndex="3"/>
+        <TextField fx:id="javaHome" promptText="Java Home" GridPane.columnIndex="1" GridPane.rowIndex="3"/>
+
+        <Label text="Deploy Directory" disable="${deployDir.disabled}" GridPane.columnIndex="0" GridPane.rowIndex="4"/>
+        <TextField fx:id="deployDir" promptText="Deploy Directory" GridPane.columnIndex="1" GridPane.rowIndex="4"/>
+
+        <Button text="Deploy" fx:id="deployButton" GridPane.columnIndex="0" GridPane.rowIndex="5"
+                onMouseClicked="#onButtonClicked"/>
+
+        <Label fx:id="status" GridPane.columnIndex="1" GridPane.rowIndex="5"/>
+
+        <ProgressBar fx:id="progress" GridPane.columnIndex="0" GridPane.columnSpan="2" GridPane.rowIndex="6"
+                     GridPane.fillWidth="true" maxWidth="Infinity" progress="0"/>
+
+        <TextArea fx:id="console" styleClass="console" editable="false" GridPane.columnIndex="0" GridPane.columnSpan="2"
+                  GridPane.rowIndex="7"/>
+    </children>
+</GridPane>

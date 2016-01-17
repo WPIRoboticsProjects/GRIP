@@ -97,7 +97,7 @@
                 </MenuItem>
             </Menu>
             <Menu text="Tools">
-                <MenuItem text="FRC Deploy" onAction="#deployFRC">
+                <MenuItem text="Deploy" onAction="#deploy">
                     <graphic>
                         <ImageView styleClass="menu-graphic">
                             <fitWidth>
@@ -141,6 +141,9 @@
             </items>
         </SplitPane>
     </children>
+    <fx:define>
+        <fx:include source="Deploy.fxml" fx:id="deployPane"/>
+    </fx:define>
     <stylesheets>
         <URL value="@roboto/Roboto.css"/>
         <URL value="@GRIP.css"/>

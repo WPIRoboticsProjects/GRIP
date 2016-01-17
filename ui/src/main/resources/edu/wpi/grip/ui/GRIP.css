@@ -109,7 +109,7 @@ Button.add-source {
 Button.delete, Button.move-left, Button.move-right, start-stoppable-button {
     -fx-padding: 0.2em 0.8em;
     -fx-font-weight: bold;
-    -fx-font-color: -fx-dark-color;
+    -fx-text-fill: -fx-dark-color;
 }
 
 VBox.sockets {
@@ -189,7 +189,7 @@ VBox.sockets {
     -fx-background-color: grey;
 }
 
-.property-sheet .property-pane {
+.property-sheet .property-pane, .deploy-pane {
     -fx-hgap: 4em;
     -fx-vgap: 1em;
 }
@@ -200,4 +200,19 @@ VBox.sockets {
 
 .exception-text {
     -fx-font-family: "Monospace";
+}
+
+.console {
+    -fx-font-family: "Monospace";
+    -fx-min-width: 48em;
+    -fx-min-height: 32em;
+}
+
+.error-label {
+    -fx-text-fill: red;
+    -fx-font-weight: bold;
+}
+
+.info-label {
+    -fx-font-weight: bold;
 }
