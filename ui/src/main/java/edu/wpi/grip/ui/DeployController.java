@@ -1,9 +1,11 @@
 package edu.wpi.grip.ui;
 
+import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import com.google.common.io.LineReader;
 import edu.wpi.grip.core.Pipeline;
 import edu.wpi.grip.core.events.ProjectSettingsChangedEvent;
+import edu.wpi.grip.core.events.StopPipelineEvent;
 import edu.wpi.grip.core.serialization.Project;
 import edu.wpi.grip.ui.annotations.ParametrizedController;
 import edu.wpi.grip.ui.util.StringInMemoryFile;
@@ -59,6 +61,7 @@ public class DeployController {
     @FXML private Label status;
     @FXML private TextArea console;
 
+    @Inject private EventBus eventBus;
     @Inject private Project project;
     @Inject private Pipeline pipeline;
     @Inject private Logger logger;
@@ -137,6 +140,10 @@ public class DeployController {
             scp.upload(new StringInMemoryFile(PROJECT_FILE, projectWriter.toString()), deployDir + "/");
             scp.upload(new FileSystemFile(Project.class.getProtectionDomain().getCodeSource().getLocation().getPath()),
                     deployDir + "/" + GRIP_JAR);
+
+            // Stop the pipeline before running it remotely, so the two instances of GRIP don't try to publish to the
+            // same NetworkTables keys.
+            eventBus.post(new StopPipelineEvent());
 
             // Run the project!
             setStatusAsync("Running GRIP", false);
