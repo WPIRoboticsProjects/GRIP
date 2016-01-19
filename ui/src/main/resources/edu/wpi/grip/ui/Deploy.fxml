@@ -1,66 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
 <?language javascript ?>
+
+<?import edu.wpi.grip.ui.util.DPIUtility?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.*?>
-<?import edu.wpi.grip.ui.util.DPIUtility ?>
-<GridPane maxWidth="Infinity" fx:controller="edu.wpi.grip.ui.DeployController" styleClass="deploy-pane"
-          xmlns:fx="http://javafx.com/fxml/1">
-    <rowConstraints>
-        <RowConstraints vgrow="NEVER"/>
-        <RowConstraints vgrow="NEVER"/>
-        <RowConstraints vgrow="NEVER"/>
-        <RowConstraints vgrow="NEVER"/>
-        <RowConstraints vgrow="NEVER"/>
-        <RowConstraints vgrow="NEVER"/>
-        <RowConstraints vgrow="ALWAYS"/>
-        <RowConstraints vgrow="NEVER"/>
-    </rowConstraints>
+<VBox styleClass="deploy-pane" maxWidth="Infinity" xmlns:fx="http://javafx.com/fxml/1"
+      xmlns="http://javafx.com/javafx/null" fx:controller="edu.wpi.grip.ui.DeployController">
+    <GridPane maxHeight="Infinity">
+        <columnConstraints>
+            <ColumnConstraints hgrow="NEVER"/>
+            <ColumnConstraints hgrow="ALWAYS"/>
+        </columnConstraints>
 
-    <columnConstraints>
-        <ColumnConstraints hgrow="SOMETIMES"/>
-        <ColumnConstraints hgrow="ALWAYS"/>
-    </columnConstraints>
-
-    <children>
-        <Label text="Address" disable="${address.disabled}" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+        <Label disable="${address.disabled}" text="Address" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
         <TextField fx:id="address" promptText="Address" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
 
-        <Label text="User" disable="${user.disabled}" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+        <Label disable="${user.disabled}" text="User" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
         <TextField fx:id="user" promptText="User" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
 
-        <Label text="Password" disable="${password.disabled}" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
+        <Label disable="${password.disabled}" text="Password" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
         <PasswordField fx:id="password" promptText="Password" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
 
-        <Label text="Java Home" disable="${javaHome.disabled}" GridPane.columnIndex="0" GridPane.rowIndex="3"/>
+        <Label disable="${javaHome.disabled}" text="Java Home" GridPane.columnIndex="0" GridPane.rowIndex="3"/>
         <TextField fx:id="javaHome" promptText="Java Home" GridPane.columnIndex="1" GridPane.rowIndex="3"/>
 
-        <Label text="Deploy Directory" disable="${deployDir.disabled}" GridPane.columnIndex="0" GridPane.rowIndex="4"/>
+        <Label disable="${deployDir.disabled}" text="Deploy Directory" GridPane.columnIndex="0" GridPane.rowIndex="4"/>
         <TextField fx:id="deployDir" promptText="Deploy Directory" GridPane.columnIndex="1" GridPane.rowIndex="4"/>
+    </GridPane>
 
-        <Button text="Deploy" fx:id="deployButton" GridPane.columnIndex="0" GridPane.rowIndex="5" defaultButton="true"
-                onMouseClicked="#onButtonClicked">
-            <graphic>
-                <ImageView styleClass="menu-graphic">
-                    <fitWidth>
-                        <DPIUtility fx:constant="SMALL_ICON_SIZE"/>
-                    </fitWidth>
-                    <fitHeight>
-                        <DPIUtility fx:constant="SMALL_ICON_SIZE"/>
-                    </fitHeight>
-                    <image>
-                        <Image url="@icons/deploy.png"/>
-                    </image>
-                </ImageView>
-            </graphic>
-        </Button>
+    <ButtonBar>
+        <buttons>
+            <Button fx:id="deployButton" defaultButton="true" onMouseClicked="#onDeploy" text="Deploy"
+                    ButtonBar.buttonData="APPLY">
+                <graphic>
+                    <ImageView styleClass="menu-graphic">
+                        <fitWidth>
+                            <DPIUtility fx:constant="SMALL_ICON_SIZE"/>
+                        </fitWidth>
+                        <fitHeight>
+                            <DPIUtility fx:constant="SMALL_ICON_SIZE"/>
+                        </fitHeight>
+                        <image>
+                            <Image url="@icons/deploy.png"/>
+                        </image>
+                    </ImageView>
+                </graphic>
+            </Button>
+            <Button fx:id="cancelButton" text="Cancel" ButtonBar.buttonData="CANCEL_CLOSE" onMouseClicked="#onCancel"/>
+        </buttons>
+    </ButtonBar>
 
-        <Label fx:id="status" GridPane.columnIndex="1" GridPane.rowIndex="5"/>
+    <StackPane>
+        <ProgressBar fx:id="progress" maxWidth="Infinity" progress="0"/>
+        <Label fx:id="status" blendMode="MULTIPLY"/>
+    </StackPane>
 
-        <ProgressBar fx:id="progress" GridPane.columnIndex="0" GridPane.columnSpan="2" GridPane.rowIndex="6"
-                     GridPane.fillWidth="true" maxWidth="Infinity" progress="0"/>
-
-        <TextArea fx:id="console" styleClass="console" editable="false" GridPane.columnIndex="0" GridPane.columnSpan="2"
-                  GridPane.rowIndex="7"/>
-    </children>
-</GridPane>
+    <TextArea fx:id="console" editable="false" styleClass="console"/>
+</VBox>

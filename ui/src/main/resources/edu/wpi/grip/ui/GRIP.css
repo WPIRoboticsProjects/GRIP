@@ -189,7 +189,7 @@ VBox.sockets {
     -fx-background-color: grey;
 }
 
-.property-sheet .property-pane, .deploy-pane {
+.property-sheet .property-pane, .deploy-pane GridPane {
     -fx-hgap: 4em;
     -fx-vgap: 1em;
 }
@@ -200,6 +200,14 @@ VBox.sockets {
 
 .exception-text {
     -fx-font-family: "Monospace";
+}
+
+.deploy-pane {
+    -fx-spacing: 1em;
+}
+
+.deploy-pane StackPane {
+    -fx-pref-height: 2em;
 }
 
 .console {

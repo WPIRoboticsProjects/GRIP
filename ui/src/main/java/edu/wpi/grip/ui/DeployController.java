@@ -94,7 +94,7 @@ public class DeployController {
     }
 
     @FXML
-    public void onButtonClicked() {
+    public void onDeploy() {
         if (deploying.get()) {
             throw new IllegalStateException("There's already a deploy in progress");
         }
@@ -103,10 +103,25 @@ public class DeployController {
         console.clear();
 
         // Start the deploy in a new thread, so the GUI doesn't freeze
-        deployThread = Optional.of(new Thread(() ->
-                deploy(address.getText(), user.getText(), password.getText(), javaHome.getText(), deployDir.getText())));
-        deployThread.get().setDaemon(true);
-        deployThread.get().start();
+        Thread t = new Thread(() -> {
+            deployThread.ifPresent(thread -> {
+                try {
+                    thread.join();
+                } catch (InterruptedException impossible) {
+                }
+            });
+
+            deployThread = Optional.of(Thread.currentThread());
+            deploy(address.getText(), user.getText(), password.getText(), javaHome.getText(), deployDir.getText());
+            deployThread = Optional.empty();
+        });
+        t.setDaemon(true);
+        t.start();
+    }
+
+    @FXML
+    public void onCancel() {
+        deployThread.ifPresent(Thread::interrupt);
     }
 
     /**
