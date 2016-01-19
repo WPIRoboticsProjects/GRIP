@@ -107,7 +107,7 @@
                                 <DPIUtility fx:constant="SMALL_ICON_SIZE"/>
                             </fitHeight>
                             <image>
-                                <Image url="@icons/first.png"/>
+                                <Image url="@icons/deploy.png"/>
                             </image>
                         </ImageView>
                     </graphic>

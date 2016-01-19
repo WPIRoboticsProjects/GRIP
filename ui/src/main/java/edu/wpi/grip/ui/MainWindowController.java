@@ -192,7 +192,7 @@ public class MainWindowController {
 
     @FXML
     public void deploy() {
-        ImageView graphic = new ImageView(new Image("/edu/wpi/grip/ui/icons/first.png"));
+        ImageView graphic = new ImageView(new Image("/edu/wpi/grip/ui/icons/deploy.png"));
         graphic.setFitWidth(DPIUtility.SMALL_ICON_SIZE);
         graphic.setFitHeight(DPIUtility.SMALL_ICON_SIZE);
 

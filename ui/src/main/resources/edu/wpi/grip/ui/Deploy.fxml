@@ -1,6 +1,9 @@
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
 <?language javascript ?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.*?>
+<?import edu.wpi.grip.ui.util.DPIUtility ?>
 <GridPane maxWidth="Infinity" fx:controller="edu.wpi.grip.ui.DeployController" styleClass="deploy-pane"
           xmlns:fx="http://javafx.com/fxml/1">
     <rowConstraints>
@@ -35,8 +38,22 @@
         <Label text="Deploy Directory" disable="${deployDir.disabled}" GridPane.columnIndex="0" GridPane.rowIndex="4"/>
         <TextField fx:id="deployDir" promptText="Deploy Directory" GridPane.columnIndex="1" GridPane.rowIndex="4"/>
 
-        <Button text="Deploy" fx:id="deployButton" GridPane.columnIndex="0" GridPane.rowIndex="5"
-                onMouseClicked="#onButtonClicked"/>
+        <Button text="Deploy" fx:id="deployButton" GridPane.columnIndex="0" GridPane.rowIndex="5" defaultButton="true"
+                onMouseClicked="#onButtonClicked">
+            <graphic>
+                <ImageView styleClass="menu-graphic">
+                    <fitWidth>
+                        <DPIUtility fx:constant="SMALL_ICON_SIZE"/>
+                    </fitWidth>
+                    <fitHeight>
+                        <DPIUtility fx:constant="SMALL_ICON_SIZE"/>
+                    </fitHeight>
+                    <image>
+                        <Image url="@icons/deploy.png"/>
+                    </image>
+                </ImageView>
+            </graphic>
+        </Button>
 
         <Label fx:id="status" GridPane.columnIndex="1" GridPane.rowIndex="5"/>
 
