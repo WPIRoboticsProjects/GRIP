@@ -7,7 +7,6 @@ import edu.wpi.grip.core.Pipeline;
 import edu.wpi.grip.core.events.ProjectSettingsChangedEvent;
 import edu.wpi.grip.core.events.StopPipelineEvent;
 import edu.wpi.grip.core.serialization.Project;
-import edu.wpi.grip.ui.annotations.ParametrizedController;
 import edu.wpi.grip.ui.util.StringInMemoryFile;
 import javafx.application.Platform;
 import javafx.beans.property.BooleanProperty;
@@ -26,6 +25,7 @@ import net.schmizz.sshj.xfer.scp.SCPFileTransfer;
 import javax.inject.Inject;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.InterruptedIOException;
 import java.io.StringWriter;
 import java.net.UnknownHostException;
 import java.util.Optional;
@@ -39,13 +39,11 @@ import java.util.logging.Logger;
  * runs it remotely.  The default values for all fields are based on typical settings for FRC, with the address
  * based on the project settings.
  */
-@ParametrizedController(url = "Deploy.fxml")
 public class DeployController {
 
     // Default deploy information for FRC. This can be overridden by the use for applications outside of FRC or not
     // using the roboRIO (ie: coprocessors)
     public final static String DEFAULT_USER = "lvuser";
-    private final static String DEFAULT_PASSWORD = "";
     private final static String DEFAULT_JAVA_HOME = "/usr/local/frc/JRE/";
     private final static String DEFAULT_DIR = "/home/" + DEFAULT_USER;
     private final static String GRIP_JAR = "grip.jar";
@@ -73,7 +71,6 @@ public class DeployController {
     public void initialize() {
         address.setText(pipeline.getProjectSettings().computeDeployAddress());
         user.setText(DEFAULT_USER);
-        password.setText(DEFAULT_PASSWORD);
         javaHome.setText(DEFAULT_JAVA_HOME);
         deployDir.setText(DEFAULT_DIR);
 
@@ -103,25 +100,17 @@ public class DeployController {
         console.clear();
 
         // Start the deploy in a new thread, so the GUI doesn't freeze
-        Thread t = new Thread(() -> {
-            deployThread.ifPresent(thread -> {
-                try {
-                    thread.join();
-                } catch (InterruptedException impossible) {
-                }
-            });
-
-            deployThread = Optional.of(Thread.currentThread());
-            deploy(address.getText(), user.getText(), password.getText(), javaHome.getText(), deployDir.getText());
-            deployThread = Optional.empty();
-        });
-        t.setDaemon(true);
-        t.start();
+        deployThread = Optional.of(new Thread(() ->
+                deploy(address.getText(), user.getText(), password.getText(), javaHome.getText(), deployDir.getText())));
+        deployThread.get().setDaemon(true);
+        deployThread.get().start();
     }
 
     @FXML
-    public void onCancel() {
+    public void onStop() {
         deployThread.ifPresent(Thread::interrupt);
+        deploying.setValue(false);
+        status.setText("");
     }
 
     /**
@@ -142,7 +131,10 @@ public class DeployController {
                 @Override
                 public StreamCopier.Listener file(String name, long size) {
                     setStatusAsync("Uploading " + name, false);
-                    return transferred -> Platform.runLater(() -> progress.setProgress((double) transferred / size));
+                    return transferred -> {
+                        if (isNotCanceled())
+                            Platform.runLater(() -> progress.setProgress((double) transferred / size));
+                    };
                 }
             });
 
@@ -163,14 +155,11 @@ public class DeployController {
             // Run the project!
             setStatusAsync("Running GRIP", false);
             Session session = ssh.startSession();
-
             session.allocateDefaultPTY();
-
-            Session.Command cmd = session.exec(
-                    javaHome + "/bin/java -jar " + deployDir + "/" + GRIP_JAR + " " + deployDir + "/" + PROJECT_FILE);
+            Session.Command cmd = session.exec(javaHome + "/bin/java -jar " + deployDir + "/" + GRIP_JAR + " " + deployDir + "/" + PROJECT_FILE);
 
             LineReader inputReader = new LineReader(new InputStreamReader(cmd.getInputStream()));
-            while (!Thread.interrupted()) {
+            while (isNotCanceled()) {
                 String line = inputReader.readLine();
                 if (line == null) {
                     // Headless GRIP normally doesn't close stdout.  If that happens, check stderr for a message, since
@@ -185,23 +174,38 @@ public class DeployController {
             setStatusAsync("Unknown host: " + address, true);
         } catch (UserAuthException e) {
             setStatusAsync("Invalid username or password (should be \"lvuser\" and blank for roboRIO)", true);
+        } catch (InterruptedIOException e) {
+            logger.info("Deploy canceled");
         } catch (IOException e) {
             logger.log(Level.WARNING, "Unexpected error deploying", e);
             setStatusAsync(e.getMessage(), true);
         } finally {
-            Platform.runLater(() -> deploying.setValue(false));
+            if (isNotCanceled()) {
+                Platform.runLater(() -> deploying.setValue(false));
+            }
         }
     }
 
     /**
+     * Called in the deploy thread to check if the deploy has been canceled.  This prevents the thread from continuing
+     * to run commands and updating UI elements after the cancel button has been pressed, but without the need for
+     * the GUI thread to join on it (and therefore block)
+     */
+    private boolean isNotCanceled() {
+        return !Thread.currentThread().isInterrupted();
+    }
+
+    /**
      * Show a message, asynchronously in the GUI thread.  This is called periodically by the deploy thread to provide
-     * feedback without locking up the GUI.
+     * feedback without locking up the GUI.  This does nothing if the current deploy has been canceled.
      */
     private void setStatusAsync(String statusText, boolean error) {
-        logger.log(error ? Level.WARNING : Level.INFO, statusText);
-        Platform.runLater(() -> {
-            status.getStyleClass().setAll("label", error ? "error-label" : "info-label");
-            status.setText(statusText);
-        });
+        if (isNotCanceled()) {
+            logger.log(error ? Level.WARNING : Level.INFO, statusText);
+            Platform.runLater(() -> {
+                status.getStyleClass().setAll("label", error ? "error-label" : "info-label");
+                status.setText(statusText);
+            });
+        }
     }
 }

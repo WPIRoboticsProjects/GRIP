@@ -212,8 +212,6 @@ VBox.sockets {
 
 .console {
     -fx-font-family: "Monospace";
-    -fx-min-width: 48em;
-    -fx-min-height: 32em;
 }
 
 .error-label {

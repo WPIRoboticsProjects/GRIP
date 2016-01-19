@@ -49,14 +49,14 @@
                     </ImageView>
                 </graphic>
             </Button>
-            <Button fx:id="cancelButton" text="Cancel" ButtonBar.buttonData="CANCEL_CLOSE" onMouseClicked="#onCancel"/>
+            <Button text="Stop" ButtonBar.buttonData="CANCEL_CLOSE" onMouseClicked="#onStop"/>
         </buttons>
     </ButtonBar>
 
     <StackPane>
         <ProgressBar fx:id="progress" maxWidth="Infinity" progress="0"/>
-        <Label fx:id="status" blendMode="MULTIPLY"/>
+        <Label fx:id="status"/>
     </StackPane>
 
-    <TextArea fx:id="console" editable="false" styleClass="console"/>
+    <TextArea fx:id="console" editable="false" styleClass="console" prefRowCount="24" prefColumnCount="80"/>
 </VBox>
