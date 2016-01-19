@@ -148,6 +148,9 @@ public class DeployController {
             // Run the project!
             setStatusAsync("Running GRIP", false);
             Session session = ssh.startSession();
+
+            session.allocateDefaultPTY();
+
             Session.Command cmd = session.exec(
                     javaHome + "/bin/java -jar " + deployDir + "/" + GRIP_JAR + " " + deployDir + "/" + PROJECT_FILE);
 
