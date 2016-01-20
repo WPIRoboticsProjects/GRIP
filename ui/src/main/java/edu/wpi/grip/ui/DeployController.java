@@ -7,6 +7,7 @@ import edu.wpi.grip.core.Pipeline;
 import edu.wpi.grip.core.events.ProjectSettingsChangedEvent;
 import edu.wpi.grip.core.events.StopPipelineEvent;
 import edu.wpi.grip.core.serialization.Project;
+import edu.wpi.grip.core.settings.ProjectSettings;
 import edu.wpi.grip.ui.util.StringInMemoryFile;
 import javafx.application.Platform;
 import javafx.beans.property.BooleanProperty;
@@ -40,13 +41,6 @@ import java.util.logging.Logger;
  * based on the project settings.
  */
 public class DeployController {
-
-    // Default deploy information for FRC. This can be overridden by the user for applications outside of FRC or not
-    // using the roboRIO (ie: coprocessors)
-    public final static String DEFAULT_USER = "lvuser";
-    public final static String DEFAULT_JAVA_HOME = "/usr/local/frc/JRE/";
-    public final static String DEFAULT_DIR = "/home/" + DEFAULT_USER;
-
     private final static String GRIP_JAR = "grip.jar";
     private final static String PROJECT_FILE = "project.grip";
 
@@ -70,19 +64,43 @@ public class DeployController {
 
     @FXML
     public void initialize() {
-        address.setText(pipeline.getProjectSettings().computeDeployAddress());
+        loadSettings(pipeline.getProjectSettings());
+
         deployButton.disableProperty().bind(deploying);
         progress.disableProperty().bind(deploying.not());
         deploying.addListener((o, b, d) -> progress.setProgress(d ? ProgressIndicator.INDETERMINATE_PROGRESS : 0));
     }
 
     @Subscribe
-    public void updateSettings(ProjectSettingsChangedEvent event) {
-        Platform.runLater(() -> address.setText(event.getProjectSettings().computeDeployAddress()));
+    public void onSettingsChanged(ProjectSettingsChangedEvent event) {
+        Platform.runLater(() -> loadSettings(event.getProjectSettings()));
+    }
+
+    private void loadSettings(ProjectSettings settings) {
+        // Almost all of the deploy settings can be persistently saved in the project settings.  Whenever the project
+        // settings are updated (either the user has edited them or a new project has been opened), we should update
+        // the fields with the new setting values.
+        address.setText(settings.getDeployAddress());
+        user.setText(settings.getDeployUser());
+        javaHome.setText(settings.getDeployJavaHome());
+        deployDir.setText(settings.getDeployDir());
+    }
+
+    private void saveSettings() {
+        // If the settings are updated in the deploy dialog, we still want to save them in the persistent project
+        // settings, so they don't get reset the next time the project is opened to the settings are edited.
+        final ProjectSettings settings = pipeline.getProjectSettings();
+        settings.setDeployAddress(address.getText());
+        settings.setDeployUser(user.getText());
+        settings.setDeployJavaHome(javaHome.getText());
+        settings.setDeployDir(deployDir.getText());
+        eventBus.post(new ProjectSettingsChangedEvent(settings));
     }
 
     @FXML
     public void onDeploy() {
+        saveSettings();
+
         deploying.setValue(true);
         console.clear();
 

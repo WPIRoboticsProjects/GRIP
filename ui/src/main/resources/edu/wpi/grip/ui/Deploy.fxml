@@ -22,11 +22,7 @@
 
         <Label disable="${deployButton.disabled}" text="User" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
         <TextField disable="${deployButton.disabled}" fx:id="user" promptText="User" GridPane.columnIndex="1"
-                   GridPane.rowIndex="1">
-            <text>
-                <DeployController fx:constant="DEFAULT_USER"/>
-            </text>
-        </TextField>
+                   GridPane.rowIndex="1"/>
 
         <Label disable="${deployButton.disabled}" text="Password" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
         <PasswordField disable="${deployButton.disabled}" fx:id="password" promptText="Password"
@@ -34,20 +30,12 @@
 
         <Label disable="${deployButton.disabled}" text="Java Home" GridPane.columnIndex="0" GridPane.rowIndex="3"/>
         <TextField disable="${deployButton.disabled}" fx:id="javaHome" promptText="Java Home"
-                   GridPane.columnIndex="1" GridPane.rowIndex="3">
-            <text>
-                <DeployController fx:constant="DEFAULT_JAVA_HOME"/>
-            </text>
-        </TextField>
+                   GridPane.columnIndex="1" GridPane.rowIndex="3"/>
 
         <Label disable="${deployButton.disabled}" text="Deploy Directory" GridPane.columnIndex="0"
                GridPane.rowIndex="4"/>
         <TextField disable="${deployButton.disabled}" fx:id="deployDir" promptText="Deploy Directory"
-                   GridPane.columnIndex="1" GridPane.rowIndex="4">
-            <text>
-                <DeployController fx:constant="DEFAULT_DIR"/>
-            </text>
-        </TextField>
+                   GridPane.columnIndex="1" GridPane.rowIndex="4"/>
     </GridPane>
 
     <ButtonBar>

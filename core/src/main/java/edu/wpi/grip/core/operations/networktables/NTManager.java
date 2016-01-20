@@ -64,7 +64,7 @@ public class NTManager {
 
         synchronized (NetworkTable.class) {
             NetworkTable.shutdown();
-            NetworkTable.setIPAddress(projectSettings.computePublishAddress());
+            NetworkTable.setIPAddress(projectSettings.getPublishAddress());
         }
     }
 
