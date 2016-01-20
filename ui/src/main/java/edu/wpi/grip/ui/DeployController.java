@@ -41,11 +41,12 @@ import java.util.logging.Logger;
  */
 public class DeployController {
 
-    // Default deploy information for FRC. This can be overridden by the use for applications outside of FRC or not
+    // Default deploy information for FRC. This can be overridden by the user for applications outside of FRC or not
     // using the roboRIO (ie: coprocessors)
     public final static String DEFAULT_USER = "lvuser";
-    private final static String DEFAULT_JAVA_HOME = "/usr/local/frc/JRE/";
-    private final static String DEFAULT_DIR = "/home/" + DEFAULT_USER;
+    public final static String DEFAULT_JAVA_HOME = "/usr/local/frc/JRE/";
+    public final static String DEFAULT_DIR = "/home/" + DEFAULT_USER;
+
     private final static String GRIP_JAR = "grip.jar";
     private final static String PROJECT_FILE = "project.grip";
 
@@ -70,16 +71,6 @@ public class DeployController {
     @FXML
     public void initialize() {
         address.setText(pipeline.getProjectSettings().computeDeployAddress());
-        user.setText(DEFAULT_USER);
-        javaHome.setText(DEFAULT_JAVA_HOME);
-        deployDir.setText(DEFAULT_DIR);
-
-        // While deploying, change the UI appropriately. This includes disabling controls and enabling the progress bar.
-        address.disableProperty().bind(deploying);
-        user.disableProperty().bind(deploying);
-        password.disableProperty().bind(deploying);
-        javaHome.disableProperty().bind(deploying);
-        deployDir.disableProperty().bind(deploying);
         deployButton.disableProperty().bind(deploying);
         progress.disableProperty().bind(deploying.not());
         deploying.addListener((o, b, d) -> progress.setProgress(d ? ProgressIndicator.INDETERMINATE_PROGRESS : 0));
@@ -92,10 +83,6 @@ public class DeployController {
 
     @FXML
     public void onDeploy() {
-        if (deploying.get()) {
-            throw new IllegalStateException("There's already a deploy in progress");
-        }
-
         deploying.setValue(true);
         console.clear();
 

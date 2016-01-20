@@ -3,6 +3,7 @@
 <?language javascript ?>
 
 <?import edu.wpi.grip.ui.util.DPIUtility?>
+<?import edu.wpi.grip.ui.DeployController?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
@@ -15,20 +16,38 @@
             <ColumnConstraints hgrow="ALWAYS"/>
         </columnConstraints>
 
-        <Label disable="${address.disabled}" text="Address" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
-        <TextField fx:id="address" promptText="Address" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+        <Label disable="${deployButton.disabled}" text="Address" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+        <TextField disable="${deployButton.disabled}" fx:id="address" promptText="Address" GridPane.columnIndex="1"
+                   GridPane.rowIndex="0"/>
 
-        <Label disable="${user.disabled}" text="User" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
-        <TextField fx:id="user" promptText="User" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+        <Label disable="${deployButton.disabled}" text="User" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+        <TextField disable="${deployButton.disabled}" fx:id="user" promptText="User" GridPane.columnIndex="1"
+                   GridPane.rowIndex="1">
+            <text>
+                <DeployController fx:constant="DEFAULT_USER"/>
+            </text>
+        </TextField>
 
-        <Label disable="${password.disabled}" text="Password" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
-        <PasswordField fx:id="password" promptText="Password" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+        <Label disable="${deployButton.disabled}" text="Password" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
+        <PasswordField disable="${deployButton.disabled}" fx:id="password" promptText="Password"
+                       GridPane.columnIndex="1" GridPane.rowIndex="2"/>
 
-        <Label disable="${javaHome.disabled}" text="Java Home" GridPane.columnIndex="0" GridPane.rowIndex="3"/>
-        <TextField fx:id="javaHome" promptText="Java Home" GridPane.columnIndex="1" GridPane.rowIndex="3"/>
+        <Label disable="${deployButton.disabled}" text="Java Home" GridPane.columnIndex="0" GridPane.rowIndex="3"/>
+        <TextField disable="${deployButton.disabled}" fx:id="javaHome" promptText="Java Home"
+                   GridPane.columnIndex="1" GridPane.rowIndex="3">
+            <text>
+                <DeployController fx:constant="DEFAULT_JAVA_HOME"/>
+            </text>
+        </TextField>
 
-        <Label disable="${deployDir.disabled}" text="Deploy Directory" GridPane.columnIndex="0" GridPane.rowIndex="4"/>
-        <TextField fx:id="deployDir" promptText="Deploy Directory" GridPane.columnIndex="1" GridPane.rowIndex="4"/>
+        <Label disable="${deployButton.disabled}" text="Deploy Directory" GridPane.columnIndex="0"
+               GridPane.rowIndex="4"/>
+        <TextField disable="${deployButton.disabled}" fx:id="deployDir" promptText="Deploy Directory"
+                   GridPane.columnIndex="1" GridPane.rowIndex="4">
+            <text>
+                <DeployController fx:constant="DEFAULT_DIR"/>
+            </text>
+        </TextField>
     </GridPane>
 
     <ButtonBar>
