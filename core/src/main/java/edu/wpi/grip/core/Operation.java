@@ -64,4 +64,18 @@ public interface Operation {
     default void perform(InputSocket<?>[] inputs, OutputSocket<?>[] outputs) {
         throw new UnsupportedOperationException("Perform was not overridden");
     }
+
+    /**
+     * Allows the step to clean itself up when removed from the pipeline.
+     * This should only be called by {@link Step#setRemoved()} to ensure correct synchronization.
+     *
+     * @param inputs  An array obtained from {@link #createInputSockets(EventBus)}. The caller can set the value of
+     *                each socket to an actual parameter for the operation.
+     * @param outputs An array obtained from {@link #createOutputSockets(EventBus)}. The outputs of the operation will
+     *                be stored in these sockets.
+     * @param data    Optional data to be passed to the operation
+     */
+    default void cleanUp(InputSocket<?>[] inputs, OutputSocket<?>[] outputs, Optional<?> data) {
+        /* no-op */
+    }
 }

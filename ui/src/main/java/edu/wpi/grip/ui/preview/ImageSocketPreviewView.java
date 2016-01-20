@@ -2,7 +2,7 @@ package edu.wpi.grip.ui.preview;
 
 import com.google.common.eventbus.Subscribe;
 import edu.wpi.grip.core.OutputSocket;
-import edu.wpi.grip.core.events.SocketChangedEvent;
+import edu.wpi.grip.core.events.RenderEvent;
 import edu.wpi.grip.ui.util.GRIPPlatform;
 import edu.wpi.grip.ui.util.ImageConverter;
 import javafx.application.Platform;
@@ -31,14 +31,11 @@ public class ImageSocketPreviewView extends SocketPreviewView<Mat> {
         this.setContent(imageView);
 
         assert Platform.isFxApplicationThread() : "Must be in FX Thread to create this or you will be exposing constructor to another thread!";
-        convertImage();
     }
 
     @Subscribe
-    public void onSocketChanged(SocketChangedEvent event) {
-        if (event.getSocket() == this.getSocket()) {
-            this.convertImage();
-        }
+    public void onRender(RenderEvent event) {
+        convertImage();
     }
 
     private void convertImage() {

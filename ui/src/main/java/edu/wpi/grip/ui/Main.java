@@ -1,5 +1,6 @@
 package edu.wpi.grip.ui;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import com.google.inject.Guice;
@@ -7,6 +8,7 @@ import com.google.inject.Injector;
 import com.sun.javafx.application.PlatformImpl;
 import edu.wpi.grip.core.GRIPCoreModule;
 import edu.wpi.grip.core.Palette;
+import edu.wpi.grip.core.PipelineRunner;
 import edu.wpi.grip.core.events.UnexpectedThrowableEvent;
 import edu.wpi.grip.core.operations.Operations;
 import edu.wpi.grip.core.util.SafeShutdown;
@@ -31,8 +33,11 @@ public class Main extends Application {
     @Inject
     private Palette palette;
     @Inject
+    private PipelineRunner pipelineRunner;
+    @Inject
     private Logger logger;
 
+    @VisibleForTesting
     protected final Injector injector = Guice.createInjector(new GRIPCoreModule(), new GRIPUIModule());
 
     private final Object dialogLock = new Object();
@@ -64,6 +69,8 @@ public class Main extends Application {
             // See issue #297
             SafeShutdown.exit(0, Platform::exit);
         });
+
+        pipelineRunner.startAsync();
 
         stage.setTitle("GRIP Computer Vision Engine");
         stage.getIcons().add(new Image("/edu/wpi/grip/ui/icons/grip.png"));

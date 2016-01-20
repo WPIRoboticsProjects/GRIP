@@ -1,11 +1,17 @@
 package edu.wpi.grip.ui;
 
+import com.google.common.base.CaseFormat;
 import com.google.common.eventbus.EventBus;
+import com.google.common.util.concurrent.Service;
 import edu.wpi.grip.core.Palette;
 import edu.wpi.grip.core.Pipeline;
+import edu.wpi.grip.core.PipelineRunner;
 import edu.wpi.grip.core.events.ProjectSettingsChangedEvent;
 import edu.wpi.grip.core.serialization.Project;
 import edu.wpi.grip.core.settings.ProjectSettings;
+import edu.wpi.grip.core.util.SafeShutdown;
+import edu.wpi.grip.core.util.service.SingleActionListener;
+import edu.wpi.grip.ui.components.StartStoppableButton;
 import edu.wpi.grip.ui.util.DPIUtility;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -19,6 +25,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
+import org.controlsfx.control.StatusBar;
 
 import javax.inject.Inject;
 import java.io.File;
@@ -40,10 +47,16 @@ public class MainWindowController {
     private Region pipelineView;
     @FXML
     private Pane deployPane;
+    @FXML
+    private StatusBar statusBar;
     @Inject
     private EventBus eventBus;
     @Inject
     private Pipeline pipeline;
+    @Inject
+    private PipelineRunner pipelineRunner;
+    @Inject
+    private StartStoppableButton.Factory startStoppableButtonFactory;
     @Inject
     private Palette palette;
     @Inject
@@ -51,6 +64,16 @@ public class MainWindowController {
 
     public void initialize() {
         pipelineView.prefHeightProperty().bind(bottomPane.heightProperty());
+        statusBar.getLeftItems().add(startStoppableButtonFactory.create(pipelineRunner));
+        pipelineRunner.addListener(new SingleActionListener(() -> {
+            final Service.State state = pipelineRunner.state();
+            final String stateMessage =
+                    state.equals(Service.State.TERMINATED)  ?
+                            "Stopped" :
+                            CaseFormat.UPPER_UNDERSCORE.converterTo(CaseFormat.UPPER_CAMEL).convert(state.toString());
+            statusBar.setText(" Pipeline " + stateMessage);
+        }), Platform::runLater);
+
     }
 
     /**
@@ -186,7 +209,8 @@ public class MainWindowController {
     @FXML
     public void quit() {
         if (showConfirmationDialogAndWait()) {
-            Platform.exit();
+            pipelineRunner.stopAsync();
+            SafeShutdown.exit(0);
         }
     }
 

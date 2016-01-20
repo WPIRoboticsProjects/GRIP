@@ -1,12 +1,10 @@
 package edu.wpi.grip.core.operations.composite;
 
 import com.google.common.eventbus.EventBus;
-import com.google.common.eventbus.Subscribe;
 import edu.wpi.grip.core.InputSocket;
 import edu.wpi.grip.core.Operation;
 import edu.wpi.grip.core.OutputSocket;
 import edu.wpi.grip.core.SocketHints;
-import edu.wpi.grip.core.events.StepRemovedEvent;
 import org.bytedeco.javacpp.BytePointer;
 import org.bytedeco.javacpp.IntPointer;
 
@@ -21,7 +19,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import static org.bytedeco.javacpp.opencv_core.Mat;
-import static org.bytedeco.javacpp.opencv_imgcodecs.*;
+import static org.bytedeco.javacpp.opencv_imgcodecs.CV_IMWRITE_JPEG_QUALITY;
+import static org.bytedeco.javacpp.opencv_imgcodecs.imencode;
 
 /**
  * Publish an M-JPEG stream with the protocol used by SmartDashboard and the FRC Dashboard.  This allows FRC teams to
@@ -41,7 +40,7 @@ public class PublishVideoOperation implements Operation {
     private final BytePointer imagePointer = new BytePointer();
     private Optional<Thread> serverThread = Optional.empty();
     private volatile boolean connected = false;
-    private volatile int numSteps = 0;
+    private int numSteps = 0;
 
     /**
      * Listens for incoming connections on port 1180 and writes JPEG data whenever there's a new frame.
@@ -131,7 +130,6 @@ public class PublishVideoOperation implements Operation {
 
     @Override
     public InputSocket<?>[] createInputSockets(EventBus eventBus) {
-        eventBus.register(this);
         return new InputSocket<?>[]{
                 new InputSocket<>(eventBus, SocketHints.Inputs.createMatSocketHint("Image", false)),
                 new InputSocket<>(eventBus, SocketHints.Inputs.createNumberSliderSocketHint("Quality", 80, 0, 100)),
@@ -144,7 +142,7 @@ public class PublishVideoOperation implements Operation {
     }
 
     @Override
-    public Optional<?> createData() {
+    public synchronized Optional<?> createData() {
         numSteps++;
         if (!serverThread.isPresent()) {
             serverThread = Optional.of(new Thread(runServer, "Camera Server"));
@@ -173,13 +171,11 @@ public class PublishVideoOperation implements Operation {
         }
     }
 
-    @Subscribe
-    public void onStepRemoved(StepRemovedEvent event) {
-        if (event.getStep().getOperation() == this) {
-            // Stop the video server if there are no Publish Video steps left
-            if (--numSteps == 0) {
-                serverThread.ifPresent(Thread::interrupt);
-            }
+    @Override
+    public synchronized void cleanUp(InputSocket<?>[] inputs, OutputSocket<?>[] outputs, Optional<?> data) {
+        // Stop the video server if there are no Publish Video steps left
+        if (--numSteps == 0) {
+            serverThread.ifPresent(Thread::interrupt);
         }
     }
 }

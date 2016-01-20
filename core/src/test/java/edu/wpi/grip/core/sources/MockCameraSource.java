@@ -32,16 +32,18 @@ public class MockCameraSource extends CameraSource {
     }
 
     @Override
-    public void start() throws IOException {
+    public MockCameraSource startAsync() {
         started = true;
+        return this;
     }
 
     @Override
-    public void stop() {
+    public MockCameraSource stopAsync() {
         started = false;
+        return this;
     }
 
-    public boolean isStarted() {
+    public boolean isRunning() {
         return started;
     }
 }

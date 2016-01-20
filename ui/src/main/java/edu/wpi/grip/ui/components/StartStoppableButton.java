@@ -1,13 +1,12 @@
 package edu.wpi.grip.ui.components;
 
 
-import com.google.common.eventbus.EventBus;
-import com.google.common.eventbus.Subscribe;
+import com.google.common.base.CaseFormat;
+import com.google.common.util.concurrent.Service;
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
-import edu.wpi.grip.core.StartStoppable;
-import edu.wpi.grip.core.events.StartedStoppedEvent;
-import edu.wpi.grip.core.events.UnexpectedThrowableEvent;
+import edu.wpi.grip.core.util.service.RestartableService;
+import edu.wpi.grip.core.util.service.SingleActionListener;
 import edu.wpi.grip.ui.util.DPIUtility;
 import javafx.application.Platform;
 import javafx.scene.control.ContentDisplay;
@@ -19,10 +18,8 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.TimeoutException;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -36,37 +33,31 @@ public final class StartStoppableButton extends ToggleButton {
 
     private final Tooltip startStopTooltip;
 
-    private final StartStoppable startStoppable;
+    private final RestartableService service;
 
     public interface Factory {
-        StartStoppableButton create(StartStoppable startStoppable);
+        StartStoppableButton create(RestartableService startStoppable);
     }
 
     @Inject
-    StartStoppableButton(final EventBus eventBus, @Assisted final StartStoppable startStoppable) {
-        super(null, pickGraphic(startStoppable));
-        this.startStoppable = checkNotNull(startStoppable, "StartStoppable can not be null");
+    StartStoppableButton(@Assisted final RestartableService service) {
+        super(null, pickGraphic(service));
+        this.service = checkNotNull(service, "RestartableService can not be null");
         this.startStopTooltip = new Tooltip(getButtonActionString());
         setContentDisplay(ContentDisplay.RIGHT);
+
+        // Run the listeners on the javafx thread
+        service.addListener(new SingleActionListener(() -> assignState()), Platform::runLater);
         assignState();
         setAllFromState();
 
         addEventFilter(MouseEvent.MOUSE_RELEASED, (event) -> {
+            setDisable(true);
             event.consume();
-            if (!isSelected()) try {
-                startStoppable.start();
-                // If this fails then an StartedStoppedEvent will not be posted
-            } catch (IOException e) {
-                eventBus.post(new UnexpectedThrowableEvent(e, "Failed to start"));
-            }
-            else try {
-                startStoppable.stop();
-                // If this fails then an StartedStoppedEvent will not be posted
-            } catch (TimeoutException | IOException e) {
-                eventBus.post(new UnexpectedThrowableEvent(e, "Failed to stop"));
-            } catch (InterruptedException e) {
-                // Unfortunately we have to eat the exception here because we can't rethrow it
-                Thread.currentThread().interrupt();
+            if (!isSelected()) {
+                this.service.startAsync();
+            } else {
+                this.service.stopAsync();
             }
         });
 
@@ -80,7 +71,7 @@ public final class StartStoppableButton extends ToggleButton {
         assert Platform.isFxApplicationThread() : "This must be called from the FX Thread";
         startStopTooltip.setText(getButtonActionString());
         setAccessibleText(getButtonActionString());
-        setGraphic(pickGraphic(startStoppable));
+        setGraphic(pickGraphic(service));
         getStyleClass().addAll(getCurrentStyleClasses());
     }
 
@@ -88,29 +79,23 @@ public final class StartStoppableButton extends ToggleButton {
      * @return The description of what action clicking the button will have.
      */
     private String getButtonActionString() {
-        return (startStoppable.isStarted() ? "Stop" : "Start");
+        return CaseFormat.UPPER_UNDERSCORE.converterTo(CaseFormat.UPPER_CAMEL).convert(service.state().toString());
     }
 
     /**
      * @return The style classes that should be assigned to the button
      */
     private List<String> getCurrentStyleClasses() {
-        return Arrays.asList(BASE_STYLE_CLASS, startStoppable.isStarted() ? STARTED_STYLE_CLASS : STOPPED_STYLE_CLASS);
+        return Arrays.asList(BASE_STYLE_CLASS, service.isRunning() ? STARTED_STYLE_CLASS : STOPPED_STYLE_CLASS);
     }
 
     /**
      * Assigns the state of the button from the {@link StartStoppable}
      */
     private void assignState() {
-        setSelected(startStoppable.isStarted());
-    }
-
-
-    @Subscribe
-    public void onStartedStopped(StartedStoppedEvent event) {
-        if (startStoppable.equals(event.getStartStoppable())) {
-            Platform.runLater(this::assignState);
-        }
+        setSelected(service.isRunning());
+        final Service.State state = service.state();
+        setDisable(state.equals(Service.State.STARTING) || state.equals(Service.State.STOPPING));
     }
 
     /**
@@ -118,8 +103,8 @@ public final class StartStoppableButton extends ToggleButton {
      *
      * @return The graphic to show on the button.
      */
-    private static ImageView pickGraphic(StartStoppable startStoppable) {
-        final ImageView icon = startStoppable.isStarted() ? new ImageView(stopImage) : new ImageView(startImage);
+    private static ImageView pickGraphic(RestartableService startStoppable) {
+        final ImageView icon = startStoppable.isRunning() ? new ImageView(stopImage) : new ImageView(startImage);
         icon.setFitHeight(DPIUtility.MINI_ICON_SIZE);
         icon.setFitWidth(DPIUtility.MINI_ICON_SIZE);
         return icon;
