@@ -15,7 +15,6 @@ import javafx.beans.property.SimpleBooleanProperty;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import net.schmizz.sshj.SSHClient;
-import net.schmizz.sshj.common.IOUtils;
 import net.schmizz.sshj.common.StreamCopier;
 import net.schmizz.sshj.connection.channel.direct.Session;
 import net.schmizz.sshj.userauth.UserAuthException;
@@ -167,9 +166,6 @@ public class DeployController {
             while (isNotCanceled()) {
                 String line = inputReader.readLine();
                 if (line == null) {
-                    // Headless GRIP normally doesn't close stdout.  If that happens, check stderr for a message, since
-                    // there must have been a problem.
-                    setStatusAsync(IOUtils.readFully(cmd.getErrorStream()).toString(), true);
                     return;
                 }
 
