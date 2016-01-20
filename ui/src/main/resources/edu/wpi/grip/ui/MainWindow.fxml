@@ -97,7 +97,10 @@
                 </MenuItem>
             </Menu>
             <Menu text="Tools">
-                <MenuItem text="FRC Deploy" onAction="#deployFRC">
+                <MenuItem text="Deploy" onAction="#deploy">
+                    <accelerator>
+                        <KeyCodeCombination alt="UP" code="R" control="DOWN" meta="UP" shift="UP" shortcut="UP"/>
+                    </accelerator>
                     <graphic>
                         <ImageView styleClass="menu-graphic">
                             <fitWidth>
@@ -107,7 +110,7 @@
                                 <DPIUtility fx:constant="SMALL_ICON_SIZE"/>
                             </fitHeight>
                             <image>
-                                <Image url="@icons/first.png"/>
+                                <Image url="@icons/deploy.png"/>
                             </image>
                         </ImageView>
                     </graphic>
@@ -141,6 +144,9 @@
             </items>
         </SplitPane>
     </children>
+    <fx:define>
+        <fx:include source="Deploy.fxml" fx:id="deployPane"/>
+    </fx:define>
     <stylesheets>
         <URL value="@roboto/Roboto.css"/>
         <URL value="@GRIP.css"/>

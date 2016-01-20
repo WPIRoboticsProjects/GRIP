@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?language javascript ?>
+
+<?import edu.wpi.grip.ui.util.DPIUtility?>
+<?import edu.wpi.grip.ui.DeployController?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.*?>
+<VBox styleClass="deploy-pane" maxWidth="Infinity" xmlns:fx="http://javafx.com/fxml/1"
+      xmlns="http://javafx.com/javafx/null" fx:controller="edu.wpi.grip.ui.DeployController">
+    <GridPane maxHeight="Infinity">
+        <columnConstraints>
+            <ColumnConstraints hgrow="NEVER"/>
+            <ColumnConstraints hgrow="ALWAYS"/>
+        </columnConstraints>
+
+        <Label disable="${deployButton.disabled}" text="Address" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+        <TextField disable="${deployButton.disabled}" fx:id="address" promptText="Address" GridPane.columnIndex="1"
+                   GridPane.rowIndex="0"/>
+
+        <Label disable="${deployButton.disabled}" text="User" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+        <TextField disable="${deployButton.disabled}" fx:id="user" promptText="User" GridPane.columnIndex="1"
+                   GridPane.rowIndex="1"/>
+
+        <Label disable="${deployButton.disabled}" text="Password" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
+        <PasswordField disable="${deployButton.disabled}" fx:id="password" promptText="Password"
+                       GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+
+        <Label disable="${deployButton.disabled}" text="Java Home" GridPane.columnIndex="0" GridPane.rowIndex="3"/>
+        <TextField disable="${deployButton.disabled}" fx:id="javaHome" promptText="Java Home"
+                   GridPane.columnIndex="1" GridPane.rowIndex="3"/>
+
+        <Label disable="${deployButton.disabled}" text="Deploy Directory" GridPane.columnIndex="0"
+               GridPane.rowIndex="4"/>
+        <TextField disable="${deployButton.disabled}" fx:id="deployDir" promptText="Deploy Directory"
+                   GridPane.columnIndex="1" GridPane.rowIndex="4"/>
+    </GridPane>
+
+    <ButtonBar>
+        <buttons>
+            <Button fx:id="deployButton" defaultButton="true" onMouseClicked="#onDeploy" text="Deploy"
+                    ButtonBar.buttonData="APPLY">
+                <graphic>
+                    <ImageView styleClass="menu-graphic">
+                        <fitWidth>
+                            <DPIUtility fx:constant="SMALL_ICON_SIZE"/>
+                        </fitWidth>
+                        <fitHeight>
+                            <DPIUtility fx:constant="SMALL_ICON_SIZE"/>
+                        </fitHeight>
+                        <image>
+                            <Image url="@icons/deploy.png"/>
+                        </image>
+                    </ImageView>
+                </graphic>
+            </Button>
+            <Button text="Stop" ButtonBar.buttonData="CANCEL_CLOSE" onMouseClicked="#onStop"/>
+        </buttons>
+    </ButtonBar>
+
+    <StackPane>
+        <ProgressBar fx:id="progress" maxWidth="Infinity" progress="0"/>
+        <Label fx:id="status"/>
+    </StackPane>
+
+    <TextArea fx:id="console" editable="false" styleClass="console" prefRowCount="24" prefColumnCount="80"/>
+</VBox>

@@ -4,7 +4,6 @@ import com.google.common.base.MoreObjects;
 import com.google.common.base.Throwables;
 
 import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * This object holds settings that are saved in project files.  This includes things like team numbers, which need to
@@ -12,21 +11,47 @@ import static com.google.common.base.Preconditions.checkNotNull;
  */
 public class ProjectSettings implements Cloneable {
 
-    @Setting(label = "FRC Team Number", description = "The team number, if used for FRC")
+    @Setting(label = "FRC team number", description = "The team number, if used for FRC")
     private int teamNumber = 0;
 
-    @Setting(label = "NetworkTables Server Address", description = "The host that runs the Network Protocol server. " +
-            "If not specified and NetworkTables is specified as the protocol, the hostname is derived from the team " +
-            "number.")
-    private String publishAddress = "";
+    @Setting(label = "NetworkTables server address", description = "The host that runs the NetworkTables server. If " +
+            "not specified and NetworkTables is used, the hostname is derived from the team number.")
+    private String publishAddress = computeFRCAddress(teamNumber);
 
-    @Setting(label = "Deploy Address", description = "The remote host that grip should be remotely deployed to. If " +
-            "not specified, the hostname is derived from the team number.")
-    private String deployAddress = "";
+    @Setting(label = "Deploy address", description = "The remote host that grip should be deployed to. " +
+            "If not specified, the hostname is derived from the team number.")
+    private String deployAddress = computeFRCAddress(teamNumber);
 
+    @Setting(label = "Deploy directory", description = "The directory on the remote host to deploy GRIP to.")
+    private String deployDir = "/home/lvuser";
+
+    @Setting(label = "Deploy user", description = "The username to log in with when deploying over SSH.")
+    private String deployUser = "lvuser";
+
+    @Setting(label = "Deploy Java home", description = "Where Java is installed on the robot.")
+    private String deployJavaHome = "/usr/local/frc/JRE/";
+
+    /**
+     * Set the FRC team number.  If the deploy address and NetworkTables server address haven't been manually
+     * overridden, this also changes them to the mDNS hostname of the team's roboRIO.
+     */
     public void setTeamNumber(int teamNumber) {
         checkArgument(teamNumber >= 0, "Team number cannot be negative");
+
+        final String oldFrcAddress = computeFRCAddress(this.teamNumber);
+        final String newFrcAddress = computeFRCAddress(teamNumber);
+
         this.teamNumber = teamNumber;
+
+        // If the deploy address and/or NetworkTables server address was previously the default for the old team
+        // number (ie: it was roborio-xxx-frc.local), update it with the new team number
+        if (oldFrcAddress.equals(getDeployAddress())) {
+            setDeployAddress(newFrcAddress);
+        }
+
+        if (oldFrcAddress.equals(getPublishAddress())) {
+            setPublishAddress(newFrcAddress);
+        }
     }
 
     public int getTeamNumber() {
@@ -34,8 +59,7 @@ public class ProjectSettings implements Cloneable {
     }
 
     public void setPublishAddress(String publishAddress) {
-        this.publishAddress =
-                checkNotNull(publishAddress, "Network Protocol Server Address cannot be null");
+        if (publishAddress != null) this.publishAddress = publishAddress;
     }
 
     public String getPublishAddress() {
@@ -43,39 +67,49 @@ public class ProjectSettings implements Cloneable {
     }
 
     public void setDeployAddress(String deployAddress) {
-        this.deployAddress = checkNotNull(deployAddress, "Deploy Address can not be null");
+        if (deployAddress != null) this.deployAddress = deployAddress;
     }
 
     public String getDeployAddress() {
         return deployAddress;
     }
 
-    /**
-     * @return The address of the machine that the NetworkTables server is running on.  If
-     * {@link #setPublishAddress} is specified, that is returned, otherwise this is based on the team
-     * number.
-     */
-    public String computePublishAddress() {
-        return computeFRCAddress(publishAddress);
+    public String getDeployDir() {
+        return deployDir;
     }
 
-    public String computeDeployAddress() {
-        return computeFRCAddress(deployAddress);
+    public void setDeployDir(String deployDir) {
+        if (deployDir != null) this.deployDir = deployDir;
     }
 
-    private String computeFRCAddress(String address) {
-        if (address == null || address.isEmpty()) {
-            return "roborio-" + teamNumber + "-frc.local";
-        } else {
-            return address;
-        }
+    public String getDeployUser() {
+        return deployUser;
+    }
+
+    public void setDeployUser(String deployUser) {
+        if (deployUser != null) this.deployUser = deployUser;
+    }
+
+    public String getDeployJavaHome() {
+        return deployJavaHome;
+    }
+
+    public void setDeployJavaHome(String deployJavaHome) {
+        if (deployJavaHome != null) this.deployJavaHome = deployJavaHome;
+    }
+
+    private String computeFRCAddress(int teamNumber) {
+        return "roborio-" + teamNumber + "-frc.local";
     }
 
     @Override
     public String toString() {
         return MoreObjects.toStringHelper(this)
-                .add("publishAddress", publishAddress)
                 .add("deployAddress", deployAddress)
+                .add("deployDir", deployDir)
+                .add("deployUser", deployUser)
+                .add("deployJavaHome", deployJavaHome)
+                .add("publishAddress", publishAddress)
                 .add("teamNumber", teamNumber)
                 .toString();
     }
