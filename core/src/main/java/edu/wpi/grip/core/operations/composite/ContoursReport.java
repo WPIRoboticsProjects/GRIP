@@ -6,10 +6,8 @@ import edu.wpi.grip.core.operations.networktables.NTValue;
 
 import java.util.Optional;
 
-import static org.bytedeco.javacpp.opencv_core.MatVector;
-import static org.bytedeco.javacpp.opencv_core.Rect;
-import static org.bytedeco.javacpp.opencv_imgproc.boundingRect;
-import static org.bytedeco.javacpp.opencv_imgproc.contourArea;
+import static org.bytedeco.javacpp.opencv_core.*;
+import static org.bytedeco.javacpp.opencv_imgproc.*;
 
 /**
  * The output of {@link FindContoursOperation}.  This stores a list of contours (which is basically a list of points) in
@@ -112,5 +110,16 @@ public final class ContoursReport implements NTPublishable {
             heights[i] = boundingBoxes[i].height();
         }
         return heights;
+    }
+
+    @NTValue(key = "solidity")
+    public synchronized double[] getSolidity() {
+        final double[] solidities = new double[(int) contours.size()];
+        Mat hull = new Mat();
+        for (int i = 0; i < contours.size(); i++) {
+            convexHull(contours.get(i), hull);
+            solidities[i] = contourArea(contours.get(i)) / contourArea(hull);
+        }
+        return solidities;
     }
 }

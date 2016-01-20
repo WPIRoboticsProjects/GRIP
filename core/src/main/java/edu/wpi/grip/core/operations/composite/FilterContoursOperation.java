@@ -4,6 +4,7 @@ import com.google.common.eventbus.EventBus;
 import edu.wpi.grip.core.*;
 
 import java.io.InputStream;
+import java.util.List;
 import java.util.Optional;
 
 import static org.bytedeco.javacpp.opencv_core.*;
@@ -41,6 +42,9 @@ public class FilterContoursOperation implements Operation {
     private final SocketHint<Number> maxHeightHint =
             SocketHints.Inputs.createNumberSpinnerSocketHint("Max Height", 1000, 0, Integer.MAX_VALUE);
 
+    private final SocketHint<List> solidityHint =
+            SocketHints.Inputs.createNumberListRangeSocketHint("Solidity", 0, 100);
+
     @Override
     public String getName() {
         return "Filter Contours";
@@ -66,6 +70,7 @@ public class FilterContoursOperation implements Operation {
                 new InputSocket<>(eventBus, maxWidthHint),
                 new InputSocket<>(eventBus, minHeightHint),
                 new InputSocket<>(eventBus, maxHeightHint),
+                new InputSocket<>(eventBus, solidityHint),
         };
     }
 
@@ -84,21 +89,30 @@ public class FilterContoursOperation implements Operation {
         final double maxWidth = ((Number) inputs[4].getValue().get()).doubleValue();
         final double minHeight = ((Number) inputs[5].getValue().get()).doubleValue();
         final double maxHeight = ((Number) inputs[6].getValue().get()).doubleValue();
+        final double minSolidity = ((List<Number>) inputs[7].getValue().get()).get(0).doubleValue();
+        final double maxSolidity = ((List<Number>) inputs[7].getValue().get()).get(1).doubleValue();
 
         final MatVector inputContours = inputSocket.getValue().get().getContours();
         final MatVector outputContours = new MatVector(inputContours.size());
+        final Mat hull = new Mat();
 
         // Add contours from the input vector to the output vector only if they pass all of the criteria (minimum
-        // area, minimum perimeter, width, and height)
+        // area, minimum perimeter, width, and height, etc...)
         int filteredContourCount = 0;
         for (int i = 0; i < inputContours.size(); i++) {
             final Mat contour = inputContours.get(i);
-            final Rect bb = boundingRect(contour);
 
-            if (contourArea(contour) < minArea) continue;
-            if (arcLength(contour, true) < minPerimeter) continue;
+            final Rect bb = boundingRect(contour);
             if (bb.width() < minWidth || bb.width() > maxWidth) continue;
             if (bb.height() < minHeight || bb.height() > maxHeight) continue;
+
+            final double area = contourArea(contour);
+            if (area < minArea) continue;
+            if (arcLength(contour, true) < minPerimeter) continue;
+
+            convexHull(contour, hull);
+            final double solidity = 100 * area / contourArea(hull);
+            if (solidity < minSolidity || solidity > maxSolidity) continue;
 
             outputContours.put(filteredContourCount++, contour);
         }
