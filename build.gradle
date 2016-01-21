@@ -101,7 +101,7 @@ project(":core") {
         compile group: 'org.bytedeco', name: 'javacv', version: '1.1'
         compile group: 'org.bytedeco.javacpp-presets', name: 'opencv', version: '3.0.0-1.1'
         compile group: 'org.bytedeco.javacpp-presets', name: 'opencv', version: '3.0.0-1.1', classifier: os
-        compile group: 'org.bytedeco.javacpp-presets', name: 'opencv-3.0.0-1.1', classifier: 'linux-frc'
+        compile name: 'opencv-3.0.0-1.1-linux-frc'
         compile group: 'org.bytedeco.javacpp-presets', name: 'videoinput', version: '0.200-1.1', classifier: os
         compile group: 'org.python', name: 'jython', version: '2.7.0'
         compile group: 'com.thoughtworks.xstream', name: 'xstream', version: '1.4.8'
@@ -112,7 +112,7 @@ project(":core") {
         // https://github.com/google/guice/wiki/OptionalAOP
         compile group: 'com.google.inject', name: 'guice', version: '4.0', classifier: 'no_aop'
         compile group: 'com.google.inject.extensions', name: 'guice-assistedinject', version: '4.0'
-        compile group: 'edu.wpi.first.wpilib.networktables.java', name: 'NetworkTables', version: '3.0.0-SNAPSHOT', classifier: 'desktop'
+        compile name: 'NetworkTables-3.0.0-SNAPSHOT-desktop'
         compile group: 'edu.wpi.first.wpilib.networktables.java', name: 'NetworkTables', version: '3.0.0-SNAPSHOT', classifier: 'arm'
     }
 
