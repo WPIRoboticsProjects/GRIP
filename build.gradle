@@ -37,7 +37,7 @@ allprojects {
         testCompile group: 'junit', name: 'junit', version: '4.12'
     }
 
-    version = '1.1.0'
+    version = '1.1.1'
 
     compileJava {
         options.compilerArgs << "-g"
