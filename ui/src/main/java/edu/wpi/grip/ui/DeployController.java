@@ -125,7 +125,7 @@ public class DeployController {
         setStatusAsync("Connecting to " + address, false);
 
         try (SSHClient ssh = new SSHClient()) {
-            ssh.loadKnownHosts();
+            ssh.addHostKeyVerifier((hostname, port, key) -> true);
             ssh.connect(address);
             ssh.authPassword(user, password);
 
