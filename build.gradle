@@ -16,19 +16,6 @@ plugins {
 apply plugin: 'nebula-aggregate-javadocs'
 
 
-/*
- * Gets the version name from the latest Git tag
- * http://ryanharter.com/blog/2013/07/30/automatic-versioning-with-git-and-gradle/
- */
-def getVersionName = { ->
-    def stdout = new ByteArrayOutputStream()
-    exec {
-        commandLine 'git', 'describe', '--tags'
-        standardOutput = stdout
-    }
-    return stdout.toString().trim().substring(1)
-}
-
 allprojects {
     apply plugin: 'java'
     apply plugin: 'application'
@@ -50,7 +37,7 @@ allprojects {
         testCompile group: 'junit', name: 'junit', version: '4.12'
     }
 
-    version = getVersionName()
+    version = '1.1.0'
 
     compileJava {
         options.compilerArgs << "-g"
