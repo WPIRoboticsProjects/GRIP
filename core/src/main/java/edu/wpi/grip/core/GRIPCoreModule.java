@@ -68,6 +68,7 @@ public class GRIPCoreModule extends AbstractModule {
             fileHandler.setFormatter(new SimpleFormatter());//log in text, not xml
 
             globalLogger.config("Configuration done.");//Log that we are done setting up the logger
+            globalLogger.config("GRIP Version: " + edu.wpi.grip.core.Main.class.getPackage().getImplementationVersion());
 
         } catch (IOException exception) {//Something happened setting up file IO
             throw new IllegalStateException("Failed to configure the Logger", exception);
