@@ -15,6 +15,29 @@ plugins {
 }
 apply plugin: 'nebula-aggregate-javadocs'
 
+
+/*
+ * Gets the version name from the latest Git tag
+ * http://ryanharter.com/blog/2013/07/30/automatic-versioning-with-git-and-gradle/
+ */
+def getVersionName = { ->
+    def stdout = new ByteArrayOutputStream()
+    exec {
+        commandLine 'git', 'describe', '--tags'
+        standardOutput = stdout
+    }
+    return stdout.toString().trim().substring(1)
+}
+
+def getVersionSimple = { ->
+    def stdout = new ByteArrayOutputStream()
+    exec {
+        commandLine 'git', 'describe', '--tags', '--abbrev=0'
+        standardOutput = stdout
+    }
+    return stdout.toString().trim().substring(1)
+}
+
 allprojects {
     apply plugin: 'java'
     apply plugin: 'application'
@@ -36,7 +59,7 @@ allprojects {
         testCompile group: 'junit', name: 'junit', version: '4.12'
     }
 
-    version = '1.1.1'
+    version = getVersionName()
 
     compileJava {
         options.compilerArgs << "-g"
@@ -227,6 +250,7 @@ project(":ui") {
         appID = 'GRIP'
         appName = 'GRIP'
         mainClass = "edu.wpi.grip.ui.Main"
+        version = getVersionSimple()
 
         // This prevents the JIT from eating stack traces that get thrown a lot
         // This is slower but means we actually get the stack traces instead of
@@ -240,9 +264,9 @@ project(":ui") {
     // The JavaFX plugin does not provide a way to change the installer artifact's name without changing the appName or appID,
     // so instead, we simply rename the artifact to append the architecture (x86 or x64)
     jfxDeploy.doLast {
-        def filet = fileTree(dir: 'build/distributions', include: "${javafx.appName}-${version}.*")
+        def filet = fileTree(dir: 'build/distributions', include: "${javafx.appName}-${getVersionSimple()}.*")
         filet.each { File f ->
-            def f2 = new File(f.getParentFile(), "${f.getName().replace("${version}", "${version}-${arch}")}")
+            def f2 = new File(f.getParentFile(), "${f.getName().replace("${getVersionSimple()}", "${getVersionSimple()}-${arch}")}")
             f.renameTo(f2)
         }
     }
