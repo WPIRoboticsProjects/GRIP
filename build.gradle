@@ -15,7 +15,6 @@ plugins {
 }
 apply plugin: 'nebula-aggregate-javadocs'
 
-
 allprojects {
     apply plugin: 'java'
     apply plugin: 'application'
@@ -78,6 +77,7 @@ allprojects {
 }
 
 def os = osdetector.classifier.replace("osx", "macosx").replace("windows-x86_32", "windows-x86")
+def arch = osdetector.arch.replace("x86_64", "x64")
 
 project(":core") {
     apply plugin: 'java'
@@ -227,6 +227,18 @@ project(":ui") {
         jvmArgs = ["-XX:-OmitStackTraceInFastThrow"]
     }
     mainClassName = javafx.mainClass
+    
+    // The JavaFX plugin does not provide a way to change the installer artifact's name without changing the appName or appID,
+    // so instead, we simply rename the artifact to append the architecture (x86 or x64)
+    jfxDeploy.doLast {
+        def filet = fileTree(dir: 'build/distributions', include: "${javafx.appName}-${version}.*")
+        println filet
+        filet.each { File f ->
+            def f2 = new File(f.getParentFile(), "${f.getName().replace("${version}", "${version}-${arch}")}")
+            println f2.getAbsolutePath()
+            f.renameTo(f2)
+        }
+    }
 }
 
 /*
