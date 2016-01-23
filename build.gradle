@@ -232,10 +232,8 @@ project(":ui") {
     // so instead, we simply rename the artifact to append the architecture (x86 or x64)
     jfxDeploy.doLast {
         def filet = fileTree(dir: 'build/distributions', include: "${javafx.appName}-${version}.*")
-        println filet
         filet.each { File f ->
             def f2 = new File(f.getParentFile(), "${f.getName().replace("${version}", "${version}-${arch}")}")
-            println f2.getAbsolutePath()
             f.renameTo(f2)
         }
     }
