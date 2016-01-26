@@ -1,6 +1,5 @@
 package edu.wpi.grip.core.serialization;
 
-import com.google.common.base.Throwables;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import com.google.inject.Guice;
@@ -9,24 +8,22 @@ import com.google.inject.Key;
 import com.google.inject.TypeLiteral;
 import edu.wpi.grip.core.*;
 import edu.wpi.grip.core.events.OperationAddedEvent;
-import edu.wpi.grip.core.operations.Operations;
 import edu.wpi.grip.core.sources.ImageFileSource;
-import edu.wpi.grip.core.util.MockExceptionWitness;
-import edu.wpi.grip.generated.CVOperations;
-import org.junit.After;
+import edu.wpi.grip.util.Files;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.io.*;
-import java.net.URL;
-import java.nio.file.Paths;
-import java.util.ArrayList;
+import java.net.URI;
 import java.util.List;
 import java.util.Optional;
 
 import static junit.framework.TestCase.assertEquals;
 
 public class CompatibilityTest {
+
+    private static final URI testphotoURI = Files.testphotoURI;
+    private static final URI testprojectURI = Files.testprojectURI;
 
     private Connection.Factory<Object> connectionFactory;
     private ImageFileSource.Factory imageSourceFactory;
@@ -61,22 +58,9 @@ public class CompatibilityTest {
         project = injector.getInstance(Project.class);
         stepFactory = injector.getInstance(Step.Factory.class);
 
-        //Set up stuff we need to add the operations
-        this.operationList = new ArrayList<>();
-        this.throwableOptional = Optional.empty();
-        this.eventBus = new EventBus((exception, context) -> throwableOptional = Optional.of(exception));
-
-        //Set up the operation grabber to help us register the operations
-        this.eventBus.register(new OperationGrabber());
-
         //Set up the test project file to work with this machine
-        URL location = CompatibilityTest.class.getProtectionDomain().getCodeSource().getLocation();
-
-        int numbOfFolders = Paths.get(location.toURI()).getNameCount();
-
-
-        String fileName = "/"+ Paths.get(location.toURI()).subpath(0,(numbOfFolders-4)).toString()+ "/testALL.grip";
-        String photoFileName = "/" + Paths.get(location.toURI()).subpath(0,(numbOfFolders-4)).toString()+ "/testphoto.png";
+        String fileName = testprojectURI.toString().substring(5);
+        String photoFileName = testphotoURI.toString().substring(5);
 
         File file = new File(fileName);
 
@@ -88,39 +72,20 @@ public class CompatibilityTest {
         }
         reader.close();
         String newtext = oldtext.replaceAll("REPLACEME", photoFileName);
+
         //TODO: replace "preferences" section to work with this machine
         FileWriter writer2 = new FileWriter(file);
         writer2.write(newtext);
         writer2.close();
 
-        //Add/register/create the operations
-        CVOperations.addOperations(eventBus);
-        for (Operation operation : operationList) {
-            new Step.Factory(eventBus, (origin) -> new MockExceptionWitness(eventBus, origin)).create(operation);
-        }
-
-        Operations.addOperations(eventBus);
-        for (Operation operation : operationList) {
-            new Step.Factory(eventBus, (origin) -> new MockExceptionWitness(eventBus, origin)).create(operation);
-        }
-
         //Open the test file as a project
         project.open(file);
-    }
-
-    @After
-    public void afterTest() {
-        //Throw any exceptions that weren't handled during the test
-        if (throwableOptional.isPresent()) {
-            throw Throwables.propagate(throwableOptional.get());
-        }
     }
 
     @Test
     public void testFoo() throws Exception {
 
-        assertEquals("blarg",
-                3, 3);
+        assertEquals("blarg", 3, 3);
 
     }
 }

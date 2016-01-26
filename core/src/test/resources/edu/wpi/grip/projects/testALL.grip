@@ -1,7 +1,7 @@
 <grip:Pipeline>
   <sources>
     <grip:ImageFile>
-      <property name="path" value="/home/arsenic/Documents/schoolwork/MQP/MyFork/GRIP/testphoto.png"/>
+      <property name="path" value="REPLACEME"/>
     </grip:ImageFile>
     <grip:Camera>
       <property name="deviceNumber" value="0"/>
