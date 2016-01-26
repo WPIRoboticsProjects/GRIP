@@ -215,6 +215,15 @@ project(":ui") {
     }
 
     javafx {
+        profiles {
+            linux {
+                category = 'Development'
+                bundleArguments = [
+                        // for DEB bundles
+                        'email': 'wpilib@wpi.edu', // This is the email used for the deb maintainer field.
+                ]
+            }
+        }
         appID = 'GRIP'
         appName = 'GRIP'
         mainClass = "edu.wpi.grip.ui.Main"
@@ -227,7 +236,7 @@ project(":ui") {
         jvmArgs = ["-XX:-OmitStackTraceInFastThrow"]
     }
     mainClassName = javafx.mainClass
-    
+
     // The JavaFX plugin does not provide a way to change the installer artifact's name without changing the appName or appID,
     // so instead, we simply rename the artifact to append the architecture (x86 or x64)
     jfxDeploy.doLast {
