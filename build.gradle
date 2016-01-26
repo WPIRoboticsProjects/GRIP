@@ -76,7 +76,7 @@ allprojects {
     }
 }
 
-def os = osdetector.classifier.replace("osx", "macosx").replace("windows-x86_32", "windows-x86")
+def os = osdetector.classifier.replace("osx", "macosx").replace("windows-x86_32", "windows-x86").replace("x86_32", "x86")
 def arch = osdetector.arch.replace("x86_64", "x64")
 
 project(":core") {
