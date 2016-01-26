@@ -8,7 +8,9 @@ import com.google.inject.Key;
 import com.google.inject.TypeLiteral;
 import edu.wpi.grip.core.*;
 import edu.wpi.grip.core.events.OperationAddedEvent;
+import edu.wpi.grip.core.operations.Operations;
 import edu.wpi.grip.core.sources.ImageFileSource;
+import edu.wpi.grip.generated.CVOperations;
 import edu.wpi.grip.util.Files;
 import org.junit.Before;
 import org.junit.Test;
@@ -57,6 +59,9 @@ public class CompatibilityTest {
         pipeline = injector.getInstance(Pipeline.class);
         project = injector.getInstance(Project.class);
         stepFactory = injector.getInstance(Step.Factory.class);
+
+        Operations.addOperations(eventBus);
+        CVOperations.addOperations(eventBus);
 
         //Set up the test project file to work with this machine
         String fileName = testprojectURI.toString().substring(5);
