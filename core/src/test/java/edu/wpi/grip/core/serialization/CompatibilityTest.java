@@ -3,12 +3,10 @@ package edu.wpi.grip.core.serialization;
 import com.google.common.eventbus.EventBus;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
-import com.google.inject.Key;
-import com.google.inject.TypeLiteral;
-import edu.wpi.grip.core.*;
+import edu.wpi.grip.core.GRIPCoreModule;
+import edu.wpi.grip.core.Pipeline;
 import edu.wpi.grip.core.operations.Operations;
 import edu.wpi.grip.core.settings.ProjectSettings;
-import edu.wpi.grip.core.sources.ImageFileSource;
 import edu.wpi.grip.generated.CVOperations;
 import edu.wpi.grip.util.Files;
 import org.junit.Before;
@@ -16,29 +14,22 @@ import org.junit.Test;
 
 import java.io.*;
 import java.net.URI;
-import java.util.List;
-import java.util.Optional;
 
 import static junit.framework.TestCase.assertEquals;
 
 /**
  * This tests for backwards compatibility by opening a project file containing ALL the steps of GRIP
- * at the time of this file's creation.
+ * at the time of this file's creation. Please note that this test requires a webcam at position 0.
  */
 public class CompatibilityTest {
 
     private static final URI testphotoURI = Files.testphotoURI; //The location of the photo source for the test
     private static final URI testprojectURI = Files.testprojectURI; //The location of the save file for the test
 
-    private Connection.Factory<Object> connectionFactory;
-    private ImageFileSource.Factory imageSourceFactory;
-    private Step.Factory stepFactory;
     private Pipeline pipeline;
     private Project project;
     private ProjectSettings settings;
 
-    private List<Operation> operationList;
-    private Optional<Throwable> throwableOptional;
     private EventBus eventBus;
 
     @Before
@@ -46,16 +37,11 @@ public class CompatibilityTest {
 
         //Set up the stuff we need for the core functionality for GRIP
         final Injector injector = Guice.createInjector(new GRIPCoreModule());
-        connectionFactory = injector
-                .getInstance(Key.get(new TypeLiteral<Connection.Factory<Object>>() {
-                }));
-        imageSourceFactory = injector
-                .getInstance(ImageFileSource.Factory.class);
+
         eventBus = injector.getInstance(EventBus.class);
         pipeline = injector.getInstance(Pipeline.class);
         project = injector.getInstance(Project.class);
         settings = injector.getInstance(ProjectSettings.class);
-        stepFactory = injector.getInstance(Step.Factory.class);
 
         //Add the operations so that GRIP will recognize them
         Operations.addOperations(eventBus);
