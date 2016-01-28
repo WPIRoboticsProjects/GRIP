@@ -32,6 +32,11 @@ public class FindLinesOperation implements Operation {
     }
 
     @Override
+    public Category getCategory() {
+        return Category.FEATURE_DETECTION;
+    }
+
+    @Override
     public Optional<InputStream> getIcon() {
         return Optional.of(getClass().getResourceAsStream("/edu/wpi/grip/ui/icons/find-lines.png"));
     }

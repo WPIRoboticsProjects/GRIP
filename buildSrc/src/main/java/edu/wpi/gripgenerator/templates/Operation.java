@@ -126,6 +126,21 @@ public class Operation {
         return getDescription;
     }
 
+    private MethodDeclaration getCategoryMethod() {
+        MethodDeclaration getCategory = new MethodDeclaration(
+                ModifierSet.PUBLIC,
+                Collections.singletonList(OVERRIDE_ANNOTATION),
+                null,
+                createReferenceType("Category", 0),
+                "getCategory",
+                null, 0,
+                null,
+                null
+        );
+        getCategory.setBody(new BlockStmt(Collections.singletonList(new ReturnStmt(new NameExpr("Category.OPENCV")))));
+        return getCategory;
+    }
+
     /**
      * Creates the method that returns the input socket of this operation.
      *
@@ -280,6 +295,7 @@ public class Operation {
                 .collect(Collectors.toList()));
         ASTHelper.addMember(operation, getNameMethod());
         ASTHelper.addMember(operation, getDescriptionMethod());
+        ASTHelper.addMember(operation, getCategoryMethod());
         ASTHelper.addMember(operation, getCreateInputSocketsMethod());
         ASTHelper.addMember(operation, getCreateOutputSocketsMethod());
         ASTHelper.addMember(operation, getPerformMethod());

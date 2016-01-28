@@ -124,6 +124,11 @@ public class PublishVideoOperation implements Operation {
     }
 
     @Override
+    public Category getCategory() {
+        return Category.NETWORK;
+    }
+
+    @Override
     public Optional<InputStream> getIcon() {
         return Optional.of(getClass().getResourceAsStream("/edu/wpi/grip/ui/icons/publish-video.png"));
     }

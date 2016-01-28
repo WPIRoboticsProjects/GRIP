@@ -19,7 +19,7 @@
     -fx-border-width: 1px;
 }
 .palette {
-    -fx-min-width: 20em;
+    -fx-min-width: 30em;
 }
 
 .operation {
@@ -27,11 +27,12 @@
     -fx-hgap: 1em;
     -fx-padding: 0.5em;
     -fx-alignment: center-left;
+    -fx-color: -fx-background;
     -fx-background-color: -fx-color;
 }
 
 .operation:hover {
-    -fx-color: -fx-hover-base;
+    -fx-color: white;
 }
 
 .operation:pressed {
@@ -58,7 +59,7 @@ Label.operation-description {
 }
 
 .palette {
-    -fx-pref-width: 30em;
+    -fx-pref-width: 40em;
 }
 
 .previews HBox {
