@@ -63,11 +63,7 @@ public class CompatibilityTest {
         reader.close();
         String newtext = oldtext.replaceAll("REPLACEME", photoFileName);//This gives the correct location of the test photo needed to the project file
         //The following alters the project settings in the project file to the defaults given in the "settings" variable
-        newtext = newtext.replaceAll("<teamNumber>.*</teamNumber>", "<teamNumber>" + settings.getTeamNumber() + "</teamNumber>");
-        newtext = newtext.replaceAll("<publishAddress>.*</publishAddress>", "<publishAddress>" + settings.getPublishAddress() + "</publishAddress>");
-        newtext = newtext.replaceAll("<deployAddress>.*</deployAddress>", "<deployAddress>" + settings.getDeployAddress() + "</deployAddress>");
         newtext = newtext.replaceAll("<deployDir>.*</deployDir>", "<deployDir>" + settings.getDeployDir() + "</deployDir>");
-        newtext = newtext.replaceAll("<deployUser>.*</deployUser>", "<deployUser>" + settings.getDeployUser() + "</deployUser>");
         newtext = newtext.replaceAll("<deployJavaHome>.*</deployJavaHome>", "<deployJavaHome>" + settings.getDeployJavaHome() + "</deployJavaHome>");
 
         //Write the altered project file text
