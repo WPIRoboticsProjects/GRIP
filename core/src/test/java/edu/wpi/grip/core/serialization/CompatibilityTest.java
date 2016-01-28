@@ -62,9 +62,6 @@ public class CompatibilityTest {
         }
         reader.close();
         String newtext = oldtext.replaceAll("REPLACEME", photoFileName);//This gives the correct location of the test photo needed to the project file
-        //The following alters the project settings in the project file to the defaults given in the "settings" variable
-        newtext = newtext.replaceAll("<deployDir>.*</deployDir>", "<deployDir>" + settings.getDeployDir() + "</deployDir>");
-        newtext = newtext.replaceAll("<deployJavaHome>.*</deployJavaHome>", "<deployJavaHome>" + settings.getDeployJavaHome() + "</deployJavaHome>");
 
         //Write the altered project file text
         FileWriter writer2 = new FileWriter(file);
