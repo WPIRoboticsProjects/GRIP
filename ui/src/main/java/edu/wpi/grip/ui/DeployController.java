@@ -27,6 +27,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.InterruptedIOException;
 import java.io.StringWriter;
+import java.net.URLDecoder;
 import java.net.UnknownHostException;
 import java.util.Optional;
 import java.util.logging.Level;
@@ -42,6 +43,8 @@ import java.util.logging.Logger;
 public class DeployController {
     private final static String GRIP_JAR = "grip.jar";
     private final static String PROJECT_FILE = "project.grip";
+    private final static String LOCAL_GRIP_JAR = URLDecoder.decode(
+            Project.class.getProtectionDomain().getCodeSource().getLocation().getPath());
 
     @FXML private TextField address;
     @FXML private TextField user;
@@ -125,7 +128,7 @@ public class DeployController {
         setStatusAsync("Connecting to " + address, false);
 
         try (SSHClient ssh = new SSHClient()) {
-            ssh.loadKnownHosts();
+            ssh.addHostKeyVerifier((hostname, port, key) -> true);
             ssh.connect(address);
             ssh.authPassword(user, password);
 
@@ -149,8 +152,7 @@ public class DeployController {
 
             // Upload the GRIP core JAR and the serialized project to the robot
             scp.upload(new StringInMemoryFile(PROJECT_FILE, projectWriter.toString()), deployDir + "/");
-            scp.upload(new FileSystemFile(Project.class.getProtectionDomain().getCodeSource().getLocation().getPath()),
-                    deployDir + "/" + GRIP_JAR);
+            scp.upload(new FileSystemFile(LOCAL_GRIP_JAR), deployDir + "/" + GRIP_JAR);
 
             // Stop the pipeline before running it remotely, so the two instances of GRIP don't try to publish to the
             // same NetworkTables keys.
@@ -160,7 +162,8 @@ public class DeployController {
             setStatusAsync("Running GRIP", false);
             Session session = ssh.startSession();
             session.allocateDefaultPTY();
-            Session.Command cmd = session.exec(javaHome + "/bin/java -jar " + deployDir + "/" + GRIP_JAR + " " + deployDir + "/" + PROJECT_FILE);
+            Session.Command cmd = session.exec(javaHome + "/bin/java -jar " + deployDir + "/" + GRIP_JAR + "' '"
+                    + deployDir + "/" + PROJECT_FILE + "'");
 
             LineReader inputReader = new LineReader(new InputStreamReader(cmd.getInputStream()));
             while (isNotCanceled()) {

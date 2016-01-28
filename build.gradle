@@ -15,7 +15,6 @@ plugins {
 }
 apply plugin: 'nebula-aggregate-javadocs'
 
-
 allprojects {
     apply plugin: 'java'
     apply plugin: 'application'
@@ -37,7 +36,7 @@ allprojects {
         testCompile group: 'junit', name: 'junit', version: '4.12'
     }
 
-    version = '1.1.0'
+    version = '1.1.1'
 
     compileJava {
         options.compilerArgs << "-g"
@@ -77,7 +76,8 @@ allprojects {
     }
 }
 
-def os = osdetector.classifier.replace("osx", "macosx").replace("windows-x86_32", "windows-x86")
+def os = osdetector.classifier.replace("osx", "macosx").replace("x86_32", "x86")
+def arch = osdetector.arch.replace("x86_64", "x64")
 
 project(":core") {
     apply plugin: 'java'
@@ -215,6 +215,15 @@ project(":ui") {
     }
 
     javafx {
+        profiles {
+            linux {
+                category = 'Development'
+                bundleArguments = [
+                        // for DEB bundles
+                        'email': 'wpilib@wpi.edu', // This is the email used for the deb maintainer field.
+                ]
+            }
+        }
         appID = 'GRIP'
         appName = 'GRIP'
         mainClass = "edu.wpi.grip.ui.Main"
@@ -227,6 +236,16 @@ project(":ui") {
         jvmArgs = ["-XX:-OmitStackTraceInFastThrow"]
     }
     mainClassName = javafx.mainClass
+
+    // The JavaFX plugin does not provide a way to change the installer artifact's name without changing the appName or appID,
+    // so instead, we simply rename the artifact to append the architecture (x86 or x64)
+    jfxDeploy.doLast {
+        def filet = fileTree(dir: 'build/distributions', include: "${javafx.appName}-${version}.*")
+        filet.each { File f ->
+            def f2 = new File(f.getParentFile(), "${f.getName().replace("${version}", "${version}-${arch}")}")
+            f.renameTo(f2)
+        }
+    }
 }
 
 /*
