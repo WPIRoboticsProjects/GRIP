@@ -31,6 +31,9 @@ public class ProjectSettings implements Cloneable {
     @Setting(label = "Deploy Java home", description = "Where Java is installed on the robot.")
     private String deployJavaHome = "/usr/local/frc/JRE/";
 
+    @Setting(label = "Deploy JVM options", description = "Command line options passed to the roboRIO JVM")
+    private String deployJvmOptions = "-Xmx50m";
+
     /**
      * Set the FRC team number.  If the deploy address and NetworkTables server address haven't been manually
      * overridden, this also changes them to the mDNS hostname of the team's roboRIO.
@@ -98,6 +101,14 @@ public class ProjectSettings implements Cloneable {
         if (deployJavaHome != null) this.deployJavaHome = deployJavaHome;
     }
 
+    public String getDeployJvmOptions() {
+        return deployJvmOptions;
+    }
+
+    public void setDeployJvmOptions(String deployJvmOptions) {
+        this.deployJvmOptions = deployJvmOptions;
+    }
+
     private String computeFRCAddress(int teamNumber) {
         return "roborio-" + teamNumber + "-frc.local";
     }
@@ -109,6 +120,7 @@ public class ProjectSettings implements Cloneable {
                 .add("deployDir", deployDir)
                 .add("deployUser", deployUser)
                 .add("deployJavaHome", deployJavaHome)
+                .add("deployJvmOptions", deployJvmOptions)
                 .add("publishAddress", publishAddress)
                 .add("teamNumber", teamNumber)
                 .toString();

@@ -189,7 +189,7 @@ VBox.sockets {
     -fx-background-color: grey;
 }
 
-.property-sheet .property-pane, .deploy-pane GridPane {
+.property-sheet .property-pane {
     -fx-hgap: 4em;
     -fx-vgap: 1em;
     -fx-padding: 0;
@@ -205,6 +205,12 @@ VBox.sockets {
 
 .deploy-pane {
     -fx-spacing: 1em;
+}
+
+.deploy-pane GridPane {
+    -fx-hgap: 1em;
+    -fx-vgap: 1em;
+    -fx-padding: 0;
 }
 
 .deploy-pane StackPane {

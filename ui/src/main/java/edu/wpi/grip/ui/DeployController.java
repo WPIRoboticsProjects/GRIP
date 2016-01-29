@@ -10,6 +10,7 @@ import edu.wpi.grip.core.serialization.Project;
 import edu.wpi.grip.core.settings.ProjectSettings;
 import edu.wpi.grip.ui.util.StringInMemoryFile;
 import javafx.application.Platform;
+import javafx.beans.binding.Bindings;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.fxml.FXML;
@@ -50,8 +51,10 @@ public class DeployController {
     @FXML private TextField user;
     @FXML private TextField password;
     @FXML private TextField javaHome;
+    @FXML private TextField jvmArgs;
     @FXML private TextField deployDir;
     @FXML private ProgressIndicator progress;
+    @FXML private Label command;
     @FXML private Button deployButton;
     @FXML private Label status;
     @FXML private TextArea console;
@@ -59,18 +62,20 @@ public class DeployController {
     @Inject private EventBus eventBus;
     @Inject private Project project;
     @Inject private Pipeline pipeline;
-    @Inject private Logger logger;
 
+    @Inject private Logger logger;
     private final BooleanProperty deploying = new SimpleBooleanProperty(this, "deploying", false);
     private Optional<Thread> deployThread = Optional.empty();
 
     @FXML
     public void initialize() {
-        loadSettings(pipeline.getProjectSettings());
-
         deployButton.disableProperty().bind(deploying);
         progress.disableProperty().bind(deploying.not());
         deploying.addListener((o, b, d) -> progress.setProgress(d ? ProgressIndicator.INDETERMINATE_PROGRESS : 0));
+        command.textProperty().bind(Bindings.concat(javaHome.textProperty(), "/bin/java ", jvmArgs.textProperty(),
+                " -jar '", deployDir.textProperty(), "/", GRIP_JAR, "' '", deployDir.textProperty(), "/", PROJECT_FILE, "'"));
+
+        loadSettings(pipeline.getProjectSettings());
     }
 
     @Subscribe
@@ -85,6 +90,7 @@ public class DeployController {
         address.setText(settings.getDeployAddress());
         user.setText(settings.getDeployUser());
         javaHome.setText(settings.getDeployJavaHome());
+        jvmArgs.setText(settings.getDeployJvmOptions());
         deployDir.setText(settings.getDeployDir());
     }
 
@@ -95,6 +101,7 @@ public class DeployController {
         settings.setDeployAddress(address.getText());
         settings.setDeployUser(user.getText());
         settings.setDeployJavaHome(javaHome.getText());
+        settings.setDeployJvmOptions(jvmArgs.getText());
         settings.setDeployDir(deployDir.getText());
         eventBus.post(new ProjectSettingsChangedEvent(settings));
     }
@@ -107,8 +114,7 @@ public class DeployController {
         console.clear();
 
         // Start the deploy in a new thread, so the GUI doesn't freeze
-        deployThread = Optional.of(new Thread(() ->
-                deploy(address.getText(), user.getText(), password.getText(), javaHome.getText(), deployDir.getText())));
+        deployThread = Optional.of(new Thread(this::deploy));
         deployThread.get().setDaemon(true);
         deployThread.get().start();
     }
@@ -124,13 +130,13 @@ public class DeployController {
      * Upload and run the GRIP project using the current deploy settings.  This is run in a separate thread, and it
      * periodically updates the GUI to inform the user of the current status of the deployment.
      */
-    private void deploy(String address, String user, String password, String javaHome, String deployDir) {
-        setStatusAsync("Connecting to " + address, false);
+    private void deploy() {
+        setStatusAsync("Connecting to " + address.getText(), false);
 
         try (SSHClient ssh = new SSHClient()) {
             ssh.addHostKeyVerifier((hostname, port, key) -> true);
-            ssh.connect(address);
-            ssh.authPassword(user, password);
+            ssh.connect(address.getText());
+            ssh.authPassword(user.getText(), password.getText());
 
             // Update the progress bar and status text while uploading files
             SCPFileTransfer scp = ssh.newSCPFileTransfer();
@@ -151,8 +157,8 @@ public class DeployController {
             project.save(projectWriter);
 
             // Upload the GRIP core JAR and the serialized project to the robot
-            scp.upload(new StringInMemoryFile(PROJECT_FILE, projectWriter.toString()), deployDir + "/");
-            scp.upload(new FileSystemFile(LOCAL_GRIP_JAR), deployDir + "/" + GRIP_JAR);
+            scp.upload(new StringInMemoryFile(PROJECT_FILE, projectWriter.toString()), deployDir.getText() + "/");
+            scp.upload(new FileSystemFile(LOCAL_GRIP_JAR), deployDir.getText() + "/" + GRIP_JAR);
 
             // Stop the pipeline before running it remotely, so the two instances of GRIP don't try to publish to the
             // same NetworkTables keys.
@@ -162,8 +168,9 @@ public class DeployController {
             setStatusAsync("Running GRIP", false);
             Session session = ssh.startSession();
             session.allocateDefaultPTY();
-            Session.Command cmd = session.exec(javaHome + "/bin/java -jar " + deployDir + "/" + GRIP_JAR + "' '"
-                    + deployDir + "/" + PROJECT_FILE + "'");
+
+            logger.info("Executing " + command.getText());
+            Session.Command cmd = session.exec(command.getText());
 
             LineReader inputReader = new LineReader(new InputStreamReader(cmd.getInputStream()));
             while (isNotCanceled()) {
@@ -175,7 +182,7 @@ public class DeployController {
                 Platform.runLater(() -> console.setText(console.getText() + line + "\n"));
             }
         } catch (UnknownHostException e) {
-            setStatusAsync("Unknown host: " + address, true);
+            setStatusAsync("Unknown host: " + address.getText(), true);
         } catch (UserAuthException e) {
             setStatusAsync("Invalid username or password (should be \"lvuser\" and blank for roboRIO)", true);
         } catch (InterruptedIOException e) {
