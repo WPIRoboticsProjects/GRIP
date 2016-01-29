@@ -130,7 +130,7 @@ project(":core") {
         compile group: 'org.python', name: 'jython', version: '2.7.0'
         compile group: 'com.thoughtworks.xstream', name: 'xstream', version: '1.4.8'
         compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.4'
-        compile group: 'com.google.guava', name: 'guava', version: '18.0'
+        compile group: 'com.google.guava', name: 'guava', version: '19.0'
         // We use the no_aop version of Guice because the aop isn't avaiable in arm java
         // http://stackoverflow.com/a/15235190/3708426
         // https://github.com/google/guice/wiki/OptionalAOP
