@@ -106,7 +106,7 @@ public class ProjectSettings implements Cloneable {
     }
 
     public void setDeployJvmOptions(String deployJvmOptions) {
-        this.deployJvmOptions = deployJvmOptions;
+        if (deployJvmOptions != null) this.deployJvmOptions = deployJvmOptions;
     }
 
     private String computeFRCAddress(int teamNumber) {

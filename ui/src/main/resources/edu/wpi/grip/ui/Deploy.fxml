@@ -11,6 +11,10 @@
 <VBox styleClass="deploy-pane" maxWidth="Infinity" xmlns:fx="http://javafx.com/fxml/1"
       onKeyPressed="if (event.code == javafx.scene.input.KeyCode.ENTER) { controller.onDeploy() }"
       xmlns="http://javafx.com/javafx/null" fx:controller="edu.wpi.grip.ui.DeployController">
+    <fx:define>
+        <SimpleBooleanProperty fx:id="deploying"/>
+    </fx:define>
+
     <GridPane maxHeight="Infinity">
         <columnConstraints>
             <ColumnConstraints hgrow="NEVER" halignment="RIGHT"/>
@@ -59,6 +63,7 @@
         <buttons>
             <Button fx:id="deployButton" defaultButton="true" onMouseClicked="#onDeploy" text="Deploy"
                     ButtonBar.buttonData="APPLY">
+                <fx:script>deployButton.disableProperty().bind(deploying)</fx:script>
                 <graphic>
                     <ImageView styleClass="menu-graphic">
                         <fitWidth>
@@ -78,7 +83,9 @@
     </ButtonBar>
 
     <StackPane>
-        <ProgressBar fx:id="progress" maxWidth="Infinity" progress="0"/>
+        <ProgressBar fx:id="progress" maxWidth="Infinity" progress="0">
+            <fx:script>progress.disableProperty().bind(deploying.not())</fx:script>
+        </ProgressBar>
         <Label fx:id="status"/>
     </StackPane>
 

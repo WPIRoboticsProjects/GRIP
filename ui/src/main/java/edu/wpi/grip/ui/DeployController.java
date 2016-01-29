@@ -12,7 +12,6 @@ import edu.wpi.grip.ui.util.StringInMemoryFile;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.SimpleBooleanProperty;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import net.schmizz.sshj.SSHClient;
@@ -55,22 +54,19 @@ public class DeployController {
     @FXML private TextField deployDir;
     @FXML private ProgressIndicator progress;
     @FXML private Label command;
-    @FXML private Button deployButton;
     @FXML private Label status;
     @FXML private TextArea console;
+    @FXML private BooleanProperty deploying;
 
     @Inject private EventBus eventBus;
     @Inject private Project project;
     @Inject private Pipeline pipeline;
-
     @Inject private Logger logger;
-    private final BooleanProperty deploying = new SimpleBooleanProperty(this, "deploying", false);
+
     private Optional<Thread> deployThread = Optional.empty();
 
     @FXML
     public void initialize() {
-        deployButton.disableProperty().bind(deploying);
-        progress.disableProperty().bind(deploying.not());
         deploying.addListener((o, b, d) -> progress.setProgress(d ? ProgressIndicator.INDETERMINATE_PROGRESS : 0));
         command.textProperty().bind(Bindings.concat(javaHome.textProperty(), "/bin/java ", jvmArgs.textProperty(),
                 " -jar '", deployDir.textProperty(), "/", GRIP_JAR, "' '", deployDir.textProperty(), "/", PROJECT_FILE, "'"));
