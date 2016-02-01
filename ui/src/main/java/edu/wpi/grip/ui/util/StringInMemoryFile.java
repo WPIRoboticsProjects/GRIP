@@ -12,11 +12,17 @@ import java.io.StringBufferInputStream;
  */
 public class StringInMemoryFile extends InMemorySourceFile {
     private final String name, contents;
+    private final int permissions;
 
-    public StringInMemoryFile(String name, String contents) {
+    public StringInMemoryFile(String name, String contents, int permissions) {
         super();
         this.name = name;
         this.contents = contents;
+        this.permissions = permissions;
+    }
+
+    public StringInMemoryFile(String name, String contents) {
+        this(name, contents, 0644);
     }
 
     @Override
@@ -27,6 +33,11 @@ public class StringInMemoryFile extends InMemorySourceFile {
     @Override
     public long getLength() {
         return contents.getBytes().length;
+    }
+
+    @Override
+    public int getPermissions() {
+        return permissions;
     }
 
     @Override

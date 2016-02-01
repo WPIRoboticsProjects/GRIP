@@ -13,7 +13,10 @@ import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.BooleanProperty;
 import javafx.fxml.FXML;
-import javafx.scene.control.*;
+import javafx.scene.control.Label;
+import javafx.scene.control.ProgressIndicator;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
 import net.schmizz.sshj.SSHClient;
 import net.schmizz.sshj.common.StreamCopier;
 import net.schmizz.sshj.connection.channel.direct.Session;
@@ -42,6 +45,7 @@ import java.util.logging.Logger;
  */
 public class DeployController {
     private final static String GRIP_JAR = "grip.jar";
+    private final static String GRIP_WRAPPER = "grip";
     private final static String PROJECT_FILE = "project.grip";
     private final static String LOCAL_GRIP_JAR = URLDecoder.decode(
             Project.class.getProtectionDomain().getCodeSource().getLocation().getPath());
@@ -152,9 +156,12 @@ public class DeployController {
             StringWriter projectWriter = new StringWriter();
             project.save(projectWriter);
 
-            // Upload the GRIP core JAR and the serialized project to the robot
-            scp.upload(new StringInMemoryFile(PROJECT_FILE, projectWriter.toString()), deployDir.getText() + "/");
-            scp.upload(new FileSystemFile(LOCAL_GRIP_JAR), deployDir.getText() + "/" + GRIP_JAR);
+            // Upload the GRIP core JAR, a wrapper script to run it, and the serialized project to the robot
+            final String commandStr = command.getText();
+            final String pathStr = deployDir.getText() + "/";
+            scp.upload(new FileSystemFile(LOCAL_GRIP_JAR), pathStr + GRIP_JAR);
+            scp.upload(new StringInMemoryFile(GRIP_WRAPPER, "echo \"" + commandStr + "\"\n" + commandStr, 0755), pathStr);
+            scp.upload(new StringInMemoryFile(PROJECT_FILE, projectWriter.toString()), pathStr);
 
             // Stop the pipeline before running it remotely, so the two instances of GRIP don't try to publish to the
             // same NetworkTables keys.
@@ -165,8 +172,7 @@ public class DeployController {
             Session session = ssh.startSession();
             session.allocateDefaultPTY();
 
-            logger.info("Executing " + command.getText());
-            Session.Command cmd = session.exec(command.getText());
+            Session.Command cmd = session.exec(String.format("'%s/%s'", pathStr, GRIP_WRAPPER));
 
             LineReader inputReader = new LineReader(new InputStreamReader(cmd.getInputStream()));
             while (isNotCanceled()) {
