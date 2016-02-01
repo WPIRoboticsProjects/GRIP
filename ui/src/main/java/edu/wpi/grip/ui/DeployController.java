@@ -115,7 +115,7 @@ public class DeployController {
         console.clear();
 
         // Start the deploy in a new thread, so the GUI doesn't freeze
-        deployThread = Optional.of(new Thread(this::deploy));
+        deployThread = Optional.of(new Thread(this::deploy, "Deploy"));
         deployThread.get().setDaemon(true);
         deployThread.get().start();
     }
