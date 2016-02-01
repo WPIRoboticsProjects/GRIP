@@ -32,7 +32,7 @@ public class ProjectSettings implements Cloneable {
     private String deployJavaHome = "/usr/local/frc/JRE/";
 
     @Setting(label = "Deploy JVM options", description = "Command line options passed to the roboRIO JVM")
-    private String deployJvmOptions = "-Xmx50m";
+    private String deployJvmOptions = "-Xmx50m -XX:-OmitStackTraceInFastThrow -XX:+HeapDumpOnOutOfMemoryError";
 
     /**
      * Set the FRC team number.  If the deploy address and NetworkTables server address haven't been manually
