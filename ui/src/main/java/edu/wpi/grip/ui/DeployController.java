@@ -2,7 +2,9 @@ package edu.wpi.grip.ui;
 
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
+import com.google.common.hash.Hashing;
 import com.google.common.io.LineReader;
+import com.google.common.io.Resources;
 import edu.wpi.grip.core.Pipeline;
 import edu.wpi.grip.core.events.ProjectSettingsChangedEvent;
 import edu.wpi.grip.core.events.StopPipelineEvent;
@@ -27,10 +29,8 @@ import net.schmizz.sshj.xfer.LoggingTransferListener;
 import net.schmizz.sshj.xfer.scp.SCPFileTransfer;
 
 import javax.inject.Inject;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.InterruptedIOException;
-import java.io.StringWriter;
+import java.io.*;
+import java.net.URL;
 import java.net.URLDecoder;
 import java.net.UnknownHostException;
 import java.util.Optional;
@@ -47,8 +47,8 @@ import java.util.logging.Logger;
 public class DeployController {
     private final static String GRIP_JAR = "grip.jar";
     private final static String GRIP_WRAPPER = "grip";
-    private final static String LOCAL_GRIP_JAR = URLDecoder.decode(
-            Project.class.getProtectionDomain().getCodeSource().getLocation().getPath());
+    private final static URL LOCAL_GRIP_URL = Project.class.getProtectionDomain().getCodeSource().getLocation();
+    private final static String LOCAL_GRIP_PATH = URLDecoder.decode(LOCAL_GRIP_URL.getPath());
 
     @FXML private TextField address;
     @FXML private TextField user;
@@ -157,10 +157,29 @@ public class DeployController {
             StringWriter projectWriter = new StringWriter();
             project.save(projectWriter);
 
-            // Upload the GRIP core JAR, a wrapper script to run it, and the serialized project to the robot
             final String commandStr = command.get();
             final String pathStr = deployDir.getText() + "/";
-            scp.upload(new FileSystemFile(LOCAL_GRIP_JAR), pathStr + GRIP_JAR);
+
+
+            // Upload the core GRIP JAR only if there isn't already one with the same hash on the robot.  This prevents
+            // us from redundantly deploying the same JAR over and over again (so deploy times after the first are
+            // much faster), while still ensuring that the JAR is deployed if it has to be.
+            try (Session session = ssh.startSession()) {
+                Session.Command md5Cmd = session.exec("md5sum " + pathStr + GRIP_JAR);
+                String remoteMd5Sum = new DataInputStream(md5Cmd.getInputStream()).readLine();
+                String localMd5Sum = Resources.asByteSource(LOCAL_GRIP_URL).hash(Hashing.md5()).toString();
+
+                // If the MD5 sum doesn't match up or there's any kind of error (there isn't a JAR there, etc...),
+                // just upload the JAR.
+                if (remoteMd5Sum == null || remoteMd5Sum.length() < 32 || !remoteMd5Sum.substring(0, 32).equals(localMd5Sum)) {
+                    scp.upload(new FileSystemFile(LOCAL_GRIP_PATH), pathStr + GRIP_JAR);
+                } else {
+                    logger.info("md5sum " + GRIP_JAR + " matches. Skipping upload.");
+                }
+            }
+
+            // Upload the project file and a wrapper script with the JVM arguments.  These are very small and change
+            // often, so we might as well upload them every time.
             scp.upload(new StringInMemoryFile(GRIP_WRAPPER, "echo \"" + commandStr + "\"\n" + commandStr, 0755), pathStr);
             scp.upload(new StringInMemoryFile(projectFile.getText(), projectWriter.toString()), pathStr);
 
@@ -170,10 +189,10 @@ public class DeployController {
 
             // Run the project!
             setStatusAsync("Running GRIP", false);
+            logger.info("Running " + commandStr);
+
             Session session = ssh.startSession();
             session.allocateDefaultPTY();
-
-            logger.info("Running " + commandStr);
             Session.Command cmd = session.exec(String.format("'%s/%s'", pathStr, GRIP_WRAPPER));
 
             LineReader inputReader = new LineReader(new InputStreamReader(cmd.getInputStream()));
