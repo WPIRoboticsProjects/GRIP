@@ -2,7 +2,9 @@ package edu.wpi.grip.ui;
 
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
+import com.google.common.hash.Hashing;
 import com.google.common.io.LineReader;
+import com.google.common.io.Resources;
 import edu.wpi.grip.core.Pipeline;
 import edu.wpi.grip.core.events.ProjectSettingsChangedEvent;
 import edu.wpi.grip.core.events.StopPipelineEvent;
@@ -10,10 +12,14 @@ import edu.wpi.grip.core.serialization.Project;
 import edu.wpi.grip.core.settings.ProjectSettings;
 import edu.wpi.grip.ui.util.StringInMemoryFile;
 import javafx.application.Platform;
+import javafx.beans.binding.Bindings;
 import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.StringProperty;
 import javafx.fxml.FXML;
-import javafx.scene.control.*;
+import javafx.scene.control.Label;
+import javafx.scene.control.ProgressIndicator;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
 import net.schmizz.sshj.SSHClient;
 import net.schmizz.sshj.common.StreamCopier;
 import net.schmizz.sshj.connection.channel.direct.Session;
@@ -23,10 +29,8 @@ import net.schmizz.sshj.xfer.LoggingTransferListener;
 import net.schmizz.sshj.xfer.scp.SCPFileTransfer;
 
 import javax.inject.Inject;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.InterruptedIOException;
-import java.io.StringWriter;
+import java.io.*;
+import java.net.URL;
 import java.net.URLDecoder;
 import java.net.UnknownHostException;
 import java.util.Optional;
@@ -42,35 +46,37 @@ import java.util.logging.Logger;
  */
 public class DeployController {
     private final static String GRIP_JAR = "grip.jar";
-    private final static String PROJECT_FILE = "project.grip";
-    private final static String LOCAL_GRIP_JAR = URLDecoder.decode(
-            Project.class.getProtectionDomain().getCodeSource().getLocation().getPath());
+    private final static String GRIP_WRAPPER = "grip";
+    private final static URL LOCAL_GRIP_URL = Project.class.getProtectionDomain().getCodeSource().getLocation();
+    private final static String LOCAL_GRIP_PATH = URLDecoder.decode(LOCAL_GRIP_URL.getPath());
 
     @FXML private TextField address;
     @FXML private TextField user;
     @FXML private TextField password;
     @FXML private TextField javaHome;
+    @FXML private TextField jvmArgs;
     @FXML private TextField deployDir;
+    @FXML private TextField projectFile;
     @FXML private ProgressIndicator progress;
-    @FXML private Button deployButton;
     @FXML private Label status;
     @FXML private TextArea console;
+    @FXML private BooleanProperty deploying;
+    @FXML private StringProperty command;
 
     @Inject private EventBus eventBus;
     @Inject private Project project;
     @Inject private Pipeline pipeline;
     @Inject private Logger logger;
 
-    private final BooleanProperty deploying = new SimpleBooleanProperty(this, "deploying", false);
     private Optional<Thread> deployThread = Optional.empty();
 
     @FXML
     public void initialize() {
-        loadSettings(pipeline.getProjectSettings());
-
-        deployButton.disableProperty().bind(deploying);
-        progress.disableProperty().bind(deploying.not());
         deploying.addListener((o, b, d) -> progress.setProgress(d ? ProgressIndicator.INDETERMINATE_PROGRESS : 0));
+        command.bind(Bindings.concat(javaHome.textProperty(), "/bin/java ", jvmArgs.textProperty(), " -jar '",
+                deployDir.textProperty(), "/", GRIP_JAR, "' '", deployDir.textProperty(), "/", projectFile.textProperty(), "'"));
+
+        loadSettings(pipeline.getProjectSettings());
     }
 
     @Subscribe
@@ -85,6 +91,7 @@ public class DeployController {
         address.setText(settings.getDeployAddress());
         user.setText(settings.getDeployUser());
         javaHome.setText(settings.getDeployJavaHome());
+        jvmArgs.setText(settings.getDeployJvmOptions());
         deployDir.setText(settings.getDeployDir());
     }
 
@@ -95,6 +102,7 @@ public class DeployController {
         settings.setDeployAddress(address.getText());
         settings.setDeployUser(user.getText());
         settings.setDeployJavaHome(javaHome.getText());
+        settings.setDeployJvmOptions(jvmArgs.getText());
         settings.setDeployDir(deployDir.getText());
         eventBus.post(new ProjectSettingsChangedEvent(settings));
     }
@@ -107,8 +115,7 @@ public class DeployController {
         console.clear();
 
         // Start the deploy in a new thread, so the GUI doesn't freeze
-        deployThread = Optional.of(new Thread(() ->
-                deploy(address.getText(), user.getText(), password.getText(), javaHome.getText(), deployDir.getText())));
+        deployThread = Optional.of(new Thread(this::deploy, "Deploy"));
         deployThread.get().setDaemon(true);
         deployThread.get().start();
     }
@@ -124,13 +131,13 @@ public class DeployController {
      * Upload and run the GRIP project using the current deploy settings.  This is run in a separate thread, and it
      * periodically updates the GUI to inform the user of the current status of the deployment.
      */
-    private void deploy(String address, String user, String password, String javaHome, String deployDir) {
-        setStatusAsync("Connecting to " + address, false);
+    private void deploy() {
+        setStatusAsync("Connecting to " + address.getText(), false);
 
         try (SSHClient ssh = new SSHClient()) {
             ssh.addHostKeyVerifier((hostname, port, key) -> true);
-            ssh.connect(address);
-            ssh.authPassword(user, password);
+            ssh.connect(address.getText());
+            ssh.authPassword(user.getText(), password.getText());
 
             // Update the progress bar and status text while uploading files
             SCPFileTransfer scp = ssh.newSCPFileTransfer();
@@ -150,9 +157,31 @@ public class DeployController {
             StringWriter projectWriter = new StringWriter();
             project.save(projectWriter);
 
-            // Upload the GRIP core JAR and the serialized project to the robot
-            scp.upload(new StringInMemoryFile(PROJECT_FILE, projectWriter.toString()), deployDir + "/");
-            scp.upload(new FileSystemFile(LOCAL_GRIP_JAR), deployDir + "/" + GRIP_JAR);
+            final String commandStr = command.get();
+            final String pathStr = deployDir.getText() + "/";
+
+
+            // Upload the core GRIP JAR only if there isn't already one with the same hash on the robot.  This prevents
+            // us from redundantly deploying the same JAR over and over again (so deploy times after the first are
+            // much faster), while still ensuring that the JAR is deployed if it has to be.
+            try (Session session = ssh.startSession()) {
+                Session.Command md5Cmd = session.exec("md5sum " + pathStr + GRIP_JAR);
+                String remoteMd5Sum = new DataInputStream(md5Cmd.getInputStream()).readLine();
+                String localMd5Sum = Resources.asByteSource(LOCAL_GRIP_URL).hash(Hashing.md5()).toString();
+
+                // If the MD5 sum doesn't match up or there's any kind of error (there isn't a JAR there, etc...),
+                // just upload the JAR.
+                if (remoteMd5Sum == null || remoteMd5Sum.length() < 32 || !remoteMd5Sum.substring(0, 32).equals(localMd5Sum)) {
+                    scp.upload(new FileSystemFile(LOCAL_GRIP_PATH), pathStr + GRIP_JAR);
+                } else {
+                    logger.info("md5sum " + GRIP_JAR + " matches. Skipping upload.");
+                }
+            }
+
+            // Upload the project file and a wrapper script with the JVM arguments.  These are very small and change
+            // often, so we might as well upload them every time.
+            scp.upload(new StringInMemoryFile(GRIP_WRAPPER, "echo \"" + commandStr + "\"\n" + commandStr, 0755), pathStr);
+            scp.upload(new StringInMemoryFile(projectFile.getText(), projectWriter.toString()), pathStr);
 
             // Stop the pipeline before running it remotely, so the two instances of GRIP don't try to publish to the
             // same NetworkTables keys.
@@ -160,10 +189,11 @@ public class DeployController {
 
             // Run the project!
             setStatusAsync("Running GRIP", false);
+            logger.info("Running " + commandStr);
+
             Session session = ssh.startSession();
             session.allocateDefaultPTY();
-            Session.Command cmd = session.exec(javaHome + "/bin/java -jar " + deployDir + "/" + GRIP_JAR + "' '"
-                    + deployDir + "/" + PROJECT_FILE + "'");
+            Session.Command cmd = session.exec(String.format("'%s/%s'", pathStr, GRIP_WRAPPER));
 
             LineReader inputReader = new LineReader(new InputStreamReader(cmd.getInputStream()));
             while (isNotCanceled()) {
@@ -175,7 +205,7 @@ public class DeployController {
                 Platform.runLater(() -> console.setText(console.getText() + line + "\n"));
             }
         } catch (UnknownHostException e) {
-            setStatusAsync("Unknown host: " + address, true);
+            setStatusAsync("Unknown host: " + address.getText(), true);
         } catch (UserAuthException e) {
             setStatusAsync("Invalid username or password (should be \"lvuser\" and blank for roboRIO)", true);
         } catch (InterruptedIOException e) {

@@ -196,6 +196,8 @@ public class MainWindowController {
         graphic.setFitWidth(DPIUtility.SMALL_ICON_SIZE);
         graphic.setFitHeight(DPIUtility.SMALL_ICON_SIZE);
 
+        deployPane.requestFocus();
+
         Dialog<ButtonType> dialog = new Dialog<>();
         dialog.setTitle("Deploy");
         dialog.setHeaderText("Deploy");
