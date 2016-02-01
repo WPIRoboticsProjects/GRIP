@@ -12,6 +12,7 @@ import edu.wpi.grip.ui.util.StringInMemoryFile;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.StringProperty;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressIndicator;
@@ -57,10 +58,10 @@ public class DeployController {
     @FXML private TextField jvmArgs;
     @FXML private TextField deployDir;
     @FXML private ProgressIndicator progress;
-    @FXML private Label command;
     @FXML private Label status;
     @FXML private TextArea console;
     @FXML private BooleanProperty deploying;
+    @FXML private StringProperty command;
 
     @Inject private EventBus eventBus;
     @Inject private Project project;
@@ -72,8 +73,8 @@ public class DeployController {
     @FXML
     public void initialize() {
         deploying.addListener((o, b, d) -> progress.setProgress(d ? ProgressIndicator.INDETERMINATE_PROGRESS : 0));
-        command.textProperty().bind(Bindings.concat(javaHome.textProperty(), "/bin/java ", jvmArgs.textProperty(),
-                " -jar '", deployDir.textProperty(), "/", GRIP_JAR, "' '", deployDir.textProperty(), "/", PROJECT_FILE, "'"));
+        command.bind(Bindings.concat(javaHome.textProperty(), "/bin/java ", jvmArgs.textProperty(), " -jar '",
+                deployDir.textProperty(), "/", GRIP_JAR, "' '", deployDir.textProperty(), "/", PROJECT_FILE, "'"));
 
         loadSettings(pipeline.getProjectSettings());
     }
@@ -157,7 +158,7 @@ public class DeployController {
             project.save(projectWriter);
 
             // Upload the GRIP core JAR, a wrapper script to run it, and the serialized project to the robot
-            final String commandStr = command.getText();
+            final String commandStr = command.get();
             final String pathStr = deployDir.getText() + "/";
             scp.upload(new FileSystemFile(LOCAL_GRIP_JAR), pathStr + GRIP_JAR);
             scp.upload(new StringInMemoryFile(GRIP_WRAPPER, "echo \"" + commandStr + "\"\n" + commandStr, 0755), pathStr);
@@ -172,6 +173,7 @@ public class DeployController {
             Session session = ssh.startSession();
             session.allocateDefaultPTY();
 
+            logger.info("Running " + commandStr);
             Session.Command cmd = session.exec(String.format("'%s/%s'", pathStr, GRIP_WRAPPER));
 
             LineReader inputReader = new LineReader(new InputStreamReader(cmd.getInputStream()));
