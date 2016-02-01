@@ -180,7 +180,11 @@ public class DeployController {
 
             // Upload the project file and a wrapper script with the JVM arguments.  These are very small and change
             // often, so we might as well upload them every time.
-            scp.upload(new StringInMemoryFile(GRIP_WRAPPER, "echo \"" + commandStr + "\"\n" + commandStr, 0755), pathStr);
+            scp.upload(new StringInMemoryFile(GRIP_WRAPPER,
+                    "PID=$(ps aux | grep " + GRIP_JAR + "| grep -v grep | awk '{print $1}')\n"
+                            + "if [ $PID ]; then kill -9 $PID; fi\n"
+                            + "echo \"" + commandStr + "\"\n"
+                            + commandStr, 0755), pathStr);
             scp.upload(new StringInMemoryFile(projectFile.getText(), projectWriter.toString()), pathStr);
 
             // Stop the pipeline before running it remotely, so the two instances of GRIP don't try to publish to the
