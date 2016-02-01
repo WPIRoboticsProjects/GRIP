@@ -47,7 +47,6 @@ import java.util.logging.Logger;
 public class DeployController {
     private final static String GRIP_JAR = "grip.jar";
     private final static String GRIP_WRAPPER = "grip";
-    private final static String PROJECT_FILE = "project.grip";
     private final static String LOCAL_GRIP_JAR = URLDecoder.decode(
             Project.class.getProtectionDomain().getCodeSource().getLocation().getPath());
 
@@ -57,6 +56,7 @@ public class DeployController {
     @FXML private TextField javaHome;
     @FXML private TextField jvmArgs;
     @FXML private TextField deployDir;
+    @FXML private TextField projectFile;
     @FXML private ProgressIndicator progress;
     @FXML private Label status;
     @FXML private TextArea console;
@@ -74,7 +74,7 @@ public class DeployController {
     public void initialize() {
         deploying.addListener((o, b, d) -> progress.setProgress(d ? ProgressIndicator.INDETERMINATE_PROGRESS : 0));
         command.bind(Bindings.concat(javaHome.textProperty(), "/bin/java ", jvmArgs.textProperty(), " -jar '",
-                deployDir.textProperty(), "/", GRIP_JAR, "' '", deployDir.textProperty(), "/", PROJECT_FILE, "'"));
+                deployDir.textProperty(), "/", GRIP_JAR, "' '", deployDir.textProperty(), "/", projectFile.textProperty(), "'"));
 
         loadSettings(pipeline.getProjectSettings());
     }
@@ -162,7 +162,7 @@ public class DeployController {
             final String pathStr = deployDir.getText() + "/";
             scp.upload(new FileSystemFile(LOCAL_GRIP_JAR), pathStr + GRIP_JAR);
             scp.upload(new StringInMemoryFile(GRIP_WRAPPER, "echo \"" + commandStr + "\"\n" + commandStr, 0755), pathStr);
-            scp.upload(new StringInMemoryFile(PROJECT_FILE, projectWriter.toString()), pathStr);
+            scp.upload(new StringInMemoryFile(projectFile.getText(), projectWriter.toString()), pathStr);
 
             // Stop the pipeline before running it remotely, so the two instances of GRIP don't try to publish to the
             // same NetworkTables keys.
