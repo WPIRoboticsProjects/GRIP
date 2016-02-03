@@ -63,7 +63,7 @@ public final class ContoursReport implements NTPublishable {
         return boundingBoxes.get();
     }
 
-    @NTValue(key = "area")
+    @NTValue(key = "area", weight = 0)
     public double[] getArea() {
         final double[] areas = new double[(int) contours.size()];
         for (int i = 0; i < contours.size(); i++) {
@@ -72,7 +72,7 @@ public final class ContoursReport implements NTPublishable {
         return areas;
     }
 
-    @NTValue(key = "centerX")
+    @NTValue(key = "centerX", weight = 1)
     public double[] getCenterX() {
         final double[] centers = new double[(int) contours.size()];
         final Rect[] boundingBoxes = computeBoundingBoxes();
@@ -82,7 +82,7 @@ public final class ContoursReport implements NTPublishable {
         return centers;
     }
 
-    @NTValue(key = "centerY")
+    @NTValue(key = "centerY", weight = 2)
     public double[] getCenterY() {
         final double[] centers = new double[(int) contours.size()];
         final Rect[] boundingBoxes = computeBoundingBoxes();
@@ -92,7 +92,7 @@ public final class ContoursReport implements NTPublishable {
         return centers;
     }
 
-    @NTValue(key = "width")
+    @NTValue(key = "width", weight = 3)
     public synchronized double[] getWidth() {
         final double[] widths = new double[(int) contours.size()];
         final Rect[] boundingBoxes = computeBoundingBoxes();
@@ -102,7 +102,7 @@ public final class ContoursReport implements NTPublishable {
         return widths;
     }
 
-    @NTValue(key = "height")
+    @NTValue(key = "height", weight = 4)
     public synchronized double[] getHeights() {
         final double[] heights = new double[(int) contours.size()];
         final Rect[] boundingBoxes = computeBoundingBoxes();
@@ -112,7 +112,7 @@ public final class ContoursReport implements NTPublishable {
         return heights;
     }
 
-    @NTValue(key = "solidity")
+    @NTValue(key = "solidity", weight = 5)
     public synchronized double[] getSolidity() {
         final double[] solidities = new double[(int) contours.size()];
         Mat hull = new Mat();

@@ -15,7 +15,7 @@ public class NTNumber implements NTPublishable {
         this.number = number.doubleValue();
     }
 
-    @NTValue
+    @NTValue(weight = 0)
     public double getValue() {
         return number;
     }
