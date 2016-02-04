@@ -1,8 +1,14 @@
 buildscript {
-    repositories { jcenter() }
+    repositories {
+        jcenter()
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
+    }
 
     dependencies {
         classpath 'com.netflix.nebula:gradle-aggregate-javadocs-plugin:2.2.+'
+        classpath 'net.ltgt.gradle:gradle-errorprone-plugin:0.0.8'
     }
 }
 plugins {
@@ -67,6 +73,11 @@ allprojects {
     apply plugin: 'java'
     apply plugin: 'application'
     apply plugin: 'jacoco'
+    apply plugin: 'net.ltgt.errorprone'
+
+    configurations.errorprone {
+        resolutionStrategy.force 'com.google.errorprone:error_prone_core:2.0.8'
+    }
 
 
     repositories {
