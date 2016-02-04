@@ -15,15 +15,21 @@
             </tooltip>
         </Button>
         <Pane HBox.hgrow="ALWAYS"/>
-        <HBox fx:id="buttons" >
+        <HBox fx:id="buttons">
             <Button fx:id="moveLeftButton" onMouseClicked="#moveStepLeft" styleClass="move-left"
                     text="◀" HBox.hgrow="NEVER">
+                <minHeight>
+                    <DPIUtility fx:constant="SMALL_ICON_SIZE"/>
+                </minHeight>
                 <tooltip>
                     <Tooltip text="Move Step Left"/>
                 </tooltip>
             </Button>
             <Button fx:id="moveRightButton" onMouseClicked="#moveStepRight" styleClass="move-right"
                     text="▶" HBox.hgrow="NEVER">
+                <minHeight>
+                    <DPIUtility fx:constant="SMALL_ICON_SIZE"/>
+                </minHeight>
                 <tooltip>
                     <Tooltip text="Move Step Right"/>
                 </tooltip>
