@@ -175,7 +175,7 @@ public class IPCameraFrameGrabber extends FrameGrabber {
         // if (boundryKey == null)
         // {
         // Yay! - server was nice and sent content length
-        int c0 = subheader.indexOf("Content-Length: ");
+        int c0 = subheader.indexOf("Content-length: ");
         int c1 = subheader.indexOf('\r', c0);
 
         if (c0 < 0) {
