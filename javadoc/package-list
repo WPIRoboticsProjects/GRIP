@@ -9,6 +9,7 @@ edu.wpi.grip.core.serialization
 edu.wpi.grip.core.settings
 edu.wpi.grip.core.sources
 edu.wpi.grip.core.util
+edu.wpi.grip.core.util.service
 edu.wpi.grip.ui
 edu.wpi.grip.ui.annotations
 edu.wpi.grip.ui.components
