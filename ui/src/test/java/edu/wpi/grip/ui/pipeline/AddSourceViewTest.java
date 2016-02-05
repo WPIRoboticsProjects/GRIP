@@ -111,7 +111,7 @@ public class AddSourceViewTest {
             // Then
             Optional<CameraSource> cameraSource = mockCameraSourceFactory.lastSourceCreated;
             assertTrue("A source was not constructed", cameraSource.isPresent());
-            assertTrue("A source was not created started", cameraSource.get().isStarted());
+            assertTrue("A source was not created started", cameraSource.get().isRunning());
             verifyThat("." + AddSourceView.SOURCE_DIALOG_STYLE_CLASS, NodeMatchers.isNull());
         }
     }
@@ -136,8 +136,8 @@ public class AddSourceViewTest {
             public CameraSource create(int deviceNumber) throws IOException {
                 return assignLastCreated(new MockCameraSource(eventBus, deviceNumber) {
                     @Override
-                    public void start() throws IOException {
-                        throw new IOException("Tried to start a mock source. This is expected to fail!");
+                    public MockCameraSource startAsync() {
+                        return this;
                     }
                 });
             }
@@ -146,8 +146,8 @@ public class AddSourceViewTest {
             public CameraSource create(String address) throws IOException {
                 return assignLastCreated(new MockCameraSource(eventBus, address) {
                     @Override
-                    public void start() throws IOException {
-                        throw new IOException("Tried to start a mock source. This is expected to fail!");
+                    public MockCameraSource startAsync() {
+                        return this;
                     }
                 });
             }
@@ -183,7 +183,7 @@ public class AddSourceViewTest {
 
         @Test
         @SuppressWarnings("PMD.JUnitTestsShouldIncludeAssert")
-        public void testWhenStartFailsDialogDoesNotClose() throws Exception {
+        public void testWhenStartFailsDialogStillCloses() throws Exception {
             // When
             clickOn(addSourceView.getWebcamButton());
             WaitForAsyncUtils.waitForFxEvents();
@@ -193,7 +193,7 @@ public class AddSourceViewTest {
             WaitForAsyncUtils.waitForFxEvents();
 
             // The dialog should not have closed because the source wasn't started
-            verifyThat("." + AddSourceView.SOURCE_DIALOG_STYLE_CLASS, NodeMatchers.isVisible());
+            verifyThat("." + AddSourceView.SOURCE_DIALOG_STYLE_CLASS, NodeMatchers.isNull());
         }
 
         @Test
@@ -209,7 +209,7 @@ public class AddSourceViewTest {
             // Then
             Optional<CameraSource> cameraSource = mockCameraSourceFactory.lastSourceCreated;
             assertTrue("A source was not constructed", cameraSource.isPresent());
-            assertFalse("A source was not created but should not have been started", cameraSource.get().isStarted());
+            assertFalse("A source was not created but should not have been started", cameraSource.get().isRunning());
         }
 
     }

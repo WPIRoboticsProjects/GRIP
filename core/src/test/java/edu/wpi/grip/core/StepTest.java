@@ -31,8 +31,9 @@ public class StepTest {
 
         a.setValue(1234.0);
         b.setValue(5678.0);
-        assertEquals((Double) (1234.0 + 5678.0), c.getValue().get());
+        step.runPerformIfPossible();
 
+        assertEquals((Double) (1234.0 + 5678.0), c.getValue().get());
         eventBus.unregister(step);
     }
 

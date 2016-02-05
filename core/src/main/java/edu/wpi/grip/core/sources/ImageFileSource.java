@@ -98,6 +98,12 @@ public final class ImageFileSource extends Source {
     }
 
     @Override
+    protected boolean updateOutputSockets() {
+        // The image never changes so the socket will never need to be updated.
+        return false;
+    }
+
+    @Override
     public Properties getProperties() {
         final Properties properties = new Properties();
         properties.setProperty(PATH_PROPERTY, this.path);

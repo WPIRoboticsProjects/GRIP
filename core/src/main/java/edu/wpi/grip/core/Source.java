@@ -70,6 +70,15 @@ public abstract class Source {
     protected abstract OutputSocket[] createOutputSockets();
 
     /**
+     * This method will check if there are any pending updates to
+     * output sockets. If there are any, update the sockets and then return true.
+     * If there are no updates this function should return false.
+     *
+     * @return true if there are updates ready to be moved into the socket.
+     */
+    protected abstract boolean updateOutputSockets();
+
+    /**
      * @return A {@link Properties} containing data that can be used to re-create this source.  This is used for
      * serialization/deserialization.
      */
