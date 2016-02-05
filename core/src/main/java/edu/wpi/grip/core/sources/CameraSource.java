@@ -21,6 +21,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Optional;
 import java.util.Properties;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -36,7 +37,24 @@ public class CameraSource extends Source implements StartStoppable {
      * {@link CameraSource.Factory#create(String)}, allowing this to work with basically any network video stream, this
      * default path allows the Axis M1011 cameras used in FRC to work when only an IP address is supplied.
      */
-    public final static String DEFAULT_IP_CAMERA_PATH = "/mjpg/video.mjpg";
+    public static final String DEFAULT_IP_CAMERA_PATH = "/mjpg/video.mjpg";
+    private static final int
+            /**
+             * Connecting to a device can take the most time.
+             * This should have a little bit of leeway.
+             *
+             * On a fairly decent computer with a great internet connection 7 seconds is more than enough.
+             * This value has been doubled to ensure that people running computers that may be older
+             * or have firewalls that will slow down connecting can still use the device.
+             */
+            IP_CAMERA_CONNECTION_TIMEOUT = 14;
+    private static final int
+            /**
+             * Reading from an existing connection shouldn't take that long.
+             * If it does we should really give up and try to reconnect.
+             */
+            IP_CAMERA_READ_TIMEOUT = 5;
+    private static final TimeUnit IP_CAMERA_TIMEOUT_UNIT = TimeUnit.SECONDS;
 
     private final static String DEVICE_NUMBER_PROPERTY = "deviceNumber";
     private final static String ADDRESS_PROPERTY = "address";
@@ -88,7 +106,11 @@ public class CameraSource extends Source implements StartStoppable {
             if (new URL(addressProperty).getPath().length() <= 1) {
                 addressProperty += DEFAULT_IP_CAMERA_PATH;
             }
-            return new IPCameraFrameGrabber(addressProperty);
+            return new IPCameraFrameGrabber(
+                    addressProperty,
+                    IP_CAMERA_CONNECTION_TIMEOUT,
+                    IP_CAMERA_READ_TIMEOUT,
+                    IP_CAMERA_TIMEOUT_UNIT);
         }
     }
 
