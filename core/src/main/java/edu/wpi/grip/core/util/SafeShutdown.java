@@ -17,7 +17,7 @@ public final class SafeShutdown {
         Runtime.getRuntime().addShutdownHook(new Thread() {
             @Override
             public void run() {
-                stopping = true;
+                SafeShutdown.stopping = true;
             }
         });
     }
