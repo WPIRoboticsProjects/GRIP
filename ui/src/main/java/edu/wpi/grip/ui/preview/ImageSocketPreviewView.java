@@ -21,7 +21,7 @@ public class ImageSocketPreviewView extends SocketPreviewView<Mat> {
     private final ImageView imageView;
 
     /**
-     * @param socket   An output socket to preview
+     * @param socket An output socket to preview
      */
     ImageSocketPreviewView(GRIPPlatform platform, OutputSocket<Mat> socket) {
         super(socket);
@@ -31,6 +31,8 @@ public class ImageSocketPreviewView extends SocketPreviewView<Mat> {
         this.setContent(imageView);
 
         assert Platform.isFxApplicationThread() : "Must be in FX Thread to create this or you will be exposing constructor to another thread!";
+
+        convertImage();
     }
 
     @Subscribe
@@ -45,7 +47,6 @@ public class ImageSocketPreviewView extends SocketPreviewView<Mat> {
                     final Image image = this.imageConverter.convert(mat);
                     this.imageView.setImage(image);
                 });
-
             });
         }
     }
