@@ -35,10 +35,13 @@ public class ProjectAboutDialog extends Dialog<ButtonType> {
         grid.setAlignment(Pos.TOP_LEFT);
 
         Label versionLabel = new Label("GRIP Version: " + edu.wpi.grip.core.Main.class.getPackage().getImplementationVersion());
-        grid.add(versionLabel, 0, 0);
+        // fixes the weird offset with the hyperlinks being 1 pixel too far to the right
+        versionLabel.setPadding(new Insets(0, 0, 0, 1));
+        grid.add(versionLabel, 0, 0, 3, 1);
 
         Hyperlink githubLink = new Hyperlink();
         githubLink.setText("GRIP on Github");
+        githubLink.setPadding(new Insets(0, 0, 0, 0));
         githubLink.setOnAction(event -> {
             if (Desktop.isDesktopSupported()) {
                 try {
@@ -49,6 +52,34 @@ public class ProjectAboutDialog extends Dialog<ButtonType> {
             }
         });
         grid.add(githubLink, 0, 1);
+
+        Hyperlink issuesLink = new Hyperlink();
+        issuesLink.setText("Issues List");
+        issuesLink.setPadding(new Insets(0, 0, 0, 0));
+        issuesLink.setOnAction(event -> {
+            if (Desktop.isDesktopSupported()) {
+                try {
+                    Desktop.getDesktop().browse(new URI("https://github.com/WPIRoboticsProjects/GRIP/issues"));
+                } catch (IOException | URISyntaxException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+        grid.add(issuesLink, 0, 2);
+
+        Hyperlink wikiLink = new Hyperlink();
+        wikiLink.setText("Wiki");
+        wikiLink.setPadding(new Insets(0, 0, 0, 0));
+        wikiLink.setOnAction(event -> {
+            if (Desktop.isDesktopSupported()) {
+                try {
+                    Desktop.getDesktop().browse(new URI("https://github.com/WPIRoboticsProjects/GRIP/wiki"));
+                } catch (IOException | URISyntaxException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+        grid.add(wikiLink, 0, 3);
 
         DialogPane pane = getDialogPane();
         pane.getButtonTypes().setAll(ButtonType.OK);
