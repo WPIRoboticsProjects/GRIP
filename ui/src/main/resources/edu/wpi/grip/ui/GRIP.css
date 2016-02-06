@@ -108,8 +108,6 @@ Button.add-source {
 
 Button.delete, Button.move-left, Button.move-right, .start-stoppable-button, .exception-witness-responder-button {
     -fx-padding: 0.2em 0.8em;
-    -fx-font-weight: bold;
-    -fx-text-fill: -fx-dark-color;
     -fx-pref-height: 2em;
     -fx-pref-width: 2em;
 }
