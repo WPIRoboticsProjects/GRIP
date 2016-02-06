@@ -184,6 +184,14 @@ public class MainWindowController {
     }
 
     @FXML
+    public void showProjectAboutDialog() {
+        final ProjectSettings projectSettings = pipeline.getProjectSettings().clone();
+
+        ProjectAboutDialog projectAboutDialog = new ProjectAboutDialog(root, projectSettings);
+        projectAboutDialog.showAndWait();
+    }
+
+    @FXML
     public void quit() {
         if (showConfirmationDialogAndWait()) {
             Platform.exit();

@@ -130,6 +130,7 @@
                         </ImageView>
                     </graphic>
                 </MenuItem>
+                <MenuItem text="About" onAction="#showProjectAboutDialog" />
             </Menu>
         </MenuBar>
         <SplitPane dividerPositions="0.6" orientation="VERTICAL" VBox.vgrow="ALWAYS">
