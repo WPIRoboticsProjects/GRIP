@@ -14,6 +14,8 @@ import edu.wpi.grip.core.operations.PythonScriptOperation;
 import edu.wpi.grip.core.settings.ProjectSettings;
 import edu.wpi.grip.core.sources.ImageFileSource;
 import edu.wpi.grip.util.Files;
+import edu.wpi.grip.util.GRIPCoreTestModule;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -27,6 +29,7 @@ import static org.bytedeco.javacpp.opencv_core.*;
 
 public class ProjectTest {
 
+    private GRIPCoreTestModule testModule;
     private Connection.Factory<Object> connectionFactory;
     private ImageFileSource.Factory imageSourceFactory;
     private Step.Factory stepFactory;
@@ -40,7 +43,9 @@ public class ProjectTest {
 
     @Before
     public void setUp() throws Exception {
-        final Injector injector = Guice.createInjector(new GRIPCoreModule());
+        testModule = new GRIPCoreTestModule();
+        testModule.setUp();
+        final Injector injector = Guice.createInjector(testModule);
         connectionFactory = injector
                 .getInstance(Key.get(new TypeLiteral<Connection.Factory<Object>>() {
                 }));
@@ -68,6 +73,11 @@ public class ProjectTest {
         eventBus.post(new OperationAddedEvent(pythonAdditionOperationFromURL));
         eventBus.post(new OperationAddedEvent(pythonAdditionOperationFromSource));
         eventBus.post(new OperationAddedEvent(opencvAddOperation));
+    }
+
+    @After
+    public void tearDown() {
+        testModule.tearDown();
     }
 
     private void serializeAndDeserialize() {
