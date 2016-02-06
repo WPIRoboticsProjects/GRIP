@@ -208,9 +208,7 @@ public class MainWindowController {
 
     @FXML
     public void showProjectAboutDialog() {
-        final ProjectSettings projectSettings = pipeline.getProjectSettings().clone();
-
-        ProjectAboutDialog projectAboutDialog = new ProjectAboutDialog(root, projectSettings);
+        ProjectAboutDialog projectAboutDialog = new ProjectAboutDialog(root);
         projectAboutDialog.showAndWait();
     }
 

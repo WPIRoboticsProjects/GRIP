@@ -1,21 +1,13 @@
 package edu.wpi.grip.ui;
 
-import edu.wpi.grip.core.settings.ProjectSettings;
 import edu.wpi.grip.ui.util.DPIUtility;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
-import org.controlsfx.control.PropertySheet;
-import org.controlsfx.property.BeanPropertyUtils;
 
 import java.awt.*;
 import java.io.IOException;
@@ -27,7 +19,7 @@ import java.net.URISyntaxException;
  */
 public class ProjectAboutDialog extends Dialog<ButtonType> {
 
-    public ProjectAboutDialog(Parent root, ProjectSettings projectSettings) {
+    public ProjectAboutDialog(Parent root) {
         super();
 
         GridPane grid = new GridPane();
