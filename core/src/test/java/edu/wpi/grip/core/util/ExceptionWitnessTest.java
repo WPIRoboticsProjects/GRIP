@@ -12,8 +12,7 @@ import java.util.Optional;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-public final class ErrorWitnessTest {
-    private EventBus eventBus;
+public final class ExceptionWitnessTest {
     private ExceptionWitness errorWitness;
     private Object witnessObserver;
     private TestWitnessListener testWitnessListener;
@@ -42,11 +41,11 @@ public final class ErrorWitnessTest {
 
     @Before
     public void setUp() {
-        this.eventBus = new EventBus();
+        final EventBus eventBus = new EventBus();
         this.witnessObserver = new Object();
         this.errorWitness = new ExceptionWitness(eventBus, witnessObserver);
         this.testWitnessListener = new TestWitnessListener();
-        this.eventBus.register(testWitnessListener);
+        eventBus.register(testWitnessListener);
     }
 
     @Test
@@ -80,6 +79,7 @@ public final class ErrorWitnessTest {
         }
         assertEquals("The cleared run count was not 1 after multiple clearException calls without an error call between them", 1, testWitnessListener.clearRunCount);
     }
+
 
     private void fireAnError() {
         try {

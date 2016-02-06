@@ -3,18 +3,16 @@ package edu.wpi.grip.core;
 import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.eventbus.EventBus;
-import com.google.common.eventbus.Subscribe;
-import edu.wpi.grip.core.events.ConnectionAddedEvent;
-import edu.wpi.grip.core.events.ConnectionRemovedEvent;
 import edu.wpi.grip.core.events.SocketChangedEvent;
 import edu.wpi.grip.core.events.SocketConnectedChangedEvent;
 
+import javax.annotation.Nullable;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 
-import static com.google.common.base.Preconditions.checkState;
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.checkState;
 
 /**
  * A Socket is an abstract wrapper for a value that can be updated and passed around operations.  Sockets contain a set of hints
@@ -75,7 +73,7 @@ public abstract class Socket<T> {
      *
      * @param value The value to store in this socket. Nullable.
      */
-    public void setValue(T value) {
+    public void setValue(@Nullable T value) {
         setValueOptional(Optional.ofNullable(this.getSocketHint().getType().cast(value)));
 
     }
