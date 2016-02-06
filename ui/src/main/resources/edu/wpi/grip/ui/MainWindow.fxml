@@ -10,6 +10,7 @@
 <?import javafx.scene.paint.Color?>
 <?import org.controlsfx.glyphfont.Glyph?>
 <?import java.net.URL?>
+<?import org.controlsfx.control.StatusBar?>
 <VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"
       minWidth="-Infinity" styleClass="main-window"
       fx:controller="edu.wpi.grip.ui.MainWindowController"
@@ -144,6 +145,7 @@
                 </ScrollPane>
             </items>
         </SplitPane>
+        <StatusBar fx:id="statusBar"/>
     </children>
     <fx:define>
         <fx:include source="Deploy.fxml" fx:id="deployPane"/>

@@ -4,10 +4,10 @@ package edu.wpi.grip.core.sources;
 import com.google.common.base.Throwables;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
+import com.google.common.util.concurrent.Service;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import edu.wpi.grip.core.GRIPCoreModule;
-import edu.wpi.grip.core.events.StopPipelineEvent;
 import edu.wpi.grip.core.events.UnexpectedThrowableEvent;
 import edu.wpi.grip.core.util.MockExceptionWitness;
 import org.bytedeco.javacpp.indexer.Indexer;
@@ -142,56 +142,52 @@ public class CameraSourceTest {
 
     @Test
     public void testCallingStopAndStartDoesNotDeadlock() throws Exception {
+        assertEquals("Service did not start new", Service.State.NEW, cameraSourceWithMockGrabber.state());
         // Run this a hundred time to ensure that there isn't a situation where this can deadlock
         for(int i = 0; i < 100; i++) {
-            cameraSourceWithMockGrabber.start();
-            assertTrue("The camera source was not started after calling start", cameraSourceWithMockGrabber.isStarted());
-            cameraSourceWithMockGrabber.stop();
-            assertFalse("The camera was not stopped after calling stop", cameraSourceWithMockGrabber.isStarted());
+            cameraSourceWithMockGrabber.startAsync().awaitRunning();
+            assertTrue("The camera source was not started after calling startAsync", cameraSourceWithMockGrabber.isRunning());
+            cameraSourceWithMockGrabber.stopAsync().awaitTerminated();
+            assertFalse("The camera was not stopped after calling stopAsync", cameraSourceWithMockGrabber.isRunning());
         }
     }
 
-    @Test(expected = IOException.class)
+    @Test
     public void testStartRethrowsIfFailure() throws Exception {
         mockFrameGrabberFactory.frameGrabber.setShouldThrowAtStart(true);
-        cameraSourceWithMockGrabber.start();
-        fail("Should have thrown an IOException");
+        // Problems starting should be swallowed
+        cameraSourceWithMockGrabber.startAsync().stopAndAwait();
+        assertFalse("Camera service has stopped completely", cameraSourceWithMockGrabber.isRunning());
     }
 
-    @Test(expected = IOException.class)
+    @Test(expected = FrameGrabber.Exception.class)
     public void testStopRethrowsIfFailure() throws Exception {
         mockFrameGrabberFactory.frameGrabber.setShouldThrowAtStop(true);
-        cameraSourceWithMockGrabber.start();
+        cameraSourceWithMockGrabber.startAsync();
 
         try {
-            cameraSourceWithMockGrabber.stop();
-        } catch (IOException e) {
-            assertFalse(cameraSourceWithMockGrabber.isStarted());
-            Throwables.propagateIfInstanceOf(e, IOException.class);
+            cameraSourceWithMockGrabber.stopAsync().awaitTerminated();
+        } catch (IllegalStateException expected) {
+            Throwables.propagateIfInstanceOf(expected.getCause(), FrameGrabber.Exception.class);
+            throw expected;
         }
-        fail("This should have thrown an IOException");
+
+        fail("This should have thrown an Exception");
     }
 
     @Test(expected = IllegalStateException.class)
     public void testStartingTwiceShouldThrowIllegalState() throws Exception {
         try {
             try {
-                cameraSourceWithMockGrabber.start();
+                cameraSourceWithMockGrabber.startAsync();
             } catch (RuntimeException e) {
                 fail("This should not have failed");
             }
-            cameraSourceWithMockGrabber.start();
+            cameraSourceWithMockGrabber.startAsync();
         } finally {
-            cameraSourceWithMockGrabber.stop();
+            cameraSourceWithMockGrabber.stopAsync();
         }
         fail("The test should have failed with an IllegalStateException");
-    }
-
-
-    @Test
-    public void testStopPipelineEventDoesntThrowWhenCameraStopped() throws Exception {
-        cameraSourceWithMockGrabber.onStopPipeline(new StopPipelineEvent());
-        assertFalse("The camera source should not be running", cameraSourceWithMockGrabber.isStarted());
     }
 
 }

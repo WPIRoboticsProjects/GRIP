@@ -1,5 +1,6 @@
 package edu.wpi.grip.ui.preview;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.eventbus.Subscribe;
 import com.sun.javafx.application.PlatformImpl;
 import edu.wpi.grip.core.OutputSocket;
@@ -8,6 +9,7 @@ import edu.wpi.grip.core.Source;
 import edu.wpi.grip.core.Step;
 import edu.wpi.grip.core.events.SocketPreviewChangedEvent;
 import edu.wpi.grip.core.events.StepMovedEvent;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -26,20 +28,20 @@ import java.util.Comparator;
 @Singleton
 public class PreviewsController {
 
-    @FXML private HBox previewBox;
+    @FXML
+    private HBox previewBox;
 
-    @Inject private Pipeline pipeline;
-    @Inject private SocketPreviewViewFactory previewViewFactory;
-
-    private final Comparator<SocketPreviewView<?>> comparePreviews =
-            Comparator.comparing(SocketPreviewView::getSocket, this::compareSockets);
+    @Inject
+    private Pipeline pipeline;
+    @Inject
+    private SocketPreviewViewFactory previewViewFactory;
 
     /**
      * Any time a step is moved in the pipeline, we have to re-sort the previews
      */
     @Subscribe
     public synchronized void onStepMoved(StepMovedEvent event) {
-        PlatformImpl.runAndWait(() -> FXCollections.sort((ObservableList) previewBox.getChildren(), comparePreviews));
+        PlatformImpl.runAndWait(() -> sortPreviews(getPreviews()));
     }
 
     /**
@@ -47,18 +49,16 @@ public class PreviewsController {
      */
     @Subscribe
     public synchronized void onSocketPreviewChanged(SocketPreviewChangedEvent event) {
-        OutputSocket<?> socket = event.getSocket();
-
-        @SuppressWarnings("unchecked")
-        ObservableList<SocketPreviewView<?>> previews = (ObservableList) previewBox.getChildren();
+        final OutputSocket<?> socket = event.getSocket();
 
         // This needs to run right away to avoid synchronization problems, although in practice this method only runs
         // in the UI thread anyways (since it fires in response to a button press)
         PlatformImpl.runAndWait(() -> {
+            final ObservableList<SocketPreviewView<?>> previews = getPreviews();
             if (socket.isPreviewed()) {
                 // When a socket previewed, add a new view, then sort all of the views so they stay ordered
                 previews.add(previewViewFactory.create(socket));
-                FXCollections.sort(previews, comparePreviews);
+                sortPreviews(previews);
             } else {
                 // When a socket is no longer marked as previewed, find and remove the view associated with it
                 previews.stream()
@@ -69,10 +69,40 @@ public class PreviewsController {
         });
     }
 
+    @SuppressWarnings("unchecked")
+    private ObservableList<SocketPreviewView<?>> getPreviews() {
+        return (ObservableList) previewBox.getChildren();
+    }
+
+    /**
+     * This should be called to sort all of the previews in the preview box.
+     *
+     * @param previews All of the previews
+     */
+    private void sortPreviews(ObservableList<SocketPreviewView<?>> previews) {
+        assert Platform.isFxApplicationThread() : "Must be run in JavaFX thread";
+        // Take a snapshot of the sources and the steps in the current state so the comparison won't break.
+        // If we don't take a copy of the lists before trying to sort them then any concurrent modification to the pipeline
+        // could cause the sort result to be wrong or.
+        final ImmutableList<Source> sources = pipeline.getSources();
+        final ImmutableList<Step> steps = pipeline.getSteps();
+
+        final Comparator<SocketPreviewView<?>> comparePreviews =
+                Comparator.comparing(SocketPreviewView::getSocket,
+                        (OutputSocket<?> a, OutputSocket<?> b) -> compareSockets(a, b, steps, sources));
+        FXCollections.sort(previews, comparePreviews);
+    }
+
     /**
      * Given two sockets, determine which comes first in the pipeline.  This is used to sort the previews.
+     * This method is static so that it doesn't rely on any member variables in order to calculate the sort.
+     *
+     * @param a       The first socket in the comparison
+     * @param b       The second socket in the comparison
+     * @param steps   A snapshot of the steps. This should be exactly the same list for the entire sort
+     * @param sources A snapshot of the sources. This should be exactly the same list for the entire sort.
      */
-    private int compareSockets(OutputSocket<?> a, OutputSocket<?> b) {
+    private static int compareSockets(OutputSocket<?> a, OutputSocket<?> b, ImmutableList<Step> steps, ImmutableList<Source> sources) {
         if (a.getStep().isPresent() && b.getStep().isPresent()) {
             final Step stepA = a.getStep().get(), stepB = b.getStep().get();
 
@@ -83,7 +113,7 @@ public class PreviewsController {
                         .findFirst().get() == a ? -1 : 1;
             } else {
                 // If both sockets are in different steps, order them based on which step is first
-                return pipeline.getSteps().stream()
+                return steps.stream()
                         .filter(step -> step == stepA || step == stepB)
                         .findFirst().get() == stepA ? -1 : 1;
             }
@@ -99,7 +129,7 @@ public class PreviewsController {
                         .findFirst().get() == a ? -1 : 1;
             } else {
                 // If both sockets are from sources, order them based on the order of the sources in the pipeline
-                return pipeline.getSources().stream()
+                return sources.stream()
                         .filter(source -> source == sourceA || source == sourceB)
                         .findFirst().get() == sourceA ? -1 : 1;
             }

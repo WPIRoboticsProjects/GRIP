@@ -26,6 +26,8 @@ public class Main {
     @Inject
     private Project project;
     @Inject
+    private PipelineRunner pipelineRunner;
+    @Inject
     private EventBus eventBus;
     @Inject
     private Logger logger;
@@ -58,6 +60,7 @@ public class Main {
         // Open a project from a .grip file specified on the command line
         project.open(new File(projectPath));
 
+        pipelineRunner.startAsync();
 
         // This is done in order to indicate to the user using the deployment UI that this is running
         logger.log(Level.INFO, "SUCCESS! The project is running in headless mode!");

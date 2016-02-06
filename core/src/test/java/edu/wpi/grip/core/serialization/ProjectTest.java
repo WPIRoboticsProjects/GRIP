@@ -33,6 +33,7 @@ public class ProjectTest {
     private EventBus eventBus;
     private Pipeline pipeline;
     private Project project;
+    private ManualPipelineRunner pipelineRunner;
 
     private Operation additionOperation, opencvAddOperation, pythonAdditionOperationFromURL,
             pythonAdditionOperationFromSource;
@@ -46,9 +47,12 @@ public class ProjectTest {
         imageSourceFactory = injector
                 .getInstance(ImageFileSource.Factory.class);
         eventBus = injector.getInstance(EventBus.class);
-        pipeline = injector.getInstance(Pipeline.class);
         project = injector.getInstance(Project.class);
         stepFactory = injector.getInstance(Step.Factory.class);
+
+        pipeline = injector.getInstance(Pipeline.class);
+
+        pipelineRunner = new ManualPipelineRunner(eventBus, pipeline);
 
 
         additionOperation = new AdditionOperation();
@@ -80,6 +84,7 @@ public class ProjectTest {
 
         assertEquals("Serialized pipeline is not equal to pipeline before serialization",
                 0, pipeline.getSteps().size());
+
         assertEquals("Serialized pipeline is not equal to pipeline before serialization",
                 0, pipeline.getConnections().size());
     }
@@ -92,8 +97,10 @@ public class ProjectTest {
 
         serializeAndDeserialize();
 
+
         assertEquals("Serialized pipeline is not equal to pipeline before serialization",
                 3, pipeline.getSteps().size());
+
         assertEquals("Serialized pipeline is not equal to pipeline before serialization",
                 0, pipeline.getConnections().size());
     }
@@ -123,6 +130,7 @@ public class ProjectTest {
 
         assertEquals("Serialized pipeline is not equal to pipeline before serialization",
                 2, pipeline.getSteps().size());
+
         assertEquals("Serialized pipeline is not equal to pipeline before serialization",
                 1, pipeline.getConnections().size());
     }
@@ -133,11 +141,16 @@ public class ProjectTest {
         pipeline.addStep(stepFactory.create(additionOperation));
         serializeAndDeserialize();
 
-        InputSocket<Number> a = (InputSocket<Number>) pipeline.getSteps().get(0).getInputSockets()[0];
-        InputSocket<Number> b = (InputSocket<Number>) pipeline.getSteps().get(0).getInputSockets()[1];
-        OutputSocket<Number> sum = (OutputSocket<Number>) pipeline.getSteps().get(0).getOutputSockets()[0];
+
+        final Step fromPipeline =  pipeline.getSteps().get(0);
+        InputSocket<Number> a = (InputSocket<Number>) fromPipeline.getInputSockets()[0];
+        InputSocket<Number> b = (InputSocket<Number>) fromPipeline.getInputSockets()[1];
+        OutputSocket<Number> sum = (OutputSocket<Number>) fromPipeline.getOutputSockets()[0];
+
         a.setValue(123.4);
         b.setValue(567.8);
+
+        pipelineRunner.runPipeline();
 
         assertEquals((Double) (123.4 + 567.8), sum.getValue().get().doubleValue());
     }
@@ -148,11 +161,16 @@ public class ProjectTest {
         pipeline.addStep(stepFactory.create(pythonAdditionOperationFromURL));
         serializeAndDeserialize();
 
-        InputSocket<Number> a = (InputSocket<Number>) pipeline.getSteps().get(0).getInputSockets()[0];
-        InputSocket<Number> b = (InputSocket<Number>) pipeline.getSteps().get(0).getInputSockets()[1];
-        OutputSocket<Number> sum = (OutputSocket<Number>) pipeline.getSteps().get(0).getOutputSockets()[0];
+        final Step fromPipeline =  pipeline.getSteps().get(0);
+        InputSocket<Number> a = (InputSocket<Number>) fromPipeline.getInputSockets()[0];
+        InputSocket<Number> b = (InputSocket<Number>) fromPipeline.getInputSockets()[1];
+        OutputSocket<Number> sum = (OutputSocket<Number>) fromPipeline.getOutputSockets()[0];
+
+
         a.setValue(1234);
         b.setValue(5678);
+
+        pipelineRunner.runPipeline();
 
         assertEquals((int) (1234 + 5678), sum.getValue().get().intValue());
     }
@@ -163,11 +181,16 @@ public class ProjectTest {
         pipeline.addStep(stepFactory.create(pythonAdditionOperationFromSource));
         serializeAndDeserialize();
 
-        InputSocket<Number> a = (InputSocket<Number>) pipeline.getSteps().get(0).getInputSockets()[0];
-        InputSocket<Number> b = (InputSocket<Number>) pipeline.getSteps().get(0).getInputSockets()[1];
-        OutputSocket<Number> sum = (OutputSocket<Number>) pipeline.getSteps().get(0).getOutputSockets()[0];
+        final Step fromPipeline =  pipeline.getSteps().get(0);
+        InputSocket<Number> a = (InputSocket<Number>) fromPipeline.getInputSockets()[0];
+        InputSocket<Number> b = (InputSocket<Number>) fromPipeline.getInputSockets()[1];
+        OutputSocket<Number> sum = (OutputSocket<Number>) fromPipeline.getOutputSockets()[0];
+
+
         a.setValue(1234);
         b.setValue(5678);
+
+        pipelineRunner.runPipeline();
 
         assertEquals((int) (1234 + 5678), sum.getValue().get().intValue());
     }
@@ -186,13 +209,21 @@ public class ProjectTest {
                 )));
         serializeAndDeserialize();
 
-        InputSocket<Number> a1 = (InputSocket<Number>) pipeline.getSteps().get(0).getInputSockets()[0];
-        InputSocket<Number> b1 = (InputSocket<Number>) pipeline.getSteps().get(0).getInputSockets()[1];
-        InputSocket<Number> b2 = (InputSocket<Number>) pipeline.getSteps().get(1).getInputSockets()[1];
-        OutputSocket<Number> sum2 = (OutputSocket<Number>) pipeline.getSteps().get(1).getOutputSockets()[0];
+        final Step step1Out = pipeline.getSteps().get(0);
+        final Step step2Out = pipeline.getSteps().get(1);
+
+        InputSocket<Number> a1 = (InputSocket<Number>) step1Out.getInputSockets()[0];
+        InputSocket<Number> b1 = (InputSocket<Number>) step1Out.getInputSockets()[1];
+        InputSocket<Number> b2 = (InputSocket<Number>) step2Out.getInputSockets()[1];
+        OutputSocket<Number> sum2 = (OutputSocket<Number>) step2Out.getOutputSockets()[0];
+
+
+
         a1.setValue(123);
         b1.setValue(456);
         b2.setValue(789);
+
+        pipelineRunner.runPipeline();
 
         assertEquals((int) (123 + 456 + 789), sum2.getValue().get().intValue());
     }
@@ -208,8 +239,12 @@ public class ProjectTest {
         InputSocket<Mat> b = (InputSocket<Mat>) step1.getInputSockets()[1];
         OutputSocket<Mat> sum = (OutputSocket<Mat>) step1.getOutputSockets()[0];
 
+
+
         a.setValue(new Mat(1, 1, CV_32F, new Scalar(1234.5)));
         b.setValue(new Mat(1, 1, CV_32F, new Scalar(6789.0)));
+
+        pipelineRunner.runPipeline();
 
         Mat diff = new Mat();
         Mat expected = new Mat(1, 1, CV_32F, new Scalar(1234.5 + 6789.0));

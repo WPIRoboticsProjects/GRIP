@@ -84,7 +84,7 @@ public class SocketHandleView extends Button {
                     .forEach(this.eventBus::post);
         });
 
-        // When the user starts dragging a socket handle, start forming a connection.  This involves keeping a
+        // When the user starts dragging a socket handle, starting forming a connection.  This involves keeping a
         // reference to the SocketView that the drag started at.
         this.setOnDragDetected(mouseEvent -> {
             Dragboard db = this.startDragAndDrop(TransferMode.ANY);
