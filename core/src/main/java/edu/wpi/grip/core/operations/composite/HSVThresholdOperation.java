@@ -5,15 +5,13 @@ import edu.wpi.grip.core.InputSocket;
 import edu.wpi.grip.core.OutputSocket;
 import edu.wpi.grip.core.SocketHint;
 import edu.wpi.grip.core.SocketHints;
+import edu.wpi.grip.core.util.OpenCVSafe;
 import org.bytedeco.javacpp.opencv_core.Mat;
 import org.bytedeco.javacpp.opencv_core.Scalar;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
-import static org.bytedeco.javacpp.opencv_core.inRange;
 import static org.bytedeco.javacpp.opencv_imgproc.COLOR_BGR2HSV;
 import static org.bytedeco.javacpp.opencv_imgproc.cvtColor;
 
@@ -21,8 +19,6 @@ import static org.bytedeco.javacpp.opencv_imgproc.cvtColor;
  * An {@link edu.wpi.grip.core.Operation} that converts a color image into a binary image based on the HSV threshold ranges for each channel
  */
 public class HSVThresholdOperation extends ThresholdOperation {
-
-    private static final Logger logger = Logger.getLogger(HSVThresholdOperation.class.getName());
     private final SocketHint<Mat> inputHint = SocketHints.Inputs.createMatSocketHint("Input", false);
     private final SocketHint<List> hueHint = SocketHints.Inputs.createNumberListRangeSocketHint("Hue", 0.0, 180.0);
     private final SocketHint<List> saturationHint = SocketHints.Inputs.createNumberListRangeSocketHint("Saturation", 0.0, 255.0);
@@ -87,12 +83,10 @@ public class HSVThresholdOperation extends ThresholdOperation {
         final Mat high = reallocateMatIfInputSizeOrWidthChanged(dataArray, 1, highScalar, input);
         final Mat hsv = dataArray[2];
 
-        try {
-            cvtColor(input, hsv, COLOR_BGR2HSV);
-            inRange(hsv, low, high, output);
-            outputSocket.setValue(output);
-        } catch (RuntimeException e) {
-            logger.log(Level.WARNING, e.getMessage(), e);
-        }
+
+        cvtColor(input, hsv, COLOR_BGR2HSV);
+        OpenCVSafe.inRange(hsv, low, high, output);
+        outputSocket.setValue(output);
+
     }
 }

@@ -2,20 +2,18 @@ package edu.wpi.grip.core.operations.composite;
 
 import com.google.common.eventbus.EventBus;
 import edu.wpi.grip.core.*;
+import edu.wpi.grip.core.util.OpenCVSafe;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
-import static org.bytedeco.javacpp.opencv_core.*;
+import static org.bytedeco.javacpp.opencv_core.Mat;
+import static org.bytedeco.javacpp.opencv_core.Scalar;
 
 /**
  * An {@link Operation} that converts a color image into a binary image based on threshold ranges for each channel
  */
 public class RGBThresholdOperation extends ThresholdOperation {
-
-    private static final Logger logger = Logger.getLogger(RGBThresholdOperation.class.getName());
     private final SocketHint<Mat> inputHint = SocketHints.Inputs.createMatSocketHint("Input", false);
     private final SocketHint<List> redHint = SocketHints.Inputs.createNumberListRangeSocketHint("Red", 0.0, 255.0);
     private final SocketHint<List> greenHint = SocketHints.Inputs.createNumberListRangeSocketHint("Green", 0.0, 255.0);
@@ -65,9 +63,6 @@ public class RGBThresholdOperation extends ThresholdOperation {
         final List<Number> channel2 = ((InputSocket<List<Number>>) inputs[2]).getValue().get();
         final List<Number> channel3 = ((InputSocket<List<Number>>) inputs[3]).getValue().get();
 
-        if (input.channels() != 3) {
-            throw new IllegalArgumentException("RGB Threshold needs a 3-channel input");
-        }
 
         final OutputSocket<Mat> outputSocket = (OutputSocket<Mat>) outputs[0];
         final Mat output = outputSocket.getValue().get();
@@ -86,12 +81,9 @@ public class RGBThresholdOperation extends ThresholdOperation {
         final Mat low = reallocateMatIfInputSizeOrWidthChanged(dataArray, 0, lowScalar, input);
         final Mat high = reallocateMatIfInputSizeOrWidthChanged(dataArray, 1, highScalar, input);
 
-        try {
-            inRange(input, low, high, output);
 
-            outputSocket.setValue(output);
-        } catch (RuntimeException e) {
-            logger.log(Level.WARNING, e.getMessage(), e);
-        }
+        OpenCVSafe.inRange(input, low, high, output);
+
+        outputSocket.setValue(output);
     }
 }
