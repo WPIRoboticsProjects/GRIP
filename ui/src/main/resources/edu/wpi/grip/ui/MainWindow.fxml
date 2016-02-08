@@ -131,6 +131,8 @@
                         </ImageView>
                     </graphic>
                 </MenuItem>
+            </Menu>
+            <Menu text="Help">
                 <MenuItem text="About" onAction="#showProjectAboutDialog" />
             </Menu>
         </MenuBar>
