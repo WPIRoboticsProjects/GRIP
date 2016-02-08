@@ -1,8 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import edu.wpi.grip.ui.util.DPIUtility?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Separator?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.*?>
 <VBox styleClass="source"
       fx:controller="edu.wpi.grip.ui.pipeline.source.SourceController"
@@ -12,7 +15,24 @@
             <top>
                 <HBox fx:id="controls" alignment="CENTER" spacing="2.0" styleClass="source-header-box"
                       BorderPane.alignment="CENTER">
-                    <Button onMouseClicked="#delete" styleClass="delete" text="✕"/>
+                    <Button onMouseClicked="#delete" styleClass="delete">
+                        <graphic>
+                            <ImageView>
+                                <Image url="/edu/wpi/grip/ui/icons/delete.png"/>
+                                <fitWidth>
+                                    <DPIUtility fx:constant="SMALL_ICON_SIZE"/>
+                                </fitWidth>
+                                <fitHeight>
+                                    <DPIUtility fx:constant="SMALL_ICON_SIZE"/>
+                                </fitHeight>
+                            </ImageView>
+                        </graphic>
+                    </Button>
+                    <Separator orientation="VERTICAL" visible="false">
+                        <prefWidth>
+                            <DPIUtility fx:constant="MINI_ICON_SIZE"/>
+                        </prefWidth>
+                    </Separator>
                     <Label fx:id="name" styleClass="source-name"/>
                     <Pane HBox.hgrow="ALWAYS"/>
                 </HBox>
