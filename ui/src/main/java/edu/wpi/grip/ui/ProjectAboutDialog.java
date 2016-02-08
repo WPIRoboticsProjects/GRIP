@@ -7,7 +7,10 @@ import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
+import javafx.scene.image.*;
+import javafx.scene.image.Image;
 import javafx.scene.layout.GridPane;
+import javafx.scene.text.Font;
 
 import java.awt.*;
 import java.io.IOException;
@@ -26,10 +29,16 @@ public class ProjectAboutDialog extends Dialog<ButtonType> {
         grid.setVgap(10);
         grid.setAlignment(Pos.TOP_LEFT);
 
-        Label versionLabel = new Label("GRIP Version: " + edu.wpi.grip.core.Main.class.getPackage().getImplementationVersion());
-        // fixes the weird offset with the hyperlinks being 1 pixel too far to the right
+        ImageView img = new ImageView(new Image("edu/wpi/grip/ui/icons/grip-title.png"));
+
+        grid.add(img, 0, 0);
+
+        Label versionLabel = new Label("Version " + edu.wpi.grip.core.Main.class.getPackage().getImplementationVersion());
+        // makes the version label look a little bit better aligned (looks too far to the left otherwise)
         versionLabel.setPadding(new Insets(0, 0, 0, 1));
-        grid.add(versionLabel, 0, 0, 3, 1);
+        Font versionLabelFont = new Font(16.0);
+        versionLabel.setFont(versionLabelFont);
+        grid.add(versionLabel, 0, 1, 3, 1);
 
         Hyperlink githubLink = new Hyperlink();
         githubLink.setText("GRIP on Github");
@@ -43,7 +52,7 @@ public class ProjectAboutDialog extends Dialog<ButtonType> {
                 }
             }
         });
-        grid.add(githubLink, 0, 1);
+        grid.add(githubLink, 0, 2);
 
         Hyperlink issuesLink = new Hyperlink();
         issuesLink.setText("Issues List");
@@ -57,7 +66,7 @@ public class ProjectAboutDialog extends Dialog<ButtonType> {
                 }
             }
         });
-        grid.add(issuesLink, 0, 2);
+        grid.add(issuesLink, 0, 3);
 
         Hyperlink wikiLink = new Hyperlink();
         wikiLink.setText("Wiki");
@@ -71,7 +80,21 @@ public class ProjectAboutDialog extends Dialog<ButtonType> {
                 }
             }
         });
-        grid.add(wikiLink, 0, 3);
+        grid.add(wikiLink, 0, 4);
+
+        Hyperlink operationsLink = new Hyperlink();
+        operationsLink.setText("Operation Reference");
+        operationsLink.setPadding(new Insets(0, 0, 0, 0));
+        operationsLink.setOnAction(event -> {
+            if (Desktop.isDesktopSupported()) {
+                try {
+                    Desktop.getDesktop().browse(new URI("https://github.com/WPIRoboticsProjects/GRIP/wiki/Operation-Reference-Table"));
+                } catch (IOException | URISyntaxException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+        grid.add(operationsLink, 0, 5);
 
         DialogPane pane = getDialogPane();
         pane.getButtonTypes().setAll(ButtonType.OK);
