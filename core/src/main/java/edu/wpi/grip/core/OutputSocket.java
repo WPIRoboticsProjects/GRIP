@@ -6,6 +6,7 @@ import com.google.common.eventbus.EventBus;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import edu.wpi.grip.core.events.SocketPreviewChangedEvent;
 
+import javax.annotation.Nullable;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
@@ -37,7 +38,7 @@ public class OutputSocket<T> extends Socket<T> {
     }
 
     @Override
-    public void setValue(T value) {
+    public void setValue(@Nullable T value) {
         super.setValue(value);
     }
 

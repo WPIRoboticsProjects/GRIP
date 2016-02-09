@@ -2,6 +2,7 @@ package edu.wpi.grip.core;
 
 import com.google.common.base.MoreObjects;
 
+import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -112,7 +113,7 @@ public class SocketHint<T> {
             return this;
         }
 
-        public Builder<T> initialValue(T value) {
+        public Builder<T> initialValue(@Nullable T value) {
             this.initialValueSupplier = value == null ? Optional.empty() : Optional.of(() -> value);
             return this;
         }

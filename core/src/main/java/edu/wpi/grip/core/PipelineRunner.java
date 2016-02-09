@@ -15,6 +15,7 @@ import edu.wpi.grip.core.events.StopPipelineEvent;
 import edu.wpi.grip.core.util.service.AutoRestartingService;
 import edu.wpi.grip.core.util.service.RestartableService;
 
+import javax.annotation.Nullable;
 import javax.inject.Inject;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Semaphore;
@@ -206,7 +207,7 @@ public class PipelineRunner implements RestartableService {
     }
 
     @Subscribe
-    public void onStopPipeline(StopPipelineEvent event) {
+    public void onStopPipeline(@Nullable StopPipelineEvent event) {
         stopAsync();
     }
 
