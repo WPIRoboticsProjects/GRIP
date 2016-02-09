@@ -7,9 +7,9 @@ import com.google.common.eventbus.Subscribe;
 import com.google.common.util.concurrent.Service;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
-import edu.wpi.grip.core.GRIPCoreModule;
 import edu.wpi.grip.core.events.UnexpectedThrowableEvent;
 import edu.wpi.grip.core.util.MockExceptionWitness;
+import edu.wpi.grip.util.GRIPCoreTestModule;
 import org.bytedeco.javacpp.indexer.Indexer;
 import org.bytedeco.javacv.Frame;
 import org.bytedeco.javacv.FrameGrabber;
@@ -25,10 +25,8 @@ import java.net.MalformedURLException;
 import static org.junit.Assert.*;
 
 public class CameraSourceTest {
-    private Injector injector;
+    private GRIPCoreTestModule testModule;
     private CameraSource.Factory cameraSourceFactory;
-
-    private EventBus eventBus;
     private CameraSource cameraSourceWithMockGrabber;
     private MockFrameGrabberFactory mockFrameGrabberFactory;
 
@@ -108,10 +106,12 @@ public class CameraSourceTest {
 
     @Before
     public void setUp() throws Exception {
-        this.injector = Guice.createInjector(new GRIPCoreModule());
+        this.testModule = new GRIPCoreTestModule();
+        testModule.setUp();
+        final Injector injector = Guice.createInjector(testModule);
         this.cameraSourceFactory = injector.getInstance(CameraSource.Factory.class);
 
-        this.eventBus = new EventBus();
+        final EventBus eventBus = new EventBus();
         class UnhandledExceptionWitness {
             @Subscribe
             public void onUnexpectedThrowableEvent(UnexpectedThrowableEvent event) {
@@ -120,7 +120,7 @@ public class CameraSourceTest {
                 });
             }
         }
-        this.eventBus.register(new UnhandledExceptionWitness());
+        eventBus.register(new UnhandledExceptionWitness());
         this.mockFrameGrabberFactory = new MockFrameGrabberFactory();
         this.cameraSourceWithMockGrabber = new CameraSource(
                 eventBus,
@@ -132,6 +132,7 @@ public class CameraSourceTest {
     @After
     public void tearDown() throws Exception {
         mockFrameGrabberFactory.frameGrabber.release();
+        testModule.tearDown();
     }
 
     @Test(expected = IOException.class)

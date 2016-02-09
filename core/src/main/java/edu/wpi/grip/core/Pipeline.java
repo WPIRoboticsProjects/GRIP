@@ -300,6 +300,7 @@ public class Pipeline {
     public void onConnectionAdded(ConnectionAddedEvent event) {
         final Connection connection = event.getConnection();
         this.connections.add(connection);
+        this.eventBus.register(connection);
     }
 
     @Subscribe

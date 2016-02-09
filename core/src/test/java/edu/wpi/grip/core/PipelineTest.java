@@ -7,6 +7,8 @@ import edu.wpi.grip.core.events.ConnectionAddedEvent;
 import edu.wpi.grip.core.events.ConnectionRemovedEvent;
 import edu.wpi.grip.core.events.SourceAddedEvent;
 import edu.wpi.grip.core.events.SourceRemovedEvent;
+import edu.wpi.grip.util.GRIPCoreTestModule;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -19,7 +21,7 @@ import static org.junit.Assert.*;
 
 public class PipelineTest {
 
-    private Injector injector;
+    private GRIPCoreTestModule testModule;
     private Step.Factory stepFactory;
     private EventBus eventBus;
     private Pipeline pipeline;
@@ -38,11 +40,18 @@ public class PipelineTest {
 
     @Before
     public void setUp() {
-        injector = Guice.createInjector(new GRIPCoreModule());
+        testModule = new GRIPCoreTestModule();
+        testModule.setUp();
+        final Injector injector = Guice.createInjector(testModule);
         stepFactory = injector.getInstance(Step.Factory.class);
         eventBus = injector.getInstance(EventBus.class);
         pipeline = injector.getInstance(Pipeline.class);
         addition = new AdditionOperation();
+    }
+
+    @After
+    public void tearDown() {
+        testModule.tearDown();
     }
 
     @Test
