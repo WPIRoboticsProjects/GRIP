@@ -16,6 +16,8 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 /**
  * This class encapsulates the way we map various settings to the global NetworkTables state.
  */
@@ -43,6 +45,7 @@ public class NTManager {
 
     @Inject
     public NTManager(Logger logger) {
+        checkNotNull(logger, "Logger cannot be null");
         // We may have another instance of this method lying around
         NetworkTable.shutdown();
         // Redirect NetworkTables log messages to our own log files.  This gets rid of console spam, and it also lets

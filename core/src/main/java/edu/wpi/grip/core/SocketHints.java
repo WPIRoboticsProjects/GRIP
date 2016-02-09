@@ -10,6 +10,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.function.Supplier;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 
 /**
  * Commonly used {@link SocketHint SocketHints}
@@ -88,7 +90,7 @@ public final class SocketHints {
         }
 
         public static SocketHint<Number> createNumberSocketHint(final String identifier, Number defaultValue) {
-            return new SocketHint.Builder<>(Number.class).identifier(identifier).initialValue(defaultValue).build();
+            return createNumberSocketHintBuilder(identifier, defaultValue).build();
         }
     }
 
@@ -139,6 +141,6 @@ public final class SocketHints {
 
     private static SocketHint.Builder<Number> createNumberSocketHintBuilder(final String identifier,
                                                                             final Number number) {
-        return new SocketHint.Builder<>(Number.class).identifier(identifier).initialValue(number);
+        return new SocketHint.Builder<>(Number.class).identifier(identifier).initialValue(checkNotNull(number, "Number can not be null"));
     }
 }

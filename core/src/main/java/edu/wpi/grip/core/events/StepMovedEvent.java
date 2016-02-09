@@ -3,6 +3,8 @@ package edu.wpi.grip.core.events;
 import com.google.common.base.MoreObjects;
 import edu.wpi.grip.core.Step;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 /**
  * An event that occurs when a new step is moved from one position to another in the pipeline
  */
@@ -15,7 +17,7 @@ public class StepMovedEvent {
      * @param distance The number of indices (positive or negative) to move the step by
      */
     public StepMovedEvent(Step step, int distance) {
-        this.step = step;
+        this.step = checkNotNull(step, "Step cannot be null");
         this.distance = distance;
     }
 

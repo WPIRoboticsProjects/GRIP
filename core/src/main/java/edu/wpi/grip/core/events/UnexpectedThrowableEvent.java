@@ -43,6 +43,7 @@ public final class UnexpectedThrowableEvent {
      */
     @SuppressWarnings("PMD.AvoidCatchingThrowable")
     public void handleSafely(UnexpectedThrowableEventHandler handler) {
+        checkNotNull(handler, "Handler cannot be null");
         try {
             if (!(throwable instanceof InterruptedException)) {
                 handler.handle(throwable, message, fatal);

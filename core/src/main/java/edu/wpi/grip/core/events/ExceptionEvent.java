@@ -2,6 +2,7 @@ package edu.wpi.grip.core.events;
 
 import edu.wpi.grip.core.util.ExceptionWitness;
 
+import javax.annotation.Nullable;
 import java.util.Optional;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -22,9 +23,9 @@ public final class ExceptionEvent {
      * @param message   The message associated with this event.
      *                  If <tt>null</tt> will use {@link Exception#getMessage()}
      */
-    public ExceptionEvent(Object origin, Exception exception, String message) {
+    public ExceptionEvent(Object origin, Exception exception, @Nullable String message) {
         this.exception = Optional.of(exception);
-        this.origin = checkNotNull(origin, "The origin can not be null");
+        this.origin = checkNotNull(origin, "The origin cannot be null");
         this.message = message != null ? message : exception.getMessage();
     }
 
@@ -33,9 +34,9 @@ public final class ExceptionEvent {
      * @param message The message associated with this event.
      */
     public ExceptionEvent(Object origin, String message) {
-        this.origin = checkNotNull(origin, "The origin can not be null");
+        this.origin = checkNotNull(origin, "The origin cannot be null");
         this.exception = Optional.empty();
-        this.message = message;
+        this.message = checkNotNull(message, "The message cannot be null");
     }
 
     /**
