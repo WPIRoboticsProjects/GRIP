@@ -1,5 +1,6 @@
 package edu.wpi.grip.ui;
 
+import com.sun.deploy.uitoolkit.impl.fx.HostServicesFactory;
 import edu.wpi.grip.ui.util.DPIUtility;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -11,11 +12,6 @@ import javafx.scene.image.*;
 import javafx.scene.image.Image;
 import javafx.scene.layout.GridPane;
 import javafx.scene.text.Font;
-
-import java.awt.*;
-import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
 
 /**
  * A JavaFX dialog that displays information about the application (such as the version number)
@@ -44,13 +40,7 @@ public class ProjectAboutDialog extends Dialog<ButtonType> {
         githubLink.setText("GRIP on Github");
         githubLink.setPadding(new Insets(0, 0, 0, 0));
         githubLink.setOnAction(event -> {
-            if (Desktop.isDesktopSupported()) {
-                try {
-                    Desktop.getDesktop().browse(new URI("https://github.com/WPIRoboticsProjects/GRIP"));
-                } catch (IOException | URISyntaxException e) {
-                    e.printStackTrace();
-                }
-            }
+            HostServicesFactory.getInstance(Main.getInstance()).showDocument("https://github.com/WPIRoboticsProjects/GRIP");
         });
         grid.add(githubLink, 0, 2);
 
@@ -58,13 +48,7 @@ public class ProjectAboutDialog extends Dialog<ButtonType> {
         issuesLink.setText("Issues List");
         issuesLink.setPadding(new Insets(0, 0, 0, 0));
         issuesLink.setOnAction(event -> {
-            if (Desktop.isDesktopSupported()) {
-                try {
-                    Desktop.getDesktop().browse(new URI("https://github.com/WPIRoboticsProjects/GRIP/issues"));
-                } catch (IOException | URISyntaxException e) {
-                    e.printStackTrace();
-                }
-            }
+            HostServicesFactory.getInstance(Main.getInstance()).showDocument("https://github.com/WPIRoboticsProjects/GRIP/issues");
         });
         grid.add(issuesLink, 0, 3);
 
@@ -72,13 +56,7 @@ public class ProjectAboutDialog extends Dialog<ButtonType> {
         wikiLink.setText("Wiki");
         wikiLink.setPadding(new Insets(0, 0, 0, 0));
         wikiLink.setOnAction(event -> {
-            if (Desktop.isDesktopSupported()) {
-                try {
-                    Desktop.getDesktop().browse(new URI("https://github.com/WPIRoboticsProjects/GRIP/wiki"));
-                } catch (IOException | URISyntaxException e) {
-                    e.printStackTrace();
-                }
-            }
+            HostServicesFactory.getInstance(Main.getInstance()).showDocument("https://github.com/WPIRoboticsProjects/GRIP/wiki");
         });
         grid.add(wikiLink, 0, 4);
 
@@ -86,13 +64,7 @@ public class ProjectAboutDialog extends Dialog<ButtonType> {
         operationsLink.setText("Operation Reference");
         operationsLink.setPadding(new Insets(0, 0, 0, 0));
         operationsLink.setOnAction(event -> {
-            if (Desktop.isDesktopSupported()) {
-                try {
-                    Desktop.getDesktop().browse(new URI("https://github.com/WPIRoboticsProjects/GRIP/wiki/Operation-Reference-Table"));
-                } catch (IOException | URISyntaxException e) {
-                    e.printStackTrace();
-                }
-            }
+            HostServicesFactory.getInstance(Main.getInstance()).showDocument("https://github.com/WPIRoboticsProjects/GRIP/wiki/Operation-Reference-Table");
         });
         grid.add(operationsLink, 0, 5);
 

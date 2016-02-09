@@ -43,6 +43,8 @@ public class Main extends Application {
     private final Object dialogLock = new Object();
     private Parent root;
 
+    private static Main instance;
+
     public static void main(String[] args) {
         launch(args);
     }
@@ -77,6 +79,7 @@ public class Main extends Application {
         stage.setScene(new Scene(root));
         stage.show();
 
+        instance = this;
     }
 
     public void stop() {
@@ -117,5 +120,9 @@ public class Main extends Application {
                 logger.log(Level.INFO, "Did not display exception because UI was stopping", throwable);
             }
         });
+    }
+
+    public static Main getInstance() {
+        return instance;
     }
 }
