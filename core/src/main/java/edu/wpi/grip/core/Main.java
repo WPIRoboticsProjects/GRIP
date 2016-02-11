@@ -8,9 +8,7 @@ import edu.wpi.grip.core.events.ExceptionClearedEvent;
 import edu.wpi.grip.core.events.ExceptionEvent;
 import edu.wpi.grip.core.operations.Operations;
 import edu.wpi.grip.core.serialization.Project;
-import edu.wpi.grip.core.util.SafeShutdown;
 import edu.wpi.grip.generated.CVOperations;
-import sun.misc.Signal;
 
 import javax.inject.Inject;
 import java.io.File;
@@ -23,22 +21,13 @@ import java.util.logging.Logger;
  */
 public class Main {
 
-    @Inject
-    private Project project;
-    @Inject
-    private PipelineRunner pipelineRunner;
-    @Inject
-    private EventBus eventBus;
-    @Inject
-    private Logger logger;
+    @Inject private Project project;
+    @Inject private PipelineRunner pipelineRunner;
+    @Inject private EventBus eventBus;
+    @Inject private Logger logger;
 
     @SuppressWarnings("PMD.SystemPrintln")
     public static void main(String[] args) throws IOException, InterruptedException {
-        // Close GRIP when we get SIGHUP.  This signal is sent, for example, when GRIP is run in an SSH session
-        // and the session is closed.
-        Signal.handle(new Signal("HUP"), signal -> SafeShutdown.exit(0));
-
-        System.out.println("Loading Dependency Injection Framework");
         final Injector injector = Guice.createInjector(new GRIPCoreModule());
         injector.getInstance(Main.class).start(args);
     }
