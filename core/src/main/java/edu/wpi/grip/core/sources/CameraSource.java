@@ -176,7 +176,7 @@ public class CameraSource extends Source implements RestartableService {
         final String addressProperty = properties.getProperty(ADDRESS_PROPERTY);
 
         if (deviceNumberProperty != null) {
-            final int deviceNumber = Integer.valueOf(deviceNumberProperty);
+            final int deviceNumber = Integer.parseInt(deviceNumberProperty);
             this.name = "Webcam " + deviceNumber;
             this.grabberSupplier = () -> grabberFactory.create(deviceNumber);
         } else if (addressProperty != null) {

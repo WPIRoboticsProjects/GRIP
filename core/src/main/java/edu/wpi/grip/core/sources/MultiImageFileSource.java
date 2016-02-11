@@ -196,11 +196,11 @@ public final class MultiImageFileSource extends Source implements PreviousNext {
     }
 
     private static int sizeFromProperties(Properties properties) {
-        return Integer.valueOf(properties.getProperty(SIZE_PROPERTY));
+        return Integer.parseInt(properties.getProperty(SIZE_PROPERTY));
     }
 
     private static int indexFromProperties(Properties properties) {
-        return Integer.valueOf(properties.getProperty(INDEX_PROPERTY));
+        return Integer.parseInt(properties.getProperty(INDEX_PROPERTY));
     }
 
     private static String[] pathsFromProperties(Properties properties) {
