@@ -24,7 +24,7 @@ public class GRIPPlatform {
     private final EventBus eventBus;
     private final Logger logger;
 
-    private class JavaFXRunnerEvent {
+    private static class JavaFXRunnerEvent {
         private final Runnable action;
 
         public JavaFXRunnerEvent(Runnable action) {

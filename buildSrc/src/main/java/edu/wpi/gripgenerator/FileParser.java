@@ -54,7 +54,7 @@ public class FileParser {
      */
     private static InputStream preProcessStream(InputStream stream) {
         //FIXME: This is a hack around. This should be removed once the above noted issue is resolved.
-        java.util.Scanner s = new java.util.Scanner(stream).useDelimiter("\\A");
+        java.util.Scanner s = new java.util.Scanner(stream, StandardCharsets.UTF_8.name()).useDelimiter("\\A");
         String input = s.hasNext() ? s.next() : "";
         input = input.replaceAll(methodReorderPattern, methodNewOrder);
         return new ByteArrayInputStream(input.getBytes(StandardCharsets.UTF_8));

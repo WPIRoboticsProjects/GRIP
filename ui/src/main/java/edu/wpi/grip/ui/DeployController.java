@@ -33,6 +33,7 @@ import java.io.*;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.net.UnknownHostException;
+import java.nio.charset.StandardCharsets;
 import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -50,23 +51,39 @@ public class DeployController {
     private final static URL LOCAL_GRIP_URL = Project.class.getProtectionDomain().getCodeSource().getLocation();
     private final static String LOCAL_GRIP_PATH = URLDecoder.decode(LOCAL_GRIP_URL.getPath());
 
-    @FXML private TextField address;
-    @FXML private TextField user;
-    @FXML private TextField password;
-    @FXML private TextField javaHome;
-    @FXML private TextField jvmArgs;
-    @FXML private TextField deployDir;
-    @FXML private TextField projectFile;
-    @FXML private ProgressIndicator progress;
-    @FXML private Label status;
-    @FXML private TextArea console;
-    @FXML private BooleanProperty deploying;
-    @FXML private StringProperty command;
+    @FXML
+    private TextField address;
+    @FXML
+    private TextField user;
+    @FXML
+    private TextField password;
+    @FXML
+    private TextField javaHome;
+    @FXML
+    private TextField jvmArgs;
+    @FXML
+    private TextField deployDir;
+    @FXML
+    private TextField projectFile;
+    @FXML
+    private ProgressIndicator progress;
+    @FXML
+    private Label status;
+    @FXML
+    private TextArea console;
+    @FXML
+    private BooleanProperty deploying;
+    @FXML
+    private StringProperty command;
 
-    @Inject private EventBus eventBus;
-    @Inject private Project project;
-    @Inject private Pipeline pipeline;
-    @Inject private Logger logger;
+    @Inject
+    private EventBus eventBus;
+    @Inject
+    private Project project;
+    @Inject
+    private Pipeline pipeline;
+    @Inject
+    private Logger logger;
 
     private Optional<Thread> deployThread = Optional.empty();
 
@@ -164,9 +181,12 @@ public class DeployController {
             // Upload the core GRIP JAR only if there isn't already one with the same hash on the robot.  This prevents
             // us from redundantly deploying the same JAR over and over again (so deploy times after the first are
             // much faster), while still ensuring that the JAR is deployed if it has to be.
-            try (Session session = ssh.startSession()) {
-                Session.Command md5Cmd = session.exec("md5sum " + pathStr + GRIP_JAR);
-                String remoteMd5Sum = new DataInputStream(md5Cmd.getInputStream()).readLine();
+            try (Session session = ssh.startSession()) { // SSH doesn't store a reference to the session to close it.
+                final Session.Command md5Cmd = session.exec("md5sum " + pathStr + GRIP_JAR);
+                final String remoteMd5Sum;
+                try (DataInputStream stream = new DataInputStream(md5Cmd.getInputStream())) {
+                    remoteMd5Sum = stream.readLine();
+                }
                 String localMd5Sum = Resources.asByteSource(LOCAL_GRIP_URL).hash(Hashing.md5()).toString();
 
                 // If the MD5 sum doesn't match up or there's any kind of error (there isn't a JAR there, etc...),
@@ -195,18 +215,21 @@ public class DeployController {
             setStatusAsync("Running GRIP", false);
             logger.info("Running " + commandStr);
 
-            Session session = ssh.startSession();
-            session.allocateDefaultPTY();
-            Session.Command cmd = session.exec(String.format("'%s/%s'", pathStr, GRIP_WRAPPER));
+            try (Session session = ssh.startSession()) {
+                session.allocateDefaultPTY();
+                Session.Command cmd = session.exec(String.format("'%s/%s'", pathStr, GRIP_WRAPPER));
 
-            LineReader inputReader = new LineReader(new InputStreamReader(cmd.getInputStream()));
-            while (isNotCanceled()) {
-                String line = inputReader.readLine();
-                if (line == null) {
-                    return;
+                try (final InputStreamReader reader = new InputStreamReader(cmd.getInputStream(), StandardCharsets.UTF_8)) {
+                    final LineReader inputReader = new LineReader(reader);
+                    while (isNotCanceled()) {
+                        String line = inputReader.readLine();
+                        if (line == null) {
+                            return;
+                        }
+
+                        Platform.runLater(() -> console.setText(console.getText() + line + "\n"));
+                    }
                 }
-
-                Platform.runLater(() -> console.setText(console.getText() + line + "\n"));
             }
         } catch (UnknownHostException e) {
             setStatusAsync("Unknown host: " + address.getText(), true);
