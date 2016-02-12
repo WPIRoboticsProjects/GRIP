@@ -29,7 +29,6 @@ import java.net.URL;
 import java.util.Optional;
 import java.util.Properties;
 import java.util.concurrent.Executor;
-
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -240,6 +239,13 @@ public class CameraSource extends Source implements RestartableService {
                         break; // We have a null frame, something external has gone wrong. Bail out and let the service restart.
                     }
 
+                    if (frameMat.empty()) {
+                        final String errMsg = "The camera returned an empty frame Mat";
+                        getExceptionWitness().flagWarning(errMsg);
+                        logger.log(Level.WARNING, errMsg);
+                        break; // We have an empty frame, something internal has gone wrong. Bail out and let the service restart.
+                    }
+
                     synchronized (currentFrameTransferMat) {
                         frameMat.copyTo(currentFrameTransferMat);
                     }
@@ -248,7 +254,9 @@ public class CameraSource extends Source implements RestartableService {
                     final long elapsedTime = stopwatch.elapsed(TimeUnit.MILLISECONDS);
                     stopwatch.reset();
                     stopwatch.start();
-                    if (elapsedTime != 0) frameRate = IntMath.divide(1000, Math.toIntExact(elapsedTime), RoundingMode.DOWN);
+                    if (elapsedTime != 0) {
+                        frameRate = IntMath.divide(1000, Math.toIntExact(elapsedTime), RoundingMode.DOWN);
+                    }
                     getExceptionWitness().clearException();
                     isNewFrame.set(true);
                     eventBus.post(new SourceHasPendingUpdateEvent(CameraSource.this));
