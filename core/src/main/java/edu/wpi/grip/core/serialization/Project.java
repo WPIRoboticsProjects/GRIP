@@ -2,6 +2,7 @@ package edu.wpi.grip.core.serialization;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.converters.reflection.PureJavaReflectionProvider;
 import edu.wpi.grip.core.*;
 import edu.wpi.grip.core.sources.CameraSource;
 import edu.wpi.grip.core.sources.ImageFileSource;
@@ -22,7 +23,7 @@ public class Project {
     @Inject
     private Pipeline pipeline;
 
-    protected final XStream xstream = new XStream();
+    protected final XStream xstream = new XStream(new PureJavaReflectionProvider());
     private Optional<File> file = Optional.empty();
 
     @Inject

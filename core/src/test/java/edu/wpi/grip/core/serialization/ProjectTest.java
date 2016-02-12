@@ -24,6 +24,7 @@ import java.io.StringReader;
 import java.io.StringWriter;
 import java.io.Writer;
 
+import static junit.framework.Assert.assertNotNull;
 import static junit.framework.TestCase.assertEquals;
 import static org.bytedeco.javacpp.opencv_core.*;
 
@@ -152,7 +153,7 @@ public class ProjectTest {
         serializeAndDeserialize();
 
 
-        final Step fromPipeline =  pipeline.getSteps().get(0);
+        final Step fromPipeline = pipeline.getSteps().get(0);
         InputSocket<Number> a = (InputSocket<Number>) fromPipeline.getInputSockets()[0];
         InputSocket<Number> b = (InputSocket<Number>) fromPipeline.getInputSockets()[1];
         OutputSocket<Number> sum = (OutputSocket<Number>) fromPipeline.getOutputSockets()[0];
@@ -171,7 +172,7 @@ public class ProjectTest {
         pipeline.addStep(stepFactory.create(pythonAdditionOperationFromURL));
         serializeAndDeserialize();
 
-        final Step fromPipeline =  pipeline.getSteps().get(0);
+        final Step fromPipeline = pipeline.getSteps().get(0);
         InputSocket<Number> a = (InputSocket<Number>) fromPipeline.getInputSockets()[0];
         InputSocket<Number> b = (InputSocket<Number>) fromPipeline.getInputSockets()[1];
         OutputSocket<Number> sum = (OutputSocket<Number>) fromPipeline.getOutputSockets()[0];
@@ -191,7 +192,7 @@ public class ProjectTest {
         pipeline.addStep(stepFactory.create(pythonAdditionOperationFromSource));
         serializeAndDeserialize();
 
-        final Step fromPipeline =  pipeline.getSteps().get(0);
+        final Step fromPipeline = pipeline.getSteps().get(0);
         InputSocket<Number> a = (InputSocket<Number>) fromPipeline.getInputSockets()[0];
         InputSocket<Number> b = (InputSocket<Number>) fromPipeline.getInputSockets()[1];
         OutputSocket<Number> sum = (OutputSocket<Number>) fromPipeline.getOutputSockets()[0];
@@ -228,7 +229,6 @@ public class ProjectTest {
         OutputSocket<Number> sum2 = (OutputSocket<Number>) step2Out.getOutputSockets()[0];
 
 
-
         a1.setValue(123);
         b1.setValue(456);
         b2.setValue(789);
@@ -248,7 +248,6 @@ public class ProjectTest {
         InputSocket<Mat> a = (InputSocket<Mat>) step1.getInputSockets()[0];
         InputSocket<Mat> b = (InputSocket<Mat>) step1.getInputSockets()[1];
         OutputSocket<Mat> sum = (OutputSocket<Mat>) step1.getOutputSockets()[0];
-
 
 
         a.setValue(new Mat(1, 1, CV_32F, new Scalar(1234.5)));
@@ -289,5 +288,19 @@ public class ProjectTest {
                 190, pipeline.getProjectSettings().getTeamNumber());
         assertEquals("Deploy address was not serialized/deserialized",
                 "roborio-191-frc.local", pipeline.getProjectSettings().getDeployAddress());
+    }
+
+    @Test
+    public void testUnspecifiedProjectSettings() {
+        Reader reader = new StringReader("<grip:Pipeline>" +
+                "  <sources/>" +
+                "  <steps/>" +
+                "  <connections/>" +
+                "  <settings/>" +
+                "</grip:Pipeline>");
+
+        project.open(reader);
+
+        assertNotNull("Project setting was null", pipeline.getProjectSettings().getDeployJvmOptions());
     }
 }
