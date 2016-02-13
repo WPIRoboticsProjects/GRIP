@@ -207,6 +207,12 @@ public class MainWindowController {
     }
 
     @FXML
+    public void showProjectAboutDialog() {
+        ProjectAboutDialog projectAboutDialog = new ProjectAboutDialog(root);
+        projectAboutDialog.showAndWait();
+    }
+
+    @FXML
     public void quit() {
         if (showConfirmationDialogAndWait()) {
             pipelineRunner.stopAsync();

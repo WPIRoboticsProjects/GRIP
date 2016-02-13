@@ -132,6 +132,9 @@
                     </graphic>
                 </MenuItem>
             </Menu>
+            <Menu text="Help">
+                <MenuItem text="About" onAction="#showProjectAboutDialog" />
+            </Menu>
         </MenuBar>
         <SplitPane dividerPositions="0.6" orientation="VERTICAL" VBox.vgrow="ALWAYS">
             <items>

@@ -16,6 +16,8 @@ public class DPIUtility {
     public final static double LARGE_ICON_SIZE = 48.0 * (isManualHiDPI() ? HIDPI_SCALE : 1.0);
     public final static double STROKE_WIDTH = 2.0 * (isManualHiDPI() ? HIDPI_SCALE : 1.0);
     public final static double SETTINGS_DIALOG_SIZE = 400.0 * (isManualHiDPI() ? HIDPI_SCALE : 1.0);
+    public final static double ABOUT_DIALOG_WIDTH = 400.0 * (isManualHiDPI() ? HIDPI_SCALE : 1.0);
+    public final static double ABOUT_DIALOG_HEIGHT = 200.0 * (isManualHiDPI() ? HIDPI_SCALE : 1.0);
 
     private static boolean isManualHiDPI() {
         // We need to do manual size adjustments for HiDPI on Linux.  JavaFX automatically does this on Windows and OSX
