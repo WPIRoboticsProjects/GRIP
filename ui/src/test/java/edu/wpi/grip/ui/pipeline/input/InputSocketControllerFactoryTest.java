@@ -3,6 +3,7 @@ package edu.wpi.grip.ui.pipeline.input;
 import com.google.common.eventbus.EventBus;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
+import com.google.inject.util.Modules;
 import edu.wpi.grip.core.InputSocket;
 import edu.wpi.grip.core.Operation;
 import edu.wpi.grip.core.Palette;
@@ -77,7 +78,7 @@ public class InputSocketControllerFactoryTest extends ApplicationTest {
     public void start(Stage stage) {
         testModule = new GRIPCoreTestModule();
         testModule.setUp();
-        Injector injector = Guice.createInjector(testModule, new GRIPUIModule());
+        Injector injector = Guice.createInjector(Modules.override(testModule).with(new GRIPUIModule()));
         inputSocketControllerFactory = injector.getInstance(InputSocketControllerFactory.class);
         stepFactory = injector.getInstance(Step.Factory.class);
         gridPane = new GridPane();

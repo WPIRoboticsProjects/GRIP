@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 import com.google.common.eventbus.EventBus;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
+import com.google.inject.util.Modules;
 import edu.wpi.grip.core.*;
 import edu.wpi.grip.core.util.MockExceptionWitness;
 import edu.wpi.grip.ui.GRIPUIModule;
@@ -44,7 +45,7 @@ public class PipelineUITest extends ApplicationTest {
     public void start(Stage stage) {
         testModule = new GRIPCoreTestModule();
         testModule.setUp();
-        final Injector injector = Guice.createInjector(testModule, new GRIPUIModule());
+        final Injector injector = Guice.createInjector(Modules.override(testModule).with(new GRIPUIModule()));
         eventBus = injector.getInstance(EventBus.class);
         pipeline = injector.getInstance(Pipeline.class);
         additionOperation = new AdditionOperation();

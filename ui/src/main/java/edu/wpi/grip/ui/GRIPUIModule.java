@@ -8,6 +8,7 @@ import com.google.inject.spi.InjectionListener;
 import com.google.inject.spi.TypeEncounter;
 import com.google.inject.spi.TypeListener;
 import edu.wpi.grip.core.Source;
+import edu.wpi.grip.core.util.GRIPMode;
 import edu.wpi.grip.ui.annotations.ParametrizedController;
 import edu.wpi.grip.ui.components.ExceptionWitnessResponderButton;
 import edu.wpi.grip.ui.components.StartStoppableButton;
@@ -28,6 +29,7 @@ import java.io.IOException;
 public class GRIPUIModule extends AbstractModule {
     @Override
     protected void configure() {
+        bind(GRIPMode.class).toInstance(GRIPMode.GUI);
 
         bindListener(Matchers.any(), new TypeListener() {
             @Override

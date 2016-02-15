@@ -7,7 +7,6 @@ import com.google.inject.Singleton;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamOmitField;
 import edu.wpi.grip.core.events.*;
-import edu.wpi.grip.core.operations.networktables.NTManager;
 import edu.wpi.grip.core.settings.ProjectSettings;
 
 import javax.inject.Inject;
@@ -36,10 +35,6 @@ public class Pipeline {
     @Inject
     @XStreamOmitField
     private EventBus eventBus;
-
-    @Inject
-    @XStreamOmitField
-    private NTManager ntManager;
 
     /*
      * We have separate locks for sources and steps because we don't want to
