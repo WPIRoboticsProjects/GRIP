@@ -241,7 +241,9 @@ public class FileParser {
                 new DefinedMethod("min", false, "Mat", "Mat")
                         .addDescription("Calculate the per-element minimum of two images."),
                 new DefinedMethod("extractChannel", false, "Mat", "Mat")
-                        .addDescription("Extract a single channel from a image.")
+                        .addDescription("Extract a single channel from a image."),
+                new DefinedMethod("transpose", false, "Mat", "Mat")
+                        .addDescription("Calculate the transpose of an image.")
 //                new DefinedMethod("sqrt", false, "Mat", "Mat"),
 //                new DefinedMethod("pow", false,
 //                        new DefinedParamType("Mat"),
