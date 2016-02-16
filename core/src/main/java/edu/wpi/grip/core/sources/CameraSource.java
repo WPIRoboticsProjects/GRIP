@@ -2,11 +2,9 @@ package edu.wpi.grip.core.sources;
 
 
 import com.google.common.base.StandardSystemProperty;
-import com.google.common.base.Stopwatch;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
-import com.google.common.math.IntMath;
-import com.google.common.util.concurrent.AbstractExecutionThreadService;
+import com.google.common.util.concurrent.MoreExecutors;
 import com.google.inject.assistedinject.Assisted;
 import com.google.inject.assistedinject.AssistedInject;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
@@ -18,23 +16,23 @@ import edu.wpi.grip.core.events.SourceHasPendingUpdateEvent;
 import edu.wpi.grip.core.events.SourceRemovedEvent;
 import edu.wpi.grip.core.util.ExceptionWitness;
 import edu.wpi.grip.core.util.service.AutoRestartingService;
+import edu.wpi.grip.core.util.service.LoggingListener;
 import edu.wpi.grip.core.util.service.RestartableService;
 import org.bytedeco.javacpp.opencv_core.Mat;
-import org.bytedeco.javacv.*;
+import org.bytedeco.javacv.FrameGrabber;
+import org.bytedeco.javacv.OpenCVFrameGrabber;
+import org.bytedeco.javacv.VideoInputFrameGrabber;
 
 import java.io.IOException;
-import java.math.RoundingMode;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Optional;
 import java.util.Properties;
 import java.util.concurrent.Executor;
-
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Supplier;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -94,6 +92,9 @@ public class CameraSource extends Source implements RestartableService {
         CameraSource create(Properties properties) throws IOException;
     }
 
+    /**
+     * Allows for the creation of a frame grabber using either a device number or URL string address.
+     */
     public interface FrameGrabberFactory {
         FrameGrabber create(int deviceNumber);
 
@@ -194,90 +195,40 @@ public class CameraSource extends Source implements RestartableService {
         }
 
         /* This must be initialized in the constructor otherwise the grabber supplier won't be present */
-        this.cameraService = new AutoRestartingService<>(() -> new AbstractExecutionThreadService() {
-            private final FrameGrabber frameGrabber = grabberSupplier.get();
-            private boolean failedStartup = false;
-
-            /**
-             * Keep a reference to the thread around so that it can be interrupted when stop is called.
-             */
-            private Optional<Thread> serviceThread = Optional.empty();
-
+        this.cameraService = new AutoRestartingService<>(() -> new GrabberService(name, grabberSupplier, new CameraSourceUpdater() {
             @Override
-            protected void startUp() {
-                serviceThread = Optional.of(Thread.currentThread());
-                try {
-                    frameGrabber.start();
-                } catch (FrameGrabber.Exception e) {
-                    failedStartup = true;
-                    getExceptionWitness().flagException(e, "Failed to start");
-                }
-            }
-
-            @Override
-            protected void run() throws InterruptedException {
-                // If we failed to startup don't even try to run. Just give up as soon as possible.
-                if (failedStartup) return;
-
-                final OpenCVFrameConverter.ToMat convertToMat = new OpenCVFrameConverter.ToMat();
-                final Stopwatch stopwatch = Stopwatch.createStarted();
-                while (super.isRunning()) {
-                    final Frame videoFrame;
-                    try {
-                        videoFrame = frameGrabber.grab();
-                    } catch (FrameGrabber.Exception e) {
-                        getExceptionWitness().flagException(e, "Failed to grab image");
-                        logger.log(Level.WARNING, "Failed to grab image", e);
-                        break; // We failed on a grab, something went wrong. Bail out and let the service restart.
-                    }
-
-                    final Mat frameMat = convertToMat.convert(videoFrame);
-
-                    if (frameMat == null || frameMat.isNull()) {
-                        final String errMsg = "The camera returned a null frame Mat";
-                        getExceptionWitness().flagWarning(errMsg);
-                        logger.log(Level.WARNING, errMsg);
-                        break; // We have a null frame, something external has gone wrong. Bail out and let the service restart.
-                    }
-
-                    synchronized (currentFrameTransferMat) {
-                        frameMat.copyTo(currentFrameTransferMat);
-                    }
-
-                    stopwatch.stop();
-                    final long elapsedTime = stopwatch.elapsed(TimeUnit.MILLISECONDS);
-                    stopwatch.reset();
-                    stopwatch.start();
-                    if (elapsedTime != 0) frameRate = IntMath.divide(1000, Math.toIntExact(elapsedTime), RoundingMode.DOWN);
-                    getExceptionWitness().clearException();
-                    isNewFrame.set(true);
-                    eventBus.post(new SourceHasPendingUpdateEvent(CameraSource.this));
-                }
-            }
-
-            @Override
-            protected void shutDown() throws FrameGrabber.Exception {
-                if (failedStartup) return;
-                frameRate = 0;
+            public void setFrameRate(double value) {
+                CameraSource.this.frameRate = frameRate;
                 isNewFrame.set(true);
+            }
+
+            @Override
+            public void copyNewMat(Mat matToCopy) {
+                synchronized (CameraSource.this.currentFrameTransferMat) {
+                    matToCopy.copyTo(CameraSource.this.currentFrameTransferMat);
+                }
+                isNewFrame.set(true);
+            }
+
+            @Override
+            public void updatesComplete() {
                 eventBus.post(new SourceHasPendingUpdateEvent(CameraSource.this));
-                frameGrabber.stop();
             }
-
+        }, getExceptionWitness()::clearException));
+        this.cameraService.addListener(new Listener() {
             @Override
-            protected void triggerShutdown() {
-                serviceThread.ifPresent(Thread::interrupt);
+            public void failed(State from, Throwable failure) {
+                if (failure instanceof GrabberService.GrabberServiceException) {
+                    // These are expected exceptions. Handle them by flagging an exception
+                    getExceptionWitness().flagException((GrabberService.GrabberServiceException) failure, "Camera service crashed");
+                } else {
+                    // Rethrow as an uncaught exception if this is not an exception we expected.
+                    Optional.ofNullable(Thread.getDefaultUncaughtExceptionHandler())
+                            .ifPresent(handler -> handler.uncaughtException(Thread.currentThread(), failure));
+                }
             }
-
-            /*
-             * Allows us to set our own service name
-             */
-            @Override
-            protected String serviceName() {
-                return name + " Service";
-            }
-
-        });
+        }, MoreExecutors.directExecutor());
+        this.cameraService.addListener(new LoggingListener(logger, CameraSource.class), MoreExecutors.directExecutor());
     }
 
     @Override

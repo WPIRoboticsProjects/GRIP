@@ -10,6 +10,7 @@ import com.google.inject.Injector;
 import edu.wpi.grip.core.events.UnexpectedThrowableEvent;
 import edu.wpi.grip.core.util.MockExceptionWitness;
 import edu.wpi.grip.util.GRIPCoreTestModule;
+import net.jodah.concurrentunit.Waiter;
 import org.bytedeco.javacpp.indexer.Indexer;
 import org.bytedeco.javacv.Frame;
 import org.bytedeco.javacv.FrameGrabber;
@@ -21,7 +22,12 @@ import org.junit.rules.Timeout;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.Queue;
+import java.util.concurrent.TimeoutException;
 
+import static com.google.common.truth.Truth.assertThat;
 import static org.junit.Assert.*;
 
 public class CameraSourceTest {
@@ -156,12 +162,19 @@ public class CameraSourceTest {
     @Test
     public void testStartRethrowsIfFailure() throws Exception {
         mockFrameGrabberFactory.frameGrabber.setShouldThrowAtStart(true);
-        // Problems starting should be swallowed
-        cameraSourceWithMockGrabber.startAsync().stopAndAwait();
+        // Problems starting should be restarted
+        try {
+            cameraSourceWithMockGrabber.startAsync().stopAndAwait();
+            fail("Should have thrown an exception");
+        } catch (IllegalStateException e) {
+            assertThat(e.getCause()).isNotNull();
+            assertThat(e.getCause()).isInstanceOf(GrabberService.GrabberServiceException.class);
+        }
+
         assertFalse("Camera service has stopped completely", cameraSourceWithMockGrabber.isRunning());
     }
 
-    @Test(expected = FrameGrabber.Exception.class)
+    @Test(expected = GrabberService.GrabberServiceException.class)
     public void testStopRethrowsIfFailure() throws Exception {
         mockFrameGrabberFactory.frameGrabber.setShouldThrowAtStop(true);
         cameraSourceWithMockGrabber.startAsync();
@@ -169,7 +182,7 @@ public class CameraSourceTest {
         try {
             cameraSourceWithMockGrabber.stopAsync().awaitTerminated();
         } catch (IllegalStateException expected) {
-            Throwables.propagateIfInstanceOf(expected.getCause(), FrameGrabber.Exception.class);
+            Throwables.propagateIfInstanceOf(expected.getCause(), GrabberService.GrabberServiceException.class);
             throw expected;
         }
 
@@ -189,6 +202,48 @@ public class CameraSourceTest {
             cameraSourceWithMockGrabber.stopAsync();
         }
         fail("The test should have failed with an IllegalStateException");
+    }
+
+    @Test
+    public void testEnsureThatGrabberIsReinitializedWhenStartThrowsException() throws IOException, TimeoutException {
+        final String GRABBER_START_MESSAGE = "This is expected to fail this way";
+        Waiter waiter1 = new Waiter();
+        Waiter waiter2 = new Waiter();
+        Waiter waiter3 = new Waiter();
+        Queue<Waiter> waiterQueue = new LinkedList<>(Arrays.asList(waiter1, waiter2, waiter3));
+
+        CameraSource source = new CameraSource(new EventBus(), new CameraSource.FrameGrabberFactory() {
+            @Override
+            public FrameGrabber create(int deviceNumber) {
+                return new SimpleMockFrameGrabber() {
+                    @Override
+                    public void start() throws Exception {
+                        if (!waiterQueue.isEmpty()) {
+                            waiterQueue.poll().resume();
+                        }
+                        throw new FrameGrabber.Exception(GRABBER_START_MESSAGE);
+                    }
+                };
+            }
+
+            @Override
+            public FrameGrabber create(String addressProperty) throws MalformedURLException {
+                throw new AssertionError("This should not be called");
+            }
+        }, MockExceptionWitness.MOCK_FACTORY, 0);
+
+        source.startAsync();
+        waiter1.await();
+        waiter2.await();
+        waiter3.await();
+        try {
+            source.stopAndAwait();
+            fail("This should have failed");
+        } catch(IllegalStateException e) {
+            assertThat(e.getCause()).isNotNull();
+            assertThat(e.getCause().getCause()).isNotNull();
+            assertThat(e.getCause().getCause()).hasMessage(GRABBER_START_MESSAGE);
+        }
     }
 
 }
