@@ -10,11 +10,13 @@ import com.google.inject.spi.InjectionListener;
 import com.google.inject.spi.TypeEncounter;
 import com.google.inject.spi.TypeListener;
 import edu.wpi.grip.core.events.UnexpectedThrowableEvent;
+import edu.wpi.grip.core.operations.networktables.NTManager;
 import edu.wpi.grip.core.serialization.Project;
 import edu.wpi.grip.core.sources.CameraSource;
 import edu.wpi.grip.core.sources.ImageFileSource;
 import edu.wpi.grip.core.sources.MultiImageFileSource;
 import edu.wpi.grip.core.util.ExceptionWitness;
+import edu.wpi.grip.core.util.GRIPMode;
 
 import javax.annotation.Nullable;
 import java.io.IOException;
@@ -87,6 +89,8 @@ public class GRIPCoreModule extends AbstractModule {
 
     @Override
     protected void configure() {
+        bind(GRIPMode.class).toInstance(GRIPMode.HEADLESS);
+
         // Register any injected object on the event bus
         bindListener(Matchers.any(), new TypeListener() {
             @Override
@@ -96,6 +100,8 @@ public class GRIPCoreModule extends AbstractModule {
         });
 
         bind(EventBus.class).toInstance(eventBus);
+
+        bind(NTManager.class).asEagerSingleton();
 
         install(new FactoryModuleBuilder().build(new TypeLiteral<Connection.Factory<Object>>() {
         }));

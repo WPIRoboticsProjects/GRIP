@@ -5,6 +5,7 @@ import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
+import com.google.inject.util.Modules;
 import com.sun.javafx.application.PlatformImpl;
 import edu.wpi.grip.core.GRIPCoreModule;
 import edu.wpi.grip.core.PipelineRunner;
@@ -37,8 +38,12 @@ public class Main extends Application {
     @Inject private Project project;
     @Inject private Logger logger;
 
+    /**
+     * JavaFX insists on creating the main application with its own reflection code, so we can't create with the
+     * Guice and do automatic field injection. However, we can inject it after the fact.
+     */
     @VisibleForTesting
-    protected final Injector injector = Guice.createInjector(new GRIPCoreModule(), new GRIPUIModule());
+    protected Injector injector;
 
     private final Object dialogLock = new Object();
     private Parent root;
@@ -47,23 +52,22 @@ public class Main extends Application {
         launch(args);
     }
 
-    /**
-     * JavaFX insists on creating the main application with its own reflection code, so we can't create with the
-     * Guice and do automatic field injection. However, we can inject it after the fact.
-     */
-    public Main() {
-        injector.injectMembers(this);
-    }
-
     @Override
     @SuppressWarnings("PMD.SignatureDeclareThrowsException")
     public void start(Stage stage) throws Exception {
-        // If --headless was specified on the command line, run in headless mode
         List<String> parameters = new ArrayList<>(getParameters().getRaw());
 
         if (parameters.contains("--headless")) {
+            // If --headless was specified on the command line, run in headless mode (only use the core module)
+            injector = Guice.createInjector(new GRIPCoreModule());
+            injector.injectMembers(this);
+
             parameters.remove("--headless");
         } else {
+            // Otherwise, run with both the core and UI modules, and show the JavaFX stage
+            injector = Guice.createInjector(Modules.override(new GRIPCoreModule()).with(new GRIPUIModule()));
+            injector.injectMembers(this);
+
             root = FXMLLoader.load(Main.class.getResource("MainWindow.fxml"), null, null, injector::getInstance);
             root.setStyle("-fx-font-size: " + DPIUtility.FONT_SIZE + "px");
 
