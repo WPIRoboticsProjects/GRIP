@@ -25,10 +25,10 @@ public class MainWindowTest extends ApplicationTest {
         final Main main = new Main();
         main.start(stage);
 
-        final PaletteController palette = main.injector.getInstance(PaletteController.class);
+        final OperationListController operationList = main.injector.getInstance(OperationListController.class);
         pipelineRunner = main.injector.getInstance(PipelineRunner.class);
-        palette.clearOperations();
-        palette.onOperationAdded(new OperationAddedEvent(new AdditionOperation()));
+        operationList.clearOperations();
+        operationList.onOperationAdded(new OperationAddedEvent(new AdditionOperation()));
     }
 
     @After

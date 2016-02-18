@@ -11,6 +11,14 @@ import java.util.Optional;
  */
 public interface Operation {
 
+    enum Category {
+        IMAGE_PROCESSING,
+        FEATURE_DETECTION,
+        NETWORK,
+        OPENCV,
+        MISCELLANEOUS,
+    }
+
     /**
      * @return The unique user-facing name of the operation, such as "Gaussian Blur"
      */
@@ -21,6 +29,13 @@ public interface Operation {
      * @return A description of the operation.
      */
     String getDescription();
+
+    /**
+     * @return What category the operation falls under.  This is used to organize them in the GUI
+     */
+    default Category getCategory() {
+        return Category.MISCELLANEOUS;
+    }
 
     /**
      * @return An {@link InputStream} of a 128x128 image to show the user as a representation of the operation.
