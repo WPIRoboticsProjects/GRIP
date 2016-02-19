@@ -7,12 +7,14 @@ import com.google.common.eventbus.AllowConcurrentEvents;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import com.google.common.util.concurrent.AbstractScheduledService;
+import com.google.common.util.concurrent.MoreExecutors;
 import com.google.inject.Provider;
 import com.google.inject.Singleton;
 import edu.wpi.grip.core.events.RenderEvent;
 import edu.wpi.grip.core.events.RunPipelineEvent;
 import edu.wpi.grip.core.events.StopPipelineEvent;
 import edu.wpi.grip.core.util.service.AutoRestartingService;
+import edu.wpi.grip.core.util.service.LoggingListener;
 import edu.wpi.grip.core.util.service.RestartableService;
 
 import javax.annotation.Nullable;
@@ -52,11 +54,6 @@ public class PipelineRunner implements RestartableService {
         this.pipelineService = new AutoRestartingService<>(
                 () -> new AbstractScheduledService() {
 
-                    @Override
-                    protected void startUp() {
-                        logger.info("Pipeline Starting");
-                    }
-
                     /**
                      *
                      * @throws InterruptedException This should never happen.
@@ -82,11 +79,6 @@ public class PipelineRunner implements RestartableService {
                     }
 
                     @Override
-                    protected void shutDown() {
-                        logger.info("Pipeline Shutting Down");
-                    }
-
-                    @Override
                     protected Scheduler scheduler() {
                         return Scheduler.newFixedRateSchedule(0, 1, TimeUnit.MILLISECONDS);
                     }
@@ -97,6 +89,7 @@ public class PipelineRunner implements RestartableService {
                     }
                 }
         );
+        this.pipelineService.addListener(new LoggingListener(logger, PipelineRunner.class), MoreExecutors.directExecutor());
     }
 
     /**
