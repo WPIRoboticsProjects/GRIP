@@ -198,7 +198,7 @@ public class CameraSource extends Source implements RestartableService {
         this.cameraService = new AutoRestartingService<>(() -> new GrabberService(name, grabberSupplier, new CameraSourceUpdater() {
             @Override
             public void setFrameRate(double value) {
-                CameraSource.this.frameRate = frameRate;
+                CameraSource.this.frameRate = value;
                 isNewFrame.set(true);
             }
 

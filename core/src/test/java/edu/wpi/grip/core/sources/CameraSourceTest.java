@@ -8,12 +8,16 @@ import com.google.common.util.concurrent.Service;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import edu.wpi.grip.core.events.UnexpectedThrowableEvent;
+import edu.wpi.grip.core.util.ImageLoadingUtility;
 import edu.wpi.grip.core.util.MockExceptionWitness;
+import edu.wpi.grip.util.Files;
 import edu.wpi.grip.util.GRIPCoreTestModule;
 import net.jodah.concurrentunit.Waiter;
 import org.bytedeco.javacpp.indexer.Indexer;
+import org.bytedeco.javacpp.opencv_core.Mat;
 import org.bytedeco.javacv.Frame;
 import org.bytedeco.javacv.FrameGrabber;
+import org.bytedeco.javacv.OpenCVFrameConverter;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
@@ -246,4 +250,54 @@ public class CameraSourceTest {
         }
     }
 
+    @Test
+    public void testFrameRateUpdatesWithGrabSpeed() throws IOException, InterruptedException, TimeoutException {
+        Waiter waiter1 = new Waiter();
+        Waiter waiter2 = new Waiter();
+        Queue<Waiter> waiterQueue = new LinkedList<>(Arrays.asList(waiter1, waiter2));
+
+        Mat image = new Mat();
+        ImageLoadingUtility.loadImage(Files.gompeiJpegFile.file.getPath(), image);
+        CameraSource source = new CameraSource(new EventBus(), new CameraSource.FrameGrabberFactory() {
+            @Override
+            public FrameGrabber create(int deviceNumber) {
+                return new SimpleMockFrameGrabber() {
+                    private OpenCVFrameConverter.ToMat converter = new OpenCVFrameConverter.ToMat();
+                    @Override
+                    public Frame grab() throws Exception {
+                        try {
+                            Thread.sleep(3);
+                        } catch (InterruptedException e) {
+                            Thread.currentThread().interrupt();
+                            throw new FrameGrabber.Exception("Thread interrupted", e);
+                        }
+                        if (!waiterQueue.isEmpty()){
+                            waiterQueue.poll().resume();
+                        }
+                        return converter.convert(image);
+                    }
+                };
+            }
+
+            @Override
+            public FrameGrabber create(String addressProperty) throws MalformedURLException {
+                throw new AssertionError("This should not be called");
+            }
+        }, MockExceptionWitness.MOCK_FACTORY, 0);
+
+        source.startAsync().awaitRunning();
+
+        waiter2.await();
+        // Move the value over to the socket.
+        source.updateOutputSockets();
+
+        assertNotEquals("The frame rate was not updated when the camera was running",
+                Double.valueOf(0), source.createOutputSockets()[1].getValue().get());
+
+        try {
+            source.stopAndAwait();
+        } catch (IllegalStateException e) {
+            // This could happen if the thread is interrupted.
+        }
+    }
 }
