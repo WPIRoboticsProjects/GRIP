@@ -2,8 +2,8 @@ package edu.wpi.grip.core.operations.composite;
 
 import com.google.common.base.MoreObjects;
 import edu.wpi.grip.core.NoSocketTypeLabel;
-import edu.wpi.grip.core.operations.networktables.NTPublishable;
-import edu.wpi.grip.core.operations.networktables.NTValue;
+import edu.wpi.grip.core.operations.network.PublishValue;
+import edu.wpi.grip.core.operations.network.Publishable;
 
 import java.util.Collections;
 import java.util.List;
@@ -14,7 +14,7 @@ import static org.bytedeco.javacpp.opencv_core.Mat;
  * This class is used as the output of operations that detect blobs in an image
  */
 @NoSocketTypeLabel
-public class BlobsReport implements NTPublishable {
+public class BlobsReport implements Publishable {
     private final Mat input;
     private final List<Blob> blobs;
 
@@ -60,7 +60,7 @@ public class BlobsReport implements NTPublishable {
         return this.input;
     }
 
-    @NTValue(key = "x", weight = 0)
+    @PublishValue(key = "x", weight = 0)
     public double[] getX() {
         final double[] x = new double[blobs.size()];
         for (int i = 0; i < blobs.size(); i++) {
@@ -69,7 +69,7 @@ public class BlobsReport implements NTPublishable {
         return x;
     }
 
-    @NTValue(key = "y", weight = 1)
+    @PublishValue(key = "y", weight = 1)
     public double[] getY() {
         final double[] y = new double[blobs.size()];
         for (int i = 0; i < blobs.size(); i++) {
@@ -78,7 +78,7 @@ public class BlobsReport implements NTPublishable {
         return y;
     }
 
-    @NTValue(key = "size", weight = 2)
+    @PublishValue(key = "size", weight = 2)
     public double[] getSize() {
         final double[] sizes = new double[blobs.size()];
         for (int i = 0; i < blobs.size(); i++) {

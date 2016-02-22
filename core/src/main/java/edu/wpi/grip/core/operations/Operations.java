@@ -1,50 +1,97 @@
 package edu.wpi.grip.core.operations;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.eventbus.EventBus;
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
+import com.google.inject.name.Named;
+import edu.wpi.grip.core.Operation;
 import edu.wpi.grip.core.events.OperationAddedEvent;
 import edu.wpi.grip.core.operations.composite.*;
-import edu.wpi.grip.core.operations.networktables.NTNumber;
-import edu.wpi.grip.core.operations.networktables.NTPublishOperation;
-import edu.wpi.grip.core.operations.networktables.NTVector2D;
+import edu.wpi.grip.core.operations.network.BooleanPublishable;
+import edu.wpi.grip.core.operations.network.Manager;
+import edu.wpi.grip.core.operations.network.NumberPublishable;
+import edu.wpi.grip.core.operations.network.Vector2D;
+import edu.wpi.grip.core.operations.network.networktables.NTKeyValuePublishOperation;
+import edu.wpi.grip.core.operations.network.ros.ROSKeyValuePublishOperation;
 import edu.wpi.grip.core.operations.opencv.MatFieldAccessor;
 import edu.wpi.grip.core.operations.opencv.MinMaxLoc;
 import edu.wpi.grip.core.operations.opencv.NewPointOperation;
 import edu.wpi.grip.core.operations.opencv.NewSizeOperation;
 
-import static org.bytedeco.javacpp.opencv_core.*;
+import java.util.function.Supplier;
 
-public final class Operations {
+import static com.google.common.base.Preconditions.checkNotNull;
+import static org.bytedeco.javacpp.opencv_core.Point;
+import static org.bytedeco.javacpp.opencv_core.Size;
 
-    private Operations() { /* no op */}
+@Singleton
+public class Operations {
+    private final EventBus eventBus;
+    private final ImmutableList<Supplier<Operation>> operations;
 
-    public static void addOperations(EventBus eventBus) {
-        // Add the default built-in operations to the palette
-        eventBus.post(new OperationAddedEvent(new ResizeOperation()));
-        eventBus.post(new OperationAddedEvent(new BlurOperation()));
-        eventBus.post(new OperationAddedEvent(new DesaturateOperation()));
-        eventBus.post(new OperationAddedEvent(new RGBThresholdOperation()));
-        eventBus.post(new OperationAddedEvent(new HSVThresholdOperation()));
-        eventBus.post(new OperationAddedEvent(new HSLThresholdOperation()));
-        eventBus.post(new OperationAddedEvent(new FindContoursOperation()));
-        eventBus.post(new OperationAddedEvent(new FilterContoursOperation()));
-        eventBus.post(new OperationAddedEvent(new ConvexHullsOperation()));
-        eventBus.post(new OperationAddedEvent(new FindBlobsOperation()));
-        eventBus.post(new OperationAddedEvent(new FindLinesOperation()));
-        eventBus.post(new OperationAddedEvent(new FilterLinesOperation()));
-        eventBus.post(new OperationAddedEvent(new MaskOperation()));
-        eventBus.post(new OperationAddedEvent(new MinMaxLoc()));
-        eventBus.post(new OperationAddedEvent(new MatFieldAccessor()));
-        eventBus.post(new OperationAddedEvent(new NewPointOperation()));
-        eventBus.post(new OperationAddedEvent(new NewSizeOperation()));
-        eventBus.post(new OperationAddedEvent(new NTPublishOperation<>(Number.class, NTNumber.class, NTNumber::new)));
-        eventBus.post(new OperationAddedEvent(new NTPublishOperation<>(Point.class, NTVector2D.class, NTVector2D::new)));
-        eventBus.post(new OperationAddedEvent(new NTPublishOperation<>(Size.class, NTVector2D.class, NTVector2D::new)));
-        eventBus.post(new OperationAddedEvent(new NTPublishOperation<>(ContoursReport.class)));
-        eventBus.post(new OperationAddedEvent(new NTPublishOperation<>(BlobsReport.class)));
-        eventBus.post(new OperationAddedEvent(new NTPublishOperation<>(LinesReport.class)));
-        eventBus.post(new OperationAddedEvent(new PublishVideoOperation()));
-        eventBus.post(new OperationAddedEvent(new DistanceTransformOperation()));
-        eventBus.post(new OperationAddedEvent(new NormalizeOperation()));
-        eventBus.post(new OperationAddedEvent(new WatershedOperation()));
+    @Inject
+    Operations(EventBus eventBus, @Named("ntManager") Manager ntManager, @Named("rosManager") Manager rosManager) {
+        this.eventBus = checkNotNull(eventBus, "EventBus cannot be null");
+        checkNotNull(ntManager, "ntManager cannot be null");
+        checkNotNull(rosManager, "rosManager cannot be null");
+        this.operations = ImmutableList.of(
+                ResizeOperation::new,
+                BlurOperation::new,
+                DesaturateOperation::new,
+                RGBThresholdOperation::new,
+                HSVThresholdOperation::new,
+                HSLThresholdOperation::new,
+                FindContoursOperation::new,
+                FilterContoursOperation::new,
+                ConvexHullsOperation::new,
+                FindBlobsOperation::new,
+                FindLinesOperation::new,
+                FilterLinesOperation::new,
+                MaskOperation::new,
+                MinMaxLoc::new,
+                MatFieldAccessor::new,
+                NewPointOperation::new,
+                NewSizeOperation::new,
+                () -> new NTKeyValuePublishOperation<Number, NumberPublishable, Number>(ntManager, NumberPublishable::new) {
+                },
+                () -> new NTKeyValuePublishOperation<Boolean, BooleanPublishable, Boolean>(ntManager, BooleanPublishable::new) {
+                },
+                () -> new NTKeyValuePublishOperation<Point, Vector2D, Double>(ntManager, Vector2D::new) {
+                },
+                () -> new NTKeyValuePublishOperation<Size, Vector2D, Double>(ntManager, Vector2D::new) {
+                },
+                () -> new NTKeyValuePublishOperation<ContoursReport, ContoursReport, double[]>(ntManager) {
+                },
+                () -> new NTKeyValuePublishOperation<BlobsReport, BlobsReport, double[]>(ntManager) {
+                },
+                () -> new NTKeyValuePublishOperation<LinesReport, LinesReport, double[]>(ntManager) {
+                },
+                () -> new ROSKeyValuePublishOperation<Number, NumberPublishable, Number>(ntManager, NumberPublishable::new) {
+                },
+                () -> new ROSKeyValuePublishOperation<Boolean, BooleanPublishable, Boolean>(ntManager, BooleanPublishable::new) {
+                },
+                () -> new ROSKeyValuePublishOperation<Point, Vector2D, Double>(ntManager, Vector2D::new) {
+                },
+                () -> new ROSKeyValuePublishOperation<Size, Vector2D, Double>(ntManager, Vector2D::new) {
+                },
+                () -> new ROSKeyValuePublishOperation<ContoursReport, ContoursReport, double[]>(ntManager) {
+                },
+                () -> new ROSKeyValuePublishOperation<BlobsReport, BlobsReport, double[]>(ntManager) {
+                },
+                () -> new ROSKeyValuePublishOperation<LinesReport, LinesReport, double[]>(ntManager) {
+                },
+                PublishVideoOperation::new,
+                DistanceTransformOperation::new,
+                NormalizeOperation::new,
+                WatershedOperation::new
+        );
+    }
+
+    public void addOperations() {
+        operations.stream()
+                .map(s -> s.get())
+                .map(OperationAddedEvent::new)
+                .forEach(eventBus::post);
     }
 }

@@ -11,6 +11,7 @@ import edu.wpi.grip.core.GRIPCoreModule;
 import edu.wpi.grip.core.PipelineRunner;
 import edu.wpi.grip.core.events.UnexpectedThrowableEvent;
 import edu.wpi.grip.core.operations.Operations;
+import edu.wpi.grip.core.operations.network.GRIPNetworkModule;
 import edu.wpi.grip.core.serialization.Project;
 import edu.wpi.grip.core.util.SafeShutdown;
 import edu.wpi.grip.generated.CVOperations;
@@ -36,6 +37,7 @@ public class Main extends Application {
     @Inject private EventBus eventBus;
     @Inject private PipelineRunner pipelineRunner;
     @Inject private Project project;
+    @Inject private Operations operations;
     @Inject private Logger logger;
 
     /**
@@ -59,13 +61,13 @@ public class Main extends Application {
 
         if (parameters.contains("--headless")) {
             // If --headless was specified on the command line, run in headless mode (only use the core module)
-            injector = Guice.createInjector(new GRIPCoreModule());
+            injector = Guice.createInjector(new GRIPCoreModule(), new GRIPNetworkModule());
             injector.injectMembers(this);
 
             parameters.remove("--headless");
         } else {
             // Otherwise, run with both the core and UI modules, and show the JavaFX stage
-            injector = Guice.createInjector(Modules.override(new GRIPCoreModule()).with(new GRIPUIModule()));
+            injector = Guice.createInjector(Modules.override(new GRIPCoreModule(), new GRIPNetworkModule()).with(new GRIPUIModule()));
             injector.injectMembers(this);
 
             root = FXMLLoader.load(Main.class.getResource("MainWindow.fxml"), null, null, injector::getInstance);
@@ -79,7 +81,7 @@ public class Main extends Application {
             stage.show();
         }
 
-        Operations.addOperations(eventBus);
+        operations.addOperations();
         CVOperations.addOperations(eventBus);
 
         // If there was a file specified on the command line, open it immediately

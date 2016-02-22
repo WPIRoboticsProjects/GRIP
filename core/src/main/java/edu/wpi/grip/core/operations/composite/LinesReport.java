@@ -1,8 +1,8 @@
 package edu.wpi.grip.core.operations.composite;
 
 import edu.wpi.grip.core.NoSocketTypeLabel;
-import edu.wpi.grip.core.operations.networktables.NTPublishable;
-import edu.wpi.grip.core.operations.networktables.NTValue;
+import edu.wpi.grip.core.operations.network.PublishValue;
+import edu.wpi.grip.core.operations.network.Publishable;
 
 import java.util.Collections;
 import java.util.List;
@@ -20,7 +20,7 @@ import static org.bytedeco.javacpp.opencv_imgproc.createLineSegmentDetector;
  * random matrix.
  */
 @NoSocketTypeLabel
-public class LinesReport implements NTPublishable {
+public class LinesReport implements Publishable {
     private final LineSegmentDetector lsd;
     private final Mat input;
     private final List<Line> lines;
@@ -77,7 +77,7 @@ public class LinesReport implements NTPublishable {
         return this.lines;
     }
 
-    @NTValue(key = "x1", weight = 0)
+    @PublishValue(key = "x1", weight = 0)
     public double[] getX1() {
         final double[] x1 = new double[lines.size()];
         for (int i = 0; i < lines.size(); i++) {
@@ -86,7 +86,7 @@ public class LinesReport implements NTPublishable {
         return x1;
     }
 
-    @NTValue(key = "y1", weight = 1)
+    @PublishValue(key = "y1", weight = 1)
     public double[] getY1() {
         final double[] y1 = new double[lines.size()];
         for (int i = 0; i < lines.size(); i++) {
@@ -95,7 +95,7 @@ public class LinesReport implements NTPublishable {
         return y1;
     }
 
-    @NTValue(key = "x2", weight = 2)
+    @PublishValue(key = "x2", weight = 2)
     public double[] getX2() {
         final double[] x2 = new double[lines.size()];
         for (int i = 0; i < lines.size(); i++) {
@@ -104,7 +104,7 @@ public class LinesReport implements NTPublishable {
         return x2;
     }
 
-    @NTValue(key = "y2", weight = 3)
+    @PublishValue(key = "y2", weight = 3)
     public double[] getY2() {
         final double[] y2 = new double[lines.size()];
         for (int i = 0; i < lines.size(); i++) {
@@ -113,7 +113,7 @@ public class LinesReport implements NTPublishable {
         return y2;
     }
 
-    @NTValue(key = "length", weight = 4)
+    @PublishValue(key = "length", weight = 4)
     public double[] getLength() {
         final double[] length = new double[lines.size()];
         for (int i = 0; i < lines.size(); i++) {
@@ -122,7 +122,7 @@ public class LinesReport implements NTPublishable {
         return length;
     }
 
-    @NTValue(key = "angle", weight = 5)
+    @PublishValue(key = "angle", weight = 5)
     public double[] getAngle() {
         final double[] angle = new double[lines.size()];
         for (int i = 0; i < lines.size(); i++) {

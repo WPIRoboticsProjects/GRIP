@@ -7,6 +7,7 @@ import com.google.inject.Injector;
 import edu.wpi.grip.core.events.ExceptionClearedEvent;
 import edu.wpi.grip.core.events.ExceptionEvent;
 import edu.wpi.grip.core.operations.Operations;
+import edu.wpi.grip.core.operations.network.GRIPNetworkModule;
 import edu.wpi.grip.core.serialization.Project;
 import edu.wpi.grip.generated.CVOperations;
 
@@ -24,11 +25,12 @@ public class Main {
     @Inject private Project project;
     @Inject private PipelineRunner pipelineRunner;
     @Inject private EventBus eventBus;
+    @Inject private Operations operations;
     @Inject private Logger logger;
 
     @SuppressWarnings("PMD.SystemPrintln")
     public static void main(String[] args) throws IOException, InterruptedException {
-        final Injector injector = Guice.createInjector(new GRIPCoreModule());
+        final Injector injector = Guice.createInjector(new GRIPCoreModule(), new GRIPNetworkModule());
         injector.getInstance(Main.class).start(args);
     }
 
@@ -41,7 +43,7 @@ public class Main {
             logger.log(Level.INFO, "Loading file " + args[0]);
         }
 
-        Operations.addOperations(eventBus);
+        operations.addOperations();
         CVOperations.addOperations(eventBus);
 
         final String projectPath = args[0];

@@ -1,4 +1,4 @@
-package edu.wpi.grip.core.operations.networktables;
+package edu.wpi.grip.core.operations.network;
 
 import edu.wpi.grip.core.operations.composite.ContoursReport;
 
@@ -8,7 +8,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Annotation for accessors of values that should be published to NetworkTables.
+ * Annotation for accessors of values that should be published to a NetworkProtocol.
  * <p>
  * Using annotations to define these methods instead of having the class implement a method in an interface allows an
  * object (such as {@link ContoursReport} to have arbitrarily many publishable values.  More values (like x, y, width,
@@ -18,13 +18,13 @@ import java.lang.annotation.Target;
  * a list, but this would prevent us from knowing how many values there are and what their names are without having
  * an instance of the object being published.
  * <p>
- * The weight of each accessor must be specified.  This determines order of the inputs to {@link NTPublishOperation}.
+ * The weight of each accessor must be specified.  This determines order of the inputs to {@link KeyValuePublishOperation}.
  * It's important to specify weights if there are multiple keys because otherwise, different JVMs will return them in
  * different orders, leading to projects that are interpreted differently on different machines.
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
-public @interface NTValue {
+public @interface PublishValue {
     String key() default "";
 
     int weight();
