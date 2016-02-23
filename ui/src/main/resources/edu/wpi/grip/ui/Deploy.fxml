@@ -10,6 +10,7 @@
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.*?>
+<?import edu.wpi.grip.ui.components.LogTextArea?>
 <VBox styleClass="deploy-pane" maxWidth="Infinity" xmlns:fx="http://javafx.com/fxml/1"
       onKeyPressed="if (event.code == javafx.scene.input.KeyCode.ENTER) { controller.onDeploy() }"
       xmlns="http://javafx.com/javafx/null" fx:controller="edu.wpi.grip.ui.DeployController" fillWidth="true">
@@ -69,6 +70,7 @@
 
             <ButtonBar GridPane.columnIndex="0" GridPane.rowIndex="3" GridPane.columnSpan="2">
                 <buttons>
+                    <ToggleButton fx:id="scrollPauseButton" text="Pause Scroll" ButtonBar.buttonData="OTHER"/>
                     <Button fx:id="deployButton" defaultButton="true" onMouseClicked="#onDeploy" text="Deploy"
                             ButtonBar.buttonData="APPLY">
                         <fx:script>deployButton.disableProperty().bind(deploying)</fx:script>
@@ -102,6 +104,6 @@
         <Label fx:id="status"/>
     </StackPane>
 
-    <TextArea fx:id="console" editable="false" styleClass="console" prefRowCount="24" prefColumnCount="100"
+    <LogTextArea fx:id="console" editable="false" styleClass="console" prefRowCount="24" prefColumnCount="100"
               VBox.vgrow="ALWAYS"/>
 </VBox>

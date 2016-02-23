@@ -10,6 +10,7 @@ import edu.wpi.grip.core.events.StopPipelineEvent;
 import edu.wpi.grip.core.serialization.Project;
 import edu.wpi.grip.core.settings.ProjectSettings;
 import edu.wpi.grip.core.settings.SettingsProvider;
+import edu.wpi.grip.ui.components.LogTextArea;
 import edu.wpi.grip.ui.util.StringInMemoryFile;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
@@ -18,8 +19,8 @@ import javafx.beans.property.StringProperty;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressIndicator;
-import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.control.ToggleButton;
 import net.schmizz.sshj.SSHClient;
 import net.schmizz.sshj.common.StreamCopier;
 import net.schmizz.sshj.connection.channel.direct.Session;
@@ -70,11 +71,13 @@ public class DeployController {
     @FXML
     private Label status;
     @FXML
-    private TextArea console;
+    private LogTextArea console;
     @FXML
     private BooleanProperty deploying;
     @FXML
     private StringProperty command;
+    @FXML
+    private ToggleButton scrollPauseButton;
 
     @Inject
     private EventBus eventBus;
@@ -93,6 +96,10 @@ public class DeployController {
         command.bind(Bindings.concat(javaHome.textProperty(), "/bin/java ", jvmArgs.textProperty(), " -jar '",
                 deployDir.textProperty(), "/", GRIP_JAR, "' '", deployDir.textProperty(), "/", projectFile.textProperty(), "'"));
 
+        scrollPauseButton.selectedProperty().bindBidirectional(console.pausedScrollProperty());
+        console.setOnScroll(event -> {
+            console.setPausedScroll(true);
+        });
         loadSettings(settingsProvider.getProjectSettings());
     }
 
@@ -227,7 +234,7 @@ public class DeployController {
                             return;
                         }
 
-                        Platform.runLater(() -> console.setText(console.getText() + line + "\n"));
+                        Platform.runLater(() -> console.addLineToLog(line));
                     }
                 }
             }
