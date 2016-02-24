@@ -21,7 +21,7 @@ public class RGBThresholdOperation extends ThresholdOperation {
     private final SocketHint<List> greenHint = SocketHints.Inputs.createNumberListRangeSocketHint("Green", 0.0, 255.0);
     private final SocketHint<List> blueHint = SocketHints.Inputs.createNumberListRangeSocketHint("Blue", 0.0, 255.0);
 
-    private final SocketHint<Mat> outputHint = SocketHints.Outputs.createMatSocketHint("Input");
+    private final SocketHint<Mat> outputHint = SocketHints.Outputs.createMatSocketHint("Output");
 
     @Override
     public String getName() {

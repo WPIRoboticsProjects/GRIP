@@ -26,20 +26,34 @@
         </Button>
         <Pane HBox.hgrow="ALWAYS"/>
         <HBox fx:id="buttons">
-            <Button fx:id="moveLeftButton" onMouseClicked="#moveStepLeft" styleClass="move-left"
-                    text="◀" HBox.hgrow="NEVER">
-                <minHeight>
-                    <DPIUtility fx:constant="SMALL_ICON_SIZE"/>
-                </minHeight>
+            <Button fx:id="moveLeftButton" onMouseClicked="#moveStepLeft" styleClass="move-left" HBox.hgrow="NEVER">
+                <graphic>
+                    <ImageView>
+                        <Image url="/edu/wpi/grip/ui/icons/left.png"/>
+                        <fitWidth>
+                            <DPIUtility fx:constant="SMALL_ICON_SIZE"/>
+                        </fitWidth>
+                        <fitHeight>
+                            <DPIUtility fx:constant="SMALL_ICON_SIZE"/>
+                        </fitHeight>
+                    </ImageView>
+                </graphic>
                 <tooltip>
                     <Tooltip text="Move Step Left"/>
                 </tooltip>
             </Button>
-            <Button fx:id="moveRightButton" onMouseClicked="#moveStepRight" styleClass="move-right"
-                    text="▶" HBox.hgrow="NEVER">
-                <minHeight>
-                    <DPIUtility fx:constant="SMALL_ICON_SIZE"/>
-                </minHeight>
+            <Button fx:id="moveRightButton" onMouseClicked="#moveStepRight" styleClass="move-right" HBox.hgrow="NEVER">
+                <graphic>
+                    <ImageView>
+                        <Image url="/edu/wpi/grip/ui/icons/right.png"/>
+                        <fitWidth>
+                            <DPIUtility fx:constant="SMALL_ICON_SIZE"/>
+                        </fitWidth>
+                        <fitHeight>
+                            <DPIUtility fx:constant="SMALL_ICON_SIZE"/>
+                        </fitHeight>
+                    </ImageView>
+                </graphic>
                 <tooltip>
                     <Tooltip text="Move Step Right"/>
                 </tooltip>
