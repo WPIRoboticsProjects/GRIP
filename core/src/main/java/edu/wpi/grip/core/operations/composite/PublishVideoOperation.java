@@ -1,23 +1,17 @@
 package edu.wpi.grip.core.operations.composite;
 
 import com.google.common.eventbus.EventBus;
-import com.google.common.eventbus.Subscribe;
 import edu.wpi.grip.core.InputSocket;
 import edu.wpi.grip.core.Operation;
 import edu.wpi.grip.core.OutputSocket;
 import edu.wpi.grip.core.SocketHints;
-import edu.wpi.grip.core.events.StepRemovedEvent;
-import org.bytedeco.javacv.FrameConverter;
-import org.bytedeco.javacv.Java2DFrameConverter;
-import org.bytedeco.javacv.OpenCVFrameConverter;
+import org.bytedeco.javacpp.BytePointer;
+import org.bytedeco.javacpp.IntPointer;
 
-import javax.imageio.IIOImage;
-import javax.imageio.ImageIO;
-import javax.imageio.ImageWriteParam;
-import javax.imageio.ImageWriter;
-import java.awt.image.BufferedImage;
-import java.awt.image.RenderedImage;
-import java.io.*;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Optional;
@@ -25,6 +19,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import static org.bytedeco.javacpp.opencv_core.Mat;
+import static org.bytedeco.javacpp.opencv_imgcodecs.CV_IMWRITE_JPEG_QUALITY;
+import static org.bytedeco.javacpp.opencv_imgcodecs.imencode;
 
 /**
  * Publish an M-JPEG stream with the protocol used by SmartDashboard and the FRC Dashboard.  This allows FRC teams to
@@ -41,29 +37,20 @@ public class PublishVideoOperation implements Operation {
     private static final byte[] MAGIC_NUMBER = {0x01, 0x00, 0x00, 0x00};
 
     private final Object imageLock = new Object();
-    private RenderedImage image = null;
+    private final BytePointer imagePointer = new BytePointer();
     private Optional<Thread> serverThread = Optional.empty();
-    private volatile float compressionQuality = 0.5f;
     private volatile boolean connected = false;
-    private volatile int numSteps = 0;
+    private int numSteps = 0;
 
     /**
      * Listens for incoming connections on port 1180 and writes JPEG data whenever there's a new frame.
      */
     private final Runnable runServer = () -> {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-
         // Loop forever (or at least until the thread is interrupted).  This lets us recover from the dashboard
         // disconnecting or the network connection going away temporarily.
         while (!Thread.currentThread().isInterrupted()) {
             try (ServerSocket serverSocket = new ServerSocket(PORT)) {
                 logger.info("Starting camera server");
-
-                ImageWriter jpegWriter = ImageIO.getImageWritersByFormatName("jpeg").next();
-                jpegWriter.setOutput(ImageIO.createImageOutputStream(baos));
-
-                ImageWriteParam jpegWriteParam = jpegWriter.getDefaultWriteParam();
-                jpegWriteParam.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
 
                 try (Socket socket = serverSocket.accept()) {
                     logger.info("Got connection from " + socket.getInetAddress());
@@ -71,6 +58,9 @@ public class PublishVideoOperation implements Operation {
 
                     DataOutputStream socketOutputStream = new DataOutputStream(socket.getOutputStream());
                     DataInputStream socketInputStream = new DataInputStream(socket.getInputStream());
+
+                    byte[] buffer = new byte[128 * 1024];
+                    int bufferSize;
 
                     final int fps = socketInputStream.readInt();
                     final int compression = socketInputStream.readInt();
@@ -84,21 +74,22 @@ public class PublishVideoOperation implements Operation {
                     long startTime = System.nanoTime();
 
                     while (!socket.isClosed() && !Thread.currentThread().isInterrupted()) {
-                        baos.reset();
-
                         // Wait for the main thread to put a new image. This happens whenever perform() is called with
                         // a new input.
                         synchronized (imageLock) {
                             imageLock.wait();
-                            jpegWriteParam.setCompressionQuality(compressionQuality / 100.0f);
-                            jpegWriter.write(null, new IIOImage(image, null, null), jpegWriteParam);
+
+                            // Copy the image data into a pre-allocated buffer, growing it if necessary
+                            bufferSize = imagePointer.limit();
+                            if (bufferSize > buffer.length) buffer = new byte[imagePointer.limit()];
+                            imagePointer.get(buffer, 0, bufferSize);
                         }
 
                         // The FRC dashboard image protocol consists of a magic number, the size of the image data,
                         // and the image data itself.
                         socketOutputStream.write(MAGIC_NUMBER);
-                        socketOutputStream.writeInt(baos.size());
-                        baos.writeTo(socketOutputStream);
+                        socketOutputStream.writeInt(bufferSize);
+                        socketOutputStream.write(buffer, 0, bufferSize);
 
                         // Limit the FPS to whatever the dashboard requested
                         int remainingTime = (int) (frameDuration - (System.nanoTime() - startTime));
@@ -133,13 +124,17 @@ public class PublishVideoOperation implements Operation {
     }
 
     @Override
+    public Category getCategory() {
+        return Category.NETWORK;
+    }
+
+    @Override
     public Optional<InputStream> getIcon() {
         return Optional.of(getClass().getResourceAsStream("/edu/wpi/grip/ui/icons/publish-video.png"));
     }
 
     @Override
     public InputSocket<?>[] createInputSockets(EventBus eventBus) {
-        eventBus.register(this);
         return new InputSocket<?>[]{
                 new InputSocket<>(eventBus, SocketHints.Inputs.createMatSocketHint("Image", false)),
                 new InputSocket<>(eventBus, SocketHints.Inputs.createNumberSliderSocketHint("Quality", 80, 0, 100)),
@@ -152,7 +147,7 @@ public class PublishVideoOperation implements Operation {
     }
 
     @Override
-    public Optional<?> createData() {
+    public synchronized Optional<?> createData() {
         numSteps++;
         if (!serverThread.isPresent()) {
             serverThread = Optional.of(new Thread(runServer, "Camera Server"));
@@ -175,24 +170,17 @@ public class PublishVideoOperation implements Operation {
             throw new IllegalArgumentException("Input image must not be empty");
         }
 
-        FrameConverter<Mat> frameConverter = new OpenCVFrameConverter.ToMat();
-        FrameConverter<BufferedImage> imageConverter = new Java2DFrameConverter();
-        BufferedImage image = imageConverter.convert(frameConverter.convert(input));
-
         synchronized (imageLock) {
-            this.image = image;
-            this.compressionQuality = quality.floatValue();
+            imencode(".jpeg", input, imagePointer, new IntPointer(CV_IMWRITE_JPEG_QUALITY, quality.intValue()));
             imageLock.notify();
         }
     }
 
-    @Subscribe
-    public void onStepRemoved(StepRemovedEvent event) {
-        if (event.getStep().getOperation() == this) {
-            // Stop the video server if there are no Publish Video steps left
-            if (--numSteps == 0) {
-                serverThread.ifPresent(Thread::interrupt);
-            }
+    @Override
+    public synchronized void cleanUp(InputSocket<?>[] inputs, OutputSocket<?>[] outputs, Optional<?> data) {
+        // Stop the video server if there are no Publish Video steps left
+        if (--numSteps == 0) {
+            serverThread.ifPresent(Thread::interrupt);
         }
     }
 }

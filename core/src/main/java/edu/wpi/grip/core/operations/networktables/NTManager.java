@@ -5,9 +5,11 @@ import com.google.inject.Singleton;
 import edu.wpi.first.wpilibj.networktables.NetworkTable;
 import edu.wpi.first.wpilibj.networktables.NetworkTablesJNI;
 import edu.wpi.grip.core.Pipeline;
+import edu.wpi.grip.core.PipelineRunner;
 import edu.wpi.grip.core.events.ProjectSettingsChangedEvent;
 import edu.wpi.grip.core.events.StepRemovedEvent;
 import edu.wpi.grip.core.settings.ProjectSettings;
+import edu.wpi.grip.core.util.GRIPMode;
 
 import javax.inject.Inject;
 import java.io.File;
@@ -15,6 +17,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * This class encapsulates the way we map various settings to the global NetworkTables state.
@@ -39,12 +43,16 @@ public class NTManager {
         put(6, Level.FINEST);
     }};
 
-    @Inject Pipeline pipeline;
+    @Inject private Pipeline pipeline;
+    @Inject private PipelineRunner pipelineRunner;
+    @Inject private GRIPMode gripMode;
 
     @Inject
     public NTManager(Logger logger) {
+        checkNotNull(logger, "Logger cannot be null");
         // We may have another instance of this method lying around
         NetworkTable.shutdown();
+
         // Redirect NetworkTables log messages to our own log files.  This gets rid of console spam, and it also lets
         // us grep through NetworkTables messages just like any other messages.
         NetworkTablesJNI.setLogger((level, file, line, msg) -> {
@@ -53,6 +61,30 @@ public class NTManager {
         }, 0);
 
         NetworkTable.setClientMode();
+
+        // When in headless mode, start and stop the pipeline based on the "GRIP/run" key.  This allows robot programs
+        // to control GRIP without actually restarting the process.
+        NetworkTable.getTable("GRIP").addTableListener("run", (source, key, value, isNew) -> {
+            if (gripMode == GRIPMode.HEADLESS) {
+                if (!(value instanceof Boolean)) {
+                    logger.warning("NetworkTables value GRIP/run should be a boolean!");
+                    return;
+                }
+
+                if ((Boolean) value) {
+                    if (!pipelineRunner.isRunning()) {
+                        logger.info("Starting GRIP from NetworkTables");
+                        pipelineRunner.startAsync();
+                    }
+                } else if (pipelineRunner.isRunning()) {
+                    logger.info("Stopping GRIP from NetworkTables");
+                    pipelineRunner.stopAsync();
+
+                }
+            }
+        }, true);
+
+        NetworkTable.shutdown();
     }
 
     /**
@@ -64,7 +96,7 @@ public class NTManager {
 
         synchronized (NetworkTable.class) {
             NetworkTable.shutdown();
-            NetworkTable.setIPAddress(projectSettings.computePublishAddress());
+            NetworkTable.setIPAddress(projectSettings.getPublishAddress());
         }
     }
 

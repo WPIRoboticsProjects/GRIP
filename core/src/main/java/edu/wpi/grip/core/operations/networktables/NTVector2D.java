@@ -24,12 +24,12 @@ public class NTVector2D implements NTPublishable {
         this.y = size.height();
     }
 
-    @NTValue(key = "x")
+    @NTValue(key = "x", weight = 0)
     public double getX() {
         return x;
     }
 
-    @NTValue(key = "y")
+    @NTValue(key = "y", weight = 1)
     public double getY() {
         return y;
     }

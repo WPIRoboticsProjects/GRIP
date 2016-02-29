@@ -3,6 +3,8 @@ package edu.wpi.grip.core.events;
 import com.google.common.base.MoreObjects;
 import edu.wpi.grip.core.Source;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 
 /**
  * An event that occurs when a source is removed from the pipeline.  This is triggered by the user removing a source
@@ -17,7 +19,7 @@ public class SourceRemovedEvent {
      * @param source The source being removed
      */
     public SourceRemovedEvent(Source source) {
-        this.source = source;
+        this.source = checkNotNull(source, "Source cannot be null");
     }
 
     /**

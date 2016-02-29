@@ -15,6 +15,11 @@ public abstract class ThresholdOperation implements Operation {
     }
 
     @Override
+    public Category getCategory() {
+        return Category.IMAGE_PROCESSING;
+    }
+
+    @Override
     public Optional<Mat[]> createData() {
         return Optional.of(new Mat[]{new Mat(), new Mat(), new Mat()});
     }

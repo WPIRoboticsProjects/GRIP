@@ -19,7 +19,7 @@
     -fx-border-width: 1px;
 }
 .palette {
-    -fx-min-width: 20em;
+    -fx-min-width: 30em;
 }
 
 .operation {
@@ -27,11 +27,12 @@
     -fx-hgap: 1em;
     -fx-padding: 0.5em;
     -fx-alignment: center-left;
+    -fx-color: -fx-background;
     -fx-background-color: -fx-color;
 }
 
 .operation:hover {
-    -fx-color: -fx-hover-base;
+    -fx-color: white;
 }
 
 .operation:pressed {
@@ -58,7 +59,7 @@ Label.operation-description {
 }
 
 .palette {
-    -fx-pref-width: 30em;
+    -fx-pref-width: 40em;
 }
 
 .previews HBox {
@@ -106,10 +107,10 @@ Button.add-source {
     -fx-spacing: 0.5em;
 }
 
-Button.delete, Button.move-left, Button.move-right, start-stoppable-button {
+Button.delete, Button.move-left, Button.move-right, .start-stoppable-button, .exception-witness-responder-button {
     -fx-padding: 0.2em 0.8em;
-    -fx-font-weight: bold;
-    -fx-font-color: -fx-dark-color;
+    -fx-pref-height: 2em;
+    -fx-pref-width: 2em;
 }
 
 VBox.sockets {
@@ -177,6 +178,10 @@ VBox.sockets {
     -fx-fill: none;
 }
 
+.error-pop-over {
+    -fx-padding: 0.5em;
+}
+
 .error-pop-over .titled-pane > .title {
     -fx-border-color: lightgrey;
     -fx-border-insets: 5 5 5 5;
@@ -192,6 +197,7 @@ VBox.sockets {
 .property-sheet .property-pane {
     -fx-hgap: 4em;
     -fx-vgap: 1em;
+    -fx-padding: 0;
 }
 
 .exception-pane {
@@ -200,4 +206,31 @@ VBox.sockets {
 
 .exception-text {
     -fx-font-family: "Monospace";
+}
+
+.deploy-pane {
+    -fx-spacing: 1em;
+}
+
+.deploy-pane GridPane {
+    -fx-hgap: 1em;
+    -fx-vgap: 1em;
+    -fx-padding: 0;
+}
+
+.deploy-pane StackPane {
+    -fx-pref-height: 2em;
+}
+
+.console {
+    -fx-font-family: "Monospace";
+}
+
+.error-label {
+    -fx-text-fill: red;
+    -fx-font-weight: bold;
+}
+
+.info-label {
+    -fx-font-weight: bold;
 }

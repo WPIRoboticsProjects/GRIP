@@ -1,6 +1,7 @@
 package edu.wpi.grip.core.sources;
 
 import com.google.common.eventbus.EventBus;
+import edu.wpi.grip.core.util.MockExceptionWitness;
 import org.bytedeco.javacv.FrameGrabber;
 
 import java.io.IOException;
@@ -24,24 +25,26 @@ public class MockCameraSource extends CameraSource {
     }
 
     public MockCameraSource(EventBus eventBus, String address) throws IOException {
-        super(eventBus, new FrameGrabberFactory(), origin -> null, address);
+        super(eventBus, new FrameGrabberFactory(), MockExceptionWitness.MOCK_FACTORY, address);
     }
 
     public MockCameraSource(EventBus eventBus, int deviceNumber) throws IOException {
-        super(eventBus, new FrameGrabberFactory(), origin -> null, deviceNumber);
+        super(eventBus, new FrameGrabberFactory(), MockExceptionWitness.MOCK_FACTORY, deviceNumber);
     }
 
     @Override
-    public void start() throws IOException {
+    public MockCameraSource startAsync() {
         started = true;
+        return this;
     }
 
     @Override
-    public void stop() {
+    public MockCameraSource stopAsync() {
         started = false;
+        return this;
     }
 
-    public boolean isStarted() {
+    public boolean isRunning() {
         return started;
     }
 }

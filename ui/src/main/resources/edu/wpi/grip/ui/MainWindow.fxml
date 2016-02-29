@@ -10,6 +10,7 @@
 <?import javafx.scene.paint.Color?>
 <?import org.controlsfx.glyphfont.Glyph?>
 <?import java.net.URL?>
+<?import org.controlsfx.control.StatusBar?>
 <VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"
       minWidth="-Infinity" styleClass="main-window"
       fx:controller="edu.wpi.grip.ui.MainWindowController"
@@ -97,7 +98,10 @@
                 </MenuItem>
             </Menu>
             <Menu text="Tools">
-                <MenuItem text="FRC Deploy" onAction="#deployFRC">
+                <MenuItem text="Deploy" onAction="#deploy">
+                    <accelerator>
+                        <KeyCodeCombination alt="UP" code="R" control="DOWN" meta="UP" shift="UP" shortcut="UP"/>
+                    </accelerator>
                     <graphic>
                         <ImageView styleClass="menu-graphic">
                             <fitWidth>
@@ -107,7 +111,7 @@
                                 <DPIUtility fx:constant="SMALL_ICON_SIZE"/>
                             </fitHeight>
                             <image>
-                                <Image url="@icons/first.png"/>
+                                <Image url="@icons/deploy.png"/>
                             </image>
                         </ImageView>
                     </graphic>
@@ -140,7 +144,11 @@
                 </ScrollPane>
             </items>
         </SplitPane>
+        <StatusBar fx:id="statusBar"/>
     </children>
+    <fx:define>
+        <fx:include source="Deploy.fxml" fx:id="deployPane"/>
+    </fx:define>
     <stylesheets>
         <URL value="@roboto/Roboto.css"/>
         <URL value="@GRIP.css"/>

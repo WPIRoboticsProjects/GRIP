@@ -77,7 +77,7 @@ public class LinesReport implements NTPublishable {
         return this.lines;
     }
 
-    @NTValue(key = "x1")
+    @NTValue(key = "x1", weight = 0)
     public double[] getX1() {
         final double[] x1 = new double[lines.size()];
         for (int i = 0; i < lines.size(); i++) {
@@ -86,7 +86,7 @@ public class LinesReport implements NTPublishable {
         return x1;
     }
 
-    @NTValue(key = "y1")
+    @NTValue(key = "y1", weight = 1)
     public double[] getY1() {
         final double[] y1 = new double[lines.size()];
         for (int i = 0; i < lines.size(); i++) {
@@ -95,7 +95,7 @@ public class LinesReport implements NTPublishable {
         return y1;
     }
 
-    @NTValue(key = "x2")
+    @NTValue(key = "x2", weight = 2)
     public double[] getX2() {
         final double[] x2 = new double[lines.size()];
         for (int i = 0; i < lines.size(); i++) {
@@ -104,7 +104,7 @@ public class LinesReport implements NTPublishable {
         return x2;
     }
 
-    @NTValue(key = "y2")
+    @NTValue(key = "y2", weight = 3)
     public double[] getY2() {
         final double[] y2 = new double[lines.size()];
         for (int i = 0; i < lines.size(); i++) {
@@ -113,7 +113,7 @@ public class LinesReport implements NTPublishable {
         return y2;
     }
 
-    @NTValue(key = "length")
+    @NTValue(key = "length", weight = 4)
     public double[] getLength() {
         final double[] length = new double[lines.size()];
         for (int i = 0; i < lines.size(); i++) {
@@ -122,7 +122,7 @@ public class LinesReport implements NTPublishable {
         return length;
     }
 
-    @NTValue(key = "angle")
+    @NTValue(key = "angle", weight = 5)
     public double[] getAngle() {
         final double[] angle = new double[lines.size()];
         for (int i = 0; i < lines.size(); i++) {

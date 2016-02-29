@@ -1,6 +1,8 @@
 package edu.wpi.grip.core.operations.networktables;
 
 import com.google.common.base.Throwables;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Ordering;
 import com.google.common.eventbus.EventBus;
 import edu.wpi.first.wpilibj.networktables.NetworkTable;
 import edu.wpi.first.wpilibj.tables.ITable;
@@ -9,8 +11,8 @@ import edu.wpi.grip.core.*;
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.Optional;
 import java.util.function.Function;
 
@@ -26,7 +28,7 @@ public class NTPublishOperation<S, T extends NTPublishable> implements Operation
 
     private final Class<S> type;
     private final Function<S, T> converter;
-    private final List<Method> ntValueMethods = new ArrayList<>();
+    private final ImmutableList<Method> ntValueMethods;
 
     /**
      * Create a new publish operation for a socket type that implements {@link NTPublishable} directly
@@ -49,15 +51,27 @@ public class NTPublishOperation<S, T extends NTPublishable> implements Operation
         this.type = checkNotNull(socketType, "Type was null");
         this.converter = checkNotNull(converter, "Converter was null");
 
-        // Any accessor method with an @NTValue annotation can be published to NetworkTables.
-        for (Method method : reportType.getDeclaredMethods()) {
-            if (method.getAnnotation(NTValue.class) != null) {
-                if (method.getParameters().length > 0) {
-                    throw new IllegalArgumentException("@NTValue method must have 0 parameters: " + method);
-                }
+        Comparator<Method> byWeight = Comparator.comparing(method -> method.getAnnotation(NTValue.class).weight());
 
-                ntValueMethods.add(method);
-            }
+        // Any accessor method with an @NTValue annotation can be published to NetworkTables.  We sort them by their
+        // "weights" in order to avoid the issue of different JVM versions returning methods in a different order.
+        this.ntValueMethods = ImmutableList.copyOf(Arrays.asList(reportType.getDeclaredMethods()).stream()
+                .filter(method -> method.getAnnotation(NTValue.class) != null)
+                .sorted(byWeight)
+                .iterator());
+
+        // In order for NTPublishOperation to call the accessor methods, they must all have no parameters
+        this.ntValueMethods.stream()
+                .filter(method -> method.getParameterCount() > 0)
+                .findAny()
+                .ifPresent(method -> {
+                    throw new IllegalArgumentException("@NTValue method must have 0 parameters: " + method);
+                });
+
+        // The weight thing doesn't help us if two methods have the same weight, since the JVM could put them in either
+        // order.
+        if (!Ordering.from(byWeight).isStrictlyOrdered(this.ntValueMethods)) {
+            throw new IllegalArgumentException("@NTValue methods must have distinct weights: " + reportType);
         }
     }
 
@@ -69,6 +83,11 @@ public class NTPublishOperation<S, T extends NTPublishable> implements Operation
     @Override
     public String getDescription() {
         return "Publish a " + type.getSimpleName() + " to NetworkTables";
+    }
+
+    @Override
+    public Category getCategory() {
+        return Category.NETWORK;
     }
 
     @Override
@@ -117,9 +136,10 @@ public class NTPublishOperation<S, T extends NTPublishable> implements Operation
 
         // Get a subtable to put the values in.  Each NTPublishable has multiple properties that are published (such as
         // x, y, width, height, etc...), so they're grouped together in a subtable.
-        final ITable subtable;
+        final ITable table, subtable;
         synchronized (NetworkTable.class) {
-            subtable = NetworkTable.getTable("GRIP").getSubTable(subtableName);
+            table = NetworkTable.getTable("GRIP");
+            subtable = table.getSubTable(subtableName);
         }
 
         // For each NTValue method in the object being published, put it in the table if the the corresponding
@@ -127,11 +147,25 @@ public class NTPublishOperation<S, T extends NTPublishable> implements Operation
         try {
             for (Method method : ntValueMethods) {
                 String key = method.getAnnotation(NTValue.class).key();
-                if ((Boolean) inputs[i++].getValue().get()) {
-                    subtable.putValue(key, method.invoke(value));
+                boolean publish = (Boolean) inputs[i++].getValue().get();
+
+                if (key.isEmpty()) {
+                    // If there is no key specified, put the value directly in the key of this report instead of a
+                    // subtable
+                    if (publish) {
+                        table.putValue(subtableName, method.invoke(value));
+                    } else {
+                        table.delete(subtableName);
+                    }
                 } else {
-                    subtable.delete(key);
+                    // Otherwise, put a value in the subtable specified by the input to this operation
+                    if (publish) {
+                        subtable.putValue(key, method.invoke(value));
+                    } else {
+                        subtable.delete(key);
+                    }
                 }
+
             }
         } catch (IllegalAccessException | InvocationTargetException e) {
             Throwables.propagate(e);

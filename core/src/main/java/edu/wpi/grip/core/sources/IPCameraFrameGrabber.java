@@ -33,13 +33,13 @@ import org.bytedeco.javacv.OpenCVFrameConverter;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
+import java.io.DataInputStream;
+import java.io.EOFException;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.List;
-import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import static org.bytedeco.javacpp.opencv_core.*;
 import static org.bytedeco.javacpp.opencv_imgcodecs.cvDecodeImage;
@@ -69,18 +69,21 @@ public class IPCameraFrameGrabber extends FrameGrabber {
         }
     }
 
-    private URL url;
+    private final URL url;
+    private final int connectionTimeout;
+    private final int readTimeout;
 
     private URLConnection connection;
-    private InputStream input;
+    private DataInputStream input;
     private byte[] pixelBuffer = new byte[1024];
-    private Map<String, List<String>> headerfields;
-    private String boundryKey;
     private IplImage decoded = null;
     private FrameConverter<IplImage> converter = new OpenCVFrameConverter.ToIplImage();
 
-    public IPCameraFrameGrabber(String urlstr) throws MalformedURLException {
+    public IPCameraFrameGrabber(String urlstr, int connectionTimeout, int readTimeout, TimeUnit unit) throws MalformedURLException {
+        super();
         url = new URL(urlstr);
+        this.connectionTimeout = Math.toIntExact(TimeUnit.MILLISECONDS.convert(connectionTimeout, unit));
+        this.readTimeout = Math.toIntExact(TimeUnit.MILLISECONDS.convert(readTimeout, unit));
     }
 
     @Override
@@ -88,18 +91,9 @@ public class IPCameraFrameGrabber extends FrameGrabber {
 
         try {
             connection = url.openConnection();
-            headerfields = connection.getHeaderFields();
-            if (headerfields.containsKey("Content-Type")) {
-                List<String> ct = headerfields.get("Content-Type");
-                for (int i = 0; i < ct.size(); ++i) {
-                    String key = ct.get(i);
-                    int j = key.indexOf("boundary=");
-                    if (j != -1) {
-                        boundryKey = key.substring(j + 9); // FIXME << fragile
-                    }
-                }
-            }
-            input = connection.getInputStream();
+            connection.setConnectTimeout(connectionTimeout);
+            connection.setReadTimeout(readTimeout);
+            input = new DataInputStream(connection.getInputStream());
         } catch (IOException e) {
             // Make sure we rethrow the IO exception https://github.com/bytedeco/javacv/pull/300
             throw new Exception(e.getMessage(), e);
@@ -169,9 +163,9 @@ public class IPCameraFrameGrabber extends FrameGrabber {
             }
         }
         // find embedded jpeg in stream
-        String subheader = sb.toString();
+        final String subheader = sb.toString();
         //log.debug(subheader);
-        int contentLength = -1;
+
         // if (boundryKey == null)
         // {
         // Yay! - server was nice and sent content length
@@ -180,18 +174,17 @@ public class IPCameraFrameGrabber extends FrameGrabber {
 
         if (c0 < 0) {
             //log.info("no content length returning null");
-            return null;
+            throw new EOFException("The camera stream ended unexpectedly");
         }
 
         c0 += 16;
-        contentLength = Integer.parseInt(subheader.substring(c0, c1).trim());
+        final int contentLength = Integer.parseInt(subheader.substring(c0, c1).trim());
         //log.debug("Content-Length: " + contentLength);
 
         // adaptive size - careful - don't want a 2G jpeg
         ensureBufferCapacity(contentLength);
 
-        while (input.available() < contentLength) ;
-        input.read(pixelBuffer, 0, contentLength);
+        input.readFully(pixelBuffer, 0, contentLength);
         input.read();// \r
         input.read();// \n
         input.read();// \r

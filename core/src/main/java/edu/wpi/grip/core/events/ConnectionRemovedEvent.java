@@ -3,6 +3,8 @@ package edu.wpi.grip.core.events;
 import com.google.common.base.MoreObjects;
 import edu.wpi.grip.core.Connection;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 /**
  * An event that occurs when a connection is removed from the pipeline.  This is triggered by the user deleting a
  * connection with the GUI.
@@ -14,7 +16,7 @@ public class ConnectionRemovedEvent {
      * @param connection The connection being deleted
      */
     public ConnectionRemovedEvent(Connection connection) {
-        this.connection = connection;
+        this.connection = checkNotNull(connection, "Connection cannot be null");
     }
 
     /**

@@ -8,11 +8,10 @@ import com.google.inject.spi.InjectionListener;
 import com.google.inject.spi.TypeEncounter;
 import com.google.inject.spi.TypeListener;
 import edu.wpi.grip.core.Source;
+import edu.wpi.grip.core.util.GRIPMode;
 import edu.wpi.grip.ui.annotations.ParametrizedController;
 import edu.wpi.grip.ui.components.ExceptionWitnessResponderButton;
 import edu.wpi.grip.ui.components.StartStoppableButton;
-import edu.wpi.grip.ui.deployment.FRCAdvancedDeploymentOptionsController;
-import edu.wpi.grip.ui.deployment.FRCDeploymentOptionsController;
 import edu.wpi.grip.ui.pipeline.OutputSocketController;
 import edu.wpi.grip.ui.pipeline.SocketHandleView;
 import edu.wpi.grip.ui.pipeline.StepController;
@@ -30,6 +29,7 @@ import java.io.IOException;
 public class GRIPUIModule extends AbstractModule {
     @Override
     protected void configure() {
+        bind(GRIPMode.class).toInstance(GRIPMode.GUI);
 
         bindListener(Matchers.any(), new TypeListener() {
             @Override
@@ -72,9 +72,6 @@ public class GRIPUIModule extends AbstractModule {
         install(new FactoryModuleBuilder().build(OperationController.Factory.class));
         install(new FactoryModuleBuilder().build(SocketHandleView.Factory.class));
         install(new FactoryModuleBuilder().build(OutputSocketController.Factory.class));
-        install(new FactoryModuleBuilder().build(DeployerController.Factory.class));
-        install(new FactoryModuleBuilder().build(FRCDeploymentOptionsController.Factory.class));
-        install(new FactoryModuleBuilder().build(FRCAdvancedDeploymentOptionsController.Factory.class));
         // End arbitrary controllers
 
         // InputSocketController Factories

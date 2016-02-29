@@ -34,7 +34,7 @@ public class OutputSocketControllerTest extends ApplicationTest {
         initiallyPreviewedOutputSocket = new InitiallyPreviewedOutputSocket("Initially previewed");
 
         final SocketHandleView.Factory socketHandleFactory
-                = socket -> new SocketHandleView(new EventBus(), null, null, new SocketHandleView.SocketHandleDraggingSocketService(), socket);
+                = socket -> new SocketHandleView(new EventBus(), null, null, new SocketHandleView.DragService(), socket);
         defaultOutputSocketController =
                 new OutputSocketController(socketHandleFactory, outputSocket);
         initiallyPreviewedOutputSocketController =

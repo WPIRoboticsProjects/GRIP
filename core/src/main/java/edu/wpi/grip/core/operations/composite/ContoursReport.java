@@ -6,10 +6,8 @@ import edu.wpi.grip.core.operations.networktables.NTValue;
 
 import java.util.Optional;
 
-import static org.bytedeco.javacpp.opencv_core.MatVector;
-import static org.bytedeco.javacpp.opencv_core.Rect;
-import static org.bytedeco.javacpp.opencv_imgproc.boundingRect;
-import static org.bytedeco.javacpp.opencv_imgproc.contourArea;
+import static org.bytedeco.javacpp.opencv_core.*;
+import static org.bytedeco.javacpp.opencv_imgproc.*;
 
 /**
  * The output of {@link FindContoursOperation}.  This stores a list of contours (which is basically a list of points) in
@@ -65,7 +63,7 @@ public final class ContoursReport implements NTPublishable {
         return boundingBoxes.get();
     }
 
-    @NTValue(key = "area")
+    @NTValue(key = "area", weight = 0)
     public double[] getArea() {
         final double[] areas = new double[(int) contours.size()];
         for (int i = 0; i < contours.size(); i++) {
@@ -74,7 +72,7 @@ public final class ContoursReport implements NTPublishable {
         return areas;
     }
 
-    @NTValue(key = "centerX")
+    @NTValue(key = "centerX", weight = 1)
     public double[] getCenterX() {
         final double[] centers = new double[(int) contours.size()];
         final Rect[] boundingBoxes = computeBoundingBoxes();
@@ -84,7 +82,7 @@ public final class ContoursReport implements NTPublishable {
         return centers;
     }
 
-    @NTValue(key = "centerY")
+    @NTValue(key = "centerY", weight = 2)
     public double[] getCenterY() {
         final double[] centers = new double[(int) contours.size()];
         final Rect[] boundingBoxes = computeBoundingBoxes();
@@ -94,7 +92,7 @@ public final class ContoursReport implements NTPublishable {
         return centers;
     }
 
-    @NTValue(key = "width")
+    @NTValue(key = "width", weight = 3)
     public synchronized double[] getWidth() {
         final double[] widths = new double[(int) contours.size()];
         final Rect[] boundingBoxes = computeBoundingBoxes();
@@ -104,7 +102,7 @@ public final class ContoursReport implements NTPublishable {
         return widths;
     }
 
-    @NTValue(key = "height")
+    @NTValue(key = "height", weight = 4)
     public synchronized double[] getHeights() {
         final double[] heights = new double[(int) contours.size()];
         final Rect[] boundingBoxes = computeBoundingBoxes();
@@ -112,5 +110,16 @@ public final class ContoursReport implements NTPublishable {
             heights[i] = boundingBoxes[i].height();
         }
         return heights;
+    }
+
+    @NTValue(key = "solidity", weight = 5)
+    public synchronized double[] getSolidity() {
+        final double[] solidities = new double[(int) contours.size()];
+        Mat hull = new Mat();
+        for (int i = 0; i < contours.size(); i++) {
+            convexHull(contours.get(i), hull);
+            solidities[i] = contourArea(contours.get(i)) / contourArea(hull);
+        }
+        return solidities;
     }
 }

@@ -21,16 +21,13 @@ import java.util.logging.Logger;
  */
 public class Main {
 
-    @Inject
-    private Project project;
-    @Inject
-    private EventBus eventBus;
-    @Inject
-    private Logger logger;
+    @Inject private Project project;
+    @Inject private PipelineRunner pipelineRunner;
+    @Inject private EventBus eventBus;
+    @Inject private Logger logger;
 
     @SuppressWarnings("PMD.SystemPrintln")
     public static void main(String[] args) throws IOException, InterruptedException {
-        System.out.println("Loading Dependency Injection Framework");
         final Injector injector = Guice.createInjector(new GRIPCoreModule());
         injector.getInstance(Main.class).start(args);
     }
@@ -52,6 +49,7 @@ public class Main {
         // Open a project from a .grip file specified on the command line
         project.open(new File(projectPath));
 
+        pipelineRunner.startAsync();
 
         // This is done in order to indicate to the user using the deployment UI that this is running
         logger.log(Level.INFO, "SUCCESS! The project is running in headless mode!");

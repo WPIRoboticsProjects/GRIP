@@ -6,6 +6,7 @@ import com.google.inject.assistedinject.Assisted;
 import edu.wpi.grip.core.events.ExceptionClearedEvent;
 import edu.wpi.grip.core.events.ExceptionEvent;
 
+import javax.annotation.Nullable;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
@@ -53,7 +54,7 @@ public class ExceptionWitness {
      *                  it will set the threads interrupted state and return.
      * @param message   Any additional details that should be associated with this message.
      */
-    public final void flagException(final Exception exception, final String message) {
+    public final void flagException(final Exception exception, @Nullable final String message) {
         if (exception instanceof InterruptedException) {
             Thread.currentThread().interrupt();
             return;

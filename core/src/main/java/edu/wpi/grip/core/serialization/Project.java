@@ -1,7 +1,8 @@
 package edu.wpi.grip.core.serialization;
 
-import com.google.common.eventbus.EventBus;
+import com.google.common.annotations.VisibleForTesting;
 import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.converters.reflection.PureJavaReflectionProvider;
 import edu.wpi.grip.core.*;
 import edu.wpi.grip.core.sources.CameraSource;
 import edu.wpi.grip.core.sources.ImageFileSource;
@@ -10,6 +11,7 @@ import edu.wpi.grip.core.sources.MultiImageFileSource;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.Optional;
 
 /**
@@ -19,13 +21,9 @@ import java.util.Optional;
 public class Project {
 
     @Inject
-    private EventBus eventBus;
-    @Inject
     private Pipeline pipeline;
-    @Inject
-    private Palette palette;
 
-    protected final XStream xstream = new XStream();
+    protected final XStream xstream = new XStream(new PureJavaReflectionProvider());
     private Optional<File> file = Optional.empty();
 
     @Inject
@@ -59,11 +57,14 @@ public class Project {
      * Load the project from a file
      */
     public void open(File file) throws IOException {
-        this.open(new FileReader(file));
+        try (final InputStreamReader reader = new InputStreamReader(new FileInputStream(file), StandardCharsets.UTF_8)) {
+            this.open(reader);
+        }
         this.file = Optional.of(file);
     }
 
-    public void open(Reader reader) {
+    @VisibleForTesting
+    void open(Reader reader) {
         this.pipeline.clear();
         this.xstream.fromXML(reader);
     }
@@ -72,7 +73,9 @@ public class Project {
      * Save the project to a file
      */
     public void save(File file) throws IOException {
-        this.save(new FileWriter(file));
+        try (final Writer writer = new OutputStreamWriter(new FileOutputStream(file), StandardCharsets.UTF_8)) {
+            this.save(writer);
+        }
         this.file = Optional.of(file);
     }
 

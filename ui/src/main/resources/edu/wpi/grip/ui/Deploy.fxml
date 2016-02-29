@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?language javascript?>
+
+<?import edu.wpi.grip.ui.DeployController?>
+<?import edu.wpi.grip.ui.util.DPIUtility?>
+<?import javafx.beans.property.SimpleBooleanProperty?>
+<?import javafx.beans.property.SimpleStringProperty?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.*?>
+<VBox styleClass="deploy-pane" maxWidth="Infinity" xmlns:fx="http://javafx.com/fxml/1"
+      onKeyPressed="if (event.code == javafx.scene.input.KeyCode.ENTER) { controller.onDeploy() }"
+      xmlns="http://javafx.com/javafx/null" fx:controller="edu.wpi.grip.ui.DeployController" fillWidth="true">
+    <fx:define>
+        <SimpleBooleanProperty fx:id="deploying"/>
+        <SimpleStringProperty fx:id="command"/>
+    </fx:define>
+
+    <HBox maxWidth="Infinity">
+        <GridPane maxHeight="Infinity" HBox.hgrow="ALWAYS">
+            <columnConstraints>
+                <ColumnConstraints hgrow="NEVER" halignment="RIGHT"/>
+                <ColumnConstraints hgrow="ALWAYS"/>
+            </columnConstraints>
+
+            <Label disable="${deployButton.disabled}" text="Address" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+            <TextField disable="${deployButton.disabled}" fx:id="address" promptText="Address" GridPane.columnIndex="1"
+                       GridPane.rowIndex="0"/>
+
+            <Label disable="${deployButton.disabled}" text="User" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+            <TextField disable="${deployButton.disabled}" fx:id="user" promptText="Username" GridPane.columnIndex="1"
+                       GridPane.rowIndex="1"/>
+
+            <Label disable="${deployButton.disabled}" text="Password" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
+            <PasswordField disable="${deployButton.disabled}" fx:id="password" promptText="Password"
+                           GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+
+            <Label disable="${deployButton.disabled}" text="Project File" GridPane.columnIndex="0"
+                   GridPane.rowIndex="3"/>
+            <TextField disable="${deployButton.disabled}" fx:id="projectFile" promptText="Project File"
+                       GridPane.columnIndex="1" GridPane.rowIndex="3" text="project.grip"/>
+        </GridPane>
+        <Separator orientation="VERTICAL" HBox.hgrow="NEVER" visible="false">
+            <prefWidth>
+                <DPIUtility fx:constant="SMALL_ICON_SIZE"/>
+            </prefWidth>
+        </Separator>
+        <GridPane maxHeight="Infinity" HBox.hgrow="ALWAYS">
+            <columnConstraints>
+                <ColumnConstraints hgrow="NEVER" halignment="RIGHT"/>
+                <ColumnConstraints hgrow="ALWAYS"/>
+            </columnConstraints>
+
+            <Label disable="${deployButton.disabled}" text="Deploy Directory" GridPane.columnIndex="0"
+                   GridPane.rowIndex="0"/>
+            <TextField disable="${deployButton.disabled}" fx:id="deployDir" promptText="Deploy Directory"
+                       GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+
+            <Label disable="${deployButton.disabled}" text="Java Home" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+            <TextField disable="${deployButton.disabled}" fx:id="javaHome" promptText="Java Home"
+                       GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+
+            <Label disable="${deployButton.disabled}" text="JVM Arguments" GridPane.columnIndex="0"
+                   GridPane.rowIndex="2"/>
+            <TextField disable="${deployButton.disabled}" fx:id="jvmArgs" promptText="JVM Arguments"
+                       GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+
+            <ButtonBar GridPane.columnIndex="0" GridPane.rowIndex="3" GridPane.columnSpan="2">
+                <buttons>
+                    <Button fx:id="deployButton" defaultButton="true" onMouseClicked="#onDeploy" text="Deploy"
+                            ButtonBar.buttonData="APPLY">
+                        <fx:script>deployButton.disableProperty().bind(deploying)</fx:script>
+                        <graphic>
+                            <ImageView styleClass="menu-graphic">
+                                <fitWidth>
+                                    <DPIUtility fx:constant="SMALL_ICON_SIZE"/>
+                                </fitWidth>
+                                <fitHeight>
+                                    <DPIUtility fx:constant="SMALL_ICON_SIZE"/>
+                                </fitHeight>
+                                <image>
+                                    <Image url="@icons/deploy.png"/>
+                                </image>
+                            </ImageView>
+                        </graphic>
+                    </Button>
+                    <Button text="Stop" ButtonBar.buttonData="CANCEL_CLOSE" onMouseClicked="#onStop"/>
+                </buttons>
+            </ButtonBar>
+
+        </GridPane>
+    </HBox>
+
+    <Separator orientation="HORIZONTAL" VBox.vgrow="NEVER"/>
+
+    <StackPane>
+        <ProgressBar fx:id="progress" maxWidth="Infinity" progress="0">
+            <fx:script>progress.disableProperty().bind(deploying.not())</fx:script>
+        </ProgressBar>
+        <Label fx:id="status"/>
+    </StackPane>
+
+    <TextArea fx:id="console" editable="false" styleClass="console" prefRowCount="24" prefColumnCount="100"
+              VBox.vgrow="ALWAYS"/>
+</VBox>

@@ -1,11 +1,9 @@
 package edu.wpi.grip.core;
 
 import com.google.common.eventbus.EventBus;
-import com.google.common.eventbus.Subscribe;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
-import edu.wpi.grip.core.events.SocketChangedEvent;
 import edu.wpi.grip.core.util.ExceptionWitness;
 
 import java.util.Optional;
@@ -29,7 +27,8 @@ public class Step {
     private final InputSocket<?>[] inputSockets;
     private final OutputSocket<?>[] outputSockets;
     private final Optional<?> data;
-
+    private final Object removedLock = new Object();
+    private boolean removed = false;
 
     @Singleton
     public static class Factory {
@@ -55,7 +54,7 @@ public class Step {
                     operation.createData(),
                     exceptionWitnessFactory
             );
-            eventBus.register(step);
+
             for (Socket<?> socket : inputSockets) {
                 socket.setStep(Optional.of(step));
             }
@@ -63,7 +62,6 @@ public class Step {
                 socket.setStep(Optional.of(step));
             }
 
-            step.runPerformIfPossible();
             return step;
         }
     }
@@ -123,7 +121,7 @@ public class Step {
      * If one input is invalid then the perform method will not run and all output sockets will be assigned to their
      * default values.
      */
-    private synchronized void runPerformIfPossible() {
+    protected final void runPerformIfPossible() {
         for (InputSocket<?> inputSocket : inputSockets) {
             // If there is a socket that isn't present then we have a problem.
             if (!inputSocket.getValue().isPresent()) {
@@ -134,7 +132,13 @@ public class Step {
         }
 
         try {
-            this.operation.perform(inputSockets, outputSockets, data);
+            // We need to ensure that if perform disabled is switching states that we don't run the perform method
+            // while that is happening.
+            synchronized (removedLock) {
+                if (!removed) {
+                    this.operation.perform(inputSockets, outputSockets, data);
+                }
+            }
         } catch (RuntimeException e) {
             // We do not want to catch all exceptions, only runtime exceptions.
             // This is especially important when it comes to InterruptedExceptions
@@ -147,13 +151,23 @@ public class Step {
         witness.clearException();
     }
 
-    @Subscribe
-    public void onInputSocketChanged(SocketChangedEvent e) {
-        final Socket<?> socket = e.getSocket();
-
-        // If this socket that changed is one of the inputs to this step, run the operation with the new value.
-        if (socket.getStep().equals(Optional.of(this)) && socket.getDirection().equals(Socket.Direction.INPUT)) {
-            runPerformIfPossible();
+    public final void setRemoved() {
+        // We need to wait for the perform method to complete before returning.
+        // if we don't wait then the perform method could end up being run concurrently with the perform methods execution
+        synchronized (removedLock) {
+            removed = true;
+            operation.cleanUp(inputSockets, outputSockets, data);
         }
     }
+
+    /**
+     * Allows checks to see if this step has had its perform method disabled.
+     * If this value ever returns false it will never return true again.
+     *
+     * @return true if runPerformIfPossible can run successfully
+     */
+    protected boolean removed() {
+        return removed;
+    }
+
 }

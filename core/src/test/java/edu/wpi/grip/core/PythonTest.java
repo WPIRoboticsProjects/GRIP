@@ -3,14 +3,20 @@ package edu.wpi.grip.core;
 import com.google.common.eventbus.EventBus;
 import edu.wpi.grip.core.operations.PythonScriptOperation;
 import edu.wpi.grip.core.util.MockExceptionWitness;
+import org.junit.Before;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 
 public class PythonTest {
-    static final int a = 1234, b = 5678;
+    private static final int a = 1234, b = 5678;
 
-    EventBus eventBus = new EventBus();
+    private EventBus eventBus;
+
+    @Before
+    public void setUp () {
+        eventBus = new EventBus();
+    }
 
     @Test
     public void testPython() throws Exception {
@@ -23,7 +29,9 @@ public class PythonTest {
         aSocket.setValue(a);
         bSocket.setValue(b);
 
-        assertEquals(a + b, sumSocket.getValue().get());
+        step.runPerformIfPossible();
+
+        assertEquals("Value was not assigned after run", a + b, sumSocket.getValue().get());
     }
 
     @Test
@@ -40,7 +48,9 @@ public class PythonTest {
         aSocket.setValue(a);
         bSocket.setValue(b);
 
-        assertEquals(a + b, sumSocket.getValue().get());
+        step.runPerformIfPossible();
+
+        assertEquals("Value was not assigned after run", a + b, sumSocket.getValue().get());
     }
 
     @Test
@@ -55,8 +65,10 @@ public class PythonTest {
         aSocket.setValue(a);
         bSocket.setValue(b);
 
-        assertEquals(a + b, sumSocket.getValue().get());
-        assertEquals(a - b, differenceSocket.getValue().get());
+        step.runPerformIfPossible();
+
+        assertEquals("Value was not assigned after run", a + b, sumSocket.getValue().get());
+        assertEquals("Value was not assigned after run", a - b, differenceSocket.getValue().get());
     }
 
     @Test
@@ -84,7 +96,9 @@ public class PythonTest {
         aSocket.setValue(a);
         bSocket.setValue(b);
 
-        assertEquals(0.0, sumSocket.getValue().get());
+        step.runPerformIfPossible();
+
+        assertEquals("Value was not assigned after run", 0.0, sumSocket.getValue().get());
     }
 
     @Test
