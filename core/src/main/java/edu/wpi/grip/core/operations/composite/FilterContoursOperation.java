@@ -46,13 +46,10 @@ public class FilterContoursOperation implements Operation {
             SocketHints.Inputs.createNumberListRangeSocketHint("Solidity", 0, 100);
 
     private final SocketHint<Number> minVertexHint =
-            SocketHints.Inputs.createNumberSpinnerSocketHint("Min Vertex Count", 0, 0, Integer.MAX_VALUE);
+            SocketHints.Inputs.createNumberSpinnerSocketHint("Min Vertices", 0, 0, Integer.MAX_VALUE);
 
     private final SocketHint<Number> maxVertexHint =
-            SocketHints.Inputs.createNumberSpinnerSocketHint("Max Vertex Count", 0, 1000, Integer.MAX_VALUE);
-
-    private final SocketHint<Boolean> forceConvexHint =
-            SocketHints.createBooleanSocketHint("Force Convex", false);
+            SocketHints.Inputs.createNumberSpinnerSocketHint("Max Vertices", 0, 1000000, Integer.MAX_VALUE);
 
     private final SocketHint<Number> minRatioHint =
             SocketHints.Inputs.createNumberSpinnerSocketHint("Min Ratio", 0, 0, Integer.MAX_VALUE);
@@ -94,7 +91,6 @@ public class FilterContoursOperation implements Operation {
                 new InputSocket<>(eventBus, solidityHint),
                 new InputSocket<>(eventBus, minVertexHint),
                 new InputSocket<>(eventBus, maxVertexHint),
-                new InputSocket<>(eventBus, forceConvexHint),
                 new InputSocket<>(eventBus, minRatioHint),
                 new InputSocket<>(eventBus, maxRatioHint),
         };
@@ -119,9 +115,8 @@ public class FilterContoursOperation implements Operation {
         final double maxSolidity = ((List<Number>) inputs[7].getValue().get()).get(1).doubleValue();
         final double minVertexCount = ((Number) inputs[8].getValue().get()).doubleValue();
         final double maxVertexCount = ((Number) inputs[9].getValue().get()).doubleValue();
-        final boolean forceConvex = ((Boolean) inputs[10].getValue().get()).booleanValue();
-        final double minRatio = ((Number) inputs[11].getValue().get()).doubleValue();
-        final double maxRatio = ((Number) inputs[12].getValue().get()).doubleValue();
+        final double minRatio = ((Number) inputs[10].getValue().get()).doubleValue();
+        final double maxRatio = ((Number) inputs[11].getValue().get()).doubleValue();
 
 
         final MatVector inputContours = inputSocket.getValue().get().getContours();
@@ -147,8 +142,6 @@ public class FilterContoursOperation implements Operation {
             if (solidity < minSolidity || solidity > maxSolidity) continue;
 
             if(contour.rows() < minVertexCount || contour.rows() > maxVertexCount) continue;
-
-            if(forceConvex && !isContourConvex(contour)) continue;
 
             final double ratio = bb.width() / bb.height();
             if (ratio < minRatio || ratio > maxRatio) continue;
