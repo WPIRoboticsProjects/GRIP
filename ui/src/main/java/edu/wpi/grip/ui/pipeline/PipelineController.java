@@ -67,16 +67,16 @@ public final class PipelineController {
         stepsMapManager = new ControllerMap<>(stepBox.getChildren());
         sourceMapManager = new ControllerMap<>(sourcesBox.getChildren());
 
-        for (Source source : pipeline.getSources()) {
-            SourceController sourceController = sourceControllerFactory.create(source);
+        pipeline.getSources().forEach(source -> {
+            final SourceController sourceController = sourceControllerFactory.create(source);
             sourceMapManager.add(sourceController);
-        }
+        });
 
         // Create a new controller and view for each initial step (see onStepAdded)
-        for (Step step : pipeline.getSteps()) {
+        pipeline.getSteps().forEach(step -> {
             final StepController stepController = stepControllerFactory.create(step);
             stepsMapManager.add(stepController);
-        }
+        });
 
         addSourcePane.getChildren().add(addSourceView);
     }
@@ -245,7 +245,7 @@ public final class PipelineController {
     public void onStepAdded(StepAddedEvent event) {
         // Add a new view to the pipeline for the step that was added
         PlatformImpl.runAndWait(() -> {
-            final int index = event.getIndex().or(stepBox.getChildren().size());
+            final int index = event.getIndex().orElse(stepBox.getChildren().size());
             final Step step = event.getStep();
 
             // Create a new controller for the step.  Doing this with our factory method instead of with JavaFX's

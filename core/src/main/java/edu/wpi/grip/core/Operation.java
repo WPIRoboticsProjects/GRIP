@@ -11,6 +11,14 @@ import java.util.Optional;
  */
 public interface Operation {
 
+    enum Category {
+        IMAGE_PROCESSING,
+        FEATURE_DETECTION,
+        NETWORK,
+        OPENCV,
+        MISCELLANEOUS,
+    }
+
     /**
      * @return The unique user-facing name of the operation, such as "Gaussian Blur"
      */
@@ -21,6 +29,13 @@ public interface Operation {
      * @return A description of the operation.
      */
     String getDescription();
+
+    /**
+     * @return What category the operation falls under.  This is used to organize them in the GUI
+     */
+    default Category getCategory() {
+        return Category.MISCELLANEOUS;
+    }
 
     /**
      * @return An {@link InputStream} of a 128x128 image to show the user as a representation of the operation.
@@ -63,5 +78,19 @@ public interface Operation {
 
     default void perform(InputSocket<?>[] inputs, OutputSocket<?>[] outputs) {
         throw new UnsupportedOperationException("Perform was not overridden");
+    }
+
+    /**
+     * Allows the step to clean itself up when removed from the pipeline.
+     * This should only be called by {@link Step#setRemoved()} to ensure correct synchronization.
+     *
+     * @param inputs  An array obtained from {@link #createInputSockets(EventBus)}. The caller can set the value of
+     *                each socket to an actual parameter for the operation.
+     * @param outputs An array obtained from {@link #createOutputSockets(EventBus)}. The outputs of the operation will
+     *                be stored in these sockets.
+     * @param data    Optional data to be passed to the operation
+     */
+    default void cleanUp(InputSocket<?>[] inputs, OutputSocket<?>[] outputs, Optional<?> data) {
+        /* no-op */
     }
 }

@@ -46,18 +46,22 @@ public class MultiImageFileSourceTest {
     public void testNextValue() throws Exception {
         source.next();
         OutputSocket<Mat> outputSocket = source.getOutputSockets()[0];
+        source.updateOutputSockets();
         gompeiJpegFile.assertSameImage(outputSocket.getValue().get());
     }
 
     @Test
     public void testPreviousValue() throws Exception {
         source.previous();
+
         OutputSocket<Mat> outputSocket = source.getOutputSockets()[0];
+        source.updateOutputSockets();
         gompeiJpegFile.assertSameImage(outputSocket.getValue().get());
     }
 
     @Test
     public void testConstructedWithIndex() {
+        sourceWithIndexSet.updateOutputSockets();
         OutputSocket<Mat> outputSocket = sourceWithIndexSet.getOutputSockets()[0];
         gompeiJpegFile.assertSameImage(outputSocket.getValue().get());
     }
@@ -70,6 +74,7 @@ public class MultiImageFileSourceTest {
                 origin -> null,
                 properties);
         newSource.initialize();
+        newSource.updateOutputSockets();
         OutputSocket<Mat> outputSocket = newSource.getOutputSockets()[0];
         gompeiJpegFile.assertSameImage(outputSocket.getValue().get());
     }

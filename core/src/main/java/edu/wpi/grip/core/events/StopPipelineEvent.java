@@ -7,5 +7,3 @@ public class StopPipelineEvent {
     public StopPipelineEvent() {
     }
 }
-
-

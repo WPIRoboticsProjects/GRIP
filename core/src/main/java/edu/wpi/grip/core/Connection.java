@@ -72,15 +72,15 @@ public class Connection<T> {
     @Subscribe
     public void removeConnection(StepRemovedEvent e) {
         // Remove this connection if one of the steps it was connected to was removed
-        for (Socket socket : e.getStep().getOutputSockets()) {
-            if (socket == this.inputSocket || socket == this.outputSocket) {
+        for (OutputSocket socket : e.getStep().getOutputSockets()) {
+            if (socket == this.outputSocket) {
                 this.eventBus.post(new ConnectionRemovedEvent(this));
                 return;
             }
         }
 
-        for (Socket socket : e.getStep().getInputSockets()) {
-            if (socket == this.inputSocket || socket == this.outputSocket) {
+        for (InputSocket socket : e.getStep().getInputSockets()) {
+            if (socket == this.inputSocket) {
                 this.eventBus.post(new ConnectionRemovedEvent(this));
                 return;
             }

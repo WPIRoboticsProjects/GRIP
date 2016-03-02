@@ -4,17 +4,20 @@ import com.google.common.collect.Lists;
 import com.google.common.eventbus.EventBus;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
+import com.google.inject.util.Modules;
 import edu.wpi.grip.core.*;
 import edu.wpi.grip.core.util.MockExceptionWitness;
 import edu.wpi.grip.ui.GRIPUIModule;
 import edu.wpi.grip.ui.util.StyleClassNameUtility;
 import edu.wpi.grip.ui.util.TestAnnotationFXMLLoader;
+import edu.wpi.grip.util.GRIPCoreTestModule;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.input.MouseButton;
 import javafx.stage.Stage;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
+import org.junit.After;
 import org.junit.Test;
 import org.testfx.framework.junit.ApplicationTest;
 import org.testfx.matcher.base.NodeMatchers;
@@ -31,7 +34,7 @@ import static org.testfx.api.FxAssert.verifyThatIter;
 
 public class PipelineUITest extends ApplicationTest {
 
-    private Injector injector;
+    private GRIPCoreTestModule testModule;
     private EventBus eventBus;
     private AdditionOperation additionOperation;
     private SubtractionOperation subtractionOperation;
@@ -40,7 +43,9 @@ public class PipelineUITest extends ApplicationTest {
 
     @Override
     public void start(Stage stage) {
-        injector = Guice.createInjector(new GRIPCoreModule(), new GRIPUIModule());
+        testModule = new GRIPCoreTestModule();
+        testModule.setUp();
+        final Injector injector = Guice.createInjector(Modules.override(testModule).with(new GRIPUIModule()));
         eventBus = injector.getInstance(EventBus.class);
         pipeline = injector.getInstance(Pipeline.class);
         additionOperation = new AdditionOperation();
@@ -51,7 +56,13 @@ public class PipelineUITest extends ApplicationTest {
         stage.show();
     }
 
+    @After
+    public void tearDown() {
+        testModule.tearDown();
+    }
+
     @Test
+    @SuppressWarnings("PMD.JUnitTestsShouldIncludeAssert")
     public void testBasicAddOperationToPipeline() {
         addAdditionOperation();
     }

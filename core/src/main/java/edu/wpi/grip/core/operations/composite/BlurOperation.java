@@ -47,6 +47,11 @@ public class BlurOperation implements Operation {
     }
 
     @Override
+    public Category getCategory() {
+        return Category.IMAGE_PROCESSING;
+    }
+
+    @Override
     public Optional<InputStream> getIcon() {
         return Optional.of(getClass().getResourceAsStream("/edu/wpi/grip/ui/icons/blur.png"));
     }

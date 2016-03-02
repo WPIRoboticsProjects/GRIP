@@ -101,15 +101,15 @@ public class SocketConverter implements Converter {
             // (such as connections) can reference sockets in the pipeline.
             Socket socket;
             if (reader.getAttribute(STEP_ATTRIBUTE) != null) {
-                final int stepIndex = Integer.valueOf(reader.getAttribute(STEP_ATTRIBUTE));
-                final int socketIndex = Integer.valueOf(reader.getAttribute(SOCKET_ATTRIBUTE));
+                final int stepIndex = Integer.parseInt(reader.getAttribute(STEP_ATTRIBUTE));
+                final int socketIndex = Integer.parseInt(reader.getAttribute(SOCKET_ATTRIBUTE));
 
                 final Step step = pipeline.getSteps().get(stepIndex);
                 socket = direction == Socket.Direction.INPUT ?
                         step.getInputSockets()[socketIndex] : step.getOutputSockets()[socketIndex];
             } else if (reader.getAttribute(SOURCE_ATTRIBUTE) != null) {
-                final int sourceIndex = Integer.valueOf(reader.getAttribute(SOURCE_ATTRIBUTE));
-                final int socketIndex = Integer.valueOf(reader.getAttribute(SOCKET_ATTRIBUTE));
+                final int sourceIndex = Integer.parseInt(reader.getAttribute(SOURCE_ATTRIBUTE));
+                final int socketIndex = Integer.parseInt(reader.getAttribute(SOCKET_ATTRIBUTE));
 
                 final Source source = pipeline.getSources().get(sourceIndex);
                 socket = source.getOutputSockets()[socketIndex];
@@ -118,7 +118,7 @@ public class SocketConverter implements Converter {
             }
 
             if (socket.getDirection() == Socket.Direction.OUTPUT) {
-                ((OutputSocket) socket).setPreviewed(Boolean.valueOf(reader.getAttribute(PREVIEWED_ATTRIBUTE)));
+                ((OutputSocket) socket).setPreviewed(Boolean.parseBoolean(reader.getAttribute(PREVIEWED_ATTRIBUTE)));
             }
 
             if (reader.hasMoreChildren()) {
@@ -134,7 +134,7 @@ public class SocketConverter implements Converter {
             reader.moveUp();
 
             return socket;
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             throw new ConversionException("Error deserializing socket", e);
         }
     }

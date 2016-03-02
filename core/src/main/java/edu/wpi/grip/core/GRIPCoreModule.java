@@ -10,12 +10,15 @@ import com.google.inject.spi.InjectionListener;
 import com.google.inject.spi.TypeEncounter;
 import com.google.inject.spi.TypeListener;
 import edu.wpi.grip.core.events.UnexpectedThrowableEvent;
+import edu.wpi.grip.core.operations.networktables.NTManager;
 import edu.wpi.grip.core.serialization.Project;
 import edu.wpi.grip.core.sources.CameraSource;
 import edu.wpi.grip.core.sources.ImageFileSource;
 import edu.wpi.grip.core.sources.MultiImageFileSource;
 import edu.wpi.grip.core.util.ExceptionWitness;
+import edu.wpi.grip.core.util.GRIPMode;
 
+import javax.annotation.Nullable;
 import java.io.IOException;
 import java.util.logging.*;
 
@@ -25,9 +28,9 @@ import java.util.logging.*;
  */
 @SuppressWarnings("PMD.MoreThanOneLogger")
 public class GRIPCoreModule extends AbstractModule {
-    private final Logger logger = Logger.getLogger(GRIPCoreModule.class.getName());
+    private static final Logger logger = Logger.getLogger(GRIPCoreModule.class.getName());
 
-    private final EventBus eventBus = new EventBus(this::onSubscriberException);
+    private final EventBus eventBus;
 
     // This is in a static initialization block so that we don't create a ton of
     // log files when running tests
@@ -75,13 +78,19 @@ public class GRIPCoreModule extends AbstractModule {
         }
     }
 
+    /*
+     * This class should not be used in tests. Use GRIPCoreTestModule for tests.
+     */
     public GRIPCoreModule() {
+        this.eventBus = new EventBus(this::onSubscriberException);
         // TODO: HACK! Don't assign the global thread handler to an instance method. Creates global state.
         Thread.setDefaultUncaughtExceptionHandler(this::onThreadException);
     }
 
     @Override
     protected void configure() {
+        bind(GRIPMode.class).toInstance(GRIPMode.HEADLESS);
+
         // Register any injected object on the event bus
         bindListener(Matchers.any(), new TypeListener() {
             @Override
@@ -91,6 +100,8 @@ public class GRIPCoreModule extends AbstractModule {
         });
 
         bind(EventBus.class).toInstance(eventBus);
+
+        bind(NTManager.class).asEagerSingleton();
 
         install(new FactoryModuleBuilder().build(new TypeLiteral<Connection.Factory<Object>>() {
         }));
@@ -111,7 +122,7 @@ public class GRIPCoreModule extends AbstractModule {
         install(new FactoryModuleBuilder().build(ExceptionWitness.Factory.class));
     }
 
-    private void onSubscriberException(Throwable exception, SubscriberExceptionContext context) {
+    protected void onSubscriberException(Throwable exception, @Nullable SubscriberExceptionContext exceptionContext) {
         if (exception instanceof InterruptedException) {
             logger.log(Level.FINE, "EventBus Subscriber threw InterruptedException", exception);
             Thread.currentThread().interrupt();
@@ -126,7 +137,7 @@ public class GRIPCoreModule extends AbstractModule {
      * We drop the last throwable because we clearly have a problem beyond our control.
      */
     @SuppressWarnings({"PMD.AvoidCatchingThrowable", "PMD.EmptyCatchBlock"})
-    private void onThreadException(Thread thread, Throwable exception) {
+    protected void onThreadException(Thread thread, Throwable exception) {
         // Don't do anything outside of a try catch block when dealing with thread death
         try {
             if (exception instanceof Error && !(exception instanceof AssertionError)) {

@@ -2,14 +2,20 @@
 
 <?language javascript?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
 <?import javafx.scene.layout.VBox?>
 <?import org.controlsfx.control.textfield.CustomTextField?>
 <VBox fillWidth="true" styleClass="palette" fx:controller="edu.wpi.grip.ui.PaletteController"
       xmlns:fx="http://javafx.com/fxml/1" onKeyPressed="operationSearch.requestFocus()" fx:id="root">
     <Label styleClass="pane-title" text="Operation Palette" maxWidth="Infinity"/>
+    <TabPane VBox.vgrow="ALWAYS">
+        <fx:include source="OperationList.fxml" fx:id="allOperations" text="All"/>
+        <fx:include source="OperationList.fxml" fx:id="imgprocOperations" text="Image Processing"/>
+        <fx:include source="OperationList.fxml" fx:id="featureOperations" text="Feature Detection"/>
+        <fx:include source="OperationList.fxml" fx:id="networkOperations" text="Network"/>
+        <fx:include source="OperationList.fxml" fx:id="opencvOperations" text="OpenCV"/>
+        <fx:include source="OperationList.fxml" fx:id="miscellaneousOperations" text="Misc."/>
+    </TabPane>
     <CustomTextField fx:id="operationSearch" promptText="Search"/>
-    <ScrollPane fitToHeight="true" fitToWidth="true" hbarPolicy="NEVER" vbarPolicy="AS_NEEDED" VBox.vgrow="ALWAYS">
-        <VBox fx:id="operations"/>
-    </ScrollPane>
 </VBox>

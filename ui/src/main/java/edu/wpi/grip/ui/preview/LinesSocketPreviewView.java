@@ -2,7 +2,7 @@ package edu.wpi.grip.ui.preview;
 
 import com.google.common.eventbus.Subscribe;
 import edu.wpi.grip.core.OutputSocket;
-import edu.wpi.grip.core.events.SocketChangedEvent;
+import edu.wpi.grip.core.events.RenderEvent;
 import edu.wpi.grip.core.operations.composite.LinesReport;
 import edu.wpi.grip.ui.util.GRIPPlatform;
 import edu.wpi.grip.ui.util.ImageConverter;
@@ -58,10 +58,8 @@ public class LinesSocketPreviewView extends SocketPreviewView<LinesReport> {
     }
 
     @Subscribe
-    public void onSocketChanged(SocketChangedEvent event) {
-        if (event.getSocket() == this.getSocket()) {
-            this.convertImage();
-        }
+    public void onRender(RenderEvent event) {
+        this.convertImage();
     }
 
     private void convertImage() {

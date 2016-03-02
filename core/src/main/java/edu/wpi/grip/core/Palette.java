@@ -11,6 +11,8 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 /**
  * The palette is a library of operations that can be added as steps in the {@link Pipeline}
  */
@@ -43,6 +45,6 @@ public class Palette {
      * @return The operation with the specified unique name
      */
     public Optional<Operation> getOperationByName(String name) {
-        return Optional.ofNullable(this.operations.get(name));
+        return Optional.ofNullable(this.operations.get(checkNotNull(name, "name cannot be null")));
     }
 }

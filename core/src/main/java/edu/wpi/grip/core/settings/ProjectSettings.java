@@ -3,6 +3,9 @@ package edu.wpi.grip.core.settings;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Throwables;
 
+import javax.annotation.Nonnegative;
+import javax.annotation.Nullable;
+
 import static com.google.common.base.Preconditions.checkArgument;
 
 /**
@@ -38,7 +41,7 @@ public class ProjectSettings implements Cloneable {
      * Set the FRC team number.  If the deploy address and NetworkTables server address haven't been manually
      * overridden, this also changes them to the mDNS hostname of the team's roboRIO.
      */
-    public void setTeamNumber(int teamNumber) {
+    public void setTeamNumber(@Nonnegative int teamNumber) {
         checkArgument(teamNumber >= 0, "Team number cannot be negative");
 
         final String oldFrcAddress = computeFRCAddress(this.teamNumber);
@@ -61,7 +64,7 @@ public class ProjectSettings implements Cloneable {
         return teamNumber;
     }
 
-    public void setPublishAddress(String publishAddress) {
+    public void setPublishAddress(@Nullable String publishAddress) {
         if (publishAddress != null) this.publishAddress = publishAddress;
     }
 
@@ -69,7 +72,7 @@ public class ProjectSettings implements Cloneable {
         return publishAddress;
     }
 
-    public void setDeployAddress(String deployAddress) {
+    public void setDeployAddress(@Nullable String deployAddress) {
         if (deployAddress != null) this.deployAddress = deployAddress;
     }
 
@@ -81,7 +84,7 @@ public class ProjectSettings implements Cloneable {
         return deployDir;
     }
 
-    public void setDeployDir(String deployDir) {
+    public void setDeployDir(@Nullable String deployDir) {
         if (deployDir != null) this.deployDir = deployDir;
     }
 
@@ -89,7 +92,7 @@ public class ProjectSettings implements Cloneable {
         return deployUser;
     }
 
-    public void setDeployUser(String deployUser) {
+    public void setDeployUser(@Nullable String deployUser) {
         if (deployUser != null) this.deployUser = deployUser;
     }
 
@@ -97,7 +100,7 @@ public class ProjectSettings implements Cloneable {
         return deployJavaHome;
     }
 
-    public void setDeployJavaHome(String deployJavaHome) {
+    public void setDeployJavaHome(@Nullable String deployJavaHome) {
         if (deployJavaHome != null) this.deployJavaHome = deployJavaHome;
     }
 
@@ -105,7 +108,7 @@ public class ProjectSettings implements Cloneable {
         return deployJvmOptions;
     }
 
-    public void setDeployJvmOptions(String deployJvmOptions) {
+    public void setDeployJvmOptions(@Nullable String deployJvmOptions) {
         if (deployJvmOptions != null) this.deployJvmOptions = deployJvmOptions;
     }
 

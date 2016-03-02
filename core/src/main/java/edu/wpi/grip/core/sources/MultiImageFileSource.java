@@ -6,6 +6,7 @@ import com.google.inject.assistedinject.Assisted;
 import com.google.inject.assistedinject.AssistedInject;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import edu.wpi.grip.core.*;
+import edu.wpi.grip.core.events.SourceHasPendingUpdateEvent;
 import edu.wpi.grip.core.util.ExceptionWitness;
 import edu.wpi.grip.core.util.ImageLoadingUtility;
 import org.bytedeco.javacpp.opencv_core.Mat;
@@ -16,6 +17,7 @@ import java.net.URLDecoder;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.Properties;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
@@ -34,9 +36,11 @@ public final class MultiImageFileSource extends Source implements PreviousNext {
     private final SocketHint<Mat> imageOutputHint = SocketHints.Inputs.createMatSocketHint("Image", true);
     private final OutputSocket<Mat> outputSocket;
 
+    private final EventBus eventBus;
     private final List<String> paths;
     private final AtomicInteger index;
     private Mat[] images;
+    private Optional<Mat> currentImage = Optional.empty();
 
     public interface Factory {
         MultiImageFileSource create(List<File> files, int index);
@@ -87,6 +91,7 @@ public final class MultiImageFileSource extends Source implements PreviousNext {
             final String[] paths,
             final int index) {
         super(exceptionWitnessFactory);
+        this.eventBus = eventBus;
         this.outputSocket = new OutputSocket(eventBus, imageOutputHint);
         this.index = new AtomicInteger(checkElementIndex(index, paths.length, "File List Index"));
         this.paths = Arrays.asList(paths);
@@ -95,7 +100,8 @@ public final class MultiImageFileSource extends Source implements PreviousNext {
     @Override
     public void initialize() throws IOException {
         this.images = createImagesArray(this.paths);
-        this.outputSocket.setValue(addIndexAndGetImageByOffset(0));
+        currentImage = Optional.of(addIndexAndGetImageByOffset(0));
+        eventBus.post(new SourceHasPendingUpdateEvent(this));
     }
 
     @Override
@@ -106,6 +112,16 @@ public final class MultiImageFileSource extends Source implements PreviousNext {
     @Override
     protected OutputSocket[] createOutputSockets() {
         return new OutputSocket[]{outputSocket};
+    }
+
+    @Override
+    protected boolean updateOutputSockets() {
+        if (!currentImage.equals(outputSocket.getValue())) {
+            outputSocket.setValueOptional(currentImage);
+            return true;
+        } else {
+            return false;
+        }
     }
 
     @Override
@@ -144,7 +160,8 @@ public final class MultiImageFileSource extends Source implements PreviousNext {
      */
     @Override
     public final void next() {
-        outputSocket.setValue(addIndexAndGetImageByOffset(+1));
+        currentImage = Optional.of(addIndexAndGetImageByOffset(+1));
+        eventBus.post(new SourceHasPendingUpdateEvent(this));
     }
 
     /**
@@ -152,7 +169,8 @@ public final class MultiImageFileSource extends Source implements PreviousNext {
      */
     @Override
     public final void previous() {
-        outputSocket.setValue(addIndexAndGetImageByOffset(-1));
+        currentImage = Optional.of(addIndexAndGetImageByOffset(-1));
+        eventBus.post(new SourceHasPendingUpdateEvent(this));
     }
 
     private static String getPathProperty(int index) {
@@ -178,11 +196,11 @@ public final class MultiImageFileSource extends Source implements PreviousNext {
     }
 
     private static int sizeFromProperties(Properties properties) {
-        return Integer.valueOf(properties.getProperty(SIZE_PROPERTY));
+        return Integer.parseInt(properties.getProperty(SIZE_PROPERTY));
     }
 
     private static int indexFromProperties(Properties properties) {
-        return Integer.valueOf(properties.getProperty(INDEX_PROPERTY));
+        return Integer.parseInt(properties.getProperty(INDEX_PROPERTY));
     }
 
     private static String[] pathsFromProperties(Properties properties) {

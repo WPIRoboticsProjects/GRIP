@@ -3,12 +3,12 @@ package edu.wpi.grip.core.serialization;
 import com.google.common.eventbus.EventBus;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
-import edu.wpi.grip.core.GRIPCoreModule;
 import edu.wpi.grip.core.Pipeline;
 import edu.wpi.grip.core.operations.Operations;
-import edu.wpi.grip.core.settings.ProjectSettings;
 import edu.wpi.grip.generated.CVOperations;
 import edu.wpi.grip.util.Files;
+import edu.wpi.grip.util.GRIPCoreTestModule;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -26,22 +26,19 @@ public class CompatibilityTest {
     private static final URI testphotoURI = Files.testphotoURI; //The location of the photo source for the test
     private static final URI testprojectURI = Files.testprojectURI; //The location of the save file for the test
 
+    private GRIPCoreTestModule testModule;
     private Pipeline pipeline;
-    private Project project;
-    private ProjectSettings settings;
-
-    private EventBus eventBus;
 
     @Before
     public void setUp() throws Exception {
-
+        testModule = new GRIPCoreTestModule();
+        testModule.setUp();
         //Set up the stuff we need for the core functionality for GRIP
-        final Injector injector = Guice.createInjector(new GRIPCoreModule());
+        final Injector injector = Guice.createInjector(testModule);
 
-        eventBus = injector.getInstance(EventBus.class);
+        final EventBus eventBus = injector.getInstance(EventBus.class);
         pipeline = injector.getInstance(Pipeline.class);
-        project = injector.getInstance(Project.class);
-        settings = injector.getInstance(ProjectSettings.class);
+        final Project project = injector.getInstance(Project.class);
 
         //Add the operations so that GRIP will recognize them
         Operations.addOperations(eventBus);
@@ -73,9 +70,15 @@ public class CompatibilityTest {
         project.open(file);
     }
 
+    @After
+    public void tearDown() {
+        testModule.tearDown();
+    }
+
     @Test
     public void testFoo() throws Exception {
         assertEquals("The expected number of steps were not found", 50, pipeline.getSteps().size());
         assertEquals("The expected number of sources were not found", 2, pipeline.getSources().size());
+        pipeline.clear();
     }
 }

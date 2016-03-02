@@ -33,9 +33,9 @@ public final class Operations {
         eventBus.post(new OperationAddedEvent(new FilterLinesOperation()));
         eventBus.post(new OperationAddedEvent(new MaskOperation()));
         eventBus.post(new OperationAddedEvent(new MinMaxLoc()));
+        eventBus.post(new OperationAddedEvent(new MatFieldAccessor()));
         eventBus.post(new OperationAddedEvent(new NewPointOperation()));
         eventBus.post(new OperationAddedEvent(new NewSizeOperation()));
-        eventBus.post(new OperationAddedEvent(new MatFieldAccessor()));
         eventBus.post(new OperationAddedEvent(new NTPublishOperation<>(Number.class, NTNumber.class, NTNumber::new)));
         eventBus.post(new OperationAddedEvent(new NTPublishOperation<>(Point.class, NTVector2D.class, NTVector2D::new)));
         eventBus.post(new OperationAddedEvent(new NTPublishOperation<>(Size.class, NTVector2D.class, NTVector2D::new)));

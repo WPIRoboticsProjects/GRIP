@@ -54,7 +54,7 @@ public class FileParser {
      */
     private static InputStream preProcessStream(InputStream stream) {
         //FIXME: This is a hack around. This should be removed once the above noted issue is resolved.
-        java.util.Scanner s = new java.util.Scanner(stream).useDelimiter("\\A");
+        java.util.Scanner s = new java.util.Scanner(stream, StandardCharsets.UTF_8.name()).useDelimiter("\\A");
         String input = s.hasNext() ? s.next() : "";
         input = input.replaceAll(methodReorderPattern, methodNewOrder);
         return new ByteArrayInputStream(input.getBytes(StandardCharsets.UTF_8));
@@ -241,7 +241,9 @@ public class FileParser {
                 new DefinedMethod("min", false, "Mat", "Mat")
                         .addDescription("Calculate the per-element minimum of two images."),
                 new DefinedMethod("extractChannel", false, "Mat", "Mat")
-                        .addDescription("Extract a single channel from a image.")
+                        .addDescription("Extract a single channel from a image."),
+                new DefinedMethod("transpose", false, "Mat", "Mat")
+                        .addDescription("Calculate the transpose of an image.")
 //                new DefinedMethod("sqrt", false, "Mat", "Mat"),
 //                new DefinedMethod("pow", false,
 //                        new DefinedParamType("Mat"),

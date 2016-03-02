@@ -2,7 +2,7 @@ package edu.wpi.grip.ui.preview;
 
 import com.google.common.eventbus.Subscribe;
 import edu.wpi.grip.core.OutputSocket;
-import edu.wpi.grip.core.events.SocketChangedEvent;
+import edu.wpi.grip.core.events.RenderEvent;
 import edu.wpi.grip.ui.util.GRIPPlatform;
 import javafx.application.Platform;
 import javafx.scene.control.Label;
@@ -52,10 +52,8 @@ public class PointSizeSocketPreviewView extends SocketPreviewView<IntPointer> {
     }
 
     @Subscribe
-    public void onSocketChanged(SocketChangedEvent event) {
-        if (event.getSocket() == this.getSocket()) {
-            this.updateTextFields();
-        }
+    public void onRenderEvent(RenderEvent event) {
+        this.updateTextFields();
     }
 
     private void updateTextFields() {

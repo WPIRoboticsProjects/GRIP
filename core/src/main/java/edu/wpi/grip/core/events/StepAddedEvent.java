@@ -1,8 +1,12 @@
 package edu.wpi.grip.core.events;
 
 import com.google.common.base.MoreObjects;
-import com.google.common.base.Optional;
 import edu.wpi.grip.core.Step;
+
+import javax.annotation.Nonnegative;
+import java.util.OptionalInt;
+
+import static com.google.common.base.Preconditions.checkNotNull;
 
 
 /**
@@ -11,23 +15,23 @@ import edu.wpi.grip.core.Step;
  */
 public class StepAddedEvent {
     private final Step step;
-    private final Optional<Integer> index;
+    private final OptionalInt index;
 
     /**
      * @param step  The step being added
      * @param index The index that the step should be added at.
      */
-    public StepAddedEvent(Step step, int index) {
-        this.step = step;
-        this.index = Optional.of(index);
+    public StepAddedEvent(Step step, @Nonnegative int index) {
+        this.step = checkNotNull(step, "Step can not be null");
+        this.index = OptionalInt.of(index);
     }
 
     /**
      * @param step The step being added to the end of the pipeline
      */
     public StepAddedEvent(Step step) {
-        this.step = step;
-        this.index = Optional.absent();
+        this.step = checkNotNull(step, "Step can not be null");
+        this.index = OptionalInt.empty();
     }
 
     /**
@@ -40,7 +44,7 @@ public class StepAddedEvent {
     /**
      * @return The index that the step should be added at, unless the step should be added at the end.
      */
-    public Optional<Integer> getIndex() {
+    public OptionalInt getIndex() {
         return this.index;
     }
 

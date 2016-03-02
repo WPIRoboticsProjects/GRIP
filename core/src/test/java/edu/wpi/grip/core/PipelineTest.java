@@ -7,6 +7,8 @@ import edu.wpi.grip.core.events.ConnectionAddedEvent;
 import edu.wpi.grip.core.events.ConnectionRemovedEvent;
 import edu.wpi.grip.core.events.SourceAddedEvent;
 import edu.wpi.grip.core.events.SourceRemovedEvent;
+import edu.wpi.grip.util.GRIPCoreTestModule;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -14,45 +16,16 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Properties;
 
 import static org.junit.Assert.*;
 
 public class PipelineTest {
 
-    private Injector injector;
+    private GRIPCoreTestModule testModule;
     private Step.Factory stepFactory;
     private EventBus eventBus;
     private Pipeline pipeline;
     private Operation addition;
-
-
-    private class MockSource extends Source {
-
-        protected MockSource() {
-            super(origin -> null);
-        }
-
-        @Override
-        public String getName() {
-            return null;
-        }
-
-        @Override
-        protected OutputSocket[] createOutputSockets() {
-            return new OutputSocket[0];
-        }
-
-        @Override
-        public Properties getProperties() {
-            return null;
-        }
-
-        @Override
-        public void initialize() throws IOException {
-
-        }
-    }
 
     private class MockConnection extends Connection {
 
@@ -67,11 +40,18 @@ public class PipelineTest {
 
     @Before
     public void setUp() {
-        injector = Guice.createInjector(new GRIPCoreModule());
+        testModule = new GRIPCoreTestModule();
+        testModule.setUp();
+        final Injector injector = Guice.createInjector(testModule);
         stepFactory = injector.getInstance(Step.Factory.class);
         eventBus = injector.getInstance(EventBus.class);
         pipeline = injector.getInstance(Pipeline.class);
         addition = new AdditionOperation();
+    }
+
+    @After
+    public void tearDown() {
+        testModule.tearDown();
     }
 
     @Test
@@ -80,7 +60,7 @@ public class PipelineTest {
 
         eventBus.post(new SourceAddedEvent(source));
 
-        assertEquals(Collections.singletonList(source), pipeline.getSources());
+        assertEquals("The source was not added to the pipeline", Collections.singletonList(source), pipeline.getSources());
     }
 
     @Test
@@ -90,7 +70,8 @@ public class PipelineTest {
         eventBus.post(new SourceAddedEvent(source));
         eventBus.post(new SourceRemovedEvent(source));
 
-        assertEquals(Collections.emptyList(), pipeline.getSources());
+        assertEquals("The source was not added then removed from the pipeline", Collections.emptyList(), pipeline.getSources());
+
     }
 
     @Test
@@ -100,7 +81,7 @@ public class PipelineTest {
 
         pipeline.addStep(step);
 
-        assertEquals(Collections.singletonList(step), pipeline.getSteps());
+        assertEquals("The step was not added to the pipeline", Collections.singletonList(step), pipeline.getSteps());
     }
 
     @Test
@@ -112,33 +93,35 @@ public class PipelineTest {
         pipeline.addStep(step1);
         pipeline.addStep(0, step2);
 
-        assertEquals(Arrays.asList(step2, step1), pipeline.getSteps());
+        assertEquals("The steps were not added to the pipeline", Arrays.asList(step2, step1), pipeline.getSteps());
     }
 
     @Test
     @SuppressWarnings("unchecked")
     public void testRemoveFirstStep() {
-        Step step1 = new MockStep();
+        Step step1 = MockStep.createMockStepWithOperation();
         Step step2 = new MockStep();
 
         pipeline.addStep(step1);
         pipeline.addStep(step2);
         pipeline.removeStep(step1);
 
-        assertEquals(Collections.singletonList(step2), pipeline.getSteps());
+        assertEquals("There was not one step left after the first was removed", Collections.singletonList(step2), pipeline.getSteps());
+
     }
 
     @Test
     @SuppressWarnings("unchecked")
     public void testRemoveSecondStep() {
         Step step1 = new MockStep();
-        Step step2 = new MockStep();
+        Step step2 = MockStep.createMockStepWithOperation();
 
         pipeline.addStep(step1);
         pipeline.addStep(step2);
         pipeline.removeStep(step2);
 
-        assertEquals(Collections.singletonList(step1), pipeline.getSteps());
+        assertEquals("There was not one step left after the second was removed", Collections.singletonList(step1), pipeline.getSteps());
+
     }
 
     @Test
@@ -152,7 +135,8 @@ public class PipelineTest {
         pipeline.addStep(step3);
         pipeline.moveStep(step1, +1);
 
-        assertEquals(Arrays.asList(step2, step1, step3), pipeline.getSteps());
+        assertEquals("The step order did not change as expected", Arrays.asList(step2, step1, step3), pipeline.getSteps());
+
     }
 
     @Test
@@ -165,7 +149,6 @@ public class PipelineTest {
         pipeline.addStep(step2);
         pipeline.addStep(step3);
         pipeline.moveStep(step2, -10);
-
         assertEquals("The step was not moved to the beginning of the pipeline", Arrays.asList(step2, step1, step3), pipeline.getSteps());
     }
 
@@ -226,9 +209,13 @@ public class PipelineTest {
         eventBus.register(connection);
         eventBus.post(new ConnectionAddedEvent(connection));
 
+        ManualPipelineRunner runner = new ManualPipelineRunner(eventBus, pipeline);
+
         a1.setValue(123.0);
         b1.setValue(456.0);
         b2.setValue(789.0);
+
+        runner.runPipeline();
 
         assertEquals((Double) 1368.0, sum2.getValue().get());
     }
@@ -254,10 +241,14 @@ public class PipelineTest {
         eventBus.post(new ConnectionAddedEvent(connection));
         eventBus.post(new ConnectionRemovedEvent(connection));
 
+        ManualPipelineRunner runner = new ManualPipelineRunner(eventBus, pipeline);
+
         // Since the connection between sum1 and a2 was removed, a2 should still be equal to 0.0 here.
         a1.setValue(123.0);
         b1.setValue(456.0);
         b2.setValue(789.0);
+
+        runner.runPipeline();
 
         assertEquals((Double) 789.0, sum2.getValue().get());
     }

@@ -1,14 +1,17 @@
 package edu.wpi.grip.ui;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
+import com.google.inject.util.Modules;
 import com.sun.javafx.application.PlatformImpl;
 import edu.wpi.grip.core.GRIPCoreModule;
-import edu.wpi.grip.core.Palette;
+import edu.wpi.grip.core.PipelineRunner;
 import edu.wpi.grip.core.events.UnexpectedThrowableEvent;
 import edu.wpi.grip.core.operations.Operations;
+import edu.wpi.grip.core.serialization.Project;
 import edu.wpi.grip.core.util.SafeShutdown;
 import edu.wpi.grip.generated.CVOperations;
 import edu.wpi.grip.ui.util.DPIUtility;
@@ -21,19 +24,26 @@ import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
 import javax.inject.Inject;
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class Main extends Application {
 
-    @Inject
-    private EventBus eventBus;
-    @Inject
-    private Palette palette;
-    @Inject
-    private Logger logger;
+    @Inject private EventBus eventBus;
+    @Inject private PipelineRunner pipelineRunner;
+    @Inject private Project project;
+    @Inject private Logger logger;
 
-    protected final Injector injector = Guice.createInjector(new GRIPCoreModule(), new GRIPUIModule());
+    /**
+     * JavaFX insists on creating the main application with its own reflection code, so we can't create with the
+     * Guice and do automatic field injection. However, we can inject it after the fact.
+     */
+    @VisibleForTesting
+    protected Injector injector;
 
     private final Object dialogLock = new Object();
     private Parent root;
@@ -42,34 +52,47 @@ public class Main extends Application {
         launch(args);
     }
 
-    /**
-     * JavaFX insists on creating the main application with its own reflection code, so we can't create with the
-     * Guice and do automatic field injection. However, we can inject it after the fact.
-     */
-    public Main() {
-        injector.injectMembers(this);
-    }
-
     @Override
     @SuppressWarnings("PMD.SignatureDeclareThrowsException")
     public void start(Stage stage) throws Exception {
-        root = FXMLLoader.load(Main.class.getResource("MainWindow.fxml"), null, null, injector::getInstance);
-        root.setStyle("-fx-font-size: " + DPIUtility.FONT_SIZE + "px");
+        List<String> parameters = new ArrayList<>(getParameters().getRaw());
+
+        if (parameters.contains("--headless")) {
+            // If --headless was specified on the command line, run in headless mode (only use the core module)
+            injector = Guice.createInjector(new GRIPCoreModule());
+            injector.injectMembers(this);
+
+            parameters.remove("--headless");
+        } else {
+            // Otherwise, run with both the core and UI modules, and show the JavaFX stage
+            injector = Guice.createInjector(Modules.override(new GRIPCoreModule()).with(new GRIPUIModule()));
+            injector.injectMembers(this);
+
+            root = FXMLLoader.load(Main.class.getResource("MainWindow.fxml"), null, null, injector::getInstance);
+            root.setStyle("-fx-font-size: " + DPIUtility.FONT_SIZE + "px");
+
+            // If this isn't here this can cause a deadlock on windows. See issue #297
+            stage.setOnCloseRequest(event -> SafeShutdown.exit(0, Platform::exit));
+            stage.setTitle("GRIP Computer Vision Engine");
+            stage.getIcons().add(new Image("/edu/wpi/grip/ui/icons/grip.png"));
+            stage.setScene(new Scene(root));
+            stage.show();
+        }
 
         Operations.addOperations(eventBus);
         CVOperations.addOperations(eventBus);
 
-        stage.setOnCloseRequest((event) -> {
-            // If this isn't here this can cause a deadlock on windows
-            // See issue #297
-            SafeShutdown.exit(0, Platform::exit);
-        });
+        // If there was a file specified on the command line, open it immediately
+        if (!parameters.isEmpty()) {
+            try {
+                project.open(new File(parameters.get(0)));
+            } catch (IOException e) {
+                logger.log(Level.SEVERE, "Error loading file: " + parameters.get(0));
+                throw e;
+            }
+        }
 
-        stage.setTitle("GRIP Computer Vision Engine");
-        stage.getIcons().add(new Image("/edu/wpi/grip/ui/icons/grip.png"));
-        stage.setScene(new Scene(root));
-        stage.show();
-
+        pipelineRunner.startAsync();
     }
 
     public void stop() {

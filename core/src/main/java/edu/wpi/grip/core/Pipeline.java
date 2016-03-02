@@ -1,16 +1,21 @@
 package edu.wpi.grip.core;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import com.google.inject.Singleton;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamOmitField;
 import edu.wpi.grip.core.events.*;
-import edu.wpi.grip.core.operations.networktables.NTManager;
 import edu.wpi.grip.core.settings.ProjectSettings;
 
 import javax.inject.Inject;
 import java.util.*;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
+import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static com.google.common.base.Preconditions.checkArgument;
@@ -31,11 +36,14 @@ public class Pipeline {
     @XStreamOmitField
     private EventBus eventBus;
 
-    @Inject
-    @XStreamOmitField
-    private NTManager ntManager;
+    /*
+     * We have separate locks for sources and steps because we don't want to
+     * block access to both resources when only one is in use.
+     */
 
+    private transient final ReadWriteLock sourceLock = new ReentrantReadWriteLock();
     private final List<Source> sources = new ArrayList<>();
+    private transient ReadWriteLock stepLock = new ReentrantReadWriteLock();
     private final List<Step> steps = new ArrayList<>();
     private final Set<Connection> connections = new HashSet<>();
     private ProjectSettings settings = new ProjectSettings();
@@ -44,27 +52,108 @@ public class Pipeline {
      * Remove everything in the pipeline
      */
     public void clear() {
-        this.steps.stream().collect(Collectors.toList()).forEach(this::removeStep);
-
+        getSteps().forEach(this::removeStep);
+        // We collect the list first because the event modifies the list
         this.sources.stream()
                 .map(SourceRemovedEvent::new)
                 .collect(Collectors.toList())
                 .forEach(this.eventBus::post);
     }
 
-    /**
-     * @return The unmodifiable list of sources for inputs to the algorithm
-     * @see Source
-     */
-    public List<Source> getSources() {
-        return Collections.unmodifiableList(this.sources);
+    private final <R> R readSourcesSafely(Function<List<Source>, R> sourceListFunction) {
+        return accessSafely(sourceLock.readLock(), Collections.unmodifiableList(sources), sourceListFunction);
     }
 
     /**
-     * @return The unmodifiable list of steps in the computer vision algorithm
+     * Returns a snapshot of all of the sources in the pipeline.
+     *
+     * @return an Immutable copy of the sources at the current point in the pipeline.
+     * @see <a href="https://youtu.be/ZeO_J2OcHYM?t=16m35s">Why we use ImmutableList return type</a>
      */
-    public List<Step> getSteps() {
-        return Collections.unmodifiableList(this.steps);
+    public final ImmutableList<Source> getSources() {
+        return readSourcesSafely(ImmutableList::copyOf);
+    }
+
+    /**
+     * @param stepListFunction The function to read the steps with.
+     * @param <R>              The return type of the function
+     * @return The value returned by the function.
+     */
+    private final <R> R readStepsSafely(Function<List<Step>, R> stepListFunction) {
+        return accessSafely(stepLock.readLock(), Collections.unmodifiableList(steps), stepListFunction);
+    }
+
+    /**
+     * Returns a snapshot of all of the steps in the pipeline.
+     *
+     * @return an Immutable copy of the steps at the current point in the pipeline.
+     * @see <a href="https://youtu.be/ZeO_J2OcHYM?t=16m35s">Why we use ImmutableList return type</a>
+     */
+    public final ImmutableList<Step> getSteps() {
+        return readStepsSafely(ImmutableList::copyOf);
+    }
+
+    /*
+     * These methods should not be made public.
+     * If you do so you are making a poor design decision and should move whatever you are trying to do into
+     * this class.
+     */
+
+    /**
+     * @param stepListWriterFunction A function that modifies the step list passed to the operation.
+     * @param <R>                    The return type of the function
+     * @return The value returned by the function.
+     */
+    private <R> R writeStepsSafely(Function<List<Step>, R> stepListWriterFunction) {
+        return accessSafely(stepLock.writeLock(), steps, stepListWriterFunction);
+    }
+
+    /**
+     * @param stepListWriterConsumer A consumer that can modify the list that is passed to it.
+     */
+    private void writeStepsSafelyConsume(Consumer<List<Step>> stepListWriterConsumer) {
+        writeStepsSafely(stepList -> {
+            stepListWriterConsumer.accept(stepList);
+            return null;
+        });
+    }
+
+    private <R> R writeSourcesSafely(Function<List<Source>, R> sourceListWriterFunction) {
+        return accessSafely(sourceLock.writeLock(), sources, sourceListWriterFunction);
+    }
+
+    private void writeSourcesSafelyConsume(Consumer<List<Source>> sourceListWriterFunction) {
+        writeSourcesSafely(sources -> {
+            sourceListWriterFunction.accept(sources);
+            return null;
+        });
+    }
+
+    /*
+     * End of methods that should not be made public
+     */
+
+    /**
+     * Locks the resource with the specified lock and performs the function.
+     * When the function is complete then the lock unlocked again.
+     *
+     * @param lock         The lock for the given resource
+     * @param list         The list that will be accessed while the resource is locked
+     * @param listFunction The function that either modifies or accesses the list
+     * @param <T>          The type of list
+     * @param <R>          The return value for the function
+     * @return The value returned by the list function
+     */
+    private static <T, R> R accessSafely(Lock lock, List<T> list, Function<List<T>, R> listFunction) {
+        final R returnValue;
+        lock.lock();
+        try {
+            returnValue = listFunction.apply(list);
+        } finally {
+            // Ensure that no matter what may get thrown while reading the steps we unlock
+            lock.unlock();
+        }
+        return returnValue;
     }
 
     /**
@@ -132,18 +221,22 @@ public class Pipeline {
     /**
      * @return true if the step1 is before step2 in the pipeline
      */
-    private synchronized boolean isBefore(Step step1, Step step2) {
-        return this.steps.indexOf(step1) < this.steps.indexOf(step2);
+    private boolean isBefore(Step step1, Step step2) {
+        return readStepsSafely(steps -> steps.indexOf(step1) < steps.indexOf(step2));
     }
 
     @Subscribe
     public void onSourceAdded(SourceAddedEvent event) {
-        this.sources.add(event.getSource());
+        writeSourcesSafelyConsume(sources -> {
+            sources.add(event.getSource());
+        });
     }
 
     @Subscribe
     public void onSourceRemoved(SourceRemovedEvent event) {
-        this.sources.remove(event.getSource());
+        writeSourcesSafelyConsume(sources -> {
+            sources.remove(event.getSource());
+        });
 
         // Sockets of deleted sources should not be previewed
         for (OutputSocket<?> socket : event.getSource().getOutputSockets()) {
@@ -151,24 +244,30 @@ public class Pipeline {
         }
     }
 
-    public synchronized void addStep(int index, Step step) {
+    public void addStep(int index, Step step) {
         checkNotNull(step, "The step can not be null");
-        this.steps.add(index, step);
+        checkArgument(!step.removed(), "The step must not have been disabled already");
+
+        writeStepsSafelyConsume(steps -> steps.add(index, step));
+
         this.eventBus.register(step);
         this.eventBus.post(new StepAddedEvent(step, index));
     }
 
-    public synchronized void addStep(Step step) {
+    public void addStep(Step step) {
         addStep(this.steps.size(), step);
     }
 
-    public synchronized void removeStep(Step step) {
+    public void removeStep(Step step) {
         checkNotNull(step, "The step can not be null");
-        this.steps.remove(step);
+
+        writeStepsSafelyConsume(steps -> steps.remove(step));
+
         // Sockets of deleted steps should not be previewed
         for (OutputSocket<?> socket : step.getOutputSockets()) {
             socket.setPreviewed(false);
         }
+        step.setRemoved();
         this.eventBus.unregister(step);
         this.eventBus.post(new StepRemovedEvent(step));
     }
@@ -177,19 +276,26 @@ public class Pipeline {
         checkNotNull(step, "The step can not be null");
         checkArgument(this.steps.contains(step), "The step must exist in the pipeline to be moved");
 
-        final int oldIndex = this.steps.indexOf(step);
-        this.steps.remove(oldIndex);
+        // We are modifying the steps array
+        writeStepsSafelyConsume(steps -> {
+            final int oldIndex = this.steps.indexOf(step);
+            this.steps.remove(oldIndex);
 
-        // Compute the new index of the step, clamping to the beginning or end of pipeline if it goes past either end
-        final int newIndex = Math.min(Math.max(oldIndex + delta, 0), this.steps.size());
-        this.steps.add(newIndex, step);
+            // Compute the new index of the step, clamping to the beginning or end of pipeline if it goes past either end
+            final int newIndex = Math.min(Math.max(oldIndex + delta, 0), this.steps.size());
+            this.steps.add(newIndex, step);
+        });
+
+        // Do not lock while posting the event
         eventBus.post(new StepMovedEvent(step, delta));
+
     }
 
     @Subscribe
     public void onConnectionAdded(ConnectionAddedEvent event) {
         final Connection connection = event.getConnection();
         this.connections.add(connection);
+        this.eventBus.register(connection);
     }
 
     @Subscribe

@@ -246,11 +246,11 @@ public class SocketHintDeclarationCollection {
 
     public List<SocketHintDeclaration> getAllSocketHints() {
         List<SocketHintDeclaration> socketHintDeclarations = new ArrayList<>();
-        for (Type type : inputHintsMap.keySet()) {
-            socketHintDeclarations.add(new SocketHintDeclaration(collector, type, inputHintsMap.get(type), DefinedParamType.DefinedParamDirection.INPUT));
+        for (Map.Entry<Type, List<DefinedParamType>> type : inputHintsMap.entrySet()) {
+            socketHintDeclarations.add(new SocketHintDeclaration(collector, type.getKey(), type.getValue(), DefinedParamType.DefinedParamDirection.INPUT));
         }
-        for (Type type : outputHintsMap.keySet()) {
-            socketHintDeclarations.add(new SocketHintDeclaration(collector, type, outputHintsMap.get(type), DefinedParamType.DefinedParamDirection.OUTPUT));
+        for (Map.Entry<Type, List<DefinedParamType>> type : outputHintsMap.entrySet()) {
+            socketHintDeclarations.add(new SocketHintDeclaration(collector, type.getKey(), type.getValue(), DefinedParamType.DefinedParamDirection.OUTPUT));
         }
         return socketHintDeclarations;
     }

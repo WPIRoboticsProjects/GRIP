@@ -28,7 +28,7 @@ import java.util.stream.Collectors;
  */
 public class OperationList {
     private final PackageDeclaration packageDec = new PackageDeclaration(new NameExpr("edu.wpi.grip.generated"));
-    private final String className = "CVOperations";
+    private static final String className = "CVOperations";
     private final List<ImportDeclaration> imports;
     private final List<Operation> operations;
 

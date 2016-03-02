@@ -32,6 +32,11 @@ public class ConvexHullsOperation implements Operation {
     }
 
     @Override
+    public Category getCategory() {
+        return Category.FEATURE_DETECTION;
+    }
+
+    @Override
     public Optional<InputStream> getIcon() {
         return Optional.of(getClass().getResourceAsStream("/edu/wpi/grip/ui/icons/convex-hulls.png"));
     }

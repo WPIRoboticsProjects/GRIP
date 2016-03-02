@@ -86,6 +86,11 @@ public class NTPublishOperation<S, T extends NTPublishable> implements Operation
     }
 
     @Override
+    public Category getCategory() {
+        return Category.NETWORK;
+    }
+
+    @Override
     public Optional<InputStream> getIcon() {
         return Optional.of(getClass().getResourceAsStream("/edu/wpi/grip/ui/icons/first.png"));
     }

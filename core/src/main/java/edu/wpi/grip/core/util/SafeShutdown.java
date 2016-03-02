@@ -1,5 +1,7 @@
 package edu.wpi.grip.core.util;
 
+import javax.annotation.Nullable;
+
 /**
  * This class should be used to shutdown GRIP safely.
  * This is because shutdown hooks may throw exceptions, as such
@@ -17,7 +19,7 @@ public final class SafeShutdown {
         Runtime.getRuntime().addShutdownHook(new Thread() {
             @Override
             public void run() {
-                stopping = true;
+                SafeShutdown.stopping = true;
             }
         });
     }
@@ -33,7 +35,7 @@ public final class SafeShutdown {
      *                   This is nullable.
      * @see System#exit(int)
      */
-    public static final void exit(int statusCode, PreSystemExitHook hook) {
+    public static final void exit(int statusCode, @Nullable PreSystemExitHook hook) {
         flagStopping();
         try {
             if (hook != null) {
