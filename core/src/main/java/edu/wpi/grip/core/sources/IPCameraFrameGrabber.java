@@ -162,14 +162,15 @@ public class IPCameraFrameGrabber extends FrameGrabber {
                 }
             }
         }
+        
         // find embedded jpeg in stream
-        final String subheader = sb.toString();
+        final String subheader = sb.toString().toLowerCase();;
         //log.debug(subheader);
 
         // if (boundryKey == null)
         // {
         // Yay! - server was nice and sent content length
-        int c0 = subheader.indexOf("Content-Length: ");
+        int c0 = subheader.indexOf("content-length: ");
         int c1 = subheader.indexOf('\r', c0);
 
         if (c0 < 0) {
