@@ -164,7 +164,7 @@ public class IPCameraFrameGrabber extends FrameGrabber {
         }
         
         // find embedded jpeg in stream
-        final String subheader = sb.toString().toLowerCase();;
+        final String subheader = sb.toString().toLowerCase();
         //log.debug(subheader);
 
         // if (boundryKey == null)
