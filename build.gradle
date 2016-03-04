@@ -42,6 +42,7 @@ allprojects {
     apply plugin: 'java'
     apply plugin: 'application'
     apply plugin: 'jacoco'
+    apply plugin: 'checkstyle'
 
 
     repositories {
@@ -51,7 +52,6 @@ allprojects {
     jacoco {
         toolVersion = "0.7.5.201505241946"
     }
-
 
     dependencies {
         testCompile group: 'net.jodah', name: 'concurrentunit', version: '0.4.2'
@@ -72,6 +72,12 @@ allprojects {
             xml.enabled = true
             html.enabled = true
         }
+    }
+
+    checkstyle {
+        configFile = file("${project.rootDir}/google_checks.xml")
+        reportsDir = file("${project.rootDir}/build/reports/checkstyle/")
+        toolVersion = '6.14'
     }
 
     check.dependsOn jacocoTestReport

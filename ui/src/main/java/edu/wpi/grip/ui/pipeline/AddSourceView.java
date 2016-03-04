@@ -1,9 +1,5 @@
 package edu.wpi.grip.ui.pipeline;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.eventbus.EventBus;
-import com.google.inject.Inject;
-import com.google.common.net.InetAddresses;
 import edu.wpi.grip.core.events.SourceAddedEvent;
 import edu.wpi.grip.core.events.UnexpectedThrowableEvent;
 import edu.wpi.grip.core.sources.CameraSource;
@@ -11,19 +7,11 @@ import edu.wpi.grip.core.sources.ImageFileSource;
 import edu.wpi.grip.core.sources.MultiImageFileSource;
 import edu.wpi.grip.ui.util.DPIUtility;
 import edu.wpi.grip.ui.util.SupplierWithIO;
-import javafx.application.Platform;
-import javafx.event.EventHandler;
-import javafx.scene.Parent;
-import javafx.scene.control.*;
-import javafx.scene.image.ImageView;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Priority;
-import javafx.scene.text.Text;
-import javafx.scene.text.TextAlignment;
-import javafx.stage.FileChooser;
-import javafx.stage.FileChooser.ExtensionFilter;
+
+import com.google.common.annotations.VisibleForTesting;
+import com.google.common.eventbus.EventBus;
+import com.google.common.net.InetAddresses;
+import com.google.inject.Inject;
 
 import java.io.File;
 import java.io.IOException;
@@ -35,10 +23,31 @@ import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
+import javafx.application.Platform;
+import javafx.event.EventHandler;
+import javafx.scene.Parent;
+import javafx.scene.control.Button;
+import javafx.scene.control.ButtonBar;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.ContentDisplay;
+import javafx.scene.control.Control;
+import javafx.scene.control.Dialog;
+import javafx.scene.control.Spinner;
+import javafx.scene.control.TextField;
+import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.text.Text;
+import javafx.scene.text.TextAlignment;
+import javafx.stage.FileChooser;
+import javafx.stage.FileChooser.ExtensionFilter;
+
 /**
- * A box of buttons that let the user add different kinds of {@link edu.wpi.grip.core.Source Source}s.  Depending on which button is pressed,
- * a different dialog is presented for the user to construct that source.  As an example, the image file source results
- * in a file picker that the user can use to browse for an image.
+ * A box of buttons that let the user add different kinds of {@link edu.wpi.grip.core.Source Source}s.  Depending on
+ * which button is pressed, a different dialog is presented for the user to construct that source.  As an example, the
+ * image file source results in a file picker that the user can use to browse for an image.
  */
 public class AddSourceView extends HBox {
 
@@ -111,7 +120,9 @@ public class AddSourceView extends HBox {
 
             final List<File> imageFiles = fileChooser.showOpenMultipleDialog(this.getScene().getWindow());
 
-            if (imageFiles == null) return;
+            if (imageFiles == null) {
+                return;
+            }
 
             // Add a new source for each image .
             if (imageFiles.size() == 1) {
@@ -119,96 +130,93 @@ public class AddSourceView extends HBox {
                     final ImageFileSource imageFileSource = imageSourceFactory.create(imageFiles.get(0));
                     imageFileSource.initialize();
                     eventBus.post(new SourceAddedEvent(imageFileSource));
-                } catch (IOException e) {
-                    eventBus.post(new UnexpectedThrowableEvent(e, "The image selected was invalid"));
+                } catch (IOException exception) {
+                    eventBus.post(new UnexpectedThrowableEvent(exception, "The image selected was invalid"));
                 }
             } else {
                 try {
                     final MultiImageFileSource multiImageFileSource = multiImageSourceFactory.create(imageFiles);
                     multiImageFileSource.initialize();
                     eventBus.post(new SourceAddedEvent(multiImageFileSource));
-                } catch (IOException e) {
-                    eventBus.post(new UnexpectedThrowableEvent(e, "One of the images selected was invalid"));
+                } catch (IOException exception) {
+                    eventBus.post(new UnexpectedThrowableEvent(exception, "One of the images selected was invalid"));
                 }
             }
         });
 
-        webcamButton = addButton("Add\nWebcam", getClass().getResource("/edu/wpi/grip/ui/icons/add-webcam.png"), mouseEvent -> {
-            final Parent root = this.getScene().getRoot();
+        webcamButton = addButton("Add\nWebcam", getClass().getResource("/edu/wpi/grip/ui/icons/add-webcam.png"),
+            mouseEvent -> {
+                final Parent root = this.getScene().getRoot();
 
-            // Show a dialog for the user to pick a camera index
-            final Spinner<Integer> cameraIndex = new Spinner<Integer>(0, Integer.MAX_VALUE, 0);
-            final SourceDialog dialog = new SourceDialog(root, cameraIndex);
+                // Show a dialog for the user to pick a camera index
+                final Spinner<Integer> cameraIndex = new Spinner<Integer>(0, Integer.MAX_VALUE, 0);
+                final SourceDialog dialog = new SourceDialog(root, cameraIndex);
 
-            dialog.setTitle("Add Webcam");
-            dialog.setHeaderText("Choose a camera");
-            dialog.setContentText("index");
+                dialog.setTitle("Add Webcam");
+                dialog.setHeaderText("Choose a camera");
+                dialog.setContentText("index");
 
-            dialog.getDialogPane().lookupButton(ButtonType.OK).requestFocus();
+                dialog.getDialogPane().lookupButton(ButtonType.OK).requestFocus();
 
-            // If the user clicks OK, add a new camera source
-            loadCamera(dialog,
-                    () -> {
-                        final CameraSource cameraSource = cameraSourceFactory.create(cameraIndex.getValue());
-                        cameraSource.initialize();
-                        return cameraSource;
-                    },
-                    e -> {
-                        dialog.errorText.setText(e.getMessage());
-                    });
-        });
-
-        ipcamButton = addButton("Add IP\nCamera", getClass().getResource("/edu/wpi/grip/ui/icons/add-webcam.png"), mouseEvent -> {
-            final Parent root = this.getScene().getRoot();
-
-            // Show a dialog for the user to pick a camera URL
-
-            final TextField cameraAddress = new TextField();
-            final SourceDialog dialog = new SourceDialog(root, cameraAddress);
-            cameraAddress.setPromptText("Ex: http://10.1.90.11/mjpg/video.mjpg");
-            cameraAddress.textProperty().addListener(observable -> {
-                boolean validURL = true;
-
-                try {
-                    new URL(cameraAddress.getText()).toURI();
-                } catch (MalformedURLException e) {
-                    validURL = false;
-                    if (InetAddresses.isInetAddress(cameraAddress.getText()) || cameraAddress.getText().endsWith(".local")) {
-                        cameraAddress.setText("http://" + cameraAddress.getText());
-                        validURL = true;
-                    }
-                } catch (URISyntaxException e) {
-                    validURL = false;
-                }
-
-                // Enable the "OK" button only if the user has entered a valid URL
-                dialog.getDialogPane().lookupButton(ButtonType.OK).setDisable(!validURL);
+                // If the user clicks OK, add a new camera source
+                loadCamera(dialog, () -> {
+                    final CameraSource cameraSource = cameraSourceFactory.create(cameraIndex.getValue());
+                    cameraSource.initialize();
+                    return cameraSource;
+                }, e -> { dialog.errorText.setText(e.getMessage()); });
             });
 
-            dialog.setTitle("Add IP Camera");
-            dialog.setHeaderText("Enter the IP camera URL");
-            dialog.setContentText("URL");
-            dialog.getDialogPane().lookupButton(ButtonType.OK).setDisable(true);
+        ipcamButton = addButton("Add IP\nCamera", getClass().getResource("/edu/wpi/grip/ui/icons/add-webcam.png"),
+            mouseEvent -> {
+                final Parent root = this.getScene().getRoot();
 
-            // If the user clicks OK, add a new camera source
-            loadCamera(dialog,
-                    () -> {
-                        final CameraSource cameraSource = cameraSourceFactory.create(cameraAddress.getText());
-                        cameraSource.initialize();
-                        return cameraSource;
-                    },
-                    e -> {
-                        dialog.errorText.setText(e.getMessage());
-                    });
-        });
+                // Show a dialog for the user to pick a camera URL
+                final TextField cameraAddress = new TextField();
+                final SourceDialog dialog = new SourceDialog(root, cameraAddress);
+                cameraAddress.setPromptText("Ex: http://10.1.90.11/mjpg/video.mjpg");
+                cameraAddress.textProperty().addListener(observable -> {
+                    boolean validUrl = true;
+
+                    try {
+                        new URL(cameraAddress.getText()).toURI();
+                    } catch (MalformedURLException exception) {
+                        validUrl = false;
+                        if (InetAddresses.isInetAddress(cameraAddress.getText())
+                                || cameraAddress.getText().endsWith(".local")) {
+                            cameraAddress.setText("http://" + cameraAddress.getText());
+                            validUrl = true;
+                        }
+                    } catch (URISyntaxException exception) {
+                        validUrl = false;
+                    }
+
+                    // Enable the "OK" button only if the user has entered a valid URL
+                    dialog.getDialogPane().lookupButton(ButtonType.OK).setDisable(!validUrl);
+                });
+
+                dialog.setTitle("Add IP Camera");
+                dialog.setHeaderText("Enter the IP camera URL");
+                dialog.setContentText("URL");
+                dialog.getDialogPane().lookupButton(ButtonType.OK).setDisable(true);
+
+                // If the user clicks OK, add a new camera source
+                loadCamera(dialog, () -> {
+                    final CameraSource cameraSource = cameraSourceFactory.create(cameraAddress.getText());
+                    cameraSource.initialize();
+                    return cameraSource;
+                }, e -> { dialog.errorText.setText(e.getMessage()); });
+            });
     }
 
     /**
+     * Load a new camera source.
+     *
      * @param dialog               The dialog to load the camera with
      * @param cameraSourceSupplier The supplier that will create the camera
      * @param failureCallback      The handler for when the camera source supplier throws an IO Exception
      */
-    private void loadCamera(Dialog<ButtonType> dialog, SupplierWithIO<CameraSource> cameraSourceSupplier, Consumer<IOException> failureCallback) {
+    private void loadCamera(Dialog<ButtonType> dialog, SupplierWithIO<CameraSource> cameraSourceSupplier,
+                            Consumer<IOException> failureCallback) {
         assert Platform.isFxApplicationThread() : "Should only run in FX thread";
         activeDialog = Optional.of(dialog);
         dialog.showAndWait().filter(Predicate.isEqual(ButtonType.OK)).ifPresent(result -> {
@@ -216,9 +224,9 @@ public class AddSourceView extends HBox {
                 // Will try to create the camera with the values from the supplier
                 final CameraSource source = cameraSourceSupplier.getWithIO();
                 eventBus.post(new SourceAddedEvent(source));
-            } catch (IOException e) {
+            } catch (IOException exception) {
                 // This will run it again with the new values retrieved by the supplier
-                failureCallback.accept(e);
+                failureCallback.accept(exception);
                 loadCamera(dialog, cameraSourceSupplier, failureCallback);
             }
         });
@@ -229,8 +237,8 @@ public class AddSourceView extends HBox {
     /**
      * Add a new button for adding a source.  This method takes care of setting the event handler.
      */
-    private Button addButton(String text, URL graphicURL, EventHandler<? super MouseEvent> onMouseClicked) {
-        final ImageView graphic = new ImageView(graphicURL.toString());
+    private Button addButton(String text, URL graphicUrl, EventHandler<? super MouseEvent> onMouseClicked) {
+        final ImageView graphic = new ImageView(graphicUrl.toString());
         graphic.setFitWidth(DPIUtility.SMALL_ICON_SIZE);
         graphic.setFitHeight(DPIUtility.SMALL_ICON_SIZE);
 
