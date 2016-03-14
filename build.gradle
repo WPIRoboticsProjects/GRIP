@@ -15,27 +15,52 @@ plugins {
 }
 apply plugin: 'nebula-aggregate-javadocs'
 
+def getGitCommit = { ->
+    String HEAD_REF = new File(rootDir, '.git/HEAD').text.replace("ref: ", "").replace("\n", "")
+    String COMMIT_HASH = new File(rootDir, ".git/${HEAD_REF}").text.substring(0, 7)
+    return COMMIT_HASH
+}
 
 /*
  * Gets the version name from the latest Git tag
  * http://ryanharter.com/blog/2013/07/30/automatic-versioning-with-git-and-gradle/
  */
 def getVersionName = { ->
-    def stdout = new ByteArrayOutputStream()
-    exec {
-        commandLine 'git', 'describe', '--tags'
-        standardOutput = stdout
+    if (project.hasProperty("vers")) return vers
+    try {
+        def stdout = new ByteArrayOutputStream()
+        exec {
+            commandLine 'git', 'describe', '--tags'
+            standardOutput = stdout
+        }
+        return stdout.toString().trim().substring(1)
+    } catch (org.gradle.process.internal.ExecException e) {
+        if (!new File(rootDir, '.git/HEAD').exists()) {
+            println("WARN: Could not fetch Git Tag for build version. No Git HEAD available. Substituting version 0.0.0")
+            return "0.0.0"
+        }
+        println("WARN: Could not fetch Git Tag for build version. Please install Git and add it to your PATH. For now, the Git commit hash has been substituted.")
+        return getGitCommit()
     }
-    return stdout.toString().trim().substring(1)
 }
 
 def getVersionSimple = { ->
-    def stdout = new ByteArrayOutputStream()
-    exec {
-        commandLine 'git', 'describe', '--tags', '--abbrev=0'
-        standardOutput = stdout
+    if (project.hasProperty("vers")) return vers
+    try {
+        def stdout = new ByteArrayOutputStream()
+        exec {
+            commandLine 'git', 'describe', '--tags', '--abbrev=0'
+            standardOutput = stdout
+        }
+        return stdout.toString().trim().substring(1)
+    } catch (org.gradle.process.internal.ExecException e) {
+        if (!new File(rootDir, '.git/HEAD').exists()) {
+            println("WARN: Could not fetch Git Tag for build version. No Git HEAD available. Substituting version 0.0.0")
+            return "0.0.0"
+        }
+        println("WARN: Could not fetch Git Tag for build version. Please install Git and add it to your PATH. For now, the Git commit hash has been substituted.")
+        return getGitCommit()
     }
-    return stdout.toString().trim().substring(1)
 }
 
 allprojects {
