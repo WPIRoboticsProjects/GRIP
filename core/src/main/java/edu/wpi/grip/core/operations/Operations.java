@@ -43,5 +43,10 @@ public final class Operations {
         eventBus.post(new OperationAddedEvent(new NTPublishOperation<>(BlobsReport.class)));
         eventBus.post(new OperationAddedEvent(new NTPublishOperation<>(LinesReport.class)));
         eventBus.post(new OperationAddedEvent(new PublishVideoOperation()));
+        eventBus.post(new OperationAddedEvent(new PlaceRectangleOperation()));
+        eventBus.post(new OperationAddedEvent(new NumberThresholdOperation()));
+        eventBus.post(new OperationAddedEvent(new CountContoursOperation()));
+        eventBus.post(new OperationAddedEvent(new CropOperation()));
     }
+    //eventBus.post(new OperationAddedEvent(new ));
 }
