@@ -160,6 +160,8 @@ public final class ExceptionWitnessResponderButton extends Button {
             final ExceptionPopOver newPopOver = new ExceptionPopOver(this.popOverTitle);
             // Scene and root are null when the the constructor is called
             // They are not null once they are added to a scene.
+            assert getScene() != null : "Scene should not be null, this object has not been added to the scene yet";
+            assert getScene().getRoot() != null : "Root should not be null, this object has not been added to the scene yet";
             final Parent root = getScene().getRoot();
             newPopOver.getRoot().getStylesheets().addAll(root.getStylesheets());
             newPopOver.getRoot().setStyle(root.getStyle());
@@ -170,6 +172,10 @@ public final class ExceptionWitnessResponderButton extends Button {
 
     @Subscribe
     public void onExceptionEvent(ExceptionEvent event) {
+        if (getScene() == null || getScene().getRoot() == null) {
+            // We are responding to an event prior to this button being added to the scene. Ignore this for now.
+            return;
+        }
         if (event.getOrigin().equals(origin)) {
             // Not timing sensitive. Can remain Platform.runLater
             Platform.runLater(() -> {
@@ -184,6 +190,10 @@ public final class ExceptionWitnessResponderButton extends Button {
 
     @Subscribe
     public void onExceptionClearedEvent(ExceptionClearedEvent event) {
+        if (getScene() == null || getScene().getRoot() == null) {
+            // We are responding to an event prior to this button being added to the scene. Ignore this for now.
+            return;
+        }
         if (event.getOrigin().equals(origin)) {
             // Not timing sensitive. Can remain Platform.runLater
             Platform.runLater(() -> {
