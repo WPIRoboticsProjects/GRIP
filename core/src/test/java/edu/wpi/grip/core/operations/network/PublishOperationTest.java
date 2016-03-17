@@ -4,14 +4,12 @@ import com.google.common.eventbus.EventBus;
 import edu.wpi.grip.core.InputSocket;
 import org.junit.Test;
 
-import java.util.function.Function;
-
 import static org.junit.Assert.assertEquals;
 
 /**
  * Tests for error handling in the publish operations' reflection stuff.
  */
-public class KeyValuePublishOperationTest {
+public class PublishOperationTest {
 
     private class Report implements Publishable {
         @PublishValue(key = "foo", weight = 2)
@@ -85,14 +83,10 @@ public class KeyValuePublishOperationTest {
         }
     }
 
-    private static class TestKeyValuePublishOperation<S, T extends Publishable> extends KeyValuePublishOperation<S, T> {
+    private abstract static class TestPublishAnnotatedOperation<S, T extends Publishable> extends PublishAnnotatedOperation<S, T, Double> {
 
-        public TestKeyValuePublishOperation(Manager manager, Class<T> type) {
-            super(manager, type);
-        }
-
-        public TestKeyValuePublishOperation(Manager manager, Class<S> socketType, Class<T> reportType, Function<S, T> converter) {
-            super(manager, socketType, reportType, converter);
+        public TestPublishAnnotatedOperation() {
+            super(MockMapNetworkPublisher::new);
         }
 
         @Override
@@ -114,7 +108,8 @@ public class KeyValuePublishOperationTest {
 
     @Test
     public void testNTValueOrder() {
-        TestKeyValuePublishOperation<Report, Report> ntPublishOperation = new TestKeyValuePublishOperation<>(new MockManager(), Report.class);
+        TestPublishAnnotatedOperation<Report, Report> ntPublishOperation = new TestPublishAnnotatedOperation<Report, Report>() {
+        };
         InputSocket<?>[] sockets = ntPublishOperation.createInputSockets(new EventBus());
 
         assertEquals(4, sockets.length);
@@ -124,27 +119,33 @@ public class KeyValuePublishOperationTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void testNonDistinctWeights() {
-        new TestKeyValuePublishOperation<>(new MockManager(), ReportWithNonDistinctWeights.class);
+        new TestPublishAnnotatedOperation<ReportWithNonDistinctWeights, ReportWithNonDistinctWeights>() {
+        };
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testPublishableWithMethodThatHasParameters() {
-        new TestKeyValuePublishOperation<>(new MockManager(), ReportWithParameters.class);
+        new TestPublishAnnotatedOperation<ReportWithParameters, ReportWithParameters>() {
+
+        };
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testPublishableWithNonDistinctKeys() {
-        new TestKeyValuePublishOperation<>(new MockManager(), ReportWithNonDistinctKeys.class);
+        new TestPublishAnnotatedOperation<ReportWithNonDistinctKeys, ReportWithNonDistinctKeys>() {
+        };
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testPublishableWithMultipleEmptyKeys() {
-        new TestKeyValuePublishOperation<>(new MockManager(), ReportWithMultipleEmptyKeys.class);
+        new TestPublishAnnotatedOperation<ReportWithMultipleEmptyKeys, ReportWithMultipleEmptyKeys>() {
+        };
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testPublishableWithMixedEmptyAndSuppliedKeys() {
-        new TestKeyValuePublishOperation<>(new MockManager(), ReportWithMixedEmptyAndSuppliedKeys.class);
+        new TestPublishAnnotatedOperation<ReportWithMixedEmptyAndSuppliedKeys, ReportWithMixedEmptyAndSuppliedKeys>() {
+        };
     }
 
 }

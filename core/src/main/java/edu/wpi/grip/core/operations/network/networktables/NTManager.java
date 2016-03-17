@@ -12,7 +12,8 @@ import edu.wpi.grip.core.PipelineRunner;
 import edu.wpi.grip.core.events.ProjectSettingsChangedEvent;
 import edu.wpi.grip.core.events.StepRemovedEvent;
 import edu.wpi.grip.core.operations.network.Manager;
-import edu.wpi.grip.core.operations.network.NetworkKeyValuePublisher;
+import edu.wpi.grip.core.operations.network.MapNetworkPublisher;
+import edu.wpi.grip.core.operations.network.MapNetworkPublisherFactory;
 import edu.wpi.grip.core.settings.ProjectSettings;
 import edu.wpi.grip.core.util.GRIPMode;
 
@@ -31,7 +32,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * This class encapsulates the way we map various settings to the global NetworkTables state.
  */
 @Singleton
-public class NTManager implements Manager {
+public class NTManager implements Manager, MapNetworkPublisherFactory {
 
     /**
      * Information from:
@@ -108,24 +109,23 @@ public class NTManager implements Manager {
     }
 
     /**
-     * If there are no NTKeyValuePublishOperation steps, we can shut down NetworkTables
+     * If there are no NTPublishAnnotatedOperation steps, we can shut down NetworkTables
      */
     @Subscribe
     public void disableNetworkTables(StepRemovedEvent event) {
-        if (!pipeline.getSteps().stream().anyMatch(step -> step.getOperation() instanceof NTKeyValuePublishOperation)) {
+        if (!pipeline.getSteps().stream().anyMatch(step -> step.getOperation() instanceof NTPublishAnnotatedOperation)) {
             synchronized (NetworkTable.class) {
                 NetworkTable.shutdown();
             }
         }
     }
 
-
-    private static final class NTPublisher<P> extends NetworkKeyValuePublisher<P> {
+    private static final class NTPublisher<P> extends MapNetworkPublisher<P> {
         private final ImmutableSet<String> keys;
         private Optional<String> name = Optional.empty();
 
-        protected NTPublisher(Class<P> publishType, Set<String> keys) {
-            super(publishType, keys);
+        protected NTPublisher(Set<String> keys) {
+            super(keys);
             this.keys = ImmutableSet.copyOf(keys);
         }
 
@@ -144,7 +144,7 @@ public class NTManager implements Manager {
         }
 
         @Override
-        protected void doPublish(P value) {
+        protected void doPublishSingle(P value) {
             checkNotNull(value, "value cannot be null");
             getRootTable().putValue(name.get(), value);
         }
@@ -187,7 +187,7 @@ public class NTManager implements Manager {
     }
 
     @Override
-    public <P>NetworkKeyValuePublisher<P> createPublisher(Class<P> publishType, Set<String> keys) {
-        return new NTPublisher<>(publishType, keys);
+    public <P>MapNetworkPublisher<P> create(Set<String> keys) {
+        return new NTPublisher<>(keys);
     }
 }

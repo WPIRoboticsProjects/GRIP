@@ -21,6 +21,21 @@ def getGitCommit = { ->
     return COMMIT_HASH
 }
 
+idea.project {
+    ipr.withXml { provider ->
+        def node = provider.asNode()
+        def compilerConfig = node.component.find { it.'@name' == 'CompilerConfiguration'}
+        compilerConfig.annotationProcessing[0].'@enabled' = 'true'
+//        def ccfg = node.component.find { it.@name == 'CompilerConfiguration' }
+//        ccfg.remove(ccfg.annotationProcessing)
+//        ccfg.append(new NodeBuilder().annotationProcessing() {
+//            profile(default: true, name: 'Default', enabled: true) {
+//                processorPath(useClasspath: true)
+//            }
+//        })
+    }
+}
+
 /*
  * Gets the version name from the latest Git tag
  * http://ryanharter.com/blog/2013/07/30/automatic-versioning-with-git-and-gradle/
@@ -146,7 +161,7 @@ project(":core") {
                 url = "http://first.wpi.edu/FRC/roborio/maven/development"
             }
             maven {
-                url = "https://github.com/rosjava/rosjava_mvn_repo/raw/master"
+                url = "https://github.com/WPIRoboticsProjects/rosjava_mvn_repo/raw/master"
             }
         }
     }
@@ -162,6 +177,7 @@ project(":core") {
         compile group: 'com.thoughtworks.xstream', name: 'xstream', version: '1.4.8'
         compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.4'
         compile group: 'com.google.guava', name: 'guava', version: '19.0'
+        compile group: 'com.google.auto.value', name: 'auto-value', version: '1.1'
         // We use the no_aop version of Guice because the aop isn't avaiable in arm java
         // http://stackoverflow.com/a/15235190/3708426
         // https://github.com/google/guice/wiki/OptionalAOP
@@ -170,6 +186,7 @@ project(":core") {
 
         // Network publishing dependencies
         compile group: 'org.ros.rosjava_core', name: 'rosjava', version: '[0.2,0.3)'
+        compile group: 'org.ros.rosjava_messages', name: 'grip_msgs', version: '0.0.1'
         compile group: 'edu.wpi.first.wpilib.networktables.java', name: 'NetworkTables', version: '3.0.0-SNAPSHOT', classifier: 'desktop'
         compile group: 'edu.wpi.first.wpilib.networktables.java', name: 'NetworkTables', version: '3.0.0-SNAPSHOT', classifier: 'arm'
     }
@@ -238,8 +255,8 @@ project(":core") {
 
     idea.module {
         sourceDirs += sourceSets.generated.java.srcDirs
+        sourceDirs += file('generated')
     }
-    // End IDE setup
 }
 
 project(":ui") {

@@ -7,29 +7,19 @@ import java.util.Map;
 import java.util.Set;
 
 import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
- * Manages the interface between the {@link KeyValuePublishOperation} and the actual network
- * protocol implemented by a specific {@link Manager}.
- * <p>
- * This class is designed to be in one of two states, either the set of keys
- * will be empty. In which case the name will be used as the publish key.
- * In the other case the keys list will be populated and each value will
- * need to be published with a specific key.
+ * Publishes a map of keys to values
+ *
+ * @param <T> The type of the 'value' in the string, value map that is being published
  */
-public abstract class NetworkKeyValuePublisher<T> extends NetworkPublisher {
+public abstract class MapNetworkPublisher<T> extends NetworkPublisher<Map<String, T>> {
     private final ImmutableSet<String> keys;
-    private final Class<T> publishType;
 
-    protected NetworkKeyValuePublisher(Class<T> publishType, Set<String> keys) {
+    protected MapNetworkPublisher(Set<String> keys) {
+        super();
         checkArgument(!keys.contains(""), "Keys can not contain the empty string");
         this.keys = ImmutableSet.copyOf(keys);
-        this.publishType = checkNotNull(publishType, "The publishType cannot be null");
-    }
-
-    protected final Class<T> getPublishType() {
-        return publishType;
     }
 
     /**
@@ -38,7 +28,8 @@ public abstract class NetworkKeyValuePublisher<T> extends NetworkPublisher {
      *
      * @param publishMap the keyValues to publish
      */
-    final void publish(Map<String, T> publishMap) {
+    @Override
+    public final void publish(Map<String, T> publishMap) {
         final Map<String, T> publishMapCopy = ImmutableMap.copyOf(publishMap);
         if (!keys.isEmpty()) {
             publishMap.entrySet().forEach(key -> checkArgument(keys.contains(key), "Key must be in keys list: " + key));
@@ -46,18 +37,17 @@ public abstract class NetworkKeyValuePublisher<T> extends NetworkPublisher {
         checkNamePresent();
         if (!publishMapCopy.containsKey("")) {
             doPublish(publishMapCopy);
-        } else if(!publishMapCopy.keySet().isEmpty()){
-            doPublish(publishMapCopy.get(""));
+        } else if (!publishMapCopy.keySet().isEmpty()) {
+            doPublishSingle(publishMapCopy.get(""));
         } else {
             doPublish();
         }
     }
 
     /**
-     * Perform the publish with the key and value. The key is guaranteed to be in the
-     * {@link #keys} set.
+     * Publishes a key value mapping
      *
-     * @param publishMap the keyValues to publish
+     * @param publishMap The mapping of keys to values to be published
      */
     protected abstract void doPublish(Map<String, T> publishMap);
 
@@ -66,15 +56,10 @@ public abstract class NetworkKeyValuePublisher<T> extends NetworkPublisher {
      *
      * @param value The value to be published
      */
-    protected abstract void doPublish(T value);
+    protected abstract void doPublishSingle(T value);
 
     /**
      * Publishes nothing.
      */
     protected abstract void doPublish();
-
-    /**
-     * Close the network publisher. This should not throw an exception.
-     */
-    public abstract void close();
 }

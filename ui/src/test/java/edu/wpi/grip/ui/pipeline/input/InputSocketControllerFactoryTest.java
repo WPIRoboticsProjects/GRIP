@@ -9,7 +9,6 @@ import edu.wpi.grip.core.Operation;
 import edu.wpi.grip.core.Palette;
 import edu.wpi.grip.core.Step;
 import edu.wpi.grip.core.operations.OperationsFactory;
-import edu.wpi.grip.core.operations.network.MockNetworkPublisher;
 import edu.wpi.grip.generated.CVOperations;
 import edu.wpi.grip.ui.GRIPUIModule;
 import edu.wpi.grip.util.GRIPCoreTestModule;
@@ -48,7 +47,7 @@ public class InputSocketControllerFactoryTest extends ApplicationTest {
         Injector injector = Guice.createInjector(testModule);
         final Palette palette = injector.getInstance(Palette.class);
         final EventBus eventBus = injector.getInstance(EventBus.class);
-        OperationsFactory.create(eventBus, MockNetworkPublisher::new, MockNetworkPublisher::new).addOperations();
+        OperationsFactory.create(eventBus).addOperations();
         CVOperations.addOperations(eventBus);
         Collection<Operation> operations = palette.getOperations();
 

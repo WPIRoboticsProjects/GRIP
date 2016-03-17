@@ -4,9 +4,9 @@ import javax.annotation.concurrent.Immutable;
 import java.util.function.Function;
 
 /**
- * An adapter to allow booleans to be published from GRIP sockets into a {@link NetworkKeyValuePublisher}
+ * An adapter to allow booleans to be published from GRIP sockets into a {@link NetworkPublisher}
  *
- * @see KeyValuePublishOperation#PublishOperation(Manager, Class, Class, Function)
+ * @see PublishAnnotatedOperation#PublishAnnotatedOperation(MapNetworkPublisherFactory, Function)
  */
 @Immutable
 public final class BooleanPublishable implements Publishable {

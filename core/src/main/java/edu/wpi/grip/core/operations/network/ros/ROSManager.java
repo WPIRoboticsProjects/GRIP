@@ -1,28 +1,24 @@
 package edu.wpi.grip.core.operations.network.ros;
 
 
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
 import com.google.inject.Singleton;
 import edu.wpi.grip.core.operations.network.Manager;
-import edu.wpi.grip.core.operations.network.NetworkKeyValuePublisher;
+import edu.wpi.grip.core.util.SinglePermitSemaphore;
 import org.ros.concurrent.CancellableLoop;
 import org.ros.internal.message.Message;
 import org.ros.namespace.GraphName;
 import org.ros.node.*;
 import org.ros.node.topic.Publisher;
 
-import java.util.*;
-import java.util.concurrent.ConcurrentMap;
+import java.util.Optional;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
- *
+ * Manages the lifecycle of ROS Nodes
  */
 @Singleton
-public class ROSManager implements Manager {
+public class ROSManager implements Manager, ROSNetworkPublisherFactory {
     /*
      * Be careful when declaring strings there are two types of the "String" class in this object.
      * Better to be verbose instead of assuming the compiler will figure out what type you are referring to.
@@ -32,20 +28,19 @@ public class ROSManager implements Manager {
         // no-op
     }
 
-    private static class GRIPPublisherNode<P> extends AbstractNodeMain {
+    /**
+     * A node to publish GRIP messages with
+     */
+    private static class GRIPPublisherNode extends AbstractNodeMain {
         private static final GraphName GRIP_ROOT = GraphName.of("GRIP/publisher");
-        private final ConcurrentMap<java.lang.String, Object> keyValuePublishMap = Maps.newConcurrentMap();
-        private final Class<P> publishType;
+        private final java.lang.String publishType;
+        private final SinglePermitSemaphore semaphore = new SinglePermitSemaphore();
+
+        private volatile Optional<ROSMessagePublisher.Converter> publishMe = Optional.empty();
 
         private final GraphName nodeName;
 
-        public GRIPPublisherNode(Class<P> publishType) {
-            super();
-            this.publishType = publishType;
-            this.nodeName = GRIP_ROOT;
-        }
-
-        public GRIPPublisherNode(Class<P> publishType, GraphName nodeName) {
+        public GRIPPublisherNode(java.lang.String publishType, GraphName nodeName) {
             super();
             this.publishType = publishType;
             this.nodeName = GRIP_ROOT.join(nodeName);
@@ -58,90 +53,54 @@ public class ROSManager implements Manager {
 
         @Override
         public void onStart(final ConnectedNode connectedNode) {
-            final Map<java.lang.String, Publisher<Message>> activePublishers = Maps.newHashMap();
             // This CancellableLoop will be canceled automatically when the node shuts
             // down.
+            final Publisher<Message> publisher = connectedNode.newPublisher(nodeName, publishType);
             connectedNode.executeCancellableLoop(new CancellableLoop() {
 
                 @Override
                 protected void loop() throws InterruptedException {
-                    final Map<java.lang.String, Publisher<Message>> usedKeyPublishers
-                            = new HashMap<>(activePublishers.size());
-                    keyValuePublishMap.forEach((key, value) -> {
-                        // Get the ros type that maps to the specified value
-                        final ROSType type = ROSType.resolveType(value);
-                        // This can return null
-                        Publisher<Message> publisher = activePublishers.get(key);
-                        if (publisher == null) {
-                            publisher = connectedNode.newPublisher(nodeName.join(GraphName.of(key)), type.getType());
-                            publisher.setLatchMode(true);
-                            activePublishers.put(key, publisher);
-                        }
-                        // Add this key and publisher to the set of ones used so it doesn't get removed
-                        usedKeyPublishers.put(key, publisher);
+                    semaphore.acquire();
+                    publishMe.ifPresent(publishAction -> {
                         final Message message = publisher.newMessage();
-                        type.assignData(message, value);
+                        publishAction.convert(message, connectedNode.getTopicMessageFactory());
                         publisher.publish(message);
                     });
-
-                    // Collect the unused publishers
-                    Sets.difference(activePublishers.keySet(), usedKeyPublishers.keySet())
-                            // Copy into a new hash set so there isn't a concurrent modification exception
-                            .copyInto(new HashSet<>())
-                            // Remove the key so we only shut down the publisher once
-                            // Shut them down because clearly we've stopped using them
-                            .forEach(key -> activePublishers.remove(key).shutdown());
                 }
             });
         }
 
-        public void publish(Map<String, P> publishMap) {
-            // This just ensures that the type is supported
-            ROSType.resolveType(publishType);
-
-        }
-
-        public void publish(java.lang.String key, P value) {
-
-        }
-
-        public void stopPublish(java.lang.String key) {
-            keyValuePublishMap.remove(key);
+        public void publish(ROSMessagePublisher.Converter o) {
+            publishMe = Optional.of(o);
+            semaphore.release();
         }
     }
 
-    private static final class ROSNetworkPublisher<P> extends NetworkKeyValuePublisher<P> {
-        private final ImmutableSet<java.lang.String> keys;
+    private static final class ROSNetworkPublisher<C extends JavaToMessageConverter> extends ROSMessagePublisher {
+        private final C converter;
         private Optional<java.lang.String> name = Optional.empty();
-
         private Optional<GRIPPublisherExecutorPair> publisherExecutor = Optional.empty();
 
         /**
          * Defines a mapping between the publisher and the executor that is running the publisher.
          */
-        private static class GRIPPublisherExecutorPair<P> {
-            private final GRIPPublisherNode<P> publisher;
+        private static class GRIPPublisherExecutorPair {
+            private final GRIPPublisherNode publisher;
             private final NodeMainExecutor nodeMainExecutor;
 
-            private GRIPPublisherExecutorPair(GRIPPublisherNode<P> publisher, NodeMainExecutor nodeMainExecutor) {
+            private GRIPPublisherExecutorPair(GRIPPublisherNode publisher, NodeMainExecutor nodeMainExecutor) {
                 this.publisher = checkNotNull(publisher, "publisher cannot be null");
                 this.nodeMainExecutor = checkNotNull(nodeMainExecutor, "nodeMainExecutor, cannot be null");
             }
         }
 
-        protected ROSNetworkPublisher(Class<P> publishType, Set<java.lang.String> keys) {
-            super(publishType, keys);
-            this.keys = ImmutableSet.copyOf(keys);
+        protected ROSNetworkPublisher(C converter) {
+            super();
+            this.converter = checkNotNull(converter, "Converter cannot be null");
         }
 
-        private GRIPPublisherNode<P> createNewPublisher() {
-            final GRIPPublisherNode<P> newPublisher;
-            if (keys.isEmpty()) {
-                newPublisher = new GRIPPublisherNode<>(getPublishType());
-            } else {
-                newPublisher = new GRIPPublisherNode<>(getPublishType(), GraphName.of(name.get()));
-            }
-            return newPublisher;
+        private GRIPPublisherNode createNewPublisher() {
+            return new GRIPPublisherNode(converter.getType(), GraphName.of(name.get()));
         }
 
         @Override
@@ -156,26 +115,16 @@ public class ROSManager implements Manager {
             // The executor will run the node
             final NodeMainExecutor nodeMainExecutor = DefaultNodeMainExecutor.newDefault();
             // The new node to be executed
-            final GRIPPublisherNode<P> gripPublisherNode = createNewPublisher();
+            final GRIPPublisherNode gripPublisherNode = createNewPublisher();
             // Start the node running
             nodeMainExecutor.execute(gripPublisherNode, configuration);
             // Save the new instance of the publisher
-            publisherExecutor = Optional.of(new GRIPPublisherExecutorPair<>(gripPublisherNode, nodeMainExecutor));
+            publisherExecutor = Optional.of(new GRIPPublisherExecutorPair(gripPublisherNode, nodeMainExecutor));
         }
 
         @Override
-        protected void doPublish(Map<java.lang.String, P> publishMap) {
-            publisherExecutor.get().publisher.publish(getPublishType(), publishMap);
-        }
-
-        @Override
-        protected void doPublish(P value) {
-            publisherExecutor.get().publisher.publish(name.get(), value);
-        }
-
-        @Override
-        public void doPublish() {
-            publisherExecutor.get().publisher.stopPublish(name.get());
+        public void publish(ROSMessagePublisher.Converter publish) {
+            publisherExecutor.get().publisher.publish(publish);
         }
 
         @Override
@@ -186,8 +135,8 @@ public class ROSManager implements Manager {
     }
 
     @Override
-    public <P> NetworkKeyValuePublisher<P> createPublisher(Class<P> publishType, Set<java.lang.String> keys) {
-        return new ROSNetworkPublisher<>(publishType, keys);
+    public <C extends JavaToMessageConverter> ROSNetworkPublisher<C> create(C converter) {
+        return new ROSNetworkPublisher<>(converter);
     }
 
 }

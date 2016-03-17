@@ -1,12 +1,26 @@
 package edu.wpi.grip.core.operations.network;
 
-
 import java.util.Optional;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
-public abstract class NetworkPublisher implements AutoCloseable {
+/**
+ * Manages the interface between the {@link PublishAnnotatedOperation} and the actual network
+ * protocol implemented by a specific {@link Manager}.
+ * <p>
+ * This class is designed to be in one of two states, either the set of keys
+ * will be empty. In which case the name will be used as the publish key.
+ * In the other case the keys list will be populated and each value will
+ * need to be published with a specific key.
+ *
+ * @param <T> The type of value to be published
+ */
+public abstract class NetworkPublisher<T> implements AutoCloseable {
     private Optional<String> name = Optional.empty();
+
+    protected NetworkPublisher() {
+        /* empty */
+    }
 
     /**
      * Sets the name for the publisher.
@@ -35,6 +49,8 @@ public abstract class NetworkPublisher implements AutoCloseable {
         }
     }
 
+    public abstract void publish(T publish);
+
     /**
      * Called when when the name assigned to the publisher changes.
      * This method should not be called directly, instead, call {@link #setName(String)}
@@ -44,4 +60,8 @@ public abstract class NetworkPublisher implements AutoCloseable {
      */
     protected abstract void publishNameChanged(Optional<String> oldName, String newName);
 
+    /**
+     * Close the network publisher. This should not throw an exception.
+     */
+    public abstract void close();
 }

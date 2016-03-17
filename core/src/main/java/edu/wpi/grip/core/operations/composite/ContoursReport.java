@@ -1,9 +1,12 @@
 package edu.wpi.grip.core.operations.composite;
 
+import com.google.auto.value.AutoValue;
 import edu.wpi.grip.core.NoSocketTypeLabel;
-import edu.wpi.grip.core.operations.network.Publishable;
 import edu.wpi.grip.core.operations.network.PublishValue;
+import edu.wpi.grip.core.operations.network.Publishable;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import static org.bytedeco.javacpp.opencv_core.*;
@@ -44,6 +47,39 @@ public final class ContoursReport implements Publishable {
 
     public MatVector getContours() {
         return this.contours;
+    }
+
+    @AutoValue
+    public static abstract class Contour {
+        static Contour create(double area, double centerX, double centerY, double width, double height, double solidity) {
+            return new AutoValue_ContoursReport_Contour(area, centerX, centerY, width, height, solidity);
+        }
+
+        public abstract double area();
+
+        public abstract double centerX();
+
+        public abstract double centerY();
+
+        public abstract double width();
+
+        public abstract double height();
+
+        public abstract double solidity();
+    }
+
+    public List<Contour> getProcessedContours() {
+        final List<Contour> processedContours = new ArrayList<>((int) contours.size());
+        double area[] = getArea();
+        double centerX[] = getCenterX();
+        double centerY[] = getCenterY();
+        double width[] = getWidth();
+        double height[] = getHeights();
+        double solidity[] = getSolidity();
+        for (int i = 0; i < contours.size(); i++) {
+            processedContours.add(Contour.create(area[i], centerX[i], centerY[i], width[i], height[i], solidity[i]));
+        }
+        return processedContours;
     }
 
     /**

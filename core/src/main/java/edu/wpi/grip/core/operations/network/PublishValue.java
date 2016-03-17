@@ -18,7 +18,7 @@ import java.lang.annotation.Target;
  * a list, but this would prevent us from knowing how many values there are and what their names are without having
  * an instance of the object being published.
  * <p>
- * The weight of each accessor must be specified.  This determines order of the inputs to {@link KeyValuePublishOperation}.
+ * The weight of each accessor must be specified.  This determines order of the inputs to {@link PublishAnnotatedOperation}.
  * It's important to specify weights if there are multiple keys because otherwise, different JVMs will return them in
  * different orders, leading to projects that are interpreted differently on different machines.
  */

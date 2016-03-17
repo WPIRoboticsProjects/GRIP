@@ -9,11 +9,13 @@ import edu.wpi.grip.core.Operation;
 import edu.wpi.grip.core.events.OperationAddedEvent;
 import edu.wpi.grip.core.operations.composite.*;
 import edu.wpi.grip.core.operations.network.BooleanPublishable;
-import edu.wpi.grip.core.operations.network.Manager;
+import edu.wpi.grip.core.operations.network.MapNetworkPublisherFactory;
 import edu.wpi.grip.core.operations.network.NumberPublishable;
 import edu.wpi.grip.core.operations.network.Vector2D;
-import edu.wpi.grip.core.operations.network.networktables.NTKeyValuePublishOperation;
-import edu.wpi.grip.core.operations.network.ros.ROSKeyValuePublishOperation;
+import edu.wpi.grip.core.operations.network.networktables.NTPublishAnnotatedOperation;
+import edu.wpi.grip.core.operations.network.ros.JavaToMessageConverter;
+import edu.wpi.grip.core.operations.network.ros.ROSNetworkPublisherFactory;
+import edu.wpi.grip.core.operations.network.ros.ROSPublishOperation;
 import edu.wpi.grip.core.operations.opencv.MatFieldAccessor;
 import edu.wpi.grip.core.operations.opencv.MinMaxLoc;
 import edu.wpi.grip.core.operations.opencv.NewPointOperation;
@@ -31,10 +33,10 @@ public class Operations {
     private final ImmutableList<Supplier<Operation>> operations;
 
     @Inject
-    Operations(EventBus eventBus, @Named("ntManager") Manager ntManager, @Named("rosManager") Manager rosManager) {
+    Operations(EventBus eventBus, @Named("ntManager") MapNetworkPublisherFactory ntPublisherFactory, @Named("rosManager") ROSNetworkPublisherFactory rosPublishFactory) {
         this.eventBus = checkNotNull(eventBus, "EventBus cannot be null");
-        checkNotNull(ntManager, "ntManager cannot be null");
-        checkNotNull(rosManager, "rosManager cannot be null");
+        checkNotNull(ntPublisherFactory, "ntPublisherFactory cannot be null");
+        checkNotNull(rosPublishFactory, "rosPublishFactory cannot be null");
         this.operations = ImmutableList.of(
                 ResizeOperation::new,
                 BlurOperation::new,
@@ -53,33 +55,33 @@ public class Operations {
                 MatFieldAccessor::new,
                 NewPointOperation::new,
                 NewSizeOperation::new,
-                () -> new NTKeyValuePublishOperation<Number, NumberPublishable, Number>(ntManager, NumberPublishable::new) {
+                () -> new NTPublishAnnotatedOperation<Number, NumberPublishable, Double>(ntPublisherFactory, NumberPublishable::new) {
                 },
-                () -> new NTKeyValuePublishOperation<Boolean, BooleanPublishable, Boolean>(ntManager, BooleanPublishable::new) {
+                () -> new NTPublishAnnotatedOperation<Boolean, BooleanPublishable, Boolean>(ntPublisherFactory, BooleanPublishable::new) {
                 },
-                () -> new NTKeyValuePublishOperation<Point, Vector2D, Double>(ntManager, Vector2D::new) {
+                () -> new NTPublishAnnotatedOperation<Point, Vector2D, Double>(ntPublisherFactory, Vector2D::new) {
                 },
-                () -> new NTKeyValuePublishOperation<Size, Vector2D, Double>(ntManager, Vector2D::new) {
+                () -> new NTPublishAnnotatedOperation<Size, Vector2D, Double>(ntPublisherFactory, Vector2D::new) {
                 },
-                () -> new NTKeyValuePublishOperation<ContoursReport, ContoursReport, double[]>(ntManager) {
+                () -> new NTPublishAnnotatedOperation<ContoursReport, ContoursReport, double[]>(ntPublisherFactory) {
                 },
-                () -> new NTKeyValuePublishOperation<BlobsReport, BlobsReport, double[]>(ntManager) {
+                () -> new NTPublishAnnotatedOperation<BlobsReport, BlobsReport, double[]>(ntPublisherFactory) {
                 },
-                () -> new NTKeyValuePublishOperation<LinesReport, LinesReport, double[]>(ntManager) {
+                () -> new NTPublishAnnotatedOperation<LinesReport, LinesReport, double[]>(ntPublisherFactory) {
                 },
-                () -> new ROSKeyValuePublishOperation<Number, NumberPublishable, Number>(ntManager, NumberPublishable::new) {
+                () -> new ROSPublishOperation<Number>(rosPublishFactory, JavaToMessageConverter.FLOAT) {
                 },
-                () -> new ROSKeyValuePublishOperation<Boolean, BooleanPublishable, Boolean>(ntManager, BooleanPublishable::new) {
+                () -> new ROSPublishOperation<Boolean>(rosPublishFactory, JavaToMessageConverter.BOOL) {
                 },
-                () -> new ROSKeyValuePublishOperation<Point, Vector2D, Double>(ntManager, Vector2D::new) {
+//                () -> new ROSPublishOperation<Point, Vector2D, Double>(rosManager, Vector2D::new) {
+//                },
+//                () -> new ROSPublishOperation<Size, Vector2D, Double>(rosManager, Vector2D::new) {
+//                },
+                () -> new ROSPublishOperation<ContoursReport>(rosPublishFactory, JavaToMessageConverter.CONTOURS) {
                 },
-                () -> new ROSKeyValuePublishOperation<Size, Vector2D, Double>(ntManager, Vector2D::new) {
+                () -> new ROSPublishOperation<BlobsReport>(rosPublishFactory, JavaToMessageConverter.BLOBS) {
                 },
-                () -> new ROSKeyValuePublishOperation<ContoursReport, ContoursReport, double[]>(ntManager) {
-                },
-                () -> new ROSKeyValuePublishOperation<BlobsReport, BlobsReport, double[]>(ntManager) {
-                },
-                () -> new ROSKeyValuePublishOperation<LinesReport, LinesReport, double[]>(ntManager) {
+                () -> new ROSPublishOperation<LinesReport>(rosPublishFactory, JavaToMessageConverter.LINES) {
                 },
                 PublishVideoOperation::new,
                 DistanceTransformOperation::new,

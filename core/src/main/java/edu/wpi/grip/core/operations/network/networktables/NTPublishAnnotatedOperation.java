@@ -1,10 +1,7 @@
 package edu.wpi.grip.core.operations.network.networktables;
 
 import com.google.common.collect.ImmutableSet;
-import edu.wpi.grip.core.operations.network.Manager;
-import edu.wpi.grip.core.operations.network.KeyValuePublishOperation;
-import edu.wpi.grip.core.operations.network.PublishValue;
-import edu.wpi.grip.core.operations.network.Publishable;
+import edu.wpi.grip.core.operations.network.*;
 
 import java.io.InputStream;
 import java.util.Optional;
@@ -16,14 +13,14 @@ import java.util.function.Function;
  * To be publishable, a type should have one or more accessor methods annotated with {@link PublishValue}.  This is done
  * with annotations instead of methods
  */
-public abstract class NTKeyValuePublishOperation<S, T extends Publishable, P> extends KeyValuePublishOperation<S, T, P> {
+public abstract class NTPublishAnnotatedOperation<S, T extends Publishable, P> extends PublishAnnotatedOperation<S, T, P> {
 
     /**
      * Create a new publish operation for a socket type that implements {@link Publishable} directly
      */
     @SuppressWarnings("unchecked")
-    public NTKeyValuePublishOperation(Manager ntManager) {
-        super(ntManager);
+    protected NTPublishAnnotatedOperation(MapNetworkPublisherFactory factory) {
+        super(factory);
     }
 
     /**
@@ -33,12 +30,12 @@ public abstract class NTKeyValuePublishOperation<S, T extends Publishable, P> ex
      *
      * @param converter  A function to convert socket values into publishable values
      */
-    public NTKeyValuePublishOperation(Manager ntManager, Function<S, T> converter) {
-        super(ntManager, converter);
+    protected NTPublishAnnotatedOperation(MapNetworkPublisherFactory factory, Function<S, T> converter) {
+        super(factory, converter);
     }
 
     @Override
-    public ImmutableSet getAliases() {
+    public ImmutableSet<String> getAliases() {
         return ImmutableSet.of("Publish " + getSocketType().getRawType().getSimpleName());
     }
 

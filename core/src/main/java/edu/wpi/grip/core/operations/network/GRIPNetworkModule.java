@@ -4,6 +4,7 @@ import com.google.inject.AbstractModule;
 import com.google.inject.name.Names;
 import edu.wpi.grip.core.operations.network.networktables.NTManager;
 import edu.wpi.grip.core.operations.network.ros.ROSManager;
+import edu.wpi.grip.core.operations.network.ros.ROSNetworkPublisherFactory;
 
 /**
  * Defines any concrete implementation mappings between
@@ -15,10 +16,10 @@ import edu.wpi.grip.core.operations.network.ros.ROSManager;
 public final class GRIPNetworkModule extends AbstractModule {
     @Override
     protected void configure() {
-        bind(Manager.class)
+        bind(MapNetworkPublisherFactory.class)
                 .annotatedWith(Names.named("ntManager"))
                 .to(NTManager.class);
-        bind(Manager.class)
+        bind(ROSNetworkPublisherFactory.class)
                 .annotatedWith(Names.named("rosManager"))
                 .to(ROSManager.class);
     }

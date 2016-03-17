@@ -1,9 +1,9 @@
 package edu.wpi.grip.core.operations.network;
 
 /**
- * Interface for classes that can be published with a NetworkKeyValuePublisher
+ * Interface for classes that can be published with a NetworkPublisher
  *
- * @see KeyValuePublishOperation
+ * @see PublishAnnotatedOperation
  */
 public interface Publishable {
 }
