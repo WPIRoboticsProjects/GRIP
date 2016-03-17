@@ -17,8 +17,6 @@ import static org.bytedeco.javacpp.opencv_core.*;
 /**
  * GRIP {@link Operation} for
  * {@link org.bytedeco.javacpp.opencv_core#normalize}.
- *
- * @author Sam Carlberg
  */
 public class NormalizeOperation implements Operation {
 

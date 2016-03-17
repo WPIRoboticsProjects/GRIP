@@ -19,8 +19,6 @@ import static org.bytedeco.javacpp.opencv_imgproc.*;
 /**
  * GRIP {@link Operation} for
  * {@link org.bytedeco.javacpp.opencv_imgproc#distanceTransform}.
- *
- * @author Sam Carlberg
  */
 public class DistanceTransformOperation implements Operation {
 
