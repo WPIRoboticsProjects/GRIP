@@ -44,6 +44,7 @@ public class DistanceTransformOperation implements Operation {
         }
     }
 
+    /** Masks are either 0x0, 3x3, or 5x5 */
     private enum MaskSize {
 
         ZERO("0x0", 0),
@@ -77,7 +78,7 @@ public class DistanceTransformOperation implements Operation {
 
     @Override
     public String getDescription() {
-        return "Performs a distance transform on an image";
+        return "Sets the brightness of pixels in a binary image based on their distance to the nearest black pixel.";
     }
 
     @Override
@@ -109,6 +110,11 @@ public class DistanceTransformOperation implements Operation {
     @Override
     public void perform(InputSocket<?>[] inputs, OutputSocket<?>[] outputs) {
         final Mat input = (Mat) inputs[0].getValue().get();
+
+        if (input.type() != CV_8U) {
+            throw new IllegalArgumentException("Distance transform only works on 8-bit binary images");
+        }
+
         final Type type = (Type) inputs[1].getValue().get();
         final MaskSize maskSize = (MaskSize) inputs[2].getValue().get();
 

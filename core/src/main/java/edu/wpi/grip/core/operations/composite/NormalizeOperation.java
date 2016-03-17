@@ -12,7 +12,6 @@ import edu.wpi.grip.core.SocketHints;
 import java.io.InputStream;
 import java.util.Optional;
 
-import org.bytedeco.javacpp.opencv_core;
 import static org.bytedeco.javacpp.opencv_core.*;
 
 /**
@@ -25,10 +24,10 @@ public class NormalizeOperation implements Operation {
 
     private enum Type {
 
-        NORM_INF("NORM_INF", opencv_core.NORM_INF),
-        NORM_L1("NORM_L1", opencv_core.NORM_L1),
-        NORM_L2("NORM_L2", opencv_core.NORM_L2),
-        NORM_MINMAX("NORM_MINMAX", opencv_core.NORM_MINMAX);
+        INF("NORM_INF", NORM_INF),
+        L1("NORM_L1", NORM_L1),
+        L2("NORM_L2", NORM_L2),
+        MINMAX("NORM_MINMAX", NORM_MINMAX);
 
         private final String label;
         private final int value;
@@ -46,7 +45,7 @@ public class NormalizeOperation implements Operation {
     }
 
     private final SocketHint<Mat> srcHint = SocketHints.Inputs.createMatSocketHint("Input", false);
-    private final SocketHint<Type> typeHint = SocketHints.createEnumSocketHint("Type", Type.NORM_MINMAX);
+    private final SocketHint<Type> typeHint = SocketHints.createEnumSocketHint("Type", Type.MINMAX);
     private final SocketHint<Number> aHint = SocketHints.Inputs.createNumberSpinnerSocketHint("Alpha", 0.0, 0, Double.MAX_VALUE);
     private final SocketHint<Number> bHint = SocketHints.Inputs.createNumberSpinnerSocketHint("Beta", 1.0, 0, Double.MAX_VALUE);
 
@@ -59,7 +58,7 @@ public class NormalizeOperation implements Operation {
 
     @Override
     public String getDescription() {
-        return "Normalizes an image";
+        return "Normalizes or remaps the pixel values in an image.";
     }
 
     @Override
