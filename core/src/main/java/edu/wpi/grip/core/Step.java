@@ -127,6 +127,7 @@ public class Step {
      * default values.
      */
     protected final void runPerformIfPossible() {
+        boolean anyDirty = false; // Keeps track of if there are sockets that are dirty
         for (InputSocket<?> inputSocket : inputSockets) {
             // If there is a socket that isn't present then we have a problem.
             if (!inputSocket.getValue().isPresent()) {
@@ -134,6 +135,12 @@ public class Step {
                 resetOutputSockets();
                 return;  /* Only run the perform method if all of the input sockets are present. */
             }
+            // If one value is true then this will stay true
+            anyDirty |= inputSocket.dirtied();
+        }
+        if (!anyDirty) { // If there aren't any dirty inputs
+            // Don't clear the exceptions just return
+            return;
         }
 
         try {

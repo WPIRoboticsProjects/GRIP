@@ -11,6 +11,7 @@ import edu.wpi.grip.core.events.RunPipelineEvent;
 import edu.wpi.grip.core.events.StopPipelineEvent;
 import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.sockets.OutputSocket;
+import edu.wpi.grip.core.sockets.SocketHints;
 import edu.wpi.grip.core.util.MockExceptionWitness;
 import net.jodah.concurrentunit.Waiter;
 import org.junit.After;
@@ -98,10 +99,11 @@ public class PipelineRunnerTest {
             class ExceptionEventReceiver {
                 private int callCount = 0;
                 private ExceptionEvent event;
+
                 @Subscribe
                 public void onException(ExceptionEvent event) {
                     this.event = event;
-                    callCount ++;
+                    callCount++;
                 }
             }
             final ExceptionEventReceiver exceptionEventReceiver = new ExceptionEventReceiver();
@@ -334,7 +336,14 @@ public class PipelineRunnerTest {
 
         @Override
         default InputSocket<?>[] createInputSockets(EventBus eventBus) {
-            return new InputSocket<?>[0];
+            return new InputSocket<?>[]{
+                    new InputSocket<Boolean>(new EventBus(), SocketHints.createBooleanSocketHint("Test val", false)) {
+                        @Override
+                        public boolean dirtied() {
+                            return true;
+                        }
+                    }
+            };
         }
 
         @Override
