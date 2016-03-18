@@ -76,7 +76,7 @@ public class DistanceTransformOperation implements Operation {
 
     @Override
     public String getDescription() {
-        return "Sets the brightness of pixels in a binary image based on their distance to the nearest black pixel.";
+        return "Sets the values of pixels in a binary image to their distance to the nearest black pixel.";
     }
 
     @Override
