@@ -39,15 +39,15 @@ public class WatershedOperation implements Operation {
     @Override
     public InputSocket<?>[] createInputSockets(EventBus eventBus) {
         return new InputSocket<?>[]{
-            new InputSocket<>(eventBus, srcHint),
-            new InputSocket<>(eventBus, contoursHint)
+                new InputSocket<>(eventBus, srcHint),
+                new InputSocket<>(eventBus, contoursHint)
         };
     }
 
     @Override
     public OutputSocket<?>[] createOutputSockets(EventBus eventBus) {
         return new OutputSocket<?>[]{
-            new OutputSocket<>(eventBus, outputHint)
+                new OutputSocket<>(eventBus, outputHint)
         };
     }
 
@@ -65,23 +65,25 @@ public class WatershedOperation implements Operation {
         final Mat markers = new Mat(input.size(), CV_32SC1, new Scalar(0.0));
         final Mat output = new Mat(markers.size(), CV_8UC1, new Scalar(0.0));
 
-        // draw foreground markers (these have to be different colors)
-        for (int i = 0; i < contours.size(); i++) {
-            drawContours(markers, contours, i, Scalar.all((i + 1) * (255 / contours.size())), CV_FILLED, LINE_8, null, 2, null);
+        try {
+            // draw foreground markers (these have to be different colors)
+            for (int i = 0; i < contours.size(); i++) {
+                drawContours(markers, contours, i, Scalar.all((i + 1) * (255 / contours.size())), CV_FILLED, LINE_8, null, 2, null);
+            }
+
+            // draw background marker a different color from the foreground markers
+            // TODO maybe make this configurable? There may be something in the corner
+            circle(markers, new Point(5, 5), 3, Scalar.WHITE, -1, LINE_8, 0);
+
+            watershed(input, markers);
+            markers.convertTo(output, CV_8UC1);
+            bitwise_not(output, output); // watershed inverts colors; invert them back
+
+            outputSocket.setValue(output);
+        } finally {
+            // make sure that the working mat is freed to avoid a memory leak
+            markers.release();
         }
-
-        // draw background marker a different color from the foreground markers
-        // TODO maybe make this configurable? There may be something in the corner
-        circle(markers, new Point(5, 5), 3, Scalar.WHITE, -1, LINE_8, 0);
-
-        watershed(input, markers);
-        markers.convertTo(output, CV_8UC1);
-        bitwise_not(output, output); // watershed inverts colors; invert them back
-
-        outputSocket.setValue(output);
-
-        // make sure that the working mat is freed to avoid a memory leak
-        markers.release();
     }
 
 }
