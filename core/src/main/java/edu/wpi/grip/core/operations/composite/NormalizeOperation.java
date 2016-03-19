@@ -45,7 +45,7 @@ public class NormalizeOperation implements Operation {
     private final SocketHint<Mat> srcHint = SocketHints.Inputs.createMatSocketHint("Input", false);
     private final SocketHint<Type> typeHint = SocketHints.createEnumSocketHint("Type", Type.MINMAX);
     private final SocketHint<Number> aHint = SocketHints.Inputs.createNumberSpinnerSocketHint("Alpha", 0.0, 0, Double.MAX_VALUE);
-    private final SocketHint<Number> bHint = SocketHints.Inputs.createNumberSpinnerSocketHint("Beta", 1.0, 0, Double.MAX_VALUE);
+    private final SocketHint<Number> bHint = SocketHints.Inputs.createNumberSpinnerSocketHint("Beta", 255, 0, Double.MAX_VALUE);
 
     private final SocketHint<Mat> dstHint = SocketHints.Inputs.createMatSocketHint("Output", true);
 
