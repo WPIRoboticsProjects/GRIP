@@ -86,7 +86,9 @@ public class Operations {
                 PublishVideoOperation::new,
                 DistanceTransformOperation::new,
                 NormalizeOperation::new,
-                WatershedOperation::new
+                WatershedOperation::new,
+                SwitchOperation::new,
+                ValveOperation::new
         );
     }
 

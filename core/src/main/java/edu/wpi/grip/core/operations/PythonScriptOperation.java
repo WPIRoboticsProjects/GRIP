@@ -184,9 +184,6 @@ public class PythonScriptOperation implements Operation {
     public void perform(InputSocket[] inputs, OutputSocket[] outputs) {
         PyObject[] pyInputs = new PyObject[inputs.length];
         for (int i = 0; i < inputs.length; i++) {
-            Class<?> a = inputs[i].getSocketHint().getType();
-            Class<?> b = inputs[i].getValue().getClass();
-
             pyInputs[i] = Py.java2py(inputs[i].getValue().get());
         }
 

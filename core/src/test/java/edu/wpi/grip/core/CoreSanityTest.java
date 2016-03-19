@@ -26,6 +26,7 @@ public class CoreSanityTest extends AbstractPackageSanityTests {
         setDistinctValues(Socket.class, new MockInputSocket("Mock In Socket"), new MockOutputSocket("Mock Out Socket"));
         setDefault(Service.Listener.class, new SingleActionListener(() -> {
         }));
+        setDefault(ConnectionValidator.class, (outputSocket, inputSocket) -> true) ;
         setDefault(Enum.class, TestEnum.A);
     }
 }

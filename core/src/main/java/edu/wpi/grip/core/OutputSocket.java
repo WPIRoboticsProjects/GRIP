@@ -7,7 +7,6 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
 import edu.wpi.grip.core.events.SocketPreviewChangedEvent;
 
 import javax.annotation.Nullable;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 
 /**
@@ -29,7 +28,6 @@ public class OutputSocket<T> extends Socket<T> {
      */
     public OutputSocket(EventBus eventBus, SocketHint<T> socketHint) {
         super(eventBus, socketHint, Direction.OUTPUT);
-        getValue().orElseThrow(()-> new NoSuchElementException("The SocketHint for an output socket must have an initial value to be valid"));
     }
 
     @Override

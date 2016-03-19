@@ -16,6 +16,7 @@ public interface Operation {
         IMAGE_PROCESSING,
         FEATURE_DETECTION,
         NETWORK,
+        LOGICAL,
         OPENCV,
         MISCELLANEOUS,
     }
@@ -53,6 +54,9 @@ public interface Operation {
         return Optional.empty();
     }
 
+    default SocketsProvider createSockets(EventBus eventBus) {
+        return new SocketsProvider(createInputSockets(eventBus), createOutputSockets(eventBus));
+    }
     /**
      * @param eventBus The Guava {@link EventBus} used by the application.
      * @return An array of sockets for the inputs that the operation expects.

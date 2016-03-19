@@ -14,6 +14,7 @@
         <fx:include source="OperationList.fxml" fx:id="imgprocOperations" text="Image Processing"/>
         <fx:include source="OperationList.fxml" fx:id="featureOperations" text="Feature Detection"/>
         <fx:include source="OperationList.fxml" fx:id="networkOperations" text="Network"/>
+        <fx:include source="OperationList.fxml" fx:id="logicalOperations" text="Logical"/>
         <fx:include source="OperationList.fxml" fx:id="opencvOperations" text="OpenCV"/>
         <fx:include source="OperationList.fxml" fx:id="miscellaneousOperations" text="Misc."/>
     </TabPane>

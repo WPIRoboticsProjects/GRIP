@@ -32,7 +32,7 @@ public abstract class Socket<T> {
     private final Direction direction;
     private final Set<Connection> connections = new HashSet<>();
     private final SocketHint<T> socketHint;
-    private Optional<? extends T> value;
+    private Optional<? extends T> value = Optional.empty();
 
 
     /**
@@ -43,7 +43,6 @@ public abstract class Socket<T> {
     public Socket(EventBus eventBus, SocketHint<T> socketHint, Direction direction) {
         this.eventBus = checkNotNull(eventBus, "EventBus can not be null");
         this.socketHint = checkNotNull(socketHint, "Socket Hint can not be null");
-        this.value = socketHint.createInitialValue();
         this.direction = checkNotNull(direction, "Direction can not be null");
     }
 
@@ -82,6 +81,9 @@ public abstract class Socket<T> {
      * @return The value currently stored in this socket.
      */
     public Optional<T> getValue() {
+        if(!this.value.isPresent()) {
+            this.value = socketHint.createInitialValue();
+        }
         return (Optional<T>) this.value;
     }
 

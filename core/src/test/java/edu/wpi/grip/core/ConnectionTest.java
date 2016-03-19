@@ -58,12 +58,7 @@ public class ConnectionTest {
     public void testPipelineSaysConnectionIsInvalid() {
         new Connection(
                 new EventBus(),
-                new Pipeline() {
-                    @Override
-                    public boolean canConnect(Socket socket1, Socket socket2) {
-                        return false;
-                    }
-                },
+                (outputSocket, inputSocket) -> false,
                 foo,
                 bar
         );
