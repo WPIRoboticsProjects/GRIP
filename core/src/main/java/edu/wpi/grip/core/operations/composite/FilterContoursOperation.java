@@ -49,7 +49,7 @@ public class FilterContoursOperation implements Operation {
             SocketHints.Inputs.createNumberSpinnerSocketHint("Min Vertices", 0, 0, Integer.MAX_VALUE);
 
     private final SocketHint<Number> maxVertexHint =
-            SocketHints.Inputs.createNumberSpinnerSocketHint("Max Vertices", 0, 1000000, Integer.MAX_VALUE);
+            SocketHints.Inputs.createNumberSpinnerSocketHint("Max Vertices", 1000000, 0, Integer.MAX_VALUE);
 
     private final SocketHint<Number> minRatioHint =
             SocketHints.Inputs.createNumberSpinnerSocketHint("Min Ratio", 0, 0, Integer.MAX_VALUE);
