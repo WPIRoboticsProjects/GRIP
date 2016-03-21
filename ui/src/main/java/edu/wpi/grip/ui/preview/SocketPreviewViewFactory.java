@@ -8,7 +8,6 @@ import edu.wpi.grip.core.operations.composite.BlobsReport;
 import edu.wpi.grip.core.operations.composite.ContoursReport;
 import edu.wpi.grip.core.operations.composite.LinesReport;
 import edu.wpi.grip.ui.util.GRIPPlatform;
-import org.bytedeco.javacpp.IntPointer;
 
 import static org.bytedeco.javacpp.opencv_core.*;
 
@@ -39,7 +38,7 @@ public class SocketPreviewViewFactory {
         if (socket.getSocketHint().getType() == Mat.class) {
             previewView = (SocketPreviewView) new ImageSocketPreviewView(platform, (OutputSocket<Mat>) socket);
         } else if (socket.getSocketHint().getType() == Point.class || socket.getSocketHint().getType() == Size.class) {
-            previewView = (SocketPreviewView) new PointSizeSocketPreviewView(platform, (OutputSocket<IntPointer>) socket);
+            previewView = (SocketPreviewView) new PointSizeSocketPreviewView(platform, socket);
         } else if (socket.getSocketHint().getType() == ContoursReport.class) {
             previewView = (SocketPreviewView) new ContoursSocketPreviewView(platform, (OutputSocket<ContoursReport>) socket);
         } else if (socket.getSocketHint().getType() == LinesReport.class) {
