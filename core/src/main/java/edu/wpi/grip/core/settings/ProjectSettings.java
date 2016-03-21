@@ -43,6 +43,9 @@ public class ProjectSettings implements Cloneable {
   private String deployJvmOptions = "-Xmx50m -XX:-OmitStackTraceInFastThrow "
       + "-XX:+HeapDumpOnOutOfMemoryError";
 
+  @Setting(label = "Internal server port", description = "The port that the internal server should run on.")
+  private int serverPort = 8080;
+
   public int getTeamNumber() {
     return teamNumber;
   }
@@ -135,6 +138,15 @@ public class ProjectSettings implements Cloneable {
     return "roborio-" + teamNumber + "-frc.local";
   }
 
+  public int getServerPort() {
+    return serverPort;
+  }
+
+  public void setServerPort(@Nonnegative int serverPort) {
+    checkArgument(serverPort >= 1024 && serverPort <= 65535, "Server port must be in the range 1024..65535");
+    this.serverPort = serverPort;
+  }
+
   @Override
   public String toString() {
     return MoreObjects.toStringHelper(this)
@@ -145,6 +157,7 @@ public class ProjectSettings implements Cloneable {
         .add("deployJvmOptions", deployJvmOptions)
         .add("publishAddress", publishAddress)
         .add("teamNumber", teamNumber)
+        .add("serverPort", serverPort)
         .toString();
   }
 

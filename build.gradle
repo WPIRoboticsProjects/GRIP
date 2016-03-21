@@ -202,6 +202,7 @@ project(":core") {
         compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.4'
         compile group: 'com.google.guava', name: 'guava', version: '19.0'
         compile group: 'com.google.auto.value', name: 'auto-value', version: '1.1'
+        compile group: 'com.google.code.gson', name: 'gson', version: '2.6.2'
         // We use the no_aop version of Guice because the aop isn't avaiable in arm java
         // http://stackoverflow.com/a/15235190/3708426
         // https://github.com/google/guice/wiki/OptionalAOP

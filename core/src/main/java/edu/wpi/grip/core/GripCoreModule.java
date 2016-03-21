@@ -1,6 +1,7 @@
 package edu.wpi.grip.core;
 
 import edu.wpi.grip.core.events.UnexpectedThrowableEvent;
+import edu.wpi.grip.core.http.GripServer;
 import edu.wpi.grip.core.serialization.Project;
 import edu.wpi.grip.core.settings.SettingsProvider;
 import edu.wpi.grip.core.sockets.InputSocket;
@@ -116,6 +117,9 @@ public class GripCoreModule extends AbstractModule {
     });
 
     bind(EventBus.class).toInstance(eventBus);
+    install(new FactoryModuleBuilder()
+        .implement(GripServer.class, GripServer.class)
+        .build(GripServer.Factory.class));
 
     // Allow for just injecting the settings provider, instead of the whole pipeline
     bind(SettingsProvider.class).to(Pipeline.class);
