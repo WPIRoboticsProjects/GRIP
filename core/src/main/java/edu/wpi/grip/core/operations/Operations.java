@@ -43,5 +43,8 @@ public final class Operations {
         eventBus.post(new OperationAddedEvent(new NTPublishOperation<>(BlobsReport.class)));
         eventBus.post(new OperationAddedEvent(new NTPublishOperation<>(LinesReport.class)));
         eventBus.post(new OperationAddedEvent(new PublishVideoOperation()));
+        eventBus.post(new OperationAddedEvent(new DistanceTransformOperation()));
+        eventBus.post(new OperationAddedEvent(new NormalizeOperation()));
+        eventBus.post(new OperationAddedEvent(new WatershedOperation()));
     }
 }
