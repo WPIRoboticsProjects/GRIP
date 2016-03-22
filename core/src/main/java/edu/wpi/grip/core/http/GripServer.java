@@ -1,15 +1,15 @@
 
 package edu.wpi.grip.core.http;
 
+import com.google.common.eventbus.Subscribe;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import com.sun.net.httpserver.Headers;
-import com.sun.net.httpserver.HttpExchange;
-import com.sun.net.httpserver.HttpServer;
+import com.sun.net.httpserver.*;
 
 import edu.wpi.grip.core.Pipeline;
+import edu.wpi.grip.core.events.ProjectSettingsChangedEvent;
 import edu.wpi.grip.core.exception.GripException;
 
 import java.io.ByteArrayOutputStream;
@@ -116,14 +116,18 @@ public class GripServer {
         }
     }
 
-    private final HttpServer server;
+    private final HttpServerFactory serverFactory;
+    private HttpServer server;
     private final Map<String, GetHandler> getHandlers;
     private final Map<String, List<PostHandler>> postHandlers;
     private final Map<String, Supplier> dataSuppliers;
+    private int currentPort;
 
     @Inject
     GripServer(HttpServerFactory serverFactory, Pipeline pipeline) {
-        this.server = serverFactory.create(pipeline.getProjectSettings().getServerPort());
+        this.currentPort = pipeline.getProjectSettings().getServerPort();
+        this.serverFactory = serverFactory;
+        this.server = serverFactory.create(currentPort);
         getHandlers = new HashMap<>();
         postHandlers = new HashMap<>();
         dataSuppliers = new HashMap<>();
@@ -188,7 +192,11 @@ public class GripServer {
             return;
         }
         contextPaths.add(path);
-        server.createContext(path, he -> {
+        server.createContext(path, makeContext(path));
+    }
+
+    private HttpHandler makeContext(final String path) {
+        return he -> {
             final Headers headers = he.getResponseHeaders();
             final String requestMethod = he.getRequestMethod().toUpperCase();
             final Map<String, List<String>> requestParameters = getRequestParameters(he.getRequestURI());
@@ -221,7 +229,7 @@ public class GripServer {
                     he.sendResponseHeaders(STATUS_METHOD_NOT_ALLOWED, NO_RESPONSE_LENGTH);
                     break;
             }
-        });
+        };
     }
 
     /**
@@ -292,6 +300,7 @@ public class GripServer {
      */
     public void stop() {
         server.stop(0);
+        didStart = false;
     }
 
     /**
@@ -335,6 +344,19 @@ public class GripServer {
             b.write(buf, 0, n);
         }
         return b.toByteArray();
+    }
+
+    @Subscribe
+    public void settingsChanged(ProjectSettingsChangedEvent event) {
+        System.out.println("Settings changed!");
+        int port = event.getProjectSettings().getServerPort();
+        if (port != currentPort) {
+            stop();
+            server = serverFactory.create(port);
+            start();
+            contextPaths.forEach(path -> server.createContext(path, makeContext(path)));
+            currentPort = port;
+        }
     }
 
 }
