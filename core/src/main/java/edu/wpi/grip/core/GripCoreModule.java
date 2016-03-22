@@ -117,9 +117,6 @@ public class GripCoreModule extends AbstractModule {
     });
 
     bind(EventBus.class).toInstance(eventBus);
-    install(new FactoryModuleBuilder()
-        .implement(GripServer.class, GripServer.class)
-        .build(GripServer.Factory.class));
 
     // Allow for just injecting the settings provider, instead of the whole pipeline
     bind(SettingsProvider.class).to(Pipeline.class);

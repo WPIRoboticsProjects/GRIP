@@ -3,7 +3,6 @@ package edu.wpi.grip.core.http;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.inject.Inject;
 import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpServer;
@@ -19,30 +18,17 @@ import java.net.URI;
 import java.net.URLDecoder;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Supplier;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
- *
+ * An internal HTTP server that can be used as an alternative to NetworkTables.
  */
 public class GripServer {
-    
-    public interface Factory {
-        public GripServer create(int port);
-    }
-    
-    public class FactroyImpl implements Factory {
 
-        @Override
-        public GripServer create(int port) {
-            return new GripServer(port);
-        }
-        
-    }
+    private static final Logger logger = Logger.getLogger(GripServer.class.getName());
 
     /**
      * The root path for all GRIP-related HTTP activity.
@@ -111,21 +97,26 @@ public class GripServer {
     private static final String METHOD_OPTIONS = "OPTIONS";
     private static final String ALLOWED_METHODS = METHOD_GET + "," + METHOD_OPTIONS;
 
+    private static GripServer instance = null;
+
+    public static GripServer getInstance() {
+        if (instance == null) {
+            instance = new GripServer(8080);
+        }
+        return instance;
+    }
+
     private final HttpServer server;
-    private final int port;
     private final Map<String, GetHandler> getHandlers;
-    private final Map<String, PostHandler> postHandlers;
+    private final Map<String, List<PostHandler>> postHandlers;
     private final Map<String, Supplier> dataSuppliers;
 
-    @Inject
-    public GripServer(int port) throws GripException {
+    private GripServer(int port) throws GripException {
         try {
             server = HttpServer.create(new InetSocketAddress(HOSTNAME, port), BACKLOG);
         } catch (IOException ex) {
             throw new GripException(ex);
         }
-
-        this.port = port;
 
         getHandlers = new HashMap<>();
         postHandlers = new HashMap<>();
@@ -136,21 +127,18 @@ public class GripServer {
         Runtime.getRuntime().addShutdownHook(new Thread(this::stop));
     }
 
-    public int getPort() {
-        return port;
-    }
-
     /**
      * Adds a {@code GetHandler} to the given path. Note that this will also
      * respond to any {@code GET} requests on subpaths unless they also have
-     * their own {@code GetHandler} attached.
+     * their own {@code GetHandler} attached. This will do nothing if a {@code GetHandler}
+     * is already added to the given path.
      *
-     * @param path the path to attach the handler to
+     * @param path    the path to attach the handler to
      * @param handler the handler to attach
      */
     public void addGetHandler(String path, GetHandler handler) {
-        getHandlers.put(path, handler);
-        updateContext(path);
+        getHandlers.putIfAbsent(path, handler);
+        createContext(path);
     }
 
     /**
@@ -161,7 +149,7 @@ public class GripServer {
      */
     public void removeGetHandler(String path) {
         getHandlers.remove(path);
-        updateContext(path);
+        createContext(path);
     }
 
     /**
@@ -169,26 +157,31 @@ public class GripServer {
      * bytes read from the connection and convert them to something useful e.g.
      * images, pipeline names, etc.
      *
-     * @param path the path to attach the handler to
+     * @param path    the path to attach the handler to
      * @param handler the handler to attach
      */
     public void addPostHandler(String path, PostHandler handler) {
-        postHandlers.put(path, handler);
-        updateContext(path);
+        postHandlers.computeIfAbsent(path, k -> new ArrayList<>()).add(handler);
+        createContext(path);
     }
 
     /**
-     * Removes the {@link PostHandler} associated with the given path. This will
-     * have no effect if no such {@code PostHandler} exists.
+     * Removes all {@link PostHandler PostHandlers} associated with the given path.
      *
-     * @param path the path to remove a {@code PostHandler} from
+     * @param path the path to remove {@code PostHandlers} from
      */
-    public void removePostHandler(String path) {
+    public void removePostHandlers(String path) {
         postHandlers.remove(path);
-        updateContext(path);
+        createContext(path);
     }
 
-    private void updateContext(String path) {
+    private final Set<String> contextPaths = new HashSet<>();
+
+    private void createContext(String path) {
+        if (contextPaths.contains(path)) {
+            return;
+        }
+        contextPaths.add(path);
         server.createContext(path, he -> {
             final Headers headers = he.getResponseHeaders();
             final String requestMethod = he.getRequestMethod().toUpperCase();
@@ -203,7 +196,10 @@ public class GripServer {
                     break;
                 case METHOD_POST:
                     final byte[] bytes = readBytes(he);
-                    boolean success = postHandlers.get(path).convert(bytes);
+                    boolean success = true;
+                    for (PostHandler handler : postHandlers.get(path)) {
+                        success &= handler.convert(bytes);
+                    }
                     if (success) {
                         he.sendResponseHeaders(STATUS_OK, NO_RESPONSE_LENGTH);
                     } else {
@@ -224,15 +220,14 @@ public class GripServer {
 
     /**
      * Adds a data supplier for data with the given name. Each name can only be
-     * associated with a single supplier at a time. If a supplier is already
-     * associated with the given name, it will have to be removed with
-     * {@link #removeDataSupplier removeDataSupplier} first.
+     * associated with a single supplier at a time, so this will remove the previous
+     * supplier (if one exists).
      *
-     * @param name the name of the data
+     * @param name     the name of the data
      * @param supplier the supplier of the data
      */
     public void addDataSupplier(String name, Supplier<?> supplier) {
-        dataSuppliers.putIfAbsent(name, supplier);
+        dataSuppliers.put(name, supplier);
     }
 
     /**
@@ -255,20 +250,34 @@ public class GripServer {
     }
 
     private String createJson(Map<String, List<String>> params) {
-        final Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        final Gson gson = new GsonBuilder()
+                .setPrettyPrinting()
+                .serializeSpecialFloatingPointValues()
+                .create();
         final Map<String, Object> data = new HashMap<>();
         dataSuppliers.entrySet()
                 .stream()
-                .filter(e -> params.containsKey(e.getKey()))
+                .filter(e -> params.isEmpty() || params.containsKey(e.getKey())) // send everything if nothing is specified
                 .forEach(e -> data.put(e.getKey(), e.getValue().get()));
-        return gson.toJson(data);
+        try {
+            return gson.toJson(data);
+        } catch (Throwable t) {
+            logger.log(Level.SEVERE, "Error generating json response", t);
+            throw new GripException(t);
+        }
     }
 
+    private boolean didStart = false;
+
     /**
-     * Starts this server.
+     * Starts this server. Has no effect if the server has already been started.
      */
     public void start() {
-        server.start();
+        if (!didStart) {
+            // Don't call server.start() if it's already been started -- it'll throw an exception
+            server.start();
+            didStart = true;
+        }
     }
 
     /**
@@ -279,7 +288,7 @@ public class GripServer {
         server.stop(0);
     }
 
-    /*
+    /**
      * Parses request parameters from a URI. For example, the URI
      * "http://roborio-190-frc.local:8080/GRIP/data?foo=1;bar=2" will be parsed to
      * {"foo"="1", "bar"="2"}.
@@ -288,9 +297,9 @@ public class GripServer {
         final Map<String, List<String>> requestParameters = new LinkedHashMap<>();
         final String requestQuery = requestUri.getRawQuery();
         if (requestQuery != null) {
-            final String[] rawRequestParameters = requestQuery.split("[&;]", -1);
+            final String[] rawRequestParameters = requestQuery.split("[&;]"); // [foo=1, bar=2, ...]
             for (final String rawRequestParameter : rawRequestParameters) {
-                final String[] requestParameter = rawRequestParameter.split("=", 2);
+                final String[] requestParameter = rawRequestParameter.split("=", 2); // [foo, 1]
                 final String requestParameterName = decodeUrlComponent(requestParameter[0]);
                 requestParameters.putIfAbsent(requestParameterName, new ArrayList<>());
                 final String requestParameterValue = requestParameter.length > 1 ? decodeUrlComponent(requestParameter[1]) : null;
@@ -304,11 +313,12 @@ public class GripServer {
         try {
             return URLDecoder.decode(urlComponent, CHARSET.name());
         } catch (final UnsupportedEncodingException ex) {
+            // Will never happen, UTF-8 is supported by all JVMs
             throw new GripException(ex);
         }
     }
 
-    /*
+    /**
      * Reads all incoming bytes from an HTTP connection.
      */
     private static byte[] readBytes(final HttpExchange he) throws IOException {

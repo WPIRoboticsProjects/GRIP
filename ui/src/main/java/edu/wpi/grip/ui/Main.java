@@ -3,6 +3,7 @@ package edu.wpi.grip.ui;
 import edu.wpi.grip.core.GripCoreModule;
 import edu.wpi.grip.core.PipelineRunner;
 import edu.wpi.grip.core.events.UnexpectedThrowableEvent;
+import edu.wpi.grip.core.http.GripServer;
 import edu.wpi.grip.core.operations.CVOperations;
 import edu.wpi.grip.core.operations.Operations;
 import edu.wpi.grip.core.operations.network.GripNetworkModule;
@@ -98,6 +99,7 @@ public class Main extends Application {
 
     operations.addOperations();
     cvOperations.addOperations();
+    GripServer.getInstance().start();
 
     // If there was a file specified on the command line, open it immediately
     if (!parameters.isEmpty()) {
