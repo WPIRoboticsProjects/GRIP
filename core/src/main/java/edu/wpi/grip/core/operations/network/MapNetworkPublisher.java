@@ -32,10 +32,10 @@ public abstract class MapNetworkPublisher<T> extends NetworkPublisher<Map<String
     public final void publish(Map<String, T> publishMap) {
         final Map<String, T> publishMapCopy = ImmutableMap.copyOf(publishMap);
         if (!keys.isEmpty()) {
-            publishMap.entrySet().forEach(key -> checkArgument(keys.contains(key), "Key must be in keys list: " + key));
+            publishMap.keySet().forEach(key -> checkArgument(keys.contains(key), "Key must be in keys list: " + key));
         }
         checkNamePresent();
-        if (!publishMapCopy.containsKey("")) {
+        if (!publishMapCopy.containsKey("") && !keys.isEmpty()) {
             doPublish(publishMapCopy);
         } else if (!publishMapCopy.keySet().isEmpty()) {
             doPublishSingle(publishMapCopy.get(""));

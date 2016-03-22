@@ -12,6 +12,7 @@ import edu.wpi.grip.core.InputSocket;
 import edu.wpi.grip.core.SocketHints;
 
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Modifier;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -73,13 +74,22 @@ public abstract class PublishAnnotatedOperation<S, T extends Publishable, P> ext
             throw new IllegalArgumentException("Must be at least one @PublishValue method on " + reportType + " to be published");
         }
 
+        if (!Modifier.isPublic(reportType.getRawType().getModifiers())) {
+            throw new IllegalAccessError(reportType.getRawType().getName() + " must be public");
+        }
+
+        if (reportType.getRawType().getEnclosingClass() != null && !Modifier.isStatic(reportType.getRawType().getModifiers())) {
+            throw new IllegalAccessError(reportType.getRawType().getName() + " must be static if declared as an inner class");
+        }
+
         // In order for PublishAnnotatedOperation to call the accessor methods, they must all be public
         this.valueMethods.stream()
                 .filter(m -> !m.isPublic())
                 .findAny()
                 .ifPresent(m -> {
-                    throw new IllegalArgumentException("@PublishValue method must be public: " + m);
+                    throw new IllegalAccessError("@PublishValue method must be public: " + m);
                 });
+
 
         // In order for PublishAnnotatedOperation to call the accessor methods, they must all have no parameters
         this.valueMethods.stream()
@@ -95,7 +105,9 @@ public abstract class PublishAnnotatedOperation<S, T extends Publishable, P> ext
             throw new IllegalArgumentException("@PublishValue methods must have distinct keys: " + reportType);
         }
         this.keys = ImmutableSet
-                .copyOf(this.valueMethods.stream().map(method -> method.getAnnotation(PublishValue.class).key())
+                .copyOf(this.valueMethods
+                        .stream()
+                        .map(method -> method.getAnnotation(PublishValue.class).key())
                         .filter(k -> !k.isEmpty()) // Check that the key is not empty
                         .iterator());
 
