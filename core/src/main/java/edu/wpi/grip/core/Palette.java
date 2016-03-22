@@ -11,6 +11,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
 
+import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
@@ -31,7 +32,21 @@ public class Palette {
     @Subscribe
     public void onOperationAdded(OperationAddedEvent event) {
         final Operation operation = event.getOperation();
-        this.operations.put(operation.getName(), operation);
+        map(operation.getName(), operation);
+        for(String alias : operation.getAliases()) {
+            map(alias, operation);
+        }
+    }
+
+    /**
+     * Maps the key to the given operation
+     * @param key The key the operation should be mapped to
+     * @param operation The operation to map the key to
+     * @throws IllegalArgumentException if the key is already in the {@link #operations} map.
+     */
+    private void map(String key, Operation operation) {
+        checkArgument(!operations.containsKey(key), "Operation name or alias already exists: " + key);
+        operations.put(key, operation);
     }
 
     /**

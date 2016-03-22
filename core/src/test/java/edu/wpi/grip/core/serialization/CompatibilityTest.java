@@ -4,7 +4,7 @@ import com.google.common.eventbus.EventBus;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import edu.wpi.grip.core.Pipeline;
-import edu.wpi.grip.core.operations.Operations;
+import edu.wpi.grip.core.operations.OperationsFactory;
 import edu.wpi.grip.generated.CVOperations;
 import edu.wpi.grip.util.Files;
 import edu.wpi.grip.util.GRIPCoreTestModule;
@@ -41,7 +41,7 @@ public class CompatibilityTest {
         final Project project = injector.getInstance(Project.class);
 
         //Add the operations so that GRIP will recognize them
-        Operations.addOperations(eventBus);
+        OperationsFactory.create(eventBus).addOperations();
         CVOperations.addOperations(eventBus);
 
         //Set up the test project file to work with this machine
