@@ -57,7 +57,8 @@ public class OperationsTest {
 
     @Test
     public void testCreateAllCoreSteps() {
-        Operations.addOperations(eventBus);
+        OperationsFactory.create(eventBus)
+                .addOperations();
         for (Operation operation : operationList) {
             final Step step =
                     new Step.Factory(eventBus, (origin) -> new MockExceptionWitness(eventBus, origin)).create(operation);

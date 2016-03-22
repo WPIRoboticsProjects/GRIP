@@ -10,7 +10,6 @@ import com.google.inject.spi.InjectionListener;
 import com.google.inject.spi.TypeEncounter;
 import com.google.inject.spi.TypeListener;
 import edu.wpi.grip.core.events.UnexpectedThrowableEvent;
-import edu.wpi.grip.core.operations.networktables.NTManager;
 import edu.wpi.grip.core.serialization.Project;
 import edu.wpi.grip.core.sources.CameraSource;
 import edu.wpi.grip.core.sources.ImageFileSource;
@@ -100,8 +99,6 @@ public class GRIPCoreModule extends AbstractModule {
         });
 
         bind(EventBus.class).toInstance(eventBus);
-
-        bind(NTManager.class).asEagerSingleton();
 
         install(new FactoryModuleBuilder().build(new TypeLiteral<Connection.Factory<Object>>() {
         }));

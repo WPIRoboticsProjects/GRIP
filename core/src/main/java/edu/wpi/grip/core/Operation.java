@@ -1,5 +1,6 @@
 package edu.wpi.grip.core;
 
+import com.google.common.collect.ImmutableSet;
 import com.google.common.eventbus.EventBus;
 
 import java.io.InputStream;
@@ -23,6 +24,14 @@ public interface Operation {
      * @return The unique user-facing name of the operation, such as "Gaussian Blur"
      */
     String getName();
+
+    /**
+     * @return Any old unique user-facing names of the operation. This is used to preserve compatibility with
+     * old versions of GRIP if the operation name changes.
+     */
+    default ImmutableSet<String> getAliases() {
+        return ImmutableSet.of();
+    }
 
 
     /**

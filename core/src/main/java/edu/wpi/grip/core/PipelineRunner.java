@@ -13,6 +13,7 @@ import com.google.inject.Singleton;
 import edu.wpi.grip.core.events.RenderEvent;
 import edu.wpi.grip.core.events.RunPipelineEvent;
 import edu.wpi.grip.core.events.StopPipelineEvent;
+import edu.wpi.grip.core.util.SinglePermitSemaphore;
 import edu.wpi.grip.core.util.service.AutoRestartingService;
 import edu.wpi.grip.core.util.service.LoggingListener;
 import edu.wpi.grip.core.util.service.RestartableService;
@@ -20,7 +21,6 @@ import edu.wpi.grip.core.util.service.RestartableService;
 import javax.annotation.Nullable;
 import javax.inject.Inject;
 import java.util.concurrent.Executor;
-import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.function.Supplier;
@@ -37,7 +37,7 @@ public class PipelineRunner implements RestartableService {
     /**
      * This is used to flag that the pipeline needs to run because of an update
      */
-    private final Semaphore pipelineFlag = new Semaphore(0);
+    private final SinglePermitSemaphore pipelineFlag = new SinglePermitSemaphore();
     private final Supplier<ImmutableList<Source>> sourceSupplier;
     private final Supplier<ImmutableList<Step>> stepSupplier;
     private final AutoRestartingService pipelineService;
@@ -62,13 +62,7 @@ public class PipelineRunner implements RestartableService {
                     protected void runOneIteration() throws InterruptedException {
                         if (!super.isRunning()) return;
 
-                        // Acquire the first this one should permit if there is at least one permit
                         pipelineFlag.acquire();
-                        // Acquire the rest of the permits from the flag
-                        // Every time release is called another permit is added.
-                        // We need to clean up any old permits that we may have been given.
-                        pipelineFlag.acquire(
-                                Math.max(0, pipelineFlag.availablePermits()));
 
                         if (!super.isRunning()) return;
                         runPipeline(super::isRunning);
