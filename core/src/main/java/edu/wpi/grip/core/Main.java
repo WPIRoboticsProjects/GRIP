@@ -3,6 +3,7 @@ package edu.wpi.grip.core;
 import edu.wpi.grip.core.events.ExceptionClearedEvent;
 import edu.wpi.grip.core.events.ExceptionEvent;
 import edu.wpi.grip.core.operations.CVOperations;
+import edu.wpi.grip.core.http.GripServer;
 import edu.wpi.grip.core.operations.Operations;
 import edu.wpi.grip.core.operations.network.GripNetworkModule;
 import edu.wpi.grip.core.serialization.Project;
@@ -37,6 +38,8 @@ public class Main {
   private CVOperations cvOperations;
   @Inject
   private Logger logger;
+  @Inject
+  private GripServer gripServer;
 
   @SuppressWarnings({"PMD.SystemPrintln", "JavadocMethod"})
   public static void main(String[] args) throws IOException, InterruptedException {
@@ -56,6 +59,7 @@ public class Main {
 
     operations.addOperations();
     cvOperations.addOperations();
+    gripServer.start();
 
     final String projectPath = args[0];
 

@@ -3,10 +3,13 @@ package edu.wpi.grip.core.http;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpServer;
 
+import edu.wpi.grip.core.Pipeline;
 import edu.wpi.grip.core.exception.GripException;
 
 import java.io.ByteArrayOutputStream;
@@ -26,6 +29,7 @@ import java.util.logging.Logger;
 /**
  * An internal HTTP server that can be used as an alternative to NetworkTables.
  */
+@Singleton
 public class GripServer {
 
     private static final Logger logger = Logger.getLogger(GripServer.class.getName());
@@ -97,13 +101,19 @@ public class GripServer {
     private static final String METHOD_OPTIONS = "OPTIONS";
     private static final String ALLOWED_METHODS = METHOD_GET + "," + METHOD_OPTIONS;
 
-    private static GripServer instance = null;
+    public interface HttpServerFactory {
+        HttpServer create(int port);
+    }
 
-    public static GripServer getInstance() {
-        if (instance == null) {
-            instance = new GripServer(8080);
+    public static class HttpServerFactoryImpl implements HttpServerFactory {
+        @Override
+        public HttpServer create(int port) {
+            try {
+                return HttpServer.create(new InetSocketAddress(HOSTNAME, port), BACKLOG);
+            } catch (IOException ex) {
+                throw new GripException(ex);
+            }
         }
-        return instance;
     }
 
     private final HttpServer server;
@@ -111,13 +121,9 @@ public class GripServer {
     private final Map<String, List<PostHandler>> postHandlers;
     private final Map<String, Supplier> dataSuppliers;
 
-    private GripServer(int port) throws GripException {
-        try {
-            server = HttpServer.create(new InetSocketAddress(HOSTNAME, port), BACKLOG);
-        } catch (IOException ex) {
-            throw new GripException(ex);
-        }
-
+    @Inject
+    GripServer(HttpServerFactory serverFactory, Pipeline pipeline) {
+        this.server = serverFactory.create(pipeline.getProjectSettings().getServerPort());
         getHandlers = new HashMap<>();
         postHandlers = new HashMap<>();
         dataSuppliers = new HashMap<>();

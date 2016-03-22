@@ -54,6 +54,7 @@ public class Main extends Application {
   @Inject private Operations operations;
   @Inject private CVOperations cvOperations;
   @Inject private Logger logger;
+  @Inject private GripServer server;
   private Parent root;
 
   public static void main(String[] args) {
@@ -99,7 +100,7 @@ public class Main extends Application {
 
     operations.addOperations();
     cvOperations.addOperations();
-    GripServer.getInstance().start();
+    server.start();
 
     // If there was a file specified on the command line, open it immediately
     if (!parameters.isEmpty()) {

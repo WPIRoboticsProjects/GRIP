@@ -121,6 +121,9 @@ public class GripCoreModule extends AbstractModule {
     // Allow for just injecting the settings provider, instead of the whole pipeline
     bind(SettingsProvider.class).to(Pipeline.class);
 
+    bind(GripServer.HttpServerFactory.class).to(GripServer.HttpServerFactoryImpl.class);
+    bind(GripServer.class).asEagerSingleton();
+
     install(new FactoryModuleBuilder().build(new TypeLiteral<Connection.Factory<Object>>() {
     }));
 
