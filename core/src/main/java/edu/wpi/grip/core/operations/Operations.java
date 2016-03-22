@@ -62,6 +62,7 @@ public class Operations {
   @Inject
   Operations(EventBus eventBus,
              @Named("ntManager") MapNetworkPublisherFactory ntPublisherFactory,
+             @Named("httpManager") MapNetworkPublisherFactory httpPublisherFactory,
              @Named("rosManager") ROSNetworkPublisherFactory rosPublishFactory,
              InputSocket.Factory isf,
              OutputSocket.Factory osf) {

@@ -1,5 +1,6 @@
 package edu.wpi.grip.core.operations.network;
 
+import edu.wpi.grip.core.operations.network.http.HttpManager;
 import edu.wpi.grip.core.operations.network.networktables.NTManager;
 import edu.wpi.grip.core.operations.network.ros.ROSManager;
 import edu.wpi.grip.core.operations.network.ros.ROSNetworkPublisherFactory;
@@ -18,6 +19,9 @@ public final class GripNetworkModule extends AbstractModule {
     bind(MapNetworkPublisherFactory.class)
         .annotatedWith(Names.named("ntManager"))
         .to(NTManager.class);
+    bind(MapNetworkPublisherFactory.class)
+        .annotatedWith(Names.named("httpManager"))
+        .to(HttpManager.class);
     bind(ROSNetworkPublisherFactory.class)
         .annotatedWith(Names.named("rosManager"))
         .to(ROSManager.class);
