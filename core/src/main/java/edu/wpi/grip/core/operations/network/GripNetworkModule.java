@@ -1,5 +1,6 @@
 package edu.wpi.grip.core.operations.network;
 
+import edu.wpi.grip.core.http.GripServer;
 import edu.wpi.grip.core.operations.network.http.HttpManager;
 import edu.wpi.grip.core.operations.network.networktables.NTManager;
 import edu.wpi.grip.core.operations.network.ros.ROSManager;
@@ -16,6 +17,10 @@ import com.google.inject.name.Names;
 public final class GripNetworkModule extends AbstractModule {
   @Override
   protected void configure() {
+    // HTTP server injection bindings
+    bind(GripServer.HttpServerFactory.class).to(GripServer.HttpServerFactoryImpl.class);
+    bind(GripServer.class).asEagerSingleton();
+    // Network publishing bindings
     bind(MapNetworkPublisherFactory.class)
         .annotatedWith(Names.named("ntManager"))
         .to(NTManager.class);
