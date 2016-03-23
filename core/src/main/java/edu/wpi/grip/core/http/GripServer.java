@@ -348,7 +348,6 @@ public class GripServer {
 
     @Subscribe
     public void settingsChanged(ProjectSettingsChangedEvent event) {
-        System.out.println("Settings changed!");
         int port = event.getProjectSettings().getServerPort();
         if (port != currentPort) {
             stop();
