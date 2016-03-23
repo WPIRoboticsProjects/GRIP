@@ -49,6 +49,11 @@ public abstract class NetworkPublisher<T> implements AutoCloseable {
         }
     }
 
+    /**
+     * Should be called to pass a value to be published to the NetworkPublisher
+     *
+     * @param publish The value to publish
+     */
     public abstract void publish(T publish);
 
     /**

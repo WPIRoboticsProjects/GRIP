@@ -140,7 +140,7 @@ public class NTManager implements Manager, MapNetworkPublisherFactory {
         @Override
         protected void doPublish(Map<String, P> publishValueMap) {
             publishValueMap.forEach(getTable()::putValue);
-            Sets.difference(keys, publishValueMap.entrySet()).forEach(getTable()::delete);
+            Sets.difference(keys, publishValueMap.keySet()).forEach(getTable()::delete);
         }
 
         @Override
