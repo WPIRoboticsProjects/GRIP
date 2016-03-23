@@ -32,6 +32,7 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.List;
 import java.util.Optional;
+import java.util.Properties;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
@@ -53,26 +54,104 @@ public class AddSourceView extends HBox {
     private final Button ipcamButton;
     private Optional<Dialog> activeDialog = Optional.empty();
 
-    private static class SourceDialog extends Dialog<ButtonType> {
+    private static class WebCamSourceDialog extends Dialog<ButtonType> {
         private final Text errorText = new Text();
+        final Spinner<Integer> cameraIndex;
+        final Spinner<Double> exposure;
 
-        private SourceDialog(final Parent root, Control inputField) {
+        private WebCamSourceDialog(final Parent root) {
             super();
 
             this.getDialogPane().getStyleClass().add(SOURCE_DIALOG_STYLE_CLASS);
 
+            setTitle("Add Webcam");
+            setHeaderText("Choose a camera");
+            setContentText("index");
+
+            cameraIndex = new Spinner<>(0, Integer.MAX_VALUE, 0);
+            exposure = new Spinner<>(-1, 4096, -1, 1);
+
             final GridPane gridContent = new GridPane();
             gridContent.setMaxWidth(Double.MAX_VALUE);
-            GridPane.setHgrow(inputField, Priority.ALWAYS);
-            GridPane.setHgrow(errorText, Priority.NEVER);
-            errorText.wrappingWidthProperty().bind(inputField.widthProperty());
-            gridContent.add(errorText, 0, 0);
-            gridContent.add(inputField, 0, 1);
 
-            getDialogPane().setContent(gridContent);
-            getDialogPane().setStyle(root.getStyle());
-            getDialogPane().getStylesheets().addAll(root.getStylesheets());
-            getDialogPane().getButtonTypes().addAll(ButtonType.CANCEL, ButtonType.OK);
+            GridPane.setHgrow(cameraIndex, Priority.ALWAYS);
+            GridPane.setHgrow(errorText, Priority.NEVER);
+
+            gridContent.add(new Text("Camera Index: "), 0, 0);
+            gridContent.add(cameraIndex, 1, 0);
+            gridContent.add(new Text("Exposure: "), 0, 1);
+            gridContent.add(exposure, 1, 1);
+            gridContent.add(errorText, 0, 3);
+
+            DialogPane dialogPane = getDialogPane();
+            dialogPane.setContent(gridContent);
+            dialogPane.setStyle(root.getStyle());
+            dialogPane.getStylesheets().addAll(root.getStylesheets());
+            dialogPane.getButtonTypes().addAll(ButtonType.CANCEL, ButtonType.OK);
+            dialogPane.lookupButton(ButtonType.OK).requestFocus();
+        }
+
+        int getCameraIndex() {
+            return cameraIndex.getValue();
+        }
+
+        double getExposure() {
+            return cameraIndex.getValue();
+        }
+    }
+
+    private static class IPCamSourceSourceDialog extends Dialog<ButtonType> {
+        private final Text errorText = new Text();
+        private final TextField cameraAddress;
+
+        private IPCamSourceSourceDialog(final Parent root) {
+            super();
+
+            this.getDialogPane().getStyleClass().add(SOURCE_DIALOG_STYLE_CLASS);
+
+            setTitle("Add IP Camera");
+            setHeaderText("Enter the IP camera URL");
+            setContentText("URL");
+
+            cameraAddress = new TextField();
+            cameraAddress.setPromptText("Ex: http://10.1.90.11/mjpg/video.mjpg");
+            cameraAddress.textProperty().addListener(observable -> {
+                boolean validURL = true;
+
+                try {
+                    new URL(cameraAddress.getText()).toURI();
+                } catch (MalformedURLException e) {
+                    validURL = false;
+                    if (InetAddresses.isInetAddress(cameraAddress.getText()) || cameraAddress.getText().endsWith(".local")) {
+                        cameraAddress.setText("http://" + cameraAddress.getText());
+                        validURL = true;
+                    }
+                } catch (URISyntaxException e) {
+                    validURL = false;
+                }
+
+                // Enable the "OK" button only if the user has entered a valid URL
+                IPCamSourceSourceDialog.this.getDialogPane().lookupButton(ButtonType.OK).setDisable(!validURL);
+            });
+
+            final GridPane gridContent = new GridPane();
+            gridContent.setMaxWidth(Double.MAX_VALUE);
+            GridPane.setHgrow(cameraAddress, Priority.ALWAYS);
+            GridPane.setHgrow(errorText, Priority.NEVER);
+            errorText.wrappingWidthProperty().bind(cameraAddress.widthProperty());
+            gridContent.add(errorText, 0, 0);
+            gridContent.add(cameraAddress, 0, 1);
+
+            DialogPane dialogPane = getDialogPane();
+            dialogPane.setContent(gridContent);
+            dialogPane.setStyle(root.getStyle());
+            dialogPane.getStylesheets().addAll(root.getStylesheets());
+            dialogPane.getButtonTypes().addAll(ButtonType.CANCEL, ButtonType.OK);
+            dialogPane.lookupButton(ButtonType.OK).setDisable(true);
+        }
+
+        public String getCameraAddress() {
+            return cameraAddress.getText();
         }
     }
 
@@ -97,17 +176,17 @@ public class AddSourceView extends HBox {
             final FileChooser fileChooser = new FileChooser();
             fileChooser.setTitle("Open an image");
             fileChooser.getExtensionFilters().addAll(
-                new ExtensionFilter("Image Files",
-                    "*.bmp", "*.dib",           // Windows bitmaps
-                    "*.jpeg", "*.jpg", "*.jpe", // JPEG files
-                    "*.jp2",                    // JPEG 2000 files
-                    "*.png",                    // Portable Network Graphics
-                    "*.webp",                   // WebP
-                    "*.pbm", "*.pgm", "*.ppm",  // Portable image format
-                    "*.sr", "*.ras",            // Sun rasters
-                    "*.tiff", "*.tif"           // TIFF files
+                    new ExtensionFilter("Image Files",
+                            "*.bmp", "*.dib",           // Windows bitmaps
+                            "*.jpeg", "*.jpg", "*.jpe", // JPEG files
+                            "*.jp2",                    // JPEG 2000 files
+                            "*.png",                    // Portable Network Graphics
+                            "*.webp",                   // WebP
+                            "*.pbm", "*.pgm", "*.ppm",  // Portable image format
+                            "*.sr", "*.ras",            // Sun rasters
+                            "*.tiff", "*.tif"           // TIFF files
                     ),
-                new ExtensionFilter("All Files", "*.*"));
+                    new ExtensionFilter("All Files", "*.*"));
 
             final List<File> imageFiles = fileChooser.showOpenMultipleDialog(this.getScene().getWindow());
 
@@ -137,19 +216,14 @@ public class AddSourceView extends HBox {
             final Parent root = this.getScene().getRoot();
 
             // Show a dialog for the user to pick a camera index
-            final Spinner<Integer> cameraIndex = new Spinner<Integer>(0, Integer.MAX_VALUE, 0);
-            final SourceDialog dialog = new SourceDialog(root, cameraIndex);
-
-            dialog.setTitle("Add Webcam");
-            dialog.setHeaderText("Choose a camera");
-            dialog.setContentText("index");
-
-            dialog.getDialogPane().lookupButton(ButtonType.OK).requestFocus();
+            final WebCamSourceDialog dialog = new WebCamSourceDialog(root);
 
             // If the user clicks OK, add a new camera source
             loadCamera(dialog,
                     () -> {
-                        final CameraSource cameraSource = cameraSourceFactory.create(cameraIndex.getValue());
+                        int cameraIndex = dialog.getCameraIndex();
+                        double exposure = dialog.getExposure();
+                        CameraSource cameraSource = cameraSourceFactory.create(cameraIndex, exposure);
                         cameraSource.initialize();
                         return cameraSource;
                     },
@@ -163,37 +237,12 @@ public class AddSourceView extends HBox {
 
             // Show a dialog for the user to pick a camera URL
 
-            final TextField cameraAddress = new TextField();
-            final SourceDialog dialog = new SourceDialog(root, cameraAddress);
-            cameraAddress.setPromptText("Ex: http://10.1.90.11/mjpg/video.mjpg");
-            cameraAddress.textProperty().addListener(observable -> {
-                boolean validURL = true;
-
-                try {
-                    new URL(cameraAddress.getText()).toURI();
-                } catch (MalformedURLException e) {
-                    validURL = false;
-                    if (InetAddresses.isInetAddress(cameraAddress.getText()) || cameraAddress.getText().endsWith(".local")) {
-                        cameraAddress.setText("http://" + cameraAddress.getText());
-                        validURL = true;
-                    }
-                } catch (URISyntaxException e) {
-                    validURL = false;
-                }
-
-                // Enable the "OK" button only if the user has entered a valid URL
-                dialog.getDialogPane().lookupButton(ButtonType.OK).setDisable(!validURL);
-            });
-
-            dialog.setTitle("Add IP Camera");
-            dialog.setHeaderText("Enter the IP camera URL");
-            dialog.setContentText("URL");
-            dialog.getDialogPane().lookupButton(ButtonType.OK).setDisable(true);
+            final IPCamSourceSourceDialog dialog = new IPCamSourceSourceDialog(root);
 
             // If the user clicks OK, add a new camera source
             loadCamera(dialog,
                     () -> {
-                        final CameraSource cameraSource = cameraSourceFactory.create(cameraAddress.getText());
+                        final CameraSource cameraSource = cameraSourceFactory.create(dialog.getCameraAddress());
                         cameraSource.initialize();
                         return cameraSource;
                     },
@@ -256,9 +305,9 @@ public class AddSourceView extends HBox {
     @VisibleForTesting
     void closeDialogs() {
         activeDialog.ifPresent(dialog -> {
-            for ( ButtonType bt : dialog.getDialogPane().getButtonTypes() ) {
-                if ( bt.getButtonData() == ButtonBar.ButtonData.CANCEL_CLOSE ) {
-                    Button cancelButton = ( Button ) dialog.getDialogPane().lookupButton( bt );
+            for (ButtonType bt : dialog.getDialogPane().getButtonTypes()) {
+                if (bt.getButtonData() == ButtonBar.ButtonData.CANCEL_CLOSE) {
+                    Button cancelButton = (Button) dialog.getDialogPane().lookupButton(bt);
                     Platform.runLater(() -> cancelButton.fire());
                     break;
                 }

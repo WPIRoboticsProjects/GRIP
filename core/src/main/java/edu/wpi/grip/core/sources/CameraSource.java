@@ -1,7 +1,6 @@
 package edu.wpi.grip.core.sources;
 
 
-import com.google.common.base.StandardSystemProperty;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import com.google.common.util.concurrent.MoreExecutors;
@@ -19,9 +18,6 @@ import edu.wpi.grip.core.util.service.AutoRestartingService;
 import edu.wpi.grip.core.util.service.LoggingListener;
 import edu.wpi.grip.core.util.service.RestartableService;
 import org.bytedeco.javacpp.opencv_core.Mat;
-import org.bytedeco.javacv.FrameGrabber;
-import org.bytedeco.javacv.OpenCVFrameGrabber;
-import org.bytedeco.javacv.VideoInputFrameGrabber;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -65,8 +61,9 @@ public class CameraSource extends Source implements RestartableService {
             IP_CAMERA_READ_TIMEOUT = 5;
     private static final TimeUnit IP_CAMERA_TIMEOUT_UNIT = TimeUnit.SECONDS;
 
-    private final static String DEVICE_NUMBER_PROPERTY = "deviceNumber";
-    private final static String ADDRESS_PROPERTY = "address";
+    public final static String PROPERTY_DEVICE_NUMBER = "deviceNumber";
+    public final static String PROPERTY_ADDRESS = "address";
+    public final static String PROPERTY_EXPOSURE = "exposure";
     private static final Logger logger = Logger.getLogger(CameraSource.class.getName());
 
     private final EventBus eventBus;
@@ -87,6 +84,8 @@ public class CameraSource extends Source implements RestartableService {
     public interface Factory {
         CameraSource create(int deviceNumber) throws IOException;
 
+        CameraSource create(int deviceNumber, double exposure) throws IOException;
+
         CameraSource create(String address) throws IOException;
 
         CameraSource create(Properties properties) throws IOException;
@@ -105,13 +104,7 @@ public class CameraSource extends Source implements RestartableService {
         FrameGrabberFactoryImpl() { /* no-op */ }
 
         public FrameGrabber create(int deviceNumber) {
-            // On Windows, videoInput is much more reliable for webcam capture.  On other platforms, OpenCV's frame
-            // grabber class works fine.
-            if (StandardSystemProperty.OS_NAME.value().contains("Windows")) {
-                return new VideoInputFrameGrabber(deviceNumber);
-            } else {
-                return new OpenCVFrameGrabber(deviceNumber);
-            }
+            return new OpenCVFrameGrabber(deviceNumber);
         }
 
         public FrameGrabber create(String addressProperty) throws MalformedURLException {
@@ -146,6 +139,22 @@ public class CameraSource extends Source implements RestartableService {
     /**
      * Creates a camera source that can be used as an input to a pipeline
      *
+     * @param eventBus     The EventBus to attach to
+     * @param deviceNumber The device number of the webcam
+     */
+    @AssistedInject
+    CameraSource(
+            final EventBus eventBus,
+            final FrameGrabberFactory grabberFactory,
+            final ExceptionWitness.Factory exceptionWitnessFactory,
+            @Assisted final int deviceNumber,
+            @Assisted final double exposure) throws IOException {
+        this(eventBus, grabberFactory, exceptionWitnessFactory, createProperties(deviceNumber, exposure));
+    }
+
+    /**
+     * Creates a camera source that can be used as an input to a pipeline
+     *
      * @param eventBus The EventBus to attach to
      * @param address  A URL to stream video from an IP camera
      */
@@ -173,13 +182,24 @@ public class CameraSource extends Source implements RestartableService {
         this.frameRateOutputSocket = new OutputSocket<>(eventBus, frameRateOutputHint);
         this.properties = properties;
 
-        final String deviceNumberProperty = properties.getProperty(DEVICE_NUMBER_PROPERTY);
-        final String addressProperty = properties.getProperty(ADDRESS_PROPERTY);
+        final String deviceNumberProperty = properties.getProperty(PROPERTY_DEVICE_NUMBER);
+        final String addressProperty = properties.getProperty(PROPERTY_ADDRESS);
 
         if (deviceNumberProperty != null) {
             final int deviceNumber = Integer.parseInt(deviceNumberProperty);
+            String exposureProperty = properties.getProperty(PROPERTY_ADDRESS);
+            final double exposure;
+            if (exposureProperty != null) {
+                exposure = Double.parseDouble(exposureProperty);
+            } else {
+                exposure = -1.0;
+            }
             this.name = "Webcam " + deviceNumber;
-            this.grabberSupplier = () -> grabberFactory.create(deviceNumber);
+            this.grabberSupplier = () -> {
+                FrameGrabber grabber = grabberFactory.create(deviceNumber);
+                grabber.setExposure(exposure);
+                return grabber;
+            };
         } else if (addressProperty != null) {
             this.name = "IP Camera " + new URL(addressProperty).getHost();
             this.grabberSupplier = () -> {
@@ -352,13 +372,19 @@ public class CameraSource extends Source implements RestartableService {
 
     private static Properties createProperties(String address) {
         final Properties properties = new Properties();
-        properties.setProperty(ADDRESS_PROPERTY, address);
+        properties.setProperty(PROPERTY_ADDRESS, address);
         return properties;
     }
 
     private static Properties createProperties(int deviceNumber) {
         final Properties properties = new Properties();
-        properties.setProperty(DEVICE_NUMBER_PROPERTY, Integer.toString(deviceNumber));
+        properties.setProperty(PROPERTY_DEVICE_NUMBER, Integer.toString(deviceNumber));
+        return properties;
+    }
+
+    private static Properties createProperties(int deviceNumber, double exposure) {
+        final Properties properties = createProperties(deviceNumber);
+        properties.setProperty(PROPERTY_EXPOSURE, Double.toString(exposure));
         return properties;
     }
 }
