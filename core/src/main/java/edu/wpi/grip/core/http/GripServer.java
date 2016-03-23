@@ -295,15 +295,17 @@ public class GripServer {
     }
 
     private boolean didStart = false;
+    private boolean stopped = false;
 
     /**
      * Starts this server. Has no effect if the server has already been started.
      */
     public void start() {
-        if (!didStart) {
-            // Don't call server.start() if it's already been started -- it'll throw an exception
+        if (!didStart && !stopped) {
+            // Don't call server.start() if it's already been started or stopped
             server.start();
             didStart = true;
+            stopped = false;
         }
     }
 
@@ -312,8 +314,26 @@ public class GripServer {
      * this method, so it's unlikely that this should need to be called.
      */
     public void stop() {
-        server.stop(0);
-        didStart = false;
+        if(!stopped) {
+            server.stop(0);
+            didStart = false;
+            stopped = true;
+        }
+    }
+    
+    
+    /**
+     * Restarts the server on the current port.
+     */
+    public void restart() {
+        try {
+            stop();
+            server = HttpServer.create(new InetSocketAddress("localhost", currentPort), BACKLOG);
+            start();
+        } catch (IOException | IllegalStateException ex) {
+            Logger.getLogger(GripServer.class.getName()).log(Level.SEVERE, null, ex);
+            throw new GripException("Could not restart GripServer", ex);
+        }
     }
 
     /**

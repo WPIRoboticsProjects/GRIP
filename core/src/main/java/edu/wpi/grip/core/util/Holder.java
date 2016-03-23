@@ -12,6 +12,9 @@ public final class Holder<T> {
      * Creates a new holder with the given default value.
      */
     public Holder(T value) {
+        if (value == null) {
+            throw new NullPointerException("Held value cannot be null");
+        }
         this.value = value;
     }
 
@@ -30,6 +33,9 @@ public final class Holder<T> {
      * @param value the new value of this holder.
      */
     public synchronized void set(T value) {
+        if (value == null) {
+            throw new NullPointerException("Held value cannot be null");
+        }
         this.value = value;
     }
 

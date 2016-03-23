@@ -2,10 +2,15 @@ package edu.wpi.grip.util;
 
 
 import edu.wpi.grip.core.GripCoreModule;
+import edu.wpi.grip.core.http.GripServer;
+import edu.wpi.grip.core.http.GripServerTest;
+import edu.wpi.grip.core.operations.network.MapNetworkPublisherFactory;
+import edu.wpi.grip.core.operations.network.http.HttpManager;
 import edu.wpi.grip.core.sources.CameraSource;
 import edu.wpi.grip.core.sources.MockFrameGrabberFactory;
 
 import com.google.common.eventbus.SubscriberExceptionContext;
+import com.google.inject.name.Names;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -74,6 +79,12 @@ public class GripCoreTestModule extends GripCoreModule {
         + "the injector";
     bind(CameraSource.FrameGrabberFactory.class).to(MockFrameGrabberFactory.class);
     super.configure();
+    // HTTP server injection bindings
+    bind(GripServer.HttpServerFactory.class).to(GripServerTest.TestServerFactory.class);
+    bind(GripServer.class).asEagerSingleton();
+    bind(MapNetworkPublisherFactory.class)
+        .annotatedWith(Names.named("httpManager"))
+        .to(HttpManager.class);
   }
 
   @Override
