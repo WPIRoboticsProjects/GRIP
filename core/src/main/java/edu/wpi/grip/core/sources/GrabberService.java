@@ -6,7 +6,6 @@ import com.google.common.math.IntMath;
 import com.google.common.util.concurrent.AbstractExecutionThreadService;
 import org.bytedeco.javacpp.opencv_core;
 import org.bytedeco.javacv.Frame;
-import org.bytedeco.javacv.FrameGrabber;
 import org.bytedeco.javacv.OpenCVFrameConverter;
 
 import java.io.IOException;

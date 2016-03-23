@@ -27,7 +27,6 @@ import org.bytedeco.javacpp.BytePointer;
 import org.bytedeco.javacpp.Loader;
 import org.bytedeco.javacv.Frame;
 import org.bytedeco.javacv.FrameConverter;
-import org.bytedeco.javacv.FrameGrabber;
 import org.bytedeco.javacv.OpenCVFrameConverter;
 
 import javax.imageio.ImageIO;
@@ -104,7 +103,7 @@ public class IPCameraFrameGrabber extends FrameGrabber {
     public void stop() throws Exception {
         // Our fix. This ensures that restart doesn't null pointer.
         // https://github.com/bytedeco/javacv/issues/299
-        if(input != null) {
+        if (input != null) {
             try {
                 input.close();
                 input = null;
@@ -162,7 +161,7 @@ public class IPCameraFrameGrabber extends FrameGrabber {
                 }
             }
         }
-        
+
         // find embedded jpeg in stream
         final String subheader = sb.toString().toLowerCase();
         //log.debug(subheader);
