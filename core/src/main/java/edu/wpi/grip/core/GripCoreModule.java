@@ -9,6 +9,7 @@ import edu.wpi.grip.core.sockets.InputSocketImpl;
 import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.core.sockets.OutputSocketImpl;
 import edu.wpi.grip.core.sources.CameraSource;
+import edu.wpi.grip.core.sources.HttpSource;
 import edu.wpi.grip.core.sources.ImageFileSource;
 import edu.wpi.grip.core.sources.MultiImageFileSource;
 import edu.wpi.grip.core.util.ExceptionWitness;
@@ -138,6 +139,9 @@ public class GripCoreModule extends AbstractModule {
     install(new FactoryModuleBuilder()
         .implement(MultiImageFileSource.class, MultiImageFileSource.class)
         .build(MultiImageFileSource.Factory.class));
+    install(new FactoryModuleBuilder()
+        .implement(HttpSource.class, HttpSource.class)
+        .build(HttpSource.Factory.class));
 
     install(new FactoryModuleBuilder().build(ExceptionWitness.Factory.class));
   }

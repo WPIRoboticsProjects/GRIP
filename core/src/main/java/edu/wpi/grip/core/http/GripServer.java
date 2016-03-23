@@ -185,6 +185,19 @@ public class GripServer {
         createContext(path);
     }
 
+    /**
+     * Removes the given handler from all post events.
+     * 
+     * @param handler the handler to remove
+     * @return true if the handler was removed from at least one path
+     */
+    public boolean removePostHandler(PostHandler handler) {
+        return postHandlers.values()
+                .stream()
+                .map(list -> list.remove(handler))
+                .anyMatch(b -> b);
+    }
+
     private final Set<String> contextPaths = new HashSet<>();
 
     private void createContext(String path) {

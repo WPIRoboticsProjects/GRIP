@@ -3,6 +3,7 @@ package edu.wpi.grip.ui.pipeline;
 import edu.wpi.grip.core.events.SourceAddedEvent;
 import edu.wpi.grip.core.events.UnexpectedThrowableEvent;
 import edu.wpi.grip.core.sources.CameraSource;
+import edu.wpi.grip.core.sources.HttpSource;
 import edu.wpi.grip.core.sources.ImageFileSource;
 import edu.wpi.grip.core.sources.MultiImageFileSource;
 import edu.wpi.grip.ui.util.DPIUtility;
@@ -58,6 +59,7 @@ public class AddSourceView extends HBox {
   private final MultiImageFileSource.Factory multiImageSourceFactory;
   private final ImageFileSource.Factory imageSourceFactory;
   private final CameraSource.Factory cameraSourceFactory;
+  private final HttpSource.Factory httpSourceFactory;
 
   private final Button webcamButton;
   private final Button ipcamButton;
@@ -67,11 +69,13 @@ public class AddSourceView extends HBox {
   AddSourceView(EventBus eventBus,
                 MultiImageFileSource.Factory multiImageSourceFactory,
                 ImageFileSource.Factory imageSourceFactory,
-                CameraSource.Factory cameraSourceFactory) {
+                CameraSource.Factory cameraSourceFactory,
+                HttpSource.Factory httpSourceFactory) {
     this.eventBus = eventBus;
     this.multiImageSourceFactory = multiImageSourceFactory;
     this.imageSourceFactory = imageSourceFactory;
     this.cameraSourceFactory = cameraSourceFactory;
+    this.httpSourceFactory = httpSourceFactory;
 
     this.setFillHeight(true);
 
@@ -199,6 +203,14 @@ public class AddSourceView extends HBox {
               },
               e -> dialog.errorText.setText(e.getMessage()));
         });
+
+    addButton("Add HTTP source", getClass().getResource("/edu/wpi/grip/ui/icons/publish.png"), mouseEvent -> {
+      System.out.println("Mouse event on add HTTP source!");
+      final HttpSource httpSource = httpSourceFactory.create();
+      httpSource.initialize(); // this will never throw an IOException
+      eventBus.post(new SourceAddedEvent(httpSource));
+    });
+
   }
 
   /**
