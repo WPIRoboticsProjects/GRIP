@@ -99,7 +99,7 @@ public class GripServer {
     private static final String METHOD_GET = "GET";
     private static final String METHOD_POST = "POST";
     private static final String METHOD_OPTIONS = "OPTIONS";
-    private static final String ALLOWED_METHODS = METHOD_GET + "," + METHOD_OPTIONS;
+    private static final String ALLOWED_METHODS = String.join(", ", METHOD_GET, METHOD_POST, METHOD_OPTIONS);
 
     public interface HttpServerFactory {
         HttpServer create(int port);
@@ -214,11 +214,16 @@ public class GripServer {
             final Map<String, List<String>> requestParameters = getRequestParameters(he.getRequestURI());
             switch (requestMethod) {
                 case METHOD_GET:
-                    final String responseBody = getHandlers.get(path).createResponse(requestParameters);
                     headers.set(HEADER_CONTENT_TYPE, String.format("application/json; charset=%s", CHARSET));
-                    final byte[] rawResponseBody = responseBody.getBytes(CHARSET);
-                    he.sendResponseHeaders(STATUS_OK, rawResponseBody.length);
-                    he.getResponseBody().write(rawResponseBody);
+                    if (getHandlers.containsKey(path)) {
+                        final String responseBody = getHandlers.get(path).createResponse(requestParameters);
+                        final byte[] rawResponseBody = responseBody.getBytes(CHARSET);
+                        he.sendResponseHeaders(STATUS_OK, rawResponseBody.length);
+                        he.getResponseBody().write(rawResponseBody);
+                        he.getResponseBody().close();
+                    } else {
+                        he.sendResponseHeaders(STATUS_OK, NO_RESPONSE_LENGTH);
+                    }
                     break;
                 case METHOD_POST:
                     final byte[] bytes = readBytes(he);
@@ -233,11 +238,11 @@ public class GripServer {
                     }
                     break;
                 case METHOD_OPTIONS:
-                    he.getResponseHeaders().set(HEADER_ALLOW, ALLOWED_METHODS);
+                    headers.set(HEADER_ALLOW, ALLOWED_METHODS);
                     he.sendResponseHeaders(STATUS_OK, NO_RESPONSE_LENGTH);
                     break;
                 default:
-                    he.getResponseHeaders().set(HEADER_ALLOW, ALLOWED_METHODS);
+                    headers.set(HEADER_ALLOW, ALLOWED_METHODS);
                     he.sendResponseHeaders(STATUS_METHOD_NOT_ALLOWED, NO_RESPONSE_LENGTH);
                     break;
             }
