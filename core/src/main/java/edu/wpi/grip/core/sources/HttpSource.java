@@ -22,8 +22,7 @@ import org.bytedeco.javacpp.opencv_core.Mat;
 import org.bytedeco.javacpp.opencv_imgcodecs;
 
 /**
- * Provides a way to generate a constantly updated {@link Mat} from an HTTP
- * server.
+ * Provides a way to generate a constantly updated {@link Mat} from the internal HTTP server.
  */
 public class HttpSource extends Source implements PostHandler {
 
@@ -78,6 +77,7 @@ public class HttpSource extends Source implements PostHandler {
     @Override
     public Properties getProperties() {
         // Don't need any special properties; everything is handled by the server
+        // (Change this if the image upload path is user-configurable)
         return new Properties();
     }
 
@@ -88,7 +88,9 @@ public class HttpSource extends Source implements PostHandler {
 
     @Subscribe
     public void onSourceRemovedEvent(SourceRemovedEvent event) {
-        server.removePostHandler(this);
+        if (event.getSource() == this) {
+            server.removePostHandler(this);
+        }
     }
 
     @Override
