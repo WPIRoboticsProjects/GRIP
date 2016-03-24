@@ -46,7 +46,7 @@ public class GripServerTest {
                     server = HttpServer.create(new InetSocketAddress("localhost", port + offset), 1);
                     break;
                 } catch (IOException e) {
-                    continue;
+                    // That port is taken -- keep trying different ports
                 }
             }
             return server;
@@ -99,15 +99,13 @@ public class GripServerTest {
      * Test of addPostHandler method, of class GripServer.
      */
     @Test
-    public void testAddPostHandler() {
+    public void testAddPostHandler() throws IOException {
         String path = "/testAddPostHandler";
         byte[] testBytes = "testAddPostHandler".getBytes();
         PostHandler handler = bytes -> Arrays.equals(bytes, testBytes);
         instance.addPostHandler(path, handler);
         try {
             doPost(path, testBytes);
-        } catch (IOException e) {
-            fail(e.getMessage());
         } finally {
             instance.removePostHandler(handler); // cleanup
         }
