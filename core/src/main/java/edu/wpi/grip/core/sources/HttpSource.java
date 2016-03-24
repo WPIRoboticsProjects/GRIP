@@ -46,7 +46,6 @@ public class HttpSource extends Source implements PostHandler {
         this.eventBus = eventBus;
         this.server = server;
         this.imageOutput = new OutputSocket<>(eventBus, outputHint);
-        System.out.println("Creating new HttpSource");
     }
 
     @Override

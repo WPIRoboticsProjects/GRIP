@@ -131,17 +131,12 @@ public class GripServerTest {
      */
     @Test
     public void testStartStop() {
-        try {
-            instance.start(); // should do nothing since the server's already running
-            instance.stop();  // stop the server so we know we can start it
-            instance.stop();  // second call should do nothing
-            instance.start(); // restart the server
-            instance.start(); // second call should do nothing
-            instance.restart(); // should stop and then start again
-        } catch (Exception e) {
-            // Starting or stopping when in an invalid state will throw an exception
-            fail(e.getMessage());
-        }
+        instance.start(); // should do nothing since the server's already running
+        instance.stop();  // stop the server so we know we can start it
+        instance.stop();  // second call should do nothing
+        instance.start(); // restart the server
+        instance.start(); // second call should do nothing
+        instance.restart(); // should stop and then start again
     }
 
     @Test
