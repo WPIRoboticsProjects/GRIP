@@ -14,7 +14,6 @@ import edu.wpi.grip.core.events.SourceRemovedEvent;
 import edu.wpi.grip.core.http.GripServer;
 import edu.wpi.grip.core.http.PostHandler;
 import edu.wpi.grip.core.util.ExceptionWitness;
-import edu.wpi.grip.core.util.Holder;
 
 import java.util.Properties;
 
@@ -28,8 +27,8 @@ public class HttpSource extends Source implements PostHandler {
 
     private final OutputSocket<Mat> imageOutput;
     private final SocketHint<Mat> outputHint = SocketHints.Outputs.createMatSocketHint("Image");
-    private final Holder<byte[]> dataHolder = new Holder<>(new byte[0]);
-    private final Holder<Boolean> gotNewImage = new Holder<>(false);
+    private byte[] data = new byte[0];
+    private boolean gotImage = false;
 
     private final EventBus eventBus;
     private final GripServer server;
@@ -62,15 +61,15 @@ public class HttpSource extends Source implements PostHandler {
 
     @Override
     protected boolean updateOutputSockets() {
-        if (!gotNewImage.get()) {
+        if (!gotImage) {
             return false;
         }
-        if (dataHolder.get().length == 0) {
+        if (data.length == 0) {
             // Got data, but it's empty
             return false;
         }
-        gotNewImage.set(false);
-        imageOutput.setValue(opencv_imgcodecs.imdecode(new Mat(dataHolder.get()), opencv_imgcodecs.CV_LOAD_IMAGE_COLOR));
+        gotImage = false;
+        imageOutput.setValue(opencv_imgcodecs.imdecode(new Mat(data), opencv_imgcodecs.CV_LOAD_IMAGE_COLOR));
         return true;
     }
 
@@ -95,8 +94,8 @@ public class HttpSource extends Source implements PostHandler {
 
     @Override
     public boolean convert(byte[] bytes) {
-        dataHolder.set(bytes);
-        gotNewImage.set(true);
+        data = bytes;
+        gotImage = true;
         eventBus.post(new SourceHasPendingUpdateEvent(this));
         return true;
     }

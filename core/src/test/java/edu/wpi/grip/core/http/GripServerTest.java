@@ -41,7 +41,7 @@ public class GripServerTest {
         @Override
         public HttpServer create(int port) {
             HttpServer server;
-            for(int offset = 0;; offset++) {
+            for (int offset = 0;; offset++) {
                 try {
                     server = HttpServer.create(new InetSocketAddress("localhost", port + offset), 1);
                     break;
@@ -71,7 +71,7 @@ public class GripServerTest {
         mockSettings.setServerPort(port);
         instance = new GripServer((ignore) -> server, new MockPipeline(mockSettings));
         instance.start();
-        
+
         client = new DefaultHttpClient();
         client.getParams().setParameter(CoreProtocolPNames.PROTOCOL_VERSION, HttpVersion.HTTP_1_1);
     }
@@ -81,7 +81,6 @@ public class GripServerTest {
      */
     @Test
     public void testGetHandlers() {
-        System.out.println("testGetHandlers");
         String path = "/testGetHandlers";
         GetHandler handler = params -> path;
         instance.addGetHandler(path, handler);
@@ -101,7 +100,6 @@ public class GripServerTest {
      */
     @Test
     public void testAddPostHandler() {
-        System.out.println("addPostHandler");
         String path = "/testAddPostHandler";
         byte[] testBytes = "testAddPostHandler".getBytes();
         PostHandler handler = bytes -> Arrays.equals(bytes, testBytes);
@@ -120,7 +118,6 @@ public class GripServerTest {
      */
     @Test
     public void testDataSuppliers() {
-        System.out.println("testDataSuppliers");
         String name = "testDataSuppliers";
         Supplier<?> supplier = () -> name;
         instance.addDataSupplier(name, supplier);
@@ -134,26 +131,22 @@ public class GripServerTest {
      */
     @Test
     public void testStartStop() {
-        System.out.println("start");
         try {
-            System.out.println("Starting server");
             instance.start(); // should do nothing since the server's already running
-            System.out.println("Stopping server (1/2)");
             instance.stop();  // stop the server so we know we can start it
-            System.out.println("Stopping server (2/2)");
             instance.stop();  // second call should do nothing
-            System.out.println("Restarting server (1/2)");
             instance.start(); // restart the server
-            System.out.println("Restarting server (2/2)");
             instance.start(); // second call should do nothing
-            instance.restart();
+            instance.restart(); // should stop and then start again
         } catch (Exception e) {
-            System.out.println("FAILED");
+            // Starting or stopping when in an invalid state will throw an exception
             fail(e.getMessage());
-        } finally {
-            System.out.println("Ensuring server is in a 'started' state");
-            instance.start(); // make sure the server is running so subsequent tests don't fail
         }
+    }
+
+    @Test
+    public void testPort() {
+        assertEquals(port, instance.getPort());
     }
 
     @After
