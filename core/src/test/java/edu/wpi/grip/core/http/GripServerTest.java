@@ -1,7 +1,6 @@
 
 package edu.wpi.grip.core.http;
 
-import com.google.inject.Inject;
 import com.sun.net.httpserver.HttpServer;
 import edu.wpi.grip.core.MockPipeline;
 import edu.wpi.grip.core.MockPipeline.MockProjectSettings;
@@ -31,7 +30,7 @@ import static org.junit.Assert.*;
  */
 public class GripServerTest {
 
-    private static final int GRIP_SERVER_TEST_PORT = 2084;
+    private static final int GRIP_SERVER_TEST_PORT = 8080;
     private final DefaultHttpClient client;
 
     private HttpServer server;
@@ -174,7 +173,8 @@ public class GripServerTest {
         BasicHttpEntity httpEntity = new BasicHttpEntity();
         httpEntity.setContent(new ByteArrayInputStream(bytes));
         post.setEntity(httpEntity);
-        client.execute(post);
+        client.execute(post).close();
+        client.close();
     }
 
 }

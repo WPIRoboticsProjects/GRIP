@@ -26,7 +26,6 @@ public class HttpSourceController extends SourceController<HttpSource> {
             final ExceptionWitnessResponderButton.Factory exceptionWitnessResponderButtonFactory,
             @Assisted final HttpSource source) {
         super(eventBus, outputSocketControllerFactory, exceptionWitnessResponderButtonFactory, source);
-        System.out.println("Creating new HttpSourceController");
     }
 
 }

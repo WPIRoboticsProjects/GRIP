@@ -121,13 +121,12 @@ public class GripServer {
     private final Map<String, GetHandler> getHandlers;
     private final Map<String, List<PostHandler>> postHandlers;
     private final Map<String, Supplier> dataSuppliers;
-    private int currentPort;
 
     @Inject
     GripServer(HttpServerFactory serverFactory, Pipeline pipeline) {
-        this.currentPort = pipeline.getProjectSettings().getServerPort();
+        int port = pipeline.getProjectSettings().getServerPort();
         this.serverFactory = serverFactory;
-        this.server = serverFactory.create(currentPort);
+        this.server = serverFactory.create(port);
         getHandlers = new HashMap<>();
         postHandlers = new HashMap<>();
         dataSuppliers = new HashMap<>();
@@ -328,12 +327,19 @@ public class GripServer {
     public void restart() {
         try {
             stop();
-            server = HttpServer.create(new InetSocketAddress("localhost", currentPort), BACKLOG);
+            server = HttpServer.create(new InetSocketAddress("localhost", getPort()), BACKLOG);
             start();
         } catch (IOException | IllegalStateException ex) {
             Logger.getLogger(GripServer.class.getName()).log(Level.SEVERE, null, ex);
             throw new GripException("Could not restart GripServer", ex);
         }
+    }
+    
+    /**
+     * Gets the port this server is running on.
+     */
+    public int getPort() {
+        return server.getAddress().getPort();
     }
 
     /**
@@ -382,12 +388,11 @@ public class GripServer {
     @Subscribe
     public void settingsChanged(ProjectSettingsChangedEvent event) {
         int port = event.getProjectSettings().getServerPort();
-        if (port != currentPort) {
+        if (port != getPort()) {
             stop();
             server = serverFactory.create(port);
             start();
             contextPaths.forEach(path -> server.createContext(path, makeContext(path)));
-            currentPort = port;
         }
     }
 

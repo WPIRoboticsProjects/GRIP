@@ -205,7 +205,6 @@ public class AddSourceView extends HBox {
         });
 
     addButton("Add HTTP source", getClass().getResource("/edu/wpi/grip/ui/icons/publish.png"), mouseEvent -> {
-      System.out.println("Mouse event on add HTTP source!");
       final HttpSource httpSource = httpSourceFactory.create();
       httpSource.initialize(); // this will never throw an IOException
       eventBus.post(new SourceAddedEvent(httpSource));
