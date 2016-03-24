@@ -11,6 +11,7 @@ import java.util.Optional;
 import java.util.Set;
 
 /**
+ * Manager for publishing data to the internal HTTP server.
  */
 public class HttpManager implements Manager, MapNetworkPublisherFactory {
 
