@@ -5,11 +5,11 @@ import com.google.common.eventbus.Subscribe;
 import com.google.common.hash.Hashing;
 import com.google.common.io.LineReader;
 import com.google.common.io.Resources;
-import edu.wpi.grip.core.Pipeline;
 import edu.wpi.grip.core.events.ProjectSettingsChangedEvent;
 import edu.wpi.grip.core.events.StopPipelineEvent;
 import edu.wpi.grip.core.serialization.Project;
 import edu.wpi.grip.core.settings.ProjectSettings;
+import edu.wpi.grip.core.settings.SettingsProvider;
 import edu.wpi.grip.ui.util.StringInMemoryFile;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
@@ -81,7 +81,7 @@ public class DeployController {
     @Inject
     private Project project;
     @Inject
-    private Pipeline pipeline;
+    private SettingsProvider settingsProvider;
     @Inject
     private Logger logger;
 
@@ -93,7 +93,7 @@ public class DeployController {
         command.bind(Bindings.concat(javaHome.textProperty(), "/bin/java ", jvmArgs.textProperty(), " -jar '",
                 deployDir.textProperty(), "/", GRIP_JAR, "' '", deployDir.textProperty(), "/", projectFile.textProperty(), "'"));
 
-        loadSettings(pipeline.getProjectSettings());
+        loadSettings(settingsProvider.getProjectSettings());
     }
 
     @Subscribe
@@ -115,7 +115,7 @@ public class DeployController {
     private void saveSettings() {
         // If the settings are updated in the deploy dialog, we still want to save them in the persistent project
         // settings, so they don't get reset the next time the project is opened to the settings are edited.
-        final ProjectSettings settings = pipeline.getProjectSettings();
+        final ProjectSettings settings = settingsProvider.getProjectSettings();
         settings.setDeployAddress(address.getText());
         settings.setDeployUser(user.getText());
         settings.setDeployJavaHome(javaHome.getText());

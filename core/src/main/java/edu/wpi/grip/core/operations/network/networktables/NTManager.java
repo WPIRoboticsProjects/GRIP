@@ -7,10 +7,8 @@ import com.google.inject.Singleton;
 import edu.wpi.first.wpilibj.networktables.NetworkTable;
 import edu.wpi.first.wpilibj.networktables.NetworkTablesJNI;
 import edu.wpi.first.wpilibj.tables.ITable;
-import edu.wpi.grip.core.Pipeline;
 import edu.wpi.grip.core.PipelineRunner;
 import edu.wpi.grip.core.events.ProjectSettingsChangedEvent;
-import edu.wpi.grip.core.events.StepRemovedEvent;
 import edu.wpi.grip.core.operations.network.Manager;
 import edu.wpi.grip.core.operations.network.MapNetworkPublisher;
 import edu.wpi.grip.core.operations.network.MapNetworkPublisherFactory;
@@ -23,6 +21,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -33,6 +32,10 @@ import static com.google.common.base.Preconditions.checkNotNull;
  */
 @Singleton
 public class NTManager implements Manager, MapNetworkPublisherFactory {
+    /*
+     * Nasty hack that is unavoidable because of how NetworkTables works.
+     */
+    private static final AtomicInteger publisherCount = new AtomicInteger(0);
 
     /**
      * Information from:
@@ -52,7 +55,6 @@ public class NTManager implements Manager, MapNetworkPublisherFactory {
     }};
     private final Logger logger = Logger.getLogger(getClass().getName());
 
-    @Inject private Pipeline pipeline;
     @Inject private PipelineRunner pipelineRunner;
     @Inject private GRIPMode gripMode;
 
@@ -108,18 +110,6 @@ public class NTManager implements Manager, MapNetworkPublisherFactory {
         }
     }
 
-    /**
-     * If there are no NTPublishAnnotatedOperation steps, we can shut down NetworkTables
-     */
-    @Subscribe
-    public void disableNetworkTables(StepRemovedEvent event) {
-        if (!pipeline.getSteps().stream().anyMatch(step -> step.getOperation() instanceof NTPublishAnnotatedOperation)) {
-            synchronized (NetworkTable.class) {
-                NetworkTable.shutdown();
-            }
-        }
-    }
-
     private static final class NTPublisher<P> extends MapNetworkPublisher<P> {
         private final ImmutableSet<String> keys;
         private Optional<String> name = Optional.empty();
@@ -170,6 +160,13 @@ public class NTManager implements Manager, MapNetworkPublisherFactory {
             if(name.isPresent()) {
                 deleteOldTable(name.get());
             }
+            synchronized (NetworkTable.class) {
+                // This publisher is no longer used.
+                if (NTManager.publisherCount.addAndGet(-1) == 0) {
+                    // We are the last publisher so shut it down
+                    NetworkTable.shutdown();
+                }
+            }
         }
 
         private ITable getTable() {
@@ -188,6 +185,8 @@ public class NTManager implements Manager, MapNetworkPublisherFactory {
 
     @Override
     public <P>MapNetworkPublisher<P> create(Set<String> keys) {
+        // Keep track of ever publisher created.
+        publisherCount.getAndAdd(1);
         return new NTPublisher<>(keys);
     }
 }
