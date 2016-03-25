@@ -3,6 +3,7 @@ package edu.wpi.grip.ui.pipeline.input;
 import com.google.inject.Inject;
 import edu.wpi.grip.core.InputSocket;
 import edu.wpi.grip.core.SocketHint;
+import org.bytedeco.javacpp.opencv_core.Scalar;
 
 import java.util.List;
 
@@ -27,6 +28,8 @@ public final class InputSocketControllerFactory {
     private SelectInputSocketController.Factory<Object> selectInputSocketControllerFactory;
     @Inject
     private TextFieldInputSocketController.Factory textFieldInputSocketController;
+    @Inject
+    private ColorInputSocketController.Factory colorInputSocketControllerFactory;
 
     /**
      * Create an instance of {@link InputSocketController} appropriate for the given socket.
@@ -77,7 +80,12 @@ public final class InputSocketControllerFactory {
                     throw new IllegalArgumentException("Could not create view for socket.  CHECKBOX views must be Booleans. "
                             + socket.toString());
                 }
-
+            case COLOR:
+                if(socketHint.getType().equals(Scalar.class)) {
+                    return (InputSocketController<T>) colorInputSocketControllerFactory.create((InputSocket<Scalar>) socket);
+                } else {
+                    throw new IllegalArgumentException("Could not create view for socket. COLOR views must be Scalars");
+                }
             default:
                 throw new IllegalArgumentException("Could not create view for socket. " + socket.toString());
         }

@@ -18,7 +18,7 @@ import static org.bytedeco.javacpp.opencv_core.Mat;
  * interface to learn how to talk to <code>Algorithm</code>s.
  */
 public class SocketHint<T> {
-    public enum View {NONE, TEXT, SLIDER, RANGE, SELECT, CHECKBOX}
+    public enum View {NONE, TEXT, SLIDER, RANGE, SELECT, CHECKBOX, COLOR}
 
     private final String identifier;
     private final Class<T> type;
