@@ -68,7 +68,10 @@ public class HttpSource extends Source implements PostHandler {
             return false;
         }
         gotImage = false;
-        imageOutput.setValue(opencv_imgcodecs.imdecode(new Mat(data), opencv_imgcodecs.CV_LOAD_IMAGE_COLOR));
+
+        Mat tmp = new Mat(data);
+        imageOutput.setValue(opencv_imgcodecs.imdecode(tmp, opencv_imgcodecs.CV_LOAD_IMAGE_COLOR));
+        tmp.release();
         return true;
     }
 
