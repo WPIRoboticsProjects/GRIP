@@ -1,6 +1,7 @@
 
 package edu.wpi.grip.core.http;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.eventbus.Subscribe;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -25,6 +26,7 @@ import java.util.*;
 import java.util.function.Supplier;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 /**
  * An internal HTTP server that can be used as an alternative to NetworkTables.
@@ -111,7 +113,7 @@ public class GripServer {
             try {
                 return HttpServer.create(new InetSocketAddress(HOSTNAME, port), BACKLOG);
             } catch (IOException ex) {
-                throw new GripException(ex);
+                throw new GripException("Could not create a server on port " + port, ex);
             }
         }
     }
@@ -121,6 +123,11 @@ public class GripServer {
     private final Map<String, GetHandler> getHandlers;
     private final Map<String, List<PostHandler>> postHandlers;
     private final Map<String, Supplier> dataSuppliers;
+
+    private boolean started = false;
+    private boolean stopped = false;
+
+    private final Set<String> contextPaths = new HashSet<>();
 
     @Inject
     GripServer(HttpServerFactory serverFactory, Pipeline pipeline) {
@@ -196,8 +203,6 @@ public class GripServer {
                 .map(list -> list.remove(handler))
                 .anyMatch(b -> b);
     }
-
-    private final Set<String> contextPaths = new HashSet<>();
 
     private void createContext(String path) {
         if (contextPaths.contains(path)) {
@@ -285,30 +290,29 @@ public class GripServer {
                 .setPrettyPrinting()
                 .serializeSpecialFloatingPointValues()
                 .create();
-        final Map<String, Object> data = new HashMap<>();
-        dataSuppliers.entrySet()
+        final Map<String, Object> data = 
+                dataSuppliers
+                .entrySet()
                 .stream()
                 .filter(e -> params.isEmpty() || params.containsKey(e.getKey())) // send everything if nothing is specified
-                .forEach(e -> data.put(e.getKey(), e.getValue().get()));
+                .collect(Collectors.toMap(Map.Entry::getKey, v -> v.getValue().get()));
         try {
             return gson.toJson(data);
-        } catch (Throwable t) {
-            logger.log(Level.SEVERE, "Error generating json response", t);
-            throw new GripException(t);
+        } catch (RuntimeException ex) {
+            // If we don't catch this, it will be silently consumed by something up the call stack
+            logger.log(Level.SEVERE, "Error generating json response", ex);
+            return "{}"; // empty json object
         }
     }
-
-    private boolean didStart = false;
-    private boolean stopped = false;
 
     /**
      * Starts this server. Has no effect if the server has already been started.
      */
     public void start() {
-        if (!didStart && !stopped) {
+        if (!started && !stopped) {
             // Don't call server.start() if it's already been started or stopped
             server.start();
-            didStart = true;
+            started = true;
             stopped = false;
         }
     }
@@ -317,10 +321,11 @@ public class GripServer {
      * Stops this server. Note that a shutdown hook has been registered to call
      * this method, so it's unlikely that this should need to be called.
      */
+    @VisibleForTesting
     public void stop() {
         if(!stopped) {
             server.stop(0);
-            didStart = false;
+            started = false;
             stopped = true;
         }
     }
@@ -328,14 +333,15 @@ public class GripServer {
     
     /**
      * Restarts the server on the current port.
+     * 
+     * @throws GripException if the server was unable to be restarted.
      */
     public void restart() {
         try {
             stop();
-            server = HttpServer.create(new InetSocketAddress("localhost", getPort()), BACKLOG);
+            server = serverFactory.create(getPort());
             start();
-        } catch (IOException | IllegalStateException ex) {
-            Logger.getLogger(GripServer.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (GripException | IllegalStateException ex) {
             throw new GripException("Could not restart GripServer", ex);
         }
     }
@@ -354,7 +360,7 @@ public class GripServer {
      */
     private static Map<String, List<String>> getRequestParameters(final URI requestUri) {
         final Map<String, List<String>> requestParameters = new LinkedHashMap<>();
-        final String requestQuery = requestUri.getRawQuery();
+        final String requestQuery = requestUri.getRawQuery(); // foo=1&bar=2&...
         if (requestQuery != null) {
             final String[] rawRequestParameters = requestQuery.split("[&;]"); // [foo=1, bar=2, ...]
             for (final String rawRequestParameter : rawRequestParameters) {

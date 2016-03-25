@@ -13,6 +13,6 @@ public interface PostHandler {
      * @param bytes the bytes to convert
      * @return true if the conversion was a success; false if not.
      */
-    public boolean convert(byte[] bytes);
+    boolean convert(byte[] bytes);
 
 }

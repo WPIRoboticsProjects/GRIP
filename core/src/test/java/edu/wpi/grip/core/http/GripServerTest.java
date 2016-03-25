@@ -2,9 +2,9 @@
 package edu.wpi.grip.core.http;
 
 import com.sun.net.httpserver.HttpServer;
+
 import edu.wpi.grip.core.MockPipeline;
 import edu.wpi.grip.core.MockPipeline.MockProjectSettings;
-
 import edu.wpi.grip.core.http.GripServer.HttpServerFactory;
 
 import java.io.ByteArrayInputStream;
@@ -32,44 +32,43 @@ public class GripServerTest {
 
     private static final int GRIP_SERVER_TEST_PORT = 8080;
     private final DefaultHttpClient client;
-
-    private HttpServer server;
-    private int port;
+    private final TestServerFactory serverFactory;
 
     public static class TestServerFactory implements HttpServerFactory {
 
+        private int port;
+
+        public int getPort() {
+            return port;
+        }
+
         @Override
         public HttpServer create(int port) {
-            HttpServer server;
-            for (int offset = 0;; offset++) {
+            final int MAX_TRIES = 200;
+            IOException lastException = null;
+            for (int offset = 0; offset < MAX_TRIES; offset++) {
                 try {
-                    server = HttpServer.create(new InetSocketAddress("localhost", port + offset), 1);
-                    break;
+                    this.port = port + offset;
+                    return HttpServer.create(new InetSocketAddress("localhost", this.port), 1);
                 } catch (IOException e) {
                     // That port is taken -- keep trying different ports
+                    lastException = e;
                 }
             }
-            return server;
+            throw new AssertionError(
+                    String.format("Could not create a server on port %d after %d attempts", port, MAX_TRIES),
+                    lastException);
         }
 
     }
 
-    // DON'T USE INJECTION FOR THIS
     private GripServer instance;
 
     public GripServerTest() {
-        for (int portOffset = 0;; portOffset++) {
-            try {
-                server = HttpServer.create(new InetSocketAddress("localhost", GRIP_SERVER_TEST_PORT + portOffset), 1);
-                port = GRIP_SERVER_TEST_PORT + portOffset;
-                break;
-            } catch (IOException ex) {
-                // That port is taken -- keep trying different ports
-            }
-        }
         MockProjectSettings mockSettings = new MockProjectSettings();
-        mockSettings.setServerPort(port);
-        instance = new GripServer((ignore) -> server, new MockPipeline(mockSettings));
+        mockSettings.setServerPort(GRIP_SERVER_TEST_PORT);
+        this.serverFactory = new TestServerFactory();
+        instance = new GripServer(serverFactory, new MockPipeline(mockSettings));
         instance.start();
 
         client = new DefaultHttpClient();
@@ -77,38 +76,27 @@ public class GripServerTest {
     }
 
     /**
-     * Test of GetHandler methods, of class GripServer.
+     * Test of GetHandler methods
      */
     @Test
-    public void testGetHandlers() {
+    public void testGetHandlers() throws IOException {
         String path = "/testGetHandlers";
         GetHandler handler = params -> path;
         instance.addGetHandler(path, handler);
         instance.addDataSupplier(path, () -> path);
-        try {
-            String data = doGet(path);
-            assertEquals(data, path);
-        } catch (IOException ex) {
-            fail(ex.getMessage());
-        } finally {
-            instance.removeGetHandler(path); // cleanup
-        }
+        assertEquals(doGet(path), path);
     }
 
     /**
-     * Test of addPostHandler method, of class GripServer.
+     * Test PostHandler methods
      */
     @Test
-    public void testAddPostHandler() throws IOException {
+    public void testPostHandlers() throws IOException {
         String path = "/testAddPostHandler";
         byte[] testBytes = "testAddPostHandler".getBytes();
         PostHandler handler = bytes -> Arrays.equals(bytes, testBytes);
         instance.addPostHandler(path, handler);
-        try {
-            doPost(path, testBytes);
-        } finally {
-            instance.removePostHandler(handler); // cleanup
-        }
+        doPost(path, testBytes);
     }
 
     /**
@@ -139,7 +127,7 @@ public class GripServerTest {
 
     @Test
     public void testPort() {
-        assertEquals(port, instance.getPort());
+        assertEquals(serverFactory.port, instance.getPort());
     }
 
     @After
@@ -148,14 +136,14 @@ public class GripServerTest {
     }
 
     private String doGet(String path) throws IOException {
-        String uri = "http://localhost:" + port + path;
+        String uri = "http://localhost:" + instance.getPort() + path;
         HttpGet get = new HttpGet(uri);
         HttpResponse response = client.execute(get);
         return EntityUtils.toString(response.getEntity());
     }
 
     private void doPost(String path, byte[] bytes) throws IOException {
-        HttpPost post = new HttpPost("http://localhost:" + port + path);
+        HttpPost post = new HttpPost("http://localhost:" + instance.getPort() + path);
         BasicHttpEntity httpEntity = new BasicHttpEntity();
         httpEntity.setContent(new ByteArrayInputStream(bytes));
         post.setEntity(httpEntity);

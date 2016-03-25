@@ -9,5 +9,6 @@ import java.util.Map;
  */
 public interface GetHandler {
 
-    public String createResponse(Map<String, List<String>> requestParameters);
+    String createResponse(Map<String, List<String>> requestParameters);
+
 }
