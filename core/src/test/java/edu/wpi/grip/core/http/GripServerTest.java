@@ -1,10 +1,14 @@
 
 package edu.wpi.grip.core.http;
 
+import com.google.common.collect.ImmutableMap;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.sun.net.httpserver.HttpServer;
 
 import edu.wpi.grip.core.MockPipeline;
 import edu.wpi.grip.core.MockPipeline.MockProjectSettings;
+import edu.wpi.grip.core.Pipeline;
 import edu.wpi.grip.core.exception.GripException;
 import edu.wpi.grip.core.http.GripServer.HttpServerFactory;
 
@@ -12,6 +16,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.util.Arrays;
+import java.util.Map;
 import java.util.function.Supplier;
 
 import org.apache.http.HttpResponse;
@@ -63,6 +68,13 @@ public class GripServerTest {
                     lastException);
         }
 
+    }
+
+    /**
+     * Public factory method for testing.
+     */
+    public static GripServer makeServer(HttpServerFactory factory, Pipeline pipeline) {
+        return new GripServer(factory, pipeline);
     }
 
     public GripServerTest() {
@@ -137,17 +149,31 @@ public class GripServerTest {
         assertTrue("Handler should have run", didHandle[0]);
     }
 
-    /**
-     * Test of data supplier methods
-     */
     @Test
-    public void testDataSuppliers() throws IOException {
+    public void testAddRemoveDataSupplier() {
         String name = "testDataSuppliers";
         Supplier<?> supplier = () -> name;
         instance.addDataSupplier(name, supplier);
         assertTrue(instance.hasDataSupplier(name));
         instance.removeDataSupplier(name);
         assertFalse(instance.hasDataSupplier(name));
+    }
+
+    @Test
+    public void testNoSupplier() throws IOException {
+        assertEquals("{}", doGet(GripServer.DATA_PATH));
+        assertEquals("{}", doGet(GripServer.DATA_PATH + "?no_data_here"));
+    }
+
+    @Test
+    public void testWithSupplier() throws IOException {
+        final Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        final String dataName = "testWithSupplier";
+        final Map data = ImmutableMap.of("foo", "bar");
+        instance.addDataSupplier(dataName, () -> data);
+        assertEquals(gson.toJson(ImmutableMap.of(dataName, data)), doGet(GripServer.DATA_PATH + "?" + dataName));
+        assertEquals(gson.toJson(ImmutableMap.of(dataName, data)), doGet(GripServer.DATA_PATH));
+        assertEquals("{}", doGet(GripServer.DATA_PATH + "?" + "no_data_here"));
     }
 
     @Test

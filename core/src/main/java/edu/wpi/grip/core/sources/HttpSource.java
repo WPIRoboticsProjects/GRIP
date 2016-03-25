@@ -15,6 +15,7 @@ import edu.wpi.grip.core.http.GripServer;
 import edu.wpi.grip.core.http.PostHandler;
 import edu.wpi.grip.core.util.ExceptionWitness;
 
+import java.util.Arrays;
 import java.util.Properties;
 
 import org.bytedeco.javacpp.opencv_core.Mat;
@@ -96,6 +97,11 @@ public class HttpSource extends Source implements PostHandler {
 
     @Override
     public boolean convert(byte[] bytes) {
+        if (bytes == null // null data, cannot convert
+                || bytes.length == 0 // no data, cannot convert
+                || Arrays.equals(bytes, data)) { // data's not new, don't bother converting
+            return false;
+        }
         data = bytes;
         gotImage = true;
         eventBus.post(new SourceHasPendingUpdateEvent(this));
