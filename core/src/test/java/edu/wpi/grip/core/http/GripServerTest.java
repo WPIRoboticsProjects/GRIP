@@ -5,6 +5,7 @@ import com.sun.net.httpserver.HttpServer;
 
 import edu.wpi.grip.core.MockPipeline;
 import edu.wpi.grip.core.MockPipeline.MockProjectSettings;
+import edu.wpi.grip.core.exception.GripException;
 import edu.wpi.grip.core.http.GripServer.HttpServerFactory;
 
 import java.io.ByteArrayInputStream;
@@ -15,6 +16,7 @@ import java.util.function.Supplier;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpVersion;
+import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.BasicHttpEntity;
@@ -33,6 +35,7 @@ public class GripServerTest {
     private static final int GRIP_SERVER_TEST_PORT = 8080;
     private final DefaultHttpClient client;
     private final TestServerFactory serverFactory;
+    private GripServer instance;
 
     public static class TestServerFactory implements HttpServerFactory {
 
@@ -62,8 +65,6 @@ public class GripServerTest {
 
     }
 
-    private GripServer instance;
-
     public GripServerTest() {
         MockProjectSettings mockSettings = new MockProjectSettings();
         mockSettings.setServerPort(GRIP_SERVER_TEST_PORT);
@@ -87,23 +88,60 @@ public class GripServerTest {
         assertEquals(doGet(path), path);
     }
 
-    /**
-     * Test PostHandler methods
-     */
     @Test
-    public void testPostHandlers() throws IOException {
-        String path = "/testAddPostHandler";
-        byte[] testBytes = "testAddPostHandler".getBytes();
-        PostHandler handler = bytes -> Arrays.equals(bytes, testBytes);
+    public void testAddAndRemovePostHandler() throws IOException {
+        final String path = "/testAddPostHandler";
+        final byte[] testBytes = "testAddPostHandler".getBytes();
+        final boolean[] didHandle = {false};
+        PostHandler handler = bytes -> {
+            didHandle[0] = true;
+            return Arrays.equals(bytes, testBytes);
+        };
+
         instance.addPostHandler(path, handler);
+        assertTrue("The server should have removed the handler", instance.removePostHandler(handler));
         doPost(path, testBytes);
+        assertFalse("Handler should not have run", didHandle[0]);
+    }
+
+    @Test
+    public void testSuccessfulPostHandler() throws IOException {
+        final String path = "/testAddPostHandler";
+        final byte[] testBytes = "testAddPostHandler".getBytes();
+        final boolean[] didHandle = {false};
+        PostHandler handler = bytes -> {
+            didHandle[0] = true;
+            return Arrays.equals(bytes, testBytes);
+        };
+
+        instance.addPostHandler(path, handler);
+        HttpResponse response = doPost(path, testBytes);
+        assertEquals("The server should return an OK status (200)", response.getStatusLine().getStatusCode(), 200);
+        assertTrue("Handler should have run", didHandle[0]);
+        assertTrue("The server should have removed the handler", instance.removePostHandler(handler));
+    }
+
+    @Test
+    public void testUnsuccessfulPostHandler() throws IOException {
+        final String path = "/testAddPostHandler";
+        final byte[] testBytes = new byte[0];
+        final boolean[] didHandle = {false};
+        PostHandler handler = bytes -> {
+            didHandle[0] = true;
+            return false;
+        };
+
+        instance.addPostHandler(path, handler);
+        HttpResponse response = doPost(path, testBytes);
+        assertEquals("Server should return an internal error (500)", response.getStatusLine().getStatusCode(), 500);
+        assertTrue("Handler should have run", didHandle[0]);
     }
 
     /**
      * Test of data supplier methods
      */
     @Test
-    public void testDataSuppliers() {
+    public void testDataSuppliers() throws IOException {
         String name = "testDataSuppliers";
         Supplier<?> supplier = () -> name;
         instance.addDataSupplier(name, supplier);
@@ -112,11 +150,8 @@ public class GripServerTest {
         assertFalse(instance.hasDataSupplier(name));
     }
 
-    /**
-     * Test of start and stop methods, of class GripServer.
-     */
     @Test
-    public void testStartStop() {
+    public void testStartStop() throws GripException, IllegalStateException {
         instance.start(); // should do nothing since the server's already running
         instance.stop();  // stop the server so we know we can start it
         instance.stop();  // second call should do nothing
@@ -131,8 +166,9 @@ public class GripServerTest {
     }
 
     @After
-    public void stopServer() {
+    public void tearDown() {
         instance.stop();
+        client.close();
     }
 
     private String doGet(String path) throws IOException {
@@ -142,13 +178,12 @@ public class GripServerTest {
         return EntityUtils.toString(response.getEntity());
     }
 
-    private void doPost(String path, byte[] bytes) throws IOException {
+    private CloseableHttpResponse doPost(String path, byte[] bytes) throws IOException {
         HttpPost post = new HttpPost("http://localhost:" + instance.getPort() + path);
         BasicHttpEntity httpEntity = new BasicHttpEntity();
         httpEntity.setContent(new ByteArrayInputStream(bytes));
         post.setEntity(httpEntity);
-        client.execute(post).close();
-        client.close();
+        return client.execute(post);
     }
 
 }
