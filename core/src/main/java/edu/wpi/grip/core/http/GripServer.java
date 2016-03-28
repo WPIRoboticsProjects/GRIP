@@ -10,8 +10,10 @@ import com.google.inject.Singleton;
 import com.sun.net.httpserver.*;
 
 import edu.wpi.grip.core.Pipeline;
+import edu.wpi.grip.core.ProjectManager;
 import edu.wpi.grip.core.events.ProjectSettingsChangedEvent;
 import edu.wpi.grip.core.exception.GripException;
+import edu.wpi.grip.core.serialization.Project;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -128,17 +130,28 @@ public class GripServer {
     private boolean stopped = false;
 
     private final Set<String> contextPaths = new HashSet<>();
+    
+    private final ProjectManager projectManager;
 
     @Inject
-    GripServer(HttpServerFactory serverFactory, Pipeline pipeline) {
+    GripServer(HttpServerFactory serverFactory, Pipeline pipeline, Project project) {
         int port = pipeline.getProjectSettings().getServerPort();
         this.serverFactory = serverFactory;
         this.server = serverFactory.create(port);
+        this.projectManager = new ProjectManager(project);
         getHandlers = new HashMap<>();
         postHandlers = new HashMap<>();
         dataSuppliers = new HashMap<>();
 
         addGetHandler(DATA_PATH, this::createJson);
+        addPostHandler(PIPELINE_UPLOAD_PATH, bytes -> {
+            try {
+                projectManager.openProject(new String(bytes));
+            } catch (IOException ex) {
+                return false;
+            }
+            return true;
+        });
 
         Runtime.getRuntime().addShutdownHook(new Thread(this::stop));
     }

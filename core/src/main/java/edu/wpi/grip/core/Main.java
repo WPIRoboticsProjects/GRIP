@@ -46,6 +46,7 @@ public class Main {
     final Injector injector = Guice.createInjector(new GripCoreModule(), new GripNetworkModule(),
         new GripSourcesHardwareModule());
     injector.getInstance(Main.class).start(args);
+    System.setProperty("grip.headless", "true");
   }
 
   @SuppressWarnings({"PMD.SystemPrintln", "JavadocMethod"})
