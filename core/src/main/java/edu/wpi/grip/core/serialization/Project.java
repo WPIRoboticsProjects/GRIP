@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.Reader;
+import java.io.StringReader;
 import java.io.Writer;
 import java.nio.charset.StandardCharsets;
 import java.util.Optional;
@@ -85,6 +86,16 @@ public class Project {
       this.open(reader);
     }
     this.file = Optional.of(file);
+  }
+  /**
+   * Loads the project defined by the given XML string. This is intended to be used to be able to programmatically
+   * run a pipeline from a remote source. Therefore, this does <strong>not</strong> save the contents to disk;
+   * if it is called in GUI mode, the user will have to manually save the file.
+   *
+   * @param projectXml the XML string defining the project to open
+   */
+  public void open(String projectXml) {
+    open(new StringReader(projectXml));
   }
 
   @VisibleForTesting

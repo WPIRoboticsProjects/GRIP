@@ -145,11 +145,7 @@ public class GripServer {
 
         addGetHandler(DATA_PATH, this::createJson);
         addPostHandler(PIPELINE_UPLOAD_PATH, bytes -> {
-            try {
-                projectManager.openProject(new String(bytes));
-            } catch (IOException ex) {
-                return false;
-            }
+            projectManager.openProject(new String(bytes));
             return true;
         });
 

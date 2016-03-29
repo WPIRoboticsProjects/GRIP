@@ -25,7 +25,7 @@ public class ProjectManager {
      * @param projectFilePath the path to the project to open
      * @throws IOException if the file couldn't be read
      */
-    public void openProject(String projectFilePath) throws IOException {
+    public void openProjectFile(String projectFilePath) throws IOException {
         if (System.getProperty("grip.headless", "true").equals("true")) {
             project.open(new File(projectFilePath));
         } else {
@@ -37,6 +37,20 @@ public class ProjectManager {
 
                 }
             });
+        }
+    }
+
+    /**
+     * Opens the GRIP project serialized to the given string.
+     *
+     * @param projectXml the serialized GRIP project to open
+     */
+    public void openProject(String projectXml) {
+        if (System.getProperty("grip.headless", "true").equals("true")) {
+            project.open(projectXml);
+        } else {
+            // Need to be careful - this will cause a deadlock if not called from the JavaFX application thread
+            Platform.runLater(() -> project.open(projectXml));
         }
     }
 
