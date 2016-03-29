@@ -1,8 +1,9 @@
 package edu.wpi.grip.core.operations.composite;
 
-import edu.wpi.grip.core.NoSocketTypeLabel;
+import edu.wpi.grip.core.sockets.NoSocketTypeLabel;
 import edu.wpi.grip.core.operations.network.PublishValue;
 import edu.wpi.grip.core.operations.network.Publishable;
+import edu.wpi.grip.core.sockets.Socket;
 
 import java.util.Collections;
 import java.util.List;
@@ -49,7 +50,7 @@ public class LinesReport implements Publishable {
     }
 
     /**
-     * Construct an empty report.  This is used as a default value for {@link edu.wpi.grip.core.Socket}s containing
+     * Construct an empty report.  This is used as a default value for {@link Socket}s containing
      * LinesReports.
      */
     public LinesReport() {

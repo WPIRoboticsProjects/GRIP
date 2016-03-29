@@ -1,4 +1,4 @@
-package edu.wpi.grip.core;
+package edu.wpi.grip.core.sockets;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

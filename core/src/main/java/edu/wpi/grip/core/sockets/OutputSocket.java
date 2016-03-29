@@ -1,9 +1,10 @@
-package edu.wpi.grip.core;
+package edu.wpi.grip.core.sockets;
 
 
 import com.google.common.base.MoreObjects;
 import com.google.common.eventbus.EventBus;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
+import edu.wpi.grip.core.Operation;
 import edu.wpi.grip.core.events.SocketPreviewChangedEvent;
 
 import javax.annotation.Nullable;
@@ -61,7 +62,10 @@ public class OutputSocket<T> extends Socket<T> {
         return this.previewed;
     }
 
-    protected void resetValueToInitial() {
+    /**
+     * Resets the  value of this socket to its initial value.
+     */
+    public void resetValueToInitial() {
         this.setValue(this.getSocketHint()
                 .createInitialValue()
                 .orElse(null));

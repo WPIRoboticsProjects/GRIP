@@ -1,4 +1,4 @@
-import edu.wpi.grip.core as grip
+import edu.wpi.grip.core.sockets as grip
 
 inputs = [
     grip.SocketHints.createNumberSocketHint("a", 0.0),

@@ -1,4 +1,7 @@
-package edu.wpi.grip.core;
+package edu.wpi.grip.core.sockets;
+
+import edu.wpi.grip.core.Operation;
+import edu.wpi.grip.core.Step;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -10,12 +13,12 @@ public final class SocketsProvider {
     private final InputSocket<?>[] inputSockets;
     private final OutputSocket<?>[] outputSockets;
 
-    public SocketsProvider(InputSocket<?>[] inputSockets , OutputSocket<?>[] outputSockets) {
+    public SocketsProvider(InputSocket<?>[] inputSockets, OutputSocket<?>[] outputSockets) {
         this.inputSockets = checkNotNull(inputSockets, "InputSockets cannot be null");
         this.outputSockets = checkNotNull(outputSockets, "OutputSockets cannot be null");
     }
 
-    public final InputSocket<?>[] inputSockets () {
+    public final InputSocket<?>[] inputSockets() {
         return inputSockets;
     }
 

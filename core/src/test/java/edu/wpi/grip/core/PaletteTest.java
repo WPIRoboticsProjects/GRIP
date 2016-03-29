@@ -2,6 +2,8 @@ package edu.wpi.grip.core;
 
 import com.google.common.eventbus.EventBus;
 import edu.wpi.grip.core.events.OperationAddedEvent;
+import edu.wpi.grip.core.sockets.InputSocket;
+import edu.wpi.grip.core.sockets.OutputSocket;
 import org.junit.Before;
 import org.junit.Test;
 

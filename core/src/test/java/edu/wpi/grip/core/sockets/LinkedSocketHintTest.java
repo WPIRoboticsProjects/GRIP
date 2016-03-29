@@ -1,7 +1,9 @@
-package edu.wpi.grip.core;
+package edu.wpi.grip.core.sockets;
 
 
 import com.google.common.eventbus.EventBus;
+import edu.wpi.grip.core.Connection;
+import edu.wpi.grip.core.MockConnection;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -28,7 +30,7 @@ public class LinkedSocketHintTest {
 
     @Test
     @SuppressWarnings("unchecked")
-    public void testMakingConnectionOfTypeBooleanPreventsConnectionOfTypeNumber () {
+    public void testMakingConnectionOfTypeBooleanPreventsConnectionOfTypeNumber() {
         // Given
         final EventBus eventBus = new EventBus();
         final OutputSocket booleanOutputSocket = new OutputSocket(eventBus, booleanSocketHint);
@@ -37,7 +39,9 @@ public class LinkedSocketHintTest {
         // When
         final InputSocket connectedLinkedInputSocket = linkedSocketHint.linkedInputSocket("A");
 
-        final Connection connection = new Connection<>(eventBus, (outputSocket, inputSocket) -> true, booleanOutputSocket, connectedLinkedInputSocket);
+        final Connection connection = new MockConnection<>(eventBus,
+                (outputSocket, inputSocket) -> true,
+                booleanOutputSocket, connectedLinkedInputSocket);
         connectedLinkedInputSocket.addConnection(connection);
 
         // Then

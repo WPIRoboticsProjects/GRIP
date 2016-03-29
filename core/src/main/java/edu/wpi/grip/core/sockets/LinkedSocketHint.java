@@ -1,6 +1,7 @@
-package edu.wpi.grip.core;
+package edu.wpi.grip.core.sockets;
 
 import com.google.common.eventbus.EventBus;
+import edu.wpi.grip.core.Connection;
 import edu.wpi.grip.core.events.ConnectionRemovedEvent;
 
 import java.util.HashSet;

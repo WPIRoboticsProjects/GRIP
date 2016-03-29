@@ -9,6 +9,8 @@ import edu.wpi.grip.core.events.ExceptionEvent;
 import edu.wpi.grip.core.events.RenderEvent;
 import edu.wpi.grip.core.events.RunPipelineEvent;
 import edu.wpi.grip.core.events.StopPipelineEvent;
+import edu.wpi.grip.core.sockets.InputSocket;
+import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.core.util.MockExceptionWitness;
 import net.jodah.concurrentunit.Waiter;
 import org.junit.After;

@@ -1,7 +1,6 @@
 package edu.wpi.gripgenerator.templates;
 
 import com.github.javaparser.ASTHelper;
-import com.github.javaparser.ast.ImportDeclaration;
 import com.github.javaparser.ast.body.*;
 import com.github.javaparser.ast.expr.*;
 import com.github.javaparser.ast.type.ClassOrInterfaceType;
@@ -32,8 +31,6 @@ import static com.github.javaparser.ASTHelper.createReferenceType;
 public class SocketHintDeclaration {
     public static final String SOCKET_HINT_CLASS_NAME = "SocketHint";
     public static final String SOCKET_HINT_BUILDER_CLASS_NAME = "Builder";
-    public static final ImportDeclaration SOCKET_IMPORT = new ImportDeclaration(
-            new NameExpr("edu.wpi.grip.core." + SOCKET_HINT_CLASS_NAME), false, false);
     public static final String HINT_POSTFIX = "Hint";
     public static final String INPUT_POSTFIX = "Input";
     public static final String OUTPUT_POSTFIX = "Output";

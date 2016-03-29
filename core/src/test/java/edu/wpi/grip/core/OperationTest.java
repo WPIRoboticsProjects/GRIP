@@ -1,6 +1,8 @@
 package edu.wpi.grip.core;
 
 import com.google.common.eventbus.EventBus;
+import edu.wpi.grip.core.sockets.InputSocket;
+import edu.wpi.grip.core.sockets.OutputSocket;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;

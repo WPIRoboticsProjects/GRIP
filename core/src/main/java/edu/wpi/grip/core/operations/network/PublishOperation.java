@@ -4,6 +4,10 @@ package edu.wpi.grip.core.operations.network;
 import com.google.common.eventbus.EventBus;
 import com.google.common.reflect.TypeToken;
 import edu.wpi.grip.core.*;
+import edu.wpi.grip.core.sockets.InputSocket;
+import edu.wpi.grip.core.sockets.OutputSocket;
+import edu.wpi.grip.core.sockets.SocketHint;
+import edu.wpi.grip.core.sockets.SocketHints;
 
 import java.util.Arrays;
 import java.util.Collections;

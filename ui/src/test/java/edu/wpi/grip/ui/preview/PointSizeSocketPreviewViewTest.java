@@ -1,8 +1,8 @@
 package edu.wpi.grip.ui.preview;
 
 import com.google.common.eventbus.EventBus;
-import edu.wpi.grip.core.OutputSocket;
-import edu.wpi.grip.core.SocketHint;
+import edu.wpi.grip.core.sockets.OutputSocket;
+import edu.wpi.grip.core.sockets.SocketHint;
 import edu.wpi.grip.ui.util.MockGripPlatform;
 import javafx.scene.Scene;
 import javafx.stage.Stage;

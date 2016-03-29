@@ -1,5 +1,9 @@
 package edu.wpi.grip.core;
 
+import edu.wpi.grip.core.sockets.InputSocket;
+import edu.wpi.grip.core.sockets.OutputSocket;
+import edu.wpi.grip.core.sockets.Socket;
+
 /**
  * Allows {@link Connection Connections} to be validated to ensure that the pipeline will remain valid.
  */

@@ -1,7 +1,7 @@
 package edu.wpi.grip.core.sources;
 
 import com.google.common.eventbus.EventBus;
-import edu.wpi.grip.core.OutputSocket;
+import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.util.Files;
 import edu.wpi.grip.util.ImageWithData;
 import org.bytedeco.javacpp.opencv_core.Mat;

@@ -7,6 +7,7 @@ import edu.wpi.grip.core.events.ConnectionAddedEvent;
 import edu.wpi.grip.core.events.ConnectionRemovedEvent;
 import edu.wpi.grip.core.events.SourceAddedEvent;
 import edu.wpi.grip.core.events.SourceRemovedEvent;
+import edu.wpi.grip.core.sockets.*;
 import edu.wpi.grip.util.GRIPCoreTestModule;
 import org.junit.After;
 import org.junit.Before;

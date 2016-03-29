@@ -1,7 +1,7 @@
 package edu.wpi.grip.core.operations.composite;
 
 import com.google.common.base.MoreObjects;
-import edu.wpi.grip.core.NoSocketTypeLabel;
+import edu.wpi.grip.core.sockets.NoSocketTypeLabel;
 import edu.wpi.grip.core.operations.network.PublishValue;
 import edu.wpi.grip.core.operations.network.Publishable;
 

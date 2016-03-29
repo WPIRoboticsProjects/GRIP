@@ -3,6 +3,7 @@ package edu.wpi.grip.core.operations.composite;
 
 import com.google.common.eventbus.EventBus;
 import edu.wpi.grip.core.*;
+import edu.wpi.grip.core.sockets.*;
 
 /**
  * Allows for switching between two arbitrary typed {@link Socket} using a

@@ -2,6 +2,9 @@ package edu.wpi.grip.core.operations;
 
 import com.google.common.eventbus.EventBus;
 import edu.wpi.grip.core.*;
+import edu.wpi.grip.core.sockets.InputSocket;
+import edu.wpi.grip.core.sockets.OutputSocket;
+import edu.wpi.grip.core.sockets.SocketHint;
 import org.python.core.*;
 import org.python.util.PythonInterpreter;
 

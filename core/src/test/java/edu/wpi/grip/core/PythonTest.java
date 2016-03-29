@@ -2,6 +2,7 @@ package edu.wpi.grip.core;
 
 import com.google.common.eventbus.EventBus;
 import edu.wpi.grip.core.operations.PythonScriptOperation;
+import edu.wpi.grip.core.sockets.Socket;
 import edu.wpi.grip.core.util.MockExceptionWitness;
 import org.junit.Before;
 import org.junit.Test;
@@ -36,7 +37,7 @@ public class PythonTest {
 
     @Test
     public void testPythonAdditionFromString() throws Exception {
-        Operation additionFromString = new PythonScriptOperation("import edu.wpi.grip.core as grip\nimport java" +
+        Operation additionFromString = new PythonScriptOperation("import edu.wpi.grip.core.sockets as grip\nimport java" +
                 ".lang.Integer\n\ninputs = [\n    grip.SocketHints.createNumberSocketHint(\"a\", 0.0),\n    grip.SocketHints.createNumberSocketHint(" +
                 "\"b\", 0.0),\n]\n\noutputs = [\n    grip.SocketHints.Outputs.createNumberSocketHint(\"sum\", 0.0)," +
                 "\n]\n\ndef perform(a, b):\n    return a + b\n");

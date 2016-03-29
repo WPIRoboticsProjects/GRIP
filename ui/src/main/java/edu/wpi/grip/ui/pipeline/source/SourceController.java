@@ -3,7 +3,7 @@ package edu.wpi.grip.ui.pipeline.source;
 import com.google.common.eventbus.EventBus;
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
-import edu.wpi.grip.core.OutputSocket;
+import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.core.Source;
 import edu.wpi.grip.core.events.SourceRemovedEvent;
 import edu.wpi.grip.ui.Controller;

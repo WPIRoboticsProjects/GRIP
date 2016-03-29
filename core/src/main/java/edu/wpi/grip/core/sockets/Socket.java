@@ -1,8 +1,11 @@
-package edu.wpi.grip.core;
+package edu.wpi.grip.core.sockets;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.eventbus.EventBus;
+import edu.wpi.grip.core.Connection;
+import edu.wpi.grip.core.Source;
+import edu.wpi.grip.core.Step;
 import edu.wpi.grip.core.events.SocketChangedEvent;
 import edu.wpi.grip.core.events.SocketConnectedChangedEvent;
 
@@ -81,7 +84,7 @@ public abstract class Socket<T> {
      * @return The value currently stored in this socket.
      */
     public Optional<T> getValue() {
-        if(!this.value.isPresent()) {
+        if (!this.value.isPresent()) {
             this.value = socketHint.createInitialValue();
         }
         return (Optional<T>) this.value;
@@ -90,7 +93,7 @@ public abstract class Socket<T> {
     /**
      * @param step The step that this socket is part of, if it's in a step.
      */
-    protected void setStep(Optional<Step> step) {
+    public void setStep(Optional<Step> step) {
         step.ifPresent(s -> checkState(!this.source.isPresent(), "Socket cannot be both in a step and a source"));
         this.step = step;
     }
@@ -106,7 +109,7 @@ public abstract class Socket<T> {
     /**
      * @param source The source that this socket is part of, if it's in a source.
      */
-    protected void setSource(Optional<Source> source) {
+    public void setSource(Optional<Source> source) {
         source.ifPresent(s -> checkState(!this.step.isPresent(), "Socket cannot be both in a step and a source"));
         this.source = source;
     }
@@ -164,7 +167,8 @@ public abstract class Socket<T> {
      * connections from continuing to have an effect on steps because they still hold references to the values they
      * were connected to.
      */
-    protected void onDisconnected() {}
+    protected void onDisconnected() {
+    }
 
     @Override
     public String toString() {

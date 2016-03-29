@@ -4,6 +4,10 @@ import com.google.common.eventbus.EventBus;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
+import edu.wpi.grip.core.sockets.InputSocket;
+import edu.wpi.grip.core.sockets.OutputSocket;
+import edu.wpi.grip.core.sockets.Socket;
+import edu.wpi.grip.core.sockets.SocketsProvider;
 import edu.wpi.grip.core.util.ExceptionWitness;
 
 import java.util.Optional;

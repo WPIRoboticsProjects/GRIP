@@ -2,7 +2,7 @@ package edu.wpi.grip.core.operations.network;
 
 import com.google.common.eventbus.EventBus;
 import com.google.common.reflect.TypeToken;
-import edu.wpi.grip.core.InputSocket;
+import edu.wpi.grip.core.sockets.InputSocket;
 import org.junit.Test;
 
 import java.util.Map;

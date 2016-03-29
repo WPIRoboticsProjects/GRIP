@@ -12,6 +12,8 @@ import edu.wpi.grip.core.events.ProjectSettingsChangedEvent;
 import edu.wpi.grip.core.events.SourceAddedEvent;
 import edu.wpi.grip.core.operations.PythonScriptOperation;
 import edu.wpi.grip.core.settings.ProjectSettings;
+import edu.wpi.grip.core.sockets.InputSocket;
+import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.core.sources.ImageFileSource;
 import edu.wpi.grip.util.Files;
 import edu.wpi.grip.util.GRIPCoreTestModule;
@@ -64,7 +66,7 @@ public class ProjectTest {
         additionOperation = new AdditionOperation();
         pythonAdditionOperationFromURL = new PythonScriptOperation(
                 ProjectTest.class.getResource("/edu/wpi/grip/scripts/addition.py"));
-        pythonAdditionOperationFromSource = new PythonScriptOperation("import edu.wpi.grip.core as grip\nimport java" +
+        pythonAdditionOperationFromSource = new PythonScriptOperation("import edu.wpi.grip.core.sockets as grip\nimport java" +
                 ".lang.Integer\n\ninputs = [\n    grip.SocketHints.createNumberSocketHint(\"a\", 0.0),\n    grip.SocketHints.createNumberSocketHint(" +
                 "\"b\", 0.0),\n]\n\noutputs = [\n    grip.SocketHints.Outputs.createNumberSocketHint(\"sum\", 0.0)," +
                 "\n]\n\ndef perform(a, b):\n    return a + b\n");
