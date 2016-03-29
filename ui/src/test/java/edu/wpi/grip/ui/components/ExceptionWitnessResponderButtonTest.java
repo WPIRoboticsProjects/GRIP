@@ -37,7 +37,7 @@ public class ExceptionWitnessResponderButtonTest extends ApplicationTest {
     public void testOnExceptionEvent() throws Exception {
         flagNewException();
         WaitForAsyncUtils.waitFor(2, TimeUnit.SECONDS,
-                () -> NodeMatchers.isVisible().matches(lookup("." + ExceptionWitnessResponderButton.STYLE_CLASS).queryFirst()));
+                () -> NodeMatchers.isVisible().matches(lookup("." + ExceptionWitnessResponderButton.STYLE_CLASS).query()));
     }
 
     @Test
@@ -45,7 +45,7 @@ public class ExceptionWitnessResponderButtonTest extends ApplicationTest {
         flagNewException();
         witness.clearException();
         WaitForAsyncUtils.waitFor(2, TimeUnit.SECONDS,
-                () -> NodeMatchers.isInvisible().matches(lookup("." + ExceptionWitnessResponderButton.STYLE_CLASS).queryFirst()));
+                () -> NodeMatchers.isInvisible().matches(lookup("." + ExceptionWitnessResponderButton.STYLE_CLASS).query()));
     }
 
     @Test
@@ -53,17 +53,17 @@ public class ExceptionWitnessResponderButtonTest extends ApplicationTest {
     public void testPopoverAppears() throws TimeoutException {
         flagNewException();
         WaitForAsyncUtils.waitFor(2, TimeUnit.SECONDS,
-                () -> NodeMatchers.isVisible().matches(lookup("." + ExceptionWitnessResponderButton.STYLE_CLASS).queryFirst()));
+                () -> NodeMatchers.isVisible().matches(lookup("." + ExceptionWitnessResponderButton.STYLE_CLASS).query()));
         clickOn("." + ExceptionWitnessResponderButton.STYLE_CLASS);
         WaitForAsyncUtils.waitFor(2, TimeUnit.SECONDS,
-                () -> NodeMatchers.isVisible().matches(lookup("." + ExceptionWitnessResponderButton.ExceptionPopOver.STYLE_CLASS).queryFirst()));
+                () -> NodeMatchers.isVisible().matches(lookup("." + ExceptionWitnessResponderButton.ExceptionPopOver.STYLE_CLASS).query()));
     }
 
     @Test
     public void testPopoverDoesNotHaveStackTracePaneWhenWarningIsFlagged() throws Exception {
         flagWarning();
         WaitForAsyncUtils.waitFor(2, TimeUnit.SECONDS,
-                () -> NodeMatchers.isVisible().matches(lookup("." + ExceptionWitnessResponderButton.STYLE_CLASS).queryFirst()));
+                () -> NodeMatchers.isVisible().matches(lookup("." + ExceptionWitnessResponderButton.STYLE_CLASS).query()));
         clickOn("." + ExceptionWitnessResponderButton.STYLE_CLASS);
         verifyThat("Stack Trace", NodeMatchers.isInvisible());
     }
