@@ -9,6 +9,7 @@ import edu.wpi.grip.core.operations.Operations;
 import edu.wpi.grip.core.operations.network.GripNetworkModule;
 import edu.wpi.grip.core.serialization.Project;
 import edu.wpi.grip.core.sources.GripSourcesHardwareModule;
+import edu.wpi.grip.core.util.GripProperties;
 import edu.wpi.grip.core.util.SafeShutdown;
 import edu.wpi.grip.ui.util.DPIUtility;
 
@@ -69,7 +70,7 @@ public class Main extends Application {
     if (parameters.contains("--headless")) {
       // If --headless was specified on the command line, run in headless mode (only use the core
       // module)
-      System.setProperty("grip.headless", "true");
+      GripProperties.setProperty("headless", "true");
       injector = Guice.createInjector(new GripCoreModule(), new GripNetworkModule(), new
           GripSourcesHardwareModule());
       injector.injectMembers(this);
@@ -77,7 +78,7 @@ public class Main extends Application {
       parameters.remove("--headless");
     } else {
       // Otherwise, run with both the core and UI modules, and show the JavaFX stage
-      System.setProperty("grip.headless", "false");
+      GripProperties.setProperty("headless", "false");
       injector = Guice.createInjector(Modules.override(new GripCoreModule(), new
           GripNetworkModule(), new GripSourcesHardwareModule()).with(new GripUiModule()));
       injector.injectMembers(this);

@@ -8,6 +8,7 @@ import edu.wpi.grip.core.operations.Operations;
 import edu.wpi.grip.core.operations.network.GripNetworkModule;
 import edu.wpi.grip.core.serialization.Project;
 import edu.wpi.grip.core.sources.GripSourcesHardwareModule;
+import edu.wpi.grip.core.util.GripProperties;
 
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
@@ -46,7 +47,7 @@ public class Main {
     final Injector injector = Guice.createInjector(new GripCoreModule(), new GripNetworkModule(),
         new GripSourcesHardwareModule());
     injector.getInstance(Main.class).start(args);
-    System.setProperty("grip.headless", "true");
+    GripProperties.setProperty("headless", "true");
   }
 
   @SuppressWarnings({"PMD.SystemPrintln", "JavadocMethod"})
