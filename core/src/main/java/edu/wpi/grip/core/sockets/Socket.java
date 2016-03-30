@@ -61,12 +61,13 @@ public abstract class Socket<T> {
      *
      * @param optionalValue The optional value to assign this socket to.
      */
-    public synchronized void setValueOptional(Optional<? extends T> optionalValue) {
+    public final synchronized void setValueOptional(Optional<? extends T> optionalValue) {
         checkNotNull(optionalValue, "The optional value can not be null");
         if (optionalValue.isPresent()) {
             getSocketHint().getType().cast(optionalValue.get());
         }
         this.value = optionalValue;
+        onValueChanged();
         eventBus.post(new SocketChangedEvent(this));
     }
 
@@ -75,9 +76,16 @@ public abstract class Socket<T> {
      *
      * @param value The value to store in this socket. Nullable.
      */
-    public void setValue(@Nullable T value) {
+    public final void setValue(@Nullable T value) {
         setValueOptional(Optional.ofNullable(this.getSocketHint().getType().cast(value)));
+    }
 
+    /**
+     * Called when the value for the socket is reassigned.
+     * Can be used by an implementing class to change behaviour when the value is changed.
+     */
+    protected void onValueChanged() {
+        /* no-op */
     }
 
     /**

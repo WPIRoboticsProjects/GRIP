@@ -7,9 +7,6 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
 import edu.wpi.grip.core.Operation;
 import edu.wpi.grip.core.events.SocketPreviewChangedEvent;
 
-import javax.annotation.Nullable;
-import java.util.Optional;
-
 /**
  * Represents the output of an {@link Operation}.
  *
@@ -29,16 +26,6 @@ public class OutputSocket<T> extends Socket<T> {
      */
     public OutputSocket(EventBus eventBus, SocketHint<T> socketHint) {
         super(eventBus, socketHint, Direction.OUTPUT);
-    }
-
-    @Override
-    public void setValueOptional(Optional<? extends T> optionalValue) {
-        super.setValueOptional(optionalValue);
-    }
-
-    @Override
-    public void setValue(@Nullable T value) {
-        super.setValue(value);
     }
 
     /**
