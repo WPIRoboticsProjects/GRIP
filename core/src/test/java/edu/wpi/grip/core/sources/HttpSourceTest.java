@@ -4,7 +4,7 @@ package edu.wpi.grip.core.sources;
 import com.google.common.eventbus.EventBus;
 
 import edu.wpi.grip.core.MockPipeline;
-import edu.wpi.grip.core.OutputSocket;
+import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.core.http.GripServer;
 import edu.wpi.grip.core.http.GripServerTest;
 import edu.wpi.grip.core.util.MockExceptionWitness;

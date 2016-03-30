@@ -5,9 +5,9 @@ import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import com.google.inject.Inject;
 
-import edu.wpi.grip.core.OutputSocket;
-import edu.wpi.grip.core.SocketHint;
-import edu.wpi.grip.core.SocketHints;
+import edu.wpi.grip.core.sockets.OutputSocket;
+import edu.wpi.grip.core.sockets.SocketHint;
+import edu.wpi.grip.core.sockets.SocketHints;
 import edu.wpi.grip.core.Source;
 import edu.wpi.grip.core.events.SourceHasPendingUpdateEvent;
 import edu.wpi.grip.core.events.SourceRemovedEvent;
