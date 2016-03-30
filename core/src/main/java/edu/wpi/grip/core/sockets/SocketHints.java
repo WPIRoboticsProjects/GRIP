@@ -52,7 +52,7 @@ public final class SocketHints {
             return createNumberSocketHintBuilder(identifier, number).view(SocketHint.View.TEXT).build();
         }
 
-        public static SocketHint<List> createNumberListRangeSocketHint(final String identifier, final Number low, final Number high) {
+        public static SocketHint<List<Number>> createNumberListRangeSocketHint(final String identifier, final Number low, final Number high) {
             return createNumberListSocketHintBuilder(identifier, new Number[]{low, high})
                     .view(SocketHint.View.RANGE)
                     .build();
@@ -127,8 +127,8 @@ public final class SocketHints {
         else return builder;
     }
 
-    private static SocketHint.Builder<List> createNumberListSocketHintBuilder(final String identifier, final Number[] domain) {
-        return new SocketHint.Builder<>(List.class).identifier(identifier)
+    private static SocketHint.Builder<List<Number>> createNumberListSocketHintBuilder(final String identifier, final Number[] domain) {
+        return new SocketHint.Builder<List<Number>>(List.class).identifier(identifier)
                 .initialValueSupplier(() -> new ArrayList<>(Arrays.asList(domain)))
                 .domain(new List[]{Arrays.asList(domain)});
     }

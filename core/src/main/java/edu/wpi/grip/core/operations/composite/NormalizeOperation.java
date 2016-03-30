@@ -3,11 +3,8 @@ package edu.wpi.grip.core.operations.composite;
 
 import com.google.common.eventbus.EventBus;
 
-import edu.wpi.grip.core.sockets.InputSocket;
+import edu.wpi.grip.core.sockets.*;
 import edu.wpi.grip.core.Operation;
-import edu.wpi.grip.core.sockets.OutputSocket;
-import edu.wpi.grip.core.sockets.SocketHint;
-import edu.wpi.grip.core.sockets.SocketHints;
 
 import java.io.InputStream;
 import java.util.Optional;
@@ -88,13 +85,13 @@ public class NormalizeOperation implements Operation {
 
     @Override
     public void perform(InputSocket<?>[] inputs, OutputSocket<?>[] outputs) {
-        final Mat input = (Mat) inputs[0].getValue().get();
-        final Type type = (Type) inputs[1].getValue().get();
-        final Number a = (Number) inputs[2].getValue().get();
-        final Number b = (Number) inputs[3].getValue().get();
+        final Mat input = srcHint.retrieveValue(inputs[0]);
+        final Type type = typeHint.retrieveValue(inputs[1]);
+        final Number a = aHint.retrieveValue(inputs[2]);
+        final Number b = bHint.retrieveValue(inputs[3]);
 
-        final OutputSocket<Mat> outputSocket = (OutputSocket<Mat>) outputs[0];
-        final Mat output = outputSocket.getValue().get();
+        final Socket<Mat> outputSocket = dstHint.safeCastSocket(outputs[0]);
+        final Mat output = dstHint.retrieveValue(outputSocket);
 
         normalize(input, output, a.doubleValue(), b.doubleValue(), type.value, -1, null);
 

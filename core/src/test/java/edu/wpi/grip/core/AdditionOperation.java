@@ -33,10 +33,9 @@ public class AdditionOperation implements Operation {
     }
 
     @Override
-    public void perform(InputSocket[] inputs, OutputSocket[] outputs) {
-        InputSocket<Number> a = inputs[0], b = inputs[1];
-        OutputSocket<Number> c = outputs[0];
+    public void perform(InputSocket<?>[] inputs, OutputSocket<?>[] outputs) {
+        final Number a = aHint.retrieveValue(inputs[0]), b = bHint.retrieveValue(inputs[1]);
 
-        c.setValue(a.getValue().get().doubleValue() + b.getValue().get().doubleValue());
+        cHint.safeCastSocket(outputs[0]).setValue(a.doubleValue() + b.doubleValue());
     }
 }

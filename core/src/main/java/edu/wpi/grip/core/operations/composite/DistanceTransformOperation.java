@@ -2,18 +2,14 @@
 package edu.wpi.grip.core.operations.composite;
 
 import com.google.common.eventbus.EventBus;
-
-import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.Operation;
-import edu.wpi.grip.core.sockets.OutputSocket;
-import edu.wpi.grip.core.sockets.SocketHint;
-import edu.wpi.grip.core.sockets.SocketHints;
+import edu.wpi.grip.core.sockets.*;
+import org.bytedeco.javacpp.opencv_core.Mat;
 
 import java.io.InputStream;
 import java.util.Optional;
 
-import org.bytedeco.javacpp.opencv_core.Mat;
-import static org.bytedeco.javacpp.opencv_core.*;
+import static org.bytedeco.javacpp.opencv_core.CV_8U;
 import static org.bytedeco.javacpp.opencv_imgproc.*;
 
 /**
@@ -107,17 +103,17 @@ public class DistanceTransformOperation implements Operation {
 
     @Override
     public void perform(InputSocket<?>[] inputs, OutputSocket<?>[] outputs) {
-        final Mat input = (Mat) inputs[0].getValue().get();
+        final Mat input = srcHint.retrieveValue(inputs[0]);
 
         if (input.type() != CV_8U) {
             throw new IllegalArgumentException("Distance transform only works on 8-bit binary images");
         }
 
-        final Type type = (Type) inputs[1].getValue().get();
-        final MaskSize maskSize = (MaskSize) inputs[2].getValue().get();
+        final Type type = typeHint.retrieveValue(inputs[1]);
+        final MaskSize maskSize = maskSizeHint.retrieveValue(inputs[2]);
 
-        final OutputSocket<Mat> outputSocket = (OutputSocket<Mat>) outputs[0];
-        final Mat output = outputSocket.getValue().get();
+        final Socket<Mat> outputSocket = outputHint.safeCastSocket(outputs[0]);
+        final Mat output = outputHint.retrieveValue(outputSocket);
 
         distanceTransform(input, output, type.value, maskSize.value);
         output.convertTo(output, CV_8U);

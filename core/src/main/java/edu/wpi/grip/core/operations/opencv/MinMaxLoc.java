@@ -9,10 +9,9 @@ import org.bytedeco.javacpp.opencv_core;
 import org.bytedeco.javacpp.opencv_core.Mat;
 import org.bytedeco.javacpp.opencv_core.Point;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
-/** Operation to call {@link opencv_core#minMaxLoc} */
+/**
+ * Operation to call {@link opencv_core#minMaxLoc}
+ */
 public class MinMaxLoc implements CVOperation {
 
     private final SocketHint<Mat>
@@ -26,7 +25,6 @@ public class MinMaxLoc implements CVOperation {
     private final SocketHint<Point>
             minLocOutputHint = SocketHints.Outputs.createPointSocketHint("Min Loc"),
             maxLocOutputHint = SocketHints.Outputs.createPointSocketHint("Max Loc");
-    private static Logger logger =  Logger.getLogger(MinMaxLoc.class.getName());
 
     @Override
     public String getName() {
@@ -41,38 +39,37 @@ public class MinMaxLoc implements CVOperation {
     @Override
     @SuppressWarnings("unchecked")
     public InputSocket<?>[] createInputSockets(EventBus eventBus) {
-        return new InputSocket[] { new InputSocket(eventBus, srcInputHint), new InputSocket(eventBus, maskInputHint) };
+        return new InputSocket[]{
+                new InputSocket<>(eventBus, srcInputHint),
+                new InputSocket<>(eventBus, maskInputHint)
+        };
     }
 
     @Override
     @SuppressWarnings("unchecked")
     public OutputSocket<?>[] createOutputSockets(EventBus eventBus) {
-        return new OutputSocket[] {
-                new OutputSocket(eventBus, minValOutputHint),
-                new OutputSocket(eventBus, maxValOutputHint),
-                new OutputSocket(eventBus, minLocOutputHint),
-                new OutputSocket(eventBus, maxLocOutputHint),
+        return new OutputSocket[]{
+                new OutputSocket<>(eventBus, minValOutputHint),
+                new OutputSocket<>(eventBus, maxValOutputHint),
+                new OutputSocket<>(eventBus, minLocOutputHint),
+                new OutputSocket<>(eventBus, maxLocOutputHint),
         };
     }
 
     @Override
     public void perform(InputSocket<?>[] inputs, OutputSocket<?>[] outputs) {
-        final Mat src = (Mat) inputs[0].getValue().get();
-        Mat mask = (Mat) inputs[1].getValue().get();
+        final Mat src = srcInputHint.retrieveValue(inputs[0]);
+        Mat mask = maskInputHint.retrieveValue(inputs[1]);
         if (mask.empty()) mask = null;
-        final double minVal[] = new double [1];
-        final double maxVal[] = new double [1];
-        final Point minLoc = (Point) outputs[2].getValue().get();
-        final Point maxLoc = (Point) outputs[3].getValue().get();
+        final double minVal[] = new double[1];
+        final double maxVal[] = new double[1];
+        final Point minLoc = minLocOutputHint.retrieveValue(outputs[2]);
+        final Point maxLoc = maxLocOutputHint.retrieveValue(outputs[3]);
 
-        try {
-            opencv_core.minMaxLoc(src, minVal, maxVal, minLoc, maxLoc, mask);
-            ((OutputSocket<Number>) outputs[0]).setValue(minVal[0]);
-            ((OutputSocket<Number>) outputs[1]).setValue(maxVal[0]);
-            ((OutputSocket) outputs[2]).setValue(outputs[2].getValue().get());
-            ((OutputSocket) outputs[3]).setValue(outputs[3].getValue().get());
-        } catch (final Exception e) {
-            logger.log(Level.WARNING, e.getMessage(), e);
-        }
+        opencv_core.minMaxLoc(src, minVal, maxVal, minLoc, maxLoc, mask);
+        minValOutputHint.safeCastSocket(outputs[0]).setValue(minVal[0]);
+        maxValOutputHint.safeCastSocket(outputs[1]).setValue(maxVal[0]);
+        minLocOutputHint.safeCastSocket(outputs[2]).setValue(minLocOutputHint.retrieveValue(outputs[2]));
+        maxLocOutputHint.safeCastSocket(outputs[3]).setValue(maxLocOutputHint.retrieveValue(outputs[3]));
     }
 }

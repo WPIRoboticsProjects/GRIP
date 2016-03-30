@@ -2,10 +2,7 @@ package edu.wpi.grip.core.operations.composite;
 
 import com.google.common.eventbus.EventBus;
 import edu.wpi.grip.core.*;
-import edu.wpi.grip.core.sockets.InputSocket;
-import edu.wpi.grip.core.sockets.OutputSocket;
-import edu.wpi.grip.core.sockets.SocketHint;
-import edu.wpi.grip.core.sockets.SocketHints;
+import edu.wpi.grip.core.sockets.*;
 
 import java.io.InputStream;
 import java.util.Optional;
@@ -61,11 +58,11 @@ public class MaskOperation implements Operation {
     @Override
     @SuppressWarnings("unchecked")
     public void perform(InputSocket<?>[] inputs, OutputSocket<?>[] outputs) {
-        final Mat input = ((InputSocket<Mat>) inputs[0]).getValue().get();
-        final Mat mask = ((InputSocket<Mat>) inputs[1]).getValue().get();
+        final Mat input = inputHint.retrieveValue(inputs[0]);
+        final Mat mask = maskHint.retrieveValue(inputs[1]);
 
-        final OutputSocket<Mat> outputSocket = (OutputSocket<Mat>) outputs[0];
-        final Mat output = outputSocket.getValue().get();
+        final Socket<Mat> outputSocket = outputHint.safeCastSocket(outputs[0]);
+        final Mat output = outputHint.retrieveValue(outputSocket);
 
         // Clear the output to black, then copy the input to it with the mask
         bitwise_xor(output, output, output);

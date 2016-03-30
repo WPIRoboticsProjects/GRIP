@@ -2,10 +2,7 @@ package edu.wpi.grip.core.operations.composite;
 
 import com.google.common.eventbus.EventBus;
 import edu.wpi.grip.core.*;
-import edu.wpi.grip.core.sockets.InputSocket;
-import edu.wpi.grip.core.sockets.OutputSocket;
-import edu.wpi.grip.core.sockets.SocketHint;
-import edu.wpi.grip.core.sockets.SocketHints;
+import edu.wpi.grip.core.sockets.*;
 
 import java.io.InputStream;
 import java.util.List;
@@ -22,7 +19,7 @@ public class FilterLinesOperation implements Operation {
 
     private final SocketHint<Number> minLengthHint = SocketHints.Inputs.createNumberSpinnerSocketHint("Min Length", 20);
 
-    private final SocketHint<List> angleHint = SocketHints.Inputs.createNumberListRangeSocketHint("Angle", 0, 360);
+    private final SocketHint<List<Number>> angleHint = SocketHints.Inputs.createNumberListRangeSocketHint("Angle", 0, 360);
 
     private final SocketHint<LinesReport> outputHint =
             new SocketHint.Builder<>(LinesReport.class)
@@ -63,16 +60,15 @@ public class FilterLinesOperation implements Operation {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public void perform(InputSocket<?>[] inputs, OutputSocket<?>[] outputs) {
-        final LinesReport inputLines = (LinesReport) inputs[0].getValue().get();
-        final double minLengthSquared = Math.pow(((Number) inputs[1].getValue().get()).doubleValue(), 2);
-        final double minAngle = ((InputSocket<List<Number>>) inputs[2]).getValue().get().get(0).doubleValue();
-        final double maxAngle = ((InputSocket<List<Number>>) inputs[2]).getValue().get().get(1).doubleValue();
+        final LinesReport inputLines = inputHint.retrieveValue(inputs[0]);
+        final double minLengthSquared = Math.pow(minLengthHint.retrieveValue(inputs[1]).doubleValue(), 2);
+        final double minAngle = angleHint.retrieveValue(inputs[2]).get(0).doubleValue();
+        final double maxAngle = angleHint.retrieveValue(inputs[2]).get(1).doubleValue();
 
-        final OutputSocket<LinesReport> linesOutputSocket = (OutputSocket<LinesReport>) outputs[0];
+        final Socket<LinesReport> linesOutputSocket = outputHint.safeCastSocket(outputs[0]);
 
-        List<LinesReport.Line> lines = inputLines.getLines().stream()
+        final List<LinesReport.Line> lines = inputLines.getLines().stream()
                 .filter(line -> line.lengthSquared() >= minLengthSquared)
                 .filter(line -> (line.angle() >= minAngle && line.angle() <= maxAngle)
                         || (line.angle() + 180.0 >= minAngle && line.angle() + 180.0 <= maxAngle))

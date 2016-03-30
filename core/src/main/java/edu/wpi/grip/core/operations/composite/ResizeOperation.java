@@ -1,10 +1,8 @@
 package edu.wpi.grip.core.operations.composite;
 
 import com.google.common.eventbus.EventBus;
-import edu.wpi.grip.core.sockets.InputSocket;
+import edu.wpi.grip.core.sockets.*;
 import edu.wpi.grip.core.Operation;
-import edu.wpi.grip.core.sockets.OutputSocket;
-import edu.wpi.grip.core.sockets.SocketHints;
 
 import java.io.InputStream;
 import java.util.Optional;
@@ -20,6 +18,11 @@ import static org.bytedeco.javacpp.opencv_imgproc.resize;
  * sizes.
  */
 public class ResizeOperation implements Operation {
+    private final SocketHint<Mat> inputHint = SocketHints.Inputs.createMatSocketHint("Input", false);
+    private final SocketHint<Number> widthHint = SocketHints.Inputs.createNumberSpinnerSocketHint("Width", 640);
+    private final SocketHint<Number> heightHint = SocketHints.Inputs.createNumberSpinnerSocketHint("Height", 480);
+    private final SocketHint<Interpolation> interpolationHint = SocketHints.createEnumSocketHint("Interpolation", Interpolation.CUBIC);
+    private final SocketHint<Mat> outputHint = SocketHints.Outputs.createMatSocketHint("Output");
 
     private enum Interpolation {
         NEAREST("None", INTER_NEAREST),
@@ -65,30 +68,29 @@ public class ResizeOperation implements Operation {
     @Override
     public InputSocket<?>[] createInputSockets(EventBus eventBus) {
         return new InputSocket<?>[]{
-                new InputSocket<>(eventBus, SocketHints.Inputs.createMatSocketHint("Input", false)),
-                new InputSocket<>(eventBus, SocketHints.Inputs.createNumberSpinnerSocketHint("Width", 640)),
-                new InputSocket<>(eventBus, SocketHints.Inputs.createNumberSpinnerSocketHint("Height", 480)),
-                new InputSocket<>(eventBus, SocketHints.createEnumSocketHint("Interpolation", Interpolation.CUBIC)),
+                new InputSocket<>(eventBus, inputHint),
+                new InputSocket<>(eventBus, widthHint),
+                new InputSocket<>(eventBus, heightHint),
+                new InputSocket<>(eventBus, interpolationHint),
         };
     }
 
     @Override
     public OutputSocket<?>[] createOutputSockets(EventBus eventBus) {
         return new OutputSocket<?>[]{
-                new OutputSocket<>(eventBus, SocketHints.Outputs.createMatSocketHint("Output")),
+                new OutputSocket<>(eventBus, outputHint),
         };
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public void perform(InputSocket<?>[] inputs, OutputSocket<?>[] outputs) {
-        final Mat input = ((InputSocket<Mat>) inputs[0]).getValue().get();
-        final Number width = ((InputSocket<Number>) inputs[1]).getValue().get();
-        final Number height = ((InputSocket<Number>) inputs[2]).getValue().get();
-        final Interpolation interpolation = ((InputSocket<Interpolation>) inputs[3]).getValue().get();
+        final Mat input = inputHint.retrieveValue(inputs[0]);
+        final Number width = widthHint.retrieveValue(inputs[1]);
+        final Number height = heightHint.retrieveValue(inputs[2]);
+        final Interpolation interpolation = interpolationHint.retrieveValue(inputs[3]);
 
-        final OutputSocket<Mat> outputSocket = (OutputSocket<Mat>) outputs[0];
-        final Mat output = outputSocket.getValue().get();
+        final Socket<Mat> outputSocket = outputHint.safeCastSocket(outputs[0]);
+        final Mat output = outputHint.retrieveValue(outputSocket);
 
         resize(input, output, new Size(width.intValue(), height.intValue()), 0.0, 0.0, interpolation.value);
 

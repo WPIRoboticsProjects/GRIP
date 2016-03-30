@@ -2,15 +2,10 @@ package edu.wpi.grip.core.operations.composite;
 
 
 import com.google.common.eventbus.EventBus;
-import edu.wpi.grip.core.sockets.InputSocket;
-import edu.wpi.grip.core.sockets.OutputSocket;
-import edu.wpi.grip.core.sockets.SocketHint;
-import edu.wpi.grip.core.sockets.SocketHints;
+import edu.wpi.grip.core.sockets.*;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import static org.bytedeco.javacpp.opencv_core.*;
 import static org.bytedeco.javacpp.opencv_imgproc.COLOR_BGR2HLS;
@@ -20,11 +15,10 @@ import static org.bytedeco.javacpp.opencv_imgproc.cvtColor;
  * An {@link edu.wpi.grip.core.Operation} that converts a color image into a binary image based on the HSL threshold ranges
  */
 public class HSLThresholdOperation extends ThresholdOperation {
-    private static final Logger logger = Logger.getLogger(HSLThresholdOperation.class.getName());
     private final SocketHint<Mat> inputHint = SocketHints.Inputs.createMatSocketHint("Input", false);
-    private final SocketHint<List> hueHint = SocketHints.Inputs.createNumberListRangeSocketHint("Hue", 0.0, 180.0);
-    private final SocketHint<List> saturationHint = SocketHints.Inputs.createNumberListRangeSocketHint("Saturation", 0.0, 255.0);
-    private final SocketHint<List> luminanceHint = SocketHints.Inputs.createNumberListRangeSocketHint("Luminance", 0.0, 255.0);
+    private final SocketHint<List<Number>> hueHint = SocketHints.Inputs.createNumberListRangeSocketHint("Hue", 0.0, 180.0);
+    private final SocketHint<List<Number>> saturationHint = SocketHints.Inputs.createNumberListRangeSocketHint("Saturation", 0.0, 255.0);
+    private final SocketHint<List<Number>> luminanceHint = SocketHints.Inputs.createNumberListRangeSocketHint("Luminance", 0.0, 255.0);
 
     private final SocketHint<Mat> outputHint = SocketHints.Outputs.createMatSocketHint("Output");
 
@@ -59,17 +53,17 @@ public class HSLThresholdOperation extends ThresholdOperation {
     public void perform(InputSocket<?>[] inputs, OutputSocket<?>[] outputs, Optional<?> data) {
         final Mat[] dataArray = (Mat[]) data.orElseThrow(() -> new IllegalStateException("Data was not provided"));
 
-        final Mat input = ((InputSocket<Mat>) inputs[0]).getValue().get();
-        final List<Number> channel1 = ((InputSocket<List<Number>>) inputs[1]).getValue().get();
-        final List<Number> channel2 = ((InputSocket<List<Number>>) inputs[2]).getValue().get();
-        final List<Number> channel3 = ((InputSocket<List<Number>>) inputs[3]).getValue().get();
+        final Mat input = inputHint.retrieveValue(inputs[0]);
+        final List<Number> channel1 = hueHint.retrieveValue(inputs[1]);
+        final List<Number> channel2 = saturationHint.retrieveValue(inputs[2]);
+        final List<Number> channel3 = luminanceHint.retrieveValue(inputs[3]);
 
         if (input.channels() != 3) {
             throw new IllegalArgumentException("HSL Threshold needs a 3-channel input");
         }
 
-        final OutputSocket<Mat> outputSocket = (OutputSocket<Mat>) outputs[0];
-        final Mat output = outputSocket.getValue().get();
+        final Socket<Mat> outputSocket = outputHint.safeCastSocket(outputs[0]);
+        final Mat output = outputHint.retrieveValue(outputSocket);
 
         // Intentionally 1, 3, 2. This maps to the HLS open cv expects
         final Scalar lowScalar = new Scalar(
@@ -86,12 +80,8 @@ public class HSLThresholdOperation extends ThresholdOperation {
         final Mat high = reallocateMatIfInputSizeOrWidthChanged(dataArray, 1, highScalar, input);
         final Mat hls = dataArray[2];
 
-        try {
-            cvtColor(input, hls, COLOR_BGR2HLS);
-            inRange(hls, low, high, output);
-            outputSocket.setValue(output);
-        } catch (RuntimeException e) {
-            logger.log(Level.WARNING, e.getMessage(), e);
-        }
+        cvtColor(input, hls, COLOR_BGR2HLS);
+        inRange(hls, low, high, output);
+        outputSocket.setValue(output);
     }
 }
