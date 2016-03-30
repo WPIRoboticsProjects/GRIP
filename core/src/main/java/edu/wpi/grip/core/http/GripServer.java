@@ -1,19 +1,21 @@
 
 package edu.wpi.grip.core.http;
 
-import com.google.common.annotations.VisibleForTesting;
 import com.google.common.eventbus.Subscribe;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import com.sun.net.httpserver.*;
+import com.sun.net.httpserver.Headers;
+import com.sun.net.httpserver.HttpExchange;
+import com.sun.net.httpserver.HttpHandler;
+import com.sun.net.httpserver.HttpServer;
 
 import edu.wpi.grip.core.Pipeline;
 import edu.wpi.grip.core.ProjectManager;
 import edu.wpi.grip.core.events.ProjectSettingsChangedEvent;
-import edu.wpi.grip.core.exception.GripException;
-import edu.wpi.grip.core.serialization.Project;
+import edu.wpi.grip.core.exception.GripServerException;
+import edu.wpi.grip.core.exception.ImpossibleExceptionError;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -35,6 +37,17 @@ import java.util.stream.Collectors;
  */
 @Singleton
 public class GripServer {
+
+    private final HttpServerFactory serverFactory;
+    private HttpServer server;
+    private final Map<String, GetHandler> getHandlers;
+    private final Map<String, List<PostHandler>> postHandlers;
+    private final Map<String, Supplier> dataSuppliers;
+
+    private boolean started = false;
+    private boolean stopped = false;
+
+    private final Set<String> contextPaths = new HashSet<>();
 
     private static final Logger logger = Logger.getLogger(GripServer.class.getName());
 
@@ -92,7 +105,7 @@ public class GripServer {
     private static final String HEADER_ALLOW = "Allow";
     private static final String HEADER_CONTENT_TYPE = "Content-Type";
 
-    private static final Charset CHARSET = StandardCharsets.UTF_8;
+    private static final Charset CHARSET_UTF_8 = StandardCharsets.UTF_8;
 
     private static final int STATUS_OK = 200;
     private static final int STATUS_METHOD_NOT_ALLOWED = 405;
@@ -115,39 +128,21 @@ public class GripServer {
             try {
                 return HttpServer.create(new InetSocketAddress(HOSTNAME, port), BACKLOG);
             } catch (IOException ex) {
-                throw new GripException("Could not create a server on port " + port, ex);
+                throw new GripServerException("Could not create a server on port " + port, ex);
             }
         }
     }
 
-    private final HttpServerFactory serverFactory;
-    private HttpServer server;
-    private final Map<String, GetHandler> getHandlers;
-    private final Map<String, List<PostHandler>> postHandlers;
-    private final Map<String, Supplier> dataSuppliers;
-
-    private boolean started = false;
-    private boolean stopped = false;
-
-    private final Set<String> contextPaths = new HashSet<>();
-    
-    private final ProjectManager projectManager;
-
     @Inject
-    GripServer(HttpServerFactory serverFactory, Pipeline pipeline, Project project) {
+    GripServer(HttpServerFactory serverFactory, Pipeline pipeline) {
         int port = pipeline.getProjectSettings().getServerPort();
         this.serverFactory = serverFactory;
         this.server = serverFactory.create(port);
-        this.projectManager = new ProjectManager(project);
         getHandlers = new HashMap<>();
         postHandlers = new HashMap<>();
         dataSuppliers = new HashMap<>();
 
         addGetHandler(DATA_PATH, this::createJson);
-        addPostHandler(PIPELINE_UPLOAD_PATH, bytes -> {
-            projectManager.openProject(new String(bytes));
-            return true;
-        });
 
         Runtime.getRuntime().addShutdownHook(new Thread(this::stop));
     }
@@ -228,10 +223,10 @@ public class GripServer {
             final Map<String, List<String>> requestParameters = getRequestParameters(he.getRequestURI());
             switch (requestMethod) {
                 case METHOD_GET:
-                    headers.set(HEADER_CONTENT_TYPE, String.format("application/json; charset=%s", CHARSET));
+                    headers.set(HEADER_CONTENT_TYPE, String.format("application/json; charset=%s", CHARSET_UTF_8));
                     if (getHandlers.containsKey(path)) {
                         final String responseBody = getHandlers.get(path).createResponse(requestParameters);
-                        final byte[] rawResponseBody = responseBody.getBytes(CHARSET);
+                        final byte[] rawResponseBody = responseBody.getBytes(CHARSET_UTF_8);
                         he.sendResponseHeaders(STATUS_OK, rawResponseBody.length);
                         he.getResponseBody().write(rawResponseBody);
                         he.getResponseBody().close();
@@ -328,9 +323,10 @@ public class GripServer {
 
     /**
      * Stops this server. Note that a shutdown hook has been registered to call
-     * this method, so it's unlikely that this should need to be called.
+     * this method, so it's unlikely that this should need to be called. If you
+     * need to restart the server, use {@link #restart()} as this will kill the
+     * internal HTTP server which cannot be restarted by {@link #start()}.
      */
-    @VisibleForTesting
     public void stop() {
         if(!stopped) {
             server.stop(0);
@@ -343,15 +339,15 @@ public class GripServer {
     /**
      * Restarts the server on the current port.
      * 
-     * @throws GripException if the server was unable to be restarted.
+     * @throws GripServerException if the server was unable to be restarted.
      */
     public void restart() {
         try {
             stop();
             server = serverFactory.create(getPort());
             start();
-        } catch (GripException | IllegalStateException ex) {
-            throw new GripException("Could not restart GripServer", ex);
+        } catch (GripServerException | IllegalStateException ex) {
+            throw new GripServerException("Could not restart GripServer", ex);
         }
     }
     
@@ -376,7 +372,7 @@ public class GripServer {
                 final String[] requestParameter = rawRequestParameter.split("=", 2); // [foo, 1]
                 final String requestParameterName = decodeUrlComponent(requestParameter[0]);
                 requestParameters.putIfAbsent(requestParameterName, new ArrayList<>());
-                final String requestParameterValue = requestParameter.length > 1 ? decodeUrlComponent(requestParameter[1]) : null;
+                final String requestParameterValue = requestParameter.length > 1 ? decodeUrlComponent(requestParameter[1]) : "";
                 requestParameters.get(requestParameterName).add(requestParameterValue);
             }
         }
@@ -385,10 +381,10 @@ public class GripServer {
 
     private static String decodeUrlComponent(final String urlComponent) {
         try {
-            return URLDecoder.decode(urlComponent, CHARSET.name());
+            return URLDecoder.decode(urlComponent, CHARSET_UTF_8.name());
         } catch (final UnsupportedEncodingException ex) {
-            // Will never happen, UTF-8 is supported by all JVMs
-            throw new GripException(ex);
+            // Should never happen, UTF-8 support is part of the JVM spec
+            throw new ImpossibleExceptionError("This JVM is out of spec and does not support UTF-8!", ex);
         }
     }
 

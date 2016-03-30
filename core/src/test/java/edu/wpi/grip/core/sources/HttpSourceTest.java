@@ -2,20 +2,15 @@
 package edu.wpi.grip.core.sources;
 
 import com.google.common.eventbus.EventBus;
-import com.google.common.eventbus.Subscribe;
-import com.google.inject.Guice;
-import com.google.inject.Injector;
 
+import edu.wpi.grip.core.MockPipeline;
 import edu.wpi.grip.core.OutputSocket;
-import edu.wpi.grip.core.events.UnexpectedThrowableEvent;
 import edu.wpi.grip.core.http.GripServer;
+import edu.wpi.grip.core.http.GripServerTest;
 import edu.wpi.grip.core.util.MockExceptionWitness;
 import edu.wpi.grip.util.Files;
-import edu.wpi.grip.util.GRIPCoreTestModule;
 
-import java.io.File;
-import java.io.IOException;
-
+import org.apache.commons.httpclient.URIException;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.FileEntity;
@@ -23,9 +18,15 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.bytedeco.javacpp.opencv_core.Mat;
 import org.junit.After;
-import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
+
+import java.io.File;
+import java.io.IOException;
+import java.net.URISyntaxException;
+
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 /**
  *
@@ -35,30 +36,18 @@ public class HttpSourceTest {
     private File logoFile;
 
     private GripServer server;
-    private GRIPCoreTestModule coreTestModule;
     private HttpSource source;
     private CloseableHttpClient postClient;
 
     @Before
-    public void setup() throws Exception {
-        coreTestModule = new GRIPCoreTestModule();
-        coreTestModule.setUp();
-        final Injector injector = Guice.createInjector(coreTestModule);
-
-        final EventBus eventBus = new EventBus();
-        class UnhandledExceptionWitness {
-
-            @Subscribe
-            public void onUnexpectedThrowableEvent(UnexpectedThrowableEvent event) {
-                event.handleSafely((throwable, message, isFatal) -> {
-                    throwable.printStackTrace();
-                });
-            }
-        }
-        eventBus.register(new UnhandledExceptionWitness());
-
-        server = injector.getInstance(GripServer.class);
+    public void setup() throws URIException, URISyntaxException {
+        GripServer.HttpServerFactory f = new GripServerTest.TestServerFactory();
+        MockPipeline.MockProjectSettings projectSettings = new MockPipeline.MockProjectSettings();
+        projectSettings.setServerPort(8080);
+        MockPipeline pipeline = new MockPipeline(projectSettings);
+        server = GripServerTest.makeServer(f, pipeline);
         server.start();
+        EventBus eventBus = new EventBus();
         source = new HttpSource(origin -> new MockExceptionWitness(eventBus, origin), eventBus, server);
 
         logoFile = new File(Files.class.getResource("/edu/wpi/grip/images/GRIP_Logo.png").toURI());
@@ -102,7 +91,6 @@ public class HttpSourceTest {
 
     @After
     public void tearDown() throws IOException {
-        coreTestModule.tearDown();
         server.stop();
         postClient.close();
     }

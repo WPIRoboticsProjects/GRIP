@@ -15,11 +15,11 @@ import edu.wpi.grip.core.http.GripServer;
 import edu.wpi.grip.core.http.PostHandler;
 import edu.wpi.grip.core.util.ExceptionWitness;
 
-import java.util.Arrays;
-import java.util.Properties;
-
 import org.bytedeco.javacpp.opencv_core.Mat;
 import org.bytedeco.javacpp.opencv_imgcodecs;
+
+import java.util.Arrays;
+import java.util.Properties;
 
 /**
  * Provides a way to generate a constantly updated {@link Mat} from the internal HTTP server.
@@ -72,7 +72,7 @@ public class HttpSource extends Source implements PostHandler {
 
         Mat tmp = new Mat(data);
         imageOutput.setValue(opencv_imgcodecs.imdecode(tmp, opencv_imgcodecs.CV_LOAD_IMAGE_COLOR));
-        tmp.release();
+        tmp.deallocate();
         return true;
     }
 

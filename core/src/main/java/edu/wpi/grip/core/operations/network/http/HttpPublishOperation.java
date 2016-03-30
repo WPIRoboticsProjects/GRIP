@@ -9,7 +9,10 @@ import java.util.Optional;
 import java.util.function.Function;
 
 /**
+ * An operation for publishing data to the internal HTTP server, from which which remote applications can request the
+ * data.
  *
+ * @see edu.wpi.grip.core.http.GripServer
  */
 public abstract class HttpPublishOperation<S, T extends Publishable, P> extends PublishAnnotatedOperation<S, T, P> {
 
