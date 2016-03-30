@@ -3,16 +3,17 @@ package edu.wpi.grip.core;
 import com.google.common.collect.ImmutableList;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
+import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamOmitField;
 import edu.wpi.grip.core.events.*;
 import edu.wpi.grip.core.settings.ProjectSettings;
+import edu.wpi.grip.core.settings.SettingsProvider;
 import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.core.sockets.SocketHint;
 
-import javax.inject.Inject;
 import java.util.*;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
@@ -33,7 +34,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
  */
 @Singleton
 @XStreamAlias(value = "grip:Pipeline")
-public class Pipeline implements ConnectionValidator {
+public class Pipeline implements ConnectionValidator, SettingsProvider {
 
     @Inject
     @XStreamOmitField
@@ -166,11 +167,8 @@ public class Pipeline implements ConnectionValidator {
         return Collections.unmodifiableSet(this.connections);
     }
 
-    /*
-     * @return The current per-project settings.  This object may become out of date if the settings are edited
-     * by the user, so objects requiring a preference value should also subscribe to {@link ProjectSettingsChangedEvent}
-     * to get updates.
-     */
+
+    @Override
     public ProjectSettings getProjectSettings() {
         return settings;
     }

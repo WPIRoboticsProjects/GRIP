@@ -11,6 +11,7 @@ import com.google.inject.spi.TypeEncounter;
 import com.google.inject.spi.TypeListener;
 import edu.wpi.grip.core.events.UnexpectedThrowableEvent;
 import edu.wpi.grip.core.serialization.Project;
+import edu.wpi.grip.core.settings.SettingsProvider;
 import edu.wpi.grip.core.sources.CameraSource;
 import edu.wpi.grip.core.sources.ImageFileSource;
 import edu.wpi.grip.core.sources.MultiImageFileSource;
@@ -99,6 +100,9 @@ public class GRIPCoreModule extends AbstractModule {
         });
 
         bind(EventBus.class).toInstance(eventBus);
+
+        // Allow for just injecting the settings provider, instead of the whole pipeline
+        bind(SettingsProvider.class).to(Pipeline.class);
 
         install(new FactoryModuleBuilder().build(new TypeLiteral<Connection.Factory<Object>>() {
         }));

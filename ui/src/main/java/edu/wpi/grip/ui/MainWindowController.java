@@ -9,6 +9,7 @@ import edu.wpi.grip.core.PipelineRunner;
 import edu.wpi.grip.core.events.ProjectSettingsChangedEvent;
 import edu.wpi.grip.core.serialization.Project;
 import edu.wpi.grip.core.settings.ProjectSettings;
+import edu.wpi.grip.core.settings.SettingsProvider;
 import edu.wpi.grip.core.util.SafeShutdown;
 import edu.wpi.grip.core.util.service.SingleActionListener;
 import edu.wpi.grip.ui.components.StartStoppableButton;
@@ -53,6 +54,8 @@ public class MainWindowController {
     private EventBus eventBus;
     @Inject
     private Pipeline pipeline;
+    @Inject
+    private SettingsProvider settingsProvider;
     @Inject
     private PipelineRunner pipelineRunner;
     @Inject
@@ -196,7 +199,7 @@ public class MainWindowController {
 
     @FXML
     public void showProjectSettingsEditor() {
-        final ProjectSettings projectSettings = pipeline.getProjectSettings().clone();
+        final ProjectSettings projectSettings = settingsProvider.getProjectSettings().clone();
 
         ProjectSettingsEditor projectSettingsEditor = new ProjectSettingsEditor(root, projectSettings);
         projectSettingsEditor.showAndWait().ifPresent(buttonType -> {
