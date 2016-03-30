@@ -23,9 +23,15 @@ Check out the release notes and [the wiki](https://github.com/WPIRoboticsProject
 
 ## Building GRIP From Source
 
-To build and run, use the included Gradle wrapper script.
+To build and run, use the included Gradle wrapper script on a Unix System:
 
     ./gradlew :ui:run
+
+On Windows:
+
+    gradlew.bat :ui:run
+
+If you don't have an internet connection you can build using the `--offline` flag if you have built GRIP once before.
 
 ## Contributing
 
