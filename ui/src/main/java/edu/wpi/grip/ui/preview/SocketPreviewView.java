@@ -1,6 +1,6 @@
 package edu.wpi.grip.ui.preview;
 
-import edu.wpi.grip.core.OutputSocket;
+import edu.wpi.grip.core.sockets.OutputSocket;
 import javafx.scene.control.TitledPane;
 
 import static com.google.common.base.Preconditions.checkNotNull;

@@ -25,8 +25,7 @@ import static com.github.javaparser.ASTHelper.createReferenceType;
 
 public class Operation {
     private static final ImportDeclaration OPERATION_IMPORT = new ImportDeclaration(new NameExpr("edu.wpi.grip.core.operations.opencv.CVOperation"), false, false);
-    private static final ImportDeclaration INPUT_SOCKET_IMPORT = new ImportDeclaration(new NameExpr("edu.wpi.grip.core.InputSocket"), false, false);
-    private static final ImportDeclaration OUTPUT_SOCKET_IMPORT = new ImportDeclaration(new NameExpr("edu.wpi.grip.core.OutputSocket"), false, false);
+    private static final ImportDeclaration SOCKETS_IMPORT = new ImportDeclaration(new NameExpr("edu.wpi.grip.core.sockets"), false, true);
     private static final ImportDeclaration EVENT_BUS_IMPORT = new ImportDeclaration(new NameExpr("com.google.common.eventbus.EventBus"), false, false);
     private static final ImportDeclaration CV_CORE_IMPORT = new ImportDeclaration(new NameExpr("org.bytedeco.javacpp.opencv_core"), true, true);
     private static final ClassOrInterfaceType iOperation = new ClassOrInterfaceType("CVOperation");
@@ -309,11 +308,9 @@ public class Operation {
      */
     public CompilationUnit getDeclaration() {
         Set<ImportDeclaration> importList = Sets.newHashSet(
-                SocketHintDeclaration.SOCKET_IMPORT,
                 OPERATION_IMPORT,
                 CV_CORE_IMPORT,
-                INPUT_SOCKET_IMPORT,
-                OUTPUT_SOCKET_IMPORT,
+                SOCKETS_IMPORT,
                 EVENT_BUS_IMPORT
         );
         importList.addAll(getAdditionalImports());

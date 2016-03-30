@@ -1,8 +1,8 @@
 package edu.wpi.grip.ui.pipeline.input;
 
 import com.google.inject.Inject;
-import edu.wpi.grip.core.InputSocket;
-import edu.wpi.grip.core.SocketHint;
+import edu.wpi.grip.core.sockets.InputSocket;
+import edu.wpi.grip.core.sockets.SocketHint;
 
 import java.util.List;
 

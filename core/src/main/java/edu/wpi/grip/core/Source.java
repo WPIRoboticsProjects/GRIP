@@ -1,6 +1,7 @@
 package edu.wpi.grip.core;
 
 import com.google.inject.Inject;
+import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.core.sources.CameraSource;
 import edu.wpi.grip.core.sources.ImageFileSource;
 import edu.wpi.grip.core.sources.MultiImageFileSource;

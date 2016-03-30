@@ -3,7 +3,7 @@ package edu.wpi.grip.ui.preview;
 import com.google.common.eventbus.EventBus;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import edu.wpi.grip.core.OutputSocket;
+import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.core.operations.composite.BlobsReport;
 import edu.wpi.grip.core.operations.composite.ContoursReport;
 import edu.wpi.grip.core.operations.composite.LinesReport;

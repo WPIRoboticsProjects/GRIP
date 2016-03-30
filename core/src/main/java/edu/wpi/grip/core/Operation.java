@@ -2,6 +2,9 @@ package edu.wpi.grip.core;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.common.eventbus.EventBus;
+import edu.wpi.grip.core.sockets.InputSocket;
+import edu.wpi.grip.core.sockets.OutputSocket;
+import edu.wpi.grip.core.sockets.SocketsProvider;
 
 import java.io.InputStream;
 import java.util.Optional;
@@ -16,6 +19,7 @@ public interface Operation {
         IMAGE_PROCESSING,
         FEATURE_DETECTION,
         NETWORK,
+        LOGICAL,
         OPENCV,
         MISCELLANEOUS,
     }
@@ -53,6 +57,9 @@ public interface Operation {
         return Optional.empty();
     }
 
+    default SocketsProvider createSockets(EventBus eventBus) {
+        return new SocketsProvider(createInputSockets(eventBus), createOutputSockets(eventBus));
+    }
     /**
      * @param eventBus The Guava {@link EventBus} used by the application.
      * @return An array of sockets for the inputs that the operation expects.

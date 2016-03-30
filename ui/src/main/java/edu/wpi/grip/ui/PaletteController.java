@@ -25,6 +25,7 @@ public class PaletteController {
     @FXML private Tab imgprocOperations;
     @FXML private Tab featureOperations;
     @FXML private Tab networkOperations;
+    @FXML private Tab logicalOperations;
     @FXML private Tab opencvOperations;
     @FXML private Tab miscellaneousOperations;
 
@@ -43,6 +44,7 @@ public class PaletteController {
         imgprocOperations.setUserData(Operation.Category.IMAGE_PROCESSING);
         featureOperations.setUserData(Operation.Category.FEATURE_DETECTION);
         networkOperations.setUserData(Operation.Category.NETWORK);
+        logicalOperations.setUserData(Operation.Category.LOGICAL);
         opencvOperations.setUserData(Operation.Category.OPENCV);
         miscellaneousOperations.setUserData(Operation.Category.MISCELLANEOUS);
 
@@ -52,6 +54,7 @@ public class PaletteController {
             imgprocOperations.getProperties().put(OperationListController.FILTER_TEXT, operationSearch.getText());
             featureOperations.getProperties().put(OperationListController.FILTER_TEXT, operationSearch.getText());
             networkOperations.getProperties().put(OperationListController.FILTER_TEXT, operationSearch.getText());
+            logicalOperations.getProperties().put(OperationListController.FILTER_TEXT, operationSearch.getText());
             opencvOperations.getProperties().put(OperationListController.FILTER_TEXT, operationSearch.getText());
             miscellaneousOperations.getProperties().put(OperationListController.FILTER_TEXT, operationSearch.getText());
         });

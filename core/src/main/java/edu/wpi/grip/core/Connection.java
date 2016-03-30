@@ -6,6 +6,8 @@ import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import edu.wpi.grip.core.events.*;
+import edu.wpi.grip.core.sockets.InputSocket;
+import edu.wpi.grip.core.sockets.OutputSocket;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
@@ -20,21 +22,21 @@ public class Connection<T> {
     private final InputSocket<T> inputSocket;
 
 
-    public interface Factory <T> {
+    public interface Factory<T> {
         Connection<T> create(OutputSocket<? extends T> outputSocket, InputSocket<T> inputSocket);
     }
 
     /**
-     * @param pipeline     The pipeline to create the connection inside of.
-     * @param outputSocket The socket to listen for changes in.
-     * @param inputSocket  A different socket to update when a change occurs in the first.
+     * @param connectionValidator An object to validate that the connection can be made
+     * @param outputSocket        The socket to listen for changes in.
+     * @param inputSocket         A different socket to update when a change occurs in the first.
      */
     @Inject
-    Connection(EventBus eventBus, Pipeline pipeline, @Assisted OutputSocket<? extends T> outputSocket, @Assisted InputSocket<T> inputSocket) {
+    Connection(EventBus eventBus, ConnectionValidator connectionValidator, @Assisted OutputSocket<? extends T> outputSocket, @Assisted InputSocket<T> inputSocket) {
         this.eventBus = eventBus;
         this.outputSocket = outputSocket;
         this.inputSocket = inputSocket;
-        checkArgument(pipeline.canConnect(outputSocket, inputSocket), "Cannot connect sockets");
+        checkArgument(connectionValidator.canConnect(outputSocket, inputSocket), "Cannot connect sockets");
     }
 
     public OutputSocket<? extends T> getOutputSocket() {

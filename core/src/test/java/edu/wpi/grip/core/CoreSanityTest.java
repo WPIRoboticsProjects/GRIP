@@ -2,12 +2,12 @@ package edu.wpi.grip.core;
 
 import com.google.common.testing.AbstractPackageSanityTests;
 import com.google.common.util.concurrent.Service;
+import edu.wpi.grip.core.sockets.*;
 import edu.wpi.grip.core.util.service.SingleActionListener;
 
 import java.util.Arrays;
 
 public class CoreSanityTest extends AbstractPackageSanityTests {
-    enum TestEnum {A, B, C}
 
     public CoreSanityTest() {
         super();
@@ -26,6 +26,6 @@ public class CoreSanityTest extends AbstractPackageSanityTests {
         setDistinctValues(Socket.class, new MockInputSocket("Mock In Socket"), new MockOutputSocket("Mock Out Socket"));
         setDefault(Service.Listener.class, new SingleActionListener(() -> {
         }));
-        setDefault(Enum.class, TestEnum.A);
+        setDefault(ConnectionValidator.class, (outputSocket, inputSocket) -> true);
     }
 }

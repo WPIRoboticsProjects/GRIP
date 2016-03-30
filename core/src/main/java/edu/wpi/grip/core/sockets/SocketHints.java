@@ -1,4 +1,4 @@
-package edu.wpi.grip.core;
+package edu.wpi.grip.core.sockets;
 
 
 import org.bytedeco.javacpp.opencv_core.Mat;

@@ -6,6 +6,8 @@ import com.google.inject.Singleton;
 import com.sun.javafx.application.PlatformImpl;
 import edu.wpi.grip.core.*;
 import edu.wpi.grip.core.events.*;
+import edu.wpi.grip.core.sockets.InputSocket;
+import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.ui.annotations.ParametrizedController;
 import edu.wpi.grip.ui.pipeline.input.InputSocketController;
 import edu.wpi.grip.ui.pipeline.source.SourceController;

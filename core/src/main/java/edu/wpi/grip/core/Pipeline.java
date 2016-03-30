@@ -8,6 +8,9 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamOmitField;
 import edu.wpi.grip.core.events.*;
 import edu.wpi.grip.core.settings.ProjectSettings;
+import edu.wpi.grip.core.sockets.InputSocket;
+import edu.wpi.grip.core.sockets.OutputSocket;
+import edu.wpi.grip.core.sockets.SocketHint;
 
 import javax.inject.Inject;
 import java.util.*;
@@ -30,7 +33,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
  */
 @Singleton
 @XStreamAlias(value = "grip:Pipeline")
-public class Pipeline {
+public class Pipeline implements ConnectionValidator {
 
     @Inject
     @XStreamOmitField
@@ -176,28 +179,13 @@ public class Pipeline {
      * @return true if a connection can be made from the given output socket to the given input socket
      */
     @SuppressWarnings("unchecked")
-    public boolean canConnect(Socket socket1, Socket socket2) {
-        final OutputSocket<?> outputSocket;
-        final InputSocket<?> inputSocket;
-
-        // One socket must be an input and one must be an output
-        if (socket1.getDirection() == socket2.getDirection()) {
-            return false;
-        }
-
-        if (socket1.getDirection().equals(Socket.Direction.OUTPUT)) {
-            outputSocket = (OutputSocket) socket1;
-            inputSocket = (InputSocket) socket2;
-        } else {
-            inputSocket = (InputSocket) socket1;
-            outputSocket = (OutputSocket) socket2;
-        }
-
-        final SocketHint outputHint = socket1.getSocketHint();
-        final SocketHint inputHint = socket2.getSocketHint();
+    @Override
+    public boolean canConnect(OutputSocket<?> outputSocket, InputSocket<?> inputSocket) {
+        final SocketHint outputHint = outputSocket.getSocketHint();
+        final SocketHint inputHint = inputSocket.getSocketHint();
 
         // The input socket must be able to hold the type of value that the output socket contains
-        if (!inputHint.getType().isAssignableFrom(outputHint.getType())) {
+        if (!inputHint.isCompatibleWith(outputHint)) {
             return false;
         }
 

@@ -1,7 +1,7 @@
 package edu.wpi.grip.core.operations.network.ros;
 
 
-import edu.wpi.grip.core.InputSocket;
+import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.operations.network.PublishOperation;
 
 import java.io.InputStream;

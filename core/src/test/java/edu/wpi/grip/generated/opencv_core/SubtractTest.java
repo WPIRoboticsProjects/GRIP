@@ -1,8 +1,8 @@
 package edu.wpi.grip.generated.opencv_core;
 
 import com.google.common.eventbus.EventBus;
-import edu.wpi.grip.core.InputSocket;
-import edu.wpi.grip.core.OutputSocket;
+import edu.wpi.grip.core.sockets.InputSocket;
+import edu.wpi.grip.core.sockets.OutputSocket;
 import org.bytedeco.javacpp.opencv_core;
 import org.bytedeco.javacpp.opencv_core.Mat;
 import org.bytedeco.javacpp.opencv_core.Scalar;

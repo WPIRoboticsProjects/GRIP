@@ -1,6 +1,8 @@
 package edu.wpi.grip.core;
 
 
+import edu.wpi.grip.core.sockets.OutputSocket;
+
 import java.io.IOException;
 import java.util.Properties;
 

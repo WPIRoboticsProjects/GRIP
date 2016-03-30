@@ -4,7 +4,7 @@ import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
-import edu.wpi.grip.core.InputSocket;
+import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.events.SocketChangedEvent;
 import edu.wpi.grip.ui.pipeline.SocketHandleView;
 import edu.wpi.grip.ui.util.GRIPPlatform;

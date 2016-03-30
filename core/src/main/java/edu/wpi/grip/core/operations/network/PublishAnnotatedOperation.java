@@ -8,8 +8,8 @@ import com.google.common.collect.Ordering;
 import com.google.common.eventbus.EventBus;
 import com.google.common.reflect.Invokable;
 import com.google.common.reflect.TypeToken;
-import edu.wpi.grip.core.InputSocket;
-import edu.wpi.grip.core.SocketHints;
+import edu.wpi.grip.core.sockets.InputSocket;
+import edu.wpi.grip.core.sockets.SocketHints;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;

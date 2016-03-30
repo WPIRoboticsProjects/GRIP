@@ -1,10 +1,10 @@
 package edu.wpi.grip.core.operations.composite;
 
 import com.google.common.eventbus.EventBus;
-import edu.wpi.grip.core.InputSocket;
+import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.Operation;
-import edu.wpi.grip.core.OutputSocket;
-import edu.wpi.grip.core.SocketHints;
+import edu.wpi.grip.core.sockets.OutputSocket;
+import edu.wpi.grip.core.sockets.SocketHints;
 import org.bytedeco.javacpp.BytePointer;
 import org.bytedeco.javacpp.IntPointer;
 

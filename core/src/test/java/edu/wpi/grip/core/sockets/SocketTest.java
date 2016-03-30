@@ -1,4 +1,4 @@
-package edu.wpi.grip.core;
+package edu.wpi.grip.core.sockets;
 
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;

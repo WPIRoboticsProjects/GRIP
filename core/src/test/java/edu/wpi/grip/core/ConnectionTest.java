@@ -2,6 +2,10 @@ package edu.wpi.grip.core;
 
 import com.google.common.eventbus.EventBus;
 import edu.wpi.grip.core.events.ConnectionRemovedEvent;
+import edu.wpi.grip.core.sockets.InputSocket;
+import edu.wpi.grip.core.sockets.OutputSocket;
+import edu.wpi.grip.core.sockets.SocketHint;
+import edu.wpi.grip.core.sockets.SocketHints;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -58,12 +62,7 @@ public class ConnectionTest {
     public void testPipelineSaysConnectionIsInvalid() {
         new Connection(
                 new EventBus(),
-                new Pipeline() {
-                    @Override
-                    public boolean canConnect(Socket socket1, Socket socket2) {
-                        return false;
-                    }
-                },
+                (outputSocket, inputSocket) -> false,
                 foo,
                 bar
         );

@@ -2,8 +2,8 @@ package edu.wpi.grip.ui.pipeline.input;
 
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
-import edu.wpi.grip.core.InputSocket;
-import edu.wpi.grip.core.Socket;
+import edu.wpi.grip.core.sockets.InputSocket;
+import edu.wpi.grip.core.sockets.Socket;
 import edu.wpi.grip.ui.Controller;
 import edu.wpi.grip.ui.annotations.ParametrizedController;
 import edu.wpi.grip.ui.pipeline.SocketHandleView;

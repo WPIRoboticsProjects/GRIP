@@ -1,9 +1,8 @@
-package edu.wpi.grip.core;
+package edu.wpi.grip.core.sockets;
 
 import com.google.common.eventbus.EventBus;
-import com.google.common.eventbus.Subscribe;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
-import edu.wpi.grip.core.events.SocketConnectedChangedEvent;
+import edu.wpi.grip.core.Operation;
 
 /**
  * Represents the input into an {@link Operation}.

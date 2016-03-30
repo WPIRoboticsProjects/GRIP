@@ -1,9 +1,10 @@
 package edu.wpi.grip.ui.preview;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import com.sun.javafx.application.PlatformImpl;
-import edu.wpi.grip.core.OutputSocket;
+import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.core.Pipeline;
 import edu.wpi.grip.core.Source;
 import edu.wpi.grip.core.Step;
@@ -31,6 +32,8 @@ public class PreviewsController {
     @FXML
     private HBox previewBox;
 
+    @Inject
+    private EventBus eventBus;
     @Inject
     private Pipeline pipeline;
     @Inject
@@ -64,7 +67,10 @@ public class PreviewsController {
                 previews.stream()
                         .filter(view -> view.getSocket() == socket)
                         .findFirst()
-                        .ifPresent(previews::remove);
+                        .ifPresent(preview -> {
+                            previews.remove(preview);
+                            eventBus.unregister(preview);
+                        });
             }
         });
     }
