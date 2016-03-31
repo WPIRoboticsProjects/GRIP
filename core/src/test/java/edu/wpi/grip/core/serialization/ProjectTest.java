@@ -122,14 +122,14 @@ public class ProjectTest {
     @SuppressWarnings("unchecked")
     public void testSerializePipelineWithStepsAndConnections() throws Exception {
         Step step1 = stepFactory.create(pythonAdditionOperationFromSource);
-        InputSocket<Number> a1 = (InputSocket<Number>) step1.getInputSockets()[0];
-        InputSocket<Number> b1 = (InputSocket<Number>) step1.getInputSockets()[1];
-        OutputSocket<Number> sum1 = (OutputSocket<Number>) step1.getOutputSockets()[0];
+        InputSocket<Number> a1 = (InputSocket<Number>) step1.getInputSockets().get(0);
+        InputSocket<Number> b1 = (InputSocket<Number>) step1.getInputSockets().get(1);
+        OutputSocket<Number> sum1 = (OutputSocket<Number>) step1.getOutputSockets().get(0);
 
         Step step2 = stepFactory.create(pythonAdditionOperationFromURL);
-        InputSocket<Number> a2 = (InputSocket<Number>) step2.getInputSockets()[0];
-        InputSocket<Number> b2 = (InputSocket<Number>) step2.getInputSockets()[1];
-        OutputSocket<Number> sum2 = (OutputSocket<Number>) step2.getOutputSockets()[0];
+        InputSocket<Number> a2 = (InputSocket<Number>) step2.getInputSockets().get(0);
+        InputSocket<Number> b2 = (InputSocket<Number>) step2.getInputSockets().get(1);
+        OutputSocket<Number> sum2 = (OutputSocket<Number>) step2.getOutputSockets().get(0);
 
         a1.setValue(12);
         b1.setValue(34);
@@ -156,9 +156,9 @@ public class ProjectTest {
 
 
         final Step fromPipeline = pipeline.getSteps().get(0);
-        InputSocket<Number> a = (InputSocket<Number>) fromPipeline.getInputSockets()[0];
-        InputSocket<Number> b = (InputSocket<Number>) fromPipeline.getInputSockets()[1];
-        OutputSocket<Number> sum = (OutputSocket<Number>) fromPipeline.getOutputSockets()[0];
+        InputSocket<Number> a = (InputSocket<Number>) fromPipeline.getInputSockets().get(0);
+        InputSocket<Number> b = (InputSocket<Number>) fromPipeline.getInputSockets().get(1);
+        OutputSocket<Number> sum = (OutputSocket<Number>) fromPipeline.getOutputSockets().get(0);
 
         a.setValue(123.4);
         b.setValue(567.8);
@@ -175,9 +175,9 @@ public class ProjectTest {
         serializeAndDeserialize();
 
         final Step fromPipeline = pipeline.getSteps().get(0);
-        InputSocket<Number> a = (InputSocket<Number>) fromPipeline.getInputSockets()[0];
-        InputSocket<Number> b = (InputSocket<Number>) fromPipeline.getInputSockets()[1];
-        OutputSocket<Number> sum = (OutputSocket<Number>) fromPipeline.getOutputSockets()[0];
+        InputSocket<Number> a = (InputSocket<Number>) fromPipeline.getInputSockets().get(0);
+        InputSocket<Number> b = (InputSocket<Number>) fromPipeline.getInputSockets().get(1);
+        OutputSocket<Number> sum = (OutputSocket<Number>) fromPipeline.getOutputSockets().get(0);
 
 
         a.setValue(1234);
@@ -195,9 +195,9 @@ public class ProjectTest {
         serializeAndDeserialize();
 
         final Step fromPipeline = pipeline.getSteps().get(0);
-        InputSocket<Number> a = (InputSocket<Number>) fromPipeline.getInputSockets()[0];
-        InputSocket<Number> b = (InputSocket<Number>) fromPipeline.getInputSockets()[1];
-        OutputSocket<Number> sum = (OutputSocket<Number>) fromPipeline.getOutputSockets()[0];
+        InputSocket<Number> a = (InputSocket<Number>) fromPipeline.getInputSockets().get(0);
+        InputSocket<Number> b = (InputSocket<Number>) fromPipeline.getInputSockets().get(1);
+        OutputSocket<Number> sum = (OutputSocket<Number>) fromPipeline.getOutputSockets().get(0);
 
 
         a.setValue(1234);
@@ -217,18 +217,18 @@ public class ProjectTest {
         pipeline.addStep(step2);
         eventBus.post(new ConnectionAddedEvent(
                 connectionFactory.create(
-                        (OutputSocket) step1.getOutputSockets()[0],
-                        (InputSocket) step2.getInputSockets()[0]
+                        (OutputSocket) step1.getOutputSockets().get(0),
+                        (InputSocket) step2.getInputSockets().get(0)
                 )));
         serializeAndDeserialize();
 
         final Step step1Out = pipeline.getSteps().get(0);
         final Step step2Out = pipeline.getSteps().get(1);
 
-        InputSocket<Number> a1 = (InputSocket<Number>) step1Out.getInputSockets()[0];
-        InputSocket<Number> b1 = (InputSocket<Number>) step1Out.getInputSockets()[1];
-        InputSocket<Number> b2 = (InputSocket<Number>) step2Out.getInputSockets()[1];
-        OutputSocket<Number> sum2 = (OutputSocket<Number>) step2Out.getOutputSockets()[0];
+        InputSocket<Number> a1 = (InputSocket<Number>) step1Out.getInputSockets().get(0);
+        InputSocket<Number> b1 = (InputSocket<Number>) step1Out.getInputSockets().get(1);
+        InputSocket<Number> b2 = (InputSocket<Number>) step2Out.getInputSockets().get(1);
+        OutputSocket<Number> sum2 = (OutputSocket<Number>) step2Out.getOutputSockets().get(0);
 
 
         a1.setValue(123);
@@ -247,9 +247,9 @@ public class ProjectTest {
         serializeAndDeserialize();
 
         Step step1 = pipeline.getSteps().get(0);
-        InputSocket<Mat> a = (InputSocket<Mat>) step1.getInputSockets()[0];
-        InputSocket<Mat> b = (InputSocket<Mat>) step1.getInputSockets()[1];
-        OutputSocket<Mat> sum = (OutputSocket<Mat>) step1.getOutputSockets()[0];
+        InputSocket<Mat> a = (InputSocket<Mat>) step1.getInputSockets().get(0);
+        InputSocket<Mat> b = (InputSocket<Mat>) step1.getInputSockets().get(1);
+        OutputSocket<Mat> sum = (OutputSocket<Mat>) step1.getOutputSockets().get(0);
 
 
         a.setValue(new Mat(1, 1, CV_32F, new Scalar(1234.5)));

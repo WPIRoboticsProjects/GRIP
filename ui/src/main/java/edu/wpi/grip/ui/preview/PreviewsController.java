@@ -4,12 +4,12 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import com.sun.javafx.application.PlatformImpl;
-import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.core.Pipeline;
 import edu.wpi.grip.core.Source;
 import edu.wpi.grip.core.Step;
 import edu.wpi.grip.core.events.SocketPreviewChangedEvent;
 import edu.wpi.grip.core.events.StepMovedEvent;
+import edu.wpi.grip.core.sockets.OutputSocket;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -18,7 +18,6 @@ import javafx.scene.layout.HBox;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
-import java.util.Arrays;
 import java.util.Comparator;
 
 /**
@@ -114,7 +113,7 @@ public class PreviewsController {
 
             if (stepA == stepB) {
                 // If both sockets are in the same step, order them based on which is first in the step
-                return Arrays.asList(stepA.getOutputSockets()).stream()
+                return stepA.getOutputSockets().stream()
                         .filter(socket -> socket == a || socket == b)
                         .findFirst().get() == a ? -1 : 1;
             } else {
@@ -130,7 +129,7 @@ public class PreviewsController {
 
             if (sourceA == sourceB) {
                 // If both sockets are in the same source, order them based on which is first in the source
-                return Arrays.asList(sourceA.getOutputSockets()).stream()
+                return sourceA.getOutputSockets().stream()
                         .filter(socket -> socket == a || socket == b)
                         .findFirst().get() == a ? -1 : 1;
             } else {

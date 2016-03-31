@@ -26,9 +26,9 @@ public class StepTest {
     @Test
     public void testStep() {
         Step step = new Step.Factory(eventBus, (origin) -> new MockExceptionWitness(eventBus, origin)).create(addition);
-        Socket<Double> a = (Socket<Double>) step.getInputSockets()[0];
-        Socket<Double> b = (Socket<Double>) step.getInputSockets()[1];
-        Socket<Double> c = (Socket<Double>) step.getOutputSockets()[0];
+        Socket<Double> a = (Socket<Double>) step.getInputSockets().get(0);
+        Socket<Double> b = (Socket<Double>) step.getInputSockets().get(1);
+        Socket<Double> c = (Socket<Double>) step.getOutputSockets().get(0);
 
         a.setValue(1234.0);
         b.setValue(5678.0);
@@ -41,9 +41,9 @@ public class StepTest {
     @Test
     public void testSocketDirection() {
         Step step = new Step.Factory(eventBus, (origin) -> new MockExceptionWitness(eventBus, origin)).create(addition);
-        Socket<Double> a = (Socket<Double>) step.getInputSockets()[0];
-        Socket<Double> b = (Socket<Double>) step.getInputSockets()[1];
-        Socket<Double> c = (Socket<Double>) step.getOutputSockets()[0];
+        Socket<Double> a = (Socket<Double>) step.getInputSockets().get(0);
+        Socket<Double> b = (Socket<Double>) step.getInputSockets().get(1);
+        Socket<Double> c = (Socket<Double>) step.getOutputSockets().get(0);
 
         assertEquals(Socket.Direction.INPUT, a.getDirection());
         assertEquals(Socket.Direction.INPUT, b.getDirection());

@@ -191,12 +191,12 @@ public class PipelineTest {
     public void testPipeline() {
         Step step1 = stepFactory.create(addition);
         Step step2 = stepFactory.create(addition);
-        InputSocket<Double> a1 = (InputSocket<Double>) step1.getInputSockets()[0];
-        InputSocket<Double> b1 = (InputSocket<Double>) step1.getInputSockets()[1];
-        OutputSocket<Double> sum1 = (OutputSocket<Double>) step1.getOutputSockets()[0];
-        InputSocket<Double> a2 = (InputSocket<Double>) step2.getInputSockets()[0];
-        InputSocket<Double> b2 = (InputSocket<Double>) step2.getInputSockets()[1];
-        OutputSocket<Double> sum2 = (OutputSocket<Double>) step2.getOutputSockets()[0];
+        InputSocket<Double> a1 = (InputSocket<Double>) step1.getInputSockets().get(0);
+        InputSocket<Double> b1 = (InputSocket<Double>) step1.getInputSockets().get(1);
+        OutputSocket<Double> sum1 = (OutputSocket<Double>) step1.getOutputSockets().get(0);
+        InputSocket<Double> a2 = (InputSocket<Double>) step2.getInputSockets().get(0);
+        InputSocket<Double> b2 = (InputSocket<Double>) step2.getInputSockets().get(1);
+        OutputSocket<Double> sum2 = (OutputSocket<Double>) step2.getOutputSockets().get(0);
 
         // The result of this is the following equalities:
         //      sum1 = a1+b1
@@ -226,12 +226,12 @@ public class PipelineTest {
     public void testPipelineRemoved() {
         Step step1 = stepFactory.create(addition);
         Step step2 = stepFactory.create(addition);
-        InputSocket<Double> a1 = (InputSocket<Double>) step1.getInputSockets()[0];
-        InputSocket<Double> b1 = (InputSocket<Double>) step1.getInputSockets()[1];
-        OutputSocket<Double> sum1 = (OutputSocket<Double>) step1.getOutputSockets()[0];
-        InputSocket<Double> a2 = (InputSocket<Double>) step2.getInputSockets()[0];
-        InputSocket<Double> b2 = (InputSocket<Double>) step2.getInputSockets()[1];
-        OutputSocket<Double> sum2 = (OutputSocket<Double>) step2.getOutputSockets()[0];
+        InputSocket<Double> a1 = (InputSocket<Double>) step1.getInputSockets().get(0);
+        InputSocket<Double> b1 = (InputSocket<Double>) step1.getInputSockets().get(1);
+        OutputSocket<Double> sum1 = (OutputSocket<Double>) step1.getOutputSockets().get(0);
+        InputSocket<Double> a2 = (InputSocket<Double>) step2.getInputSockets().get(0);
+        InputSocket<Double> b2 = (InputSocket<Double>) step2.getInputSockets().get(1);
+        OutputSocket<Double> sum2 = (OutputSocket<Double>) step2.getOutputSockets().get(0);
 
         a2.setValue(0.0);
 
@@ -259,8 +259,8 @@ public class PipelineTest {
     public void testCannotConnectBackwards() {
         Step step1 = stepFactory.create(addition);
         Step step2 = stepFactory.create(addition);
-        InputSocket<Double> a1 = (InputSocket<Double>) step1.getInputSockets()[0];
-        OutputSocket<Double> sum2 = (OutputSocket<Double>) step2.getOutputSockets()[0];
+        InputSocket<Double> a1 = (InputSocket<Double>) step1.getInputSockets().get(0);
+        OutputSocket<Double> sum2 = (OutputSocket<Double>) step2.getOutputSockets().get(0);
 
         pipeline.addStep(step1);
         pipeline.addStep(step2);

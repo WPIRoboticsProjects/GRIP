@@ -1,5 +1,6 @@
 package edu.wpi.grip.core;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.eventbus.EventBus;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
@@ -98,17 +99,17 @@ public class Step {
     }
 
     /**
-     * @return An array of <code>Socket</code>s that hold the inputs to this step
+     * @return An array of {@link InputSocket InputSockets} that hold the inputs to this step
      */
-    public InputSocket<?>[] getInputSockets() {
-        return inputSockets;
+    public ImmutableList<InputSocket<?>> getInputSockets() {
+        return ImmutableList.copyOf(inputSockets);
     }
 
     /**
-     * @return An array of <code>Socket</code>s that hold the outputs of this step
+     * @return A list of {@link OutputSocket OutputSockets} that hold the outputs of this step
      */
-    public OutputSocket<?>[] getOutputSockets() {
-        return outputSockets;
+    public ImmutableList<OutputSocket<?>> getOutputSockets() {
+        return ImmutableList.copyOf(outputSockets);
     }
 
     /**

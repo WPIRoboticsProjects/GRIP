@@ -98,8 +98,8 @@ public class InputSocketControllerFactoryTest extends ApplicationTest {
     public void testCreateAllKnownInputSocketControllers() throws Exception {
         final Step step = stepFactory.create(operation);
         interact(() -> {
-            for (int i = 0; i < step.getInputSockets().length; i++) {
-                final InputSocket<?> inputSocket = step.getInputSockets()[i];
+            for (int i = 0; i < step.getInputSockets().size(); i++) {
+                final InputSocket<?> inputSocket = step.getInputSockets().get(i);
                 InputSocketController controller = inputSocketControllerFactory.create(inputSocket);
                 gridPane.add(controller.getRoot(), 0, i);
                 verifyThat(controller.getHandle(), NodeMatchers.isEnabled());
