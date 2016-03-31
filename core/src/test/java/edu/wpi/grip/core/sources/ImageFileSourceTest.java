@@ -36,7 +36,7 @@ public class ImageFileSourceTest {
         // When
         final ImageFileSource fileSource = new ImageFileSource(eventBus, origin -> null, this.imageFile.file);
         fileSource.initialize();
-        OutputSocket<Mat> outputSocket = fileSource.getOutputSockets()[0];
+        OutputSocket<Mat> outputSocket = fileSource.getOutputSockets().get(0);
 
         // Then
         assertTrue("The output socket's value was empty.", outputSocket.getValue().isPresent());
@@ -48,7 +48,7 @@ public class ImageFileSourceTest {
     public void testReadInTextFile() throws IOException {
         final ImageFileSource fileSource = new ImageFileSource(eventBus, origin -> null, this.textFile);
         fileSource.initialize();
-        OutputSocket<Mat> outputSocket = fileSource.getOutputSockets()[0];
+        OutputSocket<Mat> outputSocket = fileSource.getOutputSockets().get(0);
         assertTrue("No matrix should have been returned.", outputSocket.getValue().get().empty());
     }
 
@@ -65,7 +65,7 @@ public class ImageFileSourceTest {
     public void testCallingInitializeAfterGetOutputSocketUpdatesOutputSocket() throws IOException {
         final ImageFileSource source = new ImageFileSource(eventBus, origin -> null, this.imageFile.file);
         // Calling this before loading the image should throw an exception
-        final OutputSocket<Mat> imageSource = source.getOutputSockets()[0];
+        final OutputSocket<Mat> imageSource = source.getOutputSockets().get(0);
         assertTrue("The value should not be present if the source hasn't been initialized", imageSource.getValue().get().empty());
         source.initialize();
         assertFalse("The value should now be present since the source has been initialized", imageSource.getValue().get().empty());

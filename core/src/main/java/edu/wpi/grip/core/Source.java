@@ -1,5 +1,6 @@
 package edu.wpi.grip.core;
 
+import com.google.common.collect.ImmutableList;
 import com.google.inject.Inject;
 import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.core.sources.CameraSource;
@@ -59,13 +60,13 @@ public abstract class Source {
      *
      * @return @return An array of {@link OutputSocket}s for the outputs that the source produces.
      */
-    public final OutputSocket[] getOutputSockets() {
+    public final ImmutableList<OutputSocket> getOutputSockets() {
         final OutputSocket[] outputSockets = this.createOutputSockets();
         for (OutputSocket socket : outputSockets) {
             socket.setSource(Optional.of(this));
         }
 
-        return outputSockets;
+        return ImmutableList.copyOf(outputSockets);
     }
 
     protected abstract OutputSocket[] createOutputSockets();

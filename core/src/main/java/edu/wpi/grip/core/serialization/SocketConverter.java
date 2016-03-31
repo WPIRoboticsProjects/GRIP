@@ -6,7 +6,9 @@ import com.thoughtworks.xstream.converters.MarshallingContext;
 import com.thoughtworks.xstream.converters.UnmarshallingContext;
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
-import edu.wpi.grip.core.*;
+import edu.wpi.grip.core.Pipeline;
+import edu.wpi.grip.core.Source;
+import edu.wpi.grip.core.Step;
 import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.core.sockets.Socket;
@@ -15,7 +17,6 @@ import edu.wpi.grip.core.sockets.SocketHint;
 import javax.inject.Inject;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -47,16 +48,16 @@ public class SocketConverter implements Converter {
 
             // Save the location of the socket in the pipeline.
             socket.getStep().ifPresent(step -> {
-                final Socket<?>[] sockets = socket.getDirection() == Socket.Direction.INPUT ?
+                final List<? extends Socket> sockets = socket.getDirection() == Socket.Direction.INPUT ?
                         step.getInputSockets() : step.getOutputSockets();
                 writer.addAttribute(STEP_ATTRIBUTE, String.valueOf(pipeline.getSteps().indexOf(step)));
-                writer.addAttribute(SOCKET_ATTRIBUTE, String.valueOf(Arrays.asList(sockets).indexOf(socket)));
+                writer.addAttribute(SOCKET_ATTRIBUTE, String.valueOf(sockets.indexOf(socket)));
             });
 
             socket.getSource().ifPresent(source -> {
-                final Socket<?>[] sockets = source.getOutputSockets();
+                final List<? extends Socket> sockets = source.getOutputSockets();
                 writer.addAttribute(SOURCE_ATTRIBUTE, String.valueOf(pipeline.getSources().indexOf(source)));
-                writer.addAttribute(SOCKET_ATTRIBUTE, String.valueOf(Arrays.asList(sockets).indexOf(socket)));
+                writer.addAttribute(SOCKET_ATTRIBUTE, String.valueOf(sockets.indexOf(socket)));
             });
 
             // Save whether or not output sockets are previewed
@@ -110,13 +111,13 @@ public class SocketConverter implements Converter {
 
                 final Step step = pipeline.getSteps().get(stepIndex);
                 socket = direction == Socket.Direction.INPUT ?
-                        step.getInputSockets()[socketIndex] : step.getOutputSockets()[socketIndex];
+                        step.getInputSockets().get(socketIndex) : step.getOutputSockets().get(socketIndex);
             } else if (reader.getAttribute(SOURCE_ATTRIBUTE) != null) {
                 final int sourceIndex = Integer.parseInt(reader.getAttribute(SOURCE_ATTRIBUTE));
                 final int socketIndex = Integer.parseInt(reader.getAttribute(SOCKET_ATTRIBUTE));
 
                 final Source source = pipeline.getSources().get(sourceIndex);
-                socket = source.getOutputSockets()[socketIndex];
+                socket = source.getOutputSockets().get(socketIndex);
             } else {
                 throw new ConversionException("Sockets must have either a step or source attribute");
             }
