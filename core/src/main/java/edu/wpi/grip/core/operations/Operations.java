@@ -88,7 +88,8 @@ public class Operations {
                 NormalizeOperation::new,
                 WatershedOperation::new,
                 SwitchOperation::new,
-                ValveOperation::new
+                ValveOperation::new,
+                ThresholdMoving::new
         );
     }
 
