@@ -1,27 +1,30 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.shape.*?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.Group?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.shape.Rectangle?>
-<StackPane maxWidth="Infinity" maxHeight="Infinity" fx:id="root"
-           fx:controller="edu.wpi.grip.ui.pipeline.PipelineController"
-           styleClass="pipeline" xmlns:fx="http://javafx.com/fxml/1">
+
+<StackPane fx:id="root" maxHeight="Infinity" maxWidth="Infinity" styleClass="pipeline" xmlns="http://javafx.com/javafx/8.0.40" xmlns:fx="http://javafx.com/fxml/1" fx:controller="edu.wpi.grip.ui.pipeline.PipelineController">
     <children>
-        <HBox>
-            <VBox fillWidth="true">
-                <Label styleClass="pane-title" text="Sources" maxWidth="Infinity"/>
-                <Separator orientation="HORIZONTAL"/>
-                <Pane fx:id="addSourcePane"/>
-                <VBox fx:id="sourcesBox" styleClass="sources"/>
+        <HBox maxWidth="1.7976931348623157E308">
+            <VBox fillWidth="true" maxWidth="1.7976931348623157E308">
+                <Label maxWidth="Infinity" styleClass="pane-title" text="Sources" />
+                <Separator orientation="HORIZONTAL" />
+                <Pane fx:id="addSourcePane" />
+                <VBox fx:id="sourcesBox" styleClass="sources" />
             </VBox>
-            <Separator orientation="VERTICAL"/>
-            <HBox fx:id="stepBox" styleClass="steps" fillHeight="false"/>
+            <Separator orientation="VERTICAL" />
+            <HBox fx:id="stepBox" fillHeight="false" maxWidth="1.7976931348623157E308" styleClass="steps" HBox.hgrow="ALWAYS" />
         </HBox>
         <Group fx:id="connections" mouseTransparent="true">
             <StackPane.alignment>TOP_LEFT</StackPane.alignment>
-            <Rectangle x="0" y="0" width="1" height="1" opacity="0"/>
+            <Rectangle height="1" opacity="0" width="1" x="0" y="0" />
         </Group>
     </children>
 </StackPane>

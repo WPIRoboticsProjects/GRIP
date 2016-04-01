@@ -5,17 +5,17 @@ import com.google.common.eventbus.Subscribe;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.google.inject.assistedinject.Assisted;
-import edu.wpi.grip.core.*;
+import edu.wpi.grip.core.Connection;
+import edu.wpi.grip.core.Pipeline;
 import edu.wpi.grip.core.events.ConnectionAddedEvent;
 import edu.wpi.grip.core.events.ConnectionRemovedEvent;
 import edu.wpi.grip.core.events.SocketConnectedChangedEvent;
 import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.core.sockets.Socket;
+import edu.wpi.grip.ui.dragging.DragService;
 import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.property.SimpleObjectProperty;
 import javafx.css.PseudoClass;
 import javafx.scene.control.Button;
 import javafx.scene.control.Tooltip;
@@ -24,6 +24,7 @@ import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
 
 import java.util.Collections;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -46,8 +47,10 @@ public class SocketHandleView extends Button {
      * connection to be made.
      */
     @Singleton
-    protected static final class DragService {
-        private final ObjectProperty<Socket> socket = new SimpleObjectProperty<>(this, "socket");
+    protected static final class SocketDragService extends DragService<Socket> {
+        public SocketDragService() {
+            super("socket");
+        }
     }
 
     final private BooleanProperty connectingProperty = new SimpleBooleanProperty(this, "connecting", false);
@@ -61,7 +64,7 @@ public class SocketHandleView extends Button {
     SocketHandleView(EventBus eventBus,
                      Pipeline pipeline,
                      Connection.Factory<Object> connectionFactory,
-                     DragService dragService,
+                     SocketDragService socketDragService,
                      @Assisted Socket socket) {
         this.eventBus = eventBus;
         this.socket = socket;
@@ -97,7 +100,7 @@ public class SocketHandleView extends Button {
             mouseEvent.consume();
 
             this.connectingProperty.set(true);
-            dragService.socket.setValue(this.socket);
+            socketDragService.beginDrag(this.socket);
         });
 
         // Remove the "connecting" property (which changes the appearance of the handle) when the user moves the cursor
@@ -105,19 +108,19 @@ public class SocketHandleView extends Button {
         // connecting property if it's not the socket that the user started dragging from, since that one is supposed
         // to be dragged away.
         this.setOnDragExited(dragEvent -> {
-            Socket<?> other = dragService.socket.getValue();
-            if (other != null) this.connectingProperty.set(this.socket == other);
+            socketDragService.getValue().ifPresent( other -> {
+                this.connectingProperty.set(this.socket == other);
+            });
         });
 
         this.setOnDragDone(dragEvent -> {
             this.connectingProperty.set(false);
-            dragService.socket.setValue(null);
+            socketDragService.completeDrag();
         });
 
         // When the user drops the connection onto another socket, add a new connection.
         this.setOnDragDropped(dragEvent -> {
-            Socket<?> other = dragService.socket.getValue();
-            if (other != null) {
+            socketDragService.getValue().ifPresent(other -> {
                 InputSocket inputSocket;
                 OutputSocket outputSocket;
 
@@ -139,23 +142,24 @@ public class SocketHandleView extends Button {
                 }
                 final Connection connection = connectionFactory.create(outputSocket, inputSocket);
                 eventBus.post(new ConnectionAddedEvent(connection));
-            }
+            });
         });
 
         // Accept a drag event if it's possible to connect the two sockets
         this.setOnDragOver(dragEvent -> {
-            Socket<?> other = dragService.socket.getValue();
-            if (other != null && pipeline.canConnect(this.socket, other)) {
-                dragEvent.acceptTransferModes(TransferMode.ANY);
-                this.connectingProperty.set(true);
-            }
+            socketDragService.getValue().ifPresent(other -> {
+                if (pipeline.canConnect(this.socket, other)) {
+                    dragEvent.acceptTransferModes(TransferMode.ANY);
+                    this.connectingProperty.set(true);
+                }
+            });
         });
 
         // While dragging, disable any socket that we can't drag onto, providing visual feedback to the user about
         // what can be connected.
-        dragService.socket.addListener(observable -> {
-            Socket<?> other = dragService.socket.getValue();
-            pseudoClassStateChanged(DISABLED_PSEUDO_CLASS, other != null && !pipeline.canConnect(socket, other));
+        socketDragService.getDragProperty().addListener(observable -> {
+            Optional<Socket> other = socketDragService.getValue();
+            pseudoClassStateChanged(DISABLED_PSEUDO_CLASS, other.isPresent() && !pipeline.canConnect(socket, other.get()));
         });
     }
 

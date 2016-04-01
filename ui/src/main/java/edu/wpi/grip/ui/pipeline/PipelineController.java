@@ -4,11 +4,15 @@ import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import com.google.inject.Singleton;
 import com.sun.javafx.application.PlatformImpl;
-import edu.wpi.grip.core.*;
+import edu.wpi.grip.core.Connection;
+import edu.wpi.grip.core.Pipeline;
+import edu.wpi.grip.core.Source;
+import edu.wpi.grip.core.Step;
 import edu.wpi.grip.core.events.*;
 import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.ui.annotations.ParametrizedController;
+import edu.wpi.grip.ui.dragging.OperationDragService;
 import edu.wpi.grip.ui.pipeline.input.InputSocketController;
 import edu.wpi.grip.ui.pipeline.source.SourceController;
 import edu.wpi.grip.ui.pipeline.source.SourceControllerFactory;
@@ -22,6 +26,7 @@ import javafx.geometry.Point2D;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Parent;
+import javafx.scene.input.TransferMode;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
@@ -54,9 +59,13 @@ public final class PipelineController {
     @Inject
     private SourceControllerFactory sourceControllerFactory;
     @Inject
+    private Step.Factory stepFactory;
+    @Inject
     private StepController.Factory stepControllerFactory;
     @Inject
     private AddSourceView addSourceView;
+    @Inject
+    private OperationDragService operationDragService;
 
     private ControllerMap<StepController, Node> stepsMapManager;
     private ControllerMap<SourceController, Node> sourceMapManager;
@@ -78,6 +87,20 @@ public final class PipelineController {
         pipeline.getSteps().forEach(step -> {
             final StepController stepController = stepControllerFactory.create(step);
             stepsMapManager.add(stepController);
+        });
+
+        stepBox.setOnDragOver(dragEvent -> {
+            operationDragService.getValue().ifPresent(operation -> {
+                dragEvent.acceptTransferModes(TransferMode.ANY);
+            });
+
+        });
+
+        stepBox.setOnDragDropped(mouseEvent -> {
+            operationDragService.getValue().ifPresent(operation -> {
+                operationDragService.completeDrag();
+                pipeline.addStep(stepFactory.create(operation));
+            });
         });
 
         addSourcePane.getChildren().add(addSourceView);

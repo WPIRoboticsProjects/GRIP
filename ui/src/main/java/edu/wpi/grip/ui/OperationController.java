@@ -6,13 +6,19 @@ import edu.wpi.grip.core.Operation;
 import edu.wpi.grip.core.Pipeline;
 import edu.wpi.grip.core.Step;
 import edu.wpi.grip.ui.annotations.ParametrizedController;
+import edu.wpi.grip.ui.dragging.OperationDragService;
 import edu.wpi.grip.ui.util.StyleClassNameUtility;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.DataFormat;
+import javafx.scene.input.Dragboard;
+import javafx.scene.input.TransferMode;
 import javafx.scene.layout.GridPane;
+
+import java.util.Collections;
 
 /**
  * A JavaFX control that renders information about an {@link Operation}.  This is used in the palette view to present
@@ -35,6 +41,7 @@ public class OperationController implements Controller {
 
     private final Pipeline pipeline;
     private final Step.Factory stepFactory;
+    private final OperationDragService operationDragService;
     private final Operation operation;
 
     public interface Factory {
@@ -42,9 +49,10 @@ public class OperationController implements Controller {
     }
 
     @Inject
-    OperationController(Pipeline pipeline, Step.Factory stepFactory, @Assisted Operation operation) {
+    OperationController(Pipeline pipeline, Step.Factory stepFactory, OperationDragService operationDragService, @Assisted Operation operation) {
         this.pipeline = pipeline;
         this.stepFactory = stepFactory;
+        this.operationDragService = operationDragService;
         this.operation = operation;
     }
 
@@ -65,6 +73,22 @@ public class OperationController implements Controller {
 
         // Ensures that when this element is hidden that it also removes its size calculations
         root.managedProperty().bind(root.visibleProperty());
+
+
+        root.setOnDragDetected(mouseEvent -> {
+            // Create a snapshot to use as the cursor
+            final ImageView preview = new ImageView(root.snapshot(null, null));
+
+            final Dragboard db = root.startDragAndDrop(TransferMode.ANY);
+            db.setContent(Collections.singletonMap(DataFormat.PLAIN_TEXT, operation.getName()));
+            db.setDragView(preview.getImage());
+            // Begin the dragging
+            root.startFullDrag();
+            // Tell the drag service that this is the operation that will be received
+            operationDragService.beginDrag(operation);
+
+            mouseEvent.consume();
+        });
     }
 
     @FXML
