@@ -33,6 +33,10 @@ import javafx.scene.layout.VBox;
 
 import javax.inject.Inject;
 import java.util.Collection;
+import java.util.Map;
+import java.util.NavigableMap;
+import java.util.TreeMap;
+import java.util.stream.Collectors;
 
 /**
  * A JavaFX controller for the pipeline.  This controller renders a list of steps.
@@ -97,13 +101,54 @@ public final class PipelineController {
         });
 
         stepBox.setOnDragDropped(mouseEvent -> {
+            // If this is an operation being dropped
             operationDragService.getValue().ifPresent(operation -> {
+                // Then we need to figure out where to put it in the pipeline
+                // First create a map of every node in the steps list to its x position
+                final Map<Double, Node> positionMapping = stepsMapManager
+                        .entrySet()
+                        .stream()
+                        .collect(
+                                Collectors
+                                        .toMap(e -> calculateMiddleXPosOfNodeInParent(e.getValue()),
+                                                Map.Entry::getValue));
+
+                // A tree map is an easy way to sort the values
+                final NavigableMap<Double, Node> sortedPositionMapping
+                        = new TreeMap<>(positionMapping);
+
+                // Now we find the sockets that are to the immediate left and
+                // immediate right of the drop point
+
+                // These can be null
+                final Map.Entry<Double, Node>
+                        lowerEntry = sortedPositionMapping.floorEntry(mouseEvent.getX()),
+                        higherEntry = sortedPositionMapping.ceilingEntry(mouseEvent.getX());
+                // These can be null
+                final StepController
+                        lowerStepController =
+                        lowerEntry == null ?
+                                null : stepsMapManager.getWithNode(lowerEntry.getValue());
+                final StepController
+                        higherStepController =
+                        higherEntry == null ?
+                                null : stepsMapManager.getWithNode(higherEntry.getValue());
+                final Step
+                        lowerStep = lowerStepController == null ? null : lowerStepController.getStep(),
+                        higherStep = higherStepController == null ? null : higherStepController.getStep();
+
+
                 operationDragService.completeDrag();
-                pipeline.addStep(stepFactory.create(operation));
+                // Add the new step to the pipeline between these two steps
+                pipeline.addStepBetween(stepFactory.create(operation), lowerStep, higherStep);
             });
         });
 
         addSourcePane.getChildren().add(addSourceView);
+    }
+
+    private double calculateMiddleXPosOfNodeInParent(Node node) {
+        return node.getLayoutX() + (node.getBoundsInParent().getWidth() / 2.);
     }
 
     /**
