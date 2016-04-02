@@ -26,7 +26,7 @@ install:
   - '[ "${TRAVIS_PULL_REQUEST}" = "false" ] && ./gradlew :ui:assemble --stacktrace || ./gradlew --stacktrace '
 
 script:
-  - ./gradlew check --stacktrace -PprintTestResults
+  - ./gradlew check --stacktrace -Pheadless=true
 
 after_success:
   - codecov

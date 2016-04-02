@@ -290,6 +290,7 @@ project(":ui") {
         testCompile files(project(':core').sourceSets.test.output.resourcesDir)
         testCompile group: 'org.testfx', name: 'testfx-core', version: '4.0.+'
         testCompile group: 'org.testfx', name: 'testfx-junit', version: '4.0.+'
+        testRuntime group: 'org.testfx', name: 'openjfx-monocle', version: '1.8.0_20'
     }
 
     evaluationDependsOn(':core')
@@ -298,6 +299,17 @@ project(":ui") {
     idea.module {
         scopes.PROVIDED.plus += [configurations.ideProvider]
     }
+
+    /*
+     * Allows you to run the UI tests in headless mode by calling gradle with the -Pheadless=true argument
+     */
+    if (project.hasProperty('headless') && project.headless) {
+        println "Running UI Tests Headless"
+        test {
+            jvmArgs = ['-Djava.awt.headless=true', '-Dtestfx.robot=glass', '-Dtestfx.headless=true', '-Dprism.order=sw', '-Dprism.text=t2k']
+        }
+    }
+
 
     javafx {
         profiles {

@@ -2,11 +2,11 @@ install:
   - choco install -y InnoSetup
 
 build_script:
-  - gradlew.bat :ui:assemble --stacktrace -PprintTestResults
+  - gradlew.bat :ui:assemble --stacktrace
 
 # to run your custom scripts instead of automatic tests
 test_script:
-  - gradlew.bat check --stacktrace -PprintTestResults
+  - gradlew.bat check --stacktrace -Pheadless=true
 
 platform:
   - x64
