@@ -45,7 +45,7 @@ public class TextFieldInputSocketController extends InputSocketController<String
 
     @Subscribe
     public void updateTextFieldFromSocket(SocketChangedEvent event) {
-        if (event.getSocket() == getSocket()) {
+        if (event.isRegarding(getSocket())) {
             final String text = getSocket().getValue().get();
             Platform.runLater(() -> textField.setText(text));
         }
