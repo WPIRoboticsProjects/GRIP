@@ -5,9 +5,9 @@ import com.google.common.io.Files;
 import com.google.inject.assistedinject.Assisted;
 import com.google.inject.assistedinject.AssistedInject;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
-import edu.wpi.grip.core.OutputSocket;
-import edu.wpi.grip.core.SocketHint;
-import edu.wpi.grip.core.SocketHints;
+import edu.wpi.grip.core.sockets.OutputSocket;
+import edu.wpi.grip.core.sockets.SocketHint;
+import edu.wpi.grip.core.sockets.SocketHints;
 import edu.wpi.grip.core.Source;
 import edu.wpi.grip.core.util.ExceptionWitness;
 import edu.wpi.grip.core.util.ImageLoadingUtility;
@@ -33,10 +33,9 @@ public final class ImageFileSource extends Source {
 
     private final String name;
     private final String path;
-    private final SocketHint<Mat> imageOutputHint = SocketHints.Inputs.createMatSocketHint("Image", true);
+    private final SocketHint<Mat> imageOutputHint = SocketHints.Outputs.createMatSocketHint("Image");
     private final OutputSocket<Mat> outputSocket;
     private final EventBus eventBus;
-    private boolean loaded = false;
 
     public interface Factory {
         ImageFileSource create(File file);
@@ -85,7 +84,6 @@ public final class ImageFileSource extends Source {
     @Override
     public void initialize() throws IOException {
         this.loadImage(path);
-        this.loaded = true;
     }
 
 
@@ -96,10 +94,13 @@ public final class ImageFileSource extends Source {
 
     @Override
     public OutputSocket[] createOutputSockets() {
-        if (!loaded) {
-            throw new IllegalStateException("The images were never loaded from the filesystem. Must call `loadImage` first.");
-        }
-        return new OutputSocket[]{this.outputSocket};
+        return new OutputSocket[]{outputSocket};
+    }
+
+    @Override
+    protected boolean updateOutputSockets() {
+        // The image never changes so the socket will never need to be updated.
+        return false;
     }
 
     @Override

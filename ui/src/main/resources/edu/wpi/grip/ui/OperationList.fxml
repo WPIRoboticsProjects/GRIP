@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?language javascript?>
+
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.layout.VBox?>
+
+<Tab fx:controller="edu.wpi.grip.ui.OperationListController" xmlns:fx="http://javafx.com/fxml/1" fx:id="root"
+     closable="false">
+    <ScrollPane fitToHeight="true" fitToWidth="true" hbarPolicy="NEVER" vbarPolicy="AS_NEEDED"
+                VBox.vgrow="ALWAYS">
+        <VBox fx:id="operations"/>
+    </ScrollPane>
+</Tab>

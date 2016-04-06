@@ -1,18 +1,23 @@
 package edu.wpi.grip.ui;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
+import com.google.inject.util.Modules;
 import com.sun.javafx.application.PlatformImpl;
 import edu.wpi.grip.core.GRIPCoreModule;
-import edu.wpi.grip.core.Palette;
+import edu.wpi.grip.core.PipelineRunner;
 import edu.wpi.grip.core.events.UnexpectedThrowableEvent;
 import edu.wpi.grip.core.operations.Operations;
+import edu.wpi.grip.core.operations.network.GRIPNetworkModule;
+import edu.wpi.grip.core.serialization.Project;
+import edu.wpi.grip.core.util.SafeShutdown;
 import edu.wpi.grip.generated.CVOperations;
 import edu.wpi.grip.ui.util.DPIUtility;
-import edu.wpi.grip.ui.util.GRIPPlatform;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -20,20 +25,27 @@ import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
 import javax.inject.Inject;
+import java.io.File;
 import java.io.IOException;
-import java.util.logging.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class Main extends Application {
 
-    @Inject
-    private EventBus eventBus;
-    @Inject
-    private Palette palette;
-    @Inject
-    private GRIPPlatform platform;
+    @Inject private EventBus eventBus;
+    @Inject private PipelineRunner pipelineRunner;
+    @Inject private Project project;
+    @Inject private Operations operations;
+    @Inject private Logger logger;
 
-
-    protected final Injector injector = Guice.createInjector(new GRIPCoreModule(), new GRIPUIModule());
+    /**
+     * JavaFX insists on creating the main application with its own reflection code, so we can't create with the
+     * Guice and do automatic field injection. However, we can inject it after the fact.
+     */
+    @VisibleForTesting
+    protected Injector injector;
 
     private final Object dialogLock = new Object();
     private Parent root;
@@ -42,85 +54,86 @@ public class Main extends Application {
         launch(args);
     }
 
-    /**
-     * JavaFX insists on creating the main application with its own reflection code, so we can't create with the
-     * Guice and do automatic field injection. However, we can inject it after the fact.
-     */
-    public Main() {
-        injector.injectMembers(this);
-    }
-
     @Override
     @SuppressWarnings("PMD.SignatureDeclareThrowsException")
     public void start(Stage stage) throws Exception {
+        List<String> parameters = new ArrayList<>(getParameters().getRaw());
 
-        //Set up the global level logger. This handles IO for all loggers.
-        Logger globalLogger = LogManager.getLogManager().getLogger("");//This is our global logger
+        if (parameters.contains("--headless")) {
+            // If --headless was specified on the command line, run in headless mode (only use the core module)
+            injector = Guice.createInjector(new GRIPCoreModule(), new GRIPNetworkModule());
+            injector.injectMembers(this);
 
-        Handler fileHandler = null;//This will be our handler for the global logger
+            parameters.remove("--headless");
+        } else {
+            // Otherwise, run with both the core and UI modules, and show the JavaFX stage
+            injector = Guice.createInjector(Modules.override(new GRIPCoreModule(), new GRIPNetworkModule()).with(new GRIPUIModule()));
+            injector.injectMembers(this);
 
-        try {
-            fileHandler = new FileHandler("%h/GRIP.log");//Log to the file "GRIP.log"
+            root = FXMLLoader.load(Main.class.getResource("MainWindow.fxml"), null, null, injector::getInstance);
+            root.setStyle("-fx-font-size: " + DPIUtility.FONT_SIZE + "px");
 
-            globalLogger.addHandler(fileHandler);//Add the handler to the global logger
-
-            fileHandler.setFormatter(new SimpleFormatter());//log in text, not xml
-
-            //Set level to handler and logger
-            fileHandler.setLevel(Level.FINE);
-            globalLogger.setLevel(Level.FINE);
-
-            globalLogger.config("Configuration done.");//Log that we are done setting up the logger
-
-        } catch (IOException exception) {//Something happened setting up file IO
-            throw new IllegalStateException(exception);
+            // If this isn't here this can cause a deadlock on windows. See issue #297
+            stage.setOnCloseRequest(event -> SafeShutdown.exit(0, Platform::exit));
+            stage.setTitle("GRIP Computer Vision Engine");
+            stage.getIcons().add(new Image("/edu/wpi/grip/ui/icons/grip.png"));
+            stage.setScene(new Scene(root));
+            stage.show();
         }
 
-        root = FXMLLoader.load(Main.class.getResource("MainWindow.fxml"), null, null, injector::getInstance);
-        root.setStyle("-fx-font-size: " + DPIUtility.FONT_SIZE + "px");
-
-        Operations.addOperations(eventBus);
+        operations.addOperations();
         CVOperations.addOperations(eventBus);
 
-        stage.setTitle("GRIP Computer Vision Engine");
-        stage.getIcons().add(new Image("/edu/wpi/grip/ui/icons/grip.png"));
-        stage.setScene(new Scene(root));
-        stage.show();
+        // If there was a file specified on the command line, open it immediately
+        if (!parameters.isEmpty()) {
+            try {
+                project.open(new File(parameters.get(0)));
+            } catch (IOException e) {
+                logger.log(Level.SEVERE, "Error loading file: " + parameters.get(0));
+                throw e;
+            }
+        }
+
+        pipelineRunner.startAsync();
+    }
+
+    public void stop() {
+        SafeShutdown.flagStopping();
     }
 
     @Subscribe
+    @SuppressWarnings("PMD.AvoidCatchingThrowable")
     public final void onUnexpectedThrowableEvent(UnexpectedThrowableEvent event) {
-        // Print throwable before showing the exception so that errors are in order in the console
-        event.getThrowable().printStackTrace();
-
-        try {
-            // If this is an interrupted exception then don't show an error.
-            // We should exit as fast as possible.
-            if (!(event.getThrowable() instanceof InterruptedException)) {
+        event.handleSafely((throwable, message, isFatal) -> {
+            // Check this so we can avoid entering the the platform wait
+            // if the program is shutting down.
+            if (!SafeShutdown.isStopping()) {
                 // This should still use PlatformImpl
                 PlatformImpl.runAndWait(() -> {
                     // WARNING! Do not post any events from within this! It could result in a deadlock!
                     synchronized (this.dialogLock) {
-                        try {
-                            // Don't create more than one exception dialog at the same time
-                            final ExceptionAlert exceptionAlert = new ExceptionAlert(root, event.getThrowable(), event.getMessage(), event.isFatal(), getHostServices());
-                            exceptionAlert.setInitialFocus();
-                            exceptionAlert.showAndWait();
-                        } catch (Throwable e) {
-                            // Well in this case something has gone very, very wrong
-                            // We don't want to create a feedback loop either.
-                            e.printStackTrace();
-                            System.exit(1); // Ensure we shut down the application if we get an exception
+                        // Check again because the value could have been changed while waiting for the javafx thread to run.
+                        if (!SafeShutdown.isStopping()) {
+                            try {
+                                // Don't create more than one exception dialog at the same time
+                                final ExceptionAlert exceptionAlert = new ExceptionAlert(root, throwable, message, isFatal, getHostServices());
+                                exceptionAlert.setInitialFocus();
+                                exceptionAlert.showAndWait();
+                            } catch (Throwable e) {
+                                // Well in this case something has gone very, very wrong
+                                // We don't want to create a feedback loop either.
+                                try {
+                                    logger.log(Level.SEVERE, "Failed to show exception alert", e);
+                                } finally {
+                                    SafeShutdown.exit(1); // Ensure we shut down the application if we get an exception
+                                }
+                            }
                         }
                     }
                 });
+            } else {
+                logger.log(Level.INFO, "Did not display exception because UI was stopping", throwable);
             }
-        } finally {
-            if (event.isFatal()) {
-                System.err.println("Original fatal exception");
-                event.getThrowable().printStackTrace();
-                System.exit(1);
-            }
-        }
+        });
     }
 }

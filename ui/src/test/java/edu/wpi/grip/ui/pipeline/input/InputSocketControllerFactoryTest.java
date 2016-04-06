@@ -3,13 +3,19 @@ package edu.wpi.grip.ui.pipeline.input;
 import com.google.common.eventbus.EventBus;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
-import edu.wpi.grip.core.*;
-import edu.wpi.grip.core.operations.Operations;
+import com.google.inject.util.Modules;
+import edu.wpi.grip.core.sockets.InputSocket;
+import edu.wpi.grip.core.Operation;
+import edu.wpi.grip.core.Palette;
+import edu.wpi.grip.core.Step;
+import edu.wpi.grip.core.operations.OperationsFactory;
 import edu.wpi.grip.generated.CVOperations;
 import edu.wpi.grip.ui.GRIPUIModule;
+import edu.wpi.grip.util.GRIPCoreTestModule;
 import javafx.scene.Scene;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -19,18 +25,29 @@ import org.testfx.matcher.base.NodeMatchers;
 import java.util.Arrays;
 import java.util.Collection;
 
-import static org.junit.runners.Parameterized.Parameters;
 import static org.testfx.api.FxAssert.verifyThat;
 
 @RunWith(Parameterized.class)
 public class InputSocketControllerFactoryTest extends ApplicationTest {
 
-    @Parameters(name = "{index}: operation({0})={1}")
+    private GRIPCoreTestModule testModule;
+    private Step.Factory stepFactory;
+    private InputSocketControllerFactory inputSocketControllerFactory;
+    private GridPane gridPane;
+
+    private final Operation operation;
+    @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
+    private final String name;
+
+    @Parameterized.Parameters(name = "{index}: operation({0})={1}")
     public static Collection<Object[]> data() {
-        Injector injector = Guice.createInjector(new GRIPCoreModule());
+        GRIPCoreTestModule testModule = new GRIPCoreTestModule();
+        testModule.setUp();
+
+        Injector injector = Guice.createInjector(testModule);
         final Palette palette = injector.getInstance(Palette.class);
         final EventBus eventBus = injector.getInstance(EventBus.class);
-        Operations.addOperations(eventBus);
+        OperationsFactory.create(eventBus).addOperations();
         CVOperations.addOperations(eventBus);
         Collection<Operation> operations = palette.getOperations();
 
@@ -41,28 +58,27 @@ public class InputSocketControllerFactoryTest extends ApplicationTest {
             params[index[0]][1] = operation.getName();
             index[0]++;
         });
+
+        testModule.tearDown();
+
         return Arrays.asList(params);
     }
-
-    private Step.Factory stepFactory;
-    private InputSocketControllerFactory inputSocketControllerFactory;
-    private GridPane gridPane;
-
-    private final Operation operation;
-    private final String name;
 
     /**
      * @param operation The operation under test
      * @param name      The name. This is used for logging if the tests fail
      */
     public InputSocketControllerFactoryTest(Operation operation, String name) {
+        super();
         this.operation = operation;
         this.name = name;
     }
 
     @Override
     public void start(Stage stage) {
-        Injector injector = Guice.createInjector(new GRIPCoreModule(), new GRIPUIModule());
+        testModule = new GRIPCoreTestModule();
+        testModule.setUp();
+        Injector injector = Guice.createInjector(Modules.override(testModule).with(new GRIPUIModule()));
         inputSocketControllerFactory = injector.getInstance(InputSocketControllerFactory.class);
         stepFactory = injector.getInstance(Step.Factory.class);
         gridPane = new GridPane();
@@ -72,12 +88,18 @@ public class InputSocketControllerFactoryTest extends ApplicationTest {
         stage.show();
     }
 
+    @Before
+    public void tearDown() {
+        testModule.tearDown();
+    }
+
     @Test
+    @SuppressWarnings("PMD.JUnitTestsShouldIncludeAssert")
     public void testCreateAllKnownInputSocketControllers() throws Exception {
         final Step step = stepFactory.create(operation);
         interact(() -> {
-            for (int i = 0; i < step.getInputSockets().length; i++) {
-                final InputSocket<?> inputSocket = step.getInputSockets()[i];
+            for (int i = 0; i < step.getInputSockets().size(); i++) {
+                final InputSocket<?> inputSocket = step.getInputSockets().get(i);
                 InputSocketController controller = inputSocketControllerFactory.create(inputSocket);
                 gridPane.add(controller.getRoot(), 0, i);
                 verifyThat(controller.getHandle(), NodeMatchers.isEnabled());

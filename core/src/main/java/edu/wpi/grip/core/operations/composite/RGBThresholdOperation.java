@@ -2,6 +2,10 @@ package edu.wpi.grip.core.operations.composite;
 
 import com.google.common.eventbus.EventBus;
 import edu.wpi.grip.core.*;
+import edu.wpi.grip.core.sockets.InputSocket;
+import edu.wpi.grip.core.sockets.OutputSocket;
+import edu.wpi.grip.core.sockets.SocketHint;
+import edu.wpi.grip.core.sockets.SocketHints;
 
 import java.util.List;
 import java.util.Optional;
@@ -15,13 +19,13 @@ import static org.bytedeco.javacpp.opencv_core.*;
  */
 public class RGBThresholdOperation extends ThresholdOperation {
 
-    private static final Logger logger =  Logger.getLogger(RGBThresholdOperation.class.getName());
+    private static final Logger logger = Logger.getLogger(RGBThresholdOperation.class.getName());
     private final SocketHint<Mat> inputHint = SocketHints.Inputs.createMatSocketHint("Input", false);
     private final SocketHint<List> redHint = SocketHints.Inputs.createNumberListRangeSocketHint("Red", 0.0, 255.0);
     private final SocketHint<List> greenHint = SocketHints.Inputs.createNumberListRangeSocketHint("Green", 0.0, 255.0);
     private final SocketHint<List> blueHint = SocketHints.Inputs.createNumberListRangeSocketHint("Blue", 0.0, 255.0);
 
-    private final SocketHint<Mat> outputHint = SocketHints.Outputs.createMatSocketHint("Input");
+    private final SocketHint<Mat> outputHint = SocketHints.Outputs.createMatSocketHint("Output");
 
     @Override
     public String getName() {
@@ -64,6 +68,10 @@ public class RGBThresholdOperation extends ThresholdOperation {
         final List<Number> channel1 = ((InputSocket<List<Number>>) inputs[1]).getValue().get();
         final List<Number> channel2 = ((InputSocket<List<Number>>) inputs[2]).getValue().get();
         final List<Number> channel3 = ((InputSocket<List<Number>>) inputs[3]).getValue().get();
+
+        if (input.channels() != 3) {
+            throw new IllegalArgumentException("RGB Threshold needs a 3-channel input");
+        }
 
         final OutputSocket<Mat> outputSocket = (OutputSocket<Mat>) outputs[0];
         final Mat output = outputSocket.getValue().get();

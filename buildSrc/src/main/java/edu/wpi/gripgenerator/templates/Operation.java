@@ -25,8 +25,7 @@ import static com.github.javaparser.ASTHelper.createReferenceType;
 
 public class Operation {
     private static final ImportDeclaration OPERATION_IMPORT = new ImportDeclaration(new NameExpr("edu.wpi.grip.core.operations.opencv.CVOperation"), false, false);
-    private static final ImportDeclaration INPUT_SOCKET_IMPORT = new ImportDeclaration(new NameExpr("edu.wpi.grip.core.InputSocket"), false, false);
-    private static final ImportDeclaration OUTPUT_SOCKET_IMPORT = new ImportDeclaration(new NameExpr("edu.wpi.grip.core.OutputSocket"), false, false);
+    private static final ImportDeclaration SOCKETS_IMPORT = new ImportDeclaration(new NameExpr("edu.wpi.grip.core.sockets"), false, true);
     private static final ImportDeclaration EVENT_BUS_IMPORT = new ImportDeclaration(new NameExpr("com.google.common.eventbus.EventBus"), false, false);
     private static final ImportDeclaration CV_CORE_IMPORT = new ImportDeclaration(new NameExpr("org.bytedeco.javacpp.opencv_core"), true, true);
     private static final ClassOrInterfaceType iOperation = new ClassOrInterfaceType("CVOperation");
@@ -96,7 +95,7 @@ public class Operation {
         );
         BlockStmt methodBody = new BlockStmt(
                 Collections.singletonList(new ReturnStmt(
-                        new StringLiteralExpr(definedMethod.getMethodName())))
+                        new StringLiteralExpr("CV " + definedMethod.getMethodName())))
         );
         getName.setBody(methodBody);
         return getName;
@@ -124,6 +123,21 @@ public class Operation {
         );
         getDescription.setBody(methodBody);
         return getDescription;
+    }
+
+    private MethodDeclaration getCategoryMethod() {
+        MethodDeclaration getCategory = new MethodDeclaration(
+                ModifierSet.PUBLIC,
+                Collections.singletonList(OVERRIDE_ANNOTATION),
+                null,
+                createReferenceType("Category", 0),
+                "getCategory",
+                null, 0,
+                null,
+                null
+        );
+        getCategory.setBody(new BlockStmt(Collections.singletonList(new ReturnStmt(new NameExpr("Category.OPENCV")))));
+        return getCategory;
     }
 
     /**
@@ -190,39 +204,38 @@ public class Operation {
         List<Statement> performStatement = expressionList.stream().map(ExpressionStmt::new).collect(Collectors.toList());
         final String exceptionVariable = "e";
         final String outputSocketForEachVariableId = "outputSocket";
-        final TryStmt performTry = new TryStmt(
-                new BlockStmt(
-                        Arrays.asList(
+
+        performStatement.addAll(
+                Arrays.asList(
                                 /* Make the operation function call */
-                                new ExpressionStmt(
-                                        getFunctionCallExpression()
-                                ),
+                        new ExpressionStmt(
+                                getFunctionCallExpression()
+                        ),
                                 /*
                                  * Afterwards iterate over all of the output sockets and call setValue using the value
                                  * stored.
                                  */
-                                new ForeachStmt(
-                                        new VariableDeclarationExpr(
-                                                0,
-                                                ASTHelper.createReferenceType("OutputSocket", 0),
-                                                Collections.singletonList(
-                                                        new VariableDeclarator(
-                                                                new VariableDeclaratorId(outputSocketForEachVariableId)
-                                                        )
+                        new ForeachStmt(
+                                new VariableDeclarationExpr(
+                                        0,
+                                        ASTHelper.createReferenceType("OutputSocket", 0),
+                                        Collections.singletonList(
+                                                new VariableDeclarator(
+                                                        new VariableDeclaratorId(outputSocketForEachVariableId)
                                                 )
-                                        ),
-                                        new NameExpr(outputParamId),
-                                        new BlockStmt(
-                                                Collections.singletonList(
-                                                        new ExpressionStmt(
-                                                                new MethodCallExpr(
-                                                                        new NameExpr(outputSocketForEachVariableId),
-                                                                        "setValueOptional",
-                                                                        Collections.singletonList(
-                                                                                new MethodCallExpr(
-                                                                                        new NameExpr(outputSocketForEachVariableId),
-                                                                                        "getValue"
-                                                                                )
+                                        )
+                                ),
+                                new NameExpr(outputParamId),
+                                new BlockStmt(
+                                        Collections.singletonList(
+                                                new ExpressionStmt(
+                                                        new MethodCallExpr(
+                                                                new NameExpr(outputSocketForEachVariableId),
+                                                                "setValueOptional",
+                                                                Collections.singletonList(
+                                                                        new MethodCallExpr(
+                                                                                new NameExpr(outputSocketForEachVariableId),
+                                                                                "getValue"
                                                                         )
                                                                 )
                                                         )
@@ -230,36 +243,10 @@ public class Operation {
                                         )
                                 )
                         )
-                ),
-                Collections.singletonList(
-                        new CatchClause(
-                                new MultiTypeParameter(
-                                        ModifierSet.FINAL,
-                                        null,
-                                        Collections.singletonList(
-                                                ASTHelper.createReferenceType("Exception", 0)
-                                        ),
-                                        new VariableDeclaratorId(exceptionVariable)
-                                ),
-                                new BlockStmt(
-                                        // TODO: Add some sort of indication that an error has occurred
-                                        Collections.singletonList(
-                                                new ExpressionStmt(
-                                                        new MethodCallExpr(
-                                                                new NameExpr(exceptionVariable),
-                                                                "printStackTrace"
-                                                        )
-                                                )
-                                        )
-                                )
-                        )
-                ),
-                null
+                )
         );
-        // This is needed to prevent a null pointer
-        performTry.setResources(Collections.emptyList());
 
-        performStatement.add(performTry);
+
         return performStatement;
     }
 
@@ -307,6 +294,7 @@ public class Operation {
                 .collect(Collectors.toList()));
         ASTHelper.addMember(operation, getNameMethod());
         ASTHelper.addMember(operation, getDescriptionMethod());
+        ASTHelper.addMember(operation, getCategoryMethod());
         ASTHelper.addMember(operation, getCreateInputSocketsMethod());
         ASTHelper.addMember(operation, getCreateOutputSocketsMethod());
         ASTHelper.addMember(operation, getPerformMethod());
@@ -320,11 +308,9 @@ public class Operation {
      */
     public CompilationUnit getDeclaration() {
         Set<ImportDeclaration> importList = Sets.newHashSet(
-                SocketHintDeclaration.SOCKET_IMPORT,
                 OPERATION_IMPORT,
                 CV_CORE_IMPORT,
-                INPUT_SOCKET_IMPORT,
-                OUTPUT_SOCKET_IMPORT,
+                SOCKETS_IMPORT,
                 EVENT_BUS_IMPORT
         );
         importList.addAll(getAdditionalImports());

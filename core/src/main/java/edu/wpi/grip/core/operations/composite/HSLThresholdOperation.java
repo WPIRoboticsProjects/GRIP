@@ -2,10 +2,10 @@ package edu.wpi.grip.core.operations.composite;
 
 
 import com.google.common.eventbus.EventBus;
-import edu.wpi.grip.core.InputSocket;
-import edu.wpi.grip.core.OutputSocket;
-import edu.wpi.grip.core.SocketHint;
-import edu.wpi.grip.core.SocketHints;
+import edu.wpi.grip.core.sockets.InputSocket;
+import edu.wpi.grip.core.sockets.OutputSocket;
+import edu.wpi.grip.core.sockets.SocketHint;
+import edu.wpi.grip.core.sockets.SocketHints;
 
 import java.util.List;
 import java.util.Optional;
@@ -20,7 +20,7 @@ import static org.bytedeco.javacpp.opencv_imgproc.cvtColor;
  * An {@link edu.wpi.grip.core.Operation} that converts a color image into a binary image based on the HSL threshold ranges
  */
 public class HSLThresholdOperation extends ThresholdOperation {
-    private static final Logger logger =  Logger.getLogger(HSLThresholdOperation.class.getName());
+    private static final Logger logger = Logger.getLogger(HSLThresholdOperation.class.getName());
     private final SocketHint<Mat> inputHint = SocketHints.Inputs.createMatSocketHint("Input", false);
     private final SocketHint<List> hueHint = SocketHints.Inputs.createNumberListRangeSocketHint("Hue", 0.0, 180.0);
     private final SocketHint<List> saturationHint = SocketHints.Inputs.createNumberListRangeSocketHint("Saturation", 0.0, 255.0);
@@ -63,6 +63,10 @@ public class HSLThresholdOperation extends ThresholdOperation {
         final List<Number> channel1 = ((InputSocket<List<Number>>) inputs[1]).getValue().get();
         final List<Number> channel2 = ((InputSocket<List<Number>>) inputs[2]).getValue().get();
         final List<Number> channel3 = ((InputSocket<List<Number>>) inputs[3]).getValue().get();
+
+        if (input.channels() != 3) {
+            throw new IllegalArgumentException("HSL Threshold needs a 3-channel input");
+        }
 
         final OutputSocket<Mat> outputSocket = (OutputSocket<Mat>) outputs[0];
         final Mat output = outputSocket.getValue().get();

@@ -1,8 +1,14 @@
 buildscript {
-    repositories { jcenter() }
+    repositories {
+        jcenter()
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
+    }
 
     dependencies {
         classpath 'com.netflix.nebula:gradle-aggregate-javadocs-plugin:2.2.+'
+        classpath 'net.ltgt.gradle:gradle-errorprone-plugin:0.0.8'
     }
 }
 plugins {
@@ -15,10 +21,78 @@ plugins {
 }
 apply plugin: 'nebula-aggregate-javadocs'
 
+def getGitCommit = { ->
+    String HEAD_REF = new File(rootDir, '.git/HEAD').text.replace("ref: ", "").replace("\n", "")
+    String COMMIT_HASH = new File(rootDir, ".git/${HEAD_REF}").text.substring(0, 7)
+    return COMMIT_HASH
+}
+
+idea.project {
+    ipr.withXml { provider ->
+        def node = provider.asNode()
+        def compilerConfig = node.component.find { it.'@name' == 'CompilerConfiguration'}
+        compilerConfig.annotationProcessing[0].'@enabled' = 'true'
+//        def ccfg = node.component.find { it.@name == 'CompilerConfiguration' }
+//        ccfg.remove(ccfg.annotationProcessing)
+//        ccfg.append(new NodeBuilder().annotationProcessing() {
+//            profile(default: true, name: 'Default', enabled: true) {
+//                processorPath(useClasspath: true)
+//            }
+//        })
+    }
+}
+
+/*
+ * Gets the version name from the latest Git tag
+ * http://ryanharter.com/blog/2013/07/30/automatic-versioning-with-git-and-gradle/
+ */
+def getVersionName = { ->
+    if (project.hasProperty("vers")) return vers
+    try {
+        def stdout = new ByteArrayOutputStream()
+        exec {
+            commandLine 'git', 'describe', '--tags'
+            standardOutput = stdout
+        }
+        return stdout.toString().trim().substring(1)
+    } catch (org.gradle.process.internal.ExecException e) {
+        if (!new File(rootDir, '.git/HEAD').exists()) {
+            println("WARN: Could not fetch Git Tag for build version. No Git HEAD available. Substituting version 0.0.0")
+            return "0.0.0"
+        }
+        println("WARN: Could not fetch Git Tag for build version. Please install Git and add it to your PATH. For now, the Git commit hash has been substituted.")
+        return getGitCommit()
+    }
+}
+
+def getVersionSimple = { ->
+    if (project.hasProperty("vers")) return vers
+    try {
+        def stdout = new ByteArrayOutputStream()
+        exec {
+            commandLine 'git', 'describe', '--tags', '--abbrev=0'
+            standardOutput = stdout
+        }
+        return stdout.toString().trim().substring(1)
+    } catch (org.gradle.process.internal.ExecException e) {
+        if (!new File(rootDir, '.git/HEAD').exists()) {
+            println("WARN: Could not fetch Git Tag for build version. No Git HEAD available. Substituting version 0.0.0")
+            return "0.0.0"
+        }
+        println("WARN: Could not fetch Git Tag for build version. Please install Git and add it to your PATH. For now, the Git commit hash has been substituted.")
+        return getGitCommit()
+    }
+}
+
 allprojects {
     apply plugin: 'java'
     apply plugin: 'application'
     apply plugin: 'jacoco'
+    apply plugin: 'net.ltgt.errorprone'
+
+    configurations.errorprone {
+        resolutionStrategy.force 'com.google.errorprone:error_prone_core:2.0.8'
+    }
 
 
     repositories {
@@ -34,9 +108,11 @@ allprojects {
         testCompile group: 'net.jodah', name: 'concurrentunit', version: '0.4.2'
         testCompile group: 'org.hamcrest', name: 'hamcrest-all', version: '1.3'
         testCompile group: 'junit', name: 'junit', version: '4.12'
+        testCompile group: 'com.google.truth', name: 'truth', version: '0.28'
+        testCompile group: 'com.google.guava', name: 'guava-testlib', version: '19.0'
     }
 
-    version = '0.3.0'
+    version = getVersionName()
 
     compileJava {
         options.compilerArgs << "-g"
@@ -76,7 +152,8 @@ allprojects {
     }
 }
 
-def os = osdetector.classifier.replace("osx", "macosx").replace("windows-x86_32", "windows-x86")
+def os = osdetector.classifier.replace("osx", "macosx").replace("x86_32", "x86")
+def arch = osdetector.arch.replace("x86_64", "x64")
 
 project(":core") {
     apply plugin: 'java'
@@ -91,10 +168,17 @@ project(":core") {
     repositories {
         flatDir {
             dirs 'libs'
+            maven {
+                url = "http://first.wpi.edu/FRC/roborio/maven/development"
+            }
+            maven {
+                url = "https://github.com/WPIRoboticsProjects/rosjava_mvn_repo/raw/master"
+            }
         }
     }
 
     dependencies {
+        compile group: 'com.google.code.findbugs', name: 'jsr305', version: '3.0.1'
         compile group: 'org.bytedeco', name: 'javacv', version: '1.1'
         compile group: 'org.bytedeco.javacpp-presets', name: 'opencv', version: '3.0.0-1.1'
         compile group: 'org.bytedeco.javacpp-presets', name: 'opencv', version: '3.0.0-1.1', classifier: os
@@ -103,9 +187,19 @@ project(":core") {
         compile group: 'org.python', name: 'jython', version: '2.7.0'
         compile group: 'com.thoughtworks.xstream', name: 'xstream', version: '1.4.8'
         compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.4'
-        compile group: 'com.google.guava', name: 'guava', version: '18.0'
-        compile group: 'com.google.inject', name: 'guice', version: '4.0'
+        compile group: 'com.google.guava', name: 'guava', version: '19.0'
+        compile group: 'com.google.auto.value', name: 'auto-value', version: '1.1'
+        // We use the no_aop version of Guice because the aop isn't avaiable in arm java
+        // http://stackoverflow.com/a/15235190/3708426
+        // https://github.com/google/guice/wiki/OptionalAOP
+        compile group: 'com.google.inject', name: 'guice', version: '4.0', classifier: 'no_aop'
         compile group: 'com.google.inject.extensions', name: 'guice-assistedinject', version: '4.0'
+
+        // Network publishing dependencies
+        compile group: 'org.ros.rosjava_core', name: 'rosjava', version: '[0.2,0.3)'
+        compile group: 'org.ros.rosjava_messages', name: 'grip_msgs', version: '0.0.1'
+        compile group: 'edu.wpi.first.wpilib.networktables.java', name: 'NetworkTables', version: '3.0.0-SNAPSHOT', classifier: 'desktop'
+        compile group: 'edu.wpi.first.wpilib.networktables.java', name: 'NetworkTables', version: '3.0.0-SNAPSHOT', classifier: 'arm'
     }
 
     mainClassName = 'edu.wpi.grip.core.Main'
@@ -172,8 +266,8 @@ project(":core") {
 
     idea.module {
         sourceDirs += sourceSets.generated.java.srcDirs
+        sourceDirs += file('generated')
     }
-    // End IDE setup
 }
 
 project(":ui") {
@@ -191,9 +285,7 @@ project(":ui") {
         compile project(path: ':core', configuration: 'shadow')
         ideProvider project(path: ':core', configuration: 'compile')
         compile group: 'org.controlsfx', name: 'controlsfx', version: '8.40.10'
-        compile group: 'org.apache.ant', name: 'ant-jsch', version: '1.8.1'
-        compile group: 'com.jcabi', name: 'jcabi-ssh', version: '1.5'
-        compile group: 'org.jdeferred', name: 'jdeferred-core', version: '1.2.4'
+        compile group: 'com.hierynomus', name: 'sshj', version: '0.15.0'
         testCompile files(project(':core').sourceSets.test.output.classesDir)
         testCompile files(project(':core').sourceSets.test.output.resourcesDir)
         testCompile group: 'org.testfx', name: 'testfx-core', version: '4.0.+'
@@ -208,9 +300,19 @@ project(":ui") {
     }
 
     javafx {
+        profiles {
+            linux {
+                category = 'Development'
+                bundleArguments = [
+                        // for DEB bundles
+                        'email': 'wpilib@wpi.edu', // This is the email used for the deb maintainer field.
+                ]
+            }
+        }
         appID = 'GRIP'
         appName = 'GRIP'
         mainClass = "edu.wpi.grip.ui.Main"
+        version = getVersionSimple()
 
         // This prevents the JIT from eating stack traces that get thrown a lot
         // This is slower but means we actually get the stack traces instead of
@@ -220,6 +322,16 @@ project(":ui") {
         jvmArgs = ["-XX:-OmitStackTraceInFastThrow"]
     }
     mainClassName = javafx.mainClass
+
+    // The JavaFX plugin does not provide a way to change the installer artifact's name without changing the appName or appID,
+    // so instead, we simply rename the artifact to append the architecture (x86 or x64)
+    jfxDeploy.doLast {
+        def filet = fileTree(dir: 'build/distributions', include: "${javafx.appName}-${getVersionSimple()}.*")
+        filet.each { File f ->
+            def f2 = new File(f.getParentFile(), "${f.getName().replace("${getVersionSimple()}", "${getVersionSimple()}-${arch}")}")
+            f.renameTo(f2)
+        }
+    }
 }
 
 /*

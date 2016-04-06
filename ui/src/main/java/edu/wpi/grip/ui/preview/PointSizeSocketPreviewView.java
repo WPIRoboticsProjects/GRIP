@@ -1,8 +1,8 @@
 package edu.wpi.grip.ui.preview;
 
 import com.google.common.eventbus.Subscribe;
-import edu.wpi.grip.core.OutputSocket;
-import edu.wpi.grip.core.events.SocketChangedEvent;
+import edu.wpi.grip.core.sockets.OutputSocket;
+import edu.wpi.grip.core.events.RenderEvent;
 import edu.wpi.grip.ui.util.GRIPPlatform;
 import javafx.application.Platform;
 import javafx.scene.control.Label;
@@ -16,15 +16,15 @@ import static org.bytedeco.javacpp.opencv_core.Size;
 /**
  * A {@link SocketPreviewView} for OpenCV points and sizes
  */
-public class PointSizeSocketPreviewView extends SocketPreviewView<IntPointer> {
+public class PointSizeSocketPreviewView<T extends IntPointer> extends SocketPreviewView<T> {
 
     private final TextField x, y;
-    private GRIPPlatform platform;
+    private final GRIPPlatform platform;
 
     /**
      * @param socket   An output socket to preview
      */
-    PointSizeSocketPreviewView(GRIPPlatform platform, OutputSocket<IntPointer> socket) {
+     PointSizeSocketPreviewView(GRIPPlatform platform, OutputSocket<T> socket) {
         super(socket);
         this.platform = platform;
 
@@ -52,10 +52,8 @@ public class PointSizeSocketPreviewView extends SocketPreviewView<IntPointer> {
     }
 
     @Subscribe
-    public void onSocketChanged(SocketChangedEvent event) {
-        if (event.getSocket() == this.getSocket()) {
-            this.updateTextFields();
-        }
+    public void onRenderEvent(RenderEvent event) {
+        this.updateTextFields();
     }
 
     private void updateTextFields() {

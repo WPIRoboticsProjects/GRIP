@@ -2,8 +2,8 @@ package edu.wpi.grip.ui.pipeline.input;
 
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
-import edu.wpi.grip.core.InputSocket;
-import edu.wpi.grip.core.Socket;
+import edu.wpi.grip.core.sockets.InputSocket;
+import edu.wpi.grip.core.sockets.Socket;
 import edu.wpi.grip.ui.Controller;
 import edu.wpi.grip.ui.annotations.ParametrizedController;
 import edu.wpi.grip.ui.pipeline.SocketHandleView;
@@ -64,7 +64,7 @@ public class InputSocketController<T> implements Controller {
     @FXML
     public void initialize() {
         this.identifier.setText(this.socket.getSocketHint().getIdentifier());
-        this.type.setText(this.socket.getSocketHint().getType().getSimpleName());
+        this.type.setText(this.socket.getSocketHint().getTypeLabel());
         this.handle = socketHandleViewFactory.create(this.socket);
         root.add(this.handle, 0, 0);
     }
@@ -74,7 +74,7 @@ public class InputSocketController<T> implements Controller {
     }
 
     public SocketHandleView getHandle() {
-        if(this.handle == null) {
+        if (this.handle == null) {
             throw new IllegalStateException("Get Handle can only be called after the FXML has been initialized!");
         }
         return this.handle;
@@ -85,7 +85,7 @@ public class InputSocketController<T> implements Controller {
     }
 
     public ObjectProperty<Node> contentProperty() {
-        if(this.contentPane == null) {
+        if (this.contentPane == null) {
             throw new IllegalStateException("contentProperty can only be called after the FXML has been initialized!");
         }
         if (this.contentProperty == null) {
@@ -101,14 +101,14 @@ public class InputSocketController<T> implements Controller {
     }
 
     protected Label getIdentifier() {
-        if(this.identifier == null) {
+        if (this.identifier == null) {
             throw new IllegalStateException("getIdentifier can only be called after the FXML has been initialized!");
         }
         return this.identifier;
     }
 
     public final GridPane getRoot() {
-        if(this.root == null) {
+        if (this.root == null) {
             throw new IllegalStateException("getIdentifier can only be called after the FXML has been initialized!");
         }
         return root;

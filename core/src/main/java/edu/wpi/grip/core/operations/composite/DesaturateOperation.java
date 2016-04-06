@@ -2,6 +2,10 @@ package edu.wpi.grip.core.operations.composite;
 
 import com.google.common.eventbus.EventBus;
 import edu.wpi.grip.core.*;
+import edu.wpi.grip.core.sockets.InputSocket;
+import edu.wpi.grip.core.sockets.OutputSocket;
+import edu.wpi.grip.core.sockets.SocketHint;
+import edu.wpi.grip.core.sockets.SocketHints;
 
 import java.io.InputStream;
 import java.util.Optional;
@@ -25,6 +29,11 @@ public class DesaturateOperation implements Operation {
     @Override
     public String getDescription() {
         return "Convert a color image into shades of gray.";
+    }
+
+    @Override
+    public Category getCategory() {
+        return Category.IMAGE_PROCESSING;
     }
 
     @Override
@@ -54,7 +63,7 @@ public class DesaturateOperation implements Operation {
         switch (input.channels()) {
             case 1:
                 // If the input is already one channel, it's already desaturated
-                output = input;
+                input.copyTo(output);
                 break;
 
             case 3:

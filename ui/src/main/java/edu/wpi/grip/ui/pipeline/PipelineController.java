@@ -3,15 +3,16 @@ package edu.wpi.grip.ui.pipeline;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import com.google.inject.Singleton;
+import com.sun.javafx.application.PlatformImpl;
 import edu.wpi.grip.core.*;
 import edu.wpi.grip.core.events.*;
+import edu.wpi.grip.core.sockets.InputSocket;
+import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.ui.annotations.ParametrizedController;
 import edu.wpi.grip.ui.pipeline.input.InputSocketController;
 import edu.wpi.grip.ui.pipeline.source.SourceController;
 import edu.wpi.grip.ui.pipeline.source.SourceControllerFactory;
-import edu.wpi.grip.ui.util.GRIPPlatform;
 import edu.wpi.grip.ui.util.ControllerMap;
-import javafx.application.Platform;
 import javafx.beans.InvalidationListener;
 import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.collections.ObservableList;
@@ -56,8 +57,6 @@ public final class PipelineController {
     private StepController.Factory stepControllerFactory;
     @Inject
     private AddSourceView addSourceView;
-    @Inject
-    private GRIPPlatform platform;
 
     private ControllerMap<StepController, Node> stepsMapManager;
     private ControllerMap<SourceController, Node> sourceMapManager;
@@ -70,16 +69,16 @@ public final class PipelineController {
         stepsMapManager = new ControllerMap<>(stepBox.getChildren());
         sourceMapManager = new ControllerMap<>(sourcesBox.getChildren());
 
-        for (Source source : pipeline.getSources()) {
-            SourceController sourceController = sourceControllerFactory.create(source);
+        pipeline.getSources().forEach(source -> {
+            final SourceController sourceController = sourceControllerFactory.create(source);
             sourceMapManager.add(sourceController);
-        }
+        });
 
         // Create a new controller and view for each initial step (see onStepAdded)
-        for (Step step : pipeline.getSteps()) {
+        pipeline.getSteps().forEach(step -> {
             final StepController stepController = stepControllerFactory.create(step);
             stepsMapManager.add(stepController);
-        }
+        });
 
         addSourcePane.getChildren().add(addSourceView);
     }
@@ -182,7 +181,11 @@ public final class PipelineController {
      * details of adding the connection.
      */
     private void addConnectionView(Connection connection) {
-        platform.runAsSoonAsPossible(() -> {
+        // runAndWait() is used here because we don't want the main thread to resume, possibly causing more actions
+        // that manipulate the list of connections, until the GUI component is added.  This prevents rendering issues.
+        // Since the code in here JUST manipulates JavaFX components and doesn't post stuff to the EventBus, it's safe
+        // to put in runAndWait() without fear of deadlock.
+        PlatformImpl.runAndWait(() -> {
             // Before adding a connection control, we have to look up the controls for both sockets in the connection so
             // we know where to position it.
             final OutputSocketController outputSocketView = findOutputSocketView(connection.getOutputSocket());
@@ -207,9 +210,7 @@ public final class PipelineController {
                     final double x2 = inputSocketBounds.getMinX() + inputSocketBounds.getWidth() / 2.0;
                     final double y2 = inputSocketBounds.getMinY() + inputSocketBounds.getHeight() / 2.0;
 
-                    // This can run whenever. Don't wait for it to complete.
-                    // This should be Platform.runLater
-                    Platform.runLater(() -> {
+                    PlatformImpl.runAndWait(() -> {
                         connectionView.inputHandleProperty().setValue(new Point2D(x1, y1));
                         connectionView.outputHandleProperty().setValue(new Point2D(x2, y2));
                         ((ReadOnlyObjectProperty) observable).get();
@@ -217,9 +218,9 @@ public final class PipelineController {
                 }
             };
 
-            inputSocketController.getRoot().localToSceneTransformProperty().addListener(handleListener);
-            outputSocketView.getRoot().localToSceneTransformProperty().addListener(handleListener);
-            handleListener.invalidated(inputSocketController.getRoot().localToSceneTransformProperty());
+            inputSocketController.getHandle().localToSceneTransformProperty().addListener(handleListener);
+            outputSocketView.getHandle().localToSceneTransformProperty().addListener(handleListener);
+            handleListener.invalidated(outputSocketView.getHandle().localToSceneTransformProperty());
 
             connections.getChildren().add(connectionView);
         });
@@ -227,7 +228,7 @@ public final class PipelineController {
 
     @Subscribe
     public void onSourceAdded(SourceAddedEvent event) {
-        platform.runAsSoonAsPossible(() -> {
+        PlatformImpl.runAndWait(() -> {
             final SourceController sourceController = sourceControllerFactory.create(event.getSource());
             sourceMapManager.add(sourceController);
         });
@@ -235,7 +236,7 @@ public final class PipelineController {
 
     @Subscribe
     public void onSourceRemoved(SourceRemovedEvent event) {
-        platform.runAsSoonAsPossible(() -> {
+        PlatformImpl.runAndWait(() -> {
             final SourceController sourceController = findSourceView(event.getSource());
             sourceMapManager.remove(sourceController);
             eventBus.unregister(sourceController);
@@ -245,8 +246,8 @@ public final class PipelineController {
     @Subscribe
     public void onStepAdded(StepAddedEvent event) {
         // Add a new view to the pipeline for the step that was added
-        platform.runAsSoonAsPossible(() -> {
-            final int index = event.getIndex().or(stepBox.getChildren().size());
+        PlatformImpl.runAndWait(() -> {
+            final int index = event.getIndex().orElse(stepBox.getChildren().size());
             final Step step = event.getStep();
 
             // Create a new controller for the step.  Doing this with our factory method instead of with JavaFX's
@@ -259,7 +260,7 @@ public final class PipelineController {
     @Subscribe
     public void onStepRemoved(StepRemovedEvent event) {
         // Remove the control that corresponds with the step that was removed
-        platform.runAsSoonAsPossible(() -> {
+        PlatformImpl.runAndWait(() -> {
             final StepController stepController = findStepController(event.getStep());
 
             stepsMapManager.remove(stepController);
@@ -269,7 +270,7 @@ public final class PipelineController {
 
     @Subscribe
     public void onStepMoved(StepMovedEvent event) {
-        platform.runAsSoonAsPossible(() -> {
+        PlatformImpl.runAndWait(() -> {
             final StepController stepController = findStepController(event.getStep());
             stepsMapManager.moveByDistance(stepController, event.getDistance());
         });
@@ -278,13 +279,13 @@ public final class PipelineController {
     @Subscribe
     public void onConnectionAdded(ConnectionAddedEvent event) {
         // Add the new connection view
-        platform.runAsSoonAsPossible(() -> addConnectionView(event.getConnection()));
+        addConnectionView(event.getConnection());
     }
 
     @Subscribe
     public void onConnectionRemoved(ConnectionRemovedEvent event) {
         // Remove the control that corresponds with the connection that was removed
-        platform.runAsSoonAsPossible(() -> {
+        PlatformImpl.runAndWait(() -> {
             final ConnectionView connectionView = findConnectionView(event.getConnection());
             connections.getChildren().remove(connectionView);
             eventBus.unregister(connectionView);

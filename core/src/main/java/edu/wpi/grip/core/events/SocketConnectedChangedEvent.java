@@ -1,7 +1,9 @@
 package edu.wpi.grip.core.events;
 
 import com.google.common.base.MoreObjects;
-import edu.wpi.grip.core.Socket;
+import edu.wpi.grip.core.sockets.Socket;
+
+import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * This event is sent when the state of a socket (connected vs. disconnected) is changed.  Specifically, this will only
@@ -17,7 +19,7 @@ public class SocketConnectedChangedEvent {
      * @param socket The socket that was either connected or disconneted.
      */
     public SocketConnectedChangedEvent(Socket socket) {
-        this.socket = socket;
+        this.socket = checkNotNull(socket, "Socket cannot be null");
     }
 
     /**

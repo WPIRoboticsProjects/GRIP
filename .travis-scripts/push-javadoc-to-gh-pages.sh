@@ -3,6 +3,9 @@
 # Source of file: http://benlimmer.com/2013/12/26/automatically-publish-javadoc-to-gh-pages-with-travis-ci/
 if [ "$TRAVIS_REPO_SLUG" == "WPIRoboticsProjects/GRIP" ] && [ "$TRAVIS_JDK_VERSION" == "oraclejdk8" ] && [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ "$TRAVIS_BRANCH" == "master" ]; then
 
+  echo -e "Generating javadoc...\n"
+  ./gradlew aggregateJavadocs
+
   echo -e "Publishing javadoc...\n"
 
   cp -R build/docs/javadoc $HOME/javadoc-latest

@@ -1,7 +1,7 @@
 package edu.wpi.grip.core.sources;
 
 import com.google.common.eventbus.EventBus;
-import edu.wpi.grip.core.OutputSocket;
+import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.util.Files;
 import edu.wpi.grip.util.ImageWithData;
 import org.bytedeco.javacpp.opencv_core.Mat;
@@ -45,20 +45,24 @@ public class MultiImageFileSourceTest {
     @Test
     public void testNextValue() throws Exception {
         source.next();
-        OutputSocket<Mat> outputSocket = source.getOutputSockets()[0];
+        OutputSocket<Mat> outputSocket = source.getOutputSockets().get(0);
+        source.updateOutputSockets();
         gompeiJpegFile.assertSameImage(outputSocket.getValue().get());
     }
 
     @Test
     public void testPreviousValue() throws Exception {
         source.previous();
-        OutputSocket<Mat> outputSocket = source.getOutputSockets()[0];
+
+        OutputSocket<Mat> outputSocket = source.getOutputSockets().get(0);
+        source.updateOutputSockets();
         gompeiJpegFile.assertSameImage(outputSocket.getValue().get());
     }
 
     @Test
     public void testConstructedWithIndex() {
-        OutputSocket<Mat> outputSocket = sourceWithIndexSet.getOutputSockets()[0];
+        sourceWithIndexSet.updateOutputSockets();
+        OutputSocket<Mat> outputSocket = sourceWithIndexSet.getOutputSockets().get(0);
         gompeiJpegFile.assertSameImage(outputSocket.getValue().get());
     }
 
@@ -70,7 +74,8 @@ public class MultiImageFileSourceTest {
                 origin -> null,
                 properties);
         newSource.initialize();
-        OutputSocket<Mat> outputSocket = newSource.getOutputSockets()[0];
+        newSource.updateOutputSockets();
+        OutputSocket<Mat> outputSocket = newSource.getOutputSockets().get(0);
         gompeiJpegFile.assertSameImage(outputSocket.getValue().get());
     }
 }

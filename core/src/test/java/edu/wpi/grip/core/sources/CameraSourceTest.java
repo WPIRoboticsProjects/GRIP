@@ -4,30 +4,44 @@ package edu.wpi.grip.core.sources;
 import com.google.common.base.Throwables;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
+import com.google.common.util.concurrent.Service;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
-import edu.wpi.grip.core.GRIPCoreModule;
 import edu.wpi.grip.core.events.UnexpectedThrowableEvent;
+import edu.wpi.grip.core.util.ImageLoadingUtility;
 import edu.wpi.grip.core.util.MockExceptionWitness;
+import edu.wpi.grip.util.Files;
+import edu.wpi.grip.util.GRIPCoreTestModule;
+import net.jodah.concurrentunit.Waiter;
 import org.bytedeco.javacpp.indexer.Indexer;
+import org.bytedeco.javacpp.opencv_core.Mat;
 import org.bytedeco.javacv.Frame;
 import org.bytedeco.javacv.FrameGrabber;
+import org.bytedeco.javacv.OpenCVFrameConverter;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.Timeout;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.Queue;
+import java.util.concurrent.TimeoutException;
 
+import static com.google.common.truth.Truth.assertThat;
 import static org.junit.Assert.*;
 
 public class CameraSourceTest {
-    private Injector injector;
+    private GRIPCoreTestModule testModule;
     private CameraSource.Factory cameraSourceFactory;
-
-    private EventBus eventBus;
     private CameraSource cameraSourceWithMockGrabber;
     private MockFrameGrabberFactory mockFrameGrabberFactory;
+
+    @Rule
+    public final Timeout timeout = Timeout.seconds(3);
 
 
     class MockFrameGrabber extends FrameGrabber {
@@ -102,18 +116,21 @@ public class CameraSourceTest {
 
     @Before
     public void setUp() throws Exception {
-        this.injector = Guice.createInjector(new GRIPCoreModule());
+        this.testModule = new GRIPCoreTestModule();
+        testModule.setUp();
+        final Injector injector = Guice.createInjector(testModule);
         this.cameraSourceFactory = injector.getInstance(CameraSource.Factory.class);
 
-        this.eventBus = new EventBus();
+        final EventBus eventBus = new EventBus();
         class UnhandledExceptionWitness {
             @Subscribe
             public void onUnexpectedThrowableEvent(UnexpectedThrowableEvent event) {
-                System.err.println(event.getMessage());
-                event.getThrowable().printStackTrace();
+                event.handleSafely((throwable, message, isFatal) -> {
+                    throwable.printStackTrace();
+                });
             }
         }
-        this.eventBus.register(new UnhandledExceptionWitness());
+        eventBus.register(new UnhandledExceptionWitness());
         this.mockFrameGrabberFactory = new MockFrameGrabberFactory();
         this.cameraSourceWithMockGrabber = new CameraSource(
                 eventBus,
@@ -125,6 +142,7 @@ public class CameraSourceTest {
     @After
     public void tearDown() throws Exception {
         mockFrameGrabberFactory.frameGrabber.release();
+        testModule.tearDown();
     }
 
     @Test(expected = IOException.class)
@@ -134,47 +152,152 @@ public class CameraSourceTest {
     }
 
     @Test
-    public void testCanStopAndStart() throws Exception {
-        cameraSourceWithMockGrabber.start();
-        assertTrue("The camera source was not started after calling start", cameraSourceWithMockGrabber.isStarted());
-        cameraSourceWithMockGrabber.stop();
-        assertFalse("The camera was not stopped after calling stop", cameraSourceWithMockGrabber.isStarted());
+    public void testCallingStopAndStartDoesNotDeadlock() throws Exception {
+        assertEquals("Service did not start new", Service.State.NEW, cameraSourceWithMockGrabber.state());
+        // Run this a hundred time to ensure that there isn't a situation where this can deadlock
+        for(int i = 0; i < 100; i++) {
+            cameraSourceWithMockGrabber.startAsync().awaitRunning();
+            assertTrue("The camera source was not started after calling startAsync", cameraSourceWithMockGrabber.isRunning());
+            cameraSourceWithMockGrabber.stopAsync().awaitTerminated();
+            assertFalse("The camera was not stopped after calling stopAsync", cameraSourceWithMockGrabber.isRunning());
+        }
     }
 
-    @Test(expected = IOException.class)
+    @Test
     public void testStartRethrowsIfFailure() throws Exception {
         mockFrameGrabberFactory.frameGrabber.setShouldThrowAtStart(true);
-        cameraSourceWithMockGrabber.start();
-        fail("Should have thrown an IOException");
+        // Problems starting should be restarted
+        try {
+            cameraSourceWithMockGrabber.startAsync().stopAndAwait();
+            fail("Should have thrown an exception");
+        } catch (IllegalStateException e) {
+            assertThat(e.getCause()).isNotNull();
+            assertThat(e.getCause()).isInstanceOf(GrabberService.GrabberServiceException.class);
+        }
+
+        assertFalse("Camera service has stopped completely", cameraSourceWithMockGrabber.isRunning());
     }
 
-    @Test(expected = IOException.class)
+    @Test(expected = GrabberService.GrabberServiceException.class)
     public void testStopRethrowsIfFailure() throws Exception {
         mockFrameGrabberFactory.frameGrabber.setShouldThrowAtStop(true);
-        cameraSourceWithMockGrabber.start();
+        cameraSourceWithMockGrabber.startAsync();
 
         try {
-            cameraSourceWithMockGrabber.stop();
-        } catch (IOException e) {
-            assertFalse(cameraSourceWithMockGrabber.isStarted());
-            Throwables.propagateIfInstanceOf(e, IOException.class);
+            cameraSourceWithMockGrabber.stopAsync().awaitTerminated();
+        } catch (IllegalStateException expected) {
+            Throwables.propagateIfInstanceOf(expected.getCause(), GrabberService.GrabberServiceException.class);
+            throw expected;
         }
-        fail("This should have thrown an IOException");
+
+        fail("This should have thrown an Exception");
     }
 
     @Test(expected = IllegalStateException.class)
     public void testStartingTwiceShouldThrowIllegalState() throws Exception {
         try {
             try {
-                cameraSourceWithMockGrabber.start();
+                cameraSourceWithMockGrabber.startAsync();
             } catch (RuntimeException e) {
                 fail("This should not have failed");
             }
-            cameraSourceWithMockGrabber.start();
+            cameraSourceWithMockGrabber.startAsync();
         } finally {
-            cameraSourceWithMockGrabber.stop();
+            cameraSourceWithMockGrabber.stopAsync();
         }
         fail("The test should have failed with an IllegalStateException");
     }
 
+    @Test
+    public void testEnsureThatGrabberIsReinitializedWhenStartThrowsException() throws IOException, TimeoutException {
+        final String GRABBER_START_MESSAGE = "This is expected to fail this way";
+        Waiter waiter1 = new Waiter();
+        Waiter waiter2 = new Waiter();
+        Waiter waiter3 = new Waiter();
+        Queue<Waiter> waiterQueue = new LinkedList<>(Arrays.asList(waiter1, waiter2, waiter3));
+
+        CameraSource source = new CameraSource(new EventBus(), new CameraSource.FrameGrabberFactory() {
+            @Override
+            public FrameGrabber create(int deviceNumber) {
+                return new SimpleMockFrameGrabber() {
+                    @Override
+                    public void start() throws Exception {
+                        if (!waiterQueue.isEmpty()) {
+                            waiterQueue.poll().resume();
+                        }
+                        throw new FrameGrabber.Exception(GRABBER_START_MESSAGE);
+                    }
+                };
+            }
+
+            @Override
+            public FrameGrabber create(String addressProperty) throws MalformedURLException {
+                throw new AssertionError("This should not be called");
+            }
+        }, MockExceptionWitness.MOCK_FACTORY, 0);
+
+        source.startAsync();
+        waiter1.await();
+        waiter2.await();
+        waiter3.await();
+        try {
+            source.stopAndAwait();
+            fail("This should have failed");
+        } catch(IllegalStateException e) {
+            assertThat(e.getCause()).isNotNull();
+            assertThat(e.getCause().getCause()).isNotNull();
+            assertThat(e.getCause().getCause()).hasMessage(GRABBER_START_MESSAGE);
+        }
+    }
+
+    @Test
+    public void testFrameRateUpdatesWithGrabSpeed() throws IOException, InterruptedException, TimeoutException {
+        Waiter waiter1 = new Waiter();
+        Waiter waiter2 = new Waiter();
+        Queue<Waiter> waiterQueue = new LinkedList<>(Arrays.asList(waiter1, waiter2));
+
+        Mat image = new Mat();
+        ImageLoadingUtility.loadImage(Files.gompeiJpegFile.file.getPath(), image);
+        CameraSource source = new CameraSource(new EventBus(), new CameraSource.FrameGrabberFactory() {
+            @Override
+            public FrameGrabber create(int deviceNumber) {
+                return new SimpleMockFrameGrabber() {
+                    private OpenCVFrameConverter.ToMat converter = new OpenCVFrameConverter.ToMat();
+                    @Override
+                    public Frame grab() throws Exception {
+                        try {
+                            Thread.sleep(3);
+                        } catch (InterruptedException e) {
+                            Thread.currentThread().interrupt();
+                            throw new FrameGrabber.Exception("Thread interrupted", e);
+                        }
+                        if (!waiterQueue.isEmpty()){
+                            waiterQueue.poll().resume();
+                        }
+                        return converter.convert(image);
+                    }
+                };
+            }
+
+            @Override
+            public FrameGrabber create(String addressProperty) throws MalformedURLException {
+                throw new AssertionError("This should not be called");
+            }
+        }, MockExceptionWitness.MOCK_FACTORY, 0);
+
+        source.startAsync().awaitRunning();
+
+        waiter2.await();
+        // Move the value over to the socket.
+        source.updateOutputSockets();
+
+        assertNotEquals("The frame rate was not updated when the camera was running",
+                Double.valueOf(0), source.createOutputSockets()[1].getValue().get());
+
+        try {
+            source.stopAndAwait();
+        } catch (IllegalStateException e) {
+            // This could happen if the thread is interrupted.
+        }
+    }
 }

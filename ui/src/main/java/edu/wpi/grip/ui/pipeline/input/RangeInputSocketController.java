@@ -3,7 +3,7 @@ package edu.wpi.grip.ui.pipeline.input;
 import com.google.common.eventbus.Subscribe;
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
-import edu.wpi.grip.core.InputSocket;
+import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.events.SocketChangedEvent;
 import edu.wpi.grip.ui.pipeline.SocketHandleView;
 import javafx.fxml.FXML;
@@ -60,10 +60,11 @@ public class RangeInputSocketController extends InputSocketController<List<Numbe
 
         // Set the socket values whenever the range changes
         this.slider.lowValueProperty().addListener(o -> {
+            List<Number> value = socket.getValue().get();
+            value.set(0, slider.getLowValue());
+
             // If the high value is also changing simultaneously, don't call setValue() twice
             if (!this.slider.isHighValueChanging()) {
-                List<Number> value = socket.getValue().get();
-                value.set(0, slider.getLowValue());
                 socket.setValue(value);
             }
         });

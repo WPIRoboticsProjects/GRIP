@@ -1,6 +1,6 @@
 package edu.wpi.grip.ui.preview;
 
-import edu.wpi.grip.core.OutputSocket;
+import edu.wpi.grip.core.sockets.OutputSocket;
 import javafx.scene.control.TitledPane;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -31,7 +31,7 @@ public abstract class SocketPreviewView<T> extends TitledPane {
         String title = "";
 
         if (this.socket.getStep().isPresent()) {
-            title += this.socket.getStep().get().getOperation().getName() + " → ";
+            title += this.socket.getStep().get().getOperation().getName() + " -> ";
         }
 
         title += this.socket.getSocketHint().getIdentifier();

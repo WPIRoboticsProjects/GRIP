@@ -49,15 +49,20 @@ public class OperationsTest {
     public void testCreateAllCVSteps() {
         CVOperations.addOperations(eventBus);
         for (Operation operation : operationList) {
-            new Step.Factory(eventBus, (origin) -> new MockExceptionWitness(eventBus, origin)).create(operation);
+            final Step step =
+                    new Step.Factory(eventBus, (origin) -> new MockExceptionWitness(eventBus, origin)).create(operation);
+            step.setRemoved();
         }
     }
 
     @Test
     public void testCreateAllCoreSteps() {
-        Operations.addOperations(eventBus);
+        OperationsFactory.create(eventBus)
+                .addOperations();
         for (Operation operation : operationList) {
-            new Step.Factory(eventBus, (origin) -> new MockExceptionWitness(eventBus, origin)).create(operation);
+            final Step step =
+                    new Step.Factory(eventBus, (origin) -> new MockExceptionWitness(eventBus, origin)).create(operation);
+            step.setRemoved();
         }
     }
 }

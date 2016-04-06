@@ -1,6 +1,8 @@
 package edu.wpi.grip.core;
 
+import com.google.common.collect.ImmutableList;
 import com.google.inject.Inject;
+import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.core.sources.CameraSource;
 import edu.wpi.grip.core.sources.ImageFileSource;
 import edu.wpi.grip.core.sources.MultiImageFileSource;
@@ -58,16 +60,25 @@ public abstract class Source {
      *
      * @return @return An array of {@link OutputSocket}s for the outputs that the source produces.
      */
-    public final OutputSocket[] getOutputSockets() {
+    public final ImmutableList<OutputSocket> getOutputSockets() {
         final OutputSocket[] outputSockets = this.createOutputSockets();
         for (OutputSocket socket : outputSockets) {
             socket.setSource(Optional.of(this));
         }
 
-        return outputSockets;
+        return ImmutableList.copyOf(outputSockets);
     }
 
     protected abstract OutputSocket[] createOutputSockets();
+
+    /**
+     * This method will check if there are any pending updates to
+     * output sockets. If there are any, update the sockets and then return true.
+     * If there are no updates this function should return false.
+     *
+     * @return true if there are updates ready to be moved into the socket.
+     */
+    protected abstract boolean updateOutputSockets();
 
     /**
      * @return A {@link Properties} containing data that can be used to re-create this source.  This is used for

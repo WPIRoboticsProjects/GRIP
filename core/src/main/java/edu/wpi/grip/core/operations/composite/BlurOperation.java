@@ -2,6 +2,10 @@ package edu.wpi.grip.core.operations.composite;
 
 import com.google.common.eventbus.EventBus;
 import edu.wpi.grip.core.*;
+import edu.wpi.grip.core.sockets.InputSocket;
+import edu.wpi.grip.core.sockets.OutputSocket;
+import edu.wpi.grip.core.sockets.SocketHint;
+import edu.wpi.grip.core.sockets.SocketHints;
 
 import java.io.InputStream;
 import java.util.Optional;
@@ -44,6 +48,11 @@ public class BlurOperation implements Operation {
     @Override
     public String getDescription() {
         return "Soften the details of an image to remove noise.";
+    }
+
+    @Override
+    public Category getCategory() {
+        return Category.IMAGE_PROCESSING;
     }
 
     @Override

@@ -1,8 +1,8 @@
 package edu.wpi.grip.ui.pipeline.input;
 
 import com.google.inject.Inject;
-import edu.wpi.grip.core.InputSocket;
-import edu.wpi.grip.core.SocketHint;
+import edu.wpi.grip.core.sockets.InputSocket;
+import edu.wpi.grip.core.sockets.SocketHint;
 
 import java.util.List;
 
@@ -25,6 +25,8 @@ public final class InputSocketControllerFactory {
     private RangeInputSocketController.Factory rangeInputSocketControllerFactory;
     @Inject
     private SelectInputSocketController.Factory<Object> selectInputSocketControllerFactory;
+    @Inject
+    private TextFieldInputSocketController.Factory textFieldInputSocketController;
 
     /**
      * Create an instance of {@link InputSocketController} appropriate for the given socket.
@@ -37,11 +39,13 @@ public final class InputSocketControllerFactory {
             case NONE:
                 return (InputSocketController<T>) baseInputSocketControllerFactory.create((InputSocket<Object>) socket);
 
-            case SPINNER:
+            case TEXT:
                 if (socketHint.getType().equals(Number.class)) {
                     return (InputSocketController<T>) numberInputSocketControllerFactory.create((InputSocket<Number>) socket);
                 } else if (socketHint.getType().equals(List.class)) {
                     return (InputSocketController<T>) listInputSocketControllerFactory.create((InputSocket<List>) socket);
+                } else if (socketHint.getType().equals(String.class)) {
+                    return (InputSocketController<T>) textFieldInputSocketController.create((InputSocket<String>) socket);
                 } else {
                     throw new IllegalArgumentException("Could not create view for socket.  SPINNER views must be Number or List. "
                             + socket.toString());

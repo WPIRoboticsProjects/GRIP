@@ -1,14 +1,15 @@
 package edu.wpi.grip.core.operations.composite;
 
 import com.google.common.eventbus.EventBus;
-import edu.wpi.grip.core.InputSocket;
+import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.Operation;
-import edu.wpi.grip.core.OutputSocket;
-import edu.wpi.grip.core.SocketHint;
+import edu.wpi.grip.core.sockets.OutputSocket;
+import edu.wpi.grip.core.sockets.SocketHint;
 
 import java.io.InputStream;
 import java.util.Optional;
 
+import static org.bytedeco.javacpp.opencv_core.MatVector;
 import static org.bytedeco.javacpp.opencv_imgproc.convexHull;
 
 /**
@@ -31,6 +32,11 @@ public class ConvexHullsOperation implements Operation {
     }
 
     @Override
+    public Category getCategory() {
+        return Category.FEATURE_DETECTION;
+    }
+
+    @Override
     public Optional<InputStream> getIcon() {
         return Optional.of(getClass().getResourceAsStream("/edu/wpi/grip/ui/icons/convex-hulls.png"));
     }
@@ -49,18 +55,16 @@ public class ConvexHullsOperation implements Operation {
     @SuppressWarnings("unchecked")
     public void perform(InputSocket<?>[] inputs, OutputSocket<?>[] outputs) {
         final InputSocket<ContoursReport> inputSocket = (InputSocket<ContoursReport>) inputs[0];
-        final OutputSocket<ContoursReport> outputSocket = (OutputSocket<ContoursReport>) outputs[0];
 
-        final ContoursReport inputContours = inputSocket.getValue().get();
-        final ContoursReport outputContours = outputSocket.getValue().get();
-        outputContours.getContours().resize(inputContours.getContours().size());
+        final MatVector inputContours = inputSocket.getValue().get().getContours();
+        final MatVector outputContours = new MatVector(inputContours.size());
 
-        for (int i = 0; i < inputContours.getContours().size(); i++) {
-            convexHull(inputContours.getContours().get(i), outputContours.getContours().get(i));
+        for (int i = 0; i < inputContours.size(); i++) {
+            convexHull(inputContours.get(i), outputContours.get(i));
         }
 
-        outputContours.setRows(inputContours.getRows());
-        outputContours.setCols(inputContours.getCols());
-        outputSocket.setValue(outputContours);
+        final OutputSocket<ContoursReport> outputSocket = (OutputSocket<ContoursReport>) outputs[0];
+        outputSocket.setValue(new ContoursReport(outputContours,
+                inputSocket.getValue().get().getRows(), inputSocket.getValue().get().getCols()));
     }
 }

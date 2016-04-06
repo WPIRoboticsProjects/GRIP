@@ -1,7 +1,7 @@
 package edu.wpi.grip.ui.pipeline;
 
 import com.google.common.eventbus.EventBus;
-import edu.wpi.grip.core.MockOutputSocket;
+import edu.wpi.grip.core.sockets.MockOutputSocket;
 import edu.wpi.grip.ui.util.TestAnnotationFXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.layout.GridPane;
@@ -34,7 +34,7 @@ public class OutputSocketControllerTest extends ApplicationTest {
         initiallyPreviewedOutputSocket = new InitiallyPreviewedOutputSocket("Initially previewed");
 
         final SocketHandleView.Factory socketHandleFactory
-                = socket -> new SocketHandleView(new EventBus(), null, null, new SocketHandleView.SocketHandleDraggingSocketService(), socket);
+                = socket -> new SocketHandleView(new EventBus(), null, null, new SocketHandleView.DragService(), socket);
         defaultOutputSocketController =
                 new OutputSocketController(socketHandleFactory, outputSocket);
         initiallyPreviewedOutputSocketController =

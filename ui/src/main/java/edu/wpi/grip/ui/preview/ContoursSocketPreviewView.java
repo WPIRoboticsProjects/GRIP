@@ -1,8 +1,8 @@
 package edu.wpi.grip.ui.preview;
 
 import com.google.common.eventbus.Subscribe;
-import edu.wpi.grip.core.OutputSocket;
-import edu.wpi.grip.core.events.SocketChangedEvent;
+import edu.wpi.grip.core.sockets.OutputSocket;
+import edu.wpi.grip.core.events.RenderEvent;
 import edu.wpi.grip.core.operations.composite.ContoursReport;
 import edu.wpi.grip.ui.util.GRIPPlatform;
 import edu.wpi.grip.ui.util.ImageConverter;
@@ -56,10 +56,8 @@ public final class ContoursSocketPreviewView extends SocketPreviewView<ContoursR
     }
 
     @Subscribe
-    public void onSocketChanged(SocketChangedEvent event) {
-        if (event.getSocket() == this.getSocket()) {
-            this.render();
-        }
+    public void onRender(RenderEvent event) {
+        this.render();
     }
 
     private void render() {
