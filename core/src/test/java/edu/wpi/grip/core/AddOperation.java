@@ -10,7 +10,7 @@ import org.bytedeco.javacpp.opencv_core.Mat;
  * Performs the opencv add operation
  */
 public class AddOperation implements Operation {
-    private SocketHint<Mat>
+    private final SocketHint<Mat>
             aHint = SocketHints.Inputs.createMatSocketHint("a", false),
             bHint = SocketHints.Inputs.createMatSocketHint("b", false),
             sumHint = SocketHints.Inputs.createMatSocketHint("sum", true);
@@ -28,21 +28,24 @@ public class AddOperation implements Operation {
     @Override
     public InputSocket[] createInputSockets(EventBus eventBus) {
         return new InputSocket[]{
-                new InputSocket<Mat>(eventBus, aHint),
-                new InputSocket<Mat>(eventBus, bHint)
+                new InputSocket<>(eventBus, aHint),
+                new InputSocket<>(eventBus, bHint)
         };
     }
 
     @Override
     public OutputSocket[] createOutputSockets(EventBus eventBus) {
         return new OutputSocket[]{
-                new OutputSocket<Mat>(eventBus, sumHint)
+                new OutputSocket<>(eventBus, sumHint)
         };
     }
 
     @Override
-    public void perform(InputSocket[] inputs, OutputSocket[] outputs) {
-        Socket<Mat> a = inputs[0], b = inputs[1], sum = outputs[0];
-        opencv_core.add(a.getValue().get(), b.getValue().get(), sum.getValue().get());
+    public void perform(InputSocket<?>[] inputs, OutputSocket<?>[] outputs) {
+        final Socket<Mat>
+                a = aHint.safeCastSocket(inputs[0]),
+                b = bHint.safeCastSocket(inputs[1]),
+                sum = sumHint.safeCastSocket(outputs[0]);
+        opencv_core.add(aHint.retrieveValue(a), bHint.retrieveValue(b), sumHint.retrieveValue(sum));
     }
 }

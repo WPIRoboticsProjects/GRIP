@@ -31,7 +31,7 @@ public abstract class ThresholdOperation implements Operation {
      * @param input     The input matrix that the dataArray element should be compared against
      * @return Either the old mat with the value assigned or a newly created Matrix.
      */
-    protected Mat reallocateMatIfInputSizeOrWidthChanged(final Mat[] dataArray, final int index, final Scalar value, final Mat input) {
+    protected static Mat reallocateMatIfInputSizeOrWidthChanged(final Mat[] dataArray, final int index, final Scalar value, final Mat input) {
         if (dataArray[index].size().width() != input.size().width()
                 || dataArray[index].size().height() != input.size().height()
                 || dataArray[index].type() != input.type()) {

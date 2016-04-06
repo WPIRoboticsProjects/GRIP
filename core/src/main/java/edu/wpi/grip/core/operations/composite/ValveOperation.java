@@ -8,6 +8,8 @@ import edu.wpi.grip.core.sockets.*;
 import java.util.Optional;
 
 public class ValveOperation implements Operation {
+    // This hint toggles the switch between using the true and false sockets
+    private final SocketHint<Boolean> valveHint = SocketHints.createBooleanSocketHint("valve", true);
     @Override
     public String getName() {
         return "Valve";
@@ -25,12 +27,9 @@ public class ValveOperation implements Operation {
 
     @Override
     public SocketsProvider createSockets(EventBus eventBus) {
-        // This hint toggles the switch between using the true and false sockets
-        final SocketHint<Boolean> switcherHint = SocketHints.createBooleanSocketHint("valve", true);
-
         final LinkedSocketHint linkedSocketHint = new LinkedSocketHint(eventBus);
         final InputSocket<?>[] inputs = new InputSocket[]{
-                new InputSocket<>(eventBus, switcherHint),
+                new InputSocket<>(eventBus, valveHint),
                 linkedSocketHint.linkedInputSocket("Input"),
         };
         final OutputSocket<?>[] outputs = new OutputSocket[]{
@@ -52,9 +51,9 @@ public class ValveOperation implements Operation {
     @Override
     @SuppressWarnings("unchecked")
     public void perform(InputSocket<?>[] inputs, OutputSocket<?>[] outputs) {
-        final InputSocket<Boolean> switchHint = (InputSocket<Boolean>) inputs[0];
+        final boolean valveValue = valveHint.retrieveValue(inputs[0]);
         // If the input is true pass the value through
-        if (switchHint.getValue().get()) {
+        if (valveValue) {
             outputs[0].setValueOptional(((InputSocket) inputs[1]).getValue());
         } else {
             outputs[0].setValueOptional((Optional) Optional.empty());

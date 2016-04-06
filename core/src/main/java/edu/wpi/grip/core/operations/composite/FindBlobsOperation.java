@@ -22,10 +22,10 @@ public class FindBlobsOperation implements Operation {
 
     private final SocketHint<Mat> inputHint = SocketHints.Inputs.createMatSocketHint("Input", false);
     private final SocketHint<Number> minAreaHint = SocketHints.Inputs.createNumberSpinnerSocketHint("Min Area", 1);
-    private final SocketHint<List> circularityHint = SocketHints.Inputs.createNumberListRangeSocketHint("Circularity", 0.0, 1.0);
+    private final SocketHint<List<Number>> circularityHint = SocketHints.Inputs.createNumberListRangeSocketHint("Circularity", 0.0, 1.0);
     private final SocketHint<Boolean> colorHint = SocketHints.createBooleanSocketHint("Dark Blobs", false);
 
-    private final SocketHint<BlobsReport> blobsHint = new SocketHint.Builder(BlobsReport.class)
+    private final SocketHint<BlobsReport> blobsHint = new SocketHint.Builder<>(BlobsReport.class)
             .identifier("Blobs")
             .initialValueSupplier(BlobsReport::new)
             .build();
@@ -68,10 +68,10 @@ public class FindBlobsOperation implements Operation {
     @Override
     @SuppressWarnings("unchecked")
     public void perform(InputSocket<?>[] inputs, OutputSocket<?>[] outputs) {
-        final Mat input = (Mat) inputs[0].getValue().get();
-        final Number minArea = (Number) inputs[1].getValue().get();
-        final List<Number> circularity = (List<Number>) inputs[2].getValue().get();
-        final Boolean darkBlobs = (Boolean) inputs[3].getValue().get();
+        final Mat input = inputHint.retrieveValue(inputs[0]);
+        final Number minArea = minAreaHint.retrieveValue(inputs[1]);
+        final List<Number> circularity = circularityHint.retrieveValue(inputs[2]);
+        final Boolean darkBlobs = colorHint.retrieveValue(inputs[3]);
 
 
         final SimpleBlobDetector blobDetector = SimpleBlobDetector.create(new SimpleBlobDetector.Params()
@@ -96,6 +96,6 @@ public class FindBlobsOperation implements Operation {
             blobs.add(new BlobsReport.Blob(keyPoint.pt().x(), keyPoint.pt().y(), keyPoint.size()));
         }
 
-        ((OutputSocket<BlobsReport>) outputs[0]).setValue(new BlobsReport(input, blobs));
+        blobsHint.safeCastSocket(outputs[0]).setValue(new BlobsReport(input, blobs));
     }
 }

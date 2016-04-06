@@ -2,10 +2,7 @@ package edu.wpi.grip.core.operations.composite;
 
 import com.google.common.eventbus.EventBus;
 import edu.wpi.grip.core.*;
-import edu.wpi.grip.core.sockets.InputSocket;
-import edu.wpi.grip.core.sockets.OutputSocket;
-import edu.wpi.grip.core.sockets.SocketHint;
-import edu.wpi.grip.core.sockets.SocketHints;
+import edu.wpi.grip.core.sockets.*;
 import org.bytedeco.javacpp.indexer.FloatIndexer;
 
 import java.io.InputStream;
@@ -63,9 +60,9 @@ public class FindLinesOperation implements Operation {
     @Override
     @SuppressWarnings("unchecked")
     public void perform(InputSocket<?>[] inputs, OutputSocket<?>[] outputs, Optional<?> data) {
-        final Mat input = (Mat) inputs[0].getValue().get();
-        final OutputSocket<LinesReport> linesReportSocket = (OutputSocket<LinesReport>) outputs[0];
-        final LineSegmentDetector lsd = linesReportSocket.getValue().get().getLineSegmentDetector();
+        final Mat input = inputHint.retrieveValue(inputs[0]);
+        final Socket<LinesReport> linesReportSocket = linesHint.safeCastSocket(outputs[0]);
+        final LineSegmentDetector lsd = linesHint.retrieveValue(linesReportSocket).getLineSegmentDetector();
 
         final Mat lines = new Mat();
         if (input.channels() == 1) {
@@ -79,7 +76,7 @@ public class FindLinesOperation implements Operation {
         }
 
         // Store the lines in the LinesReport object
-        List<LinesReport.Line> lineList = new ArrayList<>();
+        final List<LinesReport.Line> lineList = new ArrayList<>();
         if (!lines.empty()) {
             final FloatIndexer indexer = lines.<FloatIndexer>createIndexer();
             final float[] tmp = new float[4];

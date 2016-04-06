@@ -4,6 +4,7 @@ import com.google.common.eventbus.EventBus;
 import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.Operation;
 import edu.wpi.grip.core.sockets.OutputSocket;
+import edu.wpi.grip.core.sockets.SocketHint;
 import edu.wpi.grip.core.sockets.SocketHints;
 import org.bytedeco.javacpp.BytePointer;
 import org.bytedeco.javacpp.IntPointer;
@@ -32,6 +33,8 @@ import static org.bytedeco.javacpp.opencv_imgcodecs.imencode;
 public class PublishVideoOperation implements Operation {
 
     private final Logger logger = Logger.getLogger(PublishVideoOperation.class.getName());
+    private final SocketHint<Mat> imageHint = SocketHints.Inputs.createMatSocketHint("Image", false);
+    private final SocketHint<Number> qualityHint = SocketHints.Inputs.createNumberSliderSocketHint("Quality", 80, 0, 100);
 
     private static final int PORT = 1180;
     private static final byte[] MAGIC_NUMBER = {0x01, 0x00, 0x00, 0x00};
@@ -136,8 +139,8 @@ public class PublishVideoOperation implements Operation {
     @Override
     public InputSocket<?>[] createInputSockets(EventBus eventBus) {
         return new InputSocket<?>[]{
-                new InputSocket<>(eventBus, SocketHints.Inputs.createMatSocketHint("Image", false)),
-                new InputSocket<>(eventBus, SocketHints.Inputs.createNumberSliderSocketHint("Quality", 80, 0, 100)),
+                new InputSocket<>(eventBus, imageHint),
+                new InputSocket<>(eventBus, qualityHint),
         };
     }
 
@@ -159,8 +162,8 @@ public class PublishVideoOperation implements Operation {
 
     @Override
     public void perform(InputSocket<?>[] inputs, OutputSocket<?>[] outputs) {
-        Mat input = (Mat) inputs[0].getValue().get();
-        Number quality = (Number) inputs[1].getValue().get();
+        final Mat input = imageHint.retrieveValue(inputs[0]);
+        final Number quality = qualityHint.retrieveValue(inputs[1]);
 
         if (!connected) {
             return; // Don't waste any time converting images if there's no dashboard connected

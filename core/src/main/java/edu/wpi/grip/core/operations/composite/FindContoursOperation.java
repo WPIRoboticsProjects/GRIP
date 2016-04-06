@@ -2,10 +2,7 @@ package edu.wpi.grip.core.operations.composite;
 
 import com.google.common.eventbus.EventBus;
 import edu.wpi.grip.core.*;
-import edu.wpi.grip.core.sockets.InputSocket;
-import edu.wpi.grip.core.sockets.OutputSocket;
-import edu.wpi.grip.core.sockets.SocketHint;
-import edu.wpi.grip.core.sockets.SocketHints;
+import edu.wpi.grip.core.sockets.*;
 
 import java.io.InputStream;
 import java.util.Optional;
@@ -68,9 +65,9 @@ public class FindContoursOperation implements Operation {
     @Override
     @SuppressWarnings("unchecked")
     public void perform(InputSocket<?>[] inputs, OutputSocket<?>[] outputs, Optional<?> data) {
-        final Mat input = ((InputSocket<Mat>) inputs[0]).getValue().get();
+        final Mat input = inputHint.retrieveValue(inputs[0]);
         final Mat tmp = ((Optional<Mat>) data).get();
-        final boolean externalOnly = ((InputSocket<Boolean>) inputs[1]).getValue().get();
+        final boolean externalOnly = externalHint.retrieveValue(inputs[1]);
 
         if (input.empty()) {
             return;
@@ -86,7 +83,7 @@ public class FindContoursOperation implements Operation {
         findContours(tmp, contours, externalOnly ? CV_RETR_EXTERNAL : CV_RETR_LIST,
                 CV_CHAIN_APPROX_TC89_KCOS);
 
-        final OutputSocket<ContoursReport> contoursSocket = (OutputSocket<ContoursReport>) outputs[0];
+        final Socket<ContoursReport> contoursSocket = contoursHint.safeCastSocket(outputs[0]);
         contoursSocket.setValue(new ContoursReport(contours, input.rows(), input.cols()));
     }
 }

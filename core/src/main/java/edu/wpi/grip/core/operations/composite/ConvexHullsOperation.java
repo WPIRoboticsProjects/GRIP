@@ -4,6 +4,7 @@ import com.google.common.eventbus.EventBus;
 import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.Operation;
 import edu.wpi.grip.core.sockets.OutputSocket;
+import edu.wpi.grip.core.sockets.Socket;
 import edu.wpi.grip.core.sockets.SocketHint;
 
 import java.io.InputStream;
@@ -52,19 +53,17 @@ public class ConvexHullsOperation implements Operation {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public void perform(InputSocket<?>[] inputs, OutputSocket<?>[] outputs) {
-        final InputSocket<ContoursReport> inputSocket = (InputSocket<ContoursReport>) inputs[0];
-
-        final MatVector inputContours = inputSocket.getValue().get().getContours();
+        final Socket<ContoursReport> inputSocket = contoursHint.safeCastSocket(inputs[0]);
+        final ContoursReport inputValue = contoursHint.retrieveValue(inputSocket);
+        final MatVector inputContours = inputValue.getContours();
         final MatVector outputContours = new MatVector(inputContours.size());
 
         for (int i = 0; i < inputContours.size(); i++) {
             convexHull(inputContours.get(i), outputContours.get(i));
         }
 
-        final OutputSocket<ContoursReport> outputSocket = (OutputSocket<ContoursReport>) outputs[0];
-        outputSocket.setValue(new ContoursReport(outputContours,
-                inputSocket.getValue().get().getRows(), inputSocket.getValue().get().getCols()));
+        final Socket<ContoursReport> outputSocket = contoursHint.safeCastSocket(outputs[0]);
+        outputSocket.setValue(new ContoursReport(outputContours, inputValue.getRows(), inputValue.getCols()));
     }
 }

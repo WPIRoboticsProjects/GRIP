@@ -206,15 +206,39 @@ public interface SocketHint<T> {
      */
     Optional<T> createInitialValue();
 
+    /**
+     * Safely casts the {@link Socket} to be of the same type as this hint
+     *
+     * @param socket The socket to cast
+     * @return The socket cast safely to be of the type of this {@link SocketHint}
+     */
+    @SuppressWarnings("unchecked")
+    default  Socket<T> safeCastSocket(Socket<?> socket) {
+        if (!isCompatibleWith(socket.getSocketHint())) {
+            throw new ClassCastException("Incompatible socket types "
+                    + socket.getSocketHint().getType() + " " + getType());
+        }
+        return (Socket<T>) socket;
+    }
+
+    /**
+     * Casts and retries the value held in this socket.
+     *
+     * @param socket The socket to retrieve the value out of
+     * @return The value held in the socket.
+     */
+    default T retrieveValue(Socket<?> socket) {
+        return safeCastSocket(socket).getValue().get();
+    }
 
     class Builder<T> {
-        private final Class<T> type;
+        private final Class<? super T> type;
         private Optional<String> identifier = Optional.empty();
         private Optional<Supplier<T>> initialValueSupplier = Optional.empty();
         private View view = View.NONE;
         private Optional<T[]> domain = Optional.empty();
 
-        public Builder(Class<T> type) {
+        public Builder(Class<? super T> type) {
             this.type = type;
         }
 
@@ -243,12 +267,13 @@ public interface SocketHint<T> {
             return this;
         }
 
+        @SuppressWarnings("unchecked")
         public SocketHint<T> build() throws NoSuchElementException {
             if (!view.equals(View.NONE)) {
                 initialValueSupplier.orElseThrow(() -> new NoSuchElementException("A View other than `NONE` was supplied but not an initial value"));
             }
             return new BasicSocketHint<>(
-                    this.type,
+                    (Class<T>) this.type,
                     identifier.orElseThrow(() -> new NoSuchElementException("The identifier was not supplied")),
                     initialValueSupplier,
                     view,

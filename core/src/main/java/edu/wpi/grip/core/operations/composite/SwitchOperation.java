@@ -10,6 +10,8 @@ import edu.wpi.grip.core.sockets.*;
  * boolean {@link InputSocket}
  */
 public class SwitchOperation implements Operation {
+    private final SocketHint<Boolean> switcherHint = SocketHints.createBooleanSocketHint("switch", true);
+
     @Override
     public String getName() {
         return "Switch";
@@ -28,7 +30,7 @@ public class SwitchOperation implements Operation {
     @Override
     public SocketsProvider createSockets(EventBus eventBus) {
         // This hint toggles the switch between using the true and false sockets
-        final SocketHint<Boolean> switcherHint = SocketHints.createBooleanSocketHint("switch", true);
+
 
         final LinkedSocketHint linkedSocketHint = new LinkedSocketHint(eventBus);
         final InputSocket<?>[] inputs = new InputSocket[]{
@@ -55,9 +57,9 @@ public class SwitchOperation implements Operation {
     @Override
     @SuppressWarnings("unchecked")
     public void perform(InputSocket<?>[] inputs, OutputSocket<?>[] outputs) {
-        final InputSocket<Boolean> switchHint = (InputSocket<Boolean>) inputs[0];
+        final boolean switchVal =  switcherHint.retrieveValue(inputs[0]);
         // If the input is true pass one value through
-        if (switchHint.getValue().get()) {
+        if (switchVal) {
             outputs[0].setValueOptional(((InputSocket) inputs[1]).getValue());
         } else { // Otherwise pass the other one through
             outputs[0].setValueOptional(((InputSocket) inputs[2]).getValue());

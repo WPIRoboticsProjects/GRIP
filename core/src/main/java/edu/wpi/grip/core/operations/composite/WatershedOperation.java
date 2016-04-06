@@ -3,11 +3,8 @@ package edu.wpi.grip.core.operations.composite;
 
 import com.google.common.eventbus.EventBus;
 
-import edu.wpi.grip.core.sockets.InputSocket;
+import edu.wpi.grip.core.sockets.*;
 import edu.wpi.grip.core.Operation;
-import edu.wpi.grip.core.sockets.OutputSocket;
-import edu.wpi.grip.core.sockets.SocketHint;
-import edu.wpi.grip.core.sockets.SocketHints;
 
 import static org.bytedeco.javacpp.opencv_core.*;
 import static org.bytedeco.javacpp.opencv_imgproc.*;
@@ -53,15 +50,15 @@ public class WatershedOperation implements Operation {
 
     @Override
     public void perform(InputSocket<?>[] inputs, OutputSocket<?>[] outputs) {
-        final Mat input = (Mat) inputs[0].getValue().get();
+        final Mat input = srcHint.retrieveValue(inputs[0]);
         if (input.type() != CV_8UC3) {
             throw new IllegalArgumentException("Watershed only works on 8-bit, 3-channel images");
         }
 
-        final ContoursReport contourReport = (ContoursReport) inputs[1].getValue().get();
+        final ContoursReport contourReport = contoursHint.retrieveValue(inputs[1]);
         final MatVector contours = contourReport.getContours();
 
-        final OutputSocket<Mat> outputSocket = (OutputSocket<Mat>) outputs[0];
+        final Socket<Mat> outputSocket = outputHint.safeCastSocket(outputs[0]);
         final Mat markers = new Mat(input.size(), CV_32SC1, new Scalar(0.0));
         final Mat output = new Mat(markers.size(), CV_8UC1, new Scalar(0.0));
 
