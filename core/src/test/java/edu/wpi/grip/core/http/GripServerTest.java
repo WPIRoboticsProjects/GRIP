@@ -97,7 +97,7 @@ public class GripServerTest {
         GetHandler handler = params -> path;
         instance.addGetHandler(path, handler);
         instance.addDataSupplier(path, () -> path);
-        assertEquals(doGet(path), path);
+        assertEquals("The data supplied on " + path + " was not correct", doGet(path), path);
     }
 
     @Test
@@ -154,15 +154,15 @@ public class GripServerTest {
         String name = "testDataSuppliers";
         Supplier<?> supplier = () -> name;
         instance.addDataSupplier(name, supplier);
-        assertTrue(instance.hasDataSupplier(name));
+        assertTrue("Server should have a data supplier for " + name, instance.hasDataSupplier(name));
         instance.removeDataSupplier(name);
-        assertFalse(instance.hasDataSupplier(name));
+        assertFalse("Server should no longer have a data supplier for " + name, instance.hasDataSupplier(name));
     }
 
     @Test
     public void testNoSupplier() throws IOException {
-        assertEquals("{}", doGet(GripServer.DATA_PATH));
-        assertEquals("{}", doGet(GripServer.DATA_PATH + "?no_data_here"));
+        assertEquals("There shouldn't be any data on the server", "{}", doGet(GripServer.DATA_PATH));
+        assertEquals("There shouldn't be any data on the server", "{}", doGet(GripServer.DATA_PATH + "?no_data_here"));
     }
 
     @Test
@@ -171,9 +171,9 @@ public class GripServerTest {
         final String dataName = "testWithSupplier";
         final Map data = ImmutableMap.of("foo", "bar");
         instance.addDataSupplier(dataName, () -> data);
-        assertEquals(gson.toJson(ImmutableMap.of(dataName, data)), doGet(GripServer.DATA_PATH + "?" + dataName));
-        assertEquals(gson.toJson(ImmutableMap.of(dataName, data)), doGet(GripServer.DATA_PATH));
-        assertEquals("{}", doGet(GripServer.DATA_PATH + "?" + "no_data_here"));
+        assertEquals("Generated json was malformed", gson.toJson(ImmutableMap.of(dataName, data)), doGet(GripServer.DATA_PATH + "?" + dataName));
+        assertEquals("Generated json was malformed", gson.toJson(ImmutableMap.of(dataName, data)), doGet(GripServer.DATA_PATH));
+        assertEquals("There shouldn't be any data on this path", "{}", doGet(GripServer.DATA_PATH + "?no_data_here"));
     }
 
     @Test
@@ -184,17 +184,18 @@ public class GripServerTest {
         instance.start(); // restart the server
         instance.start(); // second call should do nothing
         instance.restart(); // should stop and then start again
+        // No asserts or fails -- if something goes wrong, it would have thrown an exception
     }
 
     @Test
     public void testPort() {
-        assertEquals(serverFactory.port, instance.getPort());
+        assertEquals("Server should have been created on port " + serverFactory.port,
+                serverFactory.port, instance.getPort());
     }
 
     @After
     public void tearDown() {
         instance.stop();
-        client.close();
     }
 
     private String doGet(String path) throws IOException {

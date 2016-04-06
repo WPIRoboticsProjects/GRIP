@@ -68,7 +68,6 @@ public class HttpSourceTest {
         assertTrue("The value should not be present since the source has been initialized but no image POSTed", imageSource.getValue().get().empty());
 
         doPost(GripServer.IMAGE_UPLOAD_PATH, logoFile);
-        Thread.sleep(100); // wait for the image to be uploaded
         source.updateOutputSockets();
         assertFalse("The value should now be present after POSTing the image", imageSource.getValue().get().empty());
     }

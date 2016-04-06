@@ -1,7 +1,6 @@
 package edu.wpi.grip.core;
 
 import edu.wpi.grip.core.events.UnexpectedThrowableEvent;
-import edu.wpi.grip.core.http.GripServer;
 import edu.wpi.grip.core.serialization.Project;
 import edu.wpi.grip.core.settings.SettingsProvider;
 import edu.wpi.grip.core.sockets.InputSocket;
