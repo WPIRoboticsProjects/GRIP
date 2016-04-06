@@ -79,7 +79,19 @@ public class ExceptionWitnessResponderButtonTest extends ApplicationTest {
 
     private void flagWarning() {
         witness.flagWarning("A warning without a stacktrace");
+    }
 
+    @Test
+    public void testNoNullPointerBeforeAddedToScene() {
+        final EventBus eventBus = new EventBus();
+        final Object witnessed = new Object();
+        final ExceptionWitness witness = new MockExceptionWitness(eventBus, witnessed);
+
+        final ExceptionWitnessResponderButton button = new ExceptionWitnessResponderButton(witnessed, "Test Button Popover");
+        eventBus.register(button);
+        witness.flagWarning("Warning message");
+        witness.clearException();
+        // We should not get a null pointer because of any of this
     }
 
 }
