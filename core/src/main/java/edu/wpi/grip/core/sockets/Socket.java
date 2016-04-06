@@ -8,6 +8,7 @@ import edu.wpi.grip.core.Source;
 import edu.wpi.grip.core.Step;
 import edu.wpi.grip.core.events.SocketChangedEvent;
 import edu.wpi.grip.core.events.SocketConnectedChangedEvent;
+import edu.wpi.grip.core.values.Value;
 
 import javax.annotation.Nullable;
 import java.util.HashSet;
@@ -35,7 +36,7 @@ public abstract class Socket<T> {
     private final Direction direction;
     private final Set<Connection> connections = new HashSet<>();
     private final SocketHint<T> socketHint;
-    private Optional<? extends T> value = Optional.empty();
+    private Value<? extends T> value;
 
 
     /**
@@ -47,6 +48,7 @@ public abstract class Socket<T> {
         this.eventBus = checkNotNull(eventBus, "EventBus can not be null");
         this.socketHint = checkNotNull(socketHint, "Socket Hint can not be null");
         this.direction = checkNotNull(direction, "Direction can not be null");
+        this.value = socketHint.valueFactory().create(null);
     }
 
     /**
@@ -57,16 +59,16 @@ public abstract class Socket<T> {
     }
 
     /**
-     * Set the value of the socket using an {@link Optional}, and fire off a {@link edu.wpi.grip.core.events.SocketChangedEvent}.
+     * Set the value of the socket using an {@link Value}, and fire off a {@link edu.wpi.grip.core.events.SocketChangedEvent}.
      *
-     * @param optionalValue The optional value to assign this socket to.
+     * @param value The value to assign this socket to.
      */
-    public final synchronized void setValueOptional(Optional<? extends T> optionalValue) {
-        checkNotNull(optionalValue, "The optional value can not be null");
-        if (optionalValue.isPresent()) {
-            getSocketHint().getType().cast(optionalValue.get());
+    public final synchronized void setValueToValue(Value<? extends T> value) {
+        checkNotNull(value, "The value can not be null");
+        if (value.isPresent()) {
+            getSocketHint().getType().cast(value.get());
         }
-        this.value = optionalValue;
+        this.value = value;
         onValueChanged();
         eventBus.post(new SocketChangedEvent(this));
     }
@@ -77,7 +79,7 @@ public abstract class Socket<T> {
      * @param value The value to store in this socket. Nullable.
      */
     public final void setValue(@Nullable T value) {
-        setValueOptional(Optional.ofNullable(this.getSocketHint().getType().cast(value)));
+        setValueToValue(socketHint.valueFactory().create(this.getSocketHint().getType().cast(value)));
     }
 
     /**
@@ -91,11 +93,12 @@ public abstract class Socket<T> {
     /**
      * @return The value currently stored in this socket.
      */
-    public Optional<T> getValue() {
+    @SuppressWarnings("unchecked")
+    public Value<T> getValue() {
         if (!this.value.isPresent()) {
             this.value = socketHint.createInitialValue();
         }
-        return (Optional<T>) this.value;
+        return (Value<T>) this.value;
     }
 
     /**

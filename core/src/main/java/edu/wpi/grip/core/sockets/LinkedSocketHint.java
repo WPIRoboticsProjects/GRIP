@@ -39,7 +39,7 @@ public final class LinkedSocketHint extends SocketHint.SocketHintDecorator {
     public InputSocket linkedInputSocket(String hintIdentifier) {
         // Our own custom implementation of socket hint that interacts on this class when connections are
         // added and removed
-        return new InputSocket(eventBus, new IdentiferOverridingSocketHintDecorator(this, hintIdentifier)) {
+        return new InputSocket(eventBus, new IdentifierOverridingSocketHintDecorator(this, hintIdentifier)) {
             @Override
             public void addConnection(Connection connection) {
                 synchronized (this) {
@@ -61,7 +61,7 @@ public final class LinkedSocketHint extends SocketHint.SocketHintDecorator {
                             final Set<Connection<?>> connections = outputSocket.getConnections();
                             connections.stream().map(ConnectionRemovedEvent::new).forEach(this.eventBus::post);
                             outputSocket.setPreviewed(false);
-                            outputSocket.setValueOptional(Optional.empty());
+                            outputSocket.resetValueToInitial();
                         });
                     }
                 }
@@ -80,7 +80,7 @@ public final class LinkedSocketHint extends SocketHint.SocketHintDecorator {
      */
     @SuppressWarnings("unchecked")
     public OutputSocket linkedOutputSocket(String hintIdentifier) {
-        final OutputSocket outSocket = new OutputSocket(eventBus, new IdentiferOverridingSocketHintDecorator(this, hintIdentifier));
+        final OutputSocket outSocket = new OutputSocket(eventBus, new IdentifierOverridingSocketHintDecorator(this, hintIdentifier));
         controlledOutputSockets.add(outSocket);
         return outSocket;
     }

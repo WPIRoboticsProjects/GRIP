@@ -3,15 +3,14 @@ package edu.wpi.grip.ui.pipeline.input;
 import com.google.common.eventbus.Subscribe;
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
-import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.events.SocketChangedEvent;
+import edu.wpi.grip.core.sockets.InputSocket;
+import edu.wpi.grip.core.values.Value;
 import edu.wpi.grip.ui.pipeline.SocketHandleView;
 import edu.wpi.grip.ui.util.GRIPPlatform;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ContentDisplay;
-
-import java.util.Optional;
 
 /**
  * An {@link InputSocketController} for booleans that shows a checkbox for the user to turn on or off
@@ -47,7 +46,7 @@ public class CheckboxInputSocketController extends InputSocketController<Boolean
         this.checkBox.disableProperty().bind(this.getHandle().connectedProperty());
     }
 
-    private void assignSocketValue(final Optional<Boolean> value) {
+    private void assignSocketValue(final Value<Boolean> value) {
         this.checkBox.setSelected(value.isPresent() && value.get());
     }
 

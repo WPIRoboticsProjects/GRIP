@@ -58,9 +58,9 @@ public class SwitchOperation implements Operation {
         final InputSocket<Boolean> switchHint = (InputSocket<Boolean>) inputs[0];
         // If the input is true pass one value through
         if (switchHint.getValue().get()) {
-            outputs[0].setValueOptional(((InputSocket) inputs[1]).getValue());
+            outputs[0].setValueToValue(((InputSocket) inputs[1]).getValue());
         } else { // Otherwise pass the other one through
-            outputs[0].setValueOptional(((InputSocket) inputs[2]).getValue());
+            outputs[0].setValueToValue(((InputSocket) inputs[2]).getValue());
         }
     }
 }

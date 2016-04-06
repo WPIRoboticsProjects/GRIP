@@ -8,5 +8,6 @@ public class SocketsSanityTest extends AbstractPackageSanityTests {
     public SocketsSanityTest() {
         super();
         setDefault(Enum.class, TestEnum.A);
+        setDefault(SocketHint.class, SocketHints.createBooleanSocketHint("Mock bool", false));
     }
 }
