@@ -16,6 +16,7 @@ edu.wpi.grip.core.util.service
 edu.wpi.grip.ui
 edu.wpi.grip.ui.annotations
 edu.wpi.grip.ui.components
+edu.wpi.grip.ui.dragging
 edu.wpi.grip.ui.pipeline
 edu.wpi.grip.ui.pipeline.input
 edu.wpi.grip.ui.pipeline.source
