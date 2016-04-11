@@ -275,4 +275,64 @@ public class PipelineTest {
 
         assertFalse("Should not be able to connect incompatible types", pipeline.canConnect((OutputSocket) b, (InputSocket) a));
     }
+
+    @Test
+    public void testAddBetweenSteps() {
+        final Step
+                stepToAdd = new MockStep(),
+                lowerStep = new MockStep(),
+                upperStep = new MockStep();
+        pipeline.addStep(lowerStep);
+        pipeline.addStep(upperStep);
+
+        pipeline.addStepBetween(stepToAdd, lowerStep, upperStep);
+        assertEquals("The step was not added to the middle of the pipeline",
+                Arrays.asList(lowerStep, stepToAdd, upperStep), pipeline.getSteps());
+    }
+
+    @Test
+    public void testAddBetweenNullAndStep() {
+        final Step
+                stepToAdd = new MockStep(),
+                lowerStep = new MockStep(),
+                upperStep = new MockStep();
+        pipeline.addStep(lowerStep);
+        pipeline.addStep(upperStep);
+        pipeline.addStepBetween(stepToAdd, null, lowerStep);
+        assertEquals("The step was not added to the begining of the pipeline",
+                Arrays.asList(stepToAdd, lowerStep, upperStep), pipeline.getSteps());
+    }
+
+    @Test
+    public void testAddBetweenStepAndNull() {
+        final Step
+                stepToAdd = new MockStep(),
+                lowerStep = new MockStep(),
+                upperStep = new MockStep();
+        pipeline.addStep(lowerStep);
+        pipeline.addStep(upperStep);
+        pipeline.addStepBetween(stepToAdd, upperStep, null);
+        assertEquals("The step was not added to the end of the pipeline",
+                Arrays.asList(lowerStep, upperStep, stepToAdd), pipeline.getSteps());
+    }
+
+    @Test
+    public void testAddBetweenTwoNulls() {
+        final Step stepToAdd = new MockStep();
+        pipeline.addStepBetween(stepToAdd, null, null);
+        assertEquals("The step should have been added to the pipeline",
+                Collections.singletonList(stepToAdd), pipeline.getSteps());
+    }
+
+    @Test(expected = AssertionError.class)
+    public void testAddBetweenStepsOutOfOrder() {
+        final Step
+                stepToAdd = new MockStep(),
+                lowerStep = new MockStep(),
+                upperStep = new MockStep();
+        pipeline.addStep(lowerStep);
+        pipeline.addStep(upperStep);
+
+        pipeline.addStepBetween(stepToAdd, upperStep, lowerStep);
+    }
 }

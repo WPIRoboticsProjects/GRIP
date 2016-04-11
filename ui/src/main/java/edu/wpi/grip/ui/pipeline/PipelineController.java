@@ -4,11 +4,15 @@ import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import com.google.inject.Singleton;
 import com.sun.javafx.application.PlatformImpl;
-import edu.wpi.grip.core.*;
+import edu.wpi.grip.core.Connection;
+import edu.wpi.grip.core.Pipeline;
+import edu.wpi.grip.core.Source;
+import edu.wpi.grip.core.Step;
 import edu.wpi.grip.core.events.*;
 import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.ui.annotations.ParametrizedController;
+import edu.wpi.grip.ui.dragging.OperationDragService;
 import edu.wpi.grip.ui.pipeline.input.InputSocketController;
 import edu.wpi.grip.ui.pipeline.source.SourceController;
 import edu.wpi.grip.ui.pipeline.source.SourceControllerFactory;
@@ -22,12 +26,17 @@ import javafx.geometry.Point2D;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Parent;
+import javafx.scene.input.TransferMode;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 
 import javax.inject.Inject;
 import java.util.Collection;
+import java.util.Map;
+import java.util.NavigableMap;
+import java.util.TreeMap;
+import java.util.stream.Collectors;
 
 /**
  * A JavaFX controller for the pipeline.  This controller renders a list of steps.
@@ -54,9 +63,13 @@ public final class PipelineController {
     @Inject
     private SourceControllerFactory sourceControllerFactory;
     @Inject
+    private Step.Factory stepFactory;
+    @Inject
     private StepController.Factory stepControllerFactory;
     @Inject
     private AddSourceView addSourceView;
+    @Inject
+    private OperationDragService operationDragService;
 
     private ControllerMap<StepController, Node> stepsMapManager;
     private ControllerMap<SourceController, Node> sourceMapManager;
@@ -80,7 +93,62 @@ public final class PipelineController {
             stepsMapManager.add(stepController);
         });
 
+        stepBox.setOnDragOver(dragEvent -> {
+            operationDragService.getValue().ifPresent(operation -> {
+                dragEvent.acceptTransferModes(TransferMode.ANY);
+            });
+
+        });
+
+        stepBox.setOnDragDropped(mouseEvent -> {
+            // If this is an operation being dropped
+            operationDragService.getValue().ifPresent(operation -> {
+                // Then we need to figure out where to put it in the pipeline
+                // First create a map of every node in the steps list to its x position
+                final Map<Double, Node> positionMapping = stepsMapManager
+                        .entrySet()
+                        .stream()
+                        .collect(
+                                Collectors
+                                        .toMap(e -> calculateMiddleXPosOfNodeInParent(e.getValue()),
+                                                Map.Entry::getValue));
+
+                // A tree map is an easy way to sort the values
+                final NavigableMap<Double, Node> sortedPositionMapping
+                        = new TreeMap<>(positionMapping);
+
+                // Now we find the sockets that are to the immediate left and
+                // immediate right of the drop point
+
+                // These can be null
+                final Map.Entry<Double, Node>
+                        lowerEntry = sortedPositionMapping.floorEntry(mouseEvent.getX()),
+                        higherEntry = sortedPositionMapping.ceilingEntry(mouseEvent.getX());
+                // These can be null
+                final StepController
+                        lowerStepController =
+                        lowerEntry == null ?
+                                null : stepsMapManager.getWithNode(lowerEntry.getValue());
+                final StepController
+                        higherStepController =
+                        higherEntry == null ?
+                                null : stepsMapManager.getWithNode(higherEntry.getValue());
+                final Step
+                        lowerStep = lowerStepController == null ? null : lowerStepController.getStep(),
+                        higherStep = higherStepController == null ? null : higherStepController.getStep();
+
+
+                operationDragService.completeDrag();
+                // Add the new step to the pipeline between these two steps
+                pipeline.addStepBetween(stepFactory.create(operation), lowerStep, higherStep);
+            });
+        });
+
         addSourcePane.getChildren().add(addSourceView);
+    }
+
+    private double calculateMiddleXPosOfNodeInParent(Node node) {
+        return node.getLayoutX() + (node.getBoundsInParent().getWidth() / 2.);
     }
 
     /**

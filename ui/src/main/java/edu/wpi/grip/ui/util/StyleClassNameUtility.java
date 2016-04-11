@@ -31,7 +31,34 @@ public final class StyleClassNameUtility {
      * @return The CSS class for the step in the pipeline. To use as a css selector then prepend the string with a '.'
      */
     public static String classNameFor(Step step) {
-        return shortNameFor(step.getOperation()).append("-step").toString();
+        return classNameForStepHolding(step.getOperation());
+    }
+
+    /**
+     * Return the CSS Class name for a {@link Step} that holds this {@link Operation}
+     *
+     * @param operation The operation to get the step's class name for
+     * @return The CSS class for this step. To use as a css selector then prepend the string with a '.'
+     */
+    public static String classNameForStepHolding(Operation operation) {
+        return shortNameFor(operation).append("-step").toString();
+    }
+
+    public static String cssSelectorForOutputSocketHandleOnStepHolding(Operation operation) {
+        return ".pipeline ." + classNameForStepHolding(operation) + " .socket-handle.output";
+    }
+
+    public static String cssSelectorForInputSocketHandleOnStepHolding(Operation operation) {
+        return ".pipeline ." + classNameForStepHolding(operation) + " .socket-handle.input";
+    }
+
+
+    public static String cssSelectorForOutputSocketHandleOn(Step step) {
+        return cssSelectorForOutputSocketHandleOnStepHolding(step.getOperation());
+    }
+
+    public static String cssSelectorForInputSocketHandleOn(Step step) {
+        return cssSelectorForInputSocketHandleOnStepHolding(step.getOperation());
     }
 
     /**

@@ -139,7 +139,7 @@
                     <fx:include source="preview/Previews.fxml"/>
                     <fx:include source="Palette.fxml"/>
                 </SplitPane>
-                <ScrollPane fx:id="bottomPane">
+                <ScrollPane fx:id="bottomPane" fitToHeight="true" fitToWidth="true">
                     <fx:include source="pipeline/Pipeline.fxml" fx:id="pipelineView"/>
                 </ScrollPane>
             </items>

@@ -76,8 +76,8 @@ public class PipelineUITest extends ApplicationTest {
         Step subtractStep = addOperation(1, subtractionOperation);
 
         // When
-        drag(".pipeline ." + StyleClassNameUtility.classNameFor(addStep) + " .socket-handle.output", MouseButton.PRIMARY)
-                .dropTo(".pipeline ." + StyleClassNameUtility.classNameFor(subtractStep) + " .socket-handle.input");
+        drag(StyleClassNameUtility.cssSelectorForOutputSocketHandleOn(addStep), MouseButton.PRIMARY)
+                .dropTo(StyleClassNameUtility.cssSelectorForInputSocketHandleOn(subtractStep));
 
         // Then
         Connection connection = assertStepConnected("The add step did not connect to the subtract step", addStep, subtractStep);
