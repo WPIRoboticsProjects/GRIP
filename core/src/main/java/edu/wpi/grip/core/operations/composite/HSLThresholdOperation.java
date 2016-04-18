@@ -22,9 +22,9 @@ import static org.bytedeco.javacpp.opencv_imgproc.cvtColor;
 public class HSLThresholdOperation extends ThresholdOperation {
     private static final Logger logger = Logger.getLogger(HSLThresholdOperation.class.getName());
     private final SocketHint<Mat> inputHint = SocketHints.Inputs.createMatSocketHint("Input", false);
-    private final SocketHint<List> hueHint = SocketHints.Inputs.createNumberListRangeSocketHint("Hue", 0.0, 180.0);
-    private final SocketHint<List> saturationHint = SocketHints.Inputs.createNumberListRangeSocketHint("Saturation", 0.0, 255.0);
-    private final SocketHint<List> luminanceHint = SocketHints.Inputs.createNumberListRangeSocketHint("Luminance", 0.0, 255.0);
+    private final SocketHint<List> hueHint = SocketHints.Inputs.createNumberListRangeSocketHint("Hue", 0.0, 1);
+    private final SocketHint<List> saturationHint = SocketHints.Inputs.createNumberListRangeSocketHint("Saturation", 0.0, 1);
+    private final SocketHint<List> luminanceHint = SocketHints.Inputs.createNumberListRangeSocketHint("Luminance", 0.0, 1);
 
     private final SocketHint<Mat> outputHint = SocketHints.Outputs.createMatSocketHint("Output");
 
@@ -73,14 +73,14 @@ public class HSLThresholdOperation extends ThresholdOperation {
 
         // Intentionally 1, 3, 2. This maps to the HLS open cv expects
         final Scalar lowScalar = new Scalar(
-                channel1.get(0).doubleValue(),
-                channel3.get(0).doubleValue(),
-                channel2.get(0).doubleValue(), 0);
+                channel1.get(0).doubleValue() * 180,
+                channel3.get(0).doubleValue() * 255,
+                channel2.get(0).doubleValue() * 255, 0);
 
         final Scalar highScalar = new Scalar(
-                channel1.get(1).doubleValue(),
-                channel3.get(1).doubleValue(),
-                channel2.get(1).doubleValue(), 0);
+                channel1.get(1).doubleValue() * 180,
+                channel3.get(1).doubleValue() * 255,
+                channel2.get(1).doubleValue() * 255, 0);
 
         final Mat low = reallocateMatIfInputSizeOrWidthChanged(dataArray, 0, lowScalar, input);
         final Mat high = reallocateMatIfInputSizeOrWidthChanged(dataArray, 1, highScalar, input);

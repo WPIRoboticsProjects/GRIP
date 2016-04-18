@@ -21,9 +21,9 @@ public class RGBThresholdOperation extends ThresholdOperation {
 
     private static final Logger logger = Logger.getLogger(RGBThresholdOperation.class.getName());
     private final SocketHint<Mat> inputHint = SocketHints.Inputs.createMatSocketHint("Input", false);
-    private final SocketHint<List> redHint = SocketHints.Inputs.createNumberListRangeSocketHint("Red", 0.0, 255.0);
-    private final SocketHint<List> greenHint = SocketHints.Inputs.createNumberListRangeSocketHint("Green", 0.0, 255.0);
-    private final SocketHint<List> blueHint = SocketHints.Inputs.createNumberListRangeSocketHint("Blue", 0.0, 255.0);
+    private final SocketHint<List> redHint = SocketHints.Inputs.createNumberListRangeSocketHint("Red", 0.0, 1.0);
+    private final SocketHint<List> greenHint = SocketHints.Inputs.createNumberListRangeSocketHint("Green", 0.0, 1.0);
+    private final SocketHint<List> blueHint = SocketHints.Inputs.createNumberListRangeSocketHint("Blue", 0.0, 1.0);
 
     private final SocketHint<Mat> outputHint = SocketHints.Outputs.createMatSocketHint("Output");
 
@@ -73,19 +73,27 @@ public class RGBThresholdOperation extends ThresholdOperation {
             throw new IllegalArgumentException("RGB Threshold needs a 3-channel input");
         }
 
+        if (input.depth() < CV_8U || input.depth() > CV_32F) {
+            throw new UnsupportedOperationException("RGB Threshold only works with 8-bit, 16-bit, and 32-bit images");
+        }
+
+        // Map the image type to bit depth (2^8, 2^16, or 2^32)
+        // Takes advantage of CV_8U/S, CV_16U/S, and CV_32S/F being 0, 1, 2, 3, 4, 5, respectively
+        final long depth = (1L << (8 << (input.depth() / 2))) - 1;
+
         final OutputSocket<Mat> outputSocket = (OutputSocket<Mat>) outputs[0];
         final Mat output = outputSocket.getValue().get();
 
 
         final Scalar lowScalar = new Scalar(
-                channel3.get(0).doubleValue(),
-                channel2.get(0).doubleValue(),
-                channel1.get(0).doubleValue(), 0);
+                channel3.get(0).doubleValue() * depth,
+                channel2.get(0).doubleValue() * depth,
+                channel1.get(0).doubleValue() * depth, 0);
 
         final Scalar highScalar = new Scalar(
-                channel3.get(1).doubleValue(),
-                channel2.get(1).doubleValue(),
-                channel1.get(1).doubleValue(), 0);
+                channel3.get(1).doubleValue() * depth,
+                channel2.get(1).doubleValue() * depth,
+                channel1.get(1).doubleValue() * depth, 0);
 
         final Mat low = reallocateMatIfInputSizeOrWidthChanged(dataArray, 0, lowScalar, input);
         final Mat high = reallocateMatIfInputSizeOrWidthChanged(dataArray, 1, highScalar, input);

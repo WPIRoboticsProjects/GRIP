@@ -31,7 +31,7 @@ public final class ImageConverter {
      * @param mat An 8-bit OpenCV Mat containing an image with either 1 or 3 channels
      * @return A JavaFX image, or null for empty
      */
-    public Image convert(Mat mat) {
+    public Image convert(Mat image) {
         /*
          * IMPORTANT!
          * The {@link ImageConverter#image} is a component that may be actively part of the UI
@@ -42,12 +42,26 @@ public final class ImageConverter {
             throw new IllegalStateException("This modifies an FX object. This must be run in the UI Thread");
         }
 
+        // Copy the mat for display so we don't screw up the data
+        Mat mat = image.clone();
+
         final int width = mat.cols();
         final int height = mat.rows();
         final int channels = mat.channels();
 
         assert channels == 3 || channels == 1 :
                 "Only 3-channel BGR images or single-channel grayscale images can be converted";
+
+        // Convert the image to 8-bit for display
+        // (This does not affect the actual data image)
+        switch (mat.depth()) {
+            case CV_16S:
+                mat.convertTo(mat, CV_8S, 1.0 / 256, 0);
+                break;
+            case CV_16U:
+                mat.convertTo(mat, CV_8U, 1.0 / 256, 0);
+                break;
+        }
 
         assert mat.depth() == CV_8U || mat.depth() == CV_8S :
                 "Only images with 8 bits per channel can be previewed";

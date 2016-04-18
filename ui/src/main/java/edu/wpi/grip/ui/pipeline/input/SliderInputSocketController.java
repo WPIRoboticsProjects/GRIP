@@ -52,12 +52,13 @@ public class SliderInputSocketController extends InputSocketController<Number> {
         this.slider.setMajorTickUnit(max - min);
         this.slider.valueProperty().addListener(o -> this.getSocket().setValue(this.slider.getValue()));
 
+        final int numDecimals = Math.max(3 - (int) Math.log10(max - min), 0);
         // Add a label under the slider to show the exact value
-        this.label = new Label(String.format("%.0f", initialValue));
+        this.label = new Label(String.format("%." + numDecimals + "f", initialValue));
         label.setMaxWidth(Double.MAX_VALUE);
         label.setAlignment(Pos.CENTER);
         this.slider.valueProperty().addListener(observable ->
-                label.setText(String.format("%.0f", this.slider.getValue())));
+                label.setText(String.format("%." + numDecimals + "f", this.slider.getValue())));
     }
 
     @Override
