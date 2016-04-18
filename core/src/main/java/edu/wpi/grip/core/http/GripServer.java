@@ -10,12 +10,10 @@ import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
-
-import edu.wpi.grip.core.Pipeline;
-import edu.wpi.grip.core.ProjectManager;
 import edu.wpi.grip.core.events.ProjectSettingsChangedEvent;
 import edu.wpi.grip.core.exception.GripServerException;
 import edu.wpi.grip.core.exception.ImpossibleExceptionError;
+import edu.wpi.grip.core.settings.SettingsProvider;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -44,8 +42,13 @@ public class GripServer {
     private final Map<String, List<PostHandler>> postHandlers;
     private final Map<String, Supplier> dataSuppliers;
 
-    private boolean started = false;
-    private boolean stopped = false;
+    private enum State {
+        PRE_RUN,
+        RUNNING,
+        STOPPED
+    }
+
+    private State state = State.PRE_RUN;
 
     private final Set<String> contextPaths = new HashSet<>();
 
@@ -134,10 +137,10 @@ public class GripServer {
     }
 
     @Inject
-    GripServer(HttpServerFactory serverFactory, Pipeline pipeline) {
-        int port = pipeline.getProjectSettings().getServerPort();
+    GripServer(HttpServerFactory serverFactory, SettingsProvider settingsProvider) {
+        int port = settingsProvider.getProjectSettings().getServerPort();
         this.serverFactory = serverFactory;
-        this.server = serverFactory.create(port);
+        setPort(port);
         getHandlers = new HashMap<>();
         postHandlers = new HashMap<>();
         dataSuppliers = new HashMap<>();
@@ -197,7 +200,7 @@ public class GripServer {
 
     /**
      * Removes the given handler from all post events.
-     * 
+     *
      * @param handler the handler to remove
      * @return true if the handler was removed from at least one path
      */
@@ -289,17 +292,20 @@ public class GripServer {
         dataSuppliers.remove(name);
     }
 
+    /**
+     * Creates a JSON response to a request on /GRIP/data
+     */
     private String createJson(Map<String, List<String>> params) {
         final Gson gson = new GsonBuilder()
                 .setPrettyPrinting()
                 .serializeSpecialFloatingPointValues()
                 .create();
-        final Map<String, Object> data = 
+        final Map<String, Object> data =
                 dataSuppliers
-                .entrySet()
-                .stream()
-                .filter(e -> params.isEmpty() || params.containsKey(e.getKey())) // send everything if nothing is specified
-                .collect(Collectors.toMap(Map.Entry::getKey, v -> v.getValue().get()));
+                        .entrySet()
+                        .stream()
+                        .filter(e -> params.isEmpty() || params.containsKey(e.getKey())) // send everything if nothing is specified
+                        .collect(Collectors.toMap(Map.Entry::getKey, v -> v.getValue().get()));
         try {
             return gson.toJson(data);
         } catch (RuntimeException ex) {
@@ -310,35 +316,31 @@ public class GripServer {
     }
 
     /**
-     * Starts this server. Has no effect if the server has already been started.
+     * Starts this server. Has no effect if the server has already been started or if it's been stopped.
      */
     public void start() {
-        if (!started && !stopped) {
-            // Don't call server.start() if it's already been started or stopped
+        if (state == State.PRE_RUN) {
             server.start();
-            started = true;
-            stopped = false;
+            state = State.RUNNING;
         }
     }
 
     /**
      * Stops this server. Note that a shutdown hook has been registered to call
      * this method, so it's unlikely that this should need to be called. If you
-     * need to restart the server, use {@link #restart()} as this will kill the
-     * internal HTTP server which cannot be restarted by {@link #start()}.
+     * need to restart the server, use {@link #restart()} as this method will kill the
+     * internal HTTP server, which cannot be restarted by {@link #start()}.
      */
     public void stop() {
-        if(!stopped) {
+        if (state == State.RUNNING) {
             server.stop(0);
-            started = false;
-            stopped = true;
+            state = State.STOPPED;
         }
     }
-    
-    
+
     /**
      * Restarts the server on the current port.
-     * 
+     *
      * @throws GripServerException if the server was unable to be restarted.
      */
     public void restart() {
@@ -350,7 +352,18 @@ public class GripServer {
             throw new GripServerException("Could not restart GripServer", ex);
         }
     }
-    
+
+    /**
+     * Stops the server (if it's running) and creates a new HTTP server on the given port.
+     *
+     * @param port the new port to run on.
+     */
+    private void setPort(int port) {
+        stop();
+        server = serverFactory.create(port);
+        state = State.PRE_RUN;
+    }
+
     /**
      * Gets the port this server is running on.
      */
@@ -405,8 +418,7 @@ public class GripServer {
     public void settingsChanged(ProjectSettingsChangedEvent event) {
         int port = event.getProjectSettings().getServerPort();
         if (port != getPort()) {
-            stop();
-            server = serverFactory.create(port);
+            setPort(port);
             start();
             contextPaths.forEach(path -> server.createContext(path, makeContext(path)));
         }
