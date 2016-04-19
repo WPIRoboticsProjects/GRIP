@@ -119,7 +119,7 @@ public class GripServerTest {
 
     @Test
     public void testSuccessfulPostHandler() throws IOException {
-        final String path = "/testAddPostHandler";
+        final String path = "/testSuccessfulPostHandler";
         final byte[] testBytes = "testAddPostHandler".getBytes();
         final boolean[] didHandle = {false};
         PostHandler handler = bytes -> {
@@ -136,8 +136,8 @@ public class GripServerTest {
 
     @Test
     public void testUnsuccessfulPostHandler() throws IOException {
-        final String path = "/testAddPostHandler";
-        final byte[] testBytes = new byte[0];
+        final String path = "/testUnsuccessfulPostHandler";
+        final byte[] testBytes = new byte[1];
         final boolean[] didHandle = {false};
         PostHandler handler = bytes -> {
             didHandle[0] = true;
@@ -148,6 +148,20 @@ public class GripServerTest {
         HttpResponse response = doPost(path, testBytes);
         assertEquals("Server should return an internal error (500)", response.getStatusLine().getStatusCode(), 500);
         assertTrue("Handler should have run", didHandle[0]);
+    }
+
+    @Test
+    public void testEmptyPostData() throws IOException {
+        final String path = "/testEmptyPostData";
+        final byte[] testBytes = new byte[0];
+        PostHandler handler = bytes -> {
+            fail("Handler should not have run if there is no data");
+            return false; // won't be reached
+        };
+
+        instance.addPostHandler(path, handler);
+        HttpResponse response = doPost(path, testBytes);
+        assertEquals("Server should return an internal error (500)", response.getStatusLine().getStatusCode(), 500);
     }
 
     @Test

@@ -64,10 +64,6 @@ public class HttpSource extends Source implements PostHandler {
         if (!gotImage) {
             return false;
         }
-        if (data.length == 0) {
-            // Got data, but it's empty
-            return false;
-        }
         gotImage = false;
 
         Mat tmp = new Mat(data);
@@ -97,9 +93,7 @@ public class HttpSource extends Source implements PostHandler {
 
     @Override
     public boolean convert(byte[] bytes) {
-        if (bytes == null // null data, cannot convert
-                || bytes.length == 0 // no data, cannot convert
-                || Arrays.equals(bytes, data)) { // data's not new, don't bother converting
+        if (Arrays.equals(bytes, data)) { // data's not new, don't bother converting
             return false;
         }
         data = bytes;

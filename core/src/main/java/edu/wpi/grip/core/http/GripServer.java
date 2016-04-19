@@ -241,13 +241,17 @@ public class GripServer {
                 case METHOD_POST:
                     final byte[] bytes = readBytes(he);
                     boolean success = true;
-                    for (PostHandler handler : postHandlers.get(path)) {
-                        try {
-                            handler.convert(bytes);
-                        } catch (RuntimeException ex) {
-                            logger.log(Level.SEVERE, "Exception when converting data", ex);
-                            success = false;
-                            break;
+                    if (bytes.length == 0) {
+                        success = false;
+                    } else {
+                        for (PostHandler handler : postHandlers.get(path)) {
+                            try {
+                                handler.convert(bytes);
+                            } catch (RuntimeException ex) {
+                                logger.log(Level.SEVERE, "Exception when converting data", ex);
+                                success = false;
+                                break;
+                            }
                         }
                     }
                     if (success) {
