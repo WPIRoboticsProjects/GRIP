@@ -104,7 +104,7 @@ public class GripServer {
 
     /* HTTP constants */
     private static final String HOSTNAME = "localhost";
-    private static final int BACKLOG = 1;
+    private static final int BACKLOG = 5;
 
     private static final String HEADER_ALLOW = "Allow";
     private static final String HEADER_CONTENT_TYPE = "Content-Type";

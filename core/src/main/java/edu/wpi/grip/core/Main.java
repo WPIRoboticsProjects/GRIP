@@ -46,8 +46,8 @@ public class Main {
   public static void main(String[] args) throws IOException, InterruptedException {
     final Injector injector = Guice.createInjector(new GripCoreModule(), new GripNetworkModule(),
         new GripSourcesHardwareModule());
-    injector.getInstance(Main.class).start(args);
     GripProperties.setProperty("headless", "true");
+    injector.getInstance(Main.class).start(args);
   }
 
   @SuppressWarnings({"PMD.SystemPrintln", "JavadocMethod"})
