@@ -52,18 +52,20 @@ public class Main {
 
   @SuppressWarnings({"PMD.SystemPrintln", "JavadocMethod"})
   public void start(String[] args) throws IOException, InterruptedException {
-    if (args.length != 1) {
-      System.err.println("Usage: GRIP.jar project.grip");
-      return;
-    } else {
+    String projectPath = null;
+    if (args.length == 1) {
       logger.log(Level.INFO, "Loading file " + args[0]);
+      projectPath = args[0];
     }
 
     operations.addOperations();
     cvOperations.addOperations();
     gripServer.start();
 
-    final String projectPath = args[0];
+    // Open a project from a .grip file specified on the command line
+    if (projectPath != null) {
+      project.open(new File(projectPath));
+    }
 
     // Open a project from a .grip file specified on the command line
     project.open(new File(projectPath));
