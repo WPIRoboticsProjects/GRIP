@@ -10,6 +10,7 @@ import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
+
 import edu.wpi.grip.core.events.ProjectSettingsChangedEvent;
 import edu.wpi.grip.core.exception.GripServerException;
 import edu.wpi.grip.core.exception.ImpossibleExceptionError;
@@ -241,7 +242,13 @@ public class GripServer {
                     final byte[] bytes = readBytes(he);
                     boolean success = true;
                     for (PostHandler handler : postHandlers.get(path)) {
-                        success &= handler.convert(bytes);
+                        try {
+                            handler.convert(bytes);
+                        } catch (RuntimeException ex) {
+                            logger.log(Level.SEVERE, "Exception when converting data", ex);
+                            success = false;
+                            break;
+                        }
                     }
                     if (success) {
                         he.sendResponseHeaders(STATUS_OK, NO_RESPONSE_LENGTH);

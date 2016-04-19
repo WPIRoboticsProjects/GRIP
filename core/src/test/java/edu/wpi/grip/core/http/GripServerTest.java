@@ -140,7 +140,7 @@ public class GripServerTest {
         final boolean[] didHandle = {false};
         PostHandler handler = bytes -> {
             didHandle[0] = true;
-            return false;
+            throw new RuntimeException("Expected");
         };
 
         instance.addPostHandler(path, handler);
@@ -205,7 +205,7 @@ public class GripServerTest {
         return EntityUtils.toString(response.getEntity());
     }
 
-    private CloseableHttpResponse doPost(String path, byte[] bytes) throws IOException {
+    private HttpResponse doPost(String path, byte[] bytes) throws IOException {
         HttpPost post = new HttpPost("http://localhost:" + instance.getPort() + path);
         BasicHttpEntity httpEntity = new BasicHttpEntity();
         httpEntity.setContent(new ByteArrayInputStream(bytes));
