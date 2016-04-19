@@ -6,8 +6,6 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.sun.net.httpserver.HttpServer;
 
-import edu.wpi.grip.core.MockPipeline;
-import edu.wpi.grip.core.MockPipeline.MockProjectSettings;
 import edu.wpi.grip.core.Pipeline;
 import edu.wpi.grip.core.exception.GripException;
 import edu.wpi.grip.core.http.GripServer.HttpServerFactory;
@@ -19,6 +17,8 @@ import java.util.Arrays;
 import java.util.Map;
 import java.util.function.Supplier;
 
+import edu.wpi.grip.core.settings.ProjectSettings;
+import edu.wpi.grip.core.settings.SettingsProvider;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpVersion;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -73,15 +73,15 @@ public class GripServerTest {
     /**
      * Public factory method for testing.
      */
-    public static GripServer makeServer(HttpServerFactory factory, Pipeline pipeline) {
-        return new GripServer(factory, pipeline);
+    public static GripServer makeServer(HttpServerFactory factory, SettingsProvider settingsProvider) {
+        return new GripServer(factory, settingsProvider);
     }
 
     public GripServerTest() {
-        MockProjectSettings mockSettings = new MockProjectSettings();
+        ProjectSettings mockSettings = new ProjectSettings();
         mockSettings.setServerPort(GRIP_SERVER_TEST_PORT);
         this.serverFactory = new TestServerFactory();
-        instance = new GripServer(serverFactory, new MockPipeline(mockSettings));
+        instance = new GripServer(serverFactory, () -> mockSettings);
         instance.start();
 
         client = new DefaultHttpClient();

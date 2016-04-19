@@ -3,7 +3,7 @@ package edu.wpi.grip.core.sources;
 
 import com.google.common.eventbus.EventBus;
 
-import edu.wpi.grip.core.MockPipeline;
+import edu.wpi.grip.core.settings.ProjectSettings;
 import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.core.http.GripServer;
 import edu.wpi.grip.core.http.GripServerTest;
@@ -42,10 +42,9 @@ public class HttpSourceTest {
     @Before
     public void setup() throws URIException, URISyntaxException {
         GripServer.HttpServerFactory f = new GripServerTest.TestServerFactory();
-        MockPipeline.MockProjectSettings projectSettings = new MockPipeline.MockProjectSettings();
+        ProjectSettings projectSettings = new ProjectSettings();
         projectSettings.setServerPort(8080);
-        MockPipeline pipeline = new MockPipeline(projectSettings);
-        server = GripServerTest.makeServer(f, pipeline);
+        server = GripServerTest.makeServer(f, () -> projectSettings);
         server.start();
         EventBus eventBus = new EventBus();
         source = new HttpSource(origin -> new MockExceptionWitness(eventBus, origin), eventBus, server);
