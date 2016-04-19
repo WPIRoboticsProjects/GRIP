@@ -2,6 +2,8 @@ package edu.wpi.grip.core.util;
 
 import java.util.Properties;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 /**
  * Class for storing runtime properties of the GRIP application.
  */
@@ -16,6 +18,8 @@ public final class GripProperties {
      * @param value the value of the property
      */
     public static void setProperty(String key, String value) {
+        checkNotNull(key);
+        checkNotNull(value);
         properties.setProperty(key, value);
     }
 
@@ -26,6 +30,7 @@ public final class GripProperties {
      * @return the value of the given property, or {@code null} if no such value exists
      */
     public static String getProperty(String key) {
+        checkNotNull(key);
         return properties.getProperty(key);
     }
 
@@ -37,6 +42,8 @@ public final class GripProperties {
      * @return the value of the given property, or {@code defaultValue} if no value exists for that property
      */
     public static String getProperty(String key, String defaultValue) {
+        checkNotNull(key);
+        checkNotNull(defaultValue);
         return properties.getProperty(key, defaultValue);
     }
 }

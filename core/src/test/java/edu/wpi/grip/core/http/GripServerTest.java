@@ -17,6 +17,7 @@ import java.util.Arrays;
 import java.util.Map;
 import java.util.function.Supplier;
 
+import edu.wpi.grip.core.serialization.Project;
 import edu.wpi.grip.core.settings.ProjectSettings;
 import edu.wpi.grip.core.settings.SettingsProvider;
 import org.apache.http.HttpResponse;
@@ -73,15 +74,15 @@ public class GripServerTest {
     /**
      * Public factory method for testing.
      */
-    public static GripServer makeServer(HttpServerFactory factory, SettingsProvider settingsProvider) {
-        return new GripServer(factory, settingsProvider);
+    public static GripServer makeServer(HttpServerFactory factory, SettingsProvider settingsProvider, Project project) {
+        return new GripServer(factory, settingsProvider, project);
     }
 
     public GripServerTest() {
         ProjectSettings mockSettings = new ProjectSettings();
         mockSettings.setServerPort(GRIP_SERVER_TEST_PORT);
         this.serverFactory = new TestServerFactory();
-        instance = new GripServer(serverFactory, () -> mockSettings);
+        instance = new GripServer(serverFactory, () -> mockSettings, new Project());
         instance.start();
 
         client = new DefaultHttpClient();

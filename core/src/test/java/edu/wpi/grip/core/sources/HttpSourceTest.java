@@ -3,6 +3,7 @@ package edu.wpi.grip.core.sources;
 
 import com.google.common.eventbus.EventBus;
 
+import edu.wpi.grip.core.serialization.Project;
 import edu.wpi.grip.core.settings.ProjectSettings;
 import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.core.http.GripServer;
@@ -44,7 +45,7 @@ public class HttpSourceTest {
         GripServer.HttpServerFactory f = new GripServerTest.TestServerFactory();
         ProjectSettings projectSettings = new ProjectSettings();
         projectSettings.setServerPort(8080);
-        server = GripServerTest.makeServer(f, () -> projectSettings);
+        server = GripServerTest.makeServer(f, () -> projectSettings, new Project());
         server.start();
         EventBus eventBus = new EventBus();
         source = new HttpSource(origin -> new MockExceptionWitness(eventBus, origin), eventBus, server);

@@ -1,8 +1,10 @@
 package edu.wpi.grip.core.sources;
 
 
+import edu.wpi.grip.core.ProjectManager;
 import edu.wpi.grip.core.http.GripServer;
 import edu.wpi.grip.core.http.GripServerTest;
+import edu.wpi.grip.core.serialization.Project;
 import edu.wpi.grip.core.settings.ProjectSettings;
 import edu.wpi.grip.core.util.ExceptionWitness;
 import edu.wpi.grip.core.util.MockExceptionWitness;
@@ -26,7 +28,8 @@ public class SourcesSanityTest extends AbstractPackageSanityTests {
     GripServer.HttpServerFactory f = new GripServerTest.TestServerFactory();
     ProjectSettings projectSettings = new ProjectSettings();
     projectSettings.setServerPort(8080);
-    GripServer server = GripServerTest.makeServer(f, () -> projectSettings);
+    GripServer server = GripServerTest.makeServer(f, () -> projectSettings, new Project());
     setDefault(GripServer.class, server);
+    setDefault(ProjectManager.class, new ProjectManager(new Project()));
   }
 }
