@@ -77,7 +77,7 @@ public class PipelineRunnerTest {
 
     @Test
     public void testRunEmptyPipelineSucceeds() {
-      PipelineRunner runner = new PipelineRunner(null, () -> ImmutableList.of(), () ->
+      PipelineRunner runner = new PipelineRunner(new EventBus(), () -> ImmutableList.of(), () ->
           ImmutableList.of());
       runner.addListener(failureListener, MoreExecutors.directExecutor());
       runner.startAsync().awaitRunning();
@@ -107,7 +107,7 @@ public class PipelineRunnerTest {
 
     @Test
     public void testStopPipelineEventStopsPipeline() throws TimeoutException {
-      PipelineRunner runner = new PipelineRunner(null, () -> ImmutableList.of(), () ->
+      PipelineRunner runner = new PipelineRunner(new EventBus(), () -> ImmutableList.of(), () ->
           ImmutableList.of());
       runner.addListener(failureListener, MoreExecutors.directExecutor());
       runner.startAsync().awaitRunning(3, TimeUnit.SECONDS);
@@ -159,6 +159,7 @@ public class PipelineRunnerTest {
       assertEquals("Exception event should not have run", 0, exceptionEventReceiver.callCount);
       assertNull("Event should be null", exceptionEventReceiver.event);
 
+      runner.onProjectLoaded(null);
       runner.onRunPipeline(new RunPipelineEvent() {
       });
 
@@ -216,6 +217,7 @@ public class PipelineRunnerTest {
       assertEquals("Perform should not have run", 0, operationCounter.performCount);
       assertEquals("CleanUp should not have run", 0, operationCounter.cleanUpCount);
 
+      runner.onProjectLoaded(null);
       runner.onRunPipeline(new RunPipelineEvent() {
         @Override
         public boolean pipelineShouldRun() {
@@ -228,6 +230,7 @@ public class PipelineRunnerTest {
       assertEquals("Perform should not have run", 0, operationCounter.performCount);
       assertEquals("CleanUp should not have run", 0, operationCounter.cleanUpCount);
 
+      runner.onProjectLoaded(null);
       runner.onRunPipeline(new RunPipelineEvent() {
         @Override
         public boolean pipelineShouldRun() {
@@ -262,6 +265,7 @@ public class PipelineRunnerTest {
       assertEquals("Perform should not have run", 0, operationCounter.performCount);
       assertEquals("CleanUp ran an unexpected number of times", 1, operationCounter.cleanUpCount);
 
+      runner.onProjectLoaded(null);
       runner.onRunPipeline(new RunPipelineEvent() {
         // Defaults to true
       });
@@ -292,6 +296,7 @@ public class PipelineRunnerTest {
 
       runner.startAsync().awaitRunning(3, TimeUnit.SECONDS);
 
+      runner.onProjectLoaded(null);
       runner.onRunPipeline(new RunPipelineEvent() {
       });
 
@@ -321,6 +326,7 @@ public class PipelineRunnerTest {
 
       runner.startAsync().awaitRunning(3, TimeUnit.SECONDS);
 
+      runner.onProjectLoaded(null);
       runner.onRunPipeline(new RunPipelineEvent() {
       });
 

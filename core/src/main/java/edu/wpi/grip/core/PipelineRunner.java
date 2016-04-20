@@ -1,8 +1,12 @@
 package edu.wpi.grip.core;
 
 
+import edu.wpi.grip.core.events.ProjectLoadedEvent;
+import edu.wpi.grip.core.events.ProjectUnloadedEvent;
 import edu.wpi.grip.core.events.RenderEvent;
 import edu.wpi.grip.core.events.RunPipelineEvent;
+import edu.wpi.grip.core.events.RunStartedEvent;
+import edu.wpi.grip.core.events.RunStoppedEvent;
 import edu.wpi.grip.core.events.StopPipelineEvent;
 import edu.wpi.grip.core.util.SinglePermitSemaphore;
 import edu.wpi.grip.core.util.service.AutoRestartingService;
@@ -22,11 +26,14 @@ import com.google.inject.Singleton;
 import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Supplier;
 import java.util.logging.Logger;
 
 import javax.annotation.Nullable;
 import javax.inject.Inject;
+
+import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * Runs the pipeline in a separate thread. The runner listens for {@link RunPipelineEvent
@@ -42,6 +49,7 @@ public class PipelineRunner implements RestartableService {
   private final Supplier<ImmutableList<Source>> sourceSupplier;
   private final Supplier<ImmutableList<Step>> stepSupplier;
   private final AutoRestartingService pipelineService;
+  private final AtomicBoolean pipelineReady = new AtomicBoolean(false);
 
 
   @Inject
@@ -68,6 +76,7 @@ public class PipelineRunner implements RestartableService {
             }
 
             pipelineFlag.acquire();
+            eventBus.post(new RunStartedEvent());
 
             if (!super.isRunning()) {
               return;
@@ -77,6 +86,7 @@ public class PipelineRunner implements RestartableService {
             if (super.isRunning()) {
               eventBus.post(new RenderEvent());
             }
+            eventBus.post(new RunStoppedEvent());
           }
 
           @Override
@@ -171,6 +181,7 @@ public class PipelineRunner implements RestartableService {
   }
 
   private void runPipeline(Supplier<Boolean> isRunning) {
+    logger.info("Starting pipeline");
     // Take a snapshot of both of the pipeline at the present time before running it.
     final ImmutableList<Source> sources = sourceSupplier.get();
     final ImmutableList<Step> steps = stepSupplier.get();
@@ -191,12 +202,24 @@ public class PipelineRunner implements RestartableService {
       }
       step.runPerformIfPossible();
     }
+    logger.info("Ran pipeline");
+  }
+
+  @Subscribe
+  public void onProjectUnloaded(@Nullable ProjectUnloadedEvent event) {
+    pipelineReady.set(true);
+  }
+
+  @Subscribe
+  public void onProjectLoaded(@Nullable ProjectLoadedEvent event) {
+    pipelineReady.set(false);
   }
 
   @Subscribe
   @AllowConcurrentEvents
   public void onRunPipeline(RunPipelineEvent event) {
-    if (event.pipelineShouldRun()) {
+    checkNotNull(event);
+    if (pipelineReady.get() && event.pipelineShouldRun()) {
       pipelineFlag.release();
     }
   }

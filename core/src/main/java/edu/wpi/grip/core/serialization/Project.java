@@ -1,8 +1,11 @@
 package edu.wpi.grip.core.serialization;
 
 import edu.wpi.grip.core.Pipeline;
+import edu.wpi.grip.core.events.ProjectLoadedEvent;
+import edu.wpi.grip.core.events.ProjectUnloadedEvent;
 
 import com.google.common.annotations.VisibleForTesting;
+import com.google.common.eventbus.EventBus;
 import com.google.common.reflect.ClassPath;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
@@ -32,6 +35,8 @@ public class Project {
   protected final XStream xstream = new XStream(new PureJavaReflectionProvider());
   @Inject
   private Pipeline pipeline;
+  @Inject
+  private EventBus eventBus;
   private Optional<File> file = Optional.empty();
 
   @Inject
@@ -100,8 +105,10 @@ public class Project {
 
   @VisibleForTesting
   void open(Reader reader) {
+    eventBus.post(new ProjectUnloadedEvent());
     this.pipeline.clear();
     this.xstream.fromXML(reader);
+    eventBus.post(new ProjectLoadedEvent());
   }
 
   /**

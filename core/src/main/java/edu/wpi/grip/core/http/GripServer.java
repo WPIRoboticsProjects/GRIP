@@ -11,9 +11,13 @@ import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
 
+import edu.wpi.grip.core.ProjectManager;
 import edu.wpi.grip.core.events.ProjectSettingsChangedEvent;
+import edu.wpi.grip.core.events.RunStartedEvent;
+import edu.wpi.grip.core.events.RunStoppedEvent;
 import edu.wpi.grip.core.exception.GripServerException;
 import edu.wpi.grip.core.exception.ImpossibleExceptionError;
+import edu.wpi.grip.core.serialization.Project;
 import edu.wpi.grip.core.settings.SettingsProvider;
 
 import java.io.ByteArrayOutputStream;
@@ -26,6 +30,7 @@ import java.net.URLDecoder;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Supplier;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -42,6 +47,8 @@ public class GripServer {
     private final Map<String, GetHandler> getHandlers;
     private final Map<String, List<PostHandler>> postHandlers;
     private final Map<String, Supplier> dataSuppliers;
+    private final ProjectManager projectManager;
+    private final AtomicBoolean pipelineDirty = new AtomicBoolean(false);
 
     private enum State {
         PRE_RUN,
@@ -113,6 +120,7 @@ public class GripServer {
 
     private static final int STATUS_OK = 200;
     private static final int STATUS_METHOD_NOT_ALLOWED = 405;
+    private static final int STATUS_LOCKED = 423;
     private static final int STATUS_INTERNAL_ERROR = 500;
 
     private static final int NO_RESPONSE_LENGTH = -1;
@@ -138,15 +146,20 @@ public class GripServer {
     }
 
     @Inject
-    GripServer(HttpServerFactory serverFactory, SettingsProvider settingsProvider) {
+    GripServer(HttpServerFactory serverFactory, SettingsProvider settingsProvider, Project project) {
         int port = settingsProvider.getProjectSettings().getServerPort();
         this.serverFactory = serverFactory;
         setPort(port);
+        this.projectManager = new ProjectManager(project);
         getHandlers = new HashMap<>();
         postHandlers = new HashMap<>();
         dataSuppliers = new HashMap<>();
 
         addGetHandler(DATA_PATH, this::createJson);
+        addPostHandler(PIPELINE_UPLOAD_PATH, bytes -> {
+            projectManager.openProject(new String(bytes));
+            return true;
+        });
 
         Runtime.getRuntime().addShutdownHook(new Thread(this::stop));
     }
@@ -228,7 +241,10 @@ public class GripServer {
             switch (requestMethod) {
                 case METHOD_GET:
                     headers.set(HEADER_CONTENT_TYPE, String.format("application/json; charset=%s", CHARSET_UTF_8));
-                    if (getHandlers.containsKey(path)) {
+                    if (pipelineDirty.get() && path.startsWith(DATA_PATH)) {
+                        logger.warning("Received a request for data while the pipeline is running");
+                        he.sendResponseHeaders(STATUS_LOCKED, NO_RESPONSE_LENGTH);
+                    } else if (getHandlers.containsKey(path)) {
                         final String responseBody = getHandlers.get(path).createResponse(requestParameters);
                         final byte[] rawResponseBody = responseBody.getBytes(CHARSET_UTF_8);
                         he.sendResponseHeaders(STATUS_OK, rawResponseBody.length);
@@ -242,6 +258,7 @@ public class GripServer {
                     final byte[] bytes = readBytes(he);
                     boolean success = true;
                     if (bytes.length == 0) {
+                        logger.warning("No data received from POST event on " + path);
                         success = false;
                     } else {
                         for (PostHandler handler : postHandlers.get(path)) {
@@ -433,6 +450,16 @@ public class GripServer {
             start();
             contextPaths.forEach(path -> server.createContext(path, makeContext(path)));
         }
+    }
+
+    @Subscribe
+    public void runStarted(RunStartedEvent event) {
+        pipelineDirty.set(true);
+    }
+
+    @Subscribe
+    public void runStopped(RunStoppedEvent event) {
+        pipelineDirty.set(false);
     }
 
 }
