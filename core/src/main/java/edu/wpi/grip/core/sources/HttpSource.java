@@ -4,6 +4,7 @@ package edu.wpi.grip.core.sources;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import com.google.inject.Inject;
+import com.thoughtworks.xstream.annotations.XStreamAlias;
 
 import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.core.sockets.SocketHint;
@@ -22,8 +23,9 @@ import java.util.Arrays;
 import java.util.Properties;
 
 /**
- * Provides a way to generate a constantly updated {@link Mat} from the internal HTTP server.
+ * Provides a way to generate a {@link Mat} from an image that has been POSTed to the internal HTTP server.
  */
+@XStreamAlias("grip:HttpImage")
 public class HttpSource extends Source implements PostHandler {
 
     private final OutputSocket<Mat> imageOutput;
