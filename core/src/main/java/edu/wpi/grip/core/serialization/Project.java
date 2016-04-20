@@ -3,6 +3,7 @@ package edu.wpi.grip.core.serialization;
 import edu.wpi.grip.core.Pipeline;
 import edu.wpi.grip.core.events.ProjectLoadedEvent;
 import edu.wpi.grip.core.events.ProjectUnloadedEvent;
+import edu.wpi.grip.core.events.RunPipelineEvent;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.eventbus.EventBus;
@@ -109,6 +110,7 @@ public class Project {
     this.pipeline.clear();
     this.xstream.fromXML(reader);
     eventBus.post(new ProjectLoadedEvent());
+    eventBus.post(new RunPipelineEvent() {});
   }
 
   /**

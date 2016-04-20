@@ -2,6 +2,7 @@ package edu.wpi.grip.ui;
 
 import edu.wpi.grip.core.GripCoreModule;
 import edu.wpi.grip.core.PipelineRunner;
+import edu.wpi.grip.core.events.ProjectLoadedEvent;
 import edu.wpi.grip.core.events.UnexpectedThrowableEvent;
 import edu.wpi.grip.core.http.GripServer;
 import edu.wpi.grip.core.operations.CVOperations;
@@ -99,6 +100,8 @@ public class Main extends Application {
       stage.getIcons().add(new Image("/edu/wpi/grip/ui/icons/grip.png"));
       stage.setScene(new Scene(root));
       stage.show();
+
+      eventBus.post(new ProjectLoadedEvent());
     }
 
     operations.addOperations();
