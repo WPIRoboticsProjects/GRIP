@@ -41,7 +41,7 @@ public class HttpSourceTest {
     private CloseableHttpClient postClient;
 
     @Before
-    public void setup() throws URIException, URISyntaxException {
+    public void setUp() throws URIException, URISyntaxException {
         GripServer.HttpServerFactory f = new GripServerTest.TestServerFactory();
         ProjectSettings projectSettings = new ProjectSettings();
         projectSettings.setServerPort(8080);

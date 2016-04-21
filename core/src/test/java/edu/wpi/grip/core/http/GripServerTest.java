@@ -6,8 +6,8 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.sun.net.httpserver.HttpServer;
 
-import edu.wpi.grip.core.Pipeline;
 import edu.wpi.grip.core.exception.GripException;
+import edu.wpi.grip.core.exception.GripServerException;
 import edu.wpi.grip.core.http.GripServer.HttpServerFactory;
 
 import java.io.ByteArrayInputStream;
@@ -22,7 +22,6 @@ import edu.wpi.grip.core.settings.ProjectSettings;
 import edu.wpi.grip.core.settings.SettingsProvider;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpVersion;
-import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.BasicHttpEntity;
@@ -98,7 +97,7 @@ public class GripServerTest {
         GetHandler handler = params -> path;
         instance.addGetHandler(path, handler);
         instance.addDataSupplier(path, () -> path);
-        assertEquals("The data supplied on " + path + " was not correct", doGet(path), path);
+        assertEquals("The data supplied on " + path + " was not correct", path, doGet(path));
     }
 
     @Test
@@ -129,7 +128,7 @@ public class GripServerTest {
 
         instance.addPostHandler(path, handler);
         HttpResponse response = doPost(path, testBytes);
-        assertEquals("The server should return an OK status (200)", response.getStatusLine().getStatusCode(), 200);
+        assertEquals("The server should return an OK status (200)", 200, response.getStatusLine().getStatusCode());
         assertTrue("Handler should have run", didHandle[0]);
         assertTrue("The server should have removed the handler", instance.removePostHandler(handler));
     }
@@ -141,12 +140,12 @@ public class GripServerTest {
         final boolean[] didHandle = {false};
         PostHandler handler = bytes -> {
             didHandle[0] = true;
-            throw new RuntimeException("Expected");
+            throw new GripServerException("Expected");
         };
 
         instance.addPostHandler(path, handler);
         HttpResponse response = doPost(path, testBytes);
-        assertEquals("Server should return an internal error (500)", response.getStatusLine().getStatusCode(), 500);
+        assertEquals("Server should return an internal error (500)", 500, response.getStatusLine().getStatusCode());
         assertTrue("Handler should have run", didHandle[0]);
     }
 
@@ -161,7 +160,7 @@ public class GripServerTest {
 
         instance.addPostHandler(path, handler);
         HttpResponse response = doPost(path, testBytes);
-        assertEquals("Server should return an internal error (500)", response.getStatusLine().getStatusCode(), 500);
+        assertEquals("Server should return an internal error (500)", 500, response.getStatusLine().getStatusCode());
     }
 
     @Test

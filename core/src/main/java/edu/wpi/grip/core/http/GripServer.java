@@ -6,7 +6,9 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import com.sun.net.httpserver.Filter;
 import com.sun.net.httpserver.Headers;
+import com.sun.net.httpserver.HttpContext;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
@@ -35,6 +37,8 @@ import java.util.function.Supplier;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
+
+import static org.apache.commons.httpclient.HttpStatus.*;
 
 /**
  * An internal HTTP server that can be used as an alternative to NetworkTables.
@@ -84,7 +88,7 @@ public class GripServer {
     /**
      * The path for setting which pipeline to run. To set the pipeline, post an
      * HTTP event to {@code http://$grip_ip:$grip_port/GRIP/upload/pipeline}
-     * with the name of the pipeline to run as the data.
+     * with the content of the pipeline save file as the data.
      */
     public static final String PIPELINE_UPLOAD_PATH = UPLOAD_PATH + "/pipeline";
 
@@ -118,17 +122,39 @@ public class GripServer {
 
     private static final Charset CHARSET_UTF_8 = StandardCharsets.UTF_8;
 
-    private static final int STATUS_OK = 200;
-    private static final int STATUS_METHOD_NOT_ALLOWED = 405;
-    private static final int STATUS_LOCKED = 423;
-    private static final int STATUS_INTERNAL_ERROR = 500;
-
     private static final int NO_RESPONSE_LENGTH = -1;
+
+    private static final String NOT_FOUND_RESPONSE = "<h1>404 Not Found</h1>No context found for request";
+    private static final int NOT_FOUND_RESPONSE_LENGTH = NOT_FOUND_RESPONSE.length();
 
     private static final String METHOD_GET = "GET";
     private static final String METHOD_POST = "POST";
     private static final String METHOD_OPTIONS = "OPTIONS";
     private static final String ALLOWED_METHODS = String.join(", ", METHOD_GET, METHOD_POST, METHOD_OPTIONS);
+
+    /**
+     * URI filter that only allows requests on paths that have POST or GET handlers. A request on any
+     * other URI will get a 404 response.
+     */
+    private final Filter uriFilter = new Filter() {
+        @Override
+        public void doFilter(HttpExchange httpExchange, Chain chain) throws IOException {
+            String uri = httpExchange.getRequestURI().toString();
+            String baseUri = uri.split("\\?")[0];
+            if (contextPaths.contains(baseUri)) {
+                chain.doFilter(httpExchange);
+            } else {
+                httpExchange.sendResponseHeaders(SC_NOT_FOUND, NOT_FOUND_RESPONSE_LENGTH);
+                httpExchange.getResponseBody().write(NOT_FOUND_RESPONSE.getBytes(CHARSET_UTF_8));
+                httpExchange.getResponseBody().close();
+            }
+        }
+
+        @Override
+        public String description() {
+            return "Specific path filter";
+        }
+    };
 
     public interface HttpServerFactory {
         HttpServer create(int port);
@@ -186,7 +212,6 @@ public class GripServer {
      */
     public void removeGetHandler(String path) {
         getHandlers.remove(path);
-        createContext(path);
     }
 
     /**
@@ -209,7 +234,6 @@ public class GripServer {
      */
     public void removePostHandlers(String path) {
         postHandlers.remove(path);
-        createContext(path);
     }
 
     /**
@@ -230,7 +254,8 @@ public class GripServer {
             return;
         }
         contextPaths.add(path);
-        server.createContext(path, makeContext(path));
+        HttpContext context = server.createContext(path, makeContext(path));
+        context.getFilters().add(uriFilter);
     }
 
     private HttpHandler makeContext(final String path) {
@@ -243,15 +268,15 @@ public class GripServer {
                     headers.set(HEADER_CONTENT_TYPE, String.format("application/json; charset=%s", CHARSET_UTF_8));
                     if (pipelineDirty.get() && path.startsWith(DATA_PATH)) {
                         logger.warning("Received a request for data while the pipeline is running");
-                        he.sendResponseHeaders(STATUS_LOCKED, NO_RESPONSE_LENGTH);
+                        he.sendResponseHeaders(SC_SERVICE_UNAVAILABLE, NO_RESPONSE_LENGTH);
                     } else if (getHandlers.containsKey(path)) {
                         final String responseBody = getHandlers.get(path).createResponse(requestParameters);
                         final byte[] rawResponseBody = responseBody.getBytes(CHARSET_UTF_8);
-                        he.sendResponseHeaders(STATUS_OK, rawResponseBody.length);
+                        he.sendResponseHeaders(SC_OK, rawResponseBody.length);
                         he.getResponseBody().write(rawResponseBody);
                         he.getResponseBody().close();
                     } else {
-                        he.sendResponseHeaders(STATUS_OK, NO_RESPONSE_LENGTH);
+                        he.sendResponseHeaders(SC_OK, NO_RESPONSE_LENGTH);
                     }
                     break;
                 case METHOD_POST:
@@ -272,18 +297,18 @@ public class GripServer {
                         }
                     }
                     if (success) {
-                        he.sendResponseHeaders(STATUS_OK, NO_RESPONSE_LENGTH);
+                        he.sendResponseHeaders(SC_OK, NO_RESPONSE_LENGTH);
                     } else {
-                        he.sendResponseHeaders(STATUS_INTERNAL_ERROR, NO_RESPONSE_LENGTH);
+                        he.sendResponseHeaders(SC_INTERNAL_SERVER_ERROR, NO_RESPONSE_LENGTH);
                     }
                     break;
                 case METHOD_OPTIONS:
                     headers.set(HEADER_ALLOW, ALLOWED_METHODS);
-                    he.sendResponseHeaders(STATUS_OK, NO_RESPONSE_LENGTH);
+                    he.sendResponseHeaders(SC_OK, NO_RESPONSE_LENGTH);
                     break;
                 default:
                     headers.set(HEADER_ALLOW, ALLOWED_METHODS);
-                    he.sendResponseHeaders(STATUS_METHOD_NOT_ALLOWED, NO_RESPONSE_LENGTH);
+                    he.sendResponseHeaders(SC_METHOD_NOT_ALLOWED, NO_RESPONSE_LENGTH);
                     break;
             }
         };
