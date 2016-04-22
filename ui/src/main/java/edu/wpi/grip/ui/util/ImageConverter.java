@@ -18,6 +18,7 @@ import static org.bytedeco.javacpp.opencv_core.*;
 public final class ImageConverter {
     private WritableImage image;
     private IntBuffer pixels;
+    private Mat mat;
 
     /**
      * Convert a BGR-formatted OpenCV {@link Mat} into a JavaFX {@link Image}.
@@ -28,7 +29,7 @@ public final class ImageConverter {
      * This is also possible to do by using JavaCV, but the JavaCV method involves several intermediate conversions
      * (Mat -> Frame -> BufferedImage -> JavaFX Image) and is way too slow to use for a real-time video.
      *
-     * @param mat An 8-bit OpenCV Mat containing an image with either 1 or 3 channels
+     * @param image An 8- or 16-bit OpenCV Mat containing an image with either 1 or 3 channels
      * @return A JavaFX image, or null for empty
      */
     public Image convert(Mat image) {
@@ -42,8 +43,13 @@ public final class ImageConverter {
             throw new IllegalStateException("This modifies an FX object. This must be run in the UI Thread");
         }
 
+        if (image.empty()) {
+            // Don't try to render empty images.
+            return null;
+        }
+
         // Copy the mat for display so we don't screw up the data
-        Mat mat = image.clone();
+        mat = image.clone();
 
         final int width = mat.cols();
         final int height = mat.rows();
@@ -55,20 +61,19 @@ public final class ImageConverter {
         // Convert the image to 8-bit for display
         // (This does not affect the actual data image)
         switch (mat.depth()) {
+            case CV_8U:
+            case CV_8S:
+                // Don't need to convert
+                break;
             case CV_16S:
                 mat.convertTo(mat, CV_8S, 1.0 / 256, 0);
                 break;
             case CV_16U:
                 mat.convertTo(mat, CV_8U, 1.0 / 256, 0);
                 break;
-        }
-
-        assert mat.depth() == CV_8U || mat.depth() == CV_8S :
-                "Only images with 8 bits per channel can be previewed";
-
-        // Don't try to render empty images.
-        if (mat.empty()) {
-            return null;
+            default:
+                // Don't know how to display this image
+                throw new IllegalArgumentException("Only 8-bit and 16-bit images can be converted");
         }
 
         // If the size of the Mat changed for whatever reason, allocate a new image with the proper dimensions and a buffer

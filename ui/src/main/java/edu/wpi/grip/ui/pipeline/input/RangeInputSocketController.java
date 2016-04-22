@@ -26,7 +26,7 @@ public class RangeInputSocketController extends InputSocketController<List<Numbe
     // The number of decimals to show.
     private final int numDecimals;
     // The maximum number of decimals to show.
-    private final int MAX_DECIMALS = 3;
+    private static final int MAX_DECIMALS = 3;
 
     public interface Factory {
         RangeInputSocketController create(InputSocket<List<Number>> socket);
