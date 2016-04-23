@@ -92,6 +92,13 @@ public final class SocketHints {
         public static SocketHint<Number> createNumberSocketHint(final String identifier, Number defaultValue) {
             return createNumberSocketHintBuilder(identifier, defaultValue).build();
         }
+
+        public static SocketHint<String> createTextSocketHint(final String identifier, final String defaultValue) {
+            return new SocketHint.Builder<>(String.class)
+                    .identifier(identifier)
+                    .initialValue(defaultValue)
+                    .build();
+        }
     }
 
     public static <T extends Enum<T>> SocketHint<T> createEnumSocketHint(final String identifier,

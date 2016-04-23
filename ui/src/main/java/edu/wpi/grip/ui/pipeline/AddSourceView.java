@@ -9,9 +9,11 @@ import edu.wpi.grip.core.events.UnexpectedThrowableEvent;
 import edu.wpi.grip.core.sources.CameraSource;
 import edu.wpi.grip.core.sources.ImageFileSource;
 import edu.wpi.grip.core.sources.MultiImageFileSource;
+import edu.wpi.grip.core.sources.NetworkValueSource;
 import edu.wpi.grip.ui.util.DPIUtility;
 import edu.wpi.grip.ui.util.SupplierWithIO;
 import javafx.application.Platform;
+import javafx.collections.FXCollections;
 import javafx.event.EventHandler;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
@@ -48,6 +50,7 @@ public class AddSourceView extends HBox {
     private final MultiImageFileSource.Factory multiImageSourceFactory;
     private final ImageFileSource.Factory imageSourceFactory;
     private final CameraSource.Factory cameraSourceFactory;
+    private final NetworkValueSource.Factory networkValueSourceFactory;
 
     private final Button webcamButton;
     private final Button ipcamButton;
@@ -57,17 +60,27 @@ public class AddSourceView extends HBox {
         private final Text errorText = new Text();
 
         private SourceDialog(final Parent root, Control inputField) {
+            this(root, inputField, null);
+        }
+
+        private SourceDialog(final Parent root, Control inputField1, Control inputField2) {
             super();
 
             this.getDialogPane().getStyleClass().add(SOURCE_DIALOG_STYLE_CLASS);
 
             final GridPane gridContent = new GridPane();
             gridContent.setMaxWidth(Double.MAX_VALUE);
-            GridPane.setHgrow(inputField, Priority.ALWAYS);
+            if (inputField2 != null) {
+                GridPane.setHgrow(inputField2, Priority.ALWAYS);
+            }
+            GridPane.setHgrow(inputField1, Priority.ALWAYS);
             GridPane.setHgrow(errorText, Priority.NEVER);
-            errorText.wrappingWidthProperty().bind(inputField.widthProperty());
+            errorText.wrappingWidthProperty().bind(inputField1.widthProperty());
             gridContent.add(errorText, 0, 0);
-            gridContent.add(inputField, 0, 1);
+            gridContent.add(inputField1, 0, 1);
+            if (inputField2 != null) {
+                gridContent.add(inputField2, 0, 2);
+            }
 
             getDialogPane().setContent(gridContent);
             getDialogPane().setStyle(root.getStyle());
@@ -84,11 +97,13 @@ public class AddSourceView extends HBox {
     AddSourceView(EventBus eventBus,
                   MultiImageFileSource.Factory multiImageSourceFactory,
                   ImageFileSource.Factory imageSourceFactory,
-                  CameraSource.Factory cameraSourceFactory) {
+                  CameraSource.Factory cameraSourceFactory,
+                  NetworkValueSource.Factory networkValueSourceFactory) {
         this.eventBus = eventBus;
         this.multiImageSourceFactory = multiImageSourceFactory;
         this.imageSourceFactory = imageSourceFactory;
         this.cameraSourceFactory = cameraSourceFactory;
+        this.networkValueSourceFactory = networkValueSourceFactory;
 
         this.setFillHeight(true);
 
@@ -200,6 +215,42 @@ public class AddSourceView extends HBox {
                     e -> {
                         dialog.errorText.setText(e.getMessage());
                     });
+        });
+
+        addButton("Add NT\nValue", getClass().getResource("/edu/wpi/grip/ui/icons/add-webcam.png"), mouseEvent -> {
+            final Parent root = this.getScene().getRoot();
+
+            // Show a dialog for the user to pick a NetworkTable key
+
+            final ChoiceBox type = new ChoiceBox(FXCollections.observableArrayList("Boolean", "Number", "String"));
+            final TextField key = new TextField();
+            final SourceDialog dialog = new SourceDialog(root, key, type);
+            key.setPromptText("Key");
+
+            dialog.setTitle("Add NetworkTable Value");
+            dialog.setHeaderText("Enter the NetworkTable type and key (under GRIP/)");
+
+            // If the user clicks OK, add a new source
+            activeDialog = Optional.of(dialog);
+            dialog.showAndWait().filter(Predicate.isEqual(ButtonType.OK)).ifPresent(result -> {
+                try {
+                    final NetworkValueSource source;
+                    if (type.getValue().equals("Boolean")) {
+                        source = networkValueSourceFactory.create(key.getText(), NetworkValueSource.ValueType.BOOLEAN);
+                    } else if (type.getValue().equals("Number")) {
+                        source = networkValueSourceFactory.create(key.getText(), NetworkValueSource.ValueType.NUMBER);
+                    } else if (type.getValue().equals("String")) {
+                        source = networkValueSourceFactory.create(key.getText(), NetworkValueSource.ValueType.STRING);
+                    } else {
+                        throw new IOException("unrecognized type " + type.getValue());
+                    }
+                    source.initialize();
+                    eventBus.post(new SourceAddedEvent(source));
+                } catch (IOException e) {
+                    dialog.errorText.setText(e.getMessage());
+                }
+            });
+            activeDialog = Optional.empty();
         });
     }
 
