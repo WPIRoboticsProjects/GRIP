@@ -4,11 +4,11 @@ import edu.wpi.grip.core.events.ExceptionClearedEvent;
 import edu.wpi.grip.core.events.ExceptionEvent;
 import edu.wpi.grip.core.operations.CVOperations;
 import edu.wpi.grip.core.http.GripServer;
+import edu.wpi.grip.core.http.HttpPipelineSwitcher;
 import edu.wpi.grip.core.operations.Operations;
 import edu.wpi.grip.core.operations.network.GripNetworkModule;
 import edu.wpi.grip.core.serialization.Project;
 import edu.wpi.grip.core.sources.GripSourcesHardwareModule;
-import edu.wpi.grip.core.util.GripProperties;
 
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
@@ -41,12 +41,13 @@ public class Main {
   private Logger logger;
   @Inject
   private GripServer gripServer;
+  @Inject
+  private HttpPipelineSwitcher pipelineSwitcher;
 
   @SuppressWarnings({"PMD.SystemPrintln", "JavadocMethod"})
   public static void main(String[] args) throws IOException, InterruptedException {
     final Injector injector = Guice.createInjector(new GripCoreModule(), new GripNetworkModule(),
         new GripSourcesHardwareModule());
-    GripProperties.setProperty("headless", "true");
     injector.getInstance(Main.class).start(args);
   }
 
@@ -60,6 +61,7 @@ public class Main {
 
     operations.addOperations();
     cvOperations.addOperations();
+    gripServer.addHandler(pipelineSwitcher);
     gripServer.start();
 
     // Open a project from a .grip file specified on the command line

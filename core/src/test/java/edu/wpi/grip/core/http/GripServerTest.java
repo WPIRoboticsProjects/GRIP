@@ -4,22 +4,18 @@ package edu.wpi.grip.core.http;
 import com.google.common.collect.ImmutableMap;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.sun.net.httpserver.HttpServer;
 
 import edu.wpi.grip.core.exception.GripException;
 import edu.wpi.grip.core.exception.GripServerException;
-import edu.wpi.grip.core.http.GripServer.HttpServerFactory;
+import edu.wpi.grip.core.settings.ProjectSettings;
+import edu.wpi.grip.core.settings.SettingsProvider;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.net.InetSocketAddress;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.function.Supplier;
 
-import edu.wpi.grip.core.serialization.Project;
-import edu.wpi.grip.core.settings.ProjectSettings;
-import edu.wpi.grip.core.settings.SettingsProvider;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpVersion;
 import org.apache.http.client.methods.HttpGet;
@@ -28,9 +24,14 @@ import org.apache.http.entity.BasicHttpEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.params.CoreProtocolPNames;
 import org.apache.http.util.EntityUtils;
+import org.eclipse.jetty.server.Server;
 import org.junit.After;
 import org.junit.Test;
-import static org.junit.Assert.*;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 /**
  *
@@ -42,7 +43,7 @@ public class GripServerTest {
     private final TestServerFactory serverFactory;
     private GripServer instance;
 
-    public static class TestServerFactory implements HttpServerFactory {
+    public static class TestServerFactory implements GripServer.JettyServerFactory {
 
         private int port;
 
@@ -51,13 +52,13 @@ public class GripServerTest {
         }
 
         @Override
-        public HttpServer create(int port) {
+        public Server create(int port) {
             final int MAX_TRIES = 200;
             IOException lastException = null;
             for (int offset = 0; offset < MAX_TRIES; offset++) {
                 try {
                     this.port = port + offset;
-                    return HttpServer.create(new InetSocketAddress("localhost", this.port), 1);
+                    return new Server(port);
                 } catch (IOException e) {
                     // That port is taken -- keep trying different ports
                     lastException = e;
@@ -73,15 +74,15 @@ public class GripServerTest {
     /**
      * Public factory method for testing.
      */
-    public static GripServer makeServer(HttpServerFactory factory, SettingsProvider settingsProvider, Project project) {
-        return new GripServer(factory, settingsProvider, project);
+    public static GripServer makeServer(GripServer.JettyServerFactory factory, SettingsProvider settingsProvider) {
+        return new GripServer(factory, settingsProvider);
     }
 
     public GripServerTest() {
         ProjectSettings mockSettings = new ProjectSettings();
         mockSettings.setServerPort(GRIP_SERVER_TEST_PORT);
         this.serverFactory = new TestServerFactory();
-        instance = new GripServer(serverFactory, () -> mockSettings, new Project());
+        instance = new GripServer(serverFactory, () -> mockSettings);
         instance.start();
 
         client = new DefaultHttpClient();

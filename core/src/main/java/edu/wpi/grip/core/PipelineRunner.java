@@ -181,7 +181,6 @@ public class PipelineRunner implements RestartableService {
   }
 
   private void runPipeline(Supplier<Boolean> isRunning) {
-    logger.info("Starting pipeline");
     // Take a snapshot of both of the pipeline at the present time before running it.
     final ImmutableList<Source> sources = sourceSupplier.get();
     final ImmutableList<Step> steps = stepSupplier.get();
@@ -202,7 +201,6 @@ public class PipelineRunner implements RestartableService {
       }
       step.runPerformIfPossible();
     }
-    logger.info("Ran pipeline");
   }
 
   @Subscribe

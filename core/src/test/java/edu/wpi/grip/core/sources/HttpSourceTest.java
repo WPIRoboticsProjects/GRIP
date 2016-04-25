@@ -3,7 +3,6 @@ package edu.wpi.grip.core.sources;
 
 import com.google.common.eventbus.EventBus;
 
-import edu.wpi.grip.core.serialization.Project;
 import edu.wpi.grip.core.settings.ProjectSettings;
 import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.core.http.GripServer;
@@ -42,10 +41,10 @@ public class HttpSourceTest {
 
     @Before
     public void setUp() throws URIException, URISyntaxException {
-        GripServer.HttpServerFactory f = new GripServerTest.TestServerFactory();
+        GripServer.JettyServerFactory f = new GripServerTest.TestServerFactory();
         ProjectSettings projectSettings = new ProjectSettings();
         projectSettings.setServerPort(8080);
-        server = GripServerTest.makeServer(f, () -> projectSettings, new Project());
+        server = GripServerTest.makeServer(f, () -> projectSettings);
         server.start();
         EventBus eventBus = new EventBus();
         source = new HttpSource(origin -> new MockExceptionWitness(eventBus, origin), eventBus, server);
@@ -56,8 +55,8 @@ public class HttpSourceTest {
 
     @Test
     public void testPostImage() throws IOException, InterruptedException {
-        server.addPostHandler(GripServer.IMAGE_UPLOAD_PATH, source);
-        OutputSocket<Mat> imageSource = source.getOutputSockets()[0];
+        source.initialize();
+        OutputSocket<Mat> imageSource = source.getOutputSockets().get(0);
 
         // We have to manually update the output sockets to get the image
         source.updateOutputSockets();

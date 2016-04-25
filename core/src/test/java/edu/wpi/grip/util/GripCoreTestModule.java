@@ -5,7 +5,7 @@ import edu.wpi.grip.core.GripCoreModule;
 import edu.wpi.grip.core.http.GripServer;
 import edu.wpi.grip.core.http.GripServerTest;
 import edu.wpi.grip.core.operations.network.MapNetworkPublisherFactory;
-import edu.wpi.grip.core.operations.network.http.HttpManager;
+import edu.wpi.grip.core.operations.network.http.HttpPublishManager;
 import edu.wpi.grip.core.sources.CameraSource;
 import edu.wpi.grip.core.sources.MockFrameGrabberFactory;
 
@@ -84,7 +84,7 @@ public class GripCoreTestModule extends GripCoreModule {
     bind(GripServer.class).asEagerSingleton();
     bind(MapNetworkPublisherFactory.class)
         .annotatedWith(Names.named("httpManager"))
-        .to(HttpManager.class);
+        .to(HttpPublishManager.class);
   }
 
   @Override

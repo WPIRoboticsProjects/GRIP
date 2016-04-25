@@ -1,70 +1,54 @@
 
 package edu.wpi.grip.core.http;
 
-import com.google.common.eventbus.Subscribe;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.inject.Inject;
-import com.google.inject.Singleton;
-import com.sun.net.httpserver.Filter;
-import com.sun.net.httpserver.Headers;
-import com.sun.net.httpserver.HttpContext;
-import com.sun.net.httpserver.HttpExchange;
-import com.sun.net.httpserver.HttpHandler;
-import com.sun.net.httpserver.HttpServer;
-
-import edu.wpi.grip.core.ProjectManager;
 import edu.wpi.grip.core.events.ProjectSettingsChangedEvent;
-import edu.wpi.grip.core.events.RunStartedEvent;
-import edu.wpi.grip.core.events.RunStoppedEvent;
 import edu.wpi.grip.core.exception.GripServerException;
-import edu.wpi.grip.core.exception.ImpossibleExceptionError;
-import edu.wpi.grip.core.serialization.Project;
 import edu.wpi.grip.core.settings.SettingsProvider;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
-import java.net.InetSocketAddress;
-import java.net.URI;
-import java.net.URLDecoder;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
-import java.util.*;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.function.Supplier;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import java.util.stream.Collectors;
+import com.google.common.eventbus.Subscribe;
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
 
-import static org.apache.commons.httpclient.HttpStatus.*;
+import org.eclipse.jetty.server.Handler;
+import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.server.handler.HandlerCollection;
 
 /**
- * An internal HTTP server that can be used as an alternative to NetworkTables.
+ * An internal HTTP server.
  */
 @Singleton
 public class GripServer {
 
-    private final HttpServerFactory serverFactory;
-    private HttpServer server;
-    private final Map<String, GetHandler> getHandlers;
-    private final Map<String, List<PostHandler>> postHandlers;
-    private final Map<String, Supplier> dataSuppliers;
-    private final ProjectManager projectManager;
-    private final AtomicBoolean pipelineDirty = new AtomicBoolean(false);
+    /**
+     * Factory for creating a new Jetty server.
+     */
+    private final JettyServerFactory serverFactory;
+
+    /**
+     * The port that this server is running on.
+     */
+    private int port;
+
+    /**
+     * The internal Jetty server that actually handles all server operations.
+     */
+    private Server server;
+
+    /**
+     * A collection of Jetty handlers that can be added to or removed during runtime.
+     */
+    private final HandlerCollection handlers = new HandlerCollection(true);
+
+    /**
+     * The current lifecycle state of the server.
+     */
+    private State state = State.PRE_RUN;
 
     private enum State {
         PRE_RUN,
         RUNNING,
         STOPPED
     }
-
-    private State state = State.PRE_RUN;
-
-    private final Set<String> contextPaths = new HashSet<>();
-
-    private static final Logger logger = Logger.getLogger(GripServer.class.getName());
 
     /**
      * The root path for all GRIP-related HTTP activity.
@@ -78,16 +62,13 @@ public class GripServer {
 
     /**
      * The path for uploading images. To upload an image, post an HTTP event to
-     * {@code http://$grip_ip:$grip_port/GRIP/upload/image} (where
-     * {@code $grip_ip} is the IP address of the machine that GRIP is running
-     * on, and {@code $grip_port} is the port on that machine that this server
-     * is running on), with the image bytes as the data.
+     * {@code /GRIP/upload/image}, with the image bytes as the data.
      */
     public static final String IMAGE_UPLOAD_PATH = UPLOAD_PATH + "/image";
 
     /**
      * The path for setting which pipeline to run. To set the pipeline, post an
-     * HTTP event to {@code http://$grip_ip:$grip_port/GRIP/upload/pipeline}
+     * HTTP event to {@code /GRIP/upload/pipeline},
      * with the content of the pipeline save file as the data.
      */
     public static final String PIPELINE_UPLOAD_PATH = UPLOAD_PATH + "/pipeline";
@@ -97,7 +78,7 @@ public class GripServer {
      * map of the outputs of all requested data sets.
      * <p>
      * For example, performing a {@code GET} request on the path
-     * {@code /GRIP/data?foo;bar} will return a map such as
+     * {@code /GRIP/data?foo&bar} will return a map such as
      * <br>
      * <code><pre>
      * {
@@ -113,259 +94,47 @@ public class GripServer {
      */
     public static final String DATA_PATH = ROOT_PATH + "/data";
 
-    /* HTTP constants */
-    private static final String HOSTNAME = "localhost";
-    private static final int BACKLOG = 5;
-
-    private static final String HEADER_ALLOW = "Allow";
-    private static final String HEADER_CONTENT_TYPE = "Content-Type";
-
-    private static final Charset CHARSET_UTF_8 = StandardCharsets.UTF_8;
-
-    private static final int NO_RESPONSE_LENGTH = -1;
-
-    private static final String NOT_FOUND_RESPONSE = "<h1>404 Not Found</h1>No context found for request";
-    private static final int NOT_FOUND_RESPONSE_LENGTH = NOT_FOUND_RESPONSE.length();
-
-    private static final String METHOD_GET = "GET";
-    private static final String METHOD_POST = "POST";
-    private static final String METHOD_OPTIONS = "OPTIONS";
-    private static final String ALLOWED_METHODS = String.join(", ", METHOD_GET, METHOD_POST, METHOD_OPTIONS);
-
-    /**
-     * URI filter that only allows requests on paths that have POST or GET handlers. A request on any
-     * other URI will get a 404 response.
-     */
-    private final Filter uriFilter = new Filter() {
-        @Override
-        public void doFilter(HttpExchange httpExchange, Chain chain) throws IOException {
-            String uri = httpExchange.getRequestURI().toString();
-            String baseUri = uri.split("\\?")[0];
-            if (contextPaths.contains(baseUri)) {
-                chain.doFilter(httpExchange);
-            } else {
-                httpExchange.sendResponseHeaders(SC_NOT_FOUND, NOT_FOUND_RESPONSE_LENGTH);
-                httpExchange.getResponseBody().write(NOT_FOUND_RESPONSE.getBytes(CHARSET_UTF_8));
-                httpExchange.getResponseBody().close();
-            }
-        }
-
-        @Override
-        public String description() {
-            return "Specific path filter";
-        }
-    };
-
-    public interface HttpServerFactory {
-        HttpServer create(int port);
+    public interface JettyServerFactory {
+        Server create(int port);
     }
 
-    public static class HttpServerFactoryImpl implements HttpServerFactory {
+    public static class JettyServerFactoryImpl implements JettyServerFactory {
+
         @Override
-        public HttpServer create(int port) {
-            try {
-                return HttpServer.create(new InetSocketAddress(HOSTNAME, port), BACKLOG);
-            } catch (IOException ex) {
-                throw new GripServerException("Could not create a server on port " + port, ex);
-            }
+        public Server create(int port) {
+            return new Server(port);
         }
     }
 
     @Inject
-    GripServer(HttpServerFactory serverFactory, SettingsProvider settingsProvider, Project project) {
-        int port = settingsProvider.getProjectSettings().getServerPort();
+    GripServer(JettyServerFactory serverFactory, SettingsProvider settingsProvider) {
+        this.port = settingsProvider.getProjectSettings().getServerPort();
         this.serverFactory = serverFactory;
-        setPort(port);
-        this.projectManager = new ProjectManager(project);
-        getHandlers = new HashMap<>();
-        postHandlers = new HashMap<>();
-        dataSuppliers = new HashMap<>();
-
-        addGetHandler(DATA_PATH, this::createJson);
-        addPostHandler(PIPELINE_UPLOAD_PATH, bytes -> {
-            projectManager.openProject(new String(bytes));
-            return true;
-        });
+        this.server = serverFactory.create(port);
+        this.server.setHandler(handlers);
+        handlers.addHandler(new NoContextHandler());
 
         Runtime.getRuntime().addShutdownHook(new Thread(this::stop));
     }
 
     /**
-     * Adds a {@code GetHandler} to the given path. Note that this will also
-     * respond to any {@code GET} requests on subpaths unless they also have
-     * their own {@code GetHandler} attached. This will do nothing if a {@code GetHandler}
-     * is already added to the given path.
+     * Adds the given handler to the server. Does nothing if the server already has that handler.
      *
-     * @param path    the path to attach the handler to
-     * @param handler the handler to attach
+     * @param handler the handler to add
      */
-    public void addGetHandler(String path, GetHandler handler) {
-        getHandlers.putIfAbsent(path, handler);
-        createContext(path);
+    public void addHandler(Handler handler) {
+        if (!handlers.contains(handler)) {
+            handlers.addHandler(handler);
+        }
     }
 
     /**
-     * Removes the {@link GetHandler} associated with the given path. This will
-     * have no effect if no such {@code GetHandler} exists.
-     *
-     * @param path the path to remove a {@code GetHandler} from
-     */
-    public void removeGetHandler(String path) {
-        getHandlers.remove(path);
-    }
-
-    /**
-     * Adds a {@code PostHandler} to the given path. This will convert the raw
-     * bytes read from the connection and convert them to something useful e.g.
-     * images, pipeline names, etc.
-     *
-     * @param path    the path to attach the handler to
-     * @param handler the handler to attach
-     */
-    public void addPostHandler(String path, PostHandler handler) {
-        postHandlers.computeIfAbsent(path, k -> new ArrayList<>()).add(handler);
-        createContext(path);
-    }
-
-    /**
-     * Removes all {@link PostHandler PostHandlers} associated with the given path.
-     *
-     * @param path the path to remove {@code PostHandlers} from
-     */
-    public void removePostHandlers(String path) {
-        postHandlers.remove(path);
-    }
-
-    /**
-     * Removes the given handler from all post events.
+     * Removes the given handler from the server. Does nothing if the server does not have that handler.
      *
      * @param handler the handler to remove
-     * @return true if the handler was removed from at least one path
      */
-    public boolean removePostHandler(PostHandler handler) {
-        return postHandlers.values()
-                .stream()
-                .map(list -> list.remove(handler))
-                .anyMatch(b -> b);
-    }
-
-    private void createContext(String path) {
-        if (contextPaths.contains(path)) {
-            return;
-        }
-        contextPaths.add(path);
-        HttpContext context = server.createContext(path, makeContext(path));
-        context.getFilters().add(uriFilter);
-    }
-
-    private HttpHandler makeContext(final String path) {
-        return he -> {
-            final Headers headers = he.getResponseHeaders();
-            final String requestMethod = he.getRequestMethod().toUpperCase();
-            final Map<String, List<String>> requestParameters = getRequestParameters(he.getRequestURI());
-            switch (requestMethod) {
-                case METHOD_GET:
-                    headers.set(HEADER_CONTENT_TYPE, String.format("application/json; charset=%s", CHARSET_UTF_8));
-                    if (pipelineDirty.get() && path.startsWith(DATA_PATH)) {
-                        logger.warning("Received a request for data while the pipeline is running");
-                        he.sendResponseHeaders(SC_SERVICE_UNAVAILABLE, NO_RESPONSE_LENGTH);
-                    } else if (getHandlers.containsKey(path)) {
-                        final String responseBody = getHandlers.get(path).createResponse(requestParameters);
-                        final byte[] rawResponseBody = responseBody.getBytes(CHARSET_UTF_8);
-                        he.sendResponseHeaders(SC_OK, rawResponseBody.length);
-                        he.getResponseBody().write(rawResponseBody);
-                        he.getResponseBody().close();
-                    } else {
-                        he.sendResponseHeaders(SC_OK, NO_RESPONSE_LENGTH);
-                    }
-                    break;
-                case METHOD_POST:
-                    final byte[] bytes = readBytes(he);
-                    boolean success = true;
-                    if (bytes.length == 0) {
-                        logger.warning("No data received from POST event on " + path);
-                        success = false;
-                    } else {
-                        for (PostHandler handler : postHandlers.get(path)) {
-                            try {
-                                handler.convert(bytes);
-                            } catch (RuntimeException ex) {
-                                logger.log(Level.SEVERE, "Exception when converting data", ex);
-                                success = false;
-                                break;
-                            }
-                        }
-                    }
-                    if (success) {
-                        he.sendResponseHeaders(SC_OK, NO_RESPONSE_LENGTH);
-                    } else {
-                        he.sendResponseHeaders(SC_INTERNAL_SERVER_ERROR, NO_RESPONSE_LENGTH);
-                    }
-                    break;
-                case METHOD_OPTIONS:
-                    headers.set(HEADER_ALLOW, ALLOWED_METHODS);
-                    he.sendResponseHeaders(SC_OK, NO_RESPONSE_LENGTH);
-                    break;
-                default:
-                    headers.set(HEADER_ALLOW, ALLOWED_METHODS);
-                    he.sendResponseHeaders(SC_METHOD_NOT_ALLOWED, NO_RESPONSE_LENGTH);
-                    break;
-            }
-        };
-    }
-
-    /**
-     * Adds a data supplier for data with the given name. Each name can only be
-     * associated with a single supplier at a time, so this will remove the previous
-     * supplier (if one exists).
-     *
-     * @param name     the name of the data
-     * @param supplier the supplier of the data
-     */
-    public void addDataSupplier(String name, Supplier<?> supplier) {
-        dataSuppliers.put(name, supplier);
-    }
-
-    /**
-     * Checks if the given name is associated with a supplier.
-     *
-     * @param name the name to check
-     * @return true if the name is associated with a supplier, false if not
-     */
-    public boolean hasDataSupplier(String name) {
-        return dataSuppliers.containsKey(name);
-    }
-
-    /**
-     * Removes the data supplier for data with the given name
-     *
-     * @param name the name of the data to remove
-     */
-    public void removeDataSupplier(String name) {
-        dataSuppliers.remove(name);
-    }
-
-    /**
-     * Creates a JSON response to a request on /GRIP/data
-     */
-    private String createJson(Map<String, List<String>> params) {
-        final Gson gson = new GsonBuilder()
-                .setPrettyPrinting()
-                .serializeSpecialFloatingPointValues()
-                .create();
-        final Map<String, Object> data =
-                dataSuppliers
-                        .entrySet()
-                        .stream()
-                        .filter(e -> params.isEmpty() || params.containsKey(e.getKey())) // send everything if nothing is specified
-                        .collect(Collectors.toMap(Map.Entry::getKey, v -> v.getValue().get()));
-        try {
-            return gson.toJson(data);
-        } catch (RuntimeException ex) {
-            // If we don't catch this, it will be silently consumed by something up the call stack
-            logger.log(Level.SEVERE, "Error generating json response", ex);
-            return "{}"; // empty json object
-        }
+    public void removeHandler(Handler handler) {
+        handlers.removeHandler(handler);
     }
 
     /**
@@ -373,7 +142,11 @@ public class GripServer {
      */
     public void start() {
         if (state == State.PRE_RUN) {
-            server.start();
+            try {
+                server.start();
+            } catch (Exception ex) {
+                throw new GripServerException("Could not start Jetty server", ex);
+            }
             state = State.RUNNING;
         }
     }
@@ -386,7 +159,11 @@ public class GripServer {
      */
     public void stop() {
         if (state == State.RUNNING) {
-            server.stop(0);
+            try {
+                server.stop();
+            } catch (Exception ex) {
+                throw new GripServerException("Could not stop Jetty server", ex);
+            }
             state = State.STOPPED;
         }
     }
@@ -399,7 +176,7 @@ public class GripServer {
     public void restart() {
         try {
             stop();
-            server = serverFactory.create(getPort());
+            server = serverFactory.create(port);
             start();
         } catch (GripServerException | IllegalStateException ex) {
             throw new GripServerException("Could not restart GripServer", ex);
@@ -421,50 +198,7 @@ public class GripServer {
      * Gets the port this server is running on.
      */
     public int getPort() {
-        return server.getAddress().getPort();
-    }
-
-    /**
-     * Parses request parameters from a URI. For example, the URI
-     * "http://roborio-190-frc.local:8080/GRIP/data?foo=1;bar=2" will be parsed to
-     * {"foo"="1", "bar"="2"}.
-     */
-    private static Map<String, List<String>> getRequestParameters(final URI requestUri) {
-        final Map<String, List<String>> requestParameters = new LinkedHashMap<>();
-        final String requestQuery = requestUri.getRawQuery(); // foo=1&bar=2&...
-        if (requestQuery != null) {
-            final String[] rawRequestParameters = requestQuery.split("[&;]"); // [foo=1, bar=2, ...]
-            for (final String rawRequestParameter : rawRequestParameters) {
-                final String[] requestParameter = rawRequestParameter.split("=", 2); // [foo, 1]
-                final String requestParameterName = decodeUrlComponent(requestParameter[0]);
-                requestParameters.putIfAbsent(requestParameterName, new ArrayList<>());
-                final String requestParameterValue = requestParameter.length > 1 ? decodeUrlComponent(requestParameter[1]) : "";
-                requestParameters.get(requestParameterName).add(requestParameterValue);
-            }
-        }
-        return requestParameters;
-    }
-
-    private static String decodeUrlComponent(final String urlComponent) {
-        try {
-            return URLDecoder.decode(urlComponent, CHARSET_UTF_8.name());
-        } catch (final UnsupportedEncodingException ex) {
-            // Should never happen, UTF-8 support is part of the JVM spec
-            throw new ImpossibleExceptionError("This JVM is out of spec and does not support UTF-8!", ex);
-        }
-    }
-
-    /**
-     * Reads all incoming bytes from an HTTP connection.
-     */
-    private static byte[] readBytes(final HttpExchange he) throws IOException {
-        final InputStream in = he.getRequestBody();
-        ByteArrayOutputStream b = new ByteArrayOutputStream();
-        byte[] buf = new byte[4096];
-        for (int n = in.read(buf); n > 0; n = in.read(buf)) {
-            b.write(buf, 0, n);
-        }
-        return b.toByteArray();
+        return port;
     }
 
     @Subscribe
@@ -472,19 +206,9 @@ public class GripServer {
         int port = event.getProjectSettings().getServerPort();
         if (port != getPort()) {
             setPort(port);
+            server.setHandler(handlers);
             start();
-            contextPaths.forEach(path -> server.createContext(path, makeContext(path)));
         }
-    }
-
-    @Subscribe
-    public void runStarted(RunStartedEvent event) {
-        pipelineDirty.set(true);
-    }
-
-    @Subscribe
-    public void runStopped(RunStoppedEvent event) {
-        pipelineDirty.set(false);
     }
 
 }

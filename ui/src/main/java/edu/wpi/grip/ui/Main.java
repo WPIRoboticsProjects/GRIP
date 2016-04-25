@@ -5,12 +5,12 @@ import edu.wpi.grip.core.PipelineRunner;
 import edu.wpi.grip.core.events.ProjectLoadedEvent;
 import edu.wpi.grip.core.events.UnexpectedThrowableEvent;
 import edu.wpi.grip.core.http.GripServer;
+import edu.wpi.grip.core.http.HttpPipelineSwitcher;
 import edu.wpi.grip.core.operations.CVOperations;
 import edu.wpi.grip.core.operations.Operations;
 import edu.wpi.grip.core.operations.network.GripNetworkModule;
 import edu.wpi.grip.core.serialization.Project;
 import edu.wpi.grip.core.sources.GripSourcesHardwareModule;
-import edu.wpi.grip.core.util.GripProperties;
 import edu.wpi.grip.core.util.SafeShutdown;
 import edu.wpi.grip.ui.util.DPIUtility;
 
@@ -57,6 +57,7 @@ public class Main extends Application {
   @Inject private CVOperations cvOperations;
   @Inject private Logger logger;
   @Inject private GripServer server;
+  @Inject private HttpPipelineSwitcher pipelineSwitcher;
   private Parent root;
 
   public static void main(String[] args) {
@@ -71,7 +72,6 @@ public class Main extends Application {
     if (parameters.contains("--headless")) {
       // If --headless was specified on the command line, run in headless mode (only use the core
       // module)
-      GripProperties.setProperty("headless", "true");
       injector = Guice.createInjector(new GripCoreModule(), new GripNetworkModule(), new
           GripSourcesHardwareModule());
       injector.injectMembers(this);
@@ -79,7 +79,6 @@ public class Main extends Application {
       parameters.remove("--headless");
     } else {
       // Otherwise, run with both the core and UI modules, and show the JavaFX stage
-      GripProperties.setProperty("headless", "false");
       injector = Guice.createInjector(Modules.override(new GripCoreModule(), new
           GripNetworkModule(), new GripSourcesHardwareModule()).with(new GripUiModule()));
       injector.injectMembers(this);
@@ -106,6 +105,7 @@ public class Main extends Application {
 
     operations.addOperations();
     cvOperations.addOperations();
+    server.addHandler(pipelineSwitcher);
     server.start();
 
     // If there was a file specified on the command line, open it immediately

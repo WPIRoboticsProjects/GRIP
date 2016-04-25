@@ -1,0 +1,57 @@
+package edu.wpi.grip.core.http;
+
+import java.io.IOException;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.eclipse.jetty.server.Request;
+import org.eclipse.jetty.server.handler.AbstractHandler;
+
+/**
+ * A handler that will only run if a request is on the same path as its context.
+ */
+public abstract class PedanticHandler extends GenericHandler {
+
+    /**
+     * Creates a new handler for the given context. That context will not be claimed.
+     *
+     * @param context the context for this handler
+     * @see GenericHandler#GenericHandler(String)
+     */
+    protected PedanticHandler(String context) {
+        super(context);
+    }
+
+    /**
+     * Creates a new handler for the given context.
+     *
+     * @param context the context for this handler
+     * @param doClaim if the context should be claimed
+     * @see GenericHandler#GenericHandler(String, boolean)
+     */
+    protected PedanticHandler(String context, boolean doClaim) {
+        super(context, doClaim);
+    }
+
+    @Override
+    public final void handle(String target, Request baseRequest, HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+        if (!this.context.equals(target)) {
+            return;
+        }
+        handleIfPassed(target, baseRequest, request, response);
+    }
+
+    /**
+     * Handles an HTTP request if the target is the same as the one for this handler.
+     *
+     * @param target      the target of the HTTP request (e.g. a request on "localhost:8080/foo/bar" has a target of "foo/bar")
+     * @param baseRequest the base HTTP request
+     * @param request     the request after being wrapped or filtered by other handlers
+     * @param response    the HTTP response to send to the client
+     * @see AbstractHandler#handle(String, Request, HttpServletRequest, HttpServletResponse)
+     */
+    protected abstract void handleIfPassed(String target, Request baseRequest, HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException;
+
+}
