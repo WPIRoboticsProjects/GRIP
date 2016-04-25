@@ -80,7 +80,7 @@ public class GripCoreTestModule extends GripCoreModule {
     bind(CameraSource.FrameGrabberFactory.class).to(MockFrameGrabberFactory.class);
     super.configure();
     // HTTP server injection bindings
-    bind(GripServer.HttpServerFactory.class).to(GripServerTest.TestServerFactory.class);
+    bind(GripServer.JettyServerFactory.class).to(GripServerTest.TestServerFactory.class);
     bind(GripServer.class).asEagerSingleton();
     bind(MapNetworkPublisherFactory.class)
         .annotatedWith(Names.named("httpManager"))

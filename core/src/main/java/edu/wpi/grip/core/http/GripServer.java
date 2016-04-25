@@ -11,6 +11,7 @@ import com.google.inject.Singleton;
 
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.server.handler.HandlerCollection;
 
 /**
@@ -198,7 +199,7 @@ public class GripServer {
      * Gets the port this server is running on.
      */
     public int getPort() {
-        return port;
+        return ((ServerConnector) server.getConnectors()[0]).getLocalPort();
     }
 
     @Subscribe

@@ -3,12 +3,16 @@ package edu.wpi.grip.core.sources;
 
 import com.google.common.eventbus.EventBus;
 
-import edu.wpi.grip.core.settings.ProjectSettings;
-import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.core.http.GripServer;
 import edu.wpi.grip.core.http.GripServerTest;
+import edu.wpi.grip.core.settings.ProjectSettings;
+import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.core.util.MockExceptionWitness;
 import edu.wpi.grip.util.Files;
+
+import java.io.File;
+import java.io.IOException;
+import java.net.URISyntaxException;
 
 import org.apache.commons.httpclient.URIException;
 import org.apache.http.client.config.RequestConfig;
@@ -20,10 +24,6 @@ import org.bytedeco.javacpp.opencv_core.Mat;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-
-import java.io.File;
-import java.io.IOException;
-import java.net.URISyntaxException;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -42,9 +42,7 @@ public class HttpSourceTest {
     @Before
     public void setUp() throws URIException, URISyntaxException {
         GripServer.JettyServerFactory f = new GripServerTest.TestServerFactory();
-        ProjectSettings projectSettings = new ProjectSettings();
-        projectSettings.setServerPort(8080);
-        server = GripServerTest.makeServer(f, () -> projectSettings);
+        server = GripServerTest.makeServer(f, ProjectSettings::new);
         server.start();
         EventBus eventBus = new EventBus();
         source = new HttpSource(origin -> new MockExceptionWitness(eventBus, origin), eventBus, server);
@@ -55,7 +53,6 @@ public class HttpSourceTest {
 
     @Test
     public void testPostImage() throws IOException, InterruptedException {
-        source.initialize();
         OutputSocket<Mat> imageSource = source.getOutputSockets().get(0);
 
         // We have to manually update the output sockets to get the image

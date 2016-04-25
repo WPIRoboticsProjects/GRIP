@@ -86,6 +86,10 @@ public class HttpSource extends Source {
 
     @Override
     protected boolean updateOutputSockets() {
+        if (image.empty()) {
+            // No data, don't bother converting
+            return false;
+        }
         imageOutput.setValue(opencv_imgcodecs.imdecode(image, opencv_imgcodecs.CV_LOAD_IMAGE_COLOR));
         return true;
     }
