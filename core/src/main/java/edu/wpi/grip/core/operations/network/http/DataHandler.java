@@ -72,6 +72,7 @@ public final class DataHandler extends PedanticHandler {
         if (!isGet(request)) {
             // Only allow GET on the data path
             response.setStatus(SC_METHOD_NOT_ALLOWED);
+            baseRequest.setHandled(true);
             return;
         }
         if (staleData.get()) {

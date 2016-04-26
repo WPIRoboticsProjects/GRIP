@@ -14,7 +14,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpVersion;
-import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.BasicHttpEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
@@ -138,13 +137,6 @@ public class GripServerTest {
     @After
     public void tearDown() {
         instance.stop();
-    }
-
-    private String doGet(String path) throws IOException {
-        String uri = "http://localhost:" + instance.getPort() + path;
-        HttpGet get = new HttpGet(uri);
-        HttpResponse response = client.execute(get);
-        return EntityUtils.toString(response.getEntity());
     }
 
     private HttpResponse doPost(String path, byte[] bytes) throws IOException {
