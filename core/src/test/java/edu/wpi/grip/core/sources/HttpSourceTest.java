@@ -15,11 +15,12 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 
 import org.apache.commons.httpclient.URIException;
-import org.apache.http.client.config.RequestConfig;
+import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.FileEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
+import org.apache.http.util.EntityUtils;
 import org.bytedeco.javacpp.opencv_core.Mat;
 import org.junit.After;
 import org.junit.Before;
@@ -72,16 +73,10 @@ public class HttpSourceTest {
     private void doPost(String path, File imageFile) throws IOException {
         final String uri = "http://localhost:" + server.getPort() + path;
         final HttpPost post = new HttpPost(uri);
-        // POST will hang if timeouts aren't given and the port is wrong
-        post.setConfig(RequestConfig
-                .copy(RequestConfig.DEFAULT)
-                .setSocketTimeout(100)
-                .setConnectTimeout(100)
-                .setConnectionRequestTimeout(100)
-                .build());
         final FileEntity entity = new FileEntity(imageFile);
         post.setEntity(entity);
-        postClient.execute(post);
+        CloseableHttpResponse response = postClient.execute(post);
+        EntityUtils.consume(response.getEntity());
     }
 
     @After
