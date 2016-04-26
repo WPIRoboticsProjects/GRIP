@@ -46,7 +46,7 @@ public class HttpSourceTest {
         server = GripServerTest.makeServer(f, ProjectSettings::new);
         server.start();
         EventBus eventBus = new EventBus();
-        source = new HttpSource(origin -> new MockExceptionWitness(eventBus, origin), eventBus, server);
+        source = new HttpSource(origin -> new MockExceptionWitness(eventBus, origin), eventBus, server, GripServer.IMAGE_UPLOAD_PATH);
 
         logoFile = new File(Files.class.getResource("/edu/wpi/grip/images/GRIP_Logo.png").toURI());
         postClient = HttpClients.createDefault();

@@ -121,7 +121,7 @@ public abstract class Source {
       } else if (type.isAssignableFrom(MultiImageFileSource.class)) {
         return multiImageFactory.create(properties);
       } else if (type.isAssignableFrom(HttpSource.class)) {
-        return httpFactory.create();
+        return httpFactory.create(properties);
       } else {
         throw new IllegalArgumentException(type + " was not a valid type");
       }

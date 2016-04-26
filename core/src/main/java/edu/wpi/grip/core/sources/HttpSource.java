@@ -3,7 +3,8 @@ package edu.wpi.grip.core.sources;
 
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
-import com.google.inject.Inject;
+import com.google.inject.assistedinject.Assisted;
+import com.google.inject.assistedinject.AssistedInject;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 
 import edu.wpi.grip.core.Source;
@@ -38,6 +39,8 @@ public class HttpSource extends Source {
      */
     private static final Map<String, HttpImageHandler> handlers = new HashMap<>();
 
+    private static final String PATH_PROPERTY = "image_upload_path";
+
     /**
      * HTTP handler. Fires callbacks when a new image has been POSTed to /GRIP/upload/image
      */
@@ -48,18 +51,30 @@ public class HttpSource extends Source {
     private final Mat image = new Mat();
     private final Consumer<Mat> callback;
     private final EventBus eventBus;
+    private String path;
 
     public interface Factory {
-        HttpSource create();
+        HttpSource create(Properties properties);
+        HttpSource create(String path);
     }
 
-    @Inject
+    @AssistedInject
     HttpSource(
             ExceptionWitness.Factory exceptionWitnessFactory,
             EventBus eventBus,
-            GripServer server) {
+            GripServer server,
+            @Assisted Properties properties) {
+        this(exceptionWitnessFactory, eventBus, server, properties.getProperty(PATH_PROPERTY));
+    }
+
+    @AssistedInject
+    HttpSource(
+            ExceptionWitness.Factory exceptionWitnessFactory,
+            EventBus eventBus,
+            GripServer server,
+            @Assisted String path) {
         super(exceptionWitnessFactory);
-        final String path = GripServer.IMAGE_UPLOAD_PATH; //TODO make this user-configurable
+        this.path = path;
         this.imageHandler = handlers.computeIfAbsent(path, HttpImageHandler::new);
         this.imageOutput = new OutputSocket<>(eventBus, outputHint);
         this.eventBus = eventBus;
@@ -76,7 +91,7 @@ public class HttpSource extends Source {
 
     @Override
     public String getName() {
-        return "HTTP source";
+        return path;
     }
 
     @Override
@@ -96,9 +111,9 @@ public class HttpSource extends Source {
 
     @Override
     public Properties getProperties() {
-        // Don't need any special properties; everything is handled by the server
-        // TODO make the image upload path user-configurable
-        return new Properties();
+        Properties properties = new Properties();
+        properties.setProperty(PATH_PROPERTY, path);
+        return properties;
     }
 
     @Override
