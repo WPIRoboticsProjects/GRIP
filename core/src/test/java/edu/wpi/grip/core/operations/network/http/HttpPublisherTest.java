@@ -33,16 +33,16 @@ import static org.junit.Assert.fail;
 
 public class HttpPublisherTest {
 
-    private final String dataPath = "/GRIP/data";
-    private final String noDataPath = "/GRIP/data?no_data_here";
-    private final String empty = "{}";
-    private final String name = "foo";
-    private final String json = "{\n  \"foo\": 1.0\n}";
+    private static final String dataPath = "/GRIP/data";
+    private static final String noDataPath = "/GRIP/data?no_data_here";
+    private static final String empty = "{}";
+    private static final String name = "foo";
+    private static final String json = "{\n  \"foo\": 1.0\n}";
+    private static final String unexpectedResponseMsg = "Unexpected response to data request";
 
     private EventBus eventBus;
     private GripServer server;
     private DataHandler dataHandler;
-    private HttpPublishManager manager;
     private HttpPublishOperation<Number, NumberPublishable, Double> operation;
 
     private HttpClient client;
@@ -53,9 +53,8 @@ public class HttpPublisherTest {
         server = GripServerTest.makeServer(new GripServerTest.TestServerFactory(), ProjectSettings::new);
         unclaimDataHandler();
         dataHandler = new DataHandler(eventBus);
-        manager = new HttpPublishManager(server, dataHandler);
 
-        operation = new HttpPublishOperation<Number, NumberPublishable, Double>(manager, NumberPublishable::new) {};
+        operation = new HttpPublishOperation<Number, NumberPublishable, Double>(new HttpPublishManager(server, dataHandler), NumberPublishable::new) {};
 
         client = HttpClients.createDefault();
 
@@ -77,9 +76,9 @@ public class HttpPublisherTest {
 
     @SuppressWarnings("unchecked")
     private void perform() {
-        InputSocket<?>[] inputs = operation.createInputSockets(eventBus);
-        ((InputSocket<Number>) inputs[0]).setValue(1.0);
-        ((InputSocket<String>) inputs[1]).setValue(name);
+        InputSocket[] inputs = operation.createInputSockets(eventBus);
+        inputs[0].setValue(1.0);
+        inputs[1].setValue(name);
         operation.perform(
                 inputs,
                 operation.createOutputSockets(eventBus),
@@ -95,7 +94,7 @@ public class HttpPublisherTest {
     @Test
     public void testWithData() throws IOException {
         perform();
-        assertEquals("Data was not what was expected", json, doGetText(dataPath));
+        assertEquals(unexpectedResponseMsg, json, doGetText(dataPath));
         assertEquals("Shouldn't be data on this path", empty, doGetText(noDataPath));
     }
 
@@ -122,11 +121,11 @@ public class HttpPublisherTest {
     public void testDataSuppliers() throws IOException {
         perform();
         dataHandler.addDataSupplier("some_data", () -> "some_value");
-        assertEquals("Data was not what was expected", "{\n  \"foo\": 1.0,\n  \"some_data\": \"some_value\"\n}", doGetText(dataPath));
-        assertEquals("Data was not what was expected", json, doGetText("/GRIP/data?foo"));
+        assertEquals(unexpectedResponseMsg, "{\n  \"foo\": 1.0,\n  \"some_data\": \"some_value\"\n}", doGetText(dataPath));
+        assertEquals(unexpectedResponseMsg, json, doGetText("/GRIP/data?foo"));
         dataHandler.removeDataSupplier("some_data");
-        assertEquals("Data was not what was expected", json, doGetText("/GRIP/data?foo"));
-        assertEquals("Data was not what was expected", json, doGetText(dataPath));
+        assertEquals(unexpectedResponseMsg, json, doGetText("/GRIP/data?foo"));
+        assertEquals(unexpectedResponseMsg, json, doGetText(dataPath));
     }
 
     @Test(expected = NullPointerException.class)

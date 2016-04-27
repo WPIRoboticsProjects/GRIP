@@ -45,6 +45,7 @@ public abstract class GenericHandler extends AbstractHandler {
      * Creates a generic handler for all contexts on the server.
      */
     protected GenericHandler() {
+        super();
         context = null;
     }
 
@@ -72,6 +73,7 @@ public abstract class GenericHandler extends AbstractHandler {
      * @throws IllegalArgumentException if the given context has already been claimed
      */
     protected GenericHandler(String context, boolean doClaim) {
+        super();
         checkNotNull(context);
         if (isClaimed(context)) {
             throw new IllegalArgumentException("The given context has already been claimed: " + context);

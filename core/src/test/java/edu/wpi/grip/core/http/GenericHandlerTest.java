@@ -8,7 +8,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.eclipse.jetty.server.Request;
 import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -17,11 +16,6 @@ import static org.junit.Assert.assertTrue;
 public class GenericHandlerTest {
 
     private GenericHandler gh;
-
-    @Before
-    public void setUp() {
-
-    }
 
     @Test(expected = NullPointerException.class)
     public void testNullContext() {
@@ -33,7 +27,8 @@ public class GenericHandlerTest {
         gh = new MockGenericHandler();
         gh = new MockGenericHandler("testNoClaim");
         gh = new MockGenericHandler("testNoClaim", false);
-        // No assert or fail -- an exception would be thrown if something went wrong
+        // An exception will be thrown if something went wrong
+        assertTrue(true);
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -74,7 +69,7 @@ public class GenericHandlerTest {
 
         @Override
         public void handle(String target, Request baseRequest, HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-
+            // Do nothing, this class is only used for testing automatic claims
         }
     }
 

@@ -51,6 +51,9 @@ public class HttpPipelineSwitcher extends PedanticHandler {
                 // Since this will never be called when on the RoboRIO, the lack of the JavaFX jar won't be an issue.
                 Platform.runLater(() -> project.open(projectXml));
                 break;
+            default:
+                // Will never happen unless a new entry is added to GRIPMode (unlikely)
+                throw new IllegalStateException("Unknown GRIP mode: " + mode);
         }
         response.setStatus(HttpServletResponse.SC_CREATED);
         baseRequest.setHandled(true);

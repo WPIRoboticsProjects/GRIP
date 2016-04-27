@@ -7,12 +7,11 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.http.HttpVersion;
-import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.BasicHttpEntity;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.params.CoreProtocolPNames;
+import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.Server;
@@ -30,12 +29,11 @@ public class PedanticHandlerTest {
     private HandlerCollection handlers;
     private MockHandler handler1, handler2, handler3;
     private Server server;
-    private DefaultHttpClient client;
+    private HttpClient client;
 
     @Before
     public void setUp() throws Exception {
-        client = new DefaultHttpClient();
-        client.getParams().setParameter(CoreProtocolPNames.PROTOCOL_VERSION, HttpVersion.HTTP_1_1);
+        client = HttpClients.createDefault();
         handlers = new HandlerCollection(true);
         server = new Server(0);
         server.setHandler(handlers);
@@ -50,7 +48,7 @@ public class PedanticHandlerTest {
         handler3 = new MockHandler("/path/3");
         handlers.setHandlers(arr(handler1, handler2, handler3));
 
-        sendHttpRequest("/path/1");
+        sendHttpRequest(handler1.getContext());
         assertTrue("Handler 1 should have run", handler1.didRun);
         assertTrue("Handler 2 should have run", handler2.didRun);
         assertFalse("Handler 3 should not have run", handler3.didRun);
@@ -64,7 +62,7 @@ public class PedanticHandlerTest {
         handler3 = new MockHandler("/path/3", true);
         handlers.setHandlers(arr(handler1, handler2, handler3));
 
-        sendHttpRequest("/path/1");
+        sendHttpRequest(handler1.getContext());
         assertTrue("Handler 1 should have run", handler1.didRun);
         assertFalse("Handler 2 should not have run", handler2.didRun);
         assertFalse("Handler 3 should not have run", handler3.didRun);
@@ -76,7 +74,7 @@ public class PedanticHandlerTest {
         handler2 = new MockHandler("/path/");
         handler3 = new MockHandler("/path/3");
         handlers.setHandlers(arr(handler1, handler2, handler3));
-        sendHttpRequest("/path");
+        sendHttpRequest(handler1.getContext());
         assertTrue("Handler 1 should have run", handler1.didRun);
         assertFalse("Handler 2 should not have run", handler2.didRun);
         assertFalse("Handler 3 should not have run", handler3.didRun);
@@ -90,7 +88,9 @@ public class PedanticHandlerTest {
         server.stop();
     }
 
-    private <T> T[] arr(T... a) {
+    @SafeVarargs
+    private static <T> T[] arr(T... a) {
+        // Convert varargs to array because the Jetty API isn't great
         return a;
     }
 
@@ -99,7 +99,7 @@ public class PedanticHandlerTest {
         BasicHttpEntity httpEntity = new BasicHttpEntity();
         httpEntity.setContent(new ByteArrayInputStream("http_request_bytes".getBytes()));
         post.setEntity(httpEntity);
-        CloseableHttpResponse resp = client.execute(post);
+        HttpResponse resp = client.execute(post);
         EntityUtils.consume(resp.getEntity());
     }
 
