@@ -15,7 +15,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.io.IOUtils;
 import org.eclipse.jetty.server.Request;
 
-import javafx.application.Platform;
+import static edu.wpi.grip.core.util.GRIPMode.HEADLESS;
 
 /**
  * Jetty handler responsible for loading pipelines sent over HTTP.
@@ -40,22 +40,21 @@ public class HttpPipelineSwitcher extends PedanticHandler {
             baseRequest.setHandled(true);
             return;
         }
-        String projectXml = new String(IOUtils.toByteArray(request.getInputStream()), "UTF-8");
-        // Need to be careful - this will cause a deadlock if not called from the JavaFX application thread
-        // TODO change code in UI module to make this safe -- there shouldn't be any references to UI code in the core module
         switch (mode) {
             case HEADLESS:
-                project.open(projectXml);
+                project.open(new String(IOUtils.toByteArray(request.getInputStream()), "UTF-8"));
+                response.setStatus(HttpServletResponse.SC_CREATED);
+                baseRequest.setHandled(true);
                 break;
             case GUI:
-                // Since this will never be called when on the RoboRIO, the lack of the JavaFX jar won't be an issue.
-                Platform.runLater(() -> project.open(projectXml));
-                break;
+                // Don't run in GUI mode, it doesn't make much sense and can easily deadlock if pipelines are rapidly posted.
+                // Intentional fall-through to default
             default:
-                // Will never happen unless a new entry is added to GRIPMode (unlikely)
-                throw new IllegalStateException("Unknown GRIP mode: " + mode);
+                // Don't know the mode or the mode is unsupported; let the client know
+                response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                sendTextContent(response, String.format("GRIP is not in the correct mode: should be %s, but is %s", HEADLESS, mode), CONTENT_TYPE_PLAIN_TEXT);
+                baseRequest.setHandled(true);
+                break;
         }
-        response.setStatus(HttpServletResponse.SC_CREATED);
-        baseRequest.setHandled(true);
     }
 }

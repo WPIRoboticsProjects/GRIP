@@ -4,6 +4,9 @@ import edu.wpi.grip.core.serialization.Project;
 import edu.wpi.grip.core.settings.ProjectSettings;
 import edu.wpi.grip.core.util.GRIPMode;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
@@ -13,11 +16,7 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
-
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -87,21 +86,18 @@ public class HttpPipelineSwitcherTest {
     }
 
     @Test
-    @Ignore("Always fails; JavaFX Toolkit doesn't get initialized")
     public void testGui() throws IOException {
-        boolean[] didRun = {false};
         Project project = new Project() {
             @Override
             public void open(String projectXml) {
-                didRun[0] = true;
+                fail("Project should not be opened");
             }
         };
         pipelineSwitcher = new HttpPipelineSwitcher(project, GRIPMode.GUI);
         server.addHandler(pipelineSwitcher);
         HttpResponse response = doPost(GripServer.PIPELINE_UPLOAD_PATH, "dummy data");
-        assertEquals("HTTP status should be 201 Created", 201, response.getStatusLine().getStatusCode());
+        assertEquals("HTTP status should be 500 Internal Error", 500, response.getStatusLine().getStatusCode());
         EntityUtils.consume(response.getEntity());
-        assertTrue("Project was not opened", didRun[0]);
     }
 
     @After

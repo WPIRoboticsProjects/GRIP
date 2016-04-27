@@ -42,6 +42,11 @@ public abstract class GenericHandler extends AbstractHandler {
     public static final String CONTENT_TYPE_HTML = "text/html";
 
     /**
+     * HTTP content type for plain text.
+     */
+    public static final String CONTENT_TYPE_PLAIN_TEXT = "text/plain";
+
+    /**
      * Creates a generic handler for all contexts on the server.
      */
     protected GenericHandler() {
