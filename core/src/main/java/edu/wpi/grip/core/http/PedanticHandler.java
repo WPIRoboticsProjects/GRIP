@@ -1,6 +1,10 @@
 package edu.wpi.grip.core.http;
 
+import edu.wpi.grip.core.exception.GripServerException;
+
 import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -40,7 +44,12 @@ public abstract class PedanticHandler extends GenericHandler {
         if (!this.context.equals(target)) {
             return;
         }
-        handleIfPassed(target, baseRequest, request, response);
+        try {
+            handleIfPassed(target, baseRequest, request, response);
+        } catch (RuntimeException ex) {
+            Logger.getLogger(getClass().getName()).log(Level.SEVERE, "Exception when handling HTTP request", ex);
+            throw new GripServerException("Exception when handling HTTP request", ex);
+        }
     }
 
     /**
