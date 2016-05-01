@@ -1,0 +1,14 @@
+codecov:
+  bot: WPIRoboticsProjects-Bot
+comment:
+  layout: header, changes, diff, sunburst
+coverage:
+  notify:
+    gitter:
+      default:
+        branches:
+        - master
+        url: https://webhooks.gitter.im/e/71322c5dda6c78c5ee0d
+  status:
+    patch:
+      default: {}
