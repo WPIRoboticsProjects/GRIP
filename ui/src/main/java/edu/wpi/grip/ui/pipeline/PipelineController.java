@@ -13,6 +13,7 @@ import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.ui.annotations.ParametrizedController;
 import edu.wpi.grip.ui.dragging.OperationDragService;
+import edu.wpi.grip.ui.dragging.StepDragService;
 import edu.wpi.grip.ui.pipeline.input.InputSocketController;
 import edu.wpi.grip.ui.pipeline.source.SourceController;
 import edu.wpi.grip.ui.pipeline.source.SourceControllerFactory;
@@ -31,6 +32,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 
+import javax.annotation.Nullable;
 import javax.inject.Inject;
 import java.util.Collection;
 import java.util.Map;
@@ -70,6 +72,8 @@ public final class PipelineController {
     private AddSourceView addSourceView;
     @Inject
     private OperationDragService operationDragService;
+    @Inject
+    private StepDragService stepDragService;
 
     private ControllerMap<StepController, Node> stepsMapManager;
     private ControllerMap<SourceController, Node> sourceMapManager;
@@ -98,53 +102,88 @@ public final class PipelineController {
                 dragEvent.acceptTransferModes(TransferMode.ANY);
             });
 
+            stepDragService.getValue().ifPresent(step -> {
+                dragEvent.acceptTransferModes(TransferMode.ANY);
+            });
+
         });
 
         stepBox.setOnDragDropped(mouseEvent -> {
             // If this is an operation being dropped
             operationDragService.getValue().ifPresent(operation -> {
-                // Then we need to figure out where to put it in the pipeline
-                // First create a map of every node in the steps list to its x position
-                final Map<Double, Node> positionMapping = stepsMapManager
-                        .entrySet()
-                        .stream()
-                        .collect(
-                                Collectors
-                                        .toMap(e -> calculateMiddleXPosOfNodeInParent(e.getValue()),
-                                                Map.Entry::getValue));
-
-                // A tree map is an easy way to sort the values
-                final NavigableMap<Double, Node> sortedPositionMapping
-                        = new TreeMap<>(positionMapping);
-
-                // Now we find the sockets that are to the immediate left and
-                // immediate right of the drop point
-
-                // These can be null
-                final Map.Entry<Double, Node>
-                        lowerEntry = sortedPositionMapping.floorEntry(mouseEvent.getX()),
-                        higherEntry = sortedPositionMapping.ceilingEntry(mouseEvent.getX());
-                // These can be null
-                final StepController
-                        lowerStepController =
-                        lowerEntry == null ?
-                                null : stepsMapManager.getWithNode(lowerEntry.getValue());
-                final StepController
-                        higherStepController =
-                        higherEntry == null ?
-                                null : stepsMapManager.getWithNode(higherEntry.getValue());
-                final Step
-                        lowerStep = lowerStepController == null ? null : lowerStepController.getStep(),
-                        higherStep = higherStepController == null ? null : higherStepController.getStep();
-
-
                 operationDragService.completeDrag();
+                final StepPair pair = lowerAndHigherStep(mouseEvent.getX());
                 // Add the new step to the pipeline between these two steps
-                pipeline.addStepBetween(stepFactory.create(operation), lowerStep, higherStep);
+                pipeline.addStepBetween(stepFactory.create(operation), pair.lower, pair.higher);
+            });
+
+            // If this is a step being dropped
+            stepDragService.getValue().ifPresent(step -> {
+                stepDragService.completeDrag();
+                final StepPair pair = lowerAndHigherStep(mouseEvent.getX());
+                // Move the new step to the pipeline between these two steps
+                pipeline.moveStepBetween(step, pair.lower, pair.higher);
             });
         });
 
         addSourcePane.getChildren().add(addSourceView);
+    }
+
+    /**
+     * Simple class for returning two steps
+     */
+    private static final class StepPair {
+        final Step lower;
+        final Step higher;
+
+        StepPair(@Nullable Step lower, @Nullable Step higher) {
+            this.lower = lower;
+            this.higher = higher;
+        }
+    }
+
+    /**
+     * Determines the steps (via the {@link StepController} that are above and below the given
+     * {@code x} value in the list of steps.
+     *
+     * @param x The x value to find what steps this is between
+     * @return The pair of steps that are above and below this x position.
+     */
+    private StepPair lowerAndHigherStep(double x) {
+        // Then we need to figure out where to put it in the pipeline
+        // First create a map of every node in the steps list to its x position
+        final Map<Double, Node> positionMapping = stepsMapManager
+                .entrySet()
+                .stream()
+                .collect(
+                        Collectors
+                                .toMap(e -> calculateMiddleXPosOfNodeInParent(e.getValue()),
+                                        Map.Entry::getValue));
+
+        // A tree map is an easy way to sort the values
+        final NavigableMap<Double, Node> sortedPositionMapping
+                = new TreeMap<>(positionMapping);
+
+        // Now we find the sockets that are to the immediate left and
+        // immediate right of the drop point
+
+        // These can be null
+        final Map.Entry<Double, Node>
+                lowerEntry = sortedPositionMapping.floorEntry(x),
+                higherEntry = sortedPositionMapping.ceilingEntry(x);
+        // These can be null
+        final StepController
+                lowerStepController =
+                lowerEntry == null ?
+                        null : stepsMapManager.getWithNode(lowerEntry.getValue());
+        final StepController
+                higherStepController =
+                higherEntry == null ?
+                        null : stepsMapManager.getWithNode(higherEntry.getValue());
+        return new StepPair(
+                lowerStepController == null ? null : lowerStepController.getStep(),
+                higherStepController == null ? null : higherStepController.getStep()
+        );
     }
 
     private double calculateMiddleXPosOfNodeInParent(Node node) {

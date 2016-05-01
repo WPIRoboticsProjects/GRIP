@@ -8,6 +8,7 @@ import edu.wpi.grip.core.Step;
 import edu.wpi.grip.ui.Controller;
 import edu.wpi.grip.ui.annotations.ParametrizedController;
 import edu.wpi.grip.ui.components.ExceptionWitnessResponderButton;
+import edu.wpi.grip.ui.dragging.StepDragService;
 import edu.wpi.grip.ui.pipeline.input.InputSocketController;
 import edu.wpi.grip.ui.pipeline.input.InputSocketControllerFactory;
 import edu.wpi.grip.ui.util.ControllerMap;
@@ -47,6 +48,7 @@ public class StepController implements Controller {
     private final InputSocketControllerFactory inputSocketControllerFactory;
     private final OutputSocketController.Factory outputSocketControllerFactory;
     private final ExceptionWitnessResponderButton.Factory exceptionWitnessResponderButtonFactory;
+    private final StepDragService stepDragService;
     private final Step step;
 
     private ControllerMap<InputSocketController, Node> inputSocketMapManager;
@@ -67,11 +69,13 @@ public class StepController implements Controller {
             InputSocketControllerFactory inputSocketControllerFactory,
             OutputSocketController.Factory outputSocketControllerFactory,
             ExceptionWitnessResponderButton.Factory exceptionWitnessResponderButtonFactory,
+            StepDragService stepDragService,
             @Assisted Step step) {
         this.pipeline = pipeline;
         this.inputSocketControllerFactory = inputSocketControllerFactory;
         this.outputSocketControllerFactory = outputSocketControllerFactory;
         this.exceptionWitnessResponderButtonFactory = exceptionWitnessResponderButtonFactory;
+        this.stepDragService = stepDragService;
         this.step = step;
     }
 
@@ -93,6 +97,17 @@ public class StepController implements Controller {
         for (OutputSocket<?> outputSocket : step.getOutputSockets()) {
             outputSocketMapManager.add(outputSocketControllerFactory.create(outputSocket));
         }
+
+        root.setOnDragDetected(event -> {
+            stepDragService.beginDrag(this.step, root, "step");
+            event.consume();
+        });
+
+        root.setOnDragDone(event -> {
+            stepDragService.completeDrag();
+            event.consume();
+        });
+
     }
 
     /**
