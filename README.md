@@ -9,9 +9,27 @@
 
 # GRIP Computer Vision Engine
 
-GRIP (the Graphically Represented Image Processing engine) is a program for rapidly prototyping and deploying computer
-vision algorithms, primarily for robotics applications.  It has been released with features designed for the 
-2016 FIRST Robotics Competition Season.
+GRIP (the Graphically Represented Image Processing engine) is an application for rapidly prototyping and deploying computer
+vision algorithms, primarily for robotics applications.
+Developing a vision program can be difficult because it is hard to visualize the intermediate results. 
+GRIP simplifies and accelerates the creation of vision systems for experienced users and reduces the barrier to entry for inexperienced users.
+As a result, many teams with minimal computer vision knowledge successfully used GRIP in the 2016 FIRST Robotics Competition game.
+
+# Features
+
+ - Intuitive drag and drop UI.
+ - Active development community.
+ - Extensible!
+ - Deploys and runs headless.
+ - Supports various network protocols
+   - [Network Tables](https://github.com/PeterJohnson/ntcore)
+   - [Robot Operating System (ROS)](http://www.ros.org/)
+ - OS Support:
+     - Windows
+     - OSX
+     - Linux
+     - Embedded Linux ARM (NI RoboRIO)
+
 
 ## Getting Started
 
