@@ -1,5 +1,6 @@
 package edu.wpi.grip.core.operations.composite;
 
+import com.google.common.base.Stopwatch;
 import com.google.common.eventbus.EventBus;
 import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.Operation;
@@ -14,7 +15,7 @@ import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Optional;
-import java.util.Properties;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -32,8 +33,7 @@ public class SaveImageOperation implements Operation {
     private final Object imageLock = new Object();
     private final BytePointer imagePointer = new BytePointer();
     private Optional<Thread> saveThread = Optional.empty();
-    private volatile boolean connected = false;
-    private long startTime = System.nanoTime();
+    private Stopwatch stopwatch = Stopwatch.createStarted();
     private int numSteps = 0;
     private SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd_HHmmss.SSS");
     private String prefix = "./";
@@ -47,7 +47,8 @@ public class SaveImageOperation implements Operation {
         logger.info("Starting image saver");
         byte[] buffer = new byte[128 * 1024];
         int bufferSize;
-        String prefix, suffix;
+        String prefix;
+        String suffix;
         while (!Thread.currentThread().isInterrupted()) {
             try {
                 // Wait for the main thread to put a new image.
@@ -62,14 +63,13 @@ public class SaveImageOperation implements Operation {
                     suffix = this.suffix;
                 }
             } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
                 break;
             }
 
             // Write the file
-            try {
-                FileOutputStream out = new FileOutputStream(prefix + format.format(new Date()) + suffix);
+            try (FileOutputStream out = new FileOutputStream(prefix + format.format(new Date()) + suffix)) {
                 out.write(buffer, 0, bufferSize);
-                out.close();
             } catch (IOException e) {
                 logger.log(Level.WARNING, e.getMessage(), e);
             }
@@ -143,16 +143,12 @@ public class SaveImageOperation implements Operation {
             throw new IllegalArgumentException("Input image must not be empty");
         }
 
-        //if (period.doubleValue() < 0.03) {
-        //    throw new IllegalArgumentException("Delay must be more than 30 ms");
-        //}
-
         // don't save new image until period expires
-        long curTime = System.nanoTime();
-        if ((curTime - startTime) < period.doubleValue()*1000000000L) {
+        if (stopwatch.elapsed(TimeUnit.NANOSECONDS) < period.doubleValue()*1000000000L) {
             return;
         }
-        startTime = curTime;
+        stopwatch.reset();
+        stopwatch.start();
 
         synchronized (imageLock) {
             imencode(".jpeg", input, imagePointer, new IntPointer(CV_IMWRITE_JPEG_QUALITY, quality.intValue()));
