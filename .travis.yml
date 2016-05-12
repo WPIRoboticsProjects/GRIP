@@ -7,6 +7,9 @@ matrix:
       jdk: oraclejdk8
     - os: osx
 
+matrix:
+  fast_finish: true
+
 # GCC needs to be 4.8 or higher so that GOMP_4.0 is installed for opencv
 # This is incredibly hard to track down, find the solution for and fix.
 # https://github.com/bytedeco/javacpp-presets/issues/84
