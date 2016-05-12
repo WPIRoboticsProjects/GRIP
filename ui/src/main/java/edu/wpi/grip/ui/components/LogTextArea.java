@@ -19,7 +19,7 @@ public class LogTextArea extends TextArea {
     static final int MAX_STRING_LENGTH = 200000;
     private final BooleanProperty pausedScrollProperty = new SimpleBooleanProperty(false);
     @SuppressWarnings("PMD.AvoidStringBufferField")
-    private final StringBuilder fullLog = new StringBuilder();
+    private StringBuilder fullLog = new StringBuilder();
     private boolean full = false;
 
 
@@ -65,5 +65,11 @@ public class LogTextArea extends TextArea {
 
     public final void setPausedScroll(boolean value) {
         pausedScrollProperty.setValue(value);
+    }
+
+    @Override
+    public void clear() {
+        fullLog = new StringBuilder();
+        full = false;
     }
 }
