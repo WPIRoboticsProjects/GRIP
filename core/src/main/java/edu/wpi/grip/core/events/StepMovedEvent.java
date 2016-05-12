@@ -8,7 +8,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 /**
  * An event that occurs when a new step is moved from one position to another in the pipeline
  */
-public class StepMovedEvent {
+public class StepMovedEvent implements DirtiesSaveEvent {
     private final Step step;
     private final int distance;
 

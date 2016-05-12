@@ -1,9 +1,13 @@
 package edu.wpi.grip.core.serialization;
 
 import com.google.common.annotations.VisibleForTesting;
+import com.google.common.eventbus.Subscribe;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.converters.reflection.PureJavaReflectionProvider;
-import edu.wpi.grip.core.*;
+import edu.wpi.grip.core.Connection;
+import edu.wpi.grip.core.Pipeline;
+import edu.wpi.grip.core.Step;
+import edu.wpi.grip.core.events.DirtiesSaveEvent;
 import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.core.sources.CameraSource;
@@ -27,6 +31,7 @@ public class Project {
 
     protected final XStream xstream = new XStream(new PureJavaReflectionProvider());
     private Optional<File> file = Optional.empty();
+    private boolean saveIsDirty = false;
 
     @Inject
     public void initialize(StepConverter stepConverter,
@@ -69,6 +74,7 @@ public class Project {
     void open(Reader reader) {
         this.pipeline.clear();
         this.xstream.fromXML(reader);
+        saveIsDirty = false;
     }
 
     /**
@@ -81,7 +87,22 @@ public class Project {
         this.file = Optional.of(file);
     }
 
+
     public void save(Writer writer) {
         this.xstream.toXML(this.pipeline, writer);
+        saveIsDirty = false;
+    }
+
+    public boolean isSaveDirty() {
+        return saveIsDirty;
+    }
+
+    @Subscribe
+    public void onDirtiesSaveEvent(DirtiesSaveEvent dirtySaveEvent) {
+        // Only update the flag the save isn't already dirty
+        // We don't need to be redundantly checking if the event dirties the save.
+        if (!saveIsDirty && dirtySaveEvent.doesDirtySave()) {
+            saveIsDirty = true;
+        }
     }
 }
