@@ -13,12 +13,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.DataFormat;
-import javafx.scene.input.Dragboard;
-import javafx.scene.input.TransferMode;
 import javafx.scene.layout.GridPane;
-
-import java.util.Collections;
 
 /**
  * A JavaFX control that renders information about an {@link Operation}.  This is used in the palette view to present
@@ -76,18 +71,14 @@ public class OperationController implements Controller {
 
 
         root.setOnDragDetected(mouseEvent -> {
-            // Create a snapshot to use as the cursor
-            final ImageView preview = new ImageView(root.snapshot(null, null));
-
-            final Dragboard db = root.startDragAndDrop(TransferMode.ANY);
-            db.setContent(Collections.singletonMap(DataFormat.PLAIN_TEXT, operation.getName()));
-            db.setDragView(preview.getImage());
-            // Begin the dragging
-            root.startFullDrag();
             // Tell the drag service that this is the operation that will be received
-            operationDragService.beginDrag(operation);
+            operationDragService.beginDrag(operation, root, operation.getName());
 
             mouseEvent.consume();
+        });
+
+        root.setOnDragDone(mouseEvent -> {
+            operationDragService.completeDrag();
         });
     }
 

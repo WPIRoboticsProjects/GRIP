@@ -232,14 +232,13 @@ public class Pipeline implements ConnectionValidator, SettingsProvider {
     }
 
     /**
-     * Adds the step between two other steps.
-     * @param stepToAdd The step to add to the pipeline
-     * @param lower     The step to be added above
-     * @param higher    The step to be added below
+     * Finds the index between the two steps
+     * @param lower The lower step
+     * @param higher The higher step
+     * @return The index that is in between the two of these steps
      */
-    public void addStepBetween(Step stepToAdd, @Nullable Step lower, @Nullable Step higher) {
-        checkNotNull(stepToAdd, "The step to add cannot be null");
-        int index = readStepsSafely(steps -> {
+    private int indexBetween(@Nullable Step lower, @Nullable Step higher) {
+        return readStepsSafely(steps -> {
             // If not in the list these can return -1
             int lowerIndex = steps.indexOf(lower);
             int upperIndex = steps.indexOf(higher);
@@ -259,7 +258,31 @@ public class Pipeline implements ConnectionValidator, SettingsProvider {
                 return steps.size();
             }
         });
+    }
+
+    /**
+     * Adds the step between two other steps.
+     * @param stepToAdd The step to add to the pipeline
+     * @param lower     The step to be added above
+     * @param higher    The step to be added below
+     */
+    public void addStepBetween(Step stepToAdd, @Nullable Step lower, @Nullable Step higher) {
+        checkNotNull(stepToAdd, "The step to add cannot be null");
+        final int index = indexBetween(lower, higher);
         addStep(index, stepToAdd);
+    }
+
+    /**
+     *
+     * @param toMove The step to move
+     * @param lower The lower step
+     * @param higher The upper step
+     */
+    public void moveStepBetween(Step toMove, @Nullable Step lower, @Nullable Step higher) {
+        checkNotNull(toMove, "The step to move cannot be null");
+        final int index = indexBetween(lower, higher);
+        final int currentIndex = readStepsSafely(steps -> steps.indexOf(toMove));
+        moveStep(toMove, index > currentIndex ? index - (currentIndex + 1 ) : index - currentIndex);
     }
 
     public void addStep(int index, Step step) {

@@ -335,4 +335,34 @@ public class PipelineTest {
 
         pipeline.addStepBetween(stepToAdd, upperStep, lowerStep);
     }
+
+    @Test
+    public void testMoveStepToLeft() {
+        final Step
+                stepToMove = new MockStep(),
+                lowerStep = new MockStep(),
+                upperStep = new MockStep();
+        pipeline.addStep(lowerStep);
+        pipeline.addStep(upperStep);
+        pipeline.addStep(stepToMove);
+        pipeline.moveStepBetween(stepToMove, lowerStep, upperStep);
+
+        assertEquals("The step should have been moved within the pipeline",
+                Arrays.asList(lowerStep, stepToMove, upperStep), pipeline.getSteps());
+    }
+
+    @Test
+    public void testMoveStepToRight() {
+        final Step
+                stepToMove = new MockStep(),
+                lowerStep = new MockStep(),
+                upperStep = new MockStep();
+        pipeline.addStep(stepToMove);
+        pipeline.addStep(lowerStep);
+        pipeline.addStep(upperStep);
+        pipeline.moveStepBetween(stepToMove, lowerStep, upperStep);
+
+        assertEquals("The step should have been moved within the pipeline",
+                Arrays.asList(lowerStep, stepToMove, upperStep), pipeline.getSteps());
+    }
 }
