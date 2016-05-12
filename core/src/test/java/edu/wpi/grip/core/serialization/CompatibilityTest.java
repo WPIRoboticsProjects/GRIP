@@ -76,7 +76,7 @@ public class CompatibilityTest {
     }
 
     @Test
-    public void testFoo() throws Exception {
+    public void testCompatibilityIsMaintained() throws Exception {
         assertEquals("The expected number of steps were not found", 50, pipeline.getSteps().size());
         assertEquals("The expected number of sources were not found", 2, pipeline.getSources().size());
         pipeline.clear();
