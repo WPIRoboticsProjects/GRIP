@@ -17,7 +17,7 @@ plugins {
     id 'eclipse'
     id 'jacoco'
     id 'com.google.osdetector' version '1.4.0'
-    id 'com.github.johnrengelman.shadow' version '1.2.2'
+    id 'com.github.johnrengelman.shadow' version '1.2.3'
 }
 apply plugin: 'nebula-aggregate-javadocs'
 
@@ -371,5 +371,5 @@ task jacocoRootReport(type: JacocoReport, group: 'Coverage reports') {
 check.dependsOn jacocoRootReport
 
 task wrapper(type: Wrapper) {
-    gradleVersion = '2.10'
+    gradleVersion = '2.13'
 }
