@@ -109,7 +109,6 @@ public class GRIPCoreModule extends AbstractModule {
 
         bind(ConnectionValidator.class).to(Pipeline.class);
         bind(Source.SourceFactory.class).to(Source.SourceFactoryImpl.class);
-        bind(CameraSource.FrameGrabberFactory.class).to(CameraSource.FrameGrabberFactoryImpl.class);
         install(new FactoryModuleBuilder()
                 .implement(CameraSource.class, CameraSource.class)
                 .build(CameraSource.Factory.class));
