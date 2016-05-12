@@ -91,7 +91,7 @@ allprojects {
     apply plugin: 'net.ltgt.errorprone'
 
     configurations.errorprone {
-        resolutionStrategy.force 'com.google.errorprone:error_prone_core:2.0.8'
+        resolutionStrategy.force 'com.google.errorprone:error_prone_core:2.0.9'
     }
 
 
