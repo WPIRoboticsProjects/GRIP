@@ -52,14 +52,14 @@ public class Connection<T> {
         if (event.getConnection().equals(this)) {
             inputSocket.addConnection(this);
             outputSocket.addConnection(this);
-            inputSocket.setValueOptional(outputSocket.getValue());
+            inputSocket.setValueToValue(outputSocket.getValue());
         }
     }
 
     @Subscribe
     public void onOutputChanged(SocketChangedEvent e) {
         if (e.getSocket() == outputSocket) {
-            inputSocket.setValueOptional(outputSocket.getValue());
+            inputSocket.setValueToValue(outputSocket.getValue());
         }
     }
 

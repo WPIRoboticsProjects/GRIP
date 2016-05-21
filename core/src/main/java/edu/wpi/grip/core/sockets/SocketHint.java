@@ -1,6 +1,8 @@
 package edu.wpi.grip.core.sockets;
 
 import com.google.common.base.MoreObjects;
+import edu.wpi.grip.core.values.Value;
+import edu.wpi.grip.core.values.ValueFactory;
 
 import javax.annotation.Nullable;
 import java.util.Arrays;
@@ -29,6 +31,7 @@ public interface SocketHint<T> {
         private final Optional<Supplier<T>> initialValueSupplier;
         private final View view;
         private final Optional<T[]> domain;
+        private final ValueFactory<T> valueFactory;
 
         /**
          * @param type                 The type of value held by the socket.
@@ -45,6 +48,7 @@ public interface SocketHint<T> {
             this.initialValueSupplier = initialValueSupplier;
             this.view = view;
             this.domain = domain;
+            this.valueFactory = ValueFactory.createFactory(type);
         }
 
         @Override
@@ -82,11 +86,16 @@ public interface SocketHint<T> {
         }
 
         @Override
-        public Optional<T> createInitialValue() {
+        public ValueFactory<T> valueFactory() {
+            return valueFactory;
+        }
+
+        @Override
+        public Value<T> createInitialValue() {
             if (initialValueSupplier.isPresent()) {
-                return Optional.ofNullable(initialValueSupplier.get().get());
+                return valueFactory().create(initialValueSupplier.get().get());
             }
-            return Optional.empty();
+            return valueFactory().create(null);
         }
 
         @Override
@@ -111,10 +120,10 @@ public interface SocketHint<T> {
      *
      * @param <T> The type of the SocketHint
      */
-    final class IdentiferOverridingSocketHintDecorator<T> extends SocketHintDecorator<T> {
+    final class IdentifierOverridingSocketHintDecorator<T> extends SocketHintDecorator<T> {
         private final String identifier;
 
-        public IdentiferOverridingSocketHintDecorator(SocketHint<T> decorated, String identifier) {
+        public IdentifierOverridingSocketHintDecorator(SocketHint<T> decorated, String identifier) {
             super(decorated);
             this.identifier = checkNotNull(identifier, "identifier cannot be null");
         }
@@ -167,7 +176,12 @@ public interface SocketHint<T> {
         }
 
         @Override
-        public Optional<T> createInitialValue() {
+        public ValueFactory<T> valueFactory() {
+            return decorated.valueFactory();
+        }
+
+        @Override
+        public Value<T> createInitialValue() {
             return decorated.createInitialValue();
         }
     }
@@ -204,7 +218,14 @@ public interface SocketHint<T> {
      *
      * @return Optionally, the initial value for the socket
      */
-    Optional<T> createInitialValue();
+    Value<T> createInitialValue();
+
+    /**
+     * A factory for creating values to hold a {@link Socket} value
+     *
+     * @return A factory for this type of SocketHint
+     */
+    ValueFactory<T> valueFactory();
 
 
     class Builder<T> {

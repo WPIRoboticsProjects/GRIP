@@ -119,8 +119,8 @@ public final class MultiImageFileSource extends Source implements PreviousNext {
 
     @Override
     protected boolean updateOutputSockets() {
-        if (!currentImage.equals(outputSocket.getValue())) {
-            outputSocket.setValueOptional(currentImage);
+        if (!currentImage.equals(outputSocket.getValue()) && currentImage.isPresent()) {
+            outputSocket.setValue(currentImage.get());
             return true;
         } else {
             return false;

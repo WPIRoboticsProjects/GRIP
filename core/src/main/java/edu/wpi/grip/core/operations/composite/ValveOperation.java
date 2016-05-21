@@ -2,10 +2,8 @@ package edu.wpi.grip.core.operations.composite;
 
 
 import com.google.common.eventbus.EventBus;
-import edu.wpi.grip.core.*;
+import edu.wpi.grip.core.Operation;
 import edu.wpi.grip.core.sockets.*;
-
-import java.util.Optional;
 
 public class ValveOperation implements Operation {
     @Override
@@ -55,9 +53,7 @@ public class ValveOperation implements Operation {
         final InputSocket<Boolean> switchHint = (InputSocket<Boolean>) inputs[0];
         // If the input is true pass the value through
         if (switchHint.getValue().get()) {
-            outputs[0].setValueOptional(((InputSocket) inputs[1]).getValue());
-        } else {
-            outputs[0].setValueOptional((Optional) Optional.empty());
+            outputs[0].setValueToValue(((InputSocket) inputs[1]).getValue());
         }
     }
 }
