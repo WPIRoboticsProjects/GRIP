@@ -16,7 +16,9 @@ import edu.wpi.grip.ui.components.StartStoppableButton;
 import edu.wpi.grip.ui.util.DPIUtility;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.SplitPane;
@@ -26,6 +28,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
+import javafx.stage.Stage;
 import org.controlsfx.control.StatusBar;
 
 import javax.inject.Inject;
@@ -207,6 +210,15 @@ public class MainWindowController {
                 eventBus.post(new ProjectSettingsChangedEvent(projectSettings));
             }
         });
+    }
+
+    @FXML
+    public void showProjectAboutDialog() throws IOException {
+        Parent about = FXMLLoader.load(Main.class.getResource("AboutDialog.fxml"));
+        Stage aboutDialogStage = new Stage();
+        aboutDialogStage.setScene(new Scene(about));
+        aboutDialogStage.setAlwaysOnTop(true);
+        aboutDialogStage.show();
     }
 
     @FXML

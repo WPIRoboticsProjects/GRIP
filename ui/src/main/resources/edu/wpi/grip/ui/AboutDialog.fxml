@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="330.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="edu.wpi.grip.ui.AboutDialogController">
+   <children>
+      <Pane VBox.vgrow="ALWAYS" />
+      <HBox>
+         <children>
+            <Pane HBox.hgrow="ALWAYS" />
+            <ImageView fitHeight="156.0" fitWidth="156.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@icons/grip.png" />
+               </image>
+            </ImageView>
+            <Pane HBox.hgrow="ALWAYS" />
+            <VBox HBox.hgrow="ALWAYS">
+               <children>
+                  <Text strokeType="OUTSIDE" strokeWidth="0.0" text="GRIP">
+                     <font>
+                        <Font name="Roboto Bold" size="64.0" />
+                     </font>
+                  </Text>
+                  <Text fx:id="versionNumberText" strokeType="OUTSIDE" strokeWidth="0.0" text="Version 0.0.0">
+                     <font>
+                        <Font name="Roboto Regular" size="14.0" />
+                     </font>
+                  </Text>
+               </children>
+            </VBox>
+            <Pane HBox.hgrow="ALWAYS" />
+         </children>
+      </HBox>
+      <Pane VBox.vgrow="ALWAYS">
+         <VBox.margin>
+            <Insets />
+         </VBox.margin>
+      </Pane>
+      <HBox>
+         <children>
+            <Pane HBox.hgrow="ALWAYS" />
+            <Text fill="#818181" strokeType="OUTSIDE" strokeWidth="0.0" text="GRIP is licensed under a 3 Clause BSD License">
+               <font>
+                  <Font name="Roboto Regular" size="12.0" />
+               </font></Text>
+            <Pane HBox.hgrow="ALWAYS" />
+         </children>
+         <padding>
+            <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+         </padding>
+      </HBox>
+   </children>
+</VBox>
