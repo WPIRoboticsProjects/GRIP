@@ -84,6 +84,7 @@ public class Operations {
                 () -> new ROSPublishOperation<LinesReport>(rosPublishFactory, JavaToMessageConverter.LINES) {
                 },
                 PublishVideoOperation::new,
+                SaveImageOperation::new,
                 DistanceTransformOperation::new,
                 NormalizeOperation::new,
                 WatershedOperation::new,
