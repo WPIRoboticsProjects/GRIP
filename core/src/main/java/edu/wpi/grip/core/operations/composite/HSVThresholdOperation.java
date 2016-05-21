@@ -24,9 +24,9 @@ public class HSVThresholdOperation extends ThresholdOperation {
 
     private static final Logger logger = Logger.getLogger(HSVThresholdOperation.class.getName());
     private final SocketHint<Mat> inputHint = SocketHints.Inputs.createMatSocketHint("Input", false);
-    private final SocketHint<List> hueHint = SocketHints.Inputs.createNumberListRangeSocketHint("Hue", 0.0, 180.0);
-    private final SocketHint<List> saturationHint = SocketHints.Inputs.createNumberListRangeSocketHint("Saturation", 0.0, 255.0);
-    private final SocketHint<List> valueHint = SocketHints.Inputs.createNumberListRangeSocketHint("Value", 0.0, 255.0);
+    private final SocketHint<List> hueHint = SocketHints.Inputs.createNumberListRangeSocketHint("Hue", 0.0, 1);
+    private final SocketHint<List> saturationHint = SocketHints.Inputs.createNumberListRangeSocketHint("Saturation", 0.0, 1);
+    private final SocketHint<List> valueHint = SocketHints.Inputs.createNumberListRangeSocketHint("Value", 0.0, 1);
 
     private final SocketHint<Mat> outputHint = SocketHints.Outputs.createMatSocketHint("Output");
 
@@ -75,13 +75,13 @@ public class HSVThresholdOperation extends ThresholdOperation {
         final Mat output = outputSocket.getValue().get();
 
         final Scalar lowScalar = new Scalar(
-                channel1.get(0).doubleValue(),
-                channel2.get(0).doubleValue(),
-                channel3.get(0).doubleValue(), 0);
+                channel1.get(0).doubleValue() * 180,
+                channel2.get(0).doubleValue() * 255,
+                channel3.get(0).doubleValue() * 255, 0);
         final Scalar highScalar = new Scalar(
-                channel1.get(1).doubleValue(),
-                channel2.get(1).doubleValue(),
-                channel3.get(1).doubleValue(), 0);
+                channel1.get(1).doubleValue() * 180,
+                channel2.get(1).doubleValue() * 255,
+                channel3.get(1).doubleValue() * 255, 0);
 
         final Mat low = reallocateMatIfInputSizeOrWidthChanged(dataArray, 0, lowScalar, input);
         final Mat high = reallocateMatIfInputSizeOrWidthChanged(dataArray, 1, highScalar, input);

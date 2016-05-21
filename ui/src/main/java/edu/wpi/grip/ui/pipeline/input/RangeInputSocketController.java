@@ -23,6 +23,11 @@ public class RangeInputSocketController extends InputSocketController<List<Numbe
 
     private final RangeSlider slider;
 
+    // The number of decimals to show.
+    private final int numDecimals;
+    // The maximum number of decimals to show.
+    private static final int MAX_DECIMALS = 3;
+
     public interface Factory {
         RangeInputSocketController create(InputSocket<List<Number>> socket);
     }
@@ -50,6 +55,7 @@ public class RangeInputSocketController extends InputSocketController<List<Numbe
 
         final double min = extremes.get(0).doubleValue();
         final double max = extremes.get(1).doubleValue();
+        this.numDecimals = Math.max(MAX_DECIMALS - (int) Math.log10(Math.abs(max - min)), 0);
         final double initialLow = initialValue.get(0).doubleValue();
         final double initialHigh = initialValue.get(1).doubleValue();
 
@@ -97,7 +103,9 @@ public class RangeInputSocketController extends InputSocketController<List<Numbe
     }
 
     private String getLowHighLabelText() {
-        return String.format("%.0f - %.0f", this.slider.getLowValue(), this.slider.getHighValue());
+        return String.format("%." + numDecimals + "f - %." + numDecimals + "f",
+                this.slider.getLowValue(),
+                this.slider.getHighValue());
     }
 
     @Subscribe
