@@ -28,6 +28,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import org.controlsfx.control.StatusBar;
 
@@ -217,7 +218,7 @@ public class MainWindowController {
         Parent about = FXMLLoader.load(Main.class.getResource("AboutDialog.fxml"));
         Stage aboutDialogStage = new Stage();
         aboutDialogStage.setScene(new Scene(about));
-        aboutDialogStage.setAlwaysOnTop(true);
+        aboutDialogStage.initModality(Modality.APPLICATION_MODAL);
         aboutDialogStage.show();
     }
 
