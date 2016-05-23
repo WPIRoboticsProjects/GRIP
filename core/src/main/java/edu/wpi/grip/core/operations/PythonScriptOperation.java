@@ -50,6 +50,13 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * information about what the operation does.
  */
 public class PythonScriptOperation implements Operation {
+    private static final String DEFAULT_NAME = "Python Operation";
+    private static final Logger logger = Logger.getLogger(PythonScriptOperation.class.getName());
+
+
+    private final PythonScriptFile scriptFile;
+    private List<InputSocket> inputSockets; // intentionally using raw types
+    private List<OutputSocket> outputSockets; // intentionally using raw types
 
     public static OperationDescription descriptionFor(PythonScriptFile pythonScriptFile) {
         return OperationDescription.builder()
@@ -59,14 +66,6 @@ public class PythonScriptOperation implements Operation {
                 .category(OperationDescription.Category.MISCELLANEOUS)
                 .build();
     }
-
-    private static final String DEFAULT_NAME = "Python Operation";
-    private static final Logger logger = Logger.getLogger(PythonScriptOperation.class.getName());
-
-
-    private final PythonScriptFile scriptFile;
-    private List<InputSocket> inputSockets; // intentionally using raw types
-    private List<OutputSocket> outputSockets; // intentionally using raw types
 
 
     public PythonScriptOperation(InputSocket.Factory isf, OutputSocket.Factory osf, PythonScriptFile scriptFile) {

@@ -19,7 +19,7 @@ public class PaletteTest {
     @Before
     public void setUp() {
         eventBus = new EventBus();
-        palette = new Palette(eventBus);
+        palette = new Palette();
         eventBus.register(palette);
         operation = new OperationMetaData(OperationDescription.builder()
                 .name("Find Target")

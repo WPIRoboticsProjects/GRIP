@@ -76,14 +76,14 @@ public class Connection<T> {
         // Remove this connection if one of the steps it was connected to was removed
         for (OutputSocket socket : e.getStep().getOutputSockets()) {
             if (socket == this.outputSocket) {
-                this.remove();
+                remove();
                 return;
             }
         }
 
         for (InputSocket socket : e.getStep().getInputSockets()) {
             if (socket == this.inputSocket) {
-                this.remove();
+                remove();
                 return;
             }
         }
@@ -94,7 +94,7 @@ public class Connection<T> {
         // Remove this connection if it's from a source that was removed
         for (OutputSocket socket : e.getSource().getOutputSockets()) {
             if (socket == this.outputSocket) {
-                this.remove();
+                remove();
                 return;
             }
         }

@@ -39,12 +39,17 @@ public class ValveOperation implements Operation {
 
     @Override
     public List<InputSocket> getInputSockets() {
-        return ImmutableList.of(switcherSocket, inputSocket);
+        return ImmutableList.of(
+                switcherSocket,
+                inputSocket
+        );
     }
 
     @Override
     public List<OutputSocket> getOutputSockets() {
-        return ImmutableList.of(outputSocket);
+        return ImmutableList.of(
+                outputSocket
+        );
     }
 
     @Override

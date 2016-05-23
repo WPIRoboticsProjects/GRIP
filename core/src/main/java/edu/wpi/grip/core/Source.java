@@ -62,7 +62,7 @@ public abstract class Source {
      * @return @return An array of {@link OutputSocket}s for the outputs that the source produces.
      */
     public final ImmutableList<OutputSocket> getOutputSockets() {
-        final List<OutputSocket> outputSockets = this.createOutputSockets();
+        final List<OutputSocket> outputSockets = createOutputSockets();
         for (OutputSocket socket : outputSockets) {
             socket.setSource(Optional.of(this));
         }

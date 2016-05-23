@@ -70,7 +70,8 @@ public class BlurOperation implements Operation {
     public List<InputSocket> getInputSockets() {
         return ImmutableList.of(
                 inputSocket,
-                typeSocket
+                typeSocket,
+                radiusSocket
         );
     }
 

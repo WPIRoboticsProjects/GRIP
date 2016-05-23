@@ -48,24 +48,23 @@ public class PublishVideoOperation implements Operation {
     private final Object imageLock = new Object();
     private final BytePointer imagePointer = new BytePointer();
     private volatile boolean connected = false;
-    private Thread serverThread = null;
+    private final Thread serverThread;
     private static int numSteps = 0;
 
     private final InputSocket<Mat> inputSocket;
     private final InputSocket<Number> qualitySocket;
 
-    public PublishVideoOperation(InputSocket.Factory inputSocketFactory, OutputSocket.Factory outputSocketFactory) {
+    public PublishVideoOperation(InputSocket.Factory inputSocketFactory) {
         if (numSteps != 0) {
             throw new IllegalStateException("Only one instance of PublishVideoOperation may exist");
         }
         this.inputSocket = inputSocketFactory.create(SocketHints.Inputs.createMatSocketHint("Image", false));
         this.qualitySocket = inputSocketFactory.create(SocketHints.Inputs.createNumberSliderSocketHint("Quality", 80, 0, 100));
         numSteps = numSteps + 1;
-        if (serverThread == null) {
-            serverThread = new Thread(runServer, "Camera Server");
-            serverThread.setDaemon(true);
-            serverThread.start();
-        }
+
+        serverThread = new Thread(runServer, "Camera Server");
+        serverThread.setDaemon(true);
+        serverThread.start();
     }
 
     /**
@@ -131,7 +130,6 @@ public class PublishVideoOperation implements Operation {
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt(); // This is really unnecessary since the thread is about to exit
                 logger.info("Shutting down camera server");
-                serverThread = null;
                 return;
             } finally {
                 connected = false;
@@ -174,10 +172,7 @@ public class PublishVideoOperation implements Operation {
     @Override
     public synchronized void cleanUp() {
         // Stop the video server if there are no Publish Video steps left
-        if (--numSteps == 0) {
-            if (serverThread != null) {
-                serverThread.interrupt();
-            }
-        }
+        serverThread.interrupt();
+        numSteps --;
     }
 }

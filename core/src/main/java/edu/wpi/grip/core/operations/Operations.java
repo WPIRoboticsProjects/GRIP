@@ -58,7 +58,7 @@ public class Operations {
                 new OperationMetaData(HSVThresholdOperation.DESCRIPTION, () -> new HSVThresholdOperation(isf, osf)),
                 new OperationMetaData(MaskOperation.DESCRIPTION, () -> new MaskOperation(isf, osf)),
                 new OperationMetaData(NormalizeOperation.DESCRIPTION, () -> new NormalizeOperation(isf, osf)),
-                new OperationMetaData(PublishVideoOperation.DESCRIPTION, () -> new PublishVideoOperation(isf, osf)),
+                new OperationMetaData(PublishVideoOperation.DESCRIPTION, () -> new PublishVideoOperation(isf)),
                 new OperationMetaData(ResizeOperation.DESCRIPTION, () -> new ResizeOperation(isf, osf)),
                 new OperationMetaData(RGBThresholdOperation.DESCRIPTION, () -> new RGBThresholdOperation(isf, osf)),
                 new OperationMetaData(SwitchOperation.DESCRIPTION, () -> new SwitchOperation(isf, osf)),

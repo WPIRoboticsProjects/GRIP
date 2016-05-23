@@ -1,7 +1,6 @@
 package edu.wpi.grip.core.util;
 
 import java.io.InputStream;
-import java.util.logging.Logger;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -9,9 +8,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * Utility class for fetching icon streams.
  */
 public final class Icons {
-
-    private static final Logger logger = Logger.getLogger(Icons.class.getName());
-
     /**
      * Gets an image stream for an icon.
      *

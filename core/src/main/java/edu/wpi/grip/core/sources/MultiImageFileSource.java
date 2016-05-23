@@ -120,7 +120,9 @@ public final class MultiImageFileSource extends Source implements PreviousNext {
 
     @Override
     protected List<OutputSocket> createOutputSockets() {
-        return ImmutableList.of(outputSocket);
+        return ImmutableList.of(
+                outputSocket
+        );
     }
 
     @Override

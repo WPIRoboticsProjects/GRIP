@@ -30,12 +30,17 @@ public class AdditionOperation implements Operation {
 
     @Override
     public List<InputSocket> getInputSockets() {
-        return ImmutableList.of(a, b);
+        return ImmutableList.of(
+                a,
+                b
+        );
     }
 
     @Override
     public List<OutputSocket> getOutputSockets() {
-        return ImmutableList.of(c);
+        return ImmutableList.of(
+                c
+        );
     }
 
     @Override

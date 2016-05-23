@@ -32,12 +32,16 @@ public class ThresholdMoving implements Operation {
 
     @Override
     public List<InputSocket> getInputSockets() {
-        return ImmutableList.of(imageSocket);
+        return ImmutableList.of(
+                imageSocket
+        );
     }
 
     @Override
     public List<OutputSocket> getOutputSockets() {
-        return ImmutableList.of(outputSocket);
+        return ImmutableList.of(
+                outputSocket
+        );
     }
 
     @Override

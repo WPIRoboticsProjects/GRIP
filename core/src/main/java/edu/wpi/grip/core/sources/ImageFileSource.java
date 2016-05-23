@@ -99,7 +99,9 @@ public final class ImageFileSource extends Source {
 
     @Override
     public List<OutputSocket> createOutputSockets() {
-        return ImmutableList.of(outputSocket);
+        return ImmutableList.of(
+                outputSocket
+        );
     }
 
     @Override

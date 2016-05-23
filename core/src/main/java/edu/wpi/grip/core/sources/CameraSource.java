@@ -243,7 +243,10 @@ public class CameraSource extends Source implements RestartableService {
 
     @Override
     public List<OutputSocket> createOutputSockets() {
-        return ImmutableList.of(frameOutputSocket, frameRateOutputSocket);
+        return ImmutableList.of(
+                frameOutputSocket,
+                frameRateOutputSocket
+        );
     }
 
     @Override

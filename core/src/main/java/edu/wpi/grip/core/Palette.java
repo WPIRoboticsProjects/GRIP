@@ -1,10 +1,8 @@
 package edu.wpi.grip.core;
 
-import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import edu.wpi.grip.core.events.OperationAddedEvent;
 
-import javax.inject.Inject;
 import javax.inject.Singleton;
 import java.util.Collection;
 import java.util.LinkedHashMap;
@@ -19,13 +17,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
  */
 @Singleton
 public class Palette {
-
-    private final EventBus eventBus;
-
-    @Inject
-    Palette(EventBus eventBus) {
-        this.eventBus = eventBus;
-    }
 
     private final Map<String, OperationMetaData> operations = new LinkedHashMap<>();
 
