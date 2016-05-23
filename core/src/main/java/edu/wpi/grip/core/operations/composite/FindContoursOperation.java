@@ -1,22 +1,35 @@
 package edu.wpi.grip.core.operations.composite;
 
-import com.google.common.eventbus.EventBus;
-import edu.wpi.grip.core.*;
+import com.google.common.collect.ImmutableList;
+import edu.wpi.grip.core.Operation;
+import edu.wpi.grip.core.OperationDescription;
 import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.core.sockets.SocketHint;
 import edu.wpi.grip.core.sockets.SocketHints;
+import edu.wpi.grip.core.util.Icon;
 
-import java.io.InputStream;
-import java.util.Optional;
+import java.util.List;
 
-import static org.bytedeco.javacpp.opencv_core.*;
-import static org.bytedeco.javacpp.opencv_imgproc.*;
+import static org.bytedeco.javacpp.opencv_core.Mat;
+import static org.bytedeco.javacpp.opencv_core.MatVector;
+import static org.bytedeco.javacpp.opencv_imgproc.CV_CHAIN_APPROX_TC89_KCOS;
+import static org.bytedeco.javacpp.opencv_imgproc.CV_RETR_EXTERNAL;
+import static org.bytedeco.javacpp.opencv_imgproc.CV_RETR_LIST;
+import static org.bytedeco.javacpp.opencv_imgproc.findContours;
 
 /**
  * An {@link Operation} that, given a binary image, produces a list of contours of all of the shapes in the image
  */
 public class FindContoursOperation implements Operation {
+
+    public static final OperationDescription DESCRIPTION =
+            OperationDescription.builder()
+                    .name("Find Contours")
+                    .summary("Detects contours in a binary image.")
+                    .category(OperationDescription.Category.FEATURE_DETECTION)
+                    .icon(Icon.iconStream("find-contours"))
+                    .build();
 
     private final SocketHint<Mat> inputHint =
             new SocketHint.Builder<>(Mat.class).identifier("Input").build();
@@ -27,50 +40,39 @@ public class FindContoursOperation implements Operation {
     private final SocketHint<ContoursReport> contoursHint = new SocketHint.Builder<>(ContoursReport.class)
             .identifier("Contours").initialValueSupplier(ContoursReport::new).build();
 
-    @Override
-    public String getName() {
-        return "Find Contours";
+
+    private final InputSocket<Mat> inputSocket;
+    private final InputSocket<Boolean> externalSocket;
+
+    private final OutputSocket<ContoursReport> contoursSocket;
+
+    public FindContoursOperation(InputSocket.Factory inputSocketFactory, OutputSocket.Factory outputSocketFactory) {
+        this.inputSocket = inputSocketFactory.create(inputHint);
+        this.externalSocket = inputSocketFactory.create(externalHint);
+
+        this.contoursSocket = outputSocketFactory.create(contoursHint);
     }
 
     @Override
-    public String getDescription() {
-        return "Detect contours in a binary image.";
+    public List<InputSocket> getInputSockets() {
+        return ImmutableList.of(
+                inputSocket,
+                externalSocket
+        );
     }
 
     @Override
-    public Category getCategory() {
-        return Category.FEATURE_DETECTION;
+    public List<OutputSocket> getOutputSockets() {
+        return ImmutableList.of(
+                contoursSocket
+        );
     }
 
     @Override
-    public Optional<InputStream> getIcon() {
-        return Optional.of(getClass().getResourceAsStream("/edu/wpi/grip/ui/icons/find-contours.png"));
-    }
-
-    @Override
-    public InputSocket<?>[] createInputSockets(EventBus eventBus) {
-        return new InputSocket<?>[]{
-                new InputSocket<>(eventBus, inputHint),
-                new InputSocket<>(eventBus, externalHint),
-        };
-    }
-
-    @Override
-    public OutputSocket<?>[] createOutputSockets(EventBus eventBus) {
-        return new OutputSocket<?>[]{new OutputSocket<>(eventBus, contoursHint)};
-    }
-
-    @Override
-    public Optional<?> createData() {
-        return Optional.of(new Mat());
-    }
-
-    @Override
-    @SuppressWarnings("unchecked")
-    public void perform(InputSocket<?>[] inputs, OutputSocket<?>[] outputs, Optional<?> data) {
-        final Mat input = ((InputSocket<Mat>) inputs[0]).getValue().get();
-        final Mat tmp = ((Optional<Mat>) data).get();
-        final boolean externalOnly = ((InputSocket<Boolean>) inputs[1]).getValue().get();
+    public void perform() {
+        final Mat input = inputSocket.getValue().get();
+        final Mat tmp = new Mat();
+        final boolean externalOnly = externalSocket.getValue().get();
 
         if (input.empty()) {
             return;
@@ -86,7 +88,6 @@ public class FindContoursOperation implements Operation {
         findContours(tmp, contours, externalOnly ? CV_RETR_EXTERNAL : CV_RETR_LIST,
                 CV_CHAIN_APPROX_TC89_KCOS);
 
-        final OutputSocket<ContoursReport> contoursSocket = (OutputSocket<ContoursReport>) outputs[0];
         contoursSocket.setValue(new ContoursReport(contours, input.rows(), input.cols()));
     }
 }

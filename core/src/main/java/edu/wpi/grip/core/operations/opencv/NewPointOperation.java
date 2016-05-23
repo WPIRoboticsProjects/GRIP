@@ -1,17 +1,25 @@
 package edu.wpi.grip.core.operations.opencv;
 
 
-import com.google.common.eventbus.EventBus;
+import com.google.common.collect.ImmutableList;
+import edu.wpi.grip.core.OperationDescription;
 import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.core.sockets.SocketHint;
 import edu.wpi.grip.core.sockets.SocketHints;
+import edu.wpi.grip.core.util.Icon;
 import org.bytedeco.javacpp.opencv_core.Point;
 
-import java.io.InputStream;
-import java.util.Optional;
+import java.util.List;
 
 public class NewPointOperation implements CVOperation {
+
+    public static final OperationDescription DESCRIPTION =
+            CVOperation.defaultBuilder()
+                    .name("New Point")
+                    .summary("Create a point by (x,y) value.")
+                    .icon(Icon.iconStream("point"))
+                    .build();
 
     private final SocketHint<Number> xHint = SocketHints.Inputs.createNumberSpinnerSocketHint("x", -1,
             Integer.MIN_VALUE, Integer.MAX_VALUE);
@@ -19,38 +27,38 @@ public class NewPointOperation implements CVOperation {
             Integer.MIN_VALUE, Integer.MAX_VALUE);
     private final SocketHint<Point> outputHint = SocketHints.Outputs.createPointSocketHint("point");
 
-    @Override
-    public String getName() {
-        return "New Point";
+
+    private final InputSocket<Number> xSocket;
+    private final InputSocket<Number> ySocket;
+
+    private final OutputSocket<Point> outputSocket;
+
+    public NewPointOperation(InputSocket.Factory inputSocketFactory, OutputSocket.Factory outputSocketFactory) {
+        this.xSocket = inputSocketFactory.create(xHint);
+        this.ySocket = inputSocketFactory.create(yHint);
+
+        this.outputSocket = outputSocketFactory.create(outputHint);
     }
 
     @Override
-    public String getDescription() {
-        return "Create a point by (x,y) value.";
+    public List<InputSocket> getInputSockets() {
+        return ImmutableList.of(
+                xSocket,
+                ySocket
+        );
     }
 
     @Override
-    public Optional<InputStream> getIcon() {
-        return Optional.of(getClass().getResourceAsStream("/edu/wpi/grip/ui/icons/point.png"));
+    public List<OutputSocket> getOutputSockets() {
+        return ImmutableList.of(
+                outputSocket
+        );
     }
 
     @Override
-    public InputSocket<?>[] createInputSockets(EventBus eventBus) {
-        return new InputSocket[]{new InputSocket(eventBus, xHint), new InputSocket(eventBus, yHint)};
-    }
-
-    @Override
-    public OutputSocket<?>[] createOutputSockets(EventBus eventBus) {
-        return new OutputSocket[]{new OutputSocket(eventBus, outputHint)};
-    }
-
-    @Override
-    public void perform(InputSocket<?>[] inputs, OutputSocket<?>[] outputs) {
-        final InputSocket<Number> xSocket = (InputSocket<Number>) inputs[0];
-        final InputSocket<Number> ySocket = (InputSocket<Number>) inputs[1];
+    public void perform() {
         final int xValue = xSocket.getValue().get().intValue();
         final int yValue = ySocket.getValue().get().intValue();
-        final OutputSocket<Point> outputSocket = (OutputSocket<Point>) outputs[0];
         outputSocket.setValue(new Point(xValue, yValue));
     }
 }

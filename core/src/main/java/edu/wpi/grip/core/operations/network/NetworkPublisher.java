@@ -30,7 +30,7 @@ public abstract class NetworkPublisher<T> implements AutoCloseable {
      *
      * @param name The new/existing name for the publisher.
      */
-    final void setName(String name) {
+    public final void setName(String name) {
         checkArgument(!name.isEmpty(), "Name cannot be an empty string");
         if (this.name.equals(Optional.of(name))) {
             // The old name and the new name are the same

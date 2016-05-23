@@ -1,18 +1,23 @@
 package edu.wpi.grip.core.operations.composite;
 
-import com.google.common.eventbus.EventBus;
-import edu.wpi.grip.core.*;
+import com.google.common.collect.ImmutableList;
+import edu.wpi.grip.core.Operation;
+import edu.wpi.grip.core.OperationDescription;
 import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.core.sockets.SocketHint;
 import edu.wpi.grip.core.sockets.SocketHints;
+import edu.wpi.grip.core.util.Icon;
 
-import java.io.InputStream;
 import java.util.List;
-import java.util.Optional;
 
-import static org.bytedeco.javacpp.opencv_core.*;
-import static org.bytedeco.javacpp.opencv_imgproc.*;
+import static org.bytedeco.javacpp.opencv_core.Mat;
+import static org.bytedeco.javacpp.opencv_core.MatVector;
+import static org.bytedeco.javacpp.opencv_core.Rect;
+import static org.bytedeco.javacpp.opencv_imgproc.arcLength;
+import static org.bytedeco.javacpp.opencv_imgproc.boundingRect;
+import static org.bytedeco.javacpp.opencv_imgproc.contourArea;
+import static org.bytedeco.javacpp.opencv_imgproc.convexHull;
 
 /**
  * An {@link Operation} that takes in a list of contours and outputs a list of any contours in the input that match
@@ -24,6 +29,14 @@ import static org.bytedeco.javacpp.opencv_imgproc.*;
  * feature we're actually looking for.  So, this operation can help narrow them down.
  */
 public class FilterContoursOperation implements Operation {
+
+    public static final OperationDescription DESCRIPTION =
+            OperationDescription.builder()
+                    .name("Filter Contours")
+                    .summary("Find contours matching certain criteria")
+                    .category(OperationDescription.Category.FEATURE_DETECTION)
+                    .icon(Icon.iconStream("find-contours"))
+                    .build();
 
     private final SocketHint<ContoursReport> contoursHint = new SocketHint.Builder<>(ContoursReport.class)
             .identifier("Contours").initialValueSupplier(ContoursReport::new).build();
@@ -46,7 +59,7 @@ public class FilterContoursOperation implements Operation {
     private final SocketHint<Number> maxHeightHint =
             SocketHints.Inputs.createNumberSpinnerSocketHint("Max Height", 1000, 0, Integer.MAX_VALUE);
 
-    private final SocketHint<List> solidityHint =
+    private final SocketHint<List<Number>> solidityHint =
             SocketHints.Inputs.createNumberListRangeSocketHint("Solidity", 0, 100);
 
     private final SocketHint<Number> minVertexHint =
@@ -62,65 +75,75 @@ public class FilterContoursOperation implements Operation {
             SocketHints.Inputs.createNumberSpinnerSocketHint("Max Ratio", 1000, 0, Integer.MAX_VALUE);
 
 
-    @Override
-    public String getName() {
-        return "Filter Contours";
+    private final InputSocket<ContoursReport> contoursSocket;
+    private final InputSocket<Number> minAreaSocket;
+    private final InputSocket<Number> minPerimeterSocket;
+    private final InputSocket<Number> minWidthSocket, maxWidthSocket;
+    private final InputSocket<Number> minHeightSocket, maxHeightSocket;
+    private final InputSocket<List<Number>> soliditySocket;
+    private final InputSocket<Number> minVertexSocket, maxVertexSocket;
+    private final InputSocket<Number> minRatioSocket, maxRatioSocket;
+
+    private final OutputSocket<ContoursReport> outputSocket;
+
+    public FilterContoursOperation(InputSocket.Factory inputSocketFactory, OutputSocket.Factory outputSocketFactory) {
+        this.contoursSocket = inputSocketFactory.create(contoursHint);
+        this.minAreaSocket = inputSocketFactory.create(minAreaHint);
+        this.minPerimeterSocket = inputSocketFactory.create(minPerimeterHint);
+        this.minWidthSocket = inputSocketFactory.create(minWidthHint);
+        this.maxWidthSocket = inputSocketFactory.create(maxWidthHint);
+        this.minHeightSocket = inputSocketFactory.create(minHeightHint);
+        this.maxHeightSocket = inputSocketFactory.create(maxHeightHint);
+        this.soliditySocket = inputSocketFactory.create(solidityHint);
+        this.minVertexSocket = inputSocketFactory.create(minVertexHint);
+        this.maxVertexSocket = inputSocketFactory.create(maxVertexHint);
+        this.minRatioSocket = inputSocketFactory.create(minRatioHint);
+        this.maxRatioSocket = inputSocketFactory.create(maxRatioHint);
+
+        this.outputSocket = outputSocketFactory.create(contoursHint);
     }
 
     @Override
-    public String getDescription() {
-        return "Find contours matching certain criteria.";
+    public List<InputSocket> getInputSockets() {
+        return ImmutableList.of(
+                contoursSocket,
+                minAreaSocket,
+                minPerimeterSocket,
+                minWidthSocket,
+                maxWidthSocket,
+                minHeightSocket,
+                maxHeightSocket,
+                soliditySocket,
+                maxVertexSocket,
+                minVertexSocket,
+                minRatioSocket,
+                maxRatioSocket
+        );
     }
 
     @Override
-    public Category getCategory() {
-        return Category.FEATURE_DETECTION;
-    }
-
-    @Override
-    public Optional<InputStream> getIcon() {
-        return Optional.of(getClass().getResourceAsStream("/edu/wpi/grip/ui/icons/find-contours.png"));
-    }
-
-    @Override
-    public InputSocket<?>[] createInputSockets(EventBus eventBus) {
-        return new InputSocket<?>[]{
-                new InputSocket<>(eventBus, contoursHint),
-                new InputSocket<>(eventBus, minAreaHint),
-                new InputSocket<>(eventBus, minPerimeterHint),
-                new InputSocket<>(eventBus, minWidthHint),
-                new InputSocket<>(eventBus, maxWidthHint),
-                new InputSocket<>(eventBus, minHeightHint),
-                new InputSocket<>(eventBus, maxHeightHint),
-                new InputSocket<>(eventBus, solidityHint),
-                new InputSocket<>(eventBus, minVertexHint),
-                new InputSocket<>(eventBus, maxVertexHint),
-                new InputSocket<>(eventBus, minRatioHint),
-                new InputSocket<>(eventBus, maxRatioHint),
-        };
-    }
-
-    @Override
-    public OutputSocket<?>[] createOutputSockets(EventBus eventBus) {
-        return new OutputSocket<?>[]{new OutputSocket<>(eventBus, contoursHint)};
+    public List<OutputSocket> getOutputSockets() {
+        return ImmutableList.of(
+                outputSocket
+        );
     }
 
     @Override
     @SuppressWarnings("unchecked")
-    public void perform(InputSocket<?>[] inputs, OutputSocket<?>[] outputs) {
-        final InputSocket<ContoursReport> inputSocket = (InputSocket<ContoursReport>) inputs[0];
-        final double minArea = ((Number) inputs[1].getValue().get()).doubleValue();
-        final double minPerimeter = ((Number) inputs[2].getValue().get()).doubleValue();
-        final double minWidth = ((Number) inputs[3].getValue().get()).doubleValue();
-        final double maxWidth = ((Number) inputs[4].getValue().get()).doubleValue();
-        final double minHeight = ((Number) inputs[5].getValue().get()).doubleValue();
-        final double maxHeight = ((Number) inputs[6].getValue().get()).doubleValue();
-        final double minSolidity = ((List<Number>) inputs[7].getValue().get()).get(0).doubleValue();
-        final double maxSolidity = ((List<Number>) inputs[7].getValue().get()).get(1).doubleValue();
-        final double minVertexCount = ((Number) inputs[8].getValue().get()).doubleValue();
-        final double maxVertexCount = ((Number) inputs[9].getValue().get()).doubleValue();
-        final double minRatio = ((Number) inputs[10].getValue().get()).doubleValue();
-        final double maxRatio = ((Number) inputs[11].getValue().get()).doubleValue();
+    public void perform() {
+        final InputSocket<ContoursReport> inputSocket = contoursSocket;
+        final double minArea = minAreaSocket.getValue().get().doubleValue();
+        final double minPerimeter = minPerimeterSocket.getValue().get().doubleValue();
+        final double minWidth = minWidthSocket.getValue().get().doubleValue();
+        final double maxWidth = maxWidthSocket.getValue().get().doubleValue();
+        final double minHeight = minHeightSocket.getValue().get().doubleValue();
+        final double maxHeight = maxHeightSocket.getValue().get().doubleValue();
+        final double minSolidity = soliditySocket.getValue().get().get(0).doubleValue();
+        final double maxSolidity = soliditySocket.getValue().get().get(1).doubleValue();
+        final double minVertexCount = minVertexSocket.getValue().get().doubleValue();
+        final double maxVertexCount = maxVertexSocket.getValue().get().doubleValue();
+        final double minRatio = minRatioSocket.getValue().get().doubleValue();
+        final double maxRatio = maxRatioSocket.getValue().get().doubleValue();
 
 
         final MatVector inputContours = inputSocket.getValue().get().getContours();
@@ -145,7 +168,7 @@ public class FilterContoursOperation implements Operation {
             final double solidity = 100 * area / contourArea(hull);
             if (solidity < minSolidity || solidity > maxSolidity) continue;
 
-            if(contour.rows() < minVertexCount || contour.rows() > maxVertexCount) continue;
+            if (contour.rows() < minVertexCount || contour.rows() > maxVertexCount) continue;
 
             final double ratio = bb.width() / bb.height();
             if (ratio < minRatio || ratio > maxRatio) continue;
@@ -155,7 +178,6 @@ public class FilterContoursOperation implements Operation {
 
         outputContours.resize(filteredContourCount);
 
-        final OutputSocket<ContoursReport> outputSocket = (OutputSocket<ContoursReport>) outputs[0];
         outputSocket.setValue(new ContoursReport(outputContours,
                 inputSocket.getValue().get().getRows(), inputSocket.getValue().get().getCols()));
     }

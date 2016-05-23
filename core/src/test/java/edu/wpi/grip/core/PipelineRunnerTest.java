@@ -10,8 +10,8 @@ import edu.wpi.grip.core.events.RenderEvent;
 import edu.wpi.grip.core.events.RunPipelineEvent;
 import edu.wpi.grip.core.events.StopPipelineEvent;
 import edu.wpi.grip.core.sockets.InputSocket;
+import edu.wpi.grip.core.sockets.MockInputSocket;
 import edu.wpi.grip.core.sockets.OutputSocket;
-import edu.wpi.grip.core.sockets.SocketHints;
 import edu.wpi.grip.core.util.MockExceptionWitness;
 import net.jodah.concurrentunit.Waiter;
 import org.junit.After;
@@ -21,7 +21,7 @@ import org.junit.experimental.runners.Enclosed;
 import org.junit.runner.RunWith;
 
 import java.io.IOException;
-import java.util.Optional;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
@@ -92,10 +92,12 @@ public class PipelineRunnerTest {
             final String illegalAugmentExceptionMessage = "Kersplat!";
             class OperationThatThrowsExceptionOnPerform implements SimpleOperation {
                 @Override
-                public void perform(InputSocket<?>[] inputs, OutputSocket<?>[] outputs) {
+                public void perform() {
                     throw new IllegalArgumentException(illegalAugmentExceptionMessage);
                 }
             }
+            final Operation operation = new OperationThatThrowsExceptionOnPerform();
+            final OperationMetaData operationMetaData = new OperationMetaData(OperationDescription.builder().name("OperationThatThrowsExceptionOnPerform").build(), () -> operation);
             class ExceptionEventReceiver {
                 private int callCount = 0;
                 private ExceptionEvent event;
@@ -110,7 +112,7 @@ public class PipelineRunnerTest {
             eventBus.register(exceptionEventReceiver);
             eventBus.register(new RenderWaiterResumer(renderWaiter));
 
-            final Step throwingStep = new Step.Factory(eventBus, MockExceptionWitness.simpleFactory(eventBus)).create(new OperationThatThrowsExceptionOnPerform());
+            final Step throwingStep = new Step.Factory(MockExceptionWitness.simpleFactory(eventBus)).create(operationMetaData);
             final PipelineRunner runner = new PipelineRunner(eventBus, () -> ImmutableList.of(), () -> ImmutableList.of(throwingStep));
             runner.addListener(failureListener, MoreExecutors.directExecutor());
 
@@ -148,7 +150,7 @@ public class PipelineRunnerTest {
             renderWaiter = new Waiter();
             sourceCounter = new RunSourceCounter();
             operationCounter = new RunCounterOperation();
-            runCounterStep = new Step.Factory(null, MockExceptionWitness.MOCK_FACTORY).create(operationCounter);
+            runCounterStep = new Step.Factory(MockExceptionWitness.MOCK_FACTORY).create(new OperationMetaData(RunCounterOperation.DESCRIPTION, () -> operationCounter));
             failureListener = new FailureListener();
 
         }
@@ -202,7 +204,9 @@ public class PipelineRunnerTest {
         @Test
         @SuppressWarnings("PMD.AvoidDuplicateLiterals")
         public void testRemovedStepWillNotRun() {
-            final PipelineRunner runner = new PipelineRunner(eventBus, () -> ImmutableList.of(), () -> ImmutableList.of(runCounterStep));
+            final PipelineRunner runner = new PipelineRunner(eventBus,
+                    () -> ImmutableList.of(),
+                    () -> ImmutableList.of(runCounterStep));
             runner.addListener(failureListener, MoreExecutors.directExecutor());
 
             runner.startAsync().awaitRunning();
@@ -309,46 +313,43 @@ public class PipelineRunnerTest {
     }
 
     static class RunCounterOperation implements SimpleOperation {
+        private static final OperationDescription DESCRIPTION = OperationDescription.builder().name("Simple").build();
         private int performCount = 0;
         private int cleanUpCount = 0;
 
         @Override
-        public void perform(InputSocket<?>[] inputSockets, OutputSocket<?>[] outputSockets) {
+        public void perform() {
             performCount++;
         }
 
         @Override
-        public void cleanUp(InputSocket<?>[] inputs, OutputSocket<?>[] outputs, Optional<?> data) {
+        public void cleanUp() {
             cleanUpCount++;
         }
     }
 
     interface SimpleOperation extends Operation {
-        @Override
-        default String getName() {
-            return null;
-        }
+        OperationDescription DESCRIPTION = OperationDescription.builder()
+                .name("Simple Operation")
+                .summary("A simple operation for testing")
+                .build();
 
         @Override
-        default String getDescription() {
-            return null;
-        }
-
-        @Override
-        default InputSocket<?>[] createInputSockets(EventBus eventBus) {
-            return new InputSocket<?>[]{
-                    new InputSocket<Boolean>(new EventBus(), SocketHints.createBooleanSocketHint("Test val", false)) {
+        default List<InputSocket> getInputSockets() {
+            return ImmutableList.of(
+                    new MockInputSocket("Test Socket") {
                         @Override
                         public boolean dirtied() {
                             return true;
                         }
                     }
-            };
+            );
         }
 
+
         @Override
-        default OutputSocket<?>[] createOutputSockets(EventBus eventBus) {
-            return new OutputSocket<?>[0];
+        default List<OutputSocket> getOutputSockets() {
+            return ImmutableList.of();
         }
     }
 

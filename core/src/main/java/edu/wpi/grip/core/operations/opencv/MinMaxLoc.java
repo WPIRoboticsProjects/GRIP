@@ -1,6 +1,7 @@
 package edu.wpi.grip.core.operations.opencv;
 
-import com.google.common.eventbus.EventBus;
+import com.google.common.collect.ImmutableList;
+import edu.wpi.grip.core.OperationDescription;
 import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.core.sockets.SocketHint;
@@ -9,11 +10,18 @@ import org.bytedeco.javacpp.opencv_core;
 import org.bytedeco.javacpp.opencv_core.Mat;
 import org.bytedeco.javacpp.opencv_core.Point;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.List;
 
-/** Operation to call {@link opencv_core#minMaxLoc} */
+/**
+ * Operation to call {@link opencv_core#minMaxLoc}
+ */
 public class MinMaxLoc implements CVOperation {
+
+    public static final OperationDescription DESCRIPTION =
+            CVOperation.defaultBuilder()
+                    .name("Find Min and Max")
+                    .summary("Find the global minimum and manimum in a single channel grayscale image.")
+                    .build();
 
     private final SocketHint<Mat>
             srcInputHint = SocketHints.Inputs.createMatSocketHint("Image", false),
@@ -26,53 +34,57 @@ public class MinMaxLoc implements CVOperation {
     private final SocketHint<Point>
             minLocOutputHint = SocketHints.Outputs.createPointSocketHint("Min Loc"),
             maxLocOutputHint = SocketHints.Outputs.createPointSocketHint("Max Loc");
-    private static Logger logger =  Logger.getLogger(MinMaxLoc.class.getName());
 
-    @Override
-    public String getName() {
-        return "Find Min and Max";
+    private final InputSocket<Mat> srcSocket;
+    private final InputSocket<Mat> maskSocket;
+
+    private final OutputSocket<Number> minValSocket;
+    private final OutputSocket<Number> maxValSocket;
+    private final OutputSocket<Point> minLocSocket;
+    private final OutputSocket<Point> maxLocSocket;
+
+    public MinMaxLoc(InputSocket.Factory inputSocketFactory, OutputSocket.Factory outputSocketFactory) {
+        this.srcSocket = inputSocketFactory.create(srcInputHint);
+        this.maskSocket = inputSocketFactory.create(maskInputHint);
+
+        this.minValSocket = outputSocketFactory.create(minValOutputHint);
+        this.maxValSocket = outputSocketFactory.create(maxValOutputHint);
+        this.minLocSocket = outputSocketFactory.create(minLocOutputHint);
+        this.maxLocSocket = outputSocketFactory.create(maxLocOutputHint);
     }
 
     @Override
-    public String getDescription() {
-        return "Find the global minimum and maximum in a single channel grayscale image.";
+    public List<InputSocket> getInputSockets() {
+        return ImmutableList.of(
+                srcSocket,
+                maskSocket
+        );
     }
 
     @Override
-    @SuppressWarnings("unchecked")
-    public InputSocket<?>[] createInputSockets(EventBus eventBus) {
-        return new InputSocket[] { new InputSocket(eventBus, srcInputHint), new InputSocket(eventBus, maskInputHint) };
+    public List<OutputSocket> getOutputSockets() {
+        return ImmutableList.of(
+                minValSocket,
+                maxValSocket,
+                minLocSocket,
+                maxLocSocket
+        );
     }
 
     @Override
-    @SuppressWarnings("unchecked")
-    public OutputSocket<?>[] createOutputSockets(EventBus eventBus) {
-        return new OutputSocket[] {
-                new OutputSocket(eventBus, minValOutputHint),
-                new OutputSocket(eventBus, maxValOutputHint),
-                new OutputSocket(eventBus, minLocOutputHint),
-                new OutputSocket(eventBus, maxLocOutputHint),
-        };
-    }
-
-    @Override
-    public void perform(InputSocket<?>[] inputs, OutputSocket<?>[] outputs) {
-        final Mat src = (Mat) inputs[0].getValue().get();
-        Mat mask = (Mat) inputs[1].getValue().get();
+    public void perform() {
+        final Mat src = srcSocket.getValue().get();
+        Mat mask = maskSocket.getValue().get();
         if (mask.empty()) mask = null;
-        final double minVal[] = new double [1];
-        final double maxVal[] = new double [1];
-        final Point minLoc = (Point) outputs[2].getValue().get();
-        final Point maxLoc = (Point) outputs[3].getValue().get();
+        final double minVal[] = new double[1];
+        final double maxVal[] = new double[1];
+        final Point minLoc = minLocSocket.getValue().get();
+        final Point maxLoc = maxLocSocket.getValue().get();
 
-        try {
-            opencv_core.minMaxLoc(src, minVal, maxVal, minLoc, maxLoc, mask);
-            ((OutputSocket<Number>) outputs[0]).setValue(minVal[0]);
-            ((OutputSocket<Number>) outputs[1]).setValue(maxVal[0]);
-            ((OutputSocket) outputs[2]).setValue(outputs[2].getValue().get());
-            ((OutputSocket) outputs[3]).setValue(outputs[3].getValue().get());
-        } catch (final Exception e) {
-            logger.log(Level.WARNING, e.getMessage(), e);
-        }
+        opencv_core.minMaxLoc(src, minVal, maxVal, minLoc, maxLoc, mask);
+        minValSocket.setValue(minVal[0]);
+        maxValSocket.setValue(maxVal[0]);
+        minLocSocket.setValue(minLocSocket.getValue().get());
+        maxLocSocket.setValue(maxLocSocket.getValue().get());
     }
 }

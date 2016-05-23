@@ -2,18 +2,19 @@ package edu.wpi.grip.core.sources;
 
 
 import com.google.common.base.StandardSystemProperty;
+import com.google.common.collect.ImmutableList;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import com.google.common.util.concurrent.MoreExecutors;
 import com.google.inject.assistedinject.Assisted;
 import com.google.inject.assistedinject.AssistedInject;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
-import edu.wpi.grip.core.sockets.OutputSocket;
-import edu.wpi.grip.core.sockets.SocketHint;
-import edu.wpi.grip.core.sockets.SocketHints;
 import edu.wpi.grip.core.Source;
 import edu.wpi.grip.core.events.SourceHasPendingUpdateEvent;
 import edu.wpi.grip.core.events.SourceRemovedEvent;
+import edu.wpi.grip.core.sockets.OutputSocket;
+import edu.wpi.grip.core.sockets.SocketHint;
+import edu.wpi.grip.core.sockets.SocketHints;
 import edu.wpi.grip.core.util.ExceptionWitness;
 import edu.wpi.grip.core.util.service.AutoRestartingService;
 import edu.wpi.grip.core.util.service.LoggingListener;
@@ -26,6 +27,7 @@ import org.bytedeco.javacv.VideoInputFrameGrabber;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.List;
 import java.util.Optional;
 import java.util.Properties;
 import java.util.concurrent.Executor;
@@ -137,10 +139,11 @@ public class CameraSource extends Source implements RestartableService {
     @AssistedInject
     CameraSource(
             final EventBus eventBus,
+            final OutputSocket.Factory outputSocketFactory,
             final FrameGrabberFactory grabberFactory,
             final ExceptionWitness.Factory exceptionWitnessFactory,
             @Assisted final int deviceNumber) throws IOException {
-        this(eventBus, grabberFactory, exceptionWitnessFactory, createProperties(deviceNumber));
+        this(eventBus, outputSocketFactory, grabberFactory, exceptionWitnessFactory, createProperties(deviceNumber));
     }
 
     /**
@@ -152,10 +155,11 @@ public class CameraSource extends Source implements RestartableService {
     @AssistedInject
     CameraSource(
             final EventBus eventBus,
+            final OutputSocket.Factory outputSocketFactory,
             final FrameGrabberFactory grabberFactory,
             final ExceptionWitness.Factory exceptionWitnessFactory,
             @Assisted final String address) throws IOException {
-        this(eventBus, grabberFactory, exceptionWitnessFactory, createProperties(address));
+        this(eventBus, outputSocketFactory, grabberFactory, exceptionWitnessFactory, createProperties(address));
     }
 
     /**
@@ -164,13 +168,14 @@ public class CameraSource extends Source implements RestartableService {
     @AssistedInject
     CameraSource(
             final EventBus eventBus,
+            final OutputSocket.Factory outputSocketFactory,
             final FrameGrabberFactory grabberFactory,
             final ExceptionWitness.Factory exceptionWitnessFactory,
             @Assisted final Properties properties) throws MalformedURLException {
         super(exceptionWitnessFactory);
         this.eventBus = eventBus;
-        this.frameOutputSocket = new OutputSocket<>(eventBus, imageOutputHint);
-        this.frameRateOutputSocket = new OutputSocket<>(eventBus, frameRateOutputHint);
+        this.frameOutputSocket = outputSocketFactory.create(imageOutputHint);
+        this.frameRateOutputSocket = outputSocketFactory.create(frameRateOutputHint);
         this.properties = properties;
 
         final String deviceNumberProperty = properties.getProperty(DEVICE_NUMBER_PROPERTY);
@@ -237,8 +242,11 @@ public class CameraSource extends Source implements RestartableService {
     }
 
     @Override
-    public OutputSocket[] createOutputSockets() {
-        return new OutputSocket[]{frameOutputSocket, frameRateOutputSocket};
+    public List<OutputSocket> createOutputSockets() {
+        return ImmutableList.of(
+                frameOutputSocket,
+                frameRateOutputSocket
+        );
     }
 
     @Override

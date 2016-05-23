@@ -174,7 +174,7 @@ public class SocketHandleView extends Button {
 
     @Subscribe
     public void onSocketConnectedChanged(SocketConnectedChangedEvent event) {
-        if (event.getSocket() == this.socket) {
+        if (this.socket.equals(event.getSocket())) {
             // Set the handle as "selected" whenever there is at least one connection connected to it
             this.connectedProperty().set(!this.socket.getConnections().isEmpty());
         }

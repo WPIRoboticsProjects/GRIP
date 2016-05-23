@@ -2,26 +2,26 @@ package edu.wpi.grip.core.operations.opencv;
 
 import com.google.common.eventbus.EventBus;
 import edu.wpi.grip.core.AddOperation;
-import edu.wpi.grip.core.sockets.InputSocket;
-import edu.wpi.grip.core.Operation;
-import edu.wpi.grip.core.sockets.OutputSocket;
+import edu.wpi.grip.core.sockets.*;
 import org.bytedeco.javacpp.opencv_core;
 import org.bytedeco.javacpp.opencv_core.Mat;
 import org.bytedeco.javacpp.opencv_core.Scalar;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.List;
+
 import static org.junit.Assert.assertTrue;
 
 public class AddOperationTest {
 
     EventBus eventBus;
-    Operation addition;
+    AddOperation addition;
 
     @Before
     public void setUp() throws Exception {
         this.eventBus = new EventBus();
-        this.addition = new AddOperation();
+        this.addition = new AddOperation(eventBus);
     }
 
     /**
@@ -50,10 +50,10 @@ public class AddOperationTest {
     @Test
     public void testAddMatrixOfOnesToMatrixOfTwosEqualsMatrixOfThrees() {
         // Given
-        InputSocket[] inputs = addition.createInputSockets(eventBus);
-        OutputSocket[] outputs = addition.createOutputSockets(eventBus);
-        InputSocket<Mat> a = inputs[0], b = inputs[1];
-        OutputSocket<Mat> c = outputs[0];
+        List<InputSocket> inputs = addition.getInputSockets();
+        List<OutputSocket> outputs = addition.getOutputSockets();
+        InputSocket a = inputs.get(0), b = inputs.get(1);
+        OutputSocket c = outputs.get(0);
 
         int sz[] = {256, 256};
 
@@ -63,13 +63,13 @@ public class AddOperationTest {
         //When
         long startTime = System.currentTimeMillis();
         for (int i = 0; i < 1000; i++) {
-            addition.perform(inputs, outputs);
+            addition.perform();
         }
         long endTime = System.currentTimeMillis();
         System.out.println("Run time: " + (endTime - startTime));
 
         //Then
         Mat expectedResult = new Mat(2, sz, opencv_core.CV_8U, Scalar.all(3));
-        assertTrue(isMatEqual(c.getValue().get(), expectedResult));
+        assertTrue(isMatEqual((Mat) c.getValue().get(), expectedResult));
     }
 }

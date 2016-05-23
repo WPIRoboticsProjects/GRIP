@@ -7,6 +7,8 @@ import com.google.inject.Injector;
 import com.google.inject.util.Modules;
 import edu.wpi.grip.core.*;
 import edu.wpi.grip.core.events.OperationAddedEvent;
+import edu.wpi.grip.core.sockets.InputSocket;
+import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.ui.util.DPIUtility;
 import edu.wpi.grip.ui.util.StyleClassNameUtility;
 import edu.wpi.grip.util.GRIPCoreTestModule;
@@ -29,8 +31,8 @@ public class MainWindowTest extends ApplicationTest {
     private final GRIPCoreTestModule testModule = new GRIPCoreTestModule();
     private Pipeline pipeline;
     private PipelineRunner pipelineRunner;
-    private Operation addOperation;
-    private AdditionOperation additionOperation;
+    private OperationMetaData addOperation;
+    private OperationMetaData additionOperation;
 
     @Override
     @SuppressWarnings("PMD.SignatureDeclareThrowsException")
@@ -47,8 +49,8 @@ public class MainWindowTest extends ApplicationTest {
         pipelineRunner = injector.getInstance(PipelineRunner.class);
         final EventBus eventBus = injector.getInstance(EventBus.class);
 
-        addOperation = new AddOperation();
-        additionOperation = new AdditionOperation();
+        addOperation = new OperationMetaData(AddOperation.DESCRIPTION, () -> new AddOperation(eventBus));
+        additionOperation = new OperationMetaData(AdditionOperation.DESCRIPTION, () -> new AdditionOperation(injector.getInstance(InputSocket.Factory.class), injector.getInstance(OutputSocket.Factory.class)));
 
         eventBus.post(new OperationAddedEvent(addOperation));
         eventBus.post(new OperationAddedEvent(additionOperation));
@@ -66,34 +68,34 @@ public class MainWindowTest extends ApplicationTest {
     @Test
     public void testShouldCreateNewOperationInPipelineView() {
         // Given:
-        clickOn(addOperation.getName());
+        clickOn(addOperation.getDescription().name());
 
         WaitForAsyncUtils.waitForFxEvents();
 
         // Then:
-        final String cssSelector = "." + StyleClassNameUtility.classNameForStepHolding(addOperation);
+        final String cssSelector = "." + StyleClassNameUtility.classNameForStepHolding(addOperation.getDescription());
         verifyThat(cssSelector, NodeMatchers.isNotNull());
         verifyThat(cssSelector, NodeMatchers.isVisible());
 
         assertEquals(STEP_NOT_ADDED_MSG, 1, pipeline.getSteps().size());
-        assertEquals("Step added was not this addOperation", addOperation, pipeline.getSteps().get(0).getOperation());
+        assertEquals("Step added was not this addOperation", AddOperation.DESCRIPTION, pipeline.getSteps().get(0).getOperationDescription());
     }
 
     @Test
     public void testDragOperationFromPaletteToPipeline() {
         // Given:
-        drag(addOperation.getName())
+        drag(addOperation.getDescription().name())
                 .dropTo(".steps");
 
         WaitForAsyncUtils.waitForFxEvents();
 
         // Then:
-        final String cssSelector = "." + StyleClassNameUtility.classNameForStepHolding(addOperation);
+        final String cssSelector = "." + StyleClassNameUtility.classNameForStepHolding(addOperation.getDescription());
         verifyThat(cssSelector, NodeMatchers.isNotNull());
         verifyThat(cssSelector, NodeMatchers.isVisible());
 
         assertEquals(STEP_NOT_ADDED_MSG, 1, pipeline.getSteps().size());
-        assertEquals("Step added was not this addOperation", addOperation, pipeline.getSteps().get(0).getOperation());
+        assertEquals("Step added was not this addOperation", AddOperation.DESCRIPTION, pipeline.getSteps().get(0).getOperationDescription());
     }
 
     @Test
@@ -102,21 +104,21 @@ public class MainWindowTest extends ApplicationTest {
         testDragOperationFromPaletteToPipeline();
 
         // Now add a second step before it
-        drag(additionOperation.getName())
+        drag(additionOperation.getDescription().name())
                 // We drag to the input socket hint handle because this will always be on the left side of the
                 // step. This should cause the UI to put the new step on the left side
-                .dropTo(StyleClassNameUtility.cssSelectorForInputSocketHandleOnStepHolding(addOperation));
+                .dropTo(StyleClassNameUtility.cssSelectorForInputSocketHandleOnStepHolding(addOperation.getDescription()));
 
         WaitForAsyncUtils.waitForFxEvents();
 
         // Then:
-        final String cssSelector = "." + StyleClassNameUtility.classNameForStepHolding(additionOperation);
+        final String cssSelector = "." + StyleClassNameUtility.classNameForStepHolding(additionOperation.getDescription());
         verifyThat(cssSelector, NodeMatchers.isNotNull());
         verifyThat(cssSelector, NodeMatchers.isVisible());
 
         assertEquals(STEP_NOT_ADDED_MSG, 2, pipeline.getSteps().size());
         assertEquals("Step added was not added in the right place in the pipeline",
-                additionOperation, pipeline.getSteps().get(0).getOperation());
+                AdditionOperation.DESCRIPTION, pipeline.getSteps().get(0).getOperationDescription());
     }
 
     @Test
@@ -125,21 +127,21 @@ public class MainWindowTest extends ApplicationTest {
         testDragOperationFromPaletteToPipeline();
 
         // Now add a second step after it
-        drag(additionOperation.getName())
+        drag(additionOperation.getDescription().name())
                 // We drag to the output socket hint handle because this will always be on the right side of the
                 // step. This should cause the UI to put the new step on the right side
-                .dropTo(StyleClassNameUtility.cssSelectorForOutputSocketHandleOnStepHolding(addOperation));
+                .dropTo(StyleClassNameUtility.cssSelectorForOutputSocketHandleOnStepHolding(addOperation.getDescription()));
 
         WaitForAsyncUtils.waitForFxEvents();
 
         // Then:
-        final String cssSelector = "." + StyleClassNameUtility.classNameForStepHolding(additionOperation);
+        final String cssSelector = "." + StyleClassNameUtility.classNameForStepHolding(additionOperation.getDescription());
         verifyThat(cssSelector, NodeMatchers.isNotNull());
         verifyThat(cssSelector, NodeMatchers.isVisible());
 
         assertEquals(STEP_NOT_ADDED_MSG, 2, pipeline.getSteps().size());
         assertEquals("Step added was not added in the right place in the pipeline",
-                additionOperation, pipeline.getSteps().get(1).getOperation());
+                AdditionOperation.DESCRIPTION, pipeline.getSteps().get(1).getOperationDescription());
     }
 
 

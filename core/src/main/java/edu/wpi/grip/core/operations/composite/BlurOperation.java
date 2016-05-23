@@ -1,14 +1,15 @@
 package edu.wpi.grip.core.operations.composite;
 
-import com.google.common.eventbus.EventBus;
-import edu.wpi.grip.core.*;
+import com.google.common.collect.ImmutableList;
+import edu.wpi.grip.core.Operation;
+import edu.wpi.grip.core.OperationDescription;
 import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.core.sockets.SocketHint;
 import edu.wpi.grip.core.sockets.SocketHints;
+import edu.wpi.grip.core.util.Icon;
 
-import java.io.InputStream;
-import java.util.Optional;
+import java.util.List;
 
 import static org.bytedeco.javacpp.opencv_core.Mat;
 import static org.bytedeco.javacpp.opencv_core.Size;
@@ -18,6 +19,17 @@ import static org.bytedeco.javacpp.opencv_imgproc.*;
  * An {@link Operation} that softens an image using one of several different filters
  */
 public class BlurOperation implements Operation {
+
+    /**
+     * Describes this operation. This is used by the 'Operations' class to add operations to GRIP.
+     */
+    public static final OperationDescription DESCRIPTION =
+            OperationDescription.builder()
+                    .name("Blur")
+                    .summary("Blurs an image to remove noise")
+                    .category(OperationDescription.Category.IMAGE_PROCESSING)
+                    .icon(Icon.iconStream("blur"))
+                    .build();
 
     private enum Type {
         BOX("Box Blur"), GAUSSIAN("Gaussian Blur"), MEDIAN("Median Filter"), BILATERAL_FILTER("Bilateral Filter");
@@ -40,50 +52,42 @@ public class BlurOperation implements Operation {
 
     private final SocketHint<Mat> outputHint = SocketHints.Inputs.createMatSocketHint("Output", true);
 
-    @Override
-    public String getName() {
-        return "Blur";
+    private final InputSocket<Mat> inputSocket;
+    private final InputSocket<Type> typeSocket;
+    private final InputSocket<Number> radiusSocket;
+
+    private final OutputSocket<Mat> outputSocket;
+
+    public BlurOperation(InputSocket.Factory inputSocketFactory, OutputSocket.Factory outputSocketFactory) {
+        this.inputSocket = inputSocketFactory.create(inputHint);
+        this.typeSocket = inputSocketFactory.create(typeHint);
+        this.radiusSocket = inputSocketFactory.create(radiusHint);
+
+        this.outputSocket = outputSocketFactory.create(outputHint);
     }
 
     @Override
-    public String getDescription() {
-        return "Soften the details of an image to remove noise.";
+    public List<InputSocket> getInputSockets() {
+        return ImmutableList.of(
+                inputSocket,
+                typeSocket,
+                radiusSocket
+        );
     }
 
     @Override
-    public Category getCategory() {
-        return Category.IMAGE_PROCESSING;
+    public List<OutputSocket> getOutputSockets() {
+        return ImmutableList.of(
+                outputSocket
+        );
     }
 
     @Override
-    public Optional<InputStream> getIcon() {
-        return Optional.of(getClass().getResourceAsStream("/edu/wpi/grip/ui/icons/blur.png"));
-    }
+    public void perform() {
+        final Mat input = inputSocket.getValue().get();
+        final Type type = typeSocket.getValue().get();
+        final Number radius = radiusSocket.getValue().get();
 
-    @Override
-    public InputSocket<?>[] createInputSockets(EventBus eventBus) {
-        return new InputSocket<?>[]{
-                new InputSocket<>(eventBus, inputHint),
-                new InputSocket<>(eventBus, typeHint),
-                new InputSocket<>(eventBus, radiusHint),
-        };
-    }
-
-    @Override
-    public OutputSocket<?>[] createOutputSockets(EventBus eventBus) {
-        return new OutputSocket<?>[]{
-                new OutputSocket<>(eventBus, outputHint)
-        };
-    }
-
-    @Override
-    @SuppressWarnings("unchecked")
-    public void perform(InputSocket<?>[] inputs, OutputSocket<?>[] outputs) {
-        final Mat input = ((InputSocket<Mat>) inputs[0]).getValue().get();
-        final Type type = ((InputSocket<Type>) inputs[1]).getValue().get();
-        final Number radius = ((InputSocket<Number>) inputs[2]).getValue().get();
-
-        final OutputSocket<Mat> outputSocket = (OutputSocket<Mat>) outputs[0];
         final Mat output = outputSocket.getValue().get();
 
         int kernelSize;

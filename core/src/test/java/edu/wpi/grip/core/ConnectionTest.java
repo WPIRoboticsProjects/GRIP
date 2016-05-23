@@ -2,10 +2,7 @@ package edu.wpi.grip.core;
 
 import com.google.common.eventbus.EventBus;
 import edu.wpi.grip.core.events.ConnectionRemovedEvent;
-import edu.wpi.grip.core.sockets.InputSocket;
-import edu.wpi.grip.core.sockets.OutputSocket;
-import edu.wpi.grip.core.sockets.SocketHint;
-import edu.wpi.grip.core.sockets.SocketHints;
+import edu.wpi.grip.core.sockets.*;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -27,14 +24,16 @@ public class ConnectionTest {
     @Before
     public void setUp() {
         eventBus = new EventBus();
+        InputSocket.Factory isf = new MockInputSocketFactory(eventBus);
+        OutputSocket.Factory osf = new MockOutputSocketFactory(eventBus);
 
         fooHint = SocketHints.createNumberSocketHint("foo", 0.0);
         barHint = SocketHints.createNumberSocketHint("bar", 0.0);
 
 
-        foo = new OutputSocket<>(eventBus, fooHint);
+        foo = osf.create(fooHint);
         eventBus.register(foo);
-        bar = new InputSocket<>(eventBus, barHint);
+        bar = isf.create(barHint);
         eventBus.register(bar);
     }
 
