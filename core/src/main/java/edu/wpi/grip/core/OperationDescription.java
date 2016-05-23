@@ -2,6 +2,7 @@ package edu.wpi.grip.core;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableSet;
+import edu.wpi.grip.core.util.Icon;
 
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.Immutable;
@@ -32,21 +33,21 @@ public class OperationDescription {
     private final String name;
     private final String summary;
     private final Category category;
-    private final InputStream icon;
+    private final Icon icon;
     private final ImmutableSet<String> aliases;
 
     /**
      * Private constructor - use {@link #builder} to instantiate this class.
      */
-    protected OperationDescription(String name,
+    private OperationDescription(String name,
                                  String summary,
                                  Category category,
-                                 InputStream iconStream,
+                                 Icon icon,
                                  Set<String> aliases) {
         this.name = checkNotNull(name, "Name cannot be null");
         this.summary = checkNotNull(summary, "Summary cannot be null");
         this.category = checkNotNull(category, "Category cannot be null");
-        this.icon = iconStream; // This is allowed to be null
+        this.icon = icon; // This is allowed to be null
         this.aliases = ImmutableSet.copyOf(checkNotNull(aliases, "Aliases cannot be null"));
     }
 
@@ -75,7 +76,7 @@ public class OperationDescription {
      * @return An {@link InputStream} of a 128x128 image to show the user as a representation of the operation.
      */
     public Optional<InputStream> icon() {
-        return Optional.ofNullable(icon);
+        return Optional.ofNullable(icon).map(Icon::getStream);
     }
 
     /**
@@ -125,7 +126,7 @@ public class OperationDescription {
      * Creates a new {@link Builder} instance to create a new {@code OperationDescription} object.
      * <p>
      * The created descriptor has a default category of {@link Category#MISCELLANEOUS MISCELLANEOUS} and no icon; use
-     * the {@link Builder#category(Category) .category()} and {@link Builder#icon(InputStream) .icon()} methods to
+     * the {@link Builder#category(Category) .category()} and {@link Builder#icon(Icon) .icon()} methods to
      * override the default values.
      */
     public static Builder builder() {
@@ -141,7 +142,7 @@ public class OperationDescription {
         private String name;
         private String summary = "PLEASE PROVIDE A DESCRIPTION TO THE OPERATION DESCRIPTION!";
         private Category category;
-        private InputStream icon;
+        private Icon icon;
         private ImmutableSet<String> aliases = ImmutableSet.of(); // default to empty Set to avoid NPE if not assigned
 
         /**
@@ -177,7 +178,7 @@ public class OperationDescription {
         /**
          * Sets the icon
          */
-        public Builder icon(InputStream icon) {
+        public Builder icon(Icon icon) {
             this.icon = icon;
             return this;
         }

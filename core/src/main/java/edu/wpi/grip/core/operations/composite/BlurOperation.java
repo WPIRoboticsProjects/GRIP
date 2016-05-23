@@ -7,7 +7,7 @@ import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.core.sockets.SocketHint;
 import edu.wpi.grip.core.sockets.SocketHints;
-import edu.wpi.grip.core.util.Icons;
+import edu.wpi.grip.core.util.Icon;
 
 import java.util.List;
 
@@ -28,7 +28,7 @@ public class BlurOperation implements Operation {
                     .name("Blur")
                     .summary("Blurs an image to remove noise")
                     .category(OperationDescription.Category.IMAGE_PROCESSING)
-                    .icon(Icons.iconStream("blur"))
+                    .icon(Icon.iconStream("blur"))
                     .build();
 
     private enum Type {

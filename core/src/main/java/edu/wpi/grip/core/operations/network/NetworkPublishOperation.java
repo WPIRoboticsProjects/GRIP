@@ -8,7 +8,7 @@ import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.core.sockets.SocketHint;
 import edu.wpi.grip.core.sockets.SocketHints;
-import edu.wpi.grip.core.util.Icons;
+import edu.wpi.grip.core.util.Icon;
 
 import java.util.List;
 
@@ -24,7 +24,7 @@ public abstract class NetworkPublishOperation<D> implements Operation {
      */
     protected static final OperationDescription.Builder defaultBuilder =
             OperationDescription.builder()
-                    .icon(Icons.iconStream("publish"))
+                    .icon(Icon.iconStream("publish"))
                     .category(OperationDescription.Category.NETWORK);
 
 

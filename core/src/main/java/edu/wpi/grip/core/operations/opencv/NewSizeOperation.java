@@ -6,7 +6,7 @@ import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.core.sockets.SocketHint;
 import edu.wpi.grip.core.sockets.SocketHints;
-import edu.wpi.grip.core.util.Icons;
+import edu.wpi.grip.core.util.Icon;
 import org.bytedeco.javacpp.opencv_core.Size;
 import org.python.google.common.collect.ImmutableList;
 
@@ -18,7 +18,7 @@ public class NewSizeOperation implements CVOperation {
             CVOperation.defaultBuilder()
                     .name("New Size")
                     .summary("Create a size.")
-                    .icon(Icons.iconStream("size"))
+                    .icon(Icon.iconStream("size"))
                     .build();
 
     private final SocketHint<Number> widthHint = SocketHints.Inputs.createNumberSpinnerSocketHint("width", -1, -1, Integer.MAX_VALUE);

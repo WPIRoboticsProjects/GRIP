@@ -7,7 +7,7 @@ import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.core.sockets.SocketHint;
 import edu.wpi.grip.core.sockets.SocketHints;
-import edu.wpi.grip.core.util.Icons;
+import edu.wpi.grip.core.util.Icon;
 
 import java.util.List;
 
@@ -35,7 +35,7 @@ public class FilterContoursOperation implements Operation {
                     .name("Filter Contours")
                     .summary("Find contours matching certain criteria")
                     .category(OperationDescription.Category.FEATURE_DETECTION)
-                    .icon(Icons.iconStream("find-contours"))
+                    .icon(Icon.iconStream("find-contours"))
                     .build();
 
     private final SocketHint<ContoursReport> contoursHint = new SocketHint.Builder<>(ContoursReport.class)

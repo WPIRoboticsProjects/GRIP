@@ -7,7 +7,7 @@ import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.core.sockets.SocketHint;
 import edu.wpi.grip.core.sockets.SocketHints;
-import edu.wpi.grip.core.util.Icons;
+import edu.wpi.grip.core.util.Icon;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -23,7 +23,7 @@ public class FilterLinesOperation implements Operation {
                     .name("Filter Lines")
                     .summary("Filter only lines from a Find Lines operation that fit certain criteria")
                     .category(OperationDescription.Category.FEATURE_DETECTION)
-                    .icon(Icons.iconStream("filter-lines"))
+                    .icon(Icon.iconStream("filter-lines"))
                     .build();
 
     private final SocketHint<LinesReport> inputHint =

@@ -6,7 +6,7 @@ import edu.wpi.grip.core.OperationDescription;
 import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.core.sockets.SocketHints;
-import edu.wpi.grip.core.util.Icons;
+import edu.wpi.grip.core.util.Icon;
 import org.bytedeco.javacpp.BytePointer;
 import org.bytedeco.javacpp.IntPointer;
 
@@ -37,7 +37,7 @@ public class PublishVideoOperation implements Operation {
                     .name("Publish Video")
                     .summary("Publish an M_JPEG stream to the dashboard.")
                     .category(OperationDescription.Category.NETWORK)
-                    .icon(Icons.iconStream("publish-video"))
+                    .icon(Icon.iconStream("publish-video"))
                     .build();
 
     private final Logger logger = Logger.getLogger(PublishVideoOperation.class.getName());

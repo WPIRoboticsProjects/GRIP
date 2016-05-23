@@ -7,7 +7,7 @@ import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.core.sockets.SocketHint;
 import edu.wpi.grip.core.sockets.SocketHints;
-import edu.wpi.grip.core.util.Icons;
+import edu.wpi.grip.core.util.Icon;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,7 +27,7 @@ public class FindBlobsOperation implements Operation {
                     .name("Find Blobs")
                     .summary("Detects groups of pixels in an image.")
                     .category(OperationDescription.Category.FEATURE_DETECTION)
-                    .icon(Icons.iconStream("find-blobs"))
+                    .icon(Icon.iconStream("find-blobs"))
                     .build();
 
     private final SocketHint<Mat> inputHint = SocketHints.Inputs.createMatSocketHint("Input", false);

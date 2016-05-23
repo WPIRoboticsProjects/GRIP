@@ -4,7 +4,7 @@ package edu.wpi.grip.core.operations.network.ros;
 import edu.wpi.grip.core.OperationDescription;
 import edu.wpi.grip.core.operations.network.NetworkPublishOperation;
 import edu.wpi.grip.core.sockets.InputSocket;
-import edu.wpi.grip.core.util.Icons;
+import edu.wpi.grip.core.util.Icon;
 
 import java.util.Collections;
 import java.util.List;
@@ -19,7 +19,7 @@ public class ROSPublishOperation<D> extends NetworkPublishOperation<D> {
         return OperationDescription.builder()
                 .name("ROSPublish " + dataType.getSimpleName())
                 .summary("Publishes a " + dataType.getSimpleName() + " to a ROS node")
-                .icon(Icons.iconStream("rosorg-logo"))
+                .icon(Icon.iconStream("rosorg-logo"))
                 .category(OperationDescription.Category.NETWORK)
                 .build();
     }

@@ -6,7 +6,7 @@ import edu.wpi.grip.core.operations.network.PublishAnnotatedOperation;
 import edu.wpi.grip.core.operations.network.PublishValue;
 import edu.wpi.grip.core.operations.network.Publishable;
 import edu.wpi.grip.core.sockets.InputSocket;
-import edu.wpi.grip.core.util.Icons;
+import edu.wpi.grip.core.util.Icon;
 
 import java.util.function.Function;
 
@@ -35,7 +35,7 @@ public class NTPublishAnnotatedOperation<D, P extends Publishable> extends Publi
                 .name(String.format("NTPublish %s", name))
                 .summary(String.format("Publishes a %s to a network table", name))
                 .aliases(String.format("Publish %s", name))
-                .icon(Icons.iconStream("first"))
+                .icon(Icon.iconStream("first"))
                 .category(OperationDescription.Category.NETWORK)
                 .build();
     }

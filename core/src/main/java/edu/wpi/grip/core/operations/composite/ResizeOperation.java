@@ -6,7 +6,7 @@ import edu.wpi.grip.core.OperationDescription;
 import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.core.sockets.SocketHints;
-import edu.wpi.grip.core.util.Icons;
+import edu.wpi.grip.core.util.Icon;
 
 import java.util.List;
 
@@ -31,7 +31,7 @@ public class ResizeOperation implements Operation {
                     .name("Resize Image")
                     .summary("Scale an image to an exact size")
                     .category(OperationDescription.Category.IMAGE_PROCESSING)
-                    .icon(Icons.iconStream("resize"))
+                    .icon(Icon.iconStream("resize"))
                     .build();
 
     private final InputSocket<Mat> inputSocket;

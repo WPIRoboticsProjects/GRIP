@@ -7,7 +7,7 @@ import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.core.sockets.SocketHint;
 import edu.wpi.grip.core.sockets.SocketHints;
-import edu.wpi.grip.core.util.Icons;
+import edu.wpi.grip.core.util.Icon;
 import org.bytedeco.javacpp.indexer.FloatIndexer;
 
 import java.util.ArrayList;
@@ -28,7 +28,7 @@ public class FindLinesOperation implements Operation {
                     .name("Find Lines")
                     .summary("Detects line segments in an image.")
                     .category(OperationDescription.Category.FEATURE_DETECTION)
-                    .icon(Icons.iconStream("find-lines"))
+                    .icon(Icon.iconStream("find-lines"))
                     .build();
 
     private final SocketHint<Mat> inputHint = SocketHints.Inputs.createMatSocketHint("Input", false);

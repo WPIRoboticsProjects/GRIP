@@ -8,7 +8,7 @@ import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.core.sockets.SocketHint;
 import edu.wpi.grip.core.sockets.SocketHints;
-import edu.wpi.grip.core.util.Icons;
+import edu.wpi.grip.core.util.Icon;
 
 import java.util.List;
 
@@ -27,7 +27,7 @@ public class DesaturateOperation implements Operation {
                     .name("Desaturate")
                     .summary("Convert a color image into shades of gray.")
                     .category(OperationDescription.Category.IMAGE_PROCESSING)
-                    .icon(Icons.iconStream("desaturate"))
+                    .icon(Icon.iconStream("desaturate"))
                     .build();
 
     private final SocketHint<Mat> inputHint = SocketHints.Inputs.createMatSocketHint("Input", false);

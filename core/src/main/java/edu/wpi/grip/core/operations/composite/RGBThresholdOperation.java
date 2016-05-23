@@ -7,7 +7,7 @@ import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.core.sockets.SocketHint;
 import edu.wpi.grip.core.sockets.SocketHints;
-import edu.wpi.grip.core.util.Icons;
+import edu.wpi.grip.core.util.Icon;
 
 import java.util.List;
 import java.util.logging.Level;
@@ -27,7 +27,7 @@ public class RGBThresholdOperation extends ThresholdOperation {
                     .name("RGB Threshold")
                     .summary("Segment an image based on color ranges")
                     .category(OperationDescription.Category.IMAGE_PROCESSING)
-                    .icon(Icons.iconStream("threshold"))
+                    .icon(Icon.iconStream("threshold"))
                     .build();
 
     private static final Logger logger = Logger.getLogger(RGBThresholdOperation.class.getName());

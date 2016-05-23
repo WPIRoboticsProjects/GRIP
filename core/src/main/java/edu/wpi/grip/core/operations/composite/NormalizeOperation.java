@@ -9,7 +9,7 @@ import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.core.sockets.SocketHint;
 import edu.wpi.grip.core.sockets.SocketHints;
-import edu.wpi.grip.core.util.Icons;
+import edu.wpi.grip.core.util.Icon;
 
 import java.util.List;
 
@@ -31,7 +31,7 @@ public class NormalizeOperation implements Operation {
                     .name("Normalize")
                     .summary("Normalizes or remaps the values of pixels in an image.")
                     .category(OperationDescription.Category.IMAGE_PROCESSING)
-                    .icon(Icons.iconStream("opencv"))
+                    .icon(Icon.iconStream("opencv"))
                     .build();
 
     private enum Type {

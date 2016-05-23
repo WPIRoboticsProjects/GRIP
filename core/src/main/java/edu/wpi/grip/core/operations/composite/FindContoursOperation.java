@@ -7,7 +7,7 @@ import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.core.sockets.SocketHint;
 import edu.wpi.grip.core.sockets.SocketHints;
-import edu.wpi.grip.core.util.Icons;
+import edu.wpi.grip.core.util.Icon;
 
 import java.util.List;
 
@@ -28,7 +28,7 @@ public class FindContoursOperation implements Operation {
                     .name("Find Contours")
                     .summary("Detects contours in a binary image.")
                     .category(OperationDescription.Category.FEATURE_DETECTION)
-                    .icon(Icons.iconStream("find-contours"))
+                    .icon(Icon.iconStream("find-contours"))
                     .build();
 
     private final SocketHint<Mat> inputHint =

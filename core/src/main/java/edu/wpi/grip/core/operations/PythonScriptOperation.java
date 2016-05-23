@@ -5,7 +5,7 @@ import edu.wpi.grip.core.Operation;
 import edu.wpi.grip.core.OperationDescription;
 import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.sockets.OutputSocket;
-import edu.wpi.grip.core.util.Icons;
+import edu.wpi.grip.core.util.Icon;
 import org.python.core.Py;
 import org.python.core.PyObject;
 import org.python.core.PySequence;
@@ -62,7 +62,7 @@ public class PythonScriptOperation implements Operation {
         return OperationDescription.builder()
                 .name(pythonScriptFile.name())
                 .summary(pythonScriptFile.summary())
-                .icon(Icons.iconStream("python"))
+                .icon(Icon.iconStream("python"))
                 .category(OperationDescription.Category.MISCELLANEOUS)
                 .build();
     }

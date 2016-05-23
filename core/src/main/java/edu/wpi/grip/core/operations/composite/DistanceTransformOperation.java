@@ -9,7 +9,7 @@ import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.core.sockets.SocketHint;
 import edu.wpi.grip.core.sockets.SocketHints;
-import edu.wpi.grip.core.util.Icons;
+import edu.wpi.grip.core.util.Icon;
 
 import org.bytedeco.javacpp.opencv_core.Mat;
 
@@ -32,7 +32,7 @@ public class DistanceTransformOperation implements Operation {
                     .name("Distance Transform")
                     .summary("Sets the values of pixels in a binary image to their distance to the nearest black pixel.")
                     .category(OperationDescription.Category.IMAGE_PROCESSING)
-                    .icon(Icons.iconStream("opencv"))
+                    .icon(Icon.iconStream("opencv"))
                     .build();
 
     private enum Type {

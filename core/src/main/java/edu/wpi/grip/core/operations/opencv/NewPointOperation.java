@@ -7,7 +7,7 @@ import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.core.sockets.SocketHint;
 import edu.wpi.grip.core.sockets.SocketHints;
-import edu.wpi.grip.core.util.Icons;
+import edu.wpi.grip.core.util.Icon;
 import org.bytedeco.javacpp.opencv_core.Point;
 
 import java.util.List;
@@ -18,7 +18,7 @@ public class NewPointOperation implements CVOperation {
             CVOperation.defaultBuilder()
                     .name("New Point")
                     .summary("Create a point by (x,y) value.")
-                    .icon(Icons.iconStream("point"))
+                    .icon(Icon.iconStream("point"))
                     .build();
 
     private final SocketHint<Number> xHint = SocketHints.Inputs.createNumberSpinnerSocketHint("x", -1,
