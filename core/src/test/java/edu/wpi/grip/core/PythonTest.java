@@ -123,28 +123,28 @@ public class PythonTest {
     public void testDefaultName() throws Exception {
         OperationDescription additionDescription = PythonScriptFile.create(PythonTest.class.getResource("/edu/wpi/grip/scripts/addition.py"))
                 .toOperationMetaData(isf, osf).getDescription();
-        assertEquals("addition.py", additionDescription.name());
+        assertEquals("Name incorrect", "addition.py", additionDescription.name());
     }
 
     @Test
     public void testDefaultDescription() throws Exception {
         OperationDescription additionDescription = PythonScriptFile.create(PythonTest.class.getResource("/edu/wpi/grip/scripts/addition.py"))
                 .toOperationMetaData(isf, osf).getDescription();
-        assertEquals("", additionDescription.summary());
+        assertEquals("Description incorrect", "", additionDescription.summary());
     }
 
     @Test
     public void testName() throws Exception {
         OperationDescription additionDescription = PythonScriptFile.create(PythonTest.class.getResource("/edu/wpi/grip/scripts/addition-with-name-and-description.py"))
                 .toOperationMetaData(isf, osf).getDescription();
-        assertEquals("Add", additionDescription.name());
+        assertEquals("Name incorrect", "Add", additionDescription.name());
     }
 
     @Test
     public void testSummary() throws Exception {
         OperationDescription additionDescription = PythonScriptFile.create(PythonTest.class.getResource("/edu/wpi/grip/scripts/addition-with-name-and-description.py"))
                 .toOperationMetaData(isf, osf).getDescription();
-        assertEquals("Compute the sum of two integers", additionDescription.summary());
+        assertEquals("Description incorrect", "Compute the sum of two integers", additionDescription.summary());
     }
 
     @After

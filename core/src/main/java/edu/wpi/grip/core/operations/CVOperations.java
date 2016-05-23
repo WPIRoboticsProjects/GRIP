@@ -277,7 +277,7 @@ public class CVOperations {
                         templateFactory.create(
                                 SocketHints.Inputs.createMatSocketHint("src", false),
                                 new SocketHint.Builder<>(Size.class).identifier("dsize").initialValueSupplier(() -> new Size(0, 0)).build(),
-                                SocketHints.Inputs.createNumberSpinnerSocketHint("fx", .5), SocketHints.Inputs.createNumberSpinnerSocketHint("fx", .5),
+                                SocketHints.Inputs.createNumberSpinnerSocketHint("fx", .25), SocketHints.Inputs.createNumberSpinnerSocketHint("fx", .25),
                                 SocketHints.createEnumSocketHint("interpolation", InterpolationFlagsEnum.INTER_LINEAR),
                                 SocketHints.Outputs.createMatSocketHint("dst"),
                                 (src, dsize, fx, fy, interpolation, dst) -> {
