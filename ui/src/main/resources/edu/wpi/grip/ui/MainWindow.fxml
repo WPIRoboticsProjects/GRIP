@@ -165,6 +165,7 @@
     </children>
     <fx:define>
         <fx:include source="Deploy.fxml" fx:id="deployPane"/>
+        <fx:include source="AboutDialog.fxml" fx:id="aboutPane"/>
     </fx:define>
     <stylesheets>
         <URL value="@roboto/Roboto.css"/>

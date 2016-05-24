@@ -16,7 +16,6 @@ import edu.wpi.grip.ui.components.StartStoppableButton;
 import edu.wpi.grip.ui.util.DPIUtility;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.ButtonType;
@@ -52,6 +51,8 @@ public class MainWindowController {
     private Region pipelineView;
     @FXML
     private Pane deployPane;
+    @FXML
+    private Pane aboutPane;
     @FXML
     private StatusBar statusBar;
     @Inject
@@ -215,9 +216,8 @@ public class MainWindowController {
 
     @FXML
     public void showProjectAboutDialog() throws IOException {
-        Parent about = FXMLLoader.load(Main.class.getResource("AboutDialog.fxml"));
         Stage aboutDialogStage = new Stage();
-        aboutDialogStage.setScene(new Scene(about));
+        aboutDialogStage.setScene(new Scene(aboutPane));
         aboutDialogStage.initModality(Modality.APPLICATION_MODAL);
         aboutDialogStage.show();
     }
