@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Button?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.shape.Rectangle?>
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
@@ -37,18 +38,31 @@
                   <Pane VBox.vgrow="ALWAYS" />
                   <HBox>
                      <children>
-                        <Button mnemonicParsing="false" onAction="#githubButtonAction" text="Github...">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                        </Button>
-                        <Pane HBox.hgrow="ALWAYS" />
-                        <Button mnemonicParsing="false" onAction="#screenstepsButtonAction" text="ScreenSteps...">
-                           <font>
-                              <Font name="Roboto Regular" size="14.0" />
-                           </font>
-                        </Button>
-                        <Pane HBox.hgrow="ALWAYS" />
+                        <StackPane onMouseEntered="#mouseEnteredGithubButton" onMouseExited="#mouseExitedGithubButton" onMousePressed="#mousePressedGithubButton">
+                           <children>
+                              <Rectangle fx:id="githubRectangle" arcHeight="20.0" arcWidth="20.0" fill="#ffffff00" height="20.0" stroke="#ffffff00" strokeType="INSIDE" strokeWidth="0.0" width="65.0" />
+                              <Text fx:id="githubText" strokeType="OUTSIDE" strokeWidth="0.0" text="➔ Github">
+                                 <font>
+                                    <Font name="Roboto Regular" size="14.0" />
+                                 </font>
+                              </Text>
+                           </children>
+                        </StackPane>
+                     </children>
+                  </HBox>
+                  <Pane VBox.vgrow="ALWAYS" />
+                  <HBox>
+                     <children>
+                        <StackPane onMouseEntered="#mouseEnteredDocumentationButton" onMouseExited="#mouseExitedDocumentationButton" onMousePressed="#mousePressedDocumentationButton">
+                           <children>
+                              <Rectangle fx:id="documentationRectangle" arcHeight="20.0" arcWidth="20.0" fill="#ffffff00" height="20.0" stroke="#ffffff00" strokeType="INSIDE" strokeWidth="0.0" width="205.0" />
+                              <Text fx:id="documentationText" strokeType="OUTSIDE" strokeWidth="0.0" text="➔ ScreenSteps Documentation">
+                                 <font>
+                                    <Font name="Roboto Regular" size="14.0" />
+                                 </font>
+                              </Text>
+                           </children>
+                        </StackPane>
                      </children>
                   </HBox>
                </children>
