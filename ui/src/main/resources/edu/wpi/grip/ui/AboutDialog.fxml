@@ -7,11 +7,12 @@
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
-<?import javafx.scene.shape.Rectangle?>
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<VBox fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="330.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="edu.wpi.grip.ui.AboutDialogController">
+<VBox fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
+      prefHeight="330.0" prefWidth="600.0" stylesheets="@GRIP.css" xmlns="http://javafx.com/javafx/8.0.65"
+      xmlns:fx="http://javafx.com/fxml/1" fx:controller="edu.wpi.grip.ui.AboutDialogController">
    <children>
       <Pane VBox.vgrow="ALWAYS" />
       <HBox>
@@ -38,30 +39,43 @@
                   <Pane VBox.vgrow="ALWAYS" />
                   <HBox>
                      <children>
-                        <StackPane onMouseEntered="#mouseEnteredGithubButton" onMouseExited="#mouseExitedGithubButton" onMousePressed="#mousePressedGithubButton">
+                        <StackPane onMousePressed="#mousePressedGithubButton" styleClass="about-button">
                            <children>
-                              <Rectangle fx:id="githubRectangle" arcHeight="20.0" arcWidth="20.0" fill="#ffffff00" height="20.0" stroke="#ffffff00" strokeType="INSIDE" strokeWidth="0.0" width="65.0" />
-                              <Text fx:id="githubText" strokeType="OUTSIDE" strokeWidth="0.0" text="➔ Github">
+                              <Text strokeType="OUTSIDE" strokeWidth="0.0" text="➔ Github">
                                  <font>
                                     <Font name="Roboto Regular" size="14.0" />
                                  </font>
                               </Text>
                            </children>
+                           <opaqueInsets>
+                              <Insets />
+                           </opaqueInsets>
+                           <HBox.margin>
+                              <Insets left="-3.0" />
+                           </HBox.margin>
+                           <padding>
+                              <Insets bottom="3.0" left="3.0" right="3.0" top="3.0" />
+                           </padding>
                         </StackPane>
                      </children>
                   </HBox>
                   <Pane VBox.vgrow="ALWAYS" />
                   <HBox>
                      <children>
-                        <StackPane onMouseEntered="#mouseEnteredDocumentationButton" onMouseExited="#mouseExitedDocumentationButton" onMousePressed="#mousePressedDocumentationButton">
+                        <StackPane onMousePressed="#mousePressedDocumentationButton" styleClass="about-button">
                            <children>
-                              <Rectangle fx:id="documentationRectangle" arcHeight="20.0" arcWidth="20.0" fill="#ffffff00" height="20.0" stroke="#ffffff00" strokeType="INSIDE" strokeWidth="0.0" width="205.0" />
-                              <Text fx:id="documentationText" strokeType="OUTSIDE" strokeWidth="0.0" text="➔ ScreenSteps Documentation">
+                              <Text strokeType="OUTSIDE" strokeWidth="0.0" text="➔ ScreenSteps Documentation">
                                  <font>
                                     <Font name="Roboto Regular" size="14.0" />
                                  </font>
                               </Text>
                            </children>
+                           <HBox.margin>
+                              <Insets left="-3.0" />
+                           </HBox.margin>
+                           <padding>
+                              <Insets bottom="3.0" left="3.0" right="3.0" top="3.0" />
+                           </padding>
                         </StackPane>
                      </children>
                   </HBox>

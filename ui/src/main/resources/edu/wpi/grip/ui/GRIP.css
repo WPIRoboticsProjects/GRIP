@@ -234,3 +234,13 @@ VBox.sockets {
 .info-label {
     -fx-font-weight: bold;
 }
+
+.about-button:hover {
+    -fx-background-color: gray;
+    -fx-background-radius: 12;
+    -fx-cursor: hand;
+}
+
+.about-button:hover Text {
+        -fx-fill: white;
+}
