@@ -72,7 +72,6 @@ public class AboutDialogController {
         assert documentationRectangle != null : "fx:id=\"documentationRectangle\" was not injected: check your FXML file 'AboutDialog.fxml'.";
         assert documentationText != null : "fx:id=\"documentationText\" was not injected: check your FXML file 'AboutDialog.fxml'.";
 
-
         versionNumberText.setText("Version " + edu.wpi.grip.core.Main.class.getPackage().getImplementationVersion());
     }
 }

@@ -217,7 +217,11 @@ public class MainWindowController {
     @FXML
     public void showProjectAboutDialog() throws IOException {
         Stage aboutDialogStage = new Stage();
-        aboutDialogStage.setScene(new Scene(aboutPane));
+        if (aboutPane.getScene() != null) {
+            aboutDialogStage.setScene(aboutPane.getScene());
+        } else {
+            aboutDialogStage.setScene(new Scene(aboutPane));
+        }
         aboutDialogStage.initModality(Modality.APPLICATION_MODAL);
         aboutDialogStage.show();
     }
