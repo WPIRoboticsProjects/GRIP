@@ -27,8 +27,8 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import org.controlsfx.control.StatusBar;
 
 import javax.inject.Inject;
@@ -69,6 +69,8 @@ public class MainWindowController {
     private Palette palette;
     @Inject
     private Project project;
+
+    private Stage aboutDialogStage;
 
     public void initialize() {
         pipelineView.prefHeightProperty().bind(bottomPane.heightProperty());
@@ -216,13 +218,16 @@ public class MainWindowController {
 
     @FXML
     public void showProjectAboutDialog() throws IOException {
-        Stage aboutDialogStage = new Stage();
-        if (aboutPane.getScene() != null) {
-            aboutDialogStage.setScene(aboutPane.getScene());
-        } else {
+        if (aboutDialogStage == null) {
+            aboutDialogStage = new Stage();
             aboutDialogStage.setScene(new Scene(aboutPane));
+            aboutDialogStage.initStyle(StageStyle.UTILITY);
+            aboutDialogStage.focusedProperty().addListener((observable, oldvalue, newvalue) -> {
+                if (oldvalue) {
+                    aboutDialogStage.hide();
+                }
+            });
         }
-        aboutDialogStage.initModality(Modality.APPLICATION_MODAL);
         aboutDialogStage.show();
     }
 
