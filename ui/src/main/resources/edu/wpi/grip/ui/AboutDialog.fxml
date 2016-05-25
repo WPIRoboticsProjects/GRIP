@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.net.URL?>
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.HBox?>
@@ -8,11 +10,8 @@
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
-<?import javafx.scene.text.Text?>
 
-<VBox fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
-      prefHeight="330.0" prefWidth="600.0" stylesheets="@GRIP.css" xmlns="http://javafx.com/javafx/8.0.65"
-      xmlns:fx="http://javafx.com/fxml/1" fx:controller="edu.wpi.grip.ui.AboutDialogController">
+<VBox fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="330.0" prefWidth="600.0" styleClass="about-window" stylesheets="@GRIP.css" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="edu.wpi.grip.ui.AboutDialogController">
    <children>
       <Pane VBox.vgrow="ALWAYS" />
       <HBox>
@@ -26,26 +25,17 @@
             <Pane HBox.hgrow="ALWAYS" />
             <VBox HBox.hgrow="ALWAYS">
                <children>
-                  <Text strokeType="OUTSIDE" strokeWidth="0.0" text="GRIP">
-                     <font>
-                        <Font name="Roboto Bold" size="64.0" />
-                     </font>
-                  </Text>
-                  <Text fx:id="versionNumberText" strokeType="OUTSIDE" strokeWidth="0.0" text="Version 0.0.0">
-                     <font>
-                        <Font name="Roboto Regular" size="14.0" />
-                     </font>
-                  </Text>
+                  <Label style="-fx-font-size: 64; -fx-font-weight: BOLD;" text="GRIP" />
+                  <Label fx:id="versionNumberLabel" text="Version 0.0.0" />
                   <Pane VBox.vgrow="ALWAYS" />
                   <HBox>
                      <children>
                         <StackPane onMousePressed="#mousePressedGithubButton" styleClass="about-button">
                            <children>
-                              <Text strokeType="OUTSIDE" strokeWidth="0.0" text="➔ Github">
+                              <Label text="➔ Github">
                                  <font>
-                                    <Font name="Roboto Regular" size="14.0" />
-                                 </font>
-                              </Text>
+                                    <Font size="14.0" />
+                                 </font></Label>
                            </children>
                            <opaqueInsets>
                               <Insets />
@@ -64,11 +54,7 @@
                      <children>
                         <StackPane onMousePressed="#mousePressedDocumentationButton" styleClass="about-button">
                            <children>
-                              <Text strokeType="OUTSIDE" strokeWidth="0.0" text="➔ ScreenSteps Documentation">
-                                 <font>
-                                    <Font name="Roboto Regular" size="14.0" />
-                                 </font>
-                              </Text>
+                              <Label text="➔ ScreenSteps Documentation" />
                            </children>
                            <HBox.margin>
                               <Insets left="-3.0" />
@@ -92,10 +78,7 @@
       <HBox>
          <children>
             <Pane HBox.hgrow="ALWAYS" />
-            <Text fill="#818181" strokeType="OUTSIDE" strokeWidth="0.0" text="GRIP is licensed under a 3 Clause BSD License">
-               <font>
-                  <Font name="Roboto Regular" size="12.0" />
-               </font></Text>
+            <Label style="-fx-font-size: 12;" text="GRIP is licensed under a 3 Clause BSD License" textFill="#818181" />
             <Pane HBox.hgrow="ALWAYS" />
          </children>
          <padding>
@@ -103,4 +86,8 @@
          </padding>
       </HBox>
    </children>
+   <stylesheets>
+       <URL value="@roboto/Roboto.css" />
+       <URL value="@GRIP.css" />
+   </stylesheets>
 </VBox>

@@ -1,8 +1,8 @@
 package edu.wpi.grip.ui;
 
 import javafx.fxml.FXML;
+import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.text.Text;
 
 import javax.inject.Inject;
 
@@ -12,7 +12,7 @@ public class AboutDialogController {
     private Main main;
 
     @FXML
-    private Text versionNumberText;
+    private Label versionNumberLabel;
 
     @FXML
     void mousePressedDocumentationButton(MouseEvent event) {
@@ -26,9 +26,9 @@ public class AboutDialogController {
 
     @FXML
     void initialize() {
-        assert versionNumberText != null : "fx:id=\"versionNumberText\" was not injected: check your FXML file 'AboutDialog.fxml'.";
+        assert versionNumberLabel != null : "fx:id=\"versionNumberText\" was not injected: check your FXML file 'AboutDialog.fxml'.";
 
-        versionNumberText.setText("Version " + edu.wpi.grip.core.Main.class.getPackage().getImplementationVersion());
+        versionNumberLabel.setText("Version " + edu.wpi.grip.core.Main.class.getPackage().getImplementationVersion());
     }
 }
 
