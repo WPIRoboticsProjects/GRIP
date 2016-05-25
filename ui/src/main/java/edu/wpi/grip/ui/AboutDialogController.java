@@ -1,6 +1,8 @@
 package edu.wpi.grip.ui;
 
 import javafx.fxml.FXML;
+import javafx.scene.Cursor;
+import javafx.scene.Parent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
@@ -12,6 +14,9 @@ public class AboutDialogController {
 
     @Inject
     private Main main;
+
+    @FXML
+    private Parent root;
 
     @FXML
     private Text versionNumberText;
@@ -34,24 +39,28 @@ public class AboutDialogController {
     void mouseEnteredDocumentationButton(MouseEvent event) {
         documentationRectangle.setFill(Color.GRAY);
         documentationText.setFill(Color.WHITE);
+        root.getScene().setCursor(Cursor.HAND);
     }
 
     @FXML
     void mouseEnteredGithubButton(MouseEvent event) {
         githubRectangle.setFill(Color.GRAY);
         githubText.setFill(Color.WHITE);
+        root.getScene().setCursor(Cursor.HAND);
     }
 
     @FXML
     void mouseExitedDocumentationButton(MouseEvent event) {
         documentationRectangle.setFill(CLEAR_COLOR);
         documentationText.setFill(Color.BLACK);
+        root.getScene().setCursor(Cursor.DEFAULT);
     }
 
     @FXML
     void mouseExitedGithubButton(MouseEvent event) {
         githubRectangle.setFill(CLEAR_COLOR);
         githubText.setFill(Color.BLACK);
+        root.getScene().setCursor(Cursor.DEFAULT);
     }
 
     @FXML
