@@ -12,9 +12,11 @@ import edu.wpi.grip.core.settings.ProjectSettings;
 import edu.wpi.grip.core.settings.SettingsProvider;
 import edu.wpi.grip.core.util.SafeShutdown;
 import edu.wpi.grip.core.util.service.SingleActionListener;
+import edu.wpi.grip.ui.codegeneration.Exporter;
 import edu.wpi.grip.ui.components.StartStoppableButton;
 import edu.wpi.grip.ui.util.DPIUtility;
 import javafx.application.Platform;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Parent;
 import javafx.scene.control.ButtonType;
@@ -64,8 +66,10 @@ public class MainWindowController {
     private Palette palette;
     @Inject
     private Project project;
+    private Exporter exporter;
 
     public void initialize() {
+        exporter = new Exporter(pipeline);
         pipelineView.prefHeightProperty().bind(bottomPane.heightProperty());
         statusBar.getLeftItems().add(startStoppableButtonFactory.create(pipelineRunner));
         pipelineRunner.addListener(new SingleActionListener(() -> {
@@ -235,5 +239,10 @@ public class MainWindowController {
         dialog.getDialogPane().setContent(deployPane);
         dialog.setResizable(true);
         dialog.showAndWait();
+    }
+
+    public void generate(ActionEvent actionEvent) {
+        exporter.export(this.pipeline);
+        //Exporter.printToFile(exporter.stepNames(this.pipeline));
     }
 }
