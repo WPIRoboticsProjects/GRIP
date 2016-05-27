@@ -18,20 +18,16 @@ import edu.wpi.grip.core.Pipeline;
 import edu.wpi.grip.core.Step;
 import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.sockets.OutputSocket;
+import edu.wpi.grip.ui.codegeneration.java.TPipeline;
 
-/**
- * Created by Toby on 5/24/16.
- */
 @Singleton
 public class Exporter {
 
-  TemplateMethods tempMeth;
-  @Inject
-  public Exporter(Pipeline pipeline) {
+  public Exporter() {
     Velocity.init();
   }
 
-  public String stepNames(Pipeline pipeline) {
+  /*public String stepNames(Pipeline pipeline) {
     String out = "";
     for (Step step : getSteps(pipeline)) {
       out += step.getOperationDescription().name() + " \n";
@@ -87,7 +83,7 @@ public class Exporter {
       return type + " " + name + " = " + value;
     }
 
-  }
+  }*/
 
 
 
@@ -102,11 +98,9 @@ public class Exporter {
   }
 
   public void export(Pipeline pipeline) {
-    tempMeth = new TemplateMethods();
+    TPipeline tPipeline = new TPipeline(pipeline);
     VelocityContext context = new VelocityContext();
-    context.put("pipeline", pipeline);
-    tempMeth.setPipeline(pipeline);
-    context.put("tempMeth",tempMeth);
+    context.put("pipeline", tPipeline);
     String template = "src/main/resources/edu/wpi/grip/ui/templates/Pipeline.vm";
     Template tm = Velocity.getTemplate(template);
 

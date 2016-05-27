@@ -1,32 +1,13 @@
             //input
-#foreach($input in $step.getInputSockets())
-#set($inputType = $tempMeth.parseSocketType($input))
-#set($inputName = $tempMeth.parseSocketName($input))
-#set($inputValue = $tempMeth.parseSocketValue($input))
-#if(!$input.getConnections().isEmpty())
-            $inputType $inputName = $tempMeth.findConnectionName(${input.getConnections()});
-#elseif($inputValue.equals("Optional.empty"))
-            $inputType $inputName = $tempMeth.newSource();
-#elseif($inputType.equals("List"))
-            double ${inputName}Min = $inputValue.substring(1,$inputValue.indexOf(","));
-            double ${inputName}Max = $inputValue.substring(${inputValue.lastIndexOf(" ")},$inputValue.lastIndexOf("]"));
-#elseif($inputType.equals("Type"))
-            String $inputName = "${inputValue}";
-#elseif($inputType.contains("Enum"))
-            int $inputName = Imgproc.${inputValue};
-#else
-            $inputType $inputName = $inputValue;
-#end
+#foreach($input in $step.getInputs())
+
+            $input.type() $input.name() = $input.value();
 #end
             //output
-#foreach($output in $step.getOutputSockets())
-#set($outputType = $tempMeth.parseSocketType($output))
-#set($outputName = $tempMeth.parseSocketName($output))
-#set($outputValue = $tempMeth.parseSocketValue($output))
-            $outputType $tempMeth.storeOutput(${output.getConnections()}) = new $outputType();
+#foreach($output in $step.getOutputs())
+            $output.type() $output.name() = new $output.type()();
 #end
-            $opName($tempMeth.opArgs($step));
-#foreach($output in $step.getOutputSockets())
-#set($dst = )
-            outputs.put("$dst", $dst);
+            $opName();
+#foreach($output in $step.getOutputs())
+            outputs.put("$output.name()", $output.name());
 #end

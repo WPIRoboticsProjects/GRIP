@@ -46,64 +46,56 @@ public class Pipeline{
 	protected void processImage(){
 	    //Step0: CV dilate:
             //input
-            Mat src = sources.get(source14);
+
+            Mat src = source0;
+
             Mat kernel = org.bytedeco.javacpp.opencv_core$Mat[width=0,height=0,depth=8,channels=1];
-            Point anchor = org.bytedeco.javacpp.opencv_core$Point[address=0x7fb490ce8c70,position=0,limit=1,capacity=1,deallocator=org.bytedeco.javacpp.Pointer$NativeDeallocator[ownerAddress=0x7fb490ce8c70,deallocatorAddress=0x12eaadb10]];
+
+            Point anchor = org.bytedeco.javacpp.opencv_core$Point[address=0x7fba83497b50,position=0,limit=1,capacity=1,deallocator=org.bytedeco.javacpp.Pointer$NativeDeallocator[ownerAddress=0x7fba83497b50,deallocatorAddress=0x125f69b10]];
+
             double iterations = 1;
-            int bordertype = Imgproc.BORDER_CONSTANT;
+
+            Integer bordertype = imgproc.BORDER_CONSTANT;
+
             Scalar bordervalue = (Infinity, Infinity, Infinity, Infinity);
             //output
-            Mat output8 = new Mat();
-            CV dilate(src, kernel, anchor, iterations, bordertype, bordervalue, output8);
-            outputs.put("output8", output8);
+            Mat output0 = new Mat();
+            CV dilate();
+            outputs.put("output0", output0);
 
 
 	    //Step1: HSV Threshold:
 	    //Operation not found
 	                //input
-            Mat input = sources.get(source15);
-            double hueMin = 0.0;
-            double hueMax =  180.0;
-            double saturationMin = 0.0;
-            double saturationMax =  255.0;
-            double valueMin = 0.0;
-            double valueMax =  255.0;
+
+            Mat input = output0;
+
+            int[] hue = {[0.0, 180.0]};
+
+            int[] saturation = {[0.0, 255.0]};
+
+            int[] value = {[0.0, 255.0]};
             //output
-            Mat output9 = new Mat();
-            operationNotFound(input, hue, saturation, value, output9);
-            outputs.put("output9", output9);
+            Mat output1 = new Mat();
+            operationNotFound();
+            outputs.put("output1", output1);
 
 
 	    //Step2: HSL Threshold:
 	    //Operation not found
 	                //input
-            Mat input = output9;
-            double hueMin = 0.0;
-            double hueMax =  180.0;
-            double saturationMin = 0.0;
-            double saturationMax =  255.0;
-            double luminanceMin = 0.0;
-            double luminanceMax =  255.0;
-            //output
-            Mat output10 = new Mat();
-            operationNotFound(input, hue, saturation, luminance, sources.get(source16));
-            outputs.put("sources.get(source17)", sources.get(source17));
 
+            Mat input = output1;
 
-	    //Step3: HSV Threshold:
-	    //Operation not found
-	                //input
-            Mat input = output8;
-            double hueMin = 0.0;
-            double hueMax =  180.0;
-            double saturationMin = 0.0;
-            double saturationMax =  255.0;
-            double valueMin = 0.0;
-            double valueMax =  255.0;
+            int[] hue = {[0.0, 180.0]};
+
+            int[] saturation = {[0.0, 255.0]};
+
+            int[] luminance = {[0.0, 255.0]};
             //output
-            Mat output11 = new Mat();
-            operationNotFound(input, hue, saturation, value, sources.get(source18));
-            outputs.put("sources.get(source19)", sources.get(source19));
+            Mat output2 = new Mat();
+            operationNotFound();
+            outputs.put("output2", output2);
 
 
 	}

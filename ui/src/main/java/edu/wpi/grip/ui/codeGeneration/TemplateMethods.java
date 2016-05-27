@@ -78,12 +78,12 @@ public class TemplateMethods {
     }
   }
 
-  /*public static String opName(String name){
+  public static String opName(String name){
     if(name.contains("CV ")){
-      return "Imgproc." + name.substring(3);
+      return name.substring(3);
     }
     else return name;
-  }*/
+  }
 
   public String opArgs(Step step){
     String args = "";

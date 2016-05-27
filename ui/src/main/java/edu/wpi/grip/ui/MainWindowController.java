@@ -69,7 +69,7 @@ public class MainWindowController {
     private Exporter exporter;
 
     public void initialize() {
-        exporter = new Exporter(pipeline);
+        exporter = new Exporter();
         pipelineView.prefHeightProperty().bind(bottomPane.heightProperty());
         statusBar.getLeftItems().add(startStoppableButtonFactory.create(pipelineRunner));
         pipelineRunner.addListener(new SingleActionListener(() -> {

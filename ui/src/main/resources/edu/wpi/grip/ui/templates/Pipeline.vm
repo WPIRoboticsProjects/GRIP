@@ -49,8 +49,8 @@ public class Pipeline{
 #set($count = 0)
 #foreach($step in $pipeline.getSteps())
 #set($c = $count)
-	    //Step$count: $step.getOperationDescription().name():
-#if($step.getOperationDescription().name().equals("CV dilate"))
+	    //Step$count: $step.name():
+#if($step.name().equals("CV dilate"))
 #set($opName = "CV dilate")
 #parse("src/main/resources/edu/wpi/grip/ui/templates/CV Step.vm")
 #else
