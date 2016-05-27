@@ -1,12 +1,12 @@
             //input
 #foreach($input in $step.getInputs())
-            $input.type() $input.name() = $input.value();
+            $input.type() $input.name()$c = $input.value();
 #end
             //output
 #foreach($output in $step.getOutputs())
             $output.type() $output.name() = new $output.type()();
 #end
-            $step.callOp();
+            $step.callOp($c);
 #foreach($output in $step.getOutputs())
             outputs.put("$output.name()", $output.name());
 #end

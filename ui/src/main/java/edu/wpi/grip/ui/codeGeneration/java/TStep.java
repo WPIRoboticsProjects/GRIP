@@ -36,10 +36,10 @@ public class TStep {
     return outputs;
   }
 
-  public String callOp() {
+  public String callOp(int num) {
     String out = name + "(";
     for (TInput input : inputs) {
-      out += input.name() + ", ";
+      out += input.name() + num + ", ";
     }
     if (!outputs.isEmpty()) {
       for (int i = 0; i < outputs.size() - 1; i++) {

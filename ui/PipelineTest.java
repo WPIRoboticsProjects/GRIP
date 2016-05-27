@@ -44,16 +44,54 @@ public class Pipeline{
 	 * This is the primary method that runs the entire pipeline and updates the outputs.
 	 */
 	protected void processImage(){
-	    //Step0: Distance_Transform:
+	    //Step0: CV_dilate:
             //input
-            Mat input = source0;
-            Distance_TransformType type = CV_DIST_L2;
-            MaskSize maskSize = MaskSize.get("0x0");
+            Mat src0 = source0;
+            Mat kernel0 = null;
+            Point anchor0 = null;
+            Double iterations0 = 1;
+            Integer bordertype0 = imgproc.BORDER_CONSTANT;
+            Scalar bordervalue0 = null;
             //output
             Mat output0 = new Mat();
-            Distance_Transform(input, type, maskSize, output0);
+            CV_dilate(src0, kernel0, anchor0, iterations0, bordertype0, bordervalue0, output0);
             outputs.put("output0", output0);
 
+	    //Step1: CV_dilate:
+            //input
+            Mat src1 = source1;
+            Mat kernel1 = null;
+            Point anchor1 = null;
+            Double iterations1 = 1;
+            Integer bordertype1 = imgproc.BORDER_CONSTANT;
+            Scalar bordervalue1 = null;
+            //output
+            Mat output1 = new Mat();
+            CV_dilate(src1, kernel1, anchor1, iterations1, bordertype1, bordervalue1, output1);
+            outputs.put("output1", output1);
 
-	}
+	    //Step2: CV_dilate:
+            //input
+            Mat src2 = source2;
+            Mat kernel2 = null;
+            Point anchor2 = null;
+            Double iterations2 = 1;
+            Integer bordertype2 = imgproc.BORDER_CONSTANT;
+            Scalar bordervalue2 = null;
+            //output
+            Mat output2 = new Mat();
+            CV_dilate(src2, kernel2, anchor2, iterations2, bordertype2, bordervalue2, output2);
+            outputs.put("output2", output2);
+
+
+void CV_dilate(Mat src, Mat kernal, Point anchor, int iterations,int borderType, Scalar borderValue, Mat dst){
+if(kernal == null){
+kernal = new Mat();
+}
+if(anchor == null){
+anchor = new Point(-1,-1);
+}
+
+Improc.dilate(src,dst, kernal, anchor, iterations, borderType, borderValue);
+}	}
 }

@@ -70,11 +70,12 @@ public class TPipeline {
   }
 
   protected TInput createInput(String type, String name, String value) {
-    if (value.equals("Optional.empty") || value.contains("Connection") || value.contains("ContoursReport")) {
+    if (value.contains("Optional.empty") || value.contains("Connection") || value.contains
+        ("ContoursReport")) {
       int s = numSources;
       numSources++;
       value = "source" + s;
-    } else if (value.contains("bytedeco")) {
+    } else if (value.contains("null")) {
         value = "null";
     }
 
@@ -103,9 +104,8 @@ public class TPipeline {
   public List<TStep> getUniqueSteps() {
     List<TStep> out = new ArrayList<TStep>();
     for (TStep step: steps) {
-      if (!out.contains(step)) {
+        out.removeIf(s -> s.name().equals(step.name()));
         out.add(step);
-      }
     }
     return out;
   }

@@ -33,7 +33,10 @@ public class TemplateMethods {
 
   public static String parseSocketValue(Socket socket) {
     String value = socket.getValue().toString();
-    if (value.contains("Optional[")) {
+    if(socket.getSocketHint().getView().equals(SocketHint.View.NONE)){
+      return "null" + value;
+    }
+    else if (value.contains("Optional[")) {
       return value.substring(value.indexOf("[") + 1, value.lastIndexOf("]"));
     } else {
       return value;
@@ -67,13 +70,6 @@ public class TemplateMethods {
 
   public static String parseSocketType(Socket socket) {
     String type = socket.getSocketHint().getType().getSimpleName();
-    if(socket.getValue().equals(SocketHint.View.SELECT)) {
-      if (!(type.equals("Type") || type.equals("MaskSize") || type.equals("FlipCode"))) {
-        type = "Enum" + type;
-      }
-    }
-
-
     if (type.equals("Number")) {
       return "Double";
     } else {
