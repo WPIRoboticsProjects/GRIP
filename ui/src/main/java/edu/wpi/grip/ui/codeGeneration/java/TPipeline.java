@@ -79,9 +79,12 @@ public class TPipeline {
         value = "null";
     }
 
-    if (type.contains("Enum")) {
-      return new TInput("Integer", name, "imgproc." + value);
-    } else if(type.equals("MaskSize")){
+    if (type.contains("CoreEnum")) {
+      return new TInput("Integer", name, "Core." + value);
+    } else if(type.contains("Enum")){
+      return new TInput("Integer", name, "Imgproc." + value);
+    }
+    else if(type.equals("MaskSize")){
       return new TInput(type, name, "MaskSize.get(\"" + value+"\")");
     }
     else if (type.equals("String") ) {

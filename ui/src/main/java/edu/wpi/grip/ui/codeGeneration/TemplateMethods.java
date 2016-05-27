@@ -70,6 +70,12 @@ public class TemplateMethods {
 
   public static String parseSocketType(Socket socket) {
     String type = socket.getSocketHint().getType().getSimpleName();
+    if(socket.getSocketHint().getView().equals(SocketHint.View.SELECT)){
+      if(type.equals("borderType") || type.equals("cmpop")){
+        type += "CoreEnum";
+      }
+
+    }
     if (type.equals("Number")) {
       return "Double";
     } else {

@@ -1,6 +1,4 @@
-#**
-This creates the complete java pipeline.
-*#
+
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -46,20 +44,29 @@ public class Pipeline{
 	 * This is the primary method that runs the entire pipeline and updates the outputs.
 	 */
 	protected void processImage(){
-#set($count = 0)
-#foreach($step in $pipeline.getSteps())
-#set($c = $count)
-	    //Step$count: $step.name():
-#parse("src/main/resources/edu/wpi/grip/ui/templates/CV Step.vm")
-#set($count = $count + 1)
+	    //Step0: CV_dilate:
+            //input
+            Mat src0 = source0;
+            Mat kernel0 = null;
+            Point anchor0 = null;
+            Double iterations0 = 1;
+            Integer bordertype0 = imgproc.BORDER_CONSTANT;
+            Scalar bordervalue0 = null;
+            //output
+            Mat output0 = new Mat();
+            CV_dilate(src0, kernel0, anchor0, iterations0, bordertype0, bordervalue0, output0);
+            outputs.put("output0", output0);
 
-#end
+
+void CV_dilate(Mat src, Mat kernal, Point anchor, int iterations,int borderType, Scalar borderValue, Mat dst){
+	if(kernal == null){
+		kernal = new Mat();
+	}
+	if(anchor == null){
+		anchor = new Point(-1,-1);
+	}
+	Impgroc.dilate(src, kernal, dst, anchor, iterations, borderType, borderValue);
 }
-#foreach($step in $pipeline.getUniqueSteps())
-#set($toParse = "src/main/resources/edu/wpi/grip/ui/templates/" + $step.name())
-#set($toParse = $toParse + ".vm")
-#parse($toParse)
 
-#end
-
+	}
 }
