@@ -44,58 +44,58 @@ public class Pipeline{
 	 * This is the primary method that runs the entire pipeline and updates the outputs.
 	 */
 	protected void processImage(){
-	    //Step0: CV dilate:
+	    //Step0: Blur:
             //input
-
-            Mat src = source0;
-
-            Mat kernel = org.bytedeco.javacpp.opencv_core$Mat[width=0,height=0,depth=8,channels=1];
-
-            Point anchor = org.bytedeco.javacpp.opencv_core$Point[address=0x7fba83497b50,position=0,limit=1,capacity=1,deallocator=org.bytedeco.javacpp.Pointer$NativeDeallocator[ownerAddress=0x7fba83497b50,deallocatorAddress=0x125f69b10]];
-
-            double iterations = 1;
-
-            Integer bordertype = imgproc.BORDER_CONSTANT;
-
-            Scalar bordervalue = (Infinity, Infinity, Infinity, Infinity);
+            Mat input = source0;
+            String type = "Box Blur";
+            Double radius = 0.0;
             //output
             Mat output0 = new Mat();
-            CV dilate();
+            Blur(input, type, radius, output0);
             outputs.put("output0", output0);
 
-
-	    //Step1: HSV Threshold:
-	    //Operation not found
-	                //input
-
-            Mat input = output0;
-
-            int[] hue = {[0.0, 180.0]};
-
-            int[] saturation = {[0.0, 255.0]};
-
-            int[] value = {[0.0, 255.0]};
+	    //Step1: Convex_Hulls:
+            //input
+            ContoursReport contours = source1;
             //output
-            Mat output1 = new Mat();
-            operationNotFound();
+            ContoursReport output1 = new ContoursReport();
+            Convex_Hulls(contours, output1);
             outputs.put("output1", output1);
 
-
-	    //Step2: HSL Threshold:
-	    //Operation not found
-	                //input
-
-            Mat input = output1;
-
-            int[] hue = {[0.0, 180.0]};
-
-            int[] saturation = {[0.0, 255.0]};
-
-            int[] luminance = {[0.0, 255.0]};
+	    //Step2: CV_multiply:
+            //input
+            Mat src1 = source2;
+            Mat src2 = source3;
+            Double scale = 1.0;
             //output
             Mat output2 = new Mat();
-            operationNotFound();
+            CV_multiply(src1, src2, scale, output2);
             outputs.put("output2", output2);
 
+	    //Step3: CV_Sobel:
+            //input
+            Mat src = output2;
+            Double dx = 0;
+            Double dy = 0;
+            Double ksize = 3;
+            Double scale = 1;
+            Double delta = 0;
+            String bordertype = "BORDER_DEFAULT";
+            //output
+            Mat output3 = new Mat();
+            CV_Sobel(src, dx, dy, ksize, scale, delta, bordertype, output3);
+            outputs.put("output3", output3);
+
+	    //Step4: HSL_Threshold:
+            //input
+            Mat input = source4;
+            int[] hue = {0.0, 180.0};
+            int[] saturation = {0.0, 255.0};
+            int[] luminance = {0.0, 255.0};
+            //output
+            Mat output4 = new Mat();
+            HSL_Threshold(input, hue, saturation, luminance, output4);
+            outputs.put("output4", output4);
 
 	}
+}

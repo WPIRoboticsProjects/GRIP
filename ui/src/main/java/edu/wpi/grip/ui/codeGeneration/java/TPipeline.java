@@ -47,9 +47,14 @@ public class TPipeline {
     for (int i = 0; i < pipeline.getSteps().size(); i++) {
       for (InputSocket input : pipeline.getSteps().get(i).getInputSockets()) {
         TInput tInput;
-        if (connections.containsKey(input)) {
-          tInput = new TInput(TemplateMethods.parseSocketType(input), TemplateMethods
-              .parseSocketName(input), connections.get(input));
+        if (!input.getConnections().isEmpty()) {
+          if (connections.containsKey(input)) {
+            tInput = new TInput(TemplateMethods.parseSocketType(input), TemplateMethods
+                .parseSocketName(input), connections.get(input));
+          } else {
+            tInput = createInput(TemplateMethods.parseSocketType(input), TemplateMethods
+                .parseSocketName(input), "Connection");
+          }
         } else {
           tInput = createInput(TemplateMethods.parseSocketType(input), TemplateMethods
               .parseSocketName(input), TemplateMethods.parseSocketValue(input));
@@ -62,16 +67,19 @@ public class TPipeline {
   }
 
   protected TInput createInput(String type, String name, String value) {
-    if (value.equals("Optional.empty") || value.contains("Connection")) {
+    if (value.equals("Optional.empty") || value.contains("Connection") || value.contains("ContoursReport")) {
       int s = numSources;
       numSources++;
-      return new TInput(type, name, "source" + s);
-    } else if (type.contains("Enum")) {
+      value = "source" + s;
+    } else if (value.contains("bytedeco")) {
+      //  value = "null";
+    }
+    if (type.contains("Enum")) {
       return new TInput("Integer", name, "imgproc." + value);
-    } else if (type.equals("Type")) {
-      return new TInput("String", name, value);
+    } else if (type.equals("String")) {
+      return new TInput(type , name, "\"" + value + "\"");
     } else if (type.equals("List")) {
-      return new TInput("int[]", name, "{" + value + "}");
+      return new TInput("int[]", name, "{" + value.substring(1, value.length() - 1) + "}");
     } else {
       return new TInput(type, name, value);
     }
