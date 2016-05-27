@@ -44,58 +44,16 @@ public class Pipeline{
 	 * This is the primary method that runs the entire pipeline and updates the outputs.
 	 */
 	protected void processImage(){
-	    //Step0: Blur:
+	    //Step0: Distance_Transform:
             //input
             Mat input = source0;
-            String type = "Box Blur";
-            Double radius = 0.0;
+            Distance_TransformType type = CV_DIST_L2;
+            MaskSize maskSize = MaskSize.get("0x0");
             //output
             Mat output0 = new Mat();
-            Blur(input, type, radius, output0);
+            Distance_Transform(input, type, maskSize, output0);
             outputs.put("output0", output0);
 
-	    //Step1: Convex_Hulls:
-            //input
-            ContoursReport contours = source1;
-            //output
-            ContoursReport output1 = new ContoursReport();
-            Convex_Hulls(contours, output1);
-            outputs.put("output1", output1);
-
-	    //Step2: CV_multiply:
-            //input
-            Mat src1 = source2;
-            Mat src2 = source3;
-            Double scale = 1.0;
-            //output
-            Mat output2 = new Mat();
-            CV_multiply(src1, src2, scale, output2);
-            outputs.put("output2", output2);
-
-	    //Step3: CV_Sobel:
-            //input
-            Mat src = output2;
-            Double dx = 0;
-            Double dy = 0;
-            Double ksize = 3;
-            Double scale = 1;
-            Double delta = 0;
-            String bordertype = "BORDER_DEFAULT";
-            //output
-            Mat output3 = new Mat();
-            CV_Sobel(src, dx, dy, ksize, scale, delta, bordertype, output3);
-            outputs.put("output3", output3);
-
-	    //Step4: HSL_Threshold:
-            //input
-            Mat input = source4;
-            int[] hue = {0.0, 180.0};
-            int[] saturation = {0.0, 255.0};
-            int[] luminance = {0.0, 255.0};
-            //output
-            Mat output4 = new Mat();
-            HSL_Threshold(input, hue, saturation, luminance, output4);
-            outputs.put("output4", output4);
 
 	}
 }

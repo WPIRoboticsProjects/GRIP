@@ -54,5 +54,11 @@ public class Pipeline{
 #set($count = $count + 1)
 
 #end
+
+#foreach($step in $pipeline.getUniqueSteps())
+#if($step.name().equals("CV_dilate"))
+#parse("src/main/resources/edu/wpi/grip/ui/templates/CV_dilate.vm")
+#end
+#end
 	}
 }

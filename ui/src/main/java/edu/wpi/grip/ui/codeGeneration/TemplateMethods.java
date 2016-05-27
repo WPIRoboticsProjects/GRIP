@@ -67,9 +67,14 @@ public class TemplateMethods {
 
   public static String parseSocketType(Socket socket) {
     String type = socket.getSocketHint().getType().getSimpleName();
-    if (socket.getSocketHint().getView() == SocketHint.View.SELECT) {
-      return "String";
-    } else if (type.equals("Number")) {
+    if(socket.getValue().equals(SocketHint.View.SELECT)) {
+      if (!(type.equals("Type") || type.equals("MaskSize") || type.equals("FlipCode"))) {
+        type = "Enum" + type;
+      }
+    }
+
+
+    if (type.equals("Number")) {
       return "Double";
     } else {
       return type;

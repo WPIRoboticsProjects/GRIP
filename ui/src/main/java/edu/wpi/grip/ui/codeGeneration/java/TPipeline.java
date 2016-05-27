@@ -15,6 +15,7 @@ import edu.wpi.grip.ui.codegeneration.TemplateMethods;
 
 
 public class TPipeline {
+
   protected List<TStep> steps;
   private int numSources;
   private int numOutputs;
@@ -47,17 +48,19 @@ public class TPipeline {
     for (int i = 0; i < pipeline.getSteps().size(); i++) {
       for (InputSocket input : pipeline.getSteps().get(i).getInputSockets()) {
         TInput tInput;
+        String type = TemplateMethods.parseSocketType(input);
+        if(type.equals("Type")){
+          type = steps.get(i).name() + "Type";
+        }
+        String name = TemplateMethods.parseSocketName(input);
         if (!input.getConnections().isEmpty()) {
           if (connections.containsKey(input)) {
-            tInput = new TInput(TemplateMethods.parseSocketType(input), TemplateMethods
-                .parseSocketName(input), connections.get(input));
+            tInput = new TInput(type, name, connections.get(input));
           } else {
-            tInput = createInput(TemplateMethods.parseSocketType(input), TemplateMethods
-                .parseSocketName(input), "Connection");
+            tInput = createInput(type, name, "Connection");
           }
         } else {
-          tInput = createInput(TemplateMethods.parseSocketType(input), TemplateMethods
-              .parseSocketName(input), TemplateMethods.parseSocketValue(input));
+          tInput = createInput(type, name, TemplateMethods.parseSocketValue(input));
         }
         this.steps.get(i).addInput(tInput);
       }
@@ -72,12 +75,16 @@ public class TPipeline {
       numSources++;
       value = "source" + s;
     } else if (value.contains("bytedeco")) {
-      //  value = "null";
+        value = "null";
     }
+
     if (type.contains("Enum")) {
       return new TInput("Integer", name, "imgproc." + value);
-    } else if (type.equals("String")) {
-      return new TInput(type , name, "\"" + value + "\"");
+    } else if(type.equals("MaskSize")){
+      return new TInput(type, name, "MaskSize.get(\"" + value+"\")");
+    }
+    else if (type.equals("String") ) {
+      return new TInput(type, name, "\"" + value + "\"");
     } else if (type.equals("List")) {
       return new TInput("int[]", name, "{" + value.substring(1, value.length() - 1) + "}");
     } else {
@@ -91,6 +98,16 @@ public class TPipeline {
 
   public static String updateOp(String opName) {
     return TemplateMethods.opName(opName);
+  }
+
+  public List<TStep> getUniqueSteps() {
+    List<TStep> out = new ArrayList<TStep>();
+    for (TStep step: steps) {
+      if (!out.contains(step)) {
+        out.add(step);
+      }
+    }
+    return out;
   }
 
 
