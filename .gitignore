@@ -88,3 +88,4 @@ bower_components
 **/generated
 */generated_tests
 /bin/
+ui/PipelineTest.java
