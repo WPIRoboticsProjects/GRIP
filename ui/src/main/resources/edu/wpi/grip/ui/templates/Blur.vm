@@ -1,0 +1,35 @@
+enum BlurType{
+	BOX("Box Blur"), GAUSSIAN("Gaussian Blur"), MEDIAN("Median Filter"), BILATERAL_FILTER("Bilateral Filter");
+
+	private final String label;
+
+	Type(String label) {
+		this.label = label;
+	}
+
+	@Override
+	public String toString() {
+		return this.label;
+	}
+}
+
+void Blur(Mat input, BlurType type, int radius, Mat output){
+	int kernalSize;
+	switch(type){
+ 		case BOX:
+ 			kernalSize = 2*radius+1;
+ 			Imgproc.blur(input,output,new Size(kernalSize, kernalSize);
+ 			break;
+		case GAUSSIAN:
+			kernalSize = 6*radius +1;
+			Imgproc.GaussianBlur(input,output, new Size(kernalSize, kernalSize),radius);
+			break;
+		case MEDIAN: 
+			kernalSize = 2*radius +1;
+			Imgproc.medianBlur(input,output,kernalSize);
+			break;
+		case BILATERAL_FILTER:
+			Imgproc.bilateralFilter(input,output,-1,radius,radius);
+			break;
+	}
+}
