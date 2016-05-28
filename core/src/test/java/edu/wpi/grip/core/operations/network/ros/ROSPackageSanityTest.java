@@ -6,6 +6,6 @@ import com.google.common.testing.AbstractPackageSanityTests;
 public class ROSPackageSanityTest extends AbstractPackageSanityTests {
     public ROSPackageSanityTest() {
         super();
-        ignoreClasses(c -> c.equals(ROSLoader.class));
+        ignoreClasses(c -> c.equals(ROSLoader.class) || c.equals(MockROSManager.class));
     }
 }

@@ -31,4 +31,3 @@ public class AboutDialogController {
         versionNumberLabel.setText("Version " + edu.wpi.grip.core.Main.class.getPackage().getImplementationVersion());
     }
 }
-
