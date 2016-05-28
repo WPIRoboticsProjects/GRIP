@@ -150,7 +150,6 @@
         <fx:include source="Deploy.fxml" fx:id="deployPane"/>
     </fx:define>
     <stylesheets>
-        <URL value="@roboto/Roboto.css"/>
         <URL value="@GRIP.css"/>
     </stylesheets>
 </VBox>
