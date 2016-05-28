@@ -20,6 +20,17 @@ public class SocketPreviewChangedEvent {
     }
 
     /**
+     * Queries the event to determine if this event is about this socket.
+     *
+     * @param socket The socket to check to see if it is related to.
+     * @return True if this socket is with regards to this event.
+     */
+    public boolean isRegarding(OutputSocket socket) {
+        // This is necessary as some of the sockets are just decorators for other sockets.
+        return socket.equals(this.socket);
+    }
+
+    /**
      * @return The socket being previewed
      */
     public OutputSocket getSocket() {

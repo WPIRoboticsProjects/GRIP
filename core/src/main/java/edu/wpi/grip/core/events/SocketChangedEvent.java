@@ -19,12 +19,15 @@ public class SocketChangedEvent implements RunPipelineEvent {
         this.socket = checkNotNull(socket, "Socket can not be null");
     }
 
-
     /**
-     * @return The socket that changed, with its new value.
+     * Queries the event to determine if this event is about this socket.
+     *
+     * @param socket The socket to check to see if it is related to.
+     * @return True if this socket is with regards to this event.
      */
-    public Socket getSocket() {
-        return this.socket;
+    public boolean isRegarding(Socket socket) {
+        // This is necessary as some of the sockets are just decorators for other sockets.
+        return socket.equals(this.socket);
     }
 
     @Override
@@ -38,7 +41,7 @@ public class SocketChangedEvent implements RunPipelineEvent {
          * If the connections are empty then the change must have come from the UI so we need to run the pipeline
          * with the new values.
          */
-        return getSocket().getDirection().equals(Socket.Direction.INPUT) && getSocket().getConnections().isEmpty();
+        return socket.getDirection().equals(Socket.Direction.INPUT) && socket.getConnections().isEmpty();
     }
 
     @Override

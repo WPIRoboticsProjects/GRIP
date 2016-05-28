@@ -91,15 +91,15 @@ public class SocketConverter implements Converter {
         try {
             reader.moveDown();
 
-            final String nodeName = reader.getNodeName();
+            final Class<?> nodeClass = project.xstream.getMapper().realClass(reader.getNodeName());
 
             Socket.Direction direction;
-            if (nodeName.equals(project.xstream.getMapper().serializedClass(InputSocket.class))) {
+            if (InputSocket.class.isAssignableFrom(nodeClass)) {
                 direction = Socket.Direction.INPUT;
-            } else if (nodeName.equals(project.xstream.getMapper().serializedClass(OutputSocket.class))) {
+            } else if (OutputSocket.class.isAssignableFrom(nodeClass)) {
                 direction = Socket.Direction.OUTPUT;
             } else {
-                throw new IllegalArgumentException("Unexpected socket node name: " + nodeName);
+                throw new IllegalArgumentException("Unexpected socket type: " + nodeClass.getName());
             }
 
             // Look up the socket using the saved indexes.  Serializing sockets this way makes it so different things

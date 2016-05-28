@@ -1,63 +1,64 @@
 package edu.wpi.grip.core.operations.composite;
 
 
-import com.google.common.eventbus.EventBus;
-import edu.wpi.grip.core.*;
-import edu.wpi.grip.core.sockets.*;
+import com.google.common.collect.ImmutableList;
+import edu.wpi.grip.core.Operation;
+import edu.wpi.grip.core.OperationDescription;
+import edu.wpi.grip.core.sockets.InputSocket;
+import edu.wpi.grip.core.sockets.LinkedSocketHint;
+import edu.wpi.grip.core.sockets.OutputSocket;
+import edu.wpi.grip.core.sockets.SocketHint;
+import edu.wpi.grip.core.sockets.SocketHints;
 
+import java.util.List;
 import java.util.Optional;
 
 public class ValveOperation implements Operation {
-    @Override
-    public String getName() {
-        return "Valve";
-    }
 
-    @Override
-    public String getDescription() {
-        return "Toggle an output socket on or off using a boolean";
-    }
+    public static OperationDescription DESCRIPTION =
+            OperationDescription.builder()
+                    .name("Valve")
+                    .summary("Toggle an output socket on or off using a boolean")
+                    .category(OperationDescription.Category.LOGICAL)
+                    .build();
 
-    @Override
-    public Category getCategory() {
-        return Category.LOGICAL;
-    }
+    private final InputSocket<Boolean> switcherSocket;
+    private final InputSocket inputSocket; // Intentionally using raw types
 
-    @Override
-    public SocketsProvider createSockets(EventBus eventBus) {
-        // This hint toggles the switch between using the true and false sockets
+    private final OutputSocket outputSocket;
+
+    public ValveOperation(InputSocket.Factory inputSocketFactory, OutputSocket.Factory outputSocketFactory) {
+        final LinkedSocketHint linkedSocketHint = new LinkedSocketHint(inputSocketFactory, outputSocketFactory);
         final SocketHint<Boolean> switcherHint = SocketHints.createBooleanSocketHint("valve", true);
 
-        final LinkedSocketHint linkedSocketHint = new LinkedSocketHint(eventBus);
-        final InputSocket<?>[] inputs = new InputSocket[]{
-                new InputSocket<>(eventBus, switcherHint),
-                linkedSocketHint.linkedInputSocket("Input"),
-        };
-        final OutputSocket<?>[] outputs = new OutputSocket[]{
-                linkedSocketHint.linkedOutputSocket("Output")
-        };
-        return new SocketsProvider(inputs, outputs);
+        this.switcherSocket = inputSocketFactory.create(switcherHint);
+        this.inputSocket = linkedSocketHint.linkedInputSocket("Input");
+
+        this.outputSocket = linkedSocketHint.linkedOutputSocket("Output");
     }
 
     @Override
-    public InputSocket<?>[] createInputSockets(EventBus eventBus) {
-        throw new UnsupportedOperationException("This method should not be used");
+    public List<InputSocket> getInputSockets() {
+        return ImmutableList.of(
+                switcherSocket,
+                inputSocket
+        );
     }
 
     @Override
-    public OutputSocket<?>[] createOutputSockets(EventBus eventBus) {
-        throw new UnsupportedOperationException("This method should not be used");
+    public List<OutputSocket> getOutputSockets() {
+        return ImmutableList.of(
+                outputSocket
+        );
     }
 
     @Override
-    @SuppressWarnings("unchecked")
-    public void perform(InputSocket<?>[] inputs, OutputSocket<?>[] outputs) {
-        final InputSocket<Boolean> switchHint = (InputSocket<Boolean>) inputs[0];
+    public void perform() {
         // If the input is true pass the value through
-        if (switchHint.getValue().get()) {
-            outputs[0].setValueOptional(((InputSocket) inputs[1]).getValue());
+        if (switcherSocket.getValue().get()) {
+            outputSocket.setValueOptional(inputSocket.getValue());
         } else {
-            outputs[0].setValueOptional((Optional) Optional.empty());
+            outputSocket.setValueOptional(Optional.empty());
         }
     }
 }

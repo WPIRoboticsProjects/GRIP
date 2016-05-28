@@ -1,8 +1,8 @@
 package edu.wpi.grip.core.sockets;
 
-import com.google.common.eventbus.EventBus;
+import com.thoughtworks.xstream.annotations.XStreamAlias;
+
 import edu.wpi.grip.core.Connection;
-import edu.wpi.grip.core.events.ConnectionRemovedEvent;
 
 import java.util.HashSet;
 import java.util.Optional;
@@ -20,13 +20,58 @@ public final class LinkedSocketHint extends SocketHint.SocketHintDecorator {
      */
     private final Set<InputSocket> controllingSockets = new HashSet<>();
     private final Set<OutputSocket> controlledOutputSockets = new HashSet<>();
-    private final EventBus eventBus;
     private Optional<Class> connectedType = Optional.empty();
+    private final InputSocket.Factory inputSocketFactory;
+    private final OutputSocket.Factory outputSocketFactory;
 
     @SuppressWarnings("unchecked")
-    public LinkedSocketHint(EventBus eventBus) {
-        super(new Builder<>(Object.class).identifier("").build());
-        this.eventBus = checkNotNull(eventBus, "EventBus cannot be null");
+    public LinkedSocketHint(InputSocket.Factory inputSocketFactory, OutputSocket.Factory outputSocketFactory) {
+        super(new Builder(Object.class).identifier("").build());
+        this.inputSocketFactory = checkNotNull(inputSocketFactory);
+        this.outputSocketFactory = checkNotNull(outputSocketFactory);
+    }
+
+    /**
+     * Our own custom implementation of socket hint that interacts on this class when connections are added and removed.
+     */
+    @XStreamAlias("grip:LinkedInput")
+    private class LinkedInputSocket<T> extends InputSocket.Decorator<T> {
+
+        /**
+         * @param socket the decorated socket
+         */
+        LinkedInputSocket(InputSocket<T> socket) {
+            super(socket);
+        }
+
+        @Override
+        public void addConnection(Connection connection) {
+            synchronized (this) {
+                controllingSockets.add(this);
+                connectedType = Optional.of(connection.getOutputSocket().getSocketHint().getType());
+            }
+            super.addConnection(connection);
+        }
+
+        @Override
+        @SuppressWarnings("unchecked")
+        public void removeConnection(Connection connection) {
+            synchronized (this) {
+                // Remove this socket because it is no longer controlling the type of socket
+                controllingSockets.remove(this);
+                if (controllingSockets.isEmpty()) { // When the set is empty, the socket can support any type again
+                    connectedType = Optional.empty();
+                    // XXX: TODO: This is breaking the law of Demeter fix this
+                    controlledOutputSockets.forEach(outputSocket -> {
+                        final Set<Connection<?>> connections = outputSocket.getConnections();
+                        connections.stream().forEach(Connection::remove);
+                        outputSocket.setPreviewed(false);
+                        outputSocket.setValueOptional(Optional.empty());
+                    });
+                }
+            }
+            super.removeConnection(connection);
+        }
     }
 
     /**
@@ -36,42 +81,12 @@ public final class LinkedSocketHint extends SocketHint.SocketHintDecorator {
      * @return A socket hint that's socket type is determined by this SocketHint
      */
     @SuppressWarnings("unchecked")
-    public InputSocket linkedInputSocket(String hintIdentifier) {
-        // Our own custom implementation of socket hint that interacts on this class when connections are
-        // added and removed
-        return new InputSocket(eventBus, new IdentiferOverridingSocketHintDecorator(this, hintIdentifier)) {
-            @Override
-            public void addConnection(Connection connection) {
-                synchronized (this) {
-                    controllingSockets.add(this);
-                    connectedType = Optional.of(connection.getOutputSocket().getSocketHint().getType());
-                }
-                super.addConnection(connection);
-            }
-
-            @Override
-            public void onDisconnected() {
-                synchronized (this) {
-                    // Remove this socket because it is no longer controlling the type of socket
-                    controllingSockets.remove(this);
-                    if (controllingSockets.isEmpty()) { // When the set is empty, the socket can support any type again
-                        connectedType = Optional.empty();
-                        // XXX: TODO: This is breaking the law of Demeter fix this
-                        controlledOutputSockets.forEach(outputSocket -> {
-                            final Set<Connection<?>> connections = outputSocket.getConnections();
-                            connections.stream().map(ConnectionRemovedEvent::new).forEach(this.eventBus::post);
-                            outputSocket.setPreviewed(false);
-                            outputSocket.setValueOptional(Optional.empty());
-                        });
-                    }
-                }
-                super.onDisconnected();
-            }
-        };
+    public InputSocket<?> linkedInputSocket(String hintIdentifier) {
+        return new LinkedInputSocket<>(inputSocketFactory.create(new IdentiferOverridingSocketHintDecorator(this, hintIdentifier)));
     }
 
     /**
-     * Creates an input socket that is linked to this SocketHint.
+     * Creates an input socket that is linked to this Socket
      * This output socket will automatically be disconnected when there is no longer an input socket to guarantee the type
      * of this SocketHint
      *
@@ -80,7 +95,7 @@ public final class LinkedSocketHint extends SocketHint.SocketHintDecorator {
      */
     @SuppressWarnings("unchecked")
     public OutputSocket linkedOutputSocket(String hintIdentifier) {
-        final OutputSocket outSocket = new OutputSocket(eventBus, new IdentiferOverridingSocketHintDecorator(this, hintIdentifier));
+        final OutputSocket outSocket = outputSocketFactory.create(new IdentiferOverridingSocketHintDecorator(this, hintIdentifier));
         controlledOutputSockets.add(outSocket);
         return outSocket;
     }

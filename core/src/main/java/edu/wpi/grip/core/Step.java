@@ -1,16 +1,15 @@
 package edu.wpi.grip.core;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.eventbus.EventBus;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.core.sockets.Socket;
-import edu.wpi.grip.core.sockets.SocketsProvider;
 import edu.wpi.grip.core.util.ExceptionWitness;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -29,35 +28,33 @@ public class Step {
     private final ExceptionWitness witness;
 
     private final Operation operation;
-    private final InputSocket<?>[] inputSockets;
-    private final OutputSocket<?>[] outputSockets;
-    private final Optional<?> data;
+    private final OperationDescription description;
+    private final List<InputSocket> inputSockets;
+    private final List<OutputSocket> outputSockets;
     private final Object removedLock = new Object();
     private boolean removed = false;
 
     @Singleton
     public static class Factory {
-        private final EventBus eventBus;
         private final ExceptionWitness.Factory exceptionWitnessFactory;
 
         @Inject
-        public Factory(EventBus eventBus, ExceptionWitness.Factory exceptionWitnessFactory) {
-            this.eventBus = eventBus;
+        public Factory(ExceptionWitness.Factory exceptionWitnessFactory) {
             this.exceptionWitnessFactory = exceptionWitnessFactory;
         }
 
-        public Step create(Operation operation) {
-            checkNotNull(operation, "The operation can not be null");
+        public Step create(OperationMetaData operationData) {
+            checkNotNull(operationData, "The operationMetaData cannot be null");
+            final Operation operation = operationData.getOperationSupplier().get();
             // Create the list of input and output sockets, and mark this step as their owner.
-            final SocketsProvider socketsProvider = operation.createSockets(eventBus);
-            final InputSocket<?>[] inputSockets = socketsProvider.inputSockets();
-            final OutputSocket<?>[] outputSockets = socketsProvider.outputSockets();
+            final List<InputSocket> inputSockets = operation.getInputSockets();
+            final List<OutputSocket> outputSockets = operation.getOutputSockets();
 
             final Step step = new Step(
                     operation,
+                    operationData.getDescription(),
                     inputSockets,
                     outputSockets,
-                    operation.createData(),
                     exceptionWitnessFactory
             );
 
@@ -74,41 +71,41 @@ public class Step {
 
     /**
      * @param operation               The operation that is performed at this step.
+     * @param description             The description of the operation
      * @param inputSockets            The input sockets from the operation.
      * @param outputSockets           The output sockets provided by the operation.
-     * @param data                    The data provided by the operation.
      * @param exceptionWitnessFactory A factory used to create an {@link ExceptionWitness}
      */
     Step(Operation operation,
-         InputSocket<?>[] inputSockets,
-         OutputSocket<?>[] outputSockets,
-         Optional<?> data,
+         OperationDescription description,
+         List<InputSocket> inputSockets,
+         List<OutputSocket> outputSockets,
          ExceptionWitness.Factory exceptionWitnessFactory) {
         this.operation = operation;
+        this.description = description;
         this.inputSockets = inputSockets;
         this.outputSockets = outputSockets;
-        this.data = data;
         this.witness = exceptionWitnessFactory.create(this);
     }
 
     /**
-     * @return The underlying <code>Operation</code> that this step performs
+     * @return The description for the step
      */
-    public Operation getOperation() {
-        return this.operation;
+    public OperationDescription getOperationDescription() {
+        return this.description;
     }
 
     /**
      * @return An array of {@link InputSocket InputSockets} that hold the inputs to this step
      */
-    public ImmutableList<InputSocket<?>> getInputSockets() {
+    public ImmutableList<InputSocket> getInputSockets() {
         return ImmutableList.copyOf(inputSockets);
     }
 
     /**
      * @return A list of {@link OutputSocket OutputSockets} that hold the outputs of this step
      */
-    public ImmutableList<OutputSocket<?>> getOutputSockets() {
+    public ImmutableList<OutputSocket> getOutputSockets() {
         return ImmutableList.copyOf(outputSockets);
     }
 
@@ -129,6 +126,7 @@ public class Step {
      */
     protected final void runPerformIfPossible() {
         boolean anyDirty = false; // Keeps track of if there are sockets that are dirty
+
         for (InputSocket<?> inputSocket : inputSockets) {
             // If there is a socket that isn't present then we have a problem.
             if (!inputSocket.getValue().isPresent()) {
@@ -138,6 +136,7 @@ public class Step {
             }
             // If one value is true then this will stay true
             anyDirty |= inputSocket.dirtied();
+
         }
         if (!anyDirty) { // If there aren't any dirty inputs
             // Don't clear the exceptions just return
@@ -149,13 +148,13 @@ public class Step {
             // while that is happening.
             synchronized (removedLock) {
                 if (!removed) {
-                    this.operation.perform(inputSockets, outputSockets, data);
+                    this.operation.perform();
                 }
             }
         } catch (RuntimeException e) {
             // We do not want to catch all exceptions, only runtime exceptions.
             // This is especially important when it comes to InterruptedExceptions
-            final String operationFailedMessage = "The " + operation.getName() + " operation did not perform correctly.";
+            final String operationFailedMessage = String.format("The %s operation did not perform correctly.", getOperationDescription().name());
             logger.log(Level.WARNING, operationFailedMessage, e);
             witness.flagException(e, operationFailedMessage);
             resetOutputSockets();
@@ -169,7 +168,7 @@ public class Step {
         // if we don't wait then the perform method could end up being run concurrently with the perform methods execution
         synchronized (removedLock) {
             removed = true;
-            operation.cleanUp(inputSockets, outputSockets, data);
+            operation.cleanUp();
         }
     }
 

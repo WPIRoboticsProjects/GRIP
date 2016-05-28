@@ -53,8 +53,8 @@ public class CheckboxInputSocketController extends InputSocketController<Boolean
 
     @Subscribe
     public void updateCheckboxFromSocket(SocketChangedEvent event) {
-        if (event.getSocket() == this.getSocket()) {
-            platform.runAsSoonAsPossible(() -> assignSocketValue(event.getSocket().getValue()));
+        if (event.isRegarding(getSocket())) {
+            platform.runAsSoonAsPossible(() -> assignSocketValue(getSocket().getValue()));
         }
     }
 }

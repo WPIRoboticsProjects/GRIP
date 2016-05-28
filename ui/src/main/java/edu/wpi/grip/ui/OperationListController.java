@@ -2,8 +2,9 @@ package edu.wpi.grip.ui;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.eventbus.Subscribe;
+import com.google.inject.Inject;
 import com.sun.javafx.application.PlatformImpl;
-import edu.wpi.grip.core.Operation;
+import edu.wpi.grip.core.OperationMetaData;
 import edu.wpi.grip.core.events.OperationAddedEvent;
 import edu.wpi.grip.ui.annotations.ParametrizedController;
 import edu.wpi.grip.ui.util.ControllerMap;
@@ -17,13 +18,11 @@ import javafx.scene.Node;
 import javafx.scene.control.Tab;
 import javafx.scene.layout.VBox;
 
-import javax.inject.Inject;
-
 /**
  * Controller for a VBox of {@link OperationController}s.  The user data for this should be what category it shows,
  * and the filterText property allows for fuzzy searching the operations.
  *
- * @see edu.wpi.grip.core.Operation.Category
+ * @see edu.wpi.grip.core.OperationDescription.Category
  */
 @ParametrizedController(url = "OperationList.fxml")
 public class OperationListController {
@@ -53,8 +52,8 @@ public class OperationListController {
             String filter = filterText.getValue();
             long numMatches = operationsMapManager.keySet().stream()
                     .filter(key -> {
-                        boolean visible = SearchUtility.fuzzyContains(key.getOperation().getName(), filter)
-                                || SearchUtility.fuzzyContains(key.getOperation().getDescription(), filter);
+                        boolean visible = SearchUtility.fuzzyContains(key.getOperationDescription().name(), filter)
+                                || SearchUtility.fuzzyContains(key.getOperationDescription().summary(), filter);
                         operationsMapManager.get(key).setVisible(visible);
                         return visible;
                     }).count();
@@ -83,11 +82,11 @@ public class OperationListController {
 
     @Subscribe
     public void onOperationAdded(OperationAddedEvent event) {
-        Operation operation = event.getOperation();
+        OperationMetaData operationMetaData = event.getOperation();
 
-        if (root.getUserData() == null || operation.getCategory() == root.getUserData()) {
+        if (root.getUserData() == null || operationMetaData.getDescription().category() == root.getUserData()) {
             PlatformImpl.runAndWait(() ->
-                    operationsMapManager.add(operationControllerFactory.create(event.getOperation())));
+                    operationsMapManager.add(operationControllerFactory.create(operationMetaData)));
         }
     }
 

@@ -6,11 +6,11 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 import edu.wpi.grip.core.events.ExceptionClearedEvent;
 import edu.wpi.grip.core.events.ExceptionEvent;
+import edu.wpi.grip.core.operations.CVOperations;
 import edu.wpi.grip.core.operations.Operations;
 import edu.wpi.grip.core.operations.network.GRIPNetworkModule;
 import edu.wpi.grip.core.serialization.Project;
 import edu.wpi.grip.core.sources.GRIPSourcesHardwareModule;
-import edu.wpi.grip.generated.CVOperations;
 
 import javax.inject.Inject;
 import java.io.File;
@@ -27,6 +27,7 @@ public class Main {
     @Inject private PipelineRunner pipelineRunner;
     @Inject private EventBus eventBus;
     @Inject private Operations operations;
+    @Inject private CVOperations cvOperations;
     @Inject private Logger logger;
 
     @SuppressWarnings("PMD.SystemPrintln")
@@ -45,7 +46,7 @@ public class Main {
         }
 
         operations.addOperations();
-        CVOperations.addOperations(eventBus);
+        cvOperations.addOperations();
 
         final String projectPath = args[0];
 

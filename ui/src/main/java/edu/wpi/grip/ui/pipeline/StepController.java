@@ -1,10 +1,10 @@
 package edu.wpi.grip.ui.pipeline;
 
 import com.google.inject.assistedinject.Assisted;
-import edu.wpi.grip.core.sockets.InputSocket;
-import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.core.Pipeline;
 import edu.wpi.grip.core.Step;
+import edu.wpi.grip.core.sockets.InputSocket;
+import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.ui.Controller;
 import edu.wpi.grip.ui.annotations.ParametrizedController;
 import edu.wpi.grip.ui.components.ExceptionWitnessResponderButton;
@@ -22,6 +22,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
 import javax.inject.Inject;
+import java.io.InputStream;
 import java.util.Collection;
 
 /**
@@ -85,8 +86,8 @@ public class StepController implements Controller {
         outputSocketMapManager = new ControllerMap<>(outputs.getChildren());
 
         root.getStyleClass().add(StyleClassNameUtility.classNameFor(step));
-        title.setText(step.getOperation().getName());
-        step.getOperation().getIcon().ifPresent(icon -> this.icon.setImage(new Image(icon)));
+        title.setText(step.getOperationDescription().name());
+        step.getOperationDescription().icon().ifPresent(icon -> this.icon.setImage(new Image(InputStream.class.cast(icon))));
         buttons.getChildren().add(0, exceptionWitnessResponderButtonFactory.create(step, "Step Error"));
 
         // Add a SocketControlView for each input socket and output socket

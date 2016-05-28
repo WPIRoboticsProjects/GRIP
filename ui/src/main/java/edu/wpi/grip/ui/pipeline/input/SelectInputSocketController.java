@@ -60,7 +60,7 @@ public class SelectInputSocketController<T> extends InputSocketController<T> {
 
     @Subscribe
     public void updateChoiceBoxFromSocket(SocketChangedEvent event) {
-        if (event.getSocket() == this.getSocket()) {
+        if (event.isRegarding(this.getSocket())) {
             platform.runAsSoonAsPossible(() -> {
                 // Remove the invalidation listener when we set the value.  This listener is useful for updating the socket value
                 // when the user changes the spinner, but since we're setting the spinner value from the socket value, calling it

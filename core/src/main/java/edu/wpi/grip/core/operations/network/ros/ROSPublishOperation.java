@@ -1,57 +1,48 @@
 package edu.wpi.grip.core.operations.network.ros;
 
 
+import edu.wpi.grip.core.OperationDescription;
+import edu.wpi.grip.core.operations.network.NetworkPublishOperation;
 import edu.wpi.grip.core.sockets.InputSocket;
-import edu.wpi.grip.core.operations.network.PublishOperation;
+import edu.wpi.grip.core.util.Icon;
 
-import java.io.InputStream;
+import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 
 /**
  * An operation that can publish a type to ROS using the java to message converter
- * @param <S> The type of the socket that is taken as an input to be published
+ * @param <D> The type of the socket that is taken as an input to be published
  */
-public abstract class ROSPublishOperation<S> extends PublishOperation<S, ROSMessagePublisher> {
-    private final ROSNetworkPublisherFactory rosNetworkPublisherFactory;
-    private final JavaToMessageConverter<S, ?> converter;
+public class ROSPublishOperation<D> extends NetworkPublishOperation<D> {
 
-    /*
-     * Protected so type resolution can happen
-     */
-    protected ROSPublishOperation(ROSNetworkPublisherFactory rosNetworkPublisherFactory, JavaToMessageConverter<S, ?> converter) {
-        super();
-        this.rosNetworkPublisherFactory = rosNetworkPublisherFactory;
+    public static OperationDescription descriptionFor(Class<?> dataType) {
+        return OperationDescription.builder()
+                .name("ROSPublish " + dataType.getSimpleName())
+                .summary("Publishes a " + dataType.getSimpleName() + " to a ROS node")
+                .icon(Icon.iconStream("rosorg-logo"))
+                .category(OperationDescription.Category.NETWORK)
+                .build();
+    }
+
+    private final JavaToMessageConverter<D, ?> converter;
+    private final ROSMessagePublisher publisher;
+
+
+    public ROSPublishOperation(InputSocket.Factory inputSocketFactory, Class<D> dataType, ROSNetworkPublisherFactory rosNetworkPublisherFactory, JavaToMessageConverter<D, ?> converter) {
+        super(inputSocketFactory, dataType);
         this.converter = converter;
+        this.publisher = rosNetworkPublisherFactory.create(converter);
     }
 
     @Override
-    protected final String getNetworkProtocolNameAcronym() {
-        return "ROS";
+    protected List<InputSocket<Boolean>> createFlagSockets() {
+        return Collections.emptyList();
     }
 
     @Override
-    protected final String getNetworkProtocolName() {
-        return "Robot Operating System";
+    @SuppressWarnings("OptionalGetWithoutIsPresent")
+    protected void doPublish() {
+        publisher.publish((m, f) -> converter.convert(dataSocket.getValue().get(), m, f));
     }
 
-    @Override
-    protected final String getSocketHintStringPrompt() {
-        return "Topic";
-    }
-
-    @Override
-    protected ROSMessagePublisher createPublisher() {
-        return rosNetworkPublisherFactory.create(converter);
-    }
-
-    @Override
-    protected final void performPublish(S socketValue, ROSMessagePublisher publisher, List<InputSocket<?>> restOfInputSockets) {
-        publisher.publish((message, mFactory) -> converter.convert(socketValue, message, mFactory));
-    }
-
-    @Override
-    public Optional<InputStream> getIcon() {
-        return Optional.of(getClass().getResourceAsStream("/edu/wpi/grip/ui/icons/rosorg-logo.png"));
-    }
 }

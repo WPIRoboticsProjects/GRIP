@@ -2,7 +2,7 @@ import edu.wpi.grip.core.sockets as grip
 
 name = "Add"
 
-description = "Compute the sum of two integers"
+summary = "Compute the sum of two integers"
 
 inputs = [
     grip.SocketHints.createNumberSocketHint("a", 0.0),

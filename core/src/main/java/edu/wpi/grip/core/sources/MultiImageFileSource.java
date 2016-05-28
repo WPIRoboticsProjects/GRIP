@@ -1,11 +1,13 @@
 package edu.wpi.grip.core.sources;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.eventbus.EventBus;
 import com.google.common.math.IntMath;
 import com.google.inject.assistedinject.Assisted;
 import com.google.inject.assistedinject.AssistedInject;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
-import edu.wpi.grip.core.*;
+import edu.wpi.grip.core.PreviousNext;
+import edu.wpi.grip.core.Source;
 import edu.wpi.grip.core.events.SourceHasPendingUpdateEvent;
 import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.core.sockets.SocketHint;
@@ -62,10 +64,11 @@ public final class MultiImageFileSource extends Source implements PreviousNext {
     @AssistedInject
     MultiImageFileSource(
             final EventBus eventBus,
+            final OutputSocket.Factory outputSocketFactory,
             final ExceptionWitness.Factory exceptionWitnessFactory,
             @Assisted final List<File> files,
             @Assisted final int index) {
-        this(eventBus, exceptionWitnessFactory, files.stream()
+        this(eventBus, outputSocketFactory, exceptionWitnessFactory, files.stream()
                 .map(file -> URLDecoder.decode(Paths.get(file.toURI()).toString()))
                 .collect(Collectors.toList()).toArray(new String[files.size()]), index);
     }
@@ -73,9 +76,10 @@ public final class MultiImageFileSource extends Source implements PreviousNext {
     @AssistedInject
     MultiImageFileSource(
             final EventBus eventBus,
+            final OutputSocket.Factory outputSocketFactory,
             final ExceptionWitness.Factory exceptionWitnessFactory,
             @Assisted final List<File> files) {
-        this(eventBus, exceptionWitnessFactory, files, 0);
+        this(eventBus, outputSocketFactory, exceptionWitnessFactory, files, 0);
     }
 
     /**
@@ -83,19 +87,21 @@ public final class MultiImageFileSource extends Source implements PreviousNext {
      */
     @AssistedInject
     MultiImageFileSource(final EventBus eventBus,
+                         final OutputSocket.Factory outputSocketFactory,
                          final ExceptionWitness.Factory exceptionWitnessFactory,
                          @Assisted final Properties properties) {
-        this(eventBus, exceptionWitnessFactory, pathsFromProperties(properties), indexFromProperties(properties));
+        this(eventBus, outputSocketFactory, exceptionWitnessFactory, pathsFromProperties(properties), indexFromProperties(properties));
     }
 
     private MultiImageFileSource(
             final EventBus eventBus,
+            final OutputSocket.Factory outputSocketFactory,
             final ExceptionWitness.Factory exceptionWitnessFactory,
             final String[] paths,
             final int index) {
         super(exceptionWitnessFactory);
         this.eventBus = eventBus;
-        this.outputSocket = new OutputSocket(eventBus, imageOutputHint);
+        this.outputSocket = outputSocketFactory.create(imageOutputHint);
         this.index = new AtomicInteger(checkElementIndex(index, paths.length, "File List Index"));
         this.paths = Arrays.asList(paths);
     }
@@ -113,8 +119,10 @@ public final class MultiImageFileSource extends Source implements PreviousNext {
     }
 
     @Override
-    protected OutputSocket[] createOutputSockets() {
-        return new OutputSocket[]{outputSocket};
+    protected List<OutputSocket> createOutputSockets() {
+        return ImmutableList.of(
+                outputSocket
+        );
     }
 
     @Override

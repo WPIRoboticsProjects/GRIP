@@ -64,7 +64,7 @@ public class PreviewsController {
             } else {
                 // When a socket is no longer marked as previewed, find and remove the view associated with it
                 previews.stream()
-                        .filter(view -> view.getSocket() == socket)
+                        .filter(view -> event.isRegarding(view.getSocket()))
                         .findFirst()
                         .ifPresent(preview -> {
                             previews.remove(preview);

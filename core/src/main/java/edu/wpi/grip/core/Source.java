@@ -9,6 +9,7 @@ import edu.wpi.grip.core.sources.MultiImageFileSource;
 import edu.wpi.grip.core.util.ExceptionWitness;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Optional;
 import java.util.Properties;
 import java.util.logging.Level;
@@ -61,7 +62,7 @@ public abstract class Source {
      * @return @return An array of {@link OutputSocket}s for the outputs that the source produces.
      */
     public final ImmutableList<OutputSocket> getOutputSockets() {
-        final OutputSocket[] outputSockets = this.createOutputSockets();
+        final List<OutputSocket> outputSockets = createOutputSockets();
         for (OutputSocket socket : outputSockets) {
             socket.setSource(Optional.of(this));
         }
@@ -69,7 +70,7 @@ public abstract class Source {
         return ImmutableList.copyOf(outputSockets);
     }
 
-    protected abstract OutputSocket[] createOutputSockets();
+    protected abstract List<OutputSocket> createOutputSockets();
 
     /**
      * This method will check if there are any pending updates to

@@ -27,5 +27,9 @@ public class CoreSanityTest extends AbstractPackageSanityTests {
         setDefault(Service.Listener.class, new SingleActionListener(() -> {
         }));
         setDefault(ConnectionValidator.class, (outputSocket, inputSocket) -> true);
+        setDefault(OperationMetaData.class,
+                new OperationMetaData(OperationDescription.builder().name("").summary("").build(),
+                () -> null));
+        setDefault(OperationDescription.class, OperationDescription.builder().name("").summary("").build());
     }
 }
