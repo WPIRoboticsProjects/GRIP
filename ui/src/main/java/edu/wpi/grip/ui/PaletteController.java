@@ -1,6 +1,6 @@
 package edu.wpi.grip.ui;
 
-import edu.wpi.grip.core.Operation;
+import edu.wpi.grip.core.OperationDescription;
 import javafx.beans.property.ObjectProperty;
 import javafx.fxml.FXML;
 import javafx.scene.control.Tab;
@@ -41,12 +41,12 @@ public class PaletteController {
             throw new RuntimeException(e);
         }
 
-        imgprocOperations.setUserData(Operation.Category.IMAGE_PROCESSING);
-        featureOperations.setUserData(Operation.Category.FEATURE_DETECTION);
-        networkOperations.setUserData(Operation.Category.NETWORK);
-        logicalOperations.setUserData(Operation.Category.LOGICAL);
-        opencvOperations.setUserData(Operation.Category.OPENCV);
-        miscellaneousOperations.setUserData(Operation.Category.MISCELLANEOUS);
+        imgprocOperations.setUserData(OperationDescription.Category.IMAGE_PROCESSING);
+        featureOperations.setUserData(OperationDescription.Category.FEATURE_DETECTION);
+        networkOperations.setUserData(OperationDescription.Category.NETWORK);
+        logicalOperations.setUserData(OperationDescription.Category.LOGICAL);
+        opencvOperations.setUserData(OperationDescription.Category.OPENCV);
+        miscellaneousOperations.setUserData(OperationDescription.Category.MISCELLANEOUS);
 
         // Bind the filterText of all of the individual tabs to the search field
         operationSearch.textProperty().addListener(observable -> {

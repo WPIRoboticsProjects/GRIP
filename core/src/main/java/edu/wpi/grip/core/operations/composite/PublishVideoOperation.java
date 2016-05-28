@@ -1,20 +1,21 @@
 package edu.wpi.grip.core.operations.composite;
 
-import com.google.common.eventbus.EventBus;
-import edu.wpi.grip.core.sockets.InputSocket;
+import com.google.common.collect.ImmutableList;
 import edu.wpi.grip.core.Operation;
+import edu.wpi.grip.core.OperationDescription;
+import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.core.sockets.SocketHints;
+import edu.wpi.grip.core.util.Icon;
 import org.bytedeco.javacpp.BytePointer;
 import org.bytedeco.javacpp.IntPointer;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.Optional;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -31,6 +32,14 @@ import static org.bytedeco.javacpp.opencv_imgcodecs.imencode;
  */
 public class PublishVideoOperation implements Operation {
 
+    public static final OperationDescription DESCRIPTION =
+            OperationDescription.builder()
+                    .name("Publish Video")
+                    .summary("Publish an M_JPEG stream to the dashboard.")
+                    .category(OperationDescription.Category.NETWORK)
+                    .icon(Icon.iconStream("publish-video"))
+                    .build();
+
     private final Logger logger = Logger.getLogger(PublishVideoOperation.class.getName());
 
     private static final int PORT = 1180;
@@ -38,9 +47,25 @@ public class PublishVideoOperation implements Operation {
 
     private final Object imageLock = new Object();
     private final BytePointer imagePointer = new BytePointer();
-    private Optional<Thread> serverThread = Optional.empty();
     private volatile boolean connected = false;
-    private int numSteps = 0;
+    private final Thread serverThread;
+    private static int numSteps = 0;
+
+    private final InputSocket<Mat> inputSocket;
+    private final InputSocket<Number> qualitySocket;
+
+    public PublishVideoOperation(InputSocket.Factory inputSocketFactory) {
+        if (numSteps != 0) {
+            throw new IllegalStateException("Only one instance of PublishVideoOperation may exist");
+        }
+        this.inputSocket = inputSocketFactory.create(SocketHints.Inputs.createMatSocketHint("Image", false));
+        this.qualitySocket = inputSocketFactory.create(SocketHints.Inputs.createNumberSliderSocketHint("Quality", 80, 0, 100));
+        numSteps = numSteps + 1;
+
+        serverThread = new Thread(runServer, "Camera Server");
+        serverThread.setDaemon(true);
+        serverThread.start();
+    }
 
     /**
      * Listens for incoming connections on port 1180 and writes JPEG data whenever there's a new frame.
@@ -105,7 +130,6 @@ public class PublishVideoOperation implements Operation {
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt(); // This is really unnecessary since the thread is about to exit
                 logger.info("Shutting down camera server");
-                serverThread = Optional.empty();
                 return;
             } finally {
                 connected = false;
@@ -114,53 +138,22 @@ public class PublishVideoOperation implements Operation {
     };
 
     @Override
-    public String getName() {
-        return "Publish Video";
+    public List<InputSocket> getInputSockets() {
+        return ImmutableList.of(
+                inputSocket,
+                qualitySocket
+        );
     }
 
     @Override
-    public String getDescription() {
-        return "Publish an M-JPEG stream to the dashboard";
+    public List<OutputSocket> getOutputSockets() {
+        return ImmutableList.of();
     }
 
     @Override
-    public Category getCategory() {
-        return Category.NETWORK;
-    }
-
-    @Override
-    public Optional<InputStream> getIcon() {
-        return Optional.of(getClass().getResourceAsStream("/edu/wpi/grip/ui/icons/publish-video.png"));
-    }
-
-    @Override
-    public InputSocket<?>[] createInputSockets(EventBus eventBus) {
-        return new InputSocket<?>[]{
-                new InputSocket<>(eventBus, SocketHints.Inputs.createMatSocketHint("Image", false)),
-                new InputSocket<>(eventBus, SocketHints.Inputs.createNumberSliderSocketHint("Quality", 80, 0, 100)),
-        };
-    }
-
-    @Override
-    public OutputSocket<?>[] createOutputSockets(EventBus eventBus) {
-        return new OutputSocket<?>[0];
-    }
-
-    @Override
-    public synchronized Optional<?> createData() {
-        numSteps++;
-        if (!serverThread.isPresent()) {
-            serverThread = Optional.of(new Thread(runServer, "Camera Server"));
-            serverThread.get().setDaemon(true);
-            serverThread.get().start();
-        }
-        return Optional.empty();
-    }
-
-    @Override
-    public void perform(InputSocket<?>[] inputs, OutputSocket<?>[] outputs) {
-        Mat input = (Mat) inputs[0].getValue().get();
-        Number quality = (Number) inputs[1].getValue().get();
+    public void perform() {
+        Mat input = inputSocket.getValue().get();
+        Number quality = qualitySocket.getValue().get();
 
         if (!connected) {
             return; // Don't waste any time converting images if there's no dashboard connected
@@ -177,10 +170,9 @@ public class PublishVideoOperation implements Operation {
     }
 
     @Override
-    public synchronized void cleanUp(InputSocket<?>[] inputs, OutputSocket<?>[] outputs, Optional<?> data) {
+    public synchronized void cleanUp() {
         // Stop the video server if there are no Publish Video steps left
-        if (--numSteps == 0) {
-            serverThread.ifPresent(Thread::interrupt);
-        }
+        serverThread.interrupt();
+        numSteps --;
     }
 }

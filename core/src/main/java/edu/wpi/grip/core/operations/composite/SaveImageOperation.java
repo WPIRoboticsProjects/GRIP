@@ -1,19 +1,22 @@
 package edu.wpi.grip.core.operations.composite;
 
 import com.google.common.base.Stopwatch;
-import com.google.common.eventbus.EventBus;
+import com.google.common.collect.ImmutableList;
+import edu.wpi.grip.core.OperationDescription;
 import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.Operation;
 import edu.wpi.grip.core.sockets.OutputSocket;
+import edu.wpi.grip.core.sockets.SocketHint;
 import edu.wpi.grip.core.sockets.SocketHints;
+import edu.wpi.grip.core.util.Icon;
 import org.bytedeco.javacpp.BytePointer;
 import org.bytedeco.javacpp.IntPointer;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
@@ -28,7 +31,32 @@ import static org.bytedeco.javacpp.opencv_imgcodecs.imencode;
  */
 public class SaveImageOperation implements Operation {
 
-    private final Logger logger = Logger.getLogger(SaveImageOperation.class.getName());
+    public static final OperationDescription DESCRIPTION =
+            OperationDescription.builder()
+                    .name("Save Images to Disk")
+                    .summary("Save image periodically to local disk")
+                    .category(OperationDescription.Category.MISCELLANEOUS)
+                    .icon(Icon.iconStream("publish-video"))
+                    .build();
+
+    private static final Logger logger = Logger.getLogger(SaveImageOperation.class.getName());
+    private final SocketHint<Mat> inputHint = SocketHints.Inputs.createMatSocketHint("Input", false);
+    private final SocketHint<Number> qualityHint = SocketHints.Inputs.createNumberSliderSocketHint("Quality", 90, 0, 100);
+    private final SocketHint<Number> periodHint = SocketHints.Inputs.createNumberSpinnerSocketHint("Period", 0.1);
+    private final SocketHint<Boolean> activeHint = SocketHints.Inputs.createCheckboxSocketHint("Active", false);
+    private final SocketHint<String> prefixHint = SocketHints.Inputs.createTextSocketHint("Prefix", "./");
+    private final SocketHint<String> suffixHint = SocketHints.Inputs.createTextSocketHint("Suffix", ".jpg");
+
+    private final SocketHint<Mat> outputHint = SocketHints.Outputs.createMatSocketHint("Output");
+
+    private final InputSocket<Mat> inputSocket;
+    private final InputSocket<Number> qualitySocket;
+    private final InputSocket<Number> periodSocket;
+    private final InputSocket<Boolean> activeSocket;
+    private final InputSocket<String> prefixSocket;
+    private final InputSocket<String> suffixSocket;
+
+    private final OutputSocket<Mat> outputSocket;
 
     private final Object imageLock = new Object();
     private final BytePointer imagePointer = new BytePointer();
@@ -39,6 +67,24 @@ public class SaveImageOperation implements Operation {
     private String prefix = "./";
     private String suffix = ".jpg";
 
+    public SaveImageOperation(InputSocket.Factory inputSocketFactory, OutputSocket.Factory outputSocketFactory) {
+        inputSocket = inputSocketFactory.create(inputHint);
+        qualitySocket = inputSocketFactory.create(qualityHint);
+        periodSocket = inputSocketFactory.create(periodHint);
+        activeSocket = inputSocketFactory.create(activeHint);
+        prefixSocket = inputSocketFactory.create(prefixHint);
+        suffixSocket = inputSocketFactory.create(suffixHint);
+
+        outputSocket = outputSocketFactory.create(outputHint);
+
+        numSteps++;
+        if (!saveThread.isPresent()) {
+            saveThread = Optional.of(new Thread(runServer, "Image Saver"));
+            saveThread.get().setDaemon(true);
+            saveThread.get().start();
+        }
+    }
+
     /**
      * Listens for incoming connections on port 1180 and writes JPEG data whenever there's a new frame.
      */
@@ -47,8 +93,6 @@ public class SaveImageOperation implements Operation {
         logger.info("Starting image saver");
         byte[] buffer = new byte[128 * 1024];
         int bufferSize;
-        String prefix;
-        String suffix;
         while (!Thread.currentThread().isInterrupted()) {
             try {
                 // Wait for the main thread to put a new image.
@@ -59,8 +103,6 @@ public class SaveImageOperation implements Operation {
                     bufferSize = imagePointer.limit();
                     if (bufferSize > buffer.length) buffer = new byte[imagePointer.limit()];
                     imagePointer.get(buffer, 0, bufferSize);
-                    prefix = this.prefix;
-                    suffix = this.suffix;
                 }
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
@@ -79,89 +121,54 @@ public class SaveImageOperation implements Operation {
     };
 
     @Override
-    public String getName() {
-        return "Save Images to Disk";
-    }
-
-    @Override
-    public String getDescription() {
-        return "Save image periodically to local disk";
-    }
-
-    @Override
-    public Category getCategory() {
-        return Category.MISCELLANEOUS;
-    }
-
-    @Override
-    public Optional<InputStream> getIcon() {
-        return Optional.of(getClass().getResourceAsStream("/edu/wpi/grip/ui/icons/publish-video.png"));
-    }
-
-    @Override
-    public InputSocket<?>[] createInputSockets(EventBus eventBus) {
-        return new InputSocket<?>[]{
-                new InputSocket<>(eventBus, SocketHints.Inputs.createMatSocketHint("Image", false)),
-                new InputSocket<>(eventBus, SocketHints.Inputs.createNumberSliderSocketHint("Quality", 80, 0, 100)),
-                new InputSocket<>(eventBus, SocketHints.Inputs.createNumberSpinnerSocketHint("Period", 0.1)),
-                new InputSocket<>(eventBus, SocketHints.createBooleanSocketHint("Active", false)),
-                new InputSocket<>(eventBus, SocketHints.Inputs.createTextSocketHint("Prefix", "./")),
-                new InputSocket<>(eventBus, SocketHints.Inputs.createTextSocketHint("Suffix", ".jpg")),
-        };
-    }
-
-    @Override
-    public OutputSocket<?>[] createOutputSockets(EventBus eventBus) {
-        return new OutputSocket<?>[0];
-    }
-
-    @Override
-    public synchronized Optional<?> createData() {
-        numSteps++;
-        if (!saveThread.isPresent()) {
-            saveThread = Optional.of(new Thread(runServer, "Image Saver"));
-            saveThread.get().setDaemon(true);
-            saveThread.get().start();
+    public synchronized void cleanUp() {
+        if (--numSteps == 0) {
+            saveThread.ifPresent(Thread::interrupt);
         }
-        return Optional.empty();
     }
 
     @Override
-    public void perform(InputSocket<?>[] inputs, OutputSocket<?>[] outputs) {
-        Mat input = (Mat) inputs[0].getValue().get();
-        Number quality = (Number) inputs[1].getValue().get();
-        Number period = (Number) inputs[2].getValue().get();
-        boolean active = (Boolean) inputs[3].getValue().get();
-        String prefix = (String) inputs[4].getValue().get();
-        String suffix = (String) inputs[5].getValue().get();
+    public List<InputSocket> getInputSockets() {
+        return ImmutableList.of(
+                inputSocket,
+                qualitySocket,
+                periodSocket,
+                activeSocket,
+                prefixSocket,
+                suffixSocket
+        );
+    }
 
-        if (!active) {
+    @Override
+    public List<OutputSocket> getOutputSockets() {
+        return ImmutableList.of(
+                outputSocket
+        );
+    }
+
+    @Override
+    public void perform() {
+        if (!activeSocket.getValue().orElse(false)) {
             return;
         }
 
-        if (input.empty()) {
+        if (!inputSocket.getValue().isPresent()) {
             throw new IllegalArgumentException("Input image must not be empty");
         }
 
         // don't save new image until period expires
-        if (stopwatch.elapsed(TimeUnit.NANOSECONDS) < period.doubleValue()*1000000000L) {
+        if (stopwatch.elapsed(TimeUnit.NANOSECONDS) < periodSocket.getValue().get().doubleValue()*1000000000L) {
             return;
         }
         stopwatch.reset();
         stopwatch.start();
 
         synchronized (imageLock) {
-            imencode(".jpeg", input, imagePointer, new IntPointer(CV_IMWRITE_JPEG_QUALITY, quality.intValue()));
-            this.prefix = prefix;
-            this.suffix = suffix;
+            imencode(".jpeg", inputSocket.getValue().get(), imagePointer, new IntPointer(CV_IMWRITE_JPEG_QUALITY,
+                    qualitySocket.getValue().get().intValue()));
+            prefix = prefixSocket.getValue().get();
+            suffix = suffixSocket.getValue().get();
             imageLock.notify();
-        }
-    }
-
-    @Override
-    public synchronized void cleanUp(InputSocket<?>[] inputs, OutputSocket<?>[] outputs, Optional<?> data) {
-        if (--numSteps == 0) {
-            saveThread.ifPresent(Thread::interrupt);
         }
     }
 }

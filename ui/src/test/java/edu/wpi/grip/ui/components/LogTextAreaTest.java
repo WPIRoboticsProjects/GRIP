@@ -1,9 +1,9 @@
 package edu.wpi.grip.ui.components;
 
 
-import autovalue.shaded.org.apache.commons.lang.StringUtils;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
 import org.testfx.framework.junit.ApplicationTest;
 

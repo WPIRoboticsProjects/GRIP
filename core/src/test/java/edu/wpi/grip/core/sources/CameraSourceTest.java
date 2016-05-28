@@ -8,6 +8,7 @@ import com.google.common.util.concurrent.Service;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import edu.wpi.grip.core.events.UnexpectedThrowableEvent;
+import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.core.util.ImageLoadingUtility;
 import edu.wpi.grip.core.util.MockExceptionWitness;
 import edu.wpi.grip.util.Files;
@@ -32,13 +33,18 @@ import java.util.Queue;
 import java.util.concurrent.TimeoutException;
 
 import static com.google.common.truth.Truth.assertThat;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 public class CameraSourceTest {
     private GRIPCoreTestModule testModule;
     private CameraSource.Factory cameraSourceFactory;
     private CameraSource cameraSourceWithMockGrabber;
     private MockFrameGrabberFactory mockFrameGrabberFactory;
+    private OutputSocket.Factory osf;
 
     @Rule
     public final Timeout timeout = Timeout.seconds(3);
@@ -120,6 +126,7 @@ public class CameraSourceTest {
         testModule.setUp();
         final Injector injector = Guice.createInjector(testModule);
         this.cameraSourceFactory = injector.getInstance(CameraSource.Factory.class);
+        this.osf = injector.getInstance(OutputSocket.Factory.class);
 
         final EventBus eventBus = new EventBus();
         class UnhandledExceptionWitness {
@@ -134,6 +141,7 @@ public class CameraSourceTest {
         this.mockFrameGrabberFactory = new MockFrameGrabberFactory();
         this.cameraSourceWithMockGrabber = new CameraSource(
                 eventBus,
+                osf,
                 mockFrameGrabberFactory,
                 origin -> new MockExceptionWitness(eventBus, origin),
                 0);
@@ -216,7 +224,7 @@ public class CameraSourceTest {
         Waiter waiter3 = new Waiter();
         Queue<Waiter> waiterQueue = new LinkedList<>(Arrays.asList(waiter1, waiter2, waiter3));
 
-        CameraSource source = new CameraSource(new EventBus(), new CameraSource.FrameGrabberFactory() {
+        CameraSource source = new CameraSource(new EventBus(), osf, new CameraSource.FrameGrabberFactory() {
             @Override
             public FrameGrabber create(int deviceNumber) {
                 return new SimpleMockFrameGrabber() {
@@ -258,7 +266,7 @@ public class CameraSourceTest {
 
         Mat image = new Mat();
         ImageLoadingUtility.loadImage(Files.gompeiJpegFile.file.getPath(), image);
-        CameraSource source = new CameraSource(new EventBus(), new CameraSource.FrameGrabberFactory() {
+        CameraSource source = new CameraSource(new EventBus(), osf, new CameraSource.FrameGrabberFactory() {
             @Override
             public FrameGrabber create(int deviceNumber) {
                 return new SimpleMockFrameGrabber() {
@@ -292,7 +300,7 @@ public class CameraSourceTest {
         source.updateOutputSockets();
 
         assertNotEquals("The frame rate was not updated when the camera was running",
-                Double.valueOf(0), source.createOutputSockets()[1].getValue().get());
+                Double.valueOf(0), source.createOutputSockets().get(1).getValue().get());
 
         try {
             source.stopAndAwait();

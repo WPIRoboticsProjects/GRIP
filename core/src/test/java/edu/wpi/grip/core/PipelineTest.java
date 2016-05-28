@@ -26,7 +26,9 @@ public class PipelineTest {
     private Step.Factory stepFactory;
     private EventBus eventBus;
     private Pipeline pipeline;
-    private Operation addition;
+    private OperationMetaData additionMeta;
+    private InputSocket.Factory isf;
+    private OutputSocket.Factory osf;
 
     private class MockConnection extends Connection {
 
@@ -47,7 +49,9 @@ public class PipelineTest {
         stepFactory = injector.getInstance(Step.Factory.class);
         eventBus = injector.getInstance(EventBus.class);
         pipeline = injector.getInstance(Pipeline.class);
-        addition = new AdditionOperation();
+        isf = injector.getInstance(InputSocket.Factory.class);
+        osf = injector.getInstance(OutputSocket.Factory.class);
+        additionMeta = new OperationMetaData(AdditionOperation.DESCRIPTION, () -> new AdditionOperation(isf, osf));
     }
 
     @After
@@ -189,8 +193,9 @@ public class PipelineTest {
     @Test
     @SuppressWarnings("unchecked")
     public void testPipeline() {
-        Step step1 = stepFactory.create(addition);
-        Step step2 = stepFactory.create(addition);
+        Step step1 = stepFactory.create(new OperationMetaData(AdditionOperation.DESCRIPTION, () -> new AdditionOperation(isf, osf)));
+        Step step2 = stepFactory.create(new OperationMetaData(AdditionOperation.DESCRIPTION, () -> new AdditionOperation(isf, osf)));
+
         InputSocket<Double> a1 = (InputSocket<Double>) step1.getInputSockets().get(0);
         InputSocket<Double> b1 = (InputSocket<Double>) step1.getInputSockets().get(1);
         OutputSocket<Double> sum1 = (OutputSocket<Double>) step1.getOutputSockets().get(0);
@@ -224,8 +229,9 @@ public class PipelineTest {
     @Test
     @SuppressWarnings("unchecked")
     public void testPipelineRemoved() {
-        Step step1 = stepFactory.create(addition);
-        Step step2 = stepFactory.create(addition);
+        Step step1 = stepFactory.create(new OperationMetaData(AdditionOperation.DESCRIPTION, () -> new AdditionOperation(isf, osf)));
+        Step step2 = stepFactory.create(new OperationMetaData(AdditionOperation.DESCRIPTION, () -> new AdditionOperation(isf, osf)));
+
         InputSocket<Double> a1 = (InputSocket<Double>) step1.getInputSockets().get(0);
         InputSocket<Double> b1 = (InputSocket<Double>) step1.getInputSockets().get(1);
         OutputSocket<Double> sum1 = (OutputSocket<Double>) step1.getOutputSockets().get(0);
@@ -257,8 +263,8 @@ public class PipelineTest {
     @Test
     @SuppressWarnings("unchecked")
     public void testCannotConnectBackwards() {
-        Step step1 = stepFactory.create(addition);
-        Step step2 = stepFactory.create(addition);
+        Step step1 = stepFactory.create(additionMeta);
+        Step step2 = stepFactory.create(additionMeta);
         InputSocket<Double> a1 = (InputSocket<Double>) step1.getInputSockets().get(0);
         OutputSocket<Double> sum2 = (OutputSocket<Double>) step2.getOutputSockets().get(0);
 
@@ -270,8 +276,8 @@ public class PipelineTest {
     @Test
     @SuppressWarnings("unchecked")
     public void testCannotConnectIncompatibleTypes() {
-        InputSocket<Number> a = new InputSocket<>(eventBus, SocketHints.createNumberSocketHint("a", 0.0));
-        OutputSocket<String> b = new OutputSocket<>(eventBus, new SocketHint.Builder<>(String.class).identifier("b").initialValue("").build());
+        InputSocket<Number> a = isf.create(SocketHints.createNumberSocketHint("a", 0.0));
+        OutputSocket<String> b = osf.create(new SocketHint.Builder<>(String.class).identifier("b").initialValue("").build());
 
         assertFalse("Should not be able to connect incompatible types", pipeline.canConnect((OutputSocket) b, (InputSocket) a));
     }
@@ -334,5 +340,35 @@ public class PipelineTest {
         pipeline.addStep(upperStep);
 
         pipeline.addStepBetween(stepToAdd, upperStep, lowerStep);
+    }
+
+    @Test
+    public void testMoveStepToLeft() {
+        final Step
+                stepToMove = new MockStep(),
+                lowerStep = new MockStep(),
+                upperStep = new MockStep();
+        pipeline.addStep(lowerStep);
+        pipeline.addStep(upperStep);
+        pipeline.addStep(stepToMove);
+        pipeline.moveStepBetween(stepToMove, lowerStep, upperStep);
+
+        assertEquals("The step should have been moved within the pipeline",
+                Arrays.asList(lowerStep, stepToMove, upperStep), pipeline.getSteps());
+    }
+
+    @Test
+    public void testMoveStepToRight() {
+        final Step
+                stepToMove = new MockStep(),
+                lowerStep = new MockStep(),
+                upperStep = new MockStep();
+        pipeline.addStep(stepToMove);
+        pipeline.addStep(lowerStep);
+        pipeline.addStep(upperStep);
+        pipeline.moveStepBetween(stepToMove, lowerStep, upperStep);
+
+        assertEquals("The step should have been moved within the pipeline",
+                Arrays.asList(lowerStep, stepToMove, upperStep), pipeline.getSteps());
     }
 }

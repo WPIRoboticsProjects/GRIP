@@ -1,79 +1,88 @@
 package edu.wpi.grip.core.operations.composite;
 
-import com.google.common.eventbus.EventBus;
-import edu.wpi.grip.core.*;
+import com.google.common.collect.ImmutableList;
+import edu.wpi.grip.core.Operation;
+import edu.wpi.grip.core.OperationDescription;
 import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.core.sockets.SocketHint;
 import edu.wpi.grip.core.sockets.SocketHints;
+import edu.wpi.grip.core.util.Icon;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import static org.bytedeco.javacpp.opencv_core.*;
+import static org.bytedeco.javacpp.opencv_core.Mat;
+import static org.bytedeco.javacpp.opencv_core.Scalar;
+import static org.bytedeco.javacpp.opencv_core.inRange;
 
 /**
  * An {@link Operation} that converts a color image into a binary image based on threshold ranges for each channel
  */
 public class RGBThresholdOperation extends ThresholdOperation {
 
+    public static final OperationDescription DESCRIPTION =
+            OperationDescription.builder()
+                    .name("RGB Threshold")
+                    .summary("Segment an image based on color ranges")
+                    .category(OperationDescription.Category.IMAGE_PROCESSING)
+                    .icon(Icon.iconStream("threshold"))
+                    .build();
+
     private static final Logger logger = Logger.getLogger(RGBThresholdOperation.class.getName());
     private final SocketHint<Mat> inputHint = SocketHints.Inputs.createMatSocketHint("Input", false);
-    private final SocketHint<List> redHint = SocketHints.Inputs.createNumberListRangeSocketHint("Red", 0.0, 255.0);
-    private final SocketHint<List> greenHint = SocketHints.Inputs.createNumberListRangeSocketHint("Green", 0.0, 255.0);
-    private final SocketHint<List> blueHint = SocketHints.Inputs.createNumberListRangeSocketHint("Blue", 0.0, 255.0);
+    private final SocketHint<List<Number>> redHint = SocketHints.Inputs.createNumberListRangeSocketHint("Red", 0.0, 255.0);
+    private final SocketHint<List<Number>> greenHint = SocketHints.Inputs.createNumberListRangeSocketHint("Green", 0.0, 255.0);
+    private final SocketHint<List<Number>> blueHint = SocketHints.Inputs.createNumberListRangeSocketHint("Blue", 0.0, 255.0);
 
     private final SocketHint<Mat> outputHint = SocketHints.Outputs.createMatSocketHint("Output");
 
-    @Override
-    public String getName() {
-        return "RGB Threshold";
+
+    private final InputSocket<Mat> inputSocket;
+    private final InputSocket<List<Number>> redSocket;
+    private final InputSocket<List<Number>> greenSocket;
+    private final InputSocket<List<Number>> blueSocket;
+
+    private final OutputSocket<Mat> outputSocket;
+
+    public RGBThresholdOperation(InputSocket.Factory inputSocketFactory, OutputSocket.Factory outputSocketFactory) {
+        this.inputSocket = inputSocketFactory.create(inputHint);
+        this.redSocket = inputSocketFactory.create(redHint);
+        this.greenSocket = inputSocketFactory.create(greenHint);
+        this.blueSocket = inputSocketFactory.create(blueHint);
+
+        this.outputSocket = outputSocketFactory.create(outputHint);
     }
 
     @Override
-    public String getDescription() {
-        return "Segment an image based on color ranges.";
+    public List<InputSocket> getInputSockets() {
+        return ImmutableList.of(
+                inputSocket,
+                redSocket,
+                greenSocket,
+                blueSocket
+        );
     }
 
     @Override
-    public InputSocket<?>[] createInputSockets(EventBus eventBus) {
-        return new InputSocket<?>[]{
-                new InputSocket<>(eventBus, inputHint),
-                new InputSocket<>(eventBus, redHint),
-                new InputSocket<>(eventBus, greenHint),
-                new InputSocket<>(eventBus, blueHint),
-        };
+    public List<OutputSocket> getOutputSockets() {
+        return ImmutableList.of(
+                outputSocket
+        );
     }
 
     @Override
-    public OutputSocket<?>[] createOutputSockets(EventBus eventBus) {
-        return new OutputSocket<?>[]{
-                new OutputSocket<>(eventBus, outputHint)
-        };
-    }
-
-    @Override
-    public Optional<Mat[]> createData() {
-        return Optional.of(new Mat[]{new Mat(), new Mat()});
-    }
-
-    @Override
-    @SuppressWarnings("unchecked")
-    public void perform(InputSocket<?>[] inputs, OutputSocket<?>[] outputs, Optional<?> data) {
-        final Mat[] dataArray = (Mat[]) data.orElseThrow(() -> new IllegalStateException("Data was not provided"));
-
-        final Mat input = ((InputSocket<Mat>) inputs[0]).getValue().get();
-        final List<Number> channel1 = ((InputSocket<List<Number>>) inputs[1]).getValue().get();
-        final List<Number> channel2 = ((InputSocket<List<Number>>) inputs[2]).getValue().get();
-        final List<Number> channel3 = ((InputSocket<List<Number>>) inputs[3]).getValue().get();
+    public void perform() {
+        final Mat input = inputSocket.getValue().get();
+        final List<Number> channel1 = redSocket.getValue().get();
+        final List<Number> channel2 = greenSocket.getValue().get();
+        final List<Number> channel3 = blueSocket.getValue().get();
 
         if (input.channels() != 3) {
             throw new IllegalArgumentException("RGB Threshold needs a 3-channel input");
         }
 
-        final OutputSocket<Mat> outputSocket = (OutputSocket<Mat>) outputs[0];
         final Mat output = outputSocket.getValue().get();
 
 

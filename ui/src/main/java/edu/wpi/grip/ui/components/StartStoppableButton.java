@@ -8,6 +8,8 @@ import com.google.inject.assistedinject.Assisted;
 import edu.wpi.grip.core.util.service.RestartableService;
 import edu.wpi.grip.core.util.service.SingleActionListener;
 import edu.wpi.grip.ui.util.DPIUtility;
+import javafx.animation.FadeTransition;
+import javafx.animation.Transition;
 import javafx.application.Platform;
 import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.ToggleButton;
@@ -17,6 +19,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
+import javafx.util.Duration;
 
 import java.util.Arrays;
 import java.util.List;
@@ -90,7 +93,7 @@ public final class StartStoppableButton extends ToggleButton {
     }
 
     /**
-     * Assigns the state of the button from the {@link StartStoppable}
+     * Assigns the state of the button from the {@link RestartableService}
      */
     private void assignState() {
         setSelected(service.isRunning());
@@ -104,7 +107,16 @@ public final class StartStoppableButton extends ToggleButton {
      * @return The graphic to show on the button.
      */
     private static ImageView pickGraphic(RestartableService startStoppable) {
-        final ImageView icon = startStoppable.isRunning() ? new ImageView(stopImage) : new ImageView(startImage);
+        final boolean running = startStoppable.isRunning();
+        final ImageView icon = running ? new ImageView(stopImage) : new ImageView(startImage);
+        if (!running) {
+            // If we are not running then we want the icon to flash
+            final FadeTransition ft = new FadeTransition(Duration.millis(750), icon);
+            ft.setToValue(0.1);
+            ft.setCycleCount(Transition.INDEFINITE);
+            ft.setAutoReverse(true);
+            ft.play();
+        }
         icon.setFitHeight(DPIUtility.MINI_ICON_SIZE);
         icon.setFitWidth(DPIUtility.MINI_ICON_SIZE);
         return icon;

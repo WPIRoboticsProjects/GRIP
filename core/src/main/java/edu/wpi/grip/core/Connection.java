@@ -58,7 +58,7 @@ public class Connection<T> {
 
     @Subscribe
     public void onOutputChanged(SocketChangedEvent e) {
-        if (e.getSocket() == outputSocket) {
+        if (e.isRegarding(outputSocket)) {
             inputSocket.setValueOptional(outputSocket.getValue());
         }
     }
@@ -76,14 +76,14 @@ public class Connection<T> {
         // Remove this connection if one of the steps it was connected to was removed
         for (OutputSocket socket : e.getStep().getOutputSockets()) {
             if (socket == this.outputSocket) {
-                this.eventBus.post(new ConnectionRemovedEvent(this));
+                remove();
                 return;
             }
         }
 
         for (InputSocket socket : e.getStep().getInputSockets()) {
             if (socket == this.inputSocket) {
-                this.eventBus.post(new ConnectionRemovedEvent(this));
+                remove();
                 return;
             }
         }
@@ -94,9 +94,16 @@ public class Connection<T> {
         // Remove this connection if it's from a source that was removed
         for (OutputSocket socket : e.getSource().getOutputSockets()) {
             if (socket == this.outputSocket) {
-                this.eventBus.post(new ConnectionRemovedEvent(this));
+                remove();
                 return;
             }
         }
+    }
+
+    /**
+     * Removes this connection from the pipeline.
+     */
+    public void remove() {
+        eventBus.post(new ConnectionRemovedEvent(this));
     }
 }

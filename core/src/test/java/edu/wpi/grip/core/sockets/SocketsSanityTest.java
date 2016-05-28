@@ -8,5 +8,6 @@ public class SocketsSanityTest extends AbstractPackageSanityTests {
     public SocketsSanityTest() {
         super();
         setDefault(Enum.class, TestEnum.A);
+        ignoreClasses(c -> c.getName().contains("Mock"));
     }
 }

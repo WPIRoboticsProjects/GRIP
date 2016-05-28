@@ -1,9 +1,11 @@
 package edu.wpi.grip.core;
 
 
+import com.google.common.collect.ImmutableList;
 import edu.wpi.grip.core.sockets.OutputSocket;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Properties;
 
 public class MockSource extends Source {
@@ -18,8 +20,8 @@ public class MockSource extends Source {
     }
 
     @Override
-    protected OutputSocket[] createOutputSockets() {
-        return new OutputSocket[0];
+    protected List<OutputSocket> createOutputSockets() {
+        return ImmutableList.of();
     }
 
     @Override

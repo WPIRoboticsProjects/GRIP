@@ -10,11 +10,7 @@ import com.github.javaparser.ast.expr.NameExpr;
 import com.github.javaparser.ast.type.PrimitiveType;
 import edu.wpi.gripgenerator.defaults.DefaultValueCollector;
 import edu.wpi.gripgenerator.defaults.EnumDefaultValue;
-import edu.wpi.gripgenerator.defaults.ObjectDefaultValue;
 import edu.wpi.gripgenerator.defaults.PrimitiveDefaultValue;
-import edu.wpi.gripgenerator.settings.DefinedMethod;
-import edu.wpi.gripgenerator.settings.DefinedMethodCollection;
-import edu.wpi.gripgenerator.settings.DefinedParamType;
 import edu.wpi.gripgenerator.templates.OperationList;
 
 import java.io.ByteArrayInputStream;
@@ -113,9 +109,6 @@ public class FileParser {
             returnMap.putAll(parseOpenImgprc(compilationUnit, collector, operationList));
 
         }
-
-        // Generate the Operation List class last
-        returnMap.put(operationList.getClassName(), operationList.getDeclaration());
         return returnMap;
     }
 
@@ -126,70 +119,6 @@ public class FileParser {
         OpenCVEnumVisitor enumVisitor = new OpenCVEnumVisitor(baseClassName, collector);
         enumVisitor.visit(imgprocDeclaration, compilationUnits);
         compilationUnits.putAll(enumVisitor.generateCompilationUnits());
-
-        DefinedMethodCollection collection = new DefinedMethodCollection(baseClassName,
-                new DefinedMethod("Sobel", false, "Mat", "Mat"
-                ).addDescription("Find edges by calculating the requested derivative order for the given image."),
-                new DefinedMethod("medianBlur", false, "Mat", "Mat"
-                ).addDescription("Apply a Median blur to an image."),
-                new DefinedMethod("GaussianBlur", false,
-                        new DefinedParamType("Mat"),
-                        new DefinedParamType("Mat"),
-                        new DefinedParamType("Size").setDefaultValue(new ObjectDefaultValue("Size", "1", "1"))
-                ).addDescription("Apply a Gaussian blur to an image."),
-                new DefinedMethod("Laplacian", "Mat", "Mat"
-                ).addDescription("Find edges by calculating the Laplacian for the given image."),
-                new DefinedMethod("dilate", false,
-                        new DefinedParamType("Mat"),
-                        new DefinedParamType("Mat"),
-                        new DefinedParamType("Mat").setDefaultValue(new ObjectDefaultValue("Mat"))
-                ).addDescription("Expands areas of higher values in an image."),
-                new DefinedMethod("Canny", false,
-                        new DefinedParamType("Mat"),
-                        new DefinedParamType("Mat", DefinedParamType.DefinedParamDirection.OUTPUT)
-                ).addDescription("Apply a \\\"canny edge detection\\\" algorithm to an image."),
-                new DefinedMethod("threshold", false,
-                        new DefinedParamType("Mat"),
-                        new DefinedParamType("Mat"),
-                        new DefinedParamType("double"),
-                        new DefinedParamType("double"),
-                        new DefinedParamType("int").setLiteralDefaultValue("THRESH_BINARY")
-                ).addDescription("Apply a fixed-level threshold to each array element in an image."),
-                new DefinedMethod("adaptiveThreshold", false,
-                        new DefinedParamType("Mat"),
-                        new DefinedParamType("Mat"),
-                        new DefinedParamType("double"),
-                        new DefinedParamType("int").setLiteralDefaultValue("ADAPTIVE_THRESH_MEAN_C"),
-                        new DefinedParamType("int").setLiteralDefaultValue("THRESH_BINARY")
-                ).addDescription("Transforms a grayscale image to a binary image)."),
-                new DefinedMethod("erode", false,
-                        new DefinedParamType("Mat"),
-                        new DefinedParamType("Mat"),
-                        new DefinedParamType("Mat").setDefaultValue(new ObjectDefaultValue("Mat"))
-                ).addDescription("Expands areas of lower values in an image."),
-                new DefinedMethod("cvtColor", false,
-                        new DefinedParamType("Mat"),
-                        new DefinedParamType("Mat"),
-                        new DefinedParamType("int").setLiteralDefaultValue("COLOR_BGR2BGRA")
-                ).addDescription("Convert an image from one color space to another."),
-                new DefinedMethod("applyColorMap", true,
-                        new DefinedParamType("Mat"),
-                        new DefinedParamType("Mat"),
-                        new DefinedParamType("int").setLiteralDefaultValue("COLORMAP_AUTUMN")
-                ).addDescription("Apply a MATLAB equivalent colormap to an image."),
-                new DefinedMethod("resize", false,
-                        new DefinedParamType("Mat"),
-                        new DefinedParamType("Mat"),
-                        new DefinedParamType("Size").setDefaultValue(new ObjectDefaultValue("Size"))
-                ).addDescription("Resize the image to the specified size."),
-                new DefinedMethod("rectangle", false,
-                        new DefinedParamType("Mat", DefinedParamType.DefinedParamDirection.INPUT_AND_OUTPUT),
-                        new DefinedParamType("Point")
-                ).addDescription("Draw a rectangle (outline or filled) on an image.")
-        ).setDirectionDefaults(DefinedParamType.DefinedParamDirection.OUTPUT, "dst")
-                .setIgnoreDefaults("dtype", "ddepth");
-        new OpenCVMethodVisitor(collection).visit(imgprocDeclaration, compilationUnits);
-        collection.generateCompilationUnits(collector, compilationUnits, operations);
         return compilationUnits;
     }
 
@@ -200,62 +129,6 @@ public class FileParser {
         OpenCVEnumVisitor enumVisitor = new OpenCVEnumVisitor(baseClassName, collector);
         enumVisitor.visit(coreDeclaration, compilationUnits);
         compilationUnits.putAll(enumVisitor.generateCompilationUnits());
-
-        DefinedMethodCollection collection = new DefinedMethodCollection(baseClassName,
-                new DefinedMethod("add", true, "Mat", "Mat", "Mat")
-                        .addDescription("Calculate the per-pixel sum of two images."),
-                new DefinedMethod("subtract", true, "Mat", "Mat", "Mat")
-                        .addDescription("Calculate the per-pixel difference between two images."),
-                new DefinedMethod("multiply", false, "Mat", "Mat", "Mat")
-                        .addDescription("Calculate the per-pixel scaled product of two images."),
-                new DefinedMethod("divide", false, "Mat", "Mat", "Mat")
-                        .addDescription("Perform per-pixel division of two images."),
-                new DefinedMethod("scaleAdd", false, "Mat", "double", "Mat", "Mat")
-                        .addDescription("Calculate the sum of two images where one image is multiplied by a scalar."),
-//                new DefinedMethod("normalize", false, "Mat", "Mat"),
-                new DefinedMethod("addWeighted", false, "Mat")
-                        .addDescription("Calculate the weighted sum of two images."),
-                new DefinedMethod("flip", false,
-                        new DefinedParamType("Mat"),
-                        new DefinedParamType("Mat"),
-                        new DefinedParamType("int").setLiteralDefaultValue("Y_AXIS"))
-                        .addDescription("Flip image around vertical, horizontal, or both axes."),
-                new DefinedMethod("bitwise_and", true, "Mat", "Mat", "Mat")
-                        .addDescription("Calculate the per-element bitwise conjunction of two images."),
-                new DefinedMethod("bitwise_or", true, "Mat", "Mat", "Mat")
-                        .addDescription("Calculate the per-element bit-wise disjunction of two images."),
-                new DefinedMethod("bitwise_xor", true, "Mat", "Mat", "Mat")
-                        .addDescription("Calculate the per-element bit-wise \\\"exclusive or\\\" on two images."),
-                new DefinedMethod("bitwise_not", true, "Mat", "Mat")
-                        .addDescription("Calculate per-element bit-wise inversion of an image."),
-                new DefinedMethod("absdiff", false, "Mat", "Mat")
-                        .addDescription("Calculate the per-element absolute difference of two images."),
-                new DefinedMethod("compare", true,
-                        new DefinedParamType("Mat"),
-                        new DefinedParamType("Mat"),
-                        new DefinedParamType("Mat"),
-                        new DefinedParamType("int").setLiteralDefaultValue("CMP_EQ")
-                ).addDescription("Compare each pixel in two images using a given rule."),
-                new DefinedMethod("max", false, "Mat", "Mat")
-                        .addDescription("Calculate per-element maximum of two images."),
-                new DefinedMethod("min", false, "Mat", "Mat")
-                        .addDescription("Calculate the per-element minimum of two images."),
-                new DefinedMethod("extractChannel", false, "Mat", "Mat")
-                        .addDescription("Extract a single channel from a image."),
-                new DefinedMethod("transpose", false, "Mat", "Mat")
-                        .addDescription("Calculate the transpose of an image.")
-//                new DefinedMethod("sqrt", false, "Mat", "Mat"),
-//                new DefinedMethod("pow", false,
-//                        new DefinedParamType("Mat"),
-//                        new DefinedParamType("double")
-//                                .setDefaultValue(new PrimitiveDefaultValue(new PrimitiveType(PrimitiveType.Primitive.Double), "1"))
-//                )
-        ).setDirectionDefaults(DefinedParamType.DefinedParamDirection.OUTPUT, "dst")
-                .setIgnoreDefaults("dtype", "ddepth");
-        new OpenCVMethodVisitor(collection).visit(coreDeclaration, compilationUnits);
-
-        collection.generateCompilationUnits(collector, compilationUnits, operations);
-
 
         return compilationUnits;
     }

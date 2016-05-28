@@ -10,7 +10,7 @@ import edu.wpi.grip.core.events.ConnectionAddedEvent;
 import edu.wpi.grip.core.events.OperationAddedEvent;
 import edu.wpi.grip.core.events.ProjectSettingsChangedEvent;
 import edu.wpi.grip.core.events.SourceAddedEvent;
-import edu.wpi.grip.core.operations.PythonScriptOperation;
+import edu.wpi.grip.core.operations.PythonScriptFile;
 import edu.wpi.grip.core.settings.ProjectSettings;
 import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.sockets.OutputSocket;
@@ -41,8 +41,8 @@ public class ProjectTest {
     private Project project;
     private ManualPipelineRunner pipelineRunner;
 
-    private Operation additionOperation, opencvAddOperation, pythonAdditionOperationFromURL,
-            pythonAdditionOperationFromSource;
+    private OperationMetaData pythonAdditionOperationFromURL, pythonAdditionOperationFromSource;
+    private OperationMetaData additionOperation, opencvAddOperation;
 
     @Before
     public void setUp() throws Exception {
@@ -57,24 +57,27 @@ public class ProjectTest {
         eventBus = injector.getInstance(EventBus.class);
         project = injector.getInstance(Project.class);
         stepFactory = injector.getInstance(Step.Factory.class);
+        final InputSocket.Factory isf = injector.getInstance(InputSocket.Factory.class);
+        final OutputSocket.Factory osf = injector.getInstance(OutputSocket.Factory.class);
 
         pipeline = injector.getInstance(Pipeline.class);
 
         pipelineRunner = new ManualPipelineRunner(eventBus, pipeline);
 
 
-        additionOperation = new AdditionOperation();
-        pythonAdditionOperationFromURL = new PythonScriptOperation(
-                ProjectTest.class.getResource("/edu/wpi/grip/scripts/addition.py"));
-        pythonAdditionOperationFromSource = new PythonScriptOperation("import edu.wpi.grip.core.sockets as grip\nimport java" +
-                ".lang.Integer\n\ninputs = [\n    grip.SocketHints.createNumberSocketHint(\"a\", 0.0),\n    grip.SocketHints.createNumberSocketHint(" +
-                "\"b\", 0.0),\n]\n\noutputs = [\n    grip.SocketHints.Outputs.createNumberSocketHint(\"sum\", 0.0)," +
-                "\n]\n\ndef perform(a, b):\n    return a + b\n");
-        opencvAddOperation = new AddOperation();
+        additionOperation = new OperationMetaData(AdditionOperation.DESCRIPTION, () -> new AdditionOperation(isf, osf));
+        pythonAdditionOperationFromURL = PythonScriptFile.create(
+                ProjectTest.class.getResource("/edu/wpi/grip/scripts/addition.py")).toOperationMetaData(isf, osf);
 
-        eventBus.post(new OperationAddedEvent(additionOperation));
+        pythonAdditionOperationFromSource = PythonScriptFile.create("import edu.wpi.grip.core.sockets as grip\nimport java" +
+                ".lang.Integer\n\nname = \"Addition Operation\"\n\ninputs = [\n    grip.SocketHints.createNumberSocketHint(\"a\", 0.0),\n    grip.SocketHints.createNumberSocketHint(" +
+                "\"b\", 0.0),\n]\n\noutputs = [\n    grip.SocketHints.Outputs.createNumberSocketHint(\"sum\", 0.0)," +
+                "\n]\n\ndef perform(a, b):\n    return a + b\n").toOperationMetaData(isf, osf);
+        opencvAddOperation = new OperationMetaData(AddOperation.DESCRIPTION, () -> new AddOperation(isf, osf));
+
         eventBus.post(new OperationAddedEvent(pythonAdditionOperationFromURL));
         eventBus.post(new OperationAddedEvent(pythonAdditionOperationFromSource));
+        eventBus.post(new OperationAddedEvent(additionOperation));
         eventBus.post(new OperationAddedEvent(opencvAddOperation));
     }
 
@@ -274,7 +277,7 @@ public class ProjectTest {
         serializeAndDeserialize();
 
         final ImageFileSource sourceDeserialized = (ImageFileSource) pipeline.getSources().get(0);
-        Files.gompeiJpegFile.assertSameImage((Mat) sourceDeserialized.createOutputSockets()[0].getValue().get());
+        Files.gompeiJpegFile.assertSameImage((Mat) sourceDeserialized.createOutputSockets().get(0).getValue().get());
     }
 
     @Test

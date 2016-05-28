@@ -19,11 +19,8 @@ import javafx.beans.property.SimpleBooleanProperty;
 import javafx.css.PseudoClass;
 import javafx.scene.control.Button;
 import javafx.scene.control.Tooltip;
-import javafx.scene.input.DataFormat;
-import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
 
-import java.util.Collections;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -95,12 +92,9 @@ public class SocketHandleView extends Button {
         // When the user starts dragging a socket handle, starting forming a connection.  This involves keeping a
         // reference to the SocketView that the drag started at.
         this.setOnDragDetected(mouseEvent -> {
-            Dragboard db = this.startDragAndDrop(TransferMode.ANY);
-            db.setContent(Collections.singletonMap(DataFormat.PLAIN_TEXT, "socket"));
-            mouseEvent.consume();
-
             this.connectingProperty.set(true);
-            socketDragService.beginDrag(this.socket);
+            socketDragService.beginDrag(this.socket, this, "socket");
+            mouseEvent.consume();
         });
 
         // Remove the "connecting" property (which changes the appearance of the handle) when the user moves the cursor
@@ -180,7 +174,7 @@ public class SocketHandleView extends Button {
 
     @Subscribe
     public void onSocketConnectedChanged(SocketConnectedChangedEvent event) {
-        if (event.getSocket() == this.socket) {
+        if (this.socket.equals(event.getSocket())) {
             // Set the handle as "selected" whenever there is at least one connection connected to it
             this.connectedProperty().set(!this.socket.getConnections().isEmpty());
         }

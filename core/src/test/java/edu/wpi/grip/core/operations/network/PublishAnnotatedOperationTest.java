@@ -1,13 +1,16 @@
 package edu.wpi.grip.core.operations.network;
 
 import com.google.common.eventbus.EventBus;
-import com.google.common.reflect.TypeToken;
+import edu.wpi.grip.core.Operation;
 import edu.wpi.grip.core.sockets.InputSocket;
+import edu.wpi.grip.core.sockets.MockInputSocketFactory;
 import org.junit.Test;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Function;
 
 import static junit.framework.TestCase.assertTrue;
 import static org.junit.Assert.*;
@@ -123,104 +126,71 @@ public class PublishAnnotatedOperationTest {
         }
     }
 
-    abstract static class TestPublishAnnotatedOperation<S, T extends Publishable> extends PublishAnnotatedOperation<S, T, Double> {
+    static class TestPublishAnnotatedOperation<T extends Publishable> extends PublishAnnotatedOperation<T, T> {
 
-        public TestPublishAnnotatedOperation(MapNetworkPublisherFactory factory) {
-            super(factory);
+        public TestPublishAnnotatedOperation(Class<T> type, MapNetworkPublisherFactory factory) {
+            super(new MockInputSocketFactory(new EventBus()), type, type, Function.identity(), factory);
         }
 
-        public TestPublishAnnotatedOperation() {
-            this(MockMapNetworkPublisher::new);
-        }
-
-        @Override
-        protected String getNetworkProtocolNameAcronym() {
-            return "TP";
-        }
-
-        @Override
-        protected String getNetworkProtocolName() {
-            return "Test Protocol";
-        }
-
-        @Override
-        protected String getSocketHintStringPrompt() {
-            return "Test Name";
+        public TestPublishAnnotatedOperation(Class<T> type) {
+            this(type, MockMapNetworkPublisher::new);
         }
     }
 
 
     @Test
     public void testNTValueOrder() {
-        TestPublishAnnotatedOperation<SimpleReport, SimpleReport> ntPublishOperation = new TestPublishAnnotatedOperation<SimpleReport, SimpleReport>() {
-        };
-        InputSocket<?>[] sockets = ntPublishOperation.createInputSockets(new EventBus());
+        Operation ntPublishOperation = new TestPublishAnnotatedOperation<>(SimpleReport.class);
+        List<InputSocket> sockets = ntPublishOperation.getInputSockets();
 
-        assertEquals("Unexpected number of sockets", 4, sockets.length);
-        assertEquals("Wrong publish name", "Publish bar", sockets[2].getSocketHint().getIdentifier());
-        assertEquals("Wrong publish name", "Publish foo", sockets[3].getSocketHint().getIdentifier());
+        assertEquals("Unexpected number of sockets", 4, sockets.size());
+        assertEquals("Wrong publish name", "Publish bar", sockets.get(2).getSocketHint().getIdentifier());
+        assertEquals("Wrong publish name", "Publish foo", sockets.get(3).getSocketHint().getIdentifier());
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testNonDistinctWeights() {
-        new TestPublishAnnotatedOperation<ReportWithNonDistinctWeights, ReportWithNonDistinctWeights>() {
-        };
+        new TestPublishAnnotatedOperation<>(ReportWithNonDistinctWeights.class);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testPublishableWithMethodThatHasParameters() {
-        new TestPublishAnnotatedOperation<ReportWithParameters, ReportWithParameters>() {
-
-        };
+        new TestPublishAnnotatedOperation<>(ReportWithParameters.class);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testPublishableWithNonDistinctKeys() {
-        new TestPublishAnnotatedOperation<ReportWithNonDistinctKeys, ReportWithNonDistinctKeys>() {
-        };
+        new TestPublishAnnotatedOperation<>(ReportWithNonDistinctKeys.class);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testPublishableWithMultipleEmptyKeys() {
-        new TestPublishAnnotatedOperation<ReportWithMultipleEmptyKeys, ReportWithMultipleEmptyKeys>() {
-        };
+        new TestPublishAnnotatedOperation<>(ReportWithMultipleEmptyKeys.class);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testPublishableWithMixedEmptyAndSuppliedKeys() {
-        new TestPublishAnnotatedOperation<ReportWithMixedEmptyAndSuppliedKeys, ReportWithMixedEmptyAndSuppliedKeys>() {
-        };
+        new TestPublishAnnotatedOperation<>(ReportWithMixedEmptyAndSuppliedKeys.class);
     }
 
-    @Test(expected = IllegalAccessError.class)
+    @Test(expected = IllegalArgumentException.class)
     public void testPublishableWithPrivateMethod() {
-        new TestPublishAnnotatedOperation<ReportWithPrivateMethod, ReportWithPrivateMethod>() {
-        };
+        new TestPublishAnnotatedOperation<>(ReportWithPrivateMethod.class);
     }
 
     @Test(expected = IllegalAccessError.class)
     public void testNonPublicPublishable() {
-        new TestPublishAnnotatedOperation<StaticNonPublicReport, StaticNonPublicReport>() {
-        };
+        new TestPublishAnnotatedOperation<>(StaticNonPublicReport.class);
     }
 
     @Test(expected = IllegalAccessError.class)
     public void testNonStaticInnerPublishable() {
-        new TestPublishAnnotatedOperation<NonStaticPublicReport, NonStaticPublicReport>() {
-        };
+        new TestPublishAnnotatedOperation<>(NonStaticPublicReport.class);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testPublishableWithNoAnnoatedMethods() {
-        new TestPublishAnnotatedOperation<NoAnnotatedMethodReport, NoAnnotatedMethodReport>() {
-        };
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public <T extends Publishable> void testUnresolvableTypesFails() {
-        // This should not be able to resolve the type and as such should fail
-        new TestPublishAnnotatedOperation<T, T>() {
-        };
+        new TestPublishAnnotatedOperation<>(NoAnnotatedMethodReport.class);
     }
 
     @Test
@@ -263,21 +233,20 @@ public class PublishAnnotatedOperationTest {
                 fail("This should not have run");
             }
         }
+        // Cannot be method reference due to JDK/javac bug 8144673
         final MapNetworkPublisherFactory factory = new MapNetworkPublisherFactory() {
             @Override
             public <T> MapNetworkPublisher<T> create(Set<String> keys) {
                 return new TestMapNetworkPublisher<>(keys);
             }
         };
-        final TestPublishAnnotatedOperation testPublishAnnotatedOperation = new TestPublishAnnotatedOperation<SimpleReport, SimpleReport>(factory) {
-        };
+        final TestPublishAnnotatedOperation<SimpleReport> testPublishAnnotatedOperation = new TestPublishAnnotatedOperation<>(SimpleReport.class, factory);
 
-        final InputSocket[] inputSockets = testPublishAnnotatedOperation.createInputSockets(new EventBus());
-        inputSockets[0].setValue(new SimpleReport());
-        inputSockets[1].setValue(PUBLISHER_NAME);
-        final Optional<?> data = testPublishAnnotatedOperation.createData();
+        final List<InputSocket> inputSockets = testPublishAnnotatedOperation.getInputSockets();
+        inputSockets.get(0).setValue(new SimpleReport());
+        inputSockets.get(1).setValue(PUBLISHER_NAME);
 
-        testPublishAnnotatedOperation.perform(inputSockets, null, data);
+        testPublishAnnotatedOperation.perform();
 
         assertTrue("publishNameChanged never ran", publishNameChangedRan[0]);
         assertTrue("doPublish never ran", doPublishRan[0]);
@@ -285,11 +254,10 @@ public class PublishAnnotatedOperationTest {
 
     @Test
     public void testPublishProperlyResolvesSocketType() {
-        TestPublishAnnotatedOperation<SimpleReport, SimpleReport> testPublishAnnotatedOperation
-                = new TestPublishAnnotatedOperation<SimpleReport, SimpleReport>() {
-        };
+        TestPublishAnnotatedOperation<SimpleReport> testPublishAnnotatedOperation
+                = new TestPublishAnnotatedOperation<>(SimpleReport.class);
         assertEquals("Socket types were not the same",
                 testPublishAnnotatedOperation.getSocketType(),
-                TypeToken.of(SimpleReport.class));
+                SimpleReport.class);
     }
 }

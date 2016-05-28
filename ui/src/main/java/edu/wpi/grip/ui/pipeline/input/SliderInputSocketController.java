@@ -70,7 +70,7 @@ public class SliderInputSocketController extends InputSocketController<Number> {
 
     @Subscribe
     public void updateSliderValue(SocketChangedEvent event) {
-        if (event.getSocket() == this.getSocket()) {
+        if (event.isRegarding(this.getSocket())) {
             platform.runAsSoonAsPossible(()-> this.slider.setValue(this.getSocket().getValue().get().doubleValue()));
         }
     }

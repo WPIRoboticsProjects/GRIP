@@ -1,54 +1,62 @@
 package edu.wpi.grip.core.operations.opencv;
 
 
-import com.google.common.eventbus.EventBus;
+import edu.wpi.grip.core.OperationDescription;
 import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.core.sockets.SocketHint;
 import edu.wpi.grip.core.sockets.SocketHints;
+import edu.wpi.grip.core.util.Icon;
 import org.bytedeco.javacpp.opencv_core.Size;
+import org.python.google.common.collect.ImmutableList;
 
-import java.io.InputStream;
-import java.util.Optional;
+import java.util.List;
 
 public class NewSizeOperation implements CVOperation {
+
+    public static final OperationDescription DESCRIPTION =
+            CVOperation.defaultBuilder()
+                    .name("New Size")
+                    .summary("Create a size.")
+                    .icon(Icon.iconStream("size"))
+                    .build();
 
     private final SocketHint<Number> widthHint = SocketHints.Inputs.createNumberSpinnerSocketHint("width", -1, -1, Integer.MAX_VALUE);
     private final SocketHint<Number> heightHint = SocketHints.Inputs.createNumberSpinnerSocketHint("height", -1, -1, Integer.MAX_VALUE);
     private final SocketHint<Size> outputHint = SocketHints.Outputs.createSizeSocketHint("size");
 
-    @Override
-    public String getName() {
-        return "New Size";
+
+    private final InputSocket<Number> widthSocket;
+    private final InputSocket<Number> heightSocket;
+
+    private final OutputSocket<Size> outputSocket;
+
+    public NewSizeOperation(InputSocket.Factory inputSocketFactory, OutputSocket.Factory outputSocketFactory) {
+        this.widthSocket = inputSocketFactory.create(widthHint);
+        this.heightSocket = inputSocketFactory.create(heightHint);
+
+        this.outputSocket = outputSocketFactory.create(outputHint);
     }
 
     @Override
-    public String getDescription() {
-        return "Create a size.";
+    public List<InputSocket> getInputSockets() {
+        return ImmutableList.of(
+                widthSocket,
+                heightSocket
+        );
     }
 
     @Override
-    public Optional<InputStream> getIcon() {
-        return Optional.of(getClass().getResourceAsStream("/edu/wpi/grip/ui/icons/size.png"));
+    public List<OutputSocket> getOutputSockets() {
+        return ImmutableList.of(
+                outputSocket
+        );
     }
 
     @Override
-    public InputSocket<?>[] createInputSockets(EventBus eventBus) {
-        return new InputSocket[]{new InputSocket(eventBus, widthHint), new InputSocket(eventBus, heightHint)};
-    }
-
-    @Override
-    public OutputSocket<?>[] createOutputSockets(EventBus eventBus) {
-        return new OutputSocket[]{new OutputSocket(eventBus, outputHint)};
-    }
-
-    @Override
-    public void perform(InputSocket<?>[] inputs, OutputSocket<?>[] outputs) {
-        final InputSocket<Number> widthSocket = (InputSocket<Number>) inputs[0];
-        final InputSocket<Number> heightSocket = (InputSocket<Number>) inputs[1];
+    public void perform() {
         final int widthValue = widthSocket.getValue().get().intValue();
         final int heightValue = heightSocket.getValue().get().intValue();
-        final OutputSocket<Size> outputSocket = (OutputSocket<Size>) outputs[0];
         outputSocket.setValue(new Size(widthValue, heightValue));
     }
 }

@@ -4,7 +4,13 @@ package edu.wpi.grip.ui.dragging;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.scene.Node;
+import javafx.scene.image.ImageView;
+import javafx.scene.input.DataFormat;
+import javafx.scene.input.Dragboard;
+import javafx.scene.input.TransferMode;
 
+import java.util.Collections;
 import java.util.Optional;
 
 /**
@@ -39,11 +45,22 @@ public abstract class DragService<T> {
     }
 
     /**
-     * Begins the drag action
+     * Begins the drag action.
+     * Creates the dragboard on the root node and adds a
+     * snapshot of the root node as the view.
      *
      * @param value The value to be transferred during the drag.
+     * @param root  The root node to drag
+     * @param name  The name to set as the content of the dragboard
      */
-    public void beginDrag(T value) {
+    public void beginDrag(T value, Node root, String name) {
+        // Create a snapshot to use as the cursor
+        final ImageView preview = new ImageView(root.snapshot(null, null));
+
+        final Dragboard db = root.startDragAndDrop(TransferMode.ANY);
+        db.setContent(Collections.singletonMap(DataFormat.PLAIN_TEXT, name));
+        db.setDragView(preview.getImage());
+
         this.dragProperty.set(value);
     }
 

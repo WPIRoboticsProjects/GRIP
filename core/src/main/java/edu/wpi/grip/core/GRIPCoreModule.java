@@ -12,6 +12,10 @@ import com.google.inject.spi.TypeListener;
 import edu.wpi.grip.core.events.UnexpectedThrowableEvent;
 import edu.wpi.grip.core.serialization.Project;
 import edu.wpi.grip.core.settings.SettingsProvider;
+import edu.wpi.grip.core.sockets.InputSocket;
+import edu.wpi.grip.core.sockets.InputSocketImpl;
+import edu.wpi.grip.core.sockets.OutputSocket;
+import edu.wpi.grip.core.sockets.OutputSocketImpl;
 import edu.wpi.grip.core.sources.CameraSource;
 import edu.wpi.grip.core.sources.ImageFileSource;
 import edu.wpi.grip.core.sources.MultiImageFileSource;
@@ -109,7 +113,9 @@ public class GRIPCoreModule extends AbstractModule {
 
         bind(ConnectionValidator.class).to(Pipeline.class);
         bind(Source.SourceFactory.class).to(Source.SourceFactoryImpl.class);
-        bind(CameraSource.FrameGrabberFactory.class).to(CameraSource.FrameGrabberFactoryImpl.class);
+
+        bind(InputSocket.Factory.class).to(InputSocketImpl.FactoryImpl.class);
+        bind(OutputSocket.Factory.class).to(OutputSocketImpl.FactoryImpl.class);
         install(new FactoryModuleBuilder()
                 .implement(CameraSource.class, CameraSource.class)
                 .build(CameraSource.Factory.class));

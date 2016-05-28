@@ -1,10 +1,8 @@
 package edu.wpi.grip.core;
 
-import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import edu.wpi.grip.core.events.OperationAddedEvent;
 
-import javax.inject.Inject;
 import javax.inject.Singleton;
 import java.util.Collection;
 import java.util.LinkedHashMap;
@@ -20,20 +18,13 @@ import static com.google.common.base.Preconditions.checkNotNull;
 @Singleton
 public class Palette {
 
-    private final EventBus eventBus;
-
-    @Inject
-    Palette(EventBus eventBus) {
-        this.eventBus = eventBus;
-    }
-
-    private final Map<String, Operation> operations = new LinkedHashMap<>();
+    private final Map<String, OperationMetaData> operations = new LinkedHashMap<>();
 
     @Subscribe
     public void onOperationAdded(OperationAddedEvent event) {
-        final Operation operation = event.getOperation();
-        map(operation.getName(), operation);
-        for(String alias : operation.getAliases()) {
+        final OperationMetaData operation = event.getOperation();
+        map(operation.getDescription().name(), operation);
+        for(String alias : operation.getDescription().aliases()) {
             map(alias, operation);
         }
     }
@@ -44,7 +35,7 @@ public class Palette {
      * @param operation The operation to map the key to
      * @throws IllegalArgumentException if the key is already in the {@link #operations} map.
      */
-    private void map(String key, Operation operation) {
+    private void map(String key, OperationMetaData operation) {
         checkArgument(!operations.containsKey(key), "Operation name or alias already exists: " + key);
         operations.put(key, operation);
     }
@@ -52,14 +43,14 @@ public class Palette {
     /**
      * @return A collection of all available operations
      */
-    public Collection<Operation> getOperations() {
+    public Collection<OperationMetaData> getOperations() {
         return this.operations.values();
     }
 
     /**
      * @return The operation with the specified unique name
      */
-    public Optional<Operation> getOperationByName(String name) {
+    public Optional<OperationMetaData> getOperationByName(String name) {
         return Optional.ofNullable(this.operations.get(checkNotNull(name, "name cannot be null")));
     }
 }

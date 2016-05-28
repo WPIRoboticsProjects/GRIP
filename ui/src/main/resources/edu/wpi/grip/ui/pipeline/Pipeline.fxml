@@ -13,7 +13,9 @@
 <StackPane fx:id="root" maxHeight="Infinity" maxWidth="Infinity" styleClass="pipeline" xmlns="http://javafx.com/javafx/8.0.40" xmlns:fx="http://javafx.com/fxml/1" fx:controller="edu.wpi.grip.ui.pipeline.PipelineController">
     <children>
         <HBox maxWidth="1.7976931348623157E308">
-            <VBox fillWidth="true" maxWidth="1.7976931348623157E308">
+            <VBox>
+                <minWidth><Control fx:constant="USE_PREF_SIZE" /></minWidth>
+                <maxWidth><Control fx:constant="USE_PREF_SIZE" /></maxWidth>
                 <Label maxWidth="Infinity" styleClass="pane-title" text="Sources" />
                 <Separator orientation="HORIZONTAL" />
                 <Pane fx:id="addSourcePane" />

@@ -1,7 +1,7 @@
 package edu.wpi.grip.core.events;
 
 import com.google.common.base.MoreObjects;
-import edu.wpi.grip.core.Operation;
+import edu.wpi.grip.core.OperationMetaData;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -10,19 +10,19 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * script, or at startup for the built-in operations.  This is NOT the event for adding a new step to the pipeline.
  */
 public class OperationAddedEvent {
-    private final Operation operation;
+    private final OperationMetaData operation;
 
     /**
      * @param operation The operation being added
      */
-    public OperationAddedEvent(Operation operation) {
+    public OperationAddedEvent(OperationMetaData operation) {
         this.operation = checkNotNull(operation, "Operation cannot be null");
     }
 
     /**
-     * @return The operation being added..
+     * @return The operation being added.
      */
-    public Operation getOperation() {
+    public OperationMetaData getOperation() {
         return this.operation;
     }
 

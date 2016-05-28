@@ -38,8 +38,8 @@ public class PipelineUITest extends ApplicationTest {
 
     private GRIPCoreTestModule testModule;
     private EventBus eventBus;
-    private AdditionOperation additionOperation;
-    private SubtractionOperation subtractionOperation;
+    private OperationMetaData additionOperation;
+    private OperationMetaData subtractionOperation;
     private PipelineController pipelineController;
     private Pipeline pipeline;
 
@@ -50,8 +50,10 @@ public class PipelineUITest extends ApplicationTest {
         final Injector injector = Guice.createInjector(Modules.override(testModule).with(new GRIPUIModule()));
         eventBus = injector.getInstance(EventBus.class);
         pipeline = injector.getInstance(Pipeline.class);
-        additionOperation = new AdditionOperation();
-        subtractionOperation = new SubtractionOperation();
+        InputSocket.Factory isf = injector.getInstance(InputSocket.Factory.class);
+        OutputSocket.Factory osf = injector.getInstance(OutputSocket.Factory.class);
+        additionOperation = new OperationMetaData(AdditionOperation.DESCRIPTION, () ->new AdditionOperation(isf, osf));
+        subtractionOperation = new OperationMetaData(SubtractionOperation.DESCRIPTION, () -> new SubtractionOperation(isf, osf));
         pipelineController = injector.getInstance(PipelineController.class);
         final Scene scene = new Scene(TestAnnotationFXMLLoader.load(pipelineController), 800, 600);
         stage.setScene(scene);
@@ -139,8 +141,8 @@ public class PipelineUITest extends ApplicationTest {
         addOperation(1, additionOperation);
     }
 
-    private Step addOperation(int count, Operation operation) {
-        final Step step = new Step.Factory(eventBus, origin -> new MockExceptionWitness(eventBus, origin)).create(operation);
+    private Step addOperation(int count, OperationMetaData operationMetaData) {
+        final Step step = new Step.Factory(origin -> new MockExceptionWitness(eventBus, origin)).create(operationMetaData);
         pipeline.addStep(step);
 
         // Wait for the event to propagate to the UI

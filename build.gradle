@@ -17,7 +17,7 @@ plugins {
     id 'eclipse'
     id 'jacoco'
     id 'com.google.osdetector' version '1.4.0'
-    id 'com.github.johnrengelman.shadow' version '1.2.2'
+    id 'com.github.johnrengelman.shadow' version '1.2.3'
 }
 apply plugin: 'nebula-aggregate-javadocs'
 
@@ -91,7 +91,7 @@ allprojects {
     apply plugin: 'net.ltgt.errorprone'
 
     configurations.errorprone {
-        resolutionStrategy.force 'com.google.errorprone:error_prone_core:2.0.8'
+        resolutionStrategy.force 'com.google.errorprone:error_prone_core:2.0.9'
     }
 
 
@@ -371,5 +371,5 @@ task jacocoRootReport(type: JacocoReport, group: 'Coverage reports') {
 check.dependsOn jacocoRootReport
 
 task wrapper(type: Wrapper) {
-    gradleVersion = '2.10'
+    gradleVersion = '2.13'
 }
