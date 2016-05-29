@@ -168,12 +168,12 @@ project(":core") {
     repositories {
         flatDir {
             dirs 'libs'
-            maven {
-                url = "http://first.wpi.edu/FRC/roborio/maven/development"
-            }
-            maven {
-                url = "https://github.com/WPIRoboticsProjects/rosjava_mvn_repo/raw/master"
-            }
+        }
+        maven {
+            url = "http://first.wpi.edu/FRC/roborio/maven/development"
+        }
+        maven {
+            url = "https://github.com/WPIRoboticsProjects/rosjava_mvn_repo/raw/master"
         }
     }
 
