@@ -71,16 +71,12 @@ public class TemplateMethods {
   public static String parseSocketType(Socket socket) {
     String type = socket.getSocketHint().getType().getSimpleName();
     if(socket.getSocketHint().getView().equals(SocketHint.View.SELECT)){
-      if(type.equals("borderType") || type.equals("cmpop")){
+      if(type.contains("BorderTypes") || type.contains("cmpop")){
         type += "CoreEnum";
       }
 
     }
-    if (type.equals("Number")) {
-      return "Double";
-    } else {
       return type;
-    }
   }
 
   public static String opName(String name) {

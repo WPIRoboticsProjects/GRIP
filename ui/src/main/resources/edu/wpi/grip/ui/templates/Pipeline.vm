@@ -32,14 +32,15 @@ public class Pipeline{
 
 	//This map links the Outputs with their names
 	protected Map<String,Object> outputs;
-	protected Map<String,Object> sources;
+#set($numSources = $pipeline.getNumSources())
+#set($i = 0)
+#parse("src/main/resources/edu/wpi/grip/ui/templates/MemberSources.vm")
 
 	/**
 	 * This constructor sets up the pipeline
 	 */
 	public Pipeline(){
 		outputs = new HashMap<String,Object>();
-		sources = new HashMap<String,Object>();
 	}
 
 	/**
@@ -56,7 +57,7 @@ public class Pipeline{
 #end
 }
 #foreach($step in $pipeline.getUniqueSteps())
-#set($toParse = "src/main/resources/edu/wpi/grip/ui/templates/" + $step.name())
+#set($toParse = "src/main/resources/edu/wpi/grip/ui/templates/operations/" + $step.name())
 #set($toParse = $toParse + ".vm")
 #parse($toParse)
 

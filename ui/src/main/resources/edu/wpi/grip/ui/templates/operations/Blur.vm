@@ -3,8 +3,24 @@ enum BlurType{
 
 	private final String label;
 
-	Type(String label) {
+	BlurType(String label) {
 		this.label = label;
+	}
+
+	public static BlurType get(String type){
+	    if(BILATERAL_FILTER.label.equals(type)){
+	        return BILATERAL_FILTER;
+	    }
+	    else if(GAUSSIAN.label.equals(type)){
+	        return GAUSSIAN;
+	    }
+	    else if(MEDIAN.label.equals(type)){
+        	return MEDIAN;
+        }
+        else{
+        return BOX;
+        }
+
 	}
 
 	@Override
@@ -13,12 +29,13 @@ enum BlurType{
 	}
 }
 
-void Blur(Mat input, BlurType type, int radius, Mat output){
+void Blur(Mat input, BlurType type, double doubleRadius, Mat output){
+    int radius = (int) doubleRadius;
 	int kernalSize;
 	switch(type){
  		case BOX:
  			kernalSize = 2*radius+1;
- 			Imgproc.blur(input,output,new Size(kernalSize, kernalSize);
+ 			Imgproc.blur(input,output,new Size(kernalSize, kernalSize));
  			break;
 		case GAUSSIAN:
 			kernalSize = 6*radius +1;

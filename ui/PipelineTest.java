@@ -30,43 +30,97 @@ public class Pipeline{
 
 	//This map links the Outputs with their names
 	protected Map<String,Object> outputs;
-	protected Map<String,Object> sources;
+	protected Mat source0;
 
 	/**
 	 * This constructor sets up the pipeline
 	 */
 	public Pipeline(){
 		outputs = new HashMap<String,Object>();
-		sources = new HashMap<String,Object>();
 	}
 
 	/**
 	 * This is the primary method that runs the entire pipeline and updates the outputs.
 	 */
 	protected void processImage(){
-	    //Step0: CV_dilate:
+	    //Step0: Blur:
             //input
-            Mat src0 = source0;
-            Mat kernel0 = null;
-            Point anchor0 = null;
-            Double iterations0 = 1;
-            Integer bordertype0 = imgproc.BORDER_CONSTANT;
-            Scalar bordervalue0 = null;
+            Mat input0 = source0;
+            BlurType type0 = BlurType.get("Box Blur");
+            double radius0 = 0.0;
             //output
             Mat output0 = new Mat();
-            CV_dilate(src0, kernel0, anchor0, iterations0, bordertype0, bordervalue0, output0);
+            Blur(input0, type0, radius0, output0);
             outputs.put("output0", output0);
 
+	    //Step1: HSV_Threshold:
+            //input
+            Mat input1 = output0;
+            double[] hue1 = {0.0, 180.0};
+            double[] saturation1 = {0.0, 255.0};
+            double[] value1 = {0.0, 255.0};
+            //output
+            Mat output1 = new Mat();
+            HSV_Threshold(input1, hue1, saturation1, value1, output1);
+            outputs.put("output1", output1);
 
-void CV_dilate(Mat src, Mat kernal, Point anchor, int iterations,int borderType, Scalar borderValue, Mat dst){
-	if(kernal == null){
-		kernal = new Mat();
+}
+enum BlurType{
+	BOX("Box Blur"), GAUSSIAN("Gaussian Blur"), MEDIAN("Median Filter"), BILATERAL_FILTER("Bilateral Filter");
+
+	private final String label;
+
+	BlurType(String label) {
+		this.label = label;
 	}
-	if(anchor == null){
-		anchor = new Point(-1,-1);
+
+	public static BlurType get(String type){
+	    if(BILATERAL_FILTER.label.equals(type)){
+	        return BILATERAL_FILTER;
+	    }
+	    else if(GAUSSIAN.label.equals(type)){
+	        return GAUSSIAN;
+	    }
+	    else if(MEDIAN.label.equals(type)){
+        	return MEDIAN;
+        }
+        else{
+        return BOX;
+        }
+
 	}
-	Impgroc.dilate(src, kernal, dst, anchor, iterations, borderType, borderValue);
+
+	@Override
+	public String toString() {
+		return this.label;
+	}
 }
 
+void Blur(Mat input, BlurType type, double doubleRadius, Mat output){
+    int radius = (int) doubleRadius;
+	int kernalSize;
+	switch(type){
+ 		case BOX:
+ 			kernalSize = 2*radius+1;
+ 			Imgproc.blur(input,output,new Size(kernalSize, kernalSize));
+ 			break;
+		case GAUSSIAN:
+			kernalSize = 6*radius +1;
+			Imgproc.GaussianBlur(input,output, new Size(kernalSize, kernalSize),radius);
+			break;
+		case MEDIAN: 
+			kernalSize = 2*radius +1;
+			Imgproc.medianBlur(input,output,kernalSize);
+			break;
+		case BILATERAL_FILTER:
+			Imgproc.bilateralFilter(input,output,-1,radius,radius);
+			break;
 	}
+}
+
+    void HSV_Threshold(Mat input, double[] hue, double[] sat, double[] val, Mat out){
+		Imgproc.cvtColor(input, out, Imgproc.COLOR_BGR2HSV);
+		Core.inRange(out, new Scalar(hue[0], sat[0] ,val[0]), new Scalar(hue[1], sat[1] ,val[1]), out);
+	}
+
 }

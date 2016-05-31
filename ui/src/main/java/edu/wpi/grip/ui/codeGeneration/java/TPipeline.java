@@ -70,6 +70,14 @@ public class TPipeline {
   }
 
   protected TInput createInput(String type, String name, String value) {
+    if(type.equals("Number")){
+      if(value.contains(".")){
+        type = "double";
+      }
+      else{
+        type = "int";
+      }
+    }
     if (value.contains("Optional.empty") || value.contains("Connection") || value.contains
         ("ContoursReport")) {
       int s = numSources;
@@ -84,13 +92,13 @@ public class TPipeline {
     } else if(type.contains("Enum")){
       return new TInput("Integer", name, "Imgproc." + value);
     }
-    else if(type.equals("MaskSize")){
-      return new TInput(type, name, "MaskSize.get(\"" + value+"\")");
+    else if(type.equals("MaskSize") || type.contains("Type")){
+      return new TInput(type, name, type + ".get(\"" + value+"\")");
     }
     else if (type.equals("String") ) {
       return new TInput(type, name, "\"" + value + "\"");
     } else if (type.equals("List")) {
-      return new TInput("int[]", name, "{" + value.substring(1, value.length() - 1) + "}");
+      return new TInput("double[]", name, "{" + value.substring(1, value.length() - 1) + "}");
     } else {
       return new TInput(type, name, value);
     }
@@ -111,6 +119,10 @@ public class TPipeline {
         out.add(step);
     }
     return out;
+  }
+
+  public int getNumSources(){
+    return numSources;
   }
 
 
