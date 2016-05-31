@@ -74,7 +74,12 @@ public class TemplateMethods {
       if(type.contains("BorderTypes") || type.contains("cmpop")){
         type += "CoreEnum";
       }
-
+    }
+    else if(type.equals("ContoursReport")){
+      type = "ArrayList<MatOfPoint>";
+    }
+    else if(type.equals("LinesReport")){
+      type = "ArrayList<Line>";
     }
       return type;
   }
