@@ -1,0 +1,12 @@
+void CV_dilate(Mat src, Mat kernal, Point anchor, int iterations,int borderType, Scalar borderValue, Mat dst){
+	if(kernal == null){
+		kernal = new Mat();
+	}
+	if(anchor == null){
+		anchor = new Point(-1,-1);
+	}
+	if(borderValue == null){
+    	borderValue = new Scalar(-1);
+    }
+	Imgproc.dilate(src, kernal, dst, anchor, iterations, borderType, borderValue);
+}
