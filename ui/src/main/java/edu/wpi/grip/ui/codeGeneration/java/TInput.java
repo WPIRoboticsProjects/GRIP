@@ -32,6 +32,8 @@ public class TInput extends TSocket {
     }
   }
 
-
+  public boolean hasValue(){
+	  return value!=null;
+  }
 
 }

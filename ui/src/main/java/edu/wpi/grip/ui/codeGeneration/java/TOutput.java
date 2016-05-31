@@ -8,9 +8,6 @@ public class TOutput extends TSocket {
 
   public TOutput(String type, int number){
     super(type);
-    if(super.type.equals("Number")){
-      super.setType("Integer");
-    }
     this.number = number;
     super.name = "output" +number;
   }

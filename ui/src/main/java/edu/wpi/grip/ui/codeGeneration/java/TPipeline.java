@@ -72,10 +72,10 @@ public class TPipeline {
   protected TInput createInput(String type, String name, String value) {
     if(type.equals("Number")){
       if(value.contains(".")){
-        type = "double";
+        type = "Double";
       }
       else{
-        type = "int";
+        type = "Integer";
       }
     }
     if (value.contains("Optional.empty") || value.contains("Connection") || value.contains

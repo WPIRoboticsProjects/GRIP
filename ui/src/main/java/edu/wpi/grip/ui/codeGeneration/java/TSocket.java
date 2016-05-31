@@ -16,7 +16,7 @@ public class TSocket {
     setType(type);
   }
   public void setType(String type){
-	  if(type.equals("Integer")||type.equals("Double")||type.equals("Boolean")){
+	  if(type.equals("Integer")||type.equals("Double")||type.equals("Boolean")||type.equals("Number")){
 	    	this.type = MutableOf+type+">";
 	    }
 	  else{
@@ -45,4 +45,7 @@ public class TSocket {
 	  return type.contains(MutableOf);
   }
 
+  public boolean number(){
+	  return type.contains("Integer")||type.contains("Double");
+  }
 }

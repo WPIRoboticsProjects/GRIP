@@ -87,6 +87,8 @@ public class Pipeline{
 #set($toParse = "src/main/resources/edu/wpi/grip/ui/templates/operations/" + $step.name())
 #set($toParse = $toParse + ".vm")
 #parse($toParse)
+
+
 #end
 
 }
