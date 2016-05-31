@@ -31,6 +31,7 @@ public class Pipeline{
 	//This map links the Outputs with their names
 	protected Map<String,Object> outputs;
 	protected Mat source0;
+	protected Mat source1;
 
 	/**
 	 * This constructor sets up the pipeline
@@ -42,12 +43,12 @@ public class Pipeline{
 	/**
 	 * This is the primary method that runs the entire pipeline and updates the outputs.
 	 */
-	protected void processImage(){
+	public void processImage(){
 	    //Step0: Blur:
             //input
             Mat input0 = source0;
             BlurType type0 = BlurType.get("Box Blur");
-            double radius0 = 0.0;
+            double radius0 = 1.8018018018018014;
             //output
             Mat output0 = new Mat();
             Blur(input0, type0, radius0, output0);
@@ -56,15 +57,64 @@ public class Pipeline{
 	    //Step1: HSV_Threshold:
             //input
             Mat input1 = output0;
-            double[] hue1 = {0.0, 180.0};
-            double[] saturation1 = {0.0, 255.0};
-            double[] value1 = {0.0, 255.0};
+            double[] hue1 = {42.086330935251794, 91.37521222410867};
+            double[] saturation1 = {41.276978417266186, 196.553480475382};
+            double[] value1 = {50.44964028776978, 135.9422750424448};
             //output
             Mat output1 = new Mat();
             HSV_Threshold(input1, hue1, saturation1, value1, output1);
             outputs.put("output1", output1);
 
+	    //Step2: CV_dilate:
+            //input
+            Mat src2 = source1;
+            Mat kernel2 = null;
+            Point anchor2 = null;
+            int iterations2 = 1;
+            Integer bordertype2 = Core.BORDER_CONSTANT;
+            Scalar bordervalue2 = null;
+            //output
+            Mat output2 = new Mat();
+            CV_dilate(src2, kernel2, anchor2, iterations2, bordertype2, bordervalue2, output2);
+            outputs.put("output2", output2);
+
 }
+      /**
+      * This method is a generated setter for source0.
+      * @param source is the Mat that the source will be set to
+      */
+      public void setsource0(Mat source0){
+      	 this.source0 = source0;
+      }
+      /**
+      * This method is a generated setter for source1.
+      * @param source is the Mat that the source will be set to
+      */
+      public void setsource1(Mat source1){
+      	 this.source1 = source1;
+      }
+    	/**
+    	 * This method is a generated getter for the output of a Blur.
+    	 * @return Mat is the output.
+    	 */
+    	public Mat getoutput0(){
+    		return (Mat) outputs.get("output0");
+    	}
+    	/**
+    	 * This method is a generated getter for the output of a HSV_Threshold.
+    	 * @return Mat is the output.
+    	 */
+    	public Mat getoutput1(){
+    		return (Mat) outputs.get("output1");
+    	}
+    	/**
+    	 * This method is a generated getter for the output of a CV_dilate.
+    	 * @return Mat is the output.
+    	 */
+    	public Mat getoutput2(){
+    		return (Mat) outputs.get("output2");
+    	}
+
 enum BlurType{
 	BOX("Box Blur"), GAUSSIAN("Gaussian Blur"), MEDIAN("Median Filter"), BILATERAL_FILTER("Bilateral Filter");
 
@@ -122,5 +172,15 @@ void Blur(Mat input, BlurType type, double doubleRadius, Mat output){
 		Imgproc.cvtColor(input, out, Imgproc.COLOR_BGR2HSV);
 		Core.inRange(out, new Scalar(hue[0], sat[0] ,val[0]), new Scalar(hue[1], sat[1] ,val[1]), out);
 	}
+void CV_dilate(Mat src, Mat kernal, Point anchor, int iterations,int borderType, Scalar borderValue, Mat dst){
+	if(kernal == null){
+		kernal = new Mat();
+	}
+	if(anchor == null){
+		anchor = new Point(-1,-1);
+	}
+	Imgproc.dilate(src, kernal, dst, anchor, iterations, borderType, borderValue);
+}
+
 
 }

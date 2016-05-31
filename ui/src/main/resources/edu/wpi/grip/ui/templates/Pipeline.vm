@@ -46,7 +46,7 @@ public class Pipeline{
 	/**
 	 * This is the primary method that runs the entire pipeline and updates the outputs.
 	 */
-	protected void processImage(){
+	public void processImage(){
 #set($count = 0)
 #foreach($step in $pipeline.getSteps())
 #set($c = $count)
@@ -56,6 +56,27 @@ public class Pipeline{
 
 #end
 }
+#foreach($source in $pipeline.getSources())
+      /**
+      * This method is a generated setter for $source.value().
+      * @param source is the $source.type() that the source will be set to
+      */
+      public void set${source.value()}(${source.type()} ${source.value()}){
+      	 this.$source.value() = ${source.value()};
+      }
+#end
+#foreach($step in $pipeline.getSteps())
+#foreach($output in $step.getOutputs())
+    	/**
+    	 * This method is a generated getter for the output of a $step.name().
+    	 * @return ${output.type()} is the output.
+    	 */
+    	public ${output.type()} get${output.name()}(){
+    		return (${output.type()}) outputs.get("${output.name()}");
+    	}
+#end
+#end
+
 #foreach($step in $pipeline.getUniqueSteps())
 #set($toParse = "src/main/resources/edu/wpi/grip/ui/templates/operations/" + $step.name())
 #set($toParse = $toParse + ".vm")

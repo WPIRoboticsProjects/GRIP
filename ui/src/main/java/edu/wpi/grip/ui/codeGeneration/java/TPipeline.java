@@ -125,5 +125,17 @@ public class TPipeline {
     return numSources;
   }
 
+  public List<TSocket> getSources(){
+    List<TSocket> sources = new ArrayList<TSocket>();
+    for(TStep step: steps){
+      for(TInput input: step.getInputs()){
+        if(input.value().contains("source")){
+          sources.add(input);
+        }
+      }
+    }
+    return sources;
+  }
+
 
 }
