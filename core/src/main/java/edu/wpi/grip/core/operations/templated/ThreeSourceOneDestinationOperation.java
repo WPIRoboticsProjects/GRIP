@@ -31,6 +31,7 @@ final class ThreeSourceOneDestinationOperation<T1, T2, T3, R> implements Operati
         this.input2 = inputSocketFactory.create(t2SocketHint);
         this.input3 = inputSocketFactory.create(t3SocketHint);
         this.output = outputSocketFactory.create(rSocketHint);
+        assert output.getValue().isPresent() : TemplateFactory.ASSERTION_MESSAGE;
     }
 
     @Override

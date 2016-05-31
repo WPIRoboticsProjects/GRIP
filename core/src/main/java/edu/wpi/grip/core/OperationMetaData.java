@@ -1,5 +1,7 @@
 package edu.wpi.grip.core;
 
+import com.google.common.base.MoreObjects;
+
 import javax.annotation.concurrent.Immutable;
 import java.util.function.Supplier;
 
@@ -37,5 +39,13 @@ public class OperationMetaData {
      */
     public Supplier<Operation> getOperationSupplier() {
         return operationSupplier;
+    }
+
+    @Override
+    public String toString() {
+        return MoreObjects.toStringHelper(OperationMetaData.class)
+                .add("description", description)
+                .add("operationSupplier", operationSupplier)
+                .toString();
     }
 }
