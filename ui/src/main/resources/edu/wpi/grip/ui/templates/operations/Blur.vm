@@ -1,5 +1,9 @@
+/**
+* An indication of which type of filter to use for a blur.
+* Choices are BOX, GAUSSIAN, MEDIAN, and BILATERAL
+*/
 enum BlurType{
-	BOX("Box Blur"), GAUSSIAN("Gaussian Blur"), MEDIAN("Median Filter"), BILATERAL_FILTER("Bilateral Filter");
+	BOX("Box Blur"), GAUSSIAN("Gaussian Blur"), MEDIAN("Median Filter"), BILATERAL("Bilateral Filter");
 
 	private final String label;
 
@@ -8,8 +12,8 @@ enum BlurType{
 	}
 
 	public static BlurType get(String type){
-	    if(BILATERAL_FILTER.label.equals(type)){
-	        return BILATERAL_FILTER;
+	    if(BILATERAL.label.equals(type)){
+	        return BILATERAL;
 	    }
 	    else if(GAUSSIAN.label.equals(type)){
 	        return GAUSSIAN;
@@ -29,6 +33,14 @@ enum BlurType{
 	}
 }
 
+/**
+ * Softens an image using one of several filters.
+ * 
+ * @param input The image on which to perform the blur.
+ * @param type The blurType to perform.
+ * @param doubleRadius The radius for the blur.
+ * @param output The image in which to store the output.
+ */
 void Blur(Mat input, BlurType type, double doubleRadius, Mat output){
     int radius = (int) doubleRadius;
 	int kernalSize;
@@ -45,7 +57,7 @@ void Blur(Mat input, BlurType type, double doubleRadius, Mat output){
 			kernalSize = 2*radius +1;
 			Imgproc.medianBlur(input,output,kernalSize);
 			break;
-		case BILATERAL_FILTER:
+		case BILATERAL:
 			Imgproc.bilateralFilter(input,output,-1,radius,radius);
 			break;
 	}
