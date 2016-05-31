@@ -1,0 +1,38 @@
+/**
+ * Enables modification of unmutable classes from within functions.
+ * 
+ * Syntax is MutableOf<T> varName = new MutableOf<T>(initValue).
+ * Where varName is the name of the variable and initValue is of type T and contains initial value.
+ * @param <T> The class which this object stores.
+ */
+class MutableOf<T> {
+	T value;
+	/**
+	 * Constructor for a MutableOf object.
+	 * @param initValue Type T initial value for the object.
+	 */
+	public MutableOf(T initValue){
+		value = initValue;
+	}
+	/**
+	 * Constructor for a MutableOf object without an initialCondition.
+	 * Equivalent to calling MutableOf(null)
+	 */
+	public MutableOf(){
+		this(null);
+	}
+	/**
+	 * Sets the object to contain a new value.
+	 * @param newValue the new value for the object (of type t).
+	 */
+	public void set(T newValue){
+		value = newValue;
+	}
+	/**
+	 * Gets the current value of the object.
+	 * @return the current value of type T.
+	 */
+	public T get(){
+		return value;
+	}
+}

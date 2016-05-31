@@ -4,7 +4,7 @@
 #end
             //output
 #foreach($output in $step.getOutputs())
-            $output.type() $output.name() = new $output.type()($output.initialVal());
+            $output.type() $output.name() = new $output.type()();
 #end
             $step.callOp($c);
 #foreach($output in $step.getOutputs())

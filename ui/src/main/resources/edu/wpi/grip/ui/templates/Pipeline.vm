@@ -69,11 +69,15 @@ public class Pipeline{
 #foreach($output in $step.getOutputs())
     	/**
     	 * This method is a generated getter for the output of a $step.name().
-    	 * @return ${output.type()} is the output.
+    	 * @return ${output.baseType()} is the output.
     	 */
-    	public ${output.type()} get${output.name()}(){
-    		return (${output.type()}) outputs.get("${output.name()}");
-    	}
+      public ${output.baseType()} get${output.name()}(){
+#if( $output.mutable() )
+      	 return ((${output.type()}) outputs.get("${output.name()}")).get();
+#else
+      	 return (${output.type()}) outputs.get("${output.name()}");
+#end
+      }
 #end
 #end
 
