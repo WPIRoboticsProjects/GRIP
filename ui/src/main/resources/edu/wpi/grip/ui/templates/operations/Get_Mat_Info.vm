@@ -1,4 +1,4 @@
-void Get_Mat_Info(Mat src, Size size, MutableOf<Boolean> empty, MutableOf<Integer> channels, MutableOf<Integer> cols, MutableOf<Integer> rows, MutableOf<Integer> highestValue){
+public static void Get_Mat_Info(Mat src, Size size, MutableOf<Boolean> empty, MutableOf<Integer> channels, MutableOf<Integer> cols, MutableOf<Integer> rows, MutableOf<Integer> highestValue){
 	empty.set(Boolean.valueOf(src.empty()));
 	channels.set(Integer.valueOf(src.channels()));
 	cols.set(Integer.valueOf(src.cols()));

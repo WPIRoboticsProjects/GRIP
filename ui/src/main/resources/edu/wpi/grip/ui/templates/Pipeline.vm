@@ -1,6 +1,7 @@
 #**
 This creates the complete java pipeline.
 *#
+#set($needsMut = false)
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -72,7 +73,7 @@ public class Pipeline{
     	 * @return ${output.baseType()} is the output.
     	 */
       public ${output.baseType()} get${output.name()}(){
-#if( $output.mutable() )
+#if( $output.mutable() ) #set($needsMut = true)
       	 return ((${output.type()}) outputs.get("${output.name()}")).get();
 #else
       	 return (${output.type()}) outputs.get("${output.name()}");
@@ -85,7 +86,10 @@ public class Pipeline{
 #set($toParse = "src/main/resources/edu/wpi/grip/ui/templates/operations/" + $step.name())
 #set($toParse = $toParse + ".vm")
 #parse($toParse)
-
 #end
 
 }
+#if($needsMut)
+
+#parse("src/main/resources/edu/wpi/grip/ui/templates/mutableof.vm")
+#end
