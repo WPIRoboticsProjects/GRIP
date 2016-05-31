@@ -1,0 +1,64 @@
+    enum Distance_TransformType{
+        DIST_L1("CV_DIST_L1", Imgproc.CV_DIST_L1),
+        DIST_L2("CV_DIST_L2", Imgproc.CV_DIST_L2),
+        DIST_C("CV_DIST_C", Imgproc.CV_DIST_C);
+
+        private final String label;
+        private final int value;
+
+        private Distance_TransformType(String label, int value) {
+            this.label = label;
+            this.value = value;
+        }
+
+    	public static Distance_TransformType get(String type){
+	        if(DIST_L2.label.equals(type)){
+	            return DIST_L2;
+	        }
+    	    else if(DIST_C.label.equals(type)){
+	            return DIST_C;
+	        }
+            else{
+                return DIST_L1;
+            }
+	    }
+
+        @Override
+        public String toString() {
+            return label;
+        }
+    }
+
+    private enum MaskSize {
+        ZERO("0x0", 0),
+        THREE("3x3", 3),
+        FIVE("5x5", 5);
+
+        private final String label;
+        private final int value;
+
+        private MaskSize(String label, int value) {
+            this.label = label;
+            this.value = value;
+        }
+        public static MaskSize get(String type){
+            if(ZERO.label.equals(type)){
+                return ZERO;
+            }
+    	    else if(THREE.label.equals(type)){
+                return THREE;
+            }
+            else{
+                return FIVE;
+            }
+        }
+        @Override
+        public String toString() {
+            return label;
+        }
+    }
+    public static void Desaturate(Mat input,Distance_TransformType type, MaskSize maskSize, Mat
+    output){
+        Imgproc.distanceTransform(input, output, type.value, maskSize.value);
+        output.convertTo(output, -1);
+    }

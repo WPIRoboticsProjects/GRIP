@@ -11,7 +11,6 @@ public class TStep {
 
   public TStep(String name) {
     this.name = name.replaceAll(" ", "_");
-    ;
     inputs = new ArrayList<TInput>();
     outputs = new ArrayList<TOutput>();
   }
