@@ -20,7 +20,7 @@
      */
     public static void Filter_Contours(List<MatOfPoint> inputContours, double minArea,
         double minPerimeter, double minWidth, double maxWidth, double minHeight, double
-        maxHeight, double[] solidity, double minVertexCount, double maxVertexCount, double
+        maxHeight, double[] solidity, double maxVertexCount, double minVertexCount, double
         minRatio, double maxRatio, List<MatOfPoint> output){
         final MatOfInt hull = new MatOfInt();
         //operation
