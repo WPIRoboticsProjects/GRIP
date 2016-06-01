@@ -27,7 +27,7 @@ public class Exporter {
     Velocity.init();
   }
 
-  /*public String stepNames(Pipeline pipeline) {
+  public String stepNames(Pipeline pipeline) {
     String out = "";
     for (Step step : getSteps(pipeline)) {
       out += step.getOperationDescription().name() + " \n";
@@ -55,11 +55,11 @@ public class Exporter {
   public String getInputNames(Step step) {
     String out = "";
     for (InputSocket input : step.getInputSockets()) {
-      String type = tempMeth.parseSocketType(input);
-      String name = tempMeth.parseSocketName(input);
-      String value = tempMeth.parseSocketValue(input);
+      String type = TemplateMethods.parseSocketType(input);
+      String name = TemplateMethods.parseSocketName(input);
+      String value = TemplateMethods.parseSocketValue(input);
       out += createClass(type, name, value) +  " \n";
-      out += input.getConnections() + "\n";
+      out += type + "\n";
     }
     out += step.getOperationDescription().summary() + "\n";
     return out;
@@ -83,7 +83,7 @@ public class Exporter {
       return type + " " + name + " = " + value;
     }
 
-  }*/
+  }
 
 
 

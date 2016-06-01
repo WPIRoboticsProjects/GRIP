@@ -1,0 +1,24 @@
+    private enum Type {
+
+            INF("NORM_INF", NORM_INF),
+            L1("NORM_L1", NORM_L1),
+            L2("NORM_L2", NORM_L2),
+            MINMAX("NORM_MINMAX", NORM_MINMAX);
+
+            private final String label;
+            private final int value;
+
+            private Type(String name, int value) {
+                this.label = name;
+                this.value = value;
+            }
+
+            @Override
+            public String toString() {
+                return label;
+            }
+
+        }
+    public static void Mask(Mat input, , , Mat output){
+        normalize(input, output, a.doubleValue(), b.doubleValue(), type.value, -1, null);
+	}

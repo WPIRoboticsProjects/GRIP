@@ -1,0 +1,4 @@
+    public static void Mask(Mat input, Mat mask, Mat output){
+        core.bitwise_xor(output, output, output);
+        input.copyTo(output, mask);
+	}

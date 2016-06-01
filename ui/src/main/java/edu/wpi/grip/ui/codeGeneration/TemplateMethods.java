@@ -71,7 +71,7 @@ public class TemplateMethods {
   public static String parseSocketType(Socket socket) {
     String type = socket.getSocketHint().getType().getSimpleName();
     if(socket.getSocketHint().getView().equals(SocketHint.View.SELECT)){
-      if(type.contains("BorderTypes") || type.contains("cmpop")){
+      if(type.contains("BorderTypes") || type.contains("CmpTypes")){
         type += "CoreEnum";
       }
     }
