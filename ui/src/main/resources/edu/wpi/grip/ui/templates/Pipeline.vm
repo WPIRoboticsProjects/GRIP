@@ -35,9 +35,9 @@ public class Pipeline{
 
 	//This map links the Outputs with their names
 	protected Map<String,Object> outputs;
-#set($numSources = $pipeline.getNumSources())
-#set($i = 0)
-#parse("src/main/resources/edu/wpi/grip/ui/templates/MemberSources.vm")
+#foreach($source in $pipeline.getSources())
+    protected ${source.type()} $source.value();
+#end
 
 	/**
 	 * This constructor sets up the pipeline

@@ -14,7 +14,7 @@
 #foreach($output in $step.getOutputs())
             $output.type() $output.name() = new $output.type()();
 #end
-            $step.callOp($count);
+            $step.callOp($c);
 #foreach($output in $step.getOutputs())
             outputs.put("$output.name()", $output.name());
 #end
