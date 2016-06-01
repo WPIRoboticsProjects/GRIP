@@ -1,0 +1,9 @@
+	/**
+     * Converts an image from one color space to another.
+     * @param src Image to convert.
+     * @param code conversion code.
+     * @param dst converted Image.
+     */
+	public static void CV_cvtColor(Mat src, int code, Mat dst){
+		imgproc.cvtColor(src, dst, code);
+	}
