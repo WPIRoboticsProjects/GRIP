@@ -2,6 +2,7 @@
 This creates the complete java pipeline.
 *#
 #set($needsMut = false)
+#set($interpolation = false)
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -51,7 +52,7 @@ public class Pipeline{
 	public void processImage(){
 #set($count = 0)
 #foreach($step in $pipeline.getSteps())
-#set($c = $count)
+#set($c = "S"+$count)
 	    //Step$count: $step.name():
 #parse("src/main/resources/edu/wpi/grip/ui/templates/CV Step.vm")
 #set($count = $count + 1)

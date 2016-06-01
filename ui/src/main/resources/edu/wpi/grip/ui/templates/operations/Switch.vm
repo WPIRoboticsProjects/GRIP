@@ -1,0 +1,8 @@
+    public static void Switch(boolean sw, Mat onTrue,Mat onFalse, Mat output){
+        if(sw){
+            output.setTo(onTrue);
+        }
+        else{
+            output.setTo(onFalse);
+        }
+    }

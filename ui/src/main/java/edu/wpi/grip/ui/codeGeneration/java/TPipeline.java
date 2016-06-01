@@ -92,7 +92,7 @@ public class TPipeline {
     } else if(type.contains("Enum")){
       return new TInput("Integer", name, "Imgproc." + value);
     }
-    else if(type.equals("MaskSize") || type.contains("Type")){
+    else if(type.equals("MaskSize") || type.contains("Type") || type.equals("Interpolation")){
       return new TInput(type, name, type + ".get(\"" + value+"\")");
     }
     else if (type.equals("String") ) {
