@@ -30,6 +30,7 @@ final class TwoSourceOneDestinationOperation<T1, T2, R> implements Operation {
         this.input1 = inputSocketFactory.create(t1SocketHint);
         this.input2 = inputSocketFactory.create(t2SocketHint);
         this.output = outputSocketFactory.create(rSocketHint);
+        assert output.getValue().isPresent() : TemplateFactory.ASSERTION_MESSAGE;
     }
 
     @Override

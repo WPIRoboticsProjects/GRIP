@@ -1,5 +1,6 @@
 package edu.wpi.grip.core.operations;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.ImmutableList;
 import com.google.common.eventbus.EventBus;
 import com.google.inject.Inject;
@@ -100,6 +101,11 @@ public class Operations {
                 new OperationMetaData(ROSPublishOperation.descriptionFor(LinesReport.class),
                         () -> new ROSPublishOperation<>(isf, LinesReport.class, rosPublishFactory, JavaToMessageConverter.LINES))
         );
+    }
+
+    @VisibleForTesting
+    ImmutableList<OperationMetaData> operations() {
+        return operations;
     }
 
     public void addOperations() {

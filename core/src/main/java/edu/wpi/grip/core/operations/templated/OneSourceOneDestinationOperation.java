@@ -26,6 +26,7 @@ final class OneSourceOneDestinationOperation<T1, R> implements Operation {
                                      SocketHint<R> rSocketHint) {
         this.input1 = inputSocketFactory.create(t1SocketHint);
         this.output = outputSocketFactory.create(rSocketHint);
+        assert output.getValue().isPresent() : TemplateFactory.ASSERTION_MESSAGE;
         this.performer = performer;
     }
 
