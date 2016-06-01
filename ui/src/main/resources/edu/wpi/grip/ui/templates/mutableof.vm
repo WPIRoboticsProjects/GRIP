@@ -11,7 +11,7 @@ class MutableOf<T> {
 	 * Constructor for a MutableOf object.
 	 * @param initValue Type T initial value for the object.
 	 */
-	public MutableOf(? extends T initValue){
+	public MutableOf(T initValue){
 		value = initValue;
 	}
 	/**
@@ -25,7 +25,7 @@ class MutableOf<T> {
 	 * Sets the object to contain a new value.
 	 * @param newValue the new value for the object (of type t).
 	 */
-	public void set(? extends T newValue){
+	public void set(T newValue){
 		value = newValue;
 	}
 	/**
