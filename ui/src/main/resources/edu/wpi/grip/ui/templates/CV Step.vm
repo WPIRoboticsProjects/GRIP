@@ -1,6 +1,6 @@
             //input
 #foreach($input in $step.getInputs())
-#if($input.mutable() && $input.hasValue())
+#if($input.mutable() && $input.hasValue()) #set($needsMut = true)
 #if($input.number())
 			MutableOf<Number> $input.name()$c = new MutableOf<Number>(new $input.baseType()($input.value()));
 #else
