@@ -1,0 +1,9 @@
+	/**
+	 * Performs a per element min.
+	 * @param src1 first image to use.
+	 * @param src2 second image to use.
+	 * @param dst the per element min of two images.
+	 */
+	public static void CV_min(Mat src1, Mat src2, Mat dst){
+		core.min(src1,src2,dst);
+	}
