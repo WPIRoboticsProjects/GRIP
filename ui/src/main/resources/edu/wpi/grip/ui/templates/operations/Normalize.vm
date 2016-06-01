@@ -36,5 +36,5 @@
 
     }
     public static void Normalize(Mat input, NormalizeType type, double a, double b, Mat output){
-        Core.normalize(input, output, a, b, type.value, -1, null);
+        Core.normalize(input, output, a, b, type.value);
 	}
