@@ -1,0 +1,12 @@
+    /**
+     * Computes the weighted addition of two Mats
+     * @param src1 the first Mat
+     * @param alpha the weight for the first Mat
+     * @param src2 the second Mat
+     * @param beta the weight for the second Mat
+     * @param gamma Constant to add to each sum
+     * @param dst the output Mat
+     */
+	public static void CV_addWeighted(Mat src1, MutableOf<Number> alpha, Mat src2, MutableOf<Number> beta, MutableOf<Number> gamma, Mat dst){
+		core.addWeighted(src1, alpha.doubleValue(), src2, beta.doubleValue(), gamma.doubleValue(), dst);
+	}

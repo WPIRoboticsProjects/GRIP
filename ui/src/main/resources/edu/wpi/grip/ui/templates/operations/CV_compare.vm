@@ -1,0 +1,4 @@
+
+	public static void CV_compare(Mat src1, Mat src2, MutableOf<Number> cmpop, Mat dst){
+		core.compare(src1,src2, dst, cmpop.get().intValue());
+	}
