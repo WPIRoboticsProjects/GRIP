@@ -4,7 +4,7 @@
 	 * @param y the y value to put in the point
 	 * @param point the point to fill
 	 */
-	public static void New_Point(MutableOf<Number> x, MutableOf<Number> y, Point point){
-		point.x = x.get().doubleValue();
-		point.y = y.get().doubleValue();
+	public static void New_Point(double x, double y, Point point){
+		point.x = x;
+		point.y = y;
 	}
