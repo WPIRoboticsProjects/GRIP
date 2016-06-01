@@ -22,8 +22,7 @@ import edu.wpi.grip.ui.codegeneration.java.TPipeline;
 
 @Singleton
 public class Exporter {
-
-  public Exporter() {
+  static{
     Velocity.init();
   }
 
