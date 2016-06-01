@@ -61,7 +61,7 @@ public class CVOperations {
                         templateFactory.createAllMatTwoSource(opencv_core::bitwise_and)),
 
                 new OperationMetaData(CVOperation.defaults("CV bitwise_not", "Calculate per-element bit-wise inversion of an image."),
-                        templateFactory.createAllMatTwoSource(opencv_core::bitwise_not)),
+                        templateFactory.createAllMatOneSource(opencv_core::bitwise_not)),
 
                 new OperationMetaData(CVOperation.defaults("CV bitwise_or", "Calculate the per-element bit-wise disjunction of two images."),
                         templateFactory.createAllMatTwoSource(opencv_core::bitwise_or)),
@@ -204,7 +204,7 @@ public class CVOperations {
                                 new SocketHint.Builder<>(Scalar.class).identifier("borderValue").initialValueSupplier(opencv_imgproc::morphologyDefaultBorderValue).build(),
                                 SocketHints.Outputs.createMatSocketHint("dst"),
                                 (src, kernel, anchor, iterations, borderType, borderValue, dst) -> {
-                                    opencv_imgproc.dilate(src, kernel, dst, anchor, iterations.intValue(), borderType.value, borderValue);
+                                    opencv_imgproc.dilate(src, dst, kernel, anchor, iterations.intValue(), borderType.value, borderValue);
                                 }
                         )),
 
@@ -218,7 +218,7 @@ public class CVOperations {
                                 new SocketHint.Builder<>(Scalar.class).identifier("borderValue").initialValueSupplier(opencv_imgproc::morphologyDefaultBorderValue).build(),
                                 SocketHints.Outputs.createMatSocketHint("dst"),
                                 (src, kernel, anchor, iterations, borderType, borderValue, dst) -> {
-                                    opencv_imgproc.erode(src, kernel, dst, anchor, iterations.intValue(), borderType.value, borderValue);
+                                    opencv_imgproc.erode(src, dst, kernel, anchor, iterations.intValue(), borderType.value, borderValue);
                                 }
                         )),
 
