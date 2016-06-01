@@ -52,6 +52,7 @@ public class TPipeline {
         if(type.equals("Type")){
           type = steps.get(i).name() + "Type";
         }
+        type = type.replace("Number", "Double");
         String name = TemplateMethods.parseSocketName(input);
         if (!input.getConnections().isEmpty()) {
           if (connections.containsKey(input)) {

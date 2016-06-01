@@ -37,8 +37,13 @@ public class TSocket {
 	 }
 	 else{
 		 String retVal = type.replace(MutableOf, "").replace(">", "");
+		 retVal = baseTypeHelper(retVal);
 		 return retVal;
 	 }
+  }
+  
+  String baseTypeHelper(String type){
+	  return type;
   }
   
   public boolean mutable(){

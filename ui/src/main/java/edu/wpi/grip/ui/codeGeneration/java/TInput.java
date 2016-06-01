@@ -31,7 +31,20 @@ public class TInput extends TSocket {
       return connectedOutput.name();
     }
   }
-
+  @Override
+  String baseTypeHelper(String type){
+	  if(type.equals("Integer")){
+		  return "int";
+	  }
+	  if(type.equals("Boolean")){
+		  return "boolean";
+	  }
+	  if(type.equals("Double")){
+		  return "double";
+	  }
+	  return type;
+  }
+  
   public boolean hasValue(){
 	  return value!=null;
   }
