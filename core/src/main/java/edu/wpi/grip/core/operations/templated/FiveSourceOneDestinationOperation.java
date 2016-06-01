@@ -34,6 +34,7 @@ final class FiveSourceOneDestinationOperation<T1, T2, T3, T4, T5, R> implements 
         this.input4 = inputSocketFactory.create(t4SocketHint);
         this.input5 = inputSocketFactory.create(t5SocketHint);
         this.output = outputSocketFactory.create(rSocketHint);
+        assert output.getValue().isPresent() : TemplateFactory.ASSERTION_MESSAGE;
     }
 
     @Override

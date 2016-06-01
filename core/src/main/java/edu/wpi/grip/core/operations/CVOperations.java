@@ -1,6 +1,7 @@
 package edu.wpi.grip.core.operations;
 
 
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.ImmutableList;
 import com.google.common.eventbus.EventBus;
 import com.google.inject.Inject;
@@ -312,6 +313,14 @@ public class CVOperations {
                                 }
                         ))
         );
+    }
+
+    /**
+     * All of the operations that this list supplies
+     */
+    @VisibleForTesting
+    ImmutableList<OperationMetaData> operations() {
+        return ImmutableList.<OperationMetaData>builder().addAll(coreOperations).addAll(imgprocOperation).build();
     }
 
     public void addOperations() {

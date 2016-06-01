@@ -6,6 +6,7 @@ import edu.wpi.grip.core.Operation;
 import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.core.sockets.SocketHint;
+import edu.wpi.grip.core.sockets.SocketHints;
 import org.bytedeco.javacpp.opencv_core.Mat;
 
 import java.util.function.Supplier;
@@ -17,6 +18,10 @@ import java.util.function.Supplier;
 @Singleton
 @SuppressWarnings("PMD.GenericsNaming")
 public final class TemplateFactory {
+    /*
+     * Intentionally package private
+     */
+    static final String ASSERTION_MESSAGE = "Output must be present for this operation to complete correctly.";
     private final InputSocket.Factory isf;
     private final OutputSocket.Factory osf;
 
@@ -105,7 +110,7 @@ public final class TemplateFactory {
     }
 
     public Supplier<Operation> createAllMatTwoSource(TwoSourceOneDestinationOperation.Performer<Mat, Mat, Mat> performer) {
-        return createAllMatTwoSource(srcSocketHint(Mat.class, 1), srcSocketHint(Mat.class, 2), dstSocketHint(Mat.class), performer);
+        return createAllMatTwoSource(srcSocketHint(Mat.class, 1), srcSocketHint(Mat.class, 2), dstMatSocketHint(), performer);
     }
 
     public Supplier<Operation> createAllMatOneSource(
@@ -116,7 +121,7 @@ public final class TemplateFactory {
     }
 
     public Supplier<Operation> createAllMatOneSource(OneSourceOneDestinationOperation.Performer<Mat, Mat> performer) {
-        return createAllMatOneSource(srcSocketHint(Mat.class, 1), dstSocketHint(Mat.class), performer);
+        return createAllMatOneSource(srcSocketHint(Mat.class, 1), dstMatSocketHint(), performer);
     }
 
 
@@ -124,7 +129,7 @@ public final class TemplateFactory {
         return new SocketHint.Builder<>(srcType).identifier("src" + index).build();
     }
 
-    private <R> SocketHint<R> dstSocketHint(Class<R> returnType) {
-        return new SocketHint.Builder<>(returnType).identifier("dst").build();
+    private SocketHint<Mat> dstMatSocketHint() {
+        return SocketHints.Outputs.createMatSocketHint("dst");
     }
 }

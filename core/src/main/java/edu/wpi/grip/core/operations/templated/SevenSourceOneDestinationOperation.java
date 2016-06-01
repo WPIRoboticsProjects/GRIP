@@ -47,6 +47,7 @@ final class SevenSourceOneDestinationOperation<T1, T2, T3, T4, T5, T6, T7, R> im
         this.input6 = inputSocketFactory.create(t6SocketHint);
         this.input7 = inputSocketFactory.create(t7SocketHint);
         this.output = outputSocketFactory.create(rSocketHint);
+        assert output.getValue().isPresent() : TemplateFactory.ASSERTION_MESSAGE;
     }
 
     @Override
