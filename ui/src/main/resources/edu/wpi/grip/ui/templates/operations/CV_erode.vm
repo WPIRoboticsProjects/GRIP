@@ -1,14 +1,14 @@
     /**
-     * Expands area of higher value in an image.
-     * @param src the Image to dilate.
-     * @param kernal the kernal for dilation.
+     * Expands area of lower value in an image.
+     * @param src the Image to erode.
+     * @param kernal the kernal for erosion.
      * @param anchor the center of the kernal.
-     * @param iterations the number of times to perform the dilation.
+     * @param iterations the number of times to perform the erosion.
      * @param borderType pixel extrapolation method.
      * @param borderValue value to be used for a constant border.
      * @param dst Output Image.
      */
-    public static void CV_dilate(Mat src, Mat kernal, Point anchor, double iterations, int borderType,
+    public static void CV_erode(Mat src, Mat kernal, Point anchor, double iterations, int borderType,
     Scalar borderValue, Mat dst){
 	    if(kernal == null){
 		    kernal = new Mat();
@@ -19,5 +19,5 @@
 	    if(borderValue == null){
     	    borderValue = new Scalar(-1);
         }
-	    Imgproc.dilate(src, kernal, dst, anchor, (int) iterations, borderType, borderValue);
+	    Imgproc.erode(src, kernal, dst, anchor, (int) iterations, borderType, borderValue);
     }
