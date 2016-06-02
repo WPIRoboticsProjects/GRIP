@@ -19,5 +19,5 @@
 	    if(borderValue == null){
     	    borderValue = new Scalar(-1);
         }
-	    Imgproc.erode(src, kernal, dst, anchor, (int) iterations, borderType, borderValue);
+	    Imgproc.erode(src, dst, kernal, anchor, (int) iterations, borderType, borderValue);
     }

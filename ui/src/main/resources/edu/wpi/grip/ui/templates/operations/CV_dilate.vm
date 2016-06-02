@@ -19,5 +19,5 @@
 	    if(borderValue == null){
     	    borderValue = new Scalar(-1);
         }
-	    Imgproc.dilate(src, kernal, dst, anchor, (int) iterations, borderType, borderValue);
+	    Imgproc.dilate(src, dst, kernal, anchor, (int) iterations, borderType, borderValue);
     }
