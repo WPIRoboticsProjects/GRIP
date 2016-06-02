@@ -9,5 +9,5 @@
      * @param dst Output of threshold.
      */
 	public static void CV_adaptiveThreshold(Mat src, double maxValue, int adaptiveMethod, int thresholdType, double blockSize, double c, Mat dst){
-		Imgproc.adaptiveThreshold(src, dst, maxValue, adaptiveMethod, thresholdType, blockSize, c);
+		Imgproc.adaptiveThreshold(src, dst, maxValue, adaptiveMethod, thresholdType, (int) blockSize, c);
 	}

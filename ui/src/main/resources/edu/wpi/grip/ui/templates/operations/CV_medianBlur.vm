@@ -5,5 +5,5 @@
      * @param dst output of blur.
      */
 	public static void CV_medianBlur(Mat src, double kSize, Mat dst){
-		imgproc.medianBlur(src, dst, kSize);
+		Imgproc.medianBlur(src, dst, (int) kSize);
 	}

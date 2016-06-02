@@ -8,5 +8,8 @@
      * @param dst the output image.
      */
      public static void CV_GaussianBlur(Mat src, Size kSize, double sigmaX, double sigmaY, int borderType, Mat dst){
-		imgproc.GaussianBlur(src, dst, kSize, sigmaX, sigmaY, borderType);
+     	if(kSize == null){
+     		kSize = new Size(1,1);
+     	}
+		Imgproc.GaussianBlur(src, dst, kSize, sigmaX, sigmaY, borderType);
 	}

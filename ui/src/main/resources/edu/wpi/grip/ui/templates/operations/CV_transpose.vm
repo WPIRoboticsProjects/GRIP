@@ -4,5 +4,5 @@
 	 * @param dst the transpose of src.
 	 */
 	public static void CV_transpose(Mat src, Mat dst){
-		core.transpose(src, dst);
+		Core.transpose(src, dst);
 	}

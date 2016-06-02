@@ -21,5 +21,5 @@
 	 * @param dst flipped version of the Image.
 	 */
 	public static void CV_flip(Mat src, FlipCode flipcode, Mat dst){
-		core.flip(src,dst,flipcode.value);
+		Core.flip(src,dst,flipcode.value);
 	}

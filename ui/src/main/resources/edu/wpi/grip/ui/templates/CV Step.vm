@@ -7,7 +7,11 @@
 			$input.baseType() $input.name()$c = ${input.value()}.get().$input.baseType()Value();
 #end##end Has a set value
 #else##Not Mutable
+#if ( $input.type() == "FlipCode" )
+			$input.type() $input.name()$c = FlipCode.$input.value();
+#else
 			$input.type() $input.name()$c = $input.value();
+#end
 #end##end Is Mutable
 #end
             //output
