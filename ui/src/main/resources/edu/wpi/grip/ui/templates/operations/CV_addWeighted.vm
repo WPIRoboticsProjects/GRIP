@@ -8,5 +8,5 @@
      * @param dst the output Mat
      */
 	public static void CV_addWeighted(Mat src1, double alpha, Mat src2, double beta, double gamma, Mat dst){
-		core.addWeighted(src1, alpha, src2, beta, gamma, dst);
+		Core.addWeighted(src1, alpha, src2, beta, gamma, dst);
 	}

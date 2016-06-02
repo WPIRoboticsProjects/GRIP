@@ -5,5 +5,5 @@
 	 * @param dst the per element max of two images.
 	 */
 	public static void CV_max(Mat src1, Mat src2, Mat dst){
-		core.max(src1,src2,dst);
+		Core.max(src1,src2,dst);
 	}

@@ -8,7 +8,7 @@
 	 * @param maxLoc the location of the maximum value.
 	 */
 	public static void Find_Min_and_Max(Mat src, Mat mask, MutableOf<Number> minVal, MutableOf<Number> maxVal, Point minLoc, Point maxLoc){
-		MinMaxLocResult data = core.minMaxLoc(src);
+		MinMaxLocResult data = Core.minMaxLoc(src);
 		minVal.set(Double.valueOf(data.minVal));
 		maxVal.set(Double.valueOf(data.maxVal));
 		minLoc.x = data.minLoc.x;

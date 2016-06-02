@@ -8,5 +8,5 @@
      * @param edges output of the canny.
      */
 	public static void CV_Canny(Mat image, double thres1, double thres2, double apertureSize, boolean gradient, Mat edges){
-		Imgproc.Canny(image, edges, thres1, thres2, apertureSize, gradient);
+		Imgproc.Canny(image, edges, thres1, thres2, (int) apertureSize, gradient);
 	}

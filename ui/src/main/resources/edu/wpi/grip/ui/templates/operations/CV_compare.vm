@@ -6,5 +6,5 @@
      * @param dst output Mat from the comparison.
      */
 	public static void CV_compare(Mat src1, Mat src2, int cmpop, Mat dst){
-		core.compare(src1,src2, dst, cmpop);
+		Core.compare(src1,src2, dst, cmpop);
 	}
