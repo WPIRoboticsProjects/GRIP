@@ -34,7 +34,15 @@ public class TStep {
   public List<TOutput> getOutputs() {
     return outputs;
   }
-
+  
+  public TInput getInput(int idx){
+	  return inputs.get(idx);
+  }
+  
+  public TOutput getOutput(int idx){
+	  return outputs.get(idx);
+  }
+  
   public String callOp(String num) {
     String out = name + "(";
     for (TInput input : inputs) {
