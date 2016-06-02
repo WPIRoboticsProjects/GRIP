@@ -17,6 +17,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 
 import org.opencv.core.*;
+import org.opencv.core.Core.*;
 import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.imgproc.*;
 

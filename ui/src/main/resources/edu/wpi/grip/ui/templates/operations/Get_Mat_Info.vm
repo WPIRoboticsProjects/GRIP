@@ -13,8 +13,8 @@
 		channels.set(Integer.valueOf(src.channels()));
 		cols.set(Integer.valueOf(src.cols()));
 		rows.set(Integer.valueOf(src.rows()));
-		highestValue.set(Integer.valueOf((int)(Core.minMaxLoc(src).maxVal)));
-		Size matSize = mat.size();
+		highestValue.set(Integer.valueOf((int)(Core.minMaxLoc(src.reshape(1)).maxVal)));
+		Size matSize = src.size();
 		size.height = matSize.height;
 		size.width = matSize.width;
 	}
