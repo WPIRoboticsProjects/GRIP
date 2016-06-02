@@ -26,8 +26,6 @@ public class AboutDialogController {
 
     @FXML
     void initialize() {
-        assert versionNumberLabel != null : "fx:id=\"versionNumberText\" was not injected: check your FXML file 'AboutDialog.fxml'.";
-
         versionNumberLabel.setText("Version " + edu.wpi.grip.core.Main.class.getPackage().getImplementationVersion());
     }
 }
