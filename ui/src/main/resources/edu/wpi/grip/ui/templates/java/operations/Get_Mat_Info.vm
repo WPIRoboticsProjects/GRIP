@@ -8,7 +8,7 @@
      * @param rows number of columns in the Mat.
      * @param highestValue highest value contained in the Mat.
      */
-	public static void Get_Mat_Info(Mat src, Size size, MutableOf<Boolean> empty, MutableOf<Number> channels, MutableOf<Number> cols, MutableOf<Number> rows, MutableOf<Number> highestValue){
+	public static void Get_Mat_Info(Mat src, Size size, #MutOf(Boolean) empty, #MutOf(Number) channels, #MutOf(Number) cols, #MutOf(Number) rows, #MutOf(Number) highestValue){
 		empty.set(Boolean.valueOf(src.empty()));
 		channels.set(Integer.valueOf(src.channels()));
 		cols.set(Integer.valueOf(src.cols()));
