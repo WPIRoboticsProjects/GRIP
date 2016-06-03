@@ -6,6 +6,7 @@ import com.google.common.eventbus.EventBus;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.google.inject.name.Named;
+import edu.wpi.grip.core.OperationDescription;
 import edu.wpi.grip.core.OperationMetaData;
 import edu.wpi.grip.core.events.OperationAddedEvent;
 import edu.wpi.grip.core.operations.composite.*;
@@ -21,9 +22,15 @@ import edu.wpi.grip.core.operations.opencv.MatFieldAccessor;
 import edu.wpi.grip.core.operations.opencv.MinMaxLoc;
 import edu.wpi.grip.core.operations.opencv.NewPointOperation;
 import edu.wpi.grip.core.operations.opencv.NewSizeOperation;
+import edu.wpi.grip.core.operations.templated.TemplateFactory;
 import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.sockets.OutputSocket;
+import edu.wpi.grip.core.sockets.SocketHint;
+import edu.wpi.grip.core.sockets.SocketHints;
+import edu.wpi.grip.core.util.Icon;
+import org.bytedeco.javacpp.opencv_core.Mat;
 import org.bytedeco.javacpp.opencv_core.Point;
+import org.bytedeco.javacpp.opencv_core.Rect;
 import org.bytedeco.javacpp.opencv_core.Size;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -44,6 +51,8 @@ public class Operations {
         this.eventBus = checkNotNull(eventBus, "EventBus cannot be null");
         checkNotNull(ntPublisherFactory, "ntPublisherFactory cannot be null");
         checkNotNull(rosPublishFactory, "rosPublishFactory cannot be null");
+        TemplateFactory templateFactory = new TemplateFactory(isf, osf);
+
         this.operations = ImmutableList.of(
                 // Composite operations
                 new OperationMetaData(BlurOperation.DESCRIPTION, () -> new BlurOperation(isf, osf)),
@@ -66,6 +75,52 @@ public class Operations {
                 new OperationMetaData(ValveOperation.DESCRIPTION, () -> new ValveOperation(isf, osf)),
                 new OperationMetaData(WatershedOperation.DESCRIPTION, () -> new WatershedOperation(isf, osf)),
                 new OperationMetaData(ThresholdMoving.DESCRIPTION, () -> new ThresholdMoving(isf, osf)),
+
+                new OperationMetaData(
+                        OperationDescription.builder()
+                                .name("Crop")
+                                .summary("Crop an image")
+                                .icon(Icon.iconStream("grip"))
+                                .build(),
+                        templateFactory.create(
+                                SocketHints.Inputs.createMatSocketHint("src", false),
+                                SocketHints.Inputs.createPointSocketHint("p1", false),
+                                SocketHints.Inputs.createPointSocketHint("p2", false),
+                                SocketHints.Inputs.createMatSocketHint("dst", true),
+                                (src, p1, p2, dst) -> {
+                                    final Rect rect = new Rect(p1, p2);
+                                    final Mat tmp = new Mat(src, rect);
+                                    tmp.copyTo(dst);
+                                }
+                        )),
+
+                new OperationMetaData(
+                        OperationDescription.builder()
+                                .name("Number Threshold")
+                                .summary("Returns a boolean on whether or not the number is within the given range.")
+                                .icon(Icon.iconStream("grip"))
+                                .build(),
+                        templateFactory.createReturning(
+                                SocketHints.Inputs.createNumberSpinnerSocketHint("Input", 0),
+                                SocketHints.Inputs.createNumberSpinnerSocketHint("Min", -1),
+                                SocketHints.Inputs.createNumberSpinnerSocketHint("Max", 1),
+                                SocketHints.Outputs.createBooleanSocketHint("Output", true),
+                                (num, min, max) -> min.doubleValue() <= num.doubleValue() && max.doubleValue() >= num.doubleValue()
+                        )
+                ),
+
+                new OperationMetaData(
+                        OperationDescription.builder()
+                                .name("Count Contours")
+                                .summary("Counts the number of contours in a contours report.")
+                                .icon(Icon.iconStream("grip"))
+                                .build(),
+                        templateFactory.createReturning(
+                                new SocketHint.Builder<>(ContoursReport.class).identifier("Contours").build(),
+                                SocketHints.Outputs.createNumberSocketHint("Count", 0),
+                                (contours) -> contours.getContours().size()
+                        )
+                ),
 
                 // OpenCV operations
                 new OperationMetaData(MatFieldAccessor.DESCRIPTION, () -> new MatFieldAccessor(isf, osf)),

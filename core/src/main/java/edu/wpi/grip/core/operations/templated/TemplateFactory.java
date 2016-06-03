@@ -101,6 +101,22 @@ public final class TemplateFactory {
         return () -> new SevenSourceOneDestinationOperation<>(isf, osf, t1SocketHint, t2SocketHint, t3SocketHint, t4SocketHint, t5SocketHint, t6SocketHint, t7SocketHint, rSocketHint, performer);
     }
 
+    public <T1, R> Supplier<Operation> createReturning(
+            SocketHint<T1> t1SocketHint,
+            SocketHint<R> rSocketHint,
+            OneSourceReturnDestinationOperation.Performer<T1, R> performer) {
+        return () -> new OneSourceReturnDestinationOperation<>(isf, osf, t1SocketHint, rSocketHint, performer);
+    }
+
+    public <T1, T2, T3, R> Supplier<Operation> createReturning(
+            SocketHint<T1> t1SocketHint,
+            SocketHint<T2> t2SocketHint,
+            SocketHint<T3> t3SocketHint,
+            SocketHint<R> rSocketHint,
+            ThreeSourceReturnDestinationOperation.Performer<T1, T2, T3, R> performer) {
+        return () -> new ThreeSourceReturnDestinationOperation<>(isf, osf, t1SocketHint, t2SocketHint, t3SocketHint,  rSocketHint, performer);
+    }
+
     public Supplier<Operation> createAllMatTwoSource(
             SocketHint<Mat> matSocketHint,
             SocketHint<Mat> matSocketHint2,
