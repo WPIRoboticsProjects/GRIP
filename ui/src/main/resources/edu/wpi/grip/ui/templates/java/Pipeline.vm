@@ -28,7 +28,7 @@ public class Pipeline{
 	//This map links the Outputs with their names
 	protected Map<String,Object> outputs;
 #foreach($source in $pipeline.getSources())
-    protected ${source.type()} $source.value();
+	protected ${source.type()} $source.value();
 #end
 
 	/**
@@ -45,34 +45,34 @@ public class Pipeline{
 #set($count = 0)
 #foreach($step in $pipeline.getSteps())
 #set($c = "S"+$count)
-	    //Step$count: $step.name():
+		//Step$count: $step.name():
 #parse("src/main/resources/edu/wpi/grip/ui/templates/java/CV Step.vm")
 #set($count = $count + 1)
 
 #end
 }
 #foreach($source in $pipeline.getSources())
-      /**
-      * This method is a generated setter for $source.value().
-      * @param source the $source.type() to set
-      */
-      public void set${source.value()}(${source.type()} ${source.value()}){
-      	 this.$source.value() = ${source.value()};
-      }
+	/**
+	 * This method is a generated setter for $source.value().
+	 * @param source the $source.type() to set
+	 */
+	public void set${source.value()}(${source.type()} ${source.value()}){
+		this.$source.value() = ${source.value()};
+	}
 #end
 #foreach($step in $pipeline.getSteps())
 #foreach($output in $step.getOutputs())
-    	/**
-    	 * This method is a generated getter for the output of a $step.name().
-    	 * @return ${output.baseType()} output from $step.name().
-    	 */
-      public ${output.baseType()} get${output.name()}(){
+	/**
+	 * This method is a generated getter for the output of a $step.name().
+	 * @return ${output.baseType()} output from $step.name().
+	 */
+	public ${output.baseType()} get${output.name()}(){
 #if( $output.mutable() ) #set($needsMut = true)
-      	 return ((#MutOf(${output.type()})) outputs.get("${output.name()}")).get();
+		return ((#MutOf(${output.type()})) outputs.get("${output.name()}")).get();
 #else
-      	 return (${output.type()}) outputs.get("${output.name()}");
+		return (${output.type()}) outputs.get("${output.name()}");
 #end
-      }
+	}
 #end
 #end
 
@@ -80,10 +80,7 @@ public class Pipeline{
 #set($toParse = "src/main/resources/edu/wpi/grip/ui/templates/java/operations/" + $step.name())
 #set($toParse = $toParse + ".vm")
 #parse($toParse)
-
-
 #end
-
 }
 #if($needsMut)
 

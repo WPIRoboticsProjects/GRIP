@@ -1,9 +1,9 @@
-    /**
-    * Computes the per channel and of two Images.
-    * @param src1 The first image to use.
-    * @param src2 The second image to use.
-    * @param dst the result image when the and is performed.
-    */
-    public static void CV_bitwise_and(Mat src1, Mat src2, Mat dst){
-        Core.bitwise_and(src1,src2,dst);
-    }
+	/**
+	 * Computes the per channel and of two Images.
+	 * @param src1 The first image to use.
+	 * @param src2 The second image to use.
+	 * @param dst the result image when the and is performed.
+	 */
+	public static void CV_bitwise_and(Mat src1, Mat src2, Mat dst){
+		Core.bitwise_and(src1,src2,dst);
+	}

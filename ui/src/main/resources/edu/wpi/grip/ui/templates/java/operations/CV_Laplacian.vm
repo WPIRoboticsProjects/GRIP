@@ -1,12 +1,12 @@
-    /**
-     * Performs a Laplacian on the Image.
-     * @param src Image to use Laplacian on.
-     * @param size Odd number that is size of the kernel.
-     * @param scale Scaling factor for Laplacian.
-     * @param delta offset for values in Laplacian.
-     * @param borderType pixel extrapolation method.
-     * @param dst Ouput of Laplacian. 
-     */
+	/**
+	 * Performs a Laplacian on the Image.
+	 * @param src Image to use Laplacian on.
+	 * @param size Odd number that is size of the kernel.
+	 * @param scale Scaling factor for Laplacian.
+	 * @param delta offset for values in Laplacian.
+	 * @param borderType pixel extrapolation method.
+	 * @param dst Ouput of Laplacian. 
+	 */
 	public static void CV_Laplacian(Mat src, double size, double scale, double delta, int borderType, Mat dst){
 		Imgproc.Laplacian(src, dst, 0, (int) size, scale, delta, borderType);
 	}

@@ -1,9 +1,9 @@
 	/**
-     * Code used for CV_flip. 
-     * Per OpenCV spec 0 -> flip on X axis.
-     * >0 -> flip on Y axis.
-     * <0 -> flip on both axes.
-     */
+	 * Code used for CV_flip. 
+	 * Per OpenCV spec 0 -> flip on X axis.
+	 * >0 -> flip on Y axis.
+	 * <0 -> flip on both axes.
+	 */
 	public enum FlipCode {
 		X_AXIS(0),
 		Y_AXIS(1),

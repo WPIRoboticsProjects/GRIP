@@ -1,13 +1,13 @@
 	/**
 	 * Gets information about given Mat.
-     * @param src Mat to get info about.
-     * @param size the size of the Mat.
-     * @param empty if the Mat is empty.
-     * @param channels number of channels in the Mat.
-     * @param cols number of rows in the Mat.
-     * @param rows number of columns in the Mat.
-     * @param highestValue highest value contained in the Mat.
-     */
+	 * @param src Mat to get info about.
+	 * @param size the size of the Mat.
+	 * @param empty if the Mat is empty.
+	 * @param channels number of channels in the Mat.
+	 * @param cols number of rows in the Mat.
+	 * @param rows number of columns in the Mat.
+	 * @param highestValue highest value contained in the Mat.
+	 */
 	public static void Get_Mat_Info(Mat src, Size size, #MutOf(Boolean) empty, #MutOf(Number) channels, #MutOf(Number) cols, #MutOf(Number) rows, #MutOf(Number) highestValue){
 		empty.set(Boolean.valueOf(src.empty()));
 		channels.set(Integer.valueOf(src.channels()));
