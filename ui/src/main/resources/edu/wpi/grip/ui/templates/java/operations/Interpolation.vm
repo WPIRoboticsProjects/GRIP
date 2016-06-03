@@ -1,0 +1,38 @@
+#if($interpolation == false)
+#set($interpolation = true)
+	private enum Interpolation {
+		NEAREST("None", Imgproc.INTER_NEAREST),
+		LINEAR("Linear", Imgproc.INTER_LINEAR),
+		CUBIC("Cubic", Imgproc.INTER_CUBIC),
+		LANCZOS("Lanczos", Imgproc.INTER_LANCZOS4),
+		AREA("Area", Imgproc.INTER_AREA);
+
+		final String label;
+		final int value;
+
+		Interpolation(String label, int value) {
+			this.label = label;
+			this.value = value;
+		}
+
+		public static Interpolation get(String type){
+			if(NEAREST.label.equals(type)){
+				return NEAREST;
+			}
+			else if(LINEAR.label.equals(type)){
+				return LINEAR;
+			}
+			else if(CUBIC.label.equals(type)){
+				return CUBIC;
+			}
+			else{
+			return AREA;
+			}
+		}
+
+		@Override
+		public String toString() {
+			return label;
+		}
+	}
+#end

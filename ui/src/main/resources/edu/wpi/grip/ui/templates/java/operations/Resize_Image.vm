@@ -1,0 +1,4 @@
+#parse("src/main/resources/edu/wpi/grip/ui/templates/java/operations/interpolation.vm")
+	public static void Resize_Image(Mat input,double width, double height,Interpolation interpolation, Mat output){
+		Imgproc.resize(input, output, new Size(width, height), 0.0, 0.0, interpolation.value);
+	}

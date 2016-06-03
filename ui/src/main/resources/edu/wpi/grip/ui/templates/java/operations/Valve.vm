@@ -1,0 +1,8 @@
+	public static <T> void Valve(boolean sw, T input, #MutOf(T) output){
+		if(sw){
+			output.set(input);
+		}
+		else{
+			output.set(null);
+		}
+	}

@@ -13,7 +13,7 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.util.List;
-
+import java.util.Properties;
 import edu.wpi.grip.core.Pipeline;
 import edu.wpi.grip.core.Step;
 import edu.wpi.grip.core.sockets.InputSocket;
@@ -23,7 +23,9 @@ import edu.wpi.grip.ui.codegeneration.java.TPipeline;
 @Singleton
 public class Exporter {
   static{
-    Velocity.init();
+	Properties props = new Properties();
+	props.put("velocimacro.library", "src/main/resources/edu/wpi/grip/ui/templates/java/macros.vm");
+    Velocity.init(props);
   }
 
   public String stepNames(Pipeline pipeline) {
@@ -100,12 +102,11 @@ public class Exporter {
     TPipeline tPipeline = new TPipeline(pipeline);
     VelocityContext context = new VelocityContext();
     context.put("pipeline", tPipeline);
-    String template = "src/main/resources/edu/wpi/grip/ui/templates/Pipeline.vm";
+    String template = "src/main/resources/edu/wpi/grip/ui/templates/java/Pipeline.vm";
     Template tm = Velocity.getTemplate(template);
 
     StringWriter sw = new StringWriter();
     tm.merge(context, sw);
-    System.out.println(sw);
     PrintWriter writer;
     try {
       writer = new PrintWriter("PipelineTest.java", "UTF-8");

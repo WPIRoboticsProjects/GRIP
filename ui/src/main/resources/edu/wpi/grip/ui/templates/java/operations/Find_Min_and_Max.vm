@@ -1,0 +1,18 @@
+	/**
+	 * Finds the minimum and maximum values of the Mat as well as the associated Points.
+	 * @param src the Mat to find min and max for.
+	 * @param mask the Mat to use as a mask for the operation.
+	 * @param minVal the minimum value found in the Mat.
+	 * @param maxVal the maximum value found in the Mat.
+	 * @param minLoc the location of the minimum value.
+	 * @param maxLoc the location of the maximum value.
+	 */
+	public static void Find_Min_and_Max(Mat src, Mat mask, #MutOf(Number) minVal, #MutOf(Number) maxVal, Point minLoc, Point maxLoc){
+		MinMaxLocResult data = Core.minMaxLoc(src);
+		minVal.set(Double.valueOf(data.minVal));
+		maxVal.set(Double.valueOf(data.maxVal));
+		minLoc.x = data.minLoc.x;
+		minLoc.y = data.minLoc.y;
+		maxLoc.x = data.maxLoc.x;
+		maxLoc.y = data.maxLoc.y;
+	}

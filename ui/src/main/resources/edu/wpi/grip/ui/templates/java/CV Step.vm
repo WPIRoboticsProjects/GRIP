@@ -1,0 +1,7 @@
+#if( $step.name() != "Valve" && $step.name() != "Switch" )
+#parse("src/main/resources/edu/wpi/grip/ui/templates/java/BasicStep.vm")
+#elseif( $step.name() == "Valve" )##Valve
+#parse("src/main/resources/edu/wpi/grip/ui/templates/java/Valve.vm")
+#else##Switch
+#parse("src/main/resources/edu/wpi/grip/ui/templates/java/Switch.vm")
+#end

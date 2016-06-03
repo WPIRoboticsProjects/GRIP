@@ -1,0 +1,14 @@
+	public static class Blob {
+		public final double x, y, size;
+		
+		protected Blob(double x, double y, double size) {
+			this.x = x;
+			this.y = y;
+			this.size = size;
+		}
+	}
+
+ 	public static void Find_Blobs(Mat input,Integer minArea,double[] Circularity,Boolean darkBlobs,
+ 		List<Blob> blobList){
+
+	}

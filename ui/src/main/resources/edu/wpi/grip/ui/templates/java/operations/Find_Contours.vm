@@ -1,0 +1,12 @@
+	public static void Find_Contours(Mat input,Boolean externalOnly, List<MatOfPoint> contours){
+		Mat hierarchy = new Mat();
+		int mode;
+		if(externalOnly){
+			mode = Imgproc.RETR_EXTERNAL;
+		}
+		else{
+			mode = Imgproc.RETR_LIST;
+		}
+		int method = Imgproc.CHAIN_APPROX_SIMPLE;
+		Imgproc.findContours(input, contours, hierarchy, mode, method);
+	}

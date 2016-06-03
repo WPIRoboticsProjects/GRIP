@@ -1,0 +1,8 @@
+	public static <T> void Switch(boolean sw, T onTrue, T onFalse, #MutOf(T) output){
+		if(sw){
+			output.set(onTrue);
+		}
+		else{
+			output.set(onFalse);
+		}
+	}
