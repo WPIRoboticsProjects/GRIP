@@ -16,7 +16,11 @@
 #end
             //output
 #foreach($output in $step.getOutputs())
+#if( $output.mutable() )
+			#MutOf($output.type()) $output.name() = new #MutOf($output.type())();
+#else
             $output.type() $output.name() = new $output.type()();
+#end
 #end
             $step.callOp($c);
 #foreach($output in $step.getOutputs())

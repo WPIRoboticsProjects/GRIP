@@ -1,14 +1,18 @@
 #set($needsMut = true)
 			//input
 #set($boolInp = $step.getInput(0))
+#if( $boolInp.hasValue() )##Has a set value
 			$boolInp.baseType() $boolInp.name()$c = $boolInp.value();
+#else##Has Connected Socket
+			$boolInp.baseType() $boolInp.name()$c = ${boolInp.value()}.get().$boolInp.baseType()Value();
+#end
 #set( $input = $step.getInput(1) )
 #if( $input.mutable() )##Is Mutable
-#if( $input.hasValue() )##Has a set value
-			$input.baseType() $input.name()$c = $input.value();
-#else##Has Connected Socket
+#if( $input.number() )##Is Number
+			Number $input.name()$c = ${input.value()}.get();
+#else##Not number
 			$input.baseType() $input.name()$c = ${input.value()}.get().$input.baseType()Value();
-#end##end Has a set value
+#end##end Is Number
 #else##Not Mutable
 #if ( $input.type() == "FlipCode" )
 			$input.type() $input.name()$c = FlipCode.$input.value();
@@ -21,8 +25,12 @@
 #set ( $outMutName = $outMutName + "Mutate" )
 #set ( $outMutName = $outMutName + $c )
 			//output
-			MutableOf<$out.baseType()> $outMutName = new MutableOf<$out.baseType()>();
+			#MutOf($out.baseType()) $outMutName = new #MutOf($out.baseType())();
 			$step.name()($boolInp.name()$c, $input.name()$c, $outMutName);
 			//output assignment
+#if ($out.mutable())
+			#MutOf($out.type()) $out.name() = $outMutName;
+#else
 			$out.type() $out.name() = ${outMutName}.get();
+#end
 			outputs.put("$out.name()", $out.name());

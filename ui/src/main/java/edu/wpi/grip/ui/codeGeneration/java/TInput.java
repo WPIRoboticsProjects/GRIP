@@ -1,9 +1,7 @@
 package edu.wpi.grip.ui.codegeneration.java;
 
 
-/**
- * Created by Toby on 5/26/16.
- */
+
 public class TInput extends TSocket {
   private TOutput connectedOutput;
   private String value;

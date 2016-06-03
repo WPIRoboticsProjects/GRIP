@@ -1,0 +1,2 @@
+#macro ( MutOf $obj )
+MutableOf<$obj>#end
