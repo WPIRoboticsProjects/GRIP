@@ -1,55 +1,7 @@
-#if( $step.name() != "Valve" )
-            //input
-#foreach($input in $step.getInputs())
-#if( $input.mutable() )##Is Mutable
-#if( $input.hasValue() )##Has a set value
-			$input.baseType() $input.name()$c = $input.value();
-#else##Has Connected Socket
-			$input.baseType() $input.name()$c = ${input.value()}.get().$input.baseType()Value();
-#end##end Has a set value
-#else##Not Mutable
-#if ( $input.type() == "FlipCode" )
-			$input.type() $input.name()$c = FlipCode.$input.value();
-#else
-			$input.type() $input.name()$c = $input.value();
-#end
-#end##end Is Mutable
-#end
-            //output
-#foreach($output in $step.getOutputs())
-            $output.type() $output.name() = new $output.type()();
-#end
-            $step.callOp($c);
-#foreach($output in $step.getOutputs())
-            outputs.put("$output.name()", $output.name());
-#end
-#else##Valve method
-#set($needsMut = true)
-			//input
-#set($boolInp = $step.getInput(0))
-			$boolInp.baseType() $boolInp.name()$c = $boolInp.value();
-#set( $input = $step.getInput(1) )
-#if( $input.mutable() )##Is Mutable
-#if( $input.hasValue() )##Has a set value
-			$input.baseType() $input.name()$c = $input.value();
-#else##Has Connected Socket
-			$input.baseType() $input.name()$c = ${input.value()}.get().$input.baseType()Value();
-#end##end Has a set value
-#else##Not Mutable
-#if ( $input.type() == "FlipCode" )
-			$input.type() $input.name()$c = FlipCode.$input.value();
-#else
-			$input.type() $input.name()$c = $input.value();
-#end
-#end##end Is Mutable
-#set( $out = $step.getOutput(0) )
-#set ( $outMutName = $out.name() )
-#set ( $outMutName = $outMutName + "Mutate" )
-#set ( $outMutName = $outMutName + $c )
-			//output
-			MutableOf<$out.baseType()> $outMutName = new MutableOf<$out.baseType()>();
-			$step.name()($boolInp.name()$c, $input.name()$c, $outMutName);
-			//output assignment
-			$out.type() $out.name() = ${outMutName}.get();
-			outputs.put("$out.name()", $out.name());
+#if( $step.name() != "Valve" && $step.name() != "Switch" )
+#parse("src/main/resources/edu/wpi/grip/ui/templates/BasicStep.vm")
+#elseif( $step.name() == "Valve" )##Valve
+#parse("src/main/resources/edu/wpi/grip/ui/templates/Valve.vm")
+#else##Switch
+#parse("src/main/resources/edu/wpi/grip/ui/templates/Switch.vm")
 #end

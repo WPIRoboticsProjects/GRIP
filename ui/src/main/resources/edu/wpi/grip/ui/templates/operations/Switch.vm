@@ -1,8 +1,8 @@
-    public static void Switch(boolean sw, Object onTrue,Object onFalse, Object output){
+    public static <T> void Switch(boolean sw, T onTrue, T onFalse, MutableOf<T> output){
         if(sw){
-            output = onTrue;
+            output.set(onTrue);
         }
         else{
-            output = onFalse;
+            output.set(onFalse);
         }
     }
