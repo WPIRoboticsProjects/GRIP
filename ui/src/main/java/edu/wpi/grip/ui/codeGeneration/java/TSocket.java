@@ -14,12 +14,6 @@ public class TSocket {
     setType(type);
   }
   public void setType(String type){
-/*	  if(type.equals("Integer")||type.equals("Double")||type.equals("Boolean")||type.equals("Number")){
-	    	this.type = MutableOf+type+">";
-	    }
-	  else{
-		  this.type = type;
-	  }*/
 	  this.type = type;
   }
   public String type(){
@@ -31,14 +25,6 @@ public class TSocket {
   }
 
   public String baseType(){
-/*	 if(!mutable()){	
-		 return type;
-	 }
-	 else{
-		 String retVal = type.replace(MutableOf, "").replace(">", "");
-		 retVal = baseTypeHelper(retVal);
-		 return retVal;
-	 }*/
 	  if(!mutable()){
 	  return type;
 	  }

@@ -44,18 +44,18 @@ public class TStep {
   }
   
   public String callOp(String num) {
-    String out = name + "(";
+	StringBuilder out = new StringBuilder();
     for (TInput input : inputs) {
-      out += input.name() +num + ", ";
+      out.append(input.name() +num + ", ");
     }
     if (!outputs.isEmpty()) {
       for (int i = 0; i < outputs.size() - 1; i++) {
-        out += outputs.get(i).name() + ", ";
+        out.append(outputs.get(i).name() + ", ");
       }
-      out += outputs.get(outputs.size() - 1).name();
+      out.append(outputs.get(outputs.size() - 1).name());
     }
-    out += ")";
-    return out;
+    out.append(")");
+    return out.toString();
   }
 
 }

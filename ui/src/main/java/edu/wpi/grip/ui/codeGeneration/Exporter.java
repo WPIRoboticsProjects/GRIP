@@ -29,24 +29,13 @@ public class Exporter {
   }
 
   public String stepNames(Pipeline pipeline) {
-    String out = "";
+    StringBuilder out = new StringBuilder();
     for (Step step : getSteps(pipeline)) {
-      out += step.getOperationDescription().name() + " \n";
-      out += getInputNames(step);
-      out += getOutputNames(step);
+      out.append(step.getOperationDescription().name() + " \n");
+      out.append(getInputNames(step));
+      out.append(getOutputNames(step));
     }
-    return out;
-  }
-
-  public static void printToFile(String string) {
-    PrintWriter writer;
-    try {
-      writer = new PrintWriter("PipelineTest.java", "UTF-8");
-      writer.println(string);
-      writer.close();
-    } catch (FileNotFoundException | UnsupportedEncodingException e) {
-      e.printStackTrace();
-    }
+    return out.toString();
   }
 
   public List<Step> getSteps(Pipeline pipeline) {
@@ -54,20 +43,19 @@ public class Exporter {
   }
 
   public String getInputNames(Step step) {
-    String out = "";
+    StringBuilder out = new StringBuilder();
     for (InputSocket input : step.getInputSockets()) {
       String type = TemplateMethods.parseSocketType(input);
       String name = TemplateMethods.parseSocketName(input);
       String value = TemplateMethods.parseSocketValue(input);
-      out += createClass(type, name, value) +  " \n";
-      out += type + "\n";
+      out.append(createClass(type, name, value) +  " \n");
+      out.append(type + "\n");
     }
-    out += step.getOperationDescription().summary() + "\n";
-    return out;
+    out.append(step.getOperationDescription().summary() + "\n");
+    return out.toString();
   }
 
   public static String createClass(String type, String name, String value) {
-    String out = "";
     if(type.contains("Enum")){
       return "int " + name + " = Imgproc." + value;
     }
@@ -75,10 +63,11 @@ public class Exporter {
       return "String " + name + " = \"" + value + "\"";
     }
     else if(type.equals("List")){
-      out += "double min" + name +" = "+ value.substring(1,value.indexOf(","))+ "\n";
-      out += "double max" + name +" = "+ value.substring(value.indexOf(",")+1,value.lastIndexOf
-          ("]"));
-      return out;
+      StringBuilder out = new StringBuilder();
+      out.append("double min" + name +" = "+ value.substring(1,value.indexOf(","))+ "\n");
+      out.append("double max" + name +" = "+ value.substring(value.indexOf(",")+1,value.lastIndexOf
+          ("]")));
+      return out.toString();
     }
     else{
       return type + " " + name + " = " + value;
@@ -89,16 +78,16 @@ public class Exporter {
 
 
   public String getOutputNames(Step step) {
-    String out = "";
+    StringBuilder out = new StringBuilder();
     for (OutputSocket output : step.getOutputSockets()) {
-      out += "    " + output.getSocketHint().getType().getSimpleName() + ": " + output.getSocketHint()
+      out.append("    " + output.getSocketHint().getType().getSimpleName() + ": " + output.getSocketHint()
           .getIdentifier() +
-          " \n";
+          " \n");
     }
-    return out;
+    return out.toString();
   }
 
-  public void export(Pipeline pipeline) {
+  public void export(Pipeline pipeline){
     TPipeline tPipeline = new TPipeline(pipeline);
     VelocityContext context = new VelocityContext();
     context.put("pipeline", tPipeline);
@@ -107,16 +96,11 @@ public class Exporter {
 
     StringWriter sw = new StringWriter();
     tm.merge(context, sw);
-    PrintWriter writer;
-    try {
-      writer = new PrintWriter("PipelineTest.java", "UTF-8");
-      writer.println(sw);
-      writer.close();
-    } catch (FileNotFoundException | UnsupportedEncodingException e) {
-      e.printStackTrace();
-    }
-
-
+    try (PrintWriter writer = new PrintWriter("PipelineTest.java", "UTF-8")){
+      	writer.println(sw);
+    	}catch(UnsupportedEncodingException | FileNotFoundException e){
+    		
+    	}
   }
 
 
