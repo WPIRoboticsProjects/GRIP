@@ -1,17 +1,17 @@
     /**
      * Expands area of lower value in an image.
      * @param src the Image to erode.
-     * @param kernal the kernal for erosion.
-     * @param anchor the center of the kernal.
+     * @param kernel the kernel for erosion.
+     * @param anchor the center of the kernel.
      * @param iterations the number of times to perform the erosion.
      * @param borderType pixel extrapolation method.
      * @param borderValue value to be used for a constant border.
      * @param dst Output Image.
      */
-    public static void CV_erode(Mat src, Mat kernal, Point anchor, double iterations, int borderType,
+    public static void CV_erode(Mat src, Mat kernel, Point anchor, double iterations, int borderType,
     Scalar borderValue, Mat dst){
-	    if(kernal == null){
-		    kernal = new Mat();
+	    if(kernel == null){
+		    kernel = new Mat();
     	}
 	    if(anchor == null){
 		    anchor = new Point(-1,-1);
@@ -19,5 +19,5 @@
 	    if(borderValue == null){
     	    borderValue = new Scalar(-1);
         }
-	    Imgproc.erode(src, dst, kernal, anchor, (int) iterations, borderType, borderValue);
+	    Imgproc.erode(src, dst, kernel, anchor, (int) iterations, borderType, borderValue);
     }

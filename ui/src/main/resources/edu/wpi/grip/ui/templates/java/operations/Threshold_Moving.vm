@@ -1,4 +1,5 @@
     private Mat lastImage = new Mat();
+    /*TODO: make this have a different last image for each Moving threshold step)*/
     public void Threshold_Moving(Mat input, Mat output){
     	Size lastSize = lastImage.size();
     	Size inputSize = input.size();

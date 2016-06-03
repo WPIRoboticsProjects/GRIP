@@ -3,7 +3,7 @@
      * @param src the Image to perform Sobel on.
      * @param dx order of x derivative.
      * @param dy order of y derivative.
-     * @param kSize size of kernal.
+     * @param kSize size of kernel.
      * @param scale scale factor for derivatives.
      * @param delta delta that is added to derivatives.
      * @param borderType pixel extrapolation method.

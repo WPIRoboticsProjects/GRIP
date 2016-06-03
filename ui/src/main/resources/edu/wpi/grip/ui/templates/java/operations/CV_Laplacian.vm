@@ -1,7 +1,7 @@
     /**
      * Performs a Laplacian on the Image.
      * @param src Image to use Laplacian on.
-     * @param size Odd number that is size of the kernal.
+     * @param size Odd number that is size of the kernel.
      * @param scale Scaling factor for Laplacian.
      * @param delta offset for values in Laplacian.
      * @param borderType pixel extrapolation method.

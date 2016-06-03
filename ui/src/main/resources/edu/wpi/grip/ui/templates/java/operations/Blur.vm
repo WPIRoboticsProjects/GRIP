@@ -43,19 +43,19 @@
      */
     public static void Blur(Mat input, BlurType type, double doubleRadius, Mat output){
         int radius = (int) (doubleRadius+0.5);
-        int kernalSize;
+        int kernelSize;
         switch(type){
             case BOX:
-                kernalSize = 2*radius+1;
-                Imgproc.blur(input,output,new Size(kernalSize, kernalSize));
+                kernelSize = 2*radius+1;
+                Imgproc.blur(input,output,new Size(kernelSize, kernelSize));
                 break;
             case GAUSSIAN:
-                kernalSize = 6*radius +1;
-                Imgproc.GaussianBlur(input,output, new Size(kernalSize, kernalSize),radius);
+                kernelSize = 6*radius +1;
+                Imgproc.GaussianBlur(input,output, new Size(kernelSize, kernelSize),radius);
                 break;
             case MEDIAN:
-                kernalSize = 2*radius +1;
-                Imgproc.medianBlur(input,output,kernalSize);
+                kernelSize = 2*radius +1;
+                Imgproc.medianBlur(input,output,kernelSize);
                 break;
             case BILATERAL:
                 Imgproc.bilateralFilter(input,output,-1,radius,radius);

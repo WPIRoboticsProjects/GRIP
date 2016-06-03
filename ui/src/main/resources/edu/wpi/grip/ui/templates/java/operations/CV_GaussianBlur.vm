@@ -1,7 +1,7 @@
 	/**
      * Performs a Gaussian blur on the image.
      * @param src the image to blur.
-     * @param kSize the kernal size.
+     * @param kSize the kernel size.
      * @param sigmaX the deviation in X for the Gaussian blur.
      * @param sigmaY the deviation in Y for the Gaussian blur.
      * @param borderType pixel extrapolation method.
