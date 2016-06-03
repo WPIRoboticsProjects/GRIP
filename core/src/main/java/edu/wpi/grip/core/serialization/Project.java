@@ -4,7 +4,6 @@ import edu.wpi.grip.core.Pipeline;
 import edu.wpi.grip.core.PipelineRunner;
 
 import com.google.common.annotations.VisibleForTesting;
-import com.google.common.eventbus.EventBus;
 import com.google.common.reflect.ClassPath;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
@@ -36,8 +35,6 @@ public class Project {
   private Pipeline pipeline;
   @Inject
   private PipelineRunner pipelineRunner;
-  @Inject
-  private EventBus eventBus;
   private Optional<File> file = Optional.empty();
 
   @Inject
