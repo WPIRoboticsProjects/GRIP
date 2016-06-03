@@ -28,7 +28,6 @@ public class GenericHandlerTest {
         gh = new MockGenericHandler("testNoClaim");
         gh = new MockGenericHandler("testNoClaim", false);
         // An exception will be thrown if something went wrong
-        assertTrue(true);
     }
 
     @Test(expected = IllegalArgumentException.class)

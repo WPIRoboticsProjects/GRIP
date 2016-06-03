@@ -6,6 +6,7 @@ import com.google.common.eventbus.EventBus;
 import edu.wpi.grip.core.http.GripServer;
 import edu.wpi.grip.core.http.GripServerTest;
 import edu.wpi.grip.core.settings.ProjectSettings;
+import edu.wpi.grip.core.sockets.MockOutputSocketFactory;
 import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.core.util.MockExceptionWitness;
 import edu.wpi.grip.util.Files;
@@ -46,7 +47,8 @@ public class HttpSourceTest {
         server = GripServerTest.makeServer(f, ProjectSettings::new);
         server.start();
         EventBus eventBus = new EventBus();
-        source = new HttpSource(origin -> new MockExceptionWitness(eventBus, origin), eventBus, server, GripServer.IMAGE_UPLOAD_PATH);
+        OutputSocket.Factory osf = new MockOutputSocketFactory(eventBus);
+        source = new HttpSource(origin -> new MockExceptionWitness(eventBus, origin), eventBus, osf, server, GripServer.IMAGE_UPLOAD_PATH);
 
         logoFile = new File(Files.class.getResource("/edu/wpi/grip/images/GRIP_Logo.png").toURI());
         postClient = HttpClients.createDefault();

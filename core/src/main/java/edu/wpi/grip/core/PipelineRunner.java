@@ -1,8 +1,6 @@
 package edu.wpi.grip.core;
 
 
-import edu.wpi.grip.core.events.ProjectLoadedEvent;
-import edu.wpi.grip.core.events.ProjectUnloadedEvent;
 import edu.wpi.grip.core.events.RenderEvent;
 import edu.wpi.grip.core.events.RunPipelineEvent;
 import edu.wpi.grip.core.events.RunStartedEvent;
@@ -26,7 +24,6 @@ import com.google.inject.Singleton;
 import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Supplier;
 import java.util.logging.Logger;
 
@@ -49,7 +46,6 @@ public class PipelineRunner implements RestartableService {
   private final Supplier<ImmutableList<Source>> sourceSupplier;
   private final Supplier<ImmutableList<Step>> stepSupplier;
   private final AutoRestartingService pipelineService;
-  private final AtomicBoolean pipelineReady = new AtomicBoolean(false);
 
 
   @Inject
@@ -204,20 +200,10 @@ public class PipelineRunner implements RestartableService {
   }
 
   @Subscribe
-  public void onProjectUnloaded(@Nullable ProjectUnloadedEvent event) {
-    pipelineReady.set(true);
-  }
-
-  @Subscribe
-  public void onProjectLoaded(@Nullable ProjectLoadedEvent event) {
-    pipelineReady.set(false);
-  }
-
-  @Subscribe
   @AllowConcurrentEvents
   public void onRunPipeline(RunPipelineEvent event) {
     checkNotNull(event);
-    if (pipelineReady.get() && event.pipelineShouldRun()) {
+    if (event.pipelineShouldRun()) {
       pipelineFlag.release();
     }
   }

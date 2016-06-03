@@ -1,9 +1,7 @@
 package edu.wpi.grip.core.serialization;
 
 import edu.wpi.grip.core.Pipeline;
-import edu.wpi.grip.core.events.ProjectLoadedEvent;
-import edu.wpi.grip.core.events.ProjectUnloadedEvent;
-import edu.wpi.grip.core.events.RunPipelineEvent;
+import edu.wpi.grip.core.PipelineRunner;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.eventbus.EventBus;
@@ -36,6 +34,8 @@ public class Project {
   protected final XStream xstream = new XStream(new PureJavaReflectionProvider());
   @Inject
   private Pipeline pipeline;
+  @Inject
+  private PipelineRunner pipelineRunner;
   @Inject
   private EventBus eventBus;
   private Optional<File> file = Optional.empty();
@@ -93,6 +93,7 @@ public class Project {
     }
     this.file = Optional.of(file);
   }
+
   /**
    * Loads the project defined by the given XML string. This is intended to be used to be able to programmatically
    * run a pipeline from a remote source. Therefore, this does <strong>not</strong> save the contents to disk;
@@ -106,11 +107,10 @@ public class Project {
 
   @VisibleForTesting
   void open(Reader reader) {
-    eventBus.post(new ProjectUnloadedEvent());
+    pipelineRunner.stopAndAwait();
     this.pipeline.clear();
     this.xstream.fromXML(reader);
-    eventBus.post(new ProjectLoadedEvent());
-    eventBus.post(new RunPipelineEvent() {});
+    pipelineRunner.startAsync();
   }
 
   /**

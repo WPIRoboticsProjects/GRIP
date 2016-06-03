@@ -100,7 +100,9 @@ public final class DataHandler extends PedanticHandler {
      * @param supplier a supplier for the data
      */
     public void addDataSupplier(String name, Supplier<?> supplier) {
-        dataSuppliers.put(checkNotNull(name), checkNotNull(supplier));
+        checkNotNull(name, "name");
+        checkNotNull(supplier, "supplier");
+        dataSuppliers.put(name, supplier);
     }
 
     /**

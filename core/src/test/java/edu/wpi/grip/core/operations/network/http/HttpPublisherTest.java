@@ -10,6 +10,7 @@ import edu.wpi.grip.core.http.GripServerTest;
 import edu.wpi.grip.core.operations.network.NumberPublishable;
 import edu.wpi.grip.core.settings.ProjectSettings;
 import edu.wpi.grip.core.sockets.InputSocket;
+import edu.wpi.grip.core.sockets.MockInputSocketFactory;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -50,6 +51,7 @@ public class HttpPublisherTest {
     @Before
     public void setUp() {
         eventBus = new EventBus();
+        InputSocket.Factory isf = new MockInputSocketFactory(eventBus);
         server = GripServerTest.makeServer(new GripServerTest.TestServerFactory(), ProjectSettings::new);
         unclaimDataHandler();
         dataHandler = new DataHandler(eventBus);
@@ -70,7 +72,7 @@ public class HttpPublisherTest {
             Set<String> claimedContexts = (Set<String>) f.get(null);
             claimedContexts.remove(GripServer.DATA_PATH);
         } catch (IllegalAccessException | NoSuchFieldException e) {
-            fail("Could not unclaim /GRIP/data");
+            throw new AssertionError("Could not unclaim /GRIP/data", e);
         }
     }
 
