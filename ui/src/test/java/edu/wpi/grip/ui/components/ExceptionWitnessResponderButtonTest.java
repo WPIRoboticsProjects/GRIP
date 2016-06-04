@@ -5,7 +5,6 @@ import edu.wpi.grip.core.util.ExceptionWitness;
 import edu.wpi.grip.core.util.MockExceptionWitness;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.testfx.framework.junit.ApplicationTest;
 import org.testfx.matcher.base.NodeMatchers;
@@ -49,7 +48,6 @@ public class ExceptionWitnessResponderButtonTest extends ApplicationTest {
     }
 
     @Test
-    @Ignore("Broken on AppVeyor")
     public void testPopoverAppears() throws TimeoutException {
         flagNewException();
         WaitForAsyncUtils.waitFor(2, TimeUnit.SECONDS,
