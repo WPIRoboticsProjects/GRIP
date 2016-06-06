@@ -47,7 +47,7 @@ public class TemplateMethods {
 
   public static String parseSocketName(Socket socket) {
     String name = socket.getSocketHint().getIdentifier();
-    return CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.LOWER_CAMEL, name);
+    return CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.LOWER_CAMEL, name.replaceAll("\\s",""));
     //return toCamelCase(name);
   }
 

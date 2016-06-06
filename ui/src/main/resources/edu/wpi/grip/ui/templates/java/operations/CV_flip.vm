@@ -20,6 +20,6 @@
 	 * @param flipcode FlipCode of which direction to flip.
 	 * @param dst flipped version of the Image.
 	 */
-	public static void CV_flip(Mat src, FlipCode flipcode, Mat dst){
+	public static void ${step.javaName()}(Mat src, FlipCode flipcode, Mat dst){
 		Core.flip(src,dst,flipcode.value);
 	}

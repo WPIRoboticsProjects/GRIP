@@ -1,5 +1,4 @@
-	public static void Filter_Lines(List<Line> inputs,double minLength,double[] angle, List<Line>
-		outputs){
+	public static void ${step.javaName()}(List<Line> inputs,double minLength,double[] angle, List<Line> outputs){
 		outputs = inputs.stream()
 				.filter(line -> line.lengthSquared() >= Math.pow(minLength,2))
 				.filter(line -> (line.angle() >= angle[0] && line.angle() <= angle[1])

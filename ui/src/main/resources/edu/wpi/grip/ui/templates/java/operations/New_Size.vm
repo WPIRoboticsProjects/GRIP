@@ -4,7 +4,7 @@
 	 * @param height the height of the size
 	 * @param size the size to fill
 	 */
-	public static void New_Size(double width, double height, Size size){
+	public static void ${step.javaName()}(double width, double height, Size size){
 		size.height = height;
 		size.width = width;
 	} 

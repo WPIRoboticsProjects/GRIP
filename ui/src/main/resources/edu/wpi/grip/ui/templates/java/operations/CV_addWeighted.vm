@@ -7,6 +7,6 @@
 	 * @param gamma Constant to add to each sum
 	 * @param dst the output Mat
 	 */
-	public static void CV_addWeighted(Mat src1, double alpha, Mat src2, double beta, double gamma, Mat dst){
+	public static void ${step.javaName()}(Mat src1, double alpha, Mat src2, double beta, double gamma, Mat dst){
 		Core.addWeighted(src1, alpha, src2, beta, gamma, dst);
 	}

@@ -17,7 +17,7 @@
 		}
 	}
 
-	public static void Find_Lines(Mat input, List<Line> lineList){
+	public static void ${step.javaName()}(Mat input, List<Line> lineList){
 		final LineSegmentDetector lsd = Imgproc.createLineSegmentDetector();
 		final Mat lines = new Mat();
 		if (input.channels() == 1) {

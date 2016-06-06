@@ -8,7 +8,7 @@
 	 * @param borderValue value to be used for a constant border.
 	 * @param dst Output Image.
 	 */
-	public static void CV_dilate(Mat src, Mat kernel, Point anchor, double iterations, int borderType,
+	public static void ${step.javaName()}(Mat src, Mat kernel, Point anchor, double iterations, int borderType,
 		Scalar borderValue, Mat dst){
 		if(kernel == null){
 			kernel = new Mat();

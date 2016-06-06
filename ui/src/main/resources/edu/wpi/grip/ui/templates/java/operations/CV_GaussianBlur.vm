@@ -7,7 +7,7 @@
 	 * @param borderType pixel extrapolation method.
 	 * @param dst the output image.
 	 */
-	public static void CV_GaussianBlur(Mat src, Size kSize, double sigmaX, double sigmaY, int borderType, Mat dst){
+	public static void ${step.javaName()}(Mat src, Size kSize, double sigmaX, double sigmaY, int borderType, Mat dst){
 		if(kSize == null){
 			kSize = new Size(1,1);
 		}

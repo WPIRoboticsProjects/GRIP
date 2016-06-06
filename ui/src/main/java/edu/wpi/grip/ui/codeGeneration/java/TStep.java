@@ -1,5 +1,7 @@
 package edu.wpi.grip.ui.codegeneration.java;
 
+import com.google.common.base.CaseFormat;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,6 +29,10 @@ public class TStep {
     return this.name;
   }
 
+  public String javaName() {
+    return CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.LOWER_CAMEL, this.name.replaceAll("\\s",""));
+  }
+
   public List<TInput> getInputs() {
     return inputs;
   }
@@ -45,7 +51,7 @@ public class TStep {
   
   public String callOp(String num) {
 	StringBuilder out = new StringBuilder();
-    out.append(this.name());
+    out.append(this.javaName());
     out.append("(");
     for (TInput input : inputs) {
       out.append(input.name() +num + ", ");

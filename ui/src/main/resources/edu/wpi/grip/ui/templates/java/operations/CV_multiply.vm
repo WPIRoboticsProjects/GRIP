@@ -5,6 +5,6 @@
 	 * @param scale Scale for multiplication.
 	 * @param dst Result image.
 	 */
-	public static void CV_multiply(Mat src1, Mat src2, double scale, Mat dst){
+	public static void ${step.javaName()}(Mat src1, Mat src2, double scale, Mat dst){
 		Core.multiply(src1, src2, dst, scale);
 	}

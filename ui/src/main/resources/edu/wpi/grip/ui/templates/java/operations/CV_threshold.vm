@@ -6,6 +6,6 @@
 	 * @param type Type of threshold to appy.
 	 * @param dst output Image.
 	 */
-	public static void CV_Threshold(Mat src, double threshold, double maxVal, int type, Mat dst){
+	public static void ${step.javaName()}(Mat src, double threshold, double maxVal, int type, Mat dst){
 		Imgproc.threshold(src, dst, threshold, maxVal, type);
 	}

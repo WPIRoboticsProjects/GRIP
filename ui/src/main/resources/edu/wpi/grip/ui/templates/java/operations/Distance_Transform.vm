@@ -57,8 +57,7 @@
 			return label;
 		}
 	}
-	public static void Distance_Transform(Mat input,Distance_TransformType type, MaskSize maskSize, Mat
-		output){
+	public static void ${step.javaName()}(Mat input,Distance_TransformType type, MaskSize maskSize, Mat output){
 		Imgproc.distanceTransform(input, output, type.value, maskSize.value);
 		output.convertTo(output, -1);
 	}

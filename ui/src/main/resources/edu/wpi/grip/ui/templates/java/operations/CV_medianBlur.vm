@@ -4,6 +4,6 @@
 	 * @param kSize size of blur.
 	 * @param dst output of blur.
 	 */
-	public static void CV_medianBlur(Mat src, double kSize, Mat dst){
+	public static void ${step.javaName()}(Mat src, double kSize, Mat dst){
 		Imgproc.medianBlur(src, dst, (int) kSize);
 	}

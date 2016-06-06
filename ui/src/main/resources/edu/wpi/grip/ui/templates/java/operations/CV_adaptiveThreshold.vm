@@ -8,6 +8,6 @@
 	 * @param c Constant to subtract from the mean.
 	 * @param dst Output of threshold.
 	 */
-	public static void CV_adaptiveThreshold(Mat src, double maxValue, int adaptiveMethod, int thresholdType, double blockSize, double c, Mat dst){
+	public static void ${step.javaName()}(Mat src, double maxValue, int adaptiveMethod, int thresholdType, double blockSize, double c, Mat dst){
 		Imgproc.adaptiveThreshold(src, dst, maxValue, adaptiveMethod, thresholdType, (int) blockSize, c);
 	}

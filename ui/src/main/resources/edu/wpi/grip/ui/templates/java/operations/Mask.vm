@@ -1,4 +1,4 @@
-	public static void Mask(Mat input, Mat mask, Mat output){
+	public static void ${step.javaName()}(Mat input, Mat mask, Mat output){
 		mask.convertTo(mask, CvType.CV_8UC1);
 		Core.bitwise_xor(output, output, output);
 		input.copyTo(output, mask);

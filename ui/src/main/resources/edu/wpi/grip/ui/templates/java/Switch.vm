@@ -40,7 +40,7 @@
 #set ( $outMutName = $outMutName + $c )
 		//output
 		#MutOf($out.baseType()) $outMutName = new #MutOf($out.baseType())();
-		$step.name()($boolInp.name()$c, $inputTrue.name()$c, $inputFalse.name()$c, $outMutName);
+		pipelineSwitch($boolInp.name()$c, $inputTrue.name()$c, $inputFalse.name()$c, $outMutName);
 		//output assignment
 #if ($out.mutable())
 		#MutOf($out.type()) $out.name() = $outMutName;

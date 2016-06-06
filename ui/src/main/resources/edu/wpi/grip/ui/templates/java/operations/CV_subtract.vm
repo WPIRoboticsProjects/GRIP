@@ -4,6 +4,6 @@
 	 * @param src2 the second Mat
 	 * @param out the Mat that is the subtraction of the two Mats
 	 */
-	public static void CV_subtract(Mat src1, Mat src2, Mat out){
+	public static void ${step.javaName()}(Mat src1, Mat src2, Mat out){
 		Core.subtract(src1, src2, out);
 	}

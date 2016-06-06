@@ -8,7 +8,7 @@
 		}
 	}
 
- 	public static void Find_Blobs(Mat input,Integer minArea,double[] Circularity,Boolean darkBlobs,
+ 	public static void ${step.javaName()}(Mat input,Integer minArea,double[] Circularity,Boolean darkBlobs,
  		List<Blob> blobList){
 
 	}

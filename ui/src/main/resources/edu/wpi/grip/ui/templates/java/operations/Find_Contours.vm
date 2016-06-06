@@ -1,4 +1,4 @@
-	public static void Find_Contours(Mat input,Boolean externalOnly, List<MatOfPoint> contours){
+	public static void ${step.javaName()}(Mat input,Boolean externalOnly, List<MatOfPoint> contours){
 		Mat hierarchy = new Mat();
 		int mode;
 		if(externalOnly){

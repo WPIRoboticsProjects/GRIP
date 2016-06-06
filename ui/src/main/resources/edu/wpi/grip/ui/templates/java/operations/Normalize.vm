@@ -32,6 +32,6 @@
 			return label;
 		}
     }
-	public static void Normalize(Mat input, NormalizeType type, double a, double b, Mat output){
+	public static void ${step.javaName()}(Mat input, NormalizeType type, double a, double b, Mat output){
 		Core.normalize(input, output, a, b, type.value);
 	}

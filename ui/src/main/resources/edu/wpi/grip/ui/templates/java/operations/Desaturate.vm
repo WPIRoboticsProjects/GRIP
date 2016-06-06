@@ -1,4 +1,4 @@
-	public static void Desaturate(Mat input, Mat output){
+	public static void ${step.javaName()}(Mat input, Mat output){
 		switch (input.channels()) {
 			case 1:
 				// If the input is already one channel, it's already desaturated
