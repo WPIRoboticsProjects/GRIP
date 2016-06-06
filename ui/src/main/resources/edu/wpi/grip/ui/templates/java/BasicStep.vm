@@ -22,7 +22,7 @@
 		$output.type() $output.name() = new $output.type()();
 #end
 #end
-		$step.callOp($c);
+		$step.callOp();
 #foreach($output in $step.getOutputs())
 		outputs.put("$output.name()", $output.name());
 #end

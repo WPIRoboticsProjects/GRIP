@@ -10,11 +10,13 @@ public class TStep {
   private List<TInput> inputs;
   private List<TOutput> outputs;
   private String name;
+  private int stepNum;
 
-  public TStep(String name) {
+  public TStep(String name, int stepNum) {
     this.name = name.replaceAll(" ", "_");
     inputs = new ArrayList<TInput>();
     outputs = new ArrayList<TOutput>();
+    this.stepNum = stepNum;
   }
 
   public void addInput(TInput input) {
@@ -48,13 +50,19 @@ public class TStep {
   public TOutput getOutput(int idx){
 	  return outputs.get(idx);
   }
+
+  public int num(){ return stepNum;}
   
-  public String callOp(String num) {
+  public String callOp() {
+    String num = "S" + this.stepNum;
 	StringBuilder out = new StringBuilder();
     out.append(this.javaName());
     out.append("(");
     for (TInput input : inputs) {
       out.append(input.name() +num + ", ");
+    }
+    if(this.name().equals("Threshold_Moving")){
+      out.append("this.lastImage" + num + ", ");
     }
     if (!outputs.isEmpty()) {
       for (int i = 0; i < outputs.size() - 1; i++) {

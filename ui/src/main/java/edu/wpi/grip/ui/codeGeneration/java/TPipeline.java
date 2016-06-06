@@ -31,8 +31,9 @@ public class TPipeline {
   }
 
   public void set(Pipeline pipeline) {
+    int count = 0;
     for (Step step : pipeline.getSteps()) {
-      TStep tStep = new TStep(step.getOperationDescription().name());
+      TStep tStep = new TStep(step.getOperationDescription().name(), count);
       steps.add(tStep);
       for (OutputSocket output : step.getOutputSockets()) {
         TOutput tOutput = new TOutput(TemplateMethods.parseSocketType(output), numOutputs);
@@ -44,6 +45,7 @@ public class TPipeline {
           }
         }
       }
+      count++;
     }
     for (int i = 0; i < pipeline.getSteps().size(); i++) {
       for (InputSocket input : pipeline.getSteps().get(i).getInputSockets()) {
@@ -65,8 +67,6 @@ public class TPipeline {
         }
         this.steps.get(i).addInput(tInput);
       }
-
-
     }
   }
 
@@ -136,6 +136,16 @@ public class TPipeline {
       }
     }
     return sources;
+  }
+
+  public List<TStep> getMovingThresholds(){
+    List<TStep> moving = new ArrayList<TStep>();
+    for(TStep step: steps){
+        if(step.name().equals("Threshold_Moving")){
+          moving.add(step);
+        }
+    }
+    return moving;
   }
 
 
