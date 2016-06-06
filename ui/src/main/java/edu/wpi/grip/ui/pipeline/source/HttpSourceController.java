@@ -10,7 +10,7 @@ import edu.wpi.grip.ui.components.ExceptionWitnessResponderButton;
 import edu.wpi.grip.ui.pipeline.OutputSocketController;
 
 /**
- *
+ * Provides controls for a {@link HttpSource}.
  */
 public class HttpSourceController extends SourceController<HttpSource> {
 

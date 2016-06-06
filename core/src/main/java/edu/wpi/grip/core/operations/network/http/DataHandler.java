@@ -53,18 +53,14 @@ public final class DataHandler extends PedanticHandler {
      */
     private final AtomicBoolean staleData;
 
-    @Inject
-    DataHandler(EventBus eventBus) {
+    DataHandler() {
         super(GripServer.DATA_PATH, true);
-        checkNotNull(eventBus);
         this.dataSuppliers = new HashMap<>();
         this.gson = new GsonBuilder()
                 .setPrettyPrinting()
                 .serializeSpecialFloatingPointValues()
                 .create();
         this.staleData = new AtomicBoolean(false);
-
-        eventBus.register(this);
     }
 
     @Override

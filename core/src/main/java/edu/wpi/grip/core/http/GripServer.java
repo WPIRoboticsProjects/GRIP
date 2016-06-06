@@ -45,9 +45,15 @@ public class GripServer {
      */
     private State state = State.PRE_RUN;
 
-    private enum State {
+    /**
+     * Possible lifecycle states of the server.
+     */
+    public enum State {
+        /** The server has not been started yet. */
         PRE_RUN,
+        /** The server is currently running. */
         RUNNING,
+        /** The server was running and has been stopped. */
         STOPPED
     }
 
@@ -182,6 +188,13 @@ public class GripServer {
         } catch (GripServerException | IllegalStateException ex) {
             throw new GripServerException("Could not restart GripServer", ex);
         }
+    }
+
+    /**
+     * Gets the current state of the server.
+     */
+    public State getState() {
+        return state;
     }
 
     /**

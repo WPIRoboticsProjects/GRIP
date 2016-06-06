@@ -124,6 +124,7 @@ public class GripServerTest {
     }
 
     @Test
+    @SuppressWarnings("PMD.JUnitTestsShouldIncludeAssert")
     public void testStartStop() throws GripServerException {
         instance.start(); // should do nothing since the server's already running
         instance.stop();  // stop the server so we know we can start it
@@ -136,7 +137,9 @@ public class GripServerTest {
 
     @After
     public void tearDown() {
-        instance.stop();
+        if (instance.getState() == GripServer.State.RUNNING) {
+            instance.stop();
+        }
     }
 
     private HttpResponse doPost(String path, byte[] bytes) throws IOException {

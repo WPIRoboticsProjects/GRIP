@@ -54,7 +54,8 @@ public class HttpPublisherTest {
         InputSocket.Factory isf = new MockInputSocketFactory(eventBus);
         server = GripServerTest.makeServer(new GripServerTest.TestServerFactory(), ProjectSettings::new);
         unclaimDataHandler();
-        dataHandler = new DataHandler(eventBus);
+        dataHandler = new DataHandler();
+        eventBus.register(dataHandler);
 
         operation = new HttpPublishOperation<Number, NumberPublishable, Double>(new HttpPublishManager(server, dataHandler), NumberPublishable::new) {};
 

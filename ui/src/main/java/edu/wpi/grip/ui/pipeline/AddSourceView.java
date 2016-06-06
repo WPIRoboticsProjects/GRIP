@@ -60,7 +60,6 @@ public class AddSourceView extends HBox {
   private final MultiImageFileSource.Factory multiImageSourceFactory;
   private final ImageFileSource.Factory imageSourceFactory;
   private final CameraSource.Factory cameraSourceFactory;
-  private final HttpSource.Factory httpSourceFactory;
 
   private final Button webcamButton;
   private final Button ipcamButton;
@@ -76,7 +75,6 @@ public class AddSourceView extends HBox {
     this.multiImageSourceFactory = multiImageSourceFactory;
     this.imageSourceFactory = imageSourceFactory;
     this.cameraSourceFactory = cameraSourceFactory;
-    this.httpSourceFactory = httpSourceFactory;
 
     this.setFillHeight(true);
 

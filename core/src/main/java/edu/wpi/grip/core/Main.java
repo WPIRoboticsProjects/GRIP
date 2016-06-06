@@ -2,9 +2,9 @@ package edu.wpi.grip.core;
 
 import edu.wpi.grip.core.events.ExceptionClearedEvent;
 import edu.wpi.grip.core.events.ExceptionEvent;
-import edu.wpi.grip.core.operations.CVOperations;
 import edu.wpi.grip.core.http.GripServer;
 import edu.wpi.grip.core.http.HttpPipelineSwitcher;
+import edu.wpi.grip.core.operations.CVOperations;
 import edu.wpi.grip.core.operations.Operations;
 import edu.wpi.grip.core.operations.network.GripNetworkModule;
 import edu.wpi.grip.core.serialization.Project;
@@ -14,6 +14,7 @@ import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
+import com.google.inject.util.Modules;
 
 import java.io.File;
 import java.io.IOException;
@@ -46,8 +47,8 @@ public class Main {
 
   @SuppressWarnings({"PMD.SystemPrintln", "JavadocMethod"})
   public static void main(String[] args) throws IOException, InterruptedException {
-    final Injector injector = Guice.createInjector(new GripCoreModule(), new GripNetworkModule(),
-        new GripSourcesHardwareModule());
+    final Injector injector = Guice.createInjector(Modules.override(
+        new GripCoreModule(), new GripSourcesHardwareModule()).with(new GripNetworkModule()));
     injector.getInstance(Main.class).start(args);
   }
 
