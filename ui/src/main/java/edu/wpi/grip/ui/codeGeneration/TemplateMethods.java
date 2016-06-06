@@ -1,5 +1,7 @@
 package edu.wpi.grip.ui.codegeneration;
 
+import com.google.common.base.CaseFormat;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -45,10 +47,11 @@ public class TemplateMethods {
 
   public static String parseSocketName(Socket socket) {
     String name = socket.getSocketHint().getIdentifier();
-    return toCamelCase(name);
+    return CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.LOWER_CAMEL, name);
+    //return toCamelCase(name);
   }
 
-  public static String toCamelCase(final String init) {
+  /*public static String toCamelCase(final String init) {
     if (init == null)
       return null;
 
@@ -66,7 +69,7 @@ public class TemplateMethods {
     }
 
     return ret.toString();
-  }
+  }*/
 
   public static String parseSocketType(Socket socket) {
     String type = socket.getSocketHint().getType().getSimpleName();

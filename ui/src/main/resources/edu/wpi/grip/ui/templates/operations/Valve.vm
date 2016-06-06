@@ -1,8 +1,0 @@
-    public static <T> void Valve(boolean sw, T input, MutableOf<T> output){
-        if(sw){
-            output.set(input);
-        }
-        else{
-        	output.set(null);
-        }
-    }

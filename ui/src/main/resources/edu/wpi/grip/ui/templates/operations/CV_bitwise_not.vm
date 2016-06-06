@@ -1,8 +1,0 @@
-	/**
-	 * Computes the per element inverse of an image.
-	 * @param src the image to invert.
-	 * @param dst the inversion of the input image.
-	 */
-	public static void CV_bitwise_not(Mat src, Mat dst){
-		Core.bitwise_not(src, dst);
-	}

@@ -1,9 +1,0 @@
-    private Mat lastImage = new Mat();
-    public void Threshold_Moving(Mat input, Mat output){
-    	Size lastSize = lastImage.size();
-    	Size inputSize = input.size();
-        if (!lastImage.empty() && lastSize.height == inputSize.height && lastSize.width == inputSize.width) {
-            Core.absdiff(input, lastImage, output);
-        }
-        input.copyTo(lastImage);
-    }
