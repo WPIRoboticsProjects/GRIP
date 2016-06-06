@@ -1,10 +1,8 @@
 package edu.wpi.grip.core.operations.network.http;
 
-import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
 import edu.wpi.grip.core.events.RunStartedEvent;
