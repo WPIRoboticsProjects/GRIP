@@ -1,8 +1,10 @@
 #**
 This creates the complete java pipeline.
-*#
-#set($needsMut = false)
+*##set($needsMut = false)
 #set($interpolation = false)
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -11,6 +13,7 @@ import java.util.HashMap;
 
 import org.opencv.core.*;
 import org.opencv.core.Core.*;
+import org.opencv.features2d.FeatureDetector;
 import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.imgproc.*;
 

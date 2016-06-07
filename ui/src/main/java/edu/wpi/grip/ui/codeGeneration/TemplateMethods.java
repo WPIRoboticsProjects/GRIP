@@ -81,6 +81,9 @@ public class TemplateMethods {
     else if(type.equals("ContoursReport")){
       type = "ArrayList<MatOfPoint>";
     }
+    else if(type.equals("BlobsReport")){
+      type = "MatOfKeyPoint";
+    }
     else if(type.equals("LinesReport")){
       type = "ArrayList<Line>";
     }

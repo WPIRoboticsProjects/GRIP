@@ -55,7 +55,7 @@ public class TStep {
   
   public String callOp() {
     String num = "S" + this.stepNum;
-	StringBuilder out = new StringBuilder();
+    StringBuilder out = new StringBuilder();
     out.append(this.javaName());
     out.append("(");
     for (TInput input : inputs) {
