@@ -13,9 +13,6 @@ import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.sockets.Socket;
 import edu.wpi.grip.core.sockets.SocketHint;
 
-/**
- * Created by Toby on 5/25/16.
- */
 public class TemplateMethods {
 
   private Pipeline pipeline;
