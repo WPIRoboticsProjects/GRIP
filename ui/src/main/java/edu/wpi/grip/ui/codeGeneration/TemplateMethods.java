@@ -129,5 +129,20 @@ public class TemplateMethods {
     return name;
   }
 
+  public static String cName(String name){
+	    // name is something like "CV_medianBlur" or "Find_Contours"
+	    if (name.startsWith("CV_")) {
+	        // OpenCV operation
+	        String op = name.replaceFirst("CV_", "");
+	        if (op.contains("_")) {
+	            return "CV" + CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, op.toLowerCase());
+	        } else {
+	            return "CV" + CaseFormat.LOWER_CAMEL.to(CaseFormat.UPPER_CAMEL, op);
+	        }
+	    } else {
+	        // GRIP operation
+	        return CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, name.toUpperCase());
+	    }
+  }
 
 }

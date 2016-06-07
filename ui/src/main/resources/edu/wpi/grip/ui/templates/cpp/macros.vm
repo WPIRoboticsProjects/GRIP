@@ -1,0 +1,24 @@
+#macro( cType $type )
+#if( $type == "Double" )
+double
+#elseif( $type == "Integer" )
+int
+#elseif( $type == "Boolean" || "boolean")
+bool
+#else
+$type#end
+
+#macro( cName $name )
+TemplateMethods.cName($name)#end
+
+#macro( func $step )
+#cName($step.name())(#forEach($inp in $step.getInputs()) #cType($inp.type()) *$inp.name(), #end #forEach($out in $step.getOutputs()) #cType($out.type()) *#cName($out.name())#if($velocityCount < $step.getOutputs().size()),#end#end)#end
+
+#macro( setter $source )
+Set$source.value()($source.type() *$source.value())#end
+
+#macro( getter $out $step $countplusone)#set( $cnt = countplusone -1)
+GetStep$step.num()Output$cnt()#end
+
+#macro( classMethod )
+Pipeline::#end

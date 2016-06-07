@@ -1,0 +1,21 @@
+/#pragma once
+
+class Pipeline{
+	private:
+#forEach( $source in $pipeline.getSources() )
+		#cType( $source.type() ) *$source.name();
+#end
+#forEach ( $step in $pipeline.getUniqueSteps() )
+		void #func($step);
+#end
+	public:
+		void Process();
+#forEach( $source in $pipeline.getSources() )
+		void #setter($source);
+#end
+#forEach( $step in $pipeline.getSteps() )
+#forEach( $out in $step.getOutputs() )
+		$out.type() #getter($out $step $velocityCount);
+#end
+#end
+}
