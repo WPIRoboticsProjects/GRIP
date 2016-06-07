@@ -1,4 +1,10 @@
-	public static void ${step.javaName()}(List<MatOfPoint> inputContours,List<MatOfPoint> outputContours){
+	/**
+	 * Compute the convex hulls of contours
+	 *
+	 * @param inputContours The contours on which to perform the operation.
+	 * @param outputContours The contours where the output will be stored.
+	 */
+	private void ${step.javaName()}(List<MatOfPoint> inputContours,List<MatOfPoint> outputContours){
 		final MatOfInt hull = new MatOfInt();
 		outputContours = new ArrayList<MatOfPoint>(inputContours.size());
 		for (int i = 0; i < inputContours.size(); i++) {

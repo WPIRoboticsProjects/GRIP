@@ -7,7 +7,8 @@
 	 * @param interpolation type of interpolation to use.
 	 * @param dst output image.
 	 */
-	public static void ${step.javaName()}(Mat src, Size dSize, double fx, double fy, int interpolation, Mat dst){
+	private void ${step.javaName()}(Mat src, Size dSize, double fx, double fy, int interpolation,
+	Mat dst){
 		if(dSize==null){
 			dSize = new Size(0,0);
 		}

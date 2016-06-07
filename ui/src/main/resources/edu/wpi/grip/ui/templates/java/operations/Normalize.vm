@@ -32,6 +32,15 @@
 			return label;
 		}
     }
-	public static void ${step.javaName()}(Mat input, NormalizeType type, double a, double b, Mat output){
+	/**
+	 * Normalizes or remaps the values of pixels in an image.
+	 *
+	 * @param input The image on which to perform the Normalize.
+	 * @param type The type of normalization.
+	 * @param a The minimum value.
+	 * @param b The maximum value.
+	 * @param output The image in which to store the output.
+	 */
+	private void ${step.javaName()}(Mat input, NormalizeType type, double a, double b, Mat output){
 		Core.normalize(input, output, a, b, type.value);
 	}

@@ -1,4 +1,10 @@
-	public static void ${step.javaName()}(Mat input, Mat output){
+	/**
+	 * Converts a color image into shades of grey
+	 *
+	 * @param input The image on which to perform the desaturate.
+	 * @param output The image in which to store the output.
+	 */
+	private void ${step.javaName()}(Mat input, Mat output){
 		switch (input.channels()) {
 			case 1:
 				// If the input is already one channel, it's already desaturated

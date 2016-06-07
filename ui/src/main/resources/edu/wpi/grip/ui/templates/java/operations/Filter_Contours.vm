@@ -18,7 +18,7 @@ This creates the java OpenCV Filter Contours function
 	 * @param maxRatio maximum ratio of width to height
 	 * @return returns a list of filtered contours
 	 */
-	public static void ${step.javaName()}(List<MatOfPoint> inputContours, double minArea,
+	private void ${step.javaName()}(List<MatOfPoint> inputContours, double minArea,
 		double minPerimeter, double minWidth, double maxWidth, double minHeight, double
 		maxHeight, double[] solidity, double maxVertexCount, double minVertexCount, double
 		minRatio, double maxRatio, List<MatOfPoint> output){

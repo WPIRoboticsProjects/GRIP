@@ -16,8 +16,13 @@
 			return Math.toDegrees(Math.atan2(y2 - y1, x2 - x1));
 		}
 	}
-
-	public static void ${step.javaName()}(Mat input, List<Line> lineList){
+	/**
+	 * Finds all line segments in an image.
+	 *
+	 * @param input The image on which to perform the find lines.
+	 * @param lineList The output where the lines are stored.
+	 */
+	private void ${step.javaName()}(Mat input, List<Line> lineList){
 		final LineSegmentDetector lsd = Imgproc.createLineSegmentDetector();
 		final Mat lines = new Mat();
 		if (input.channels() == 1) {

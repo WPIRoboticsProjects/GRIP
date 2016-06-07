@@ -1,3 +1,6 @@
+	/**
+	 * An indication of which type of transform.
+	 */
 	enum Distance_TransformType{
 		DIST_L1("CV_DIST_L1", Imgproc.CV_DIST_L1),
 		DIST_L2("CV_DIST_L2", Imgproc.CV_DIST_L2),
@@ -28,7 +31,6 @@
 			return label;
 		}
 	}
-
 	private enum MaskSize {
 		ZERO("0x0", 0),
 		THREE("3x3", 3),
@@ -57,7 +59,16 @@
 			return label;
 		}
 	}
-	public static void ${step.javaName()}(Mat input,Distance_TransformType type, MaskSize maskSize, Mat output){
+	/**
+	 * Sets the values of pixels in a binary image to their distance to the nearest black pixel.
+	 *
+	 * @param input The image on which to perform the Distance Transform.
+	 * @param type The Transform.
+	 * @param maskSize the size of the mask.
+	 * @param output The image in which to store the output.
+	 */
+	private void ${step.javaName()}(Mat input,Distance_TransformType type, MaskSize maskSize, Mat
+	output){
 		Imgproc.distanceTransform(input, output, type.value, maskSize.value);
 		output.convertTo(output, -1);
 	}
