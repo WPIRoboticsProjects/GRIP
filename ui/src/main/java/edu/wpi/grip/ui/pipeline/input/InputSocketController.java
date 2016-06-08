@@ -57,7 +57,8 @@ public class InputSocketController<T> implements Controller {
         InputSocketController<T> create(InputSocket<T> socket);
     }
 
-    @Inject InputSocketController(SocketHandleView.Factory socketHandleViewFactory, @Assisted InputSocket<T> socket) {
+    @Inject
+    InputSocketController(SocketHandleView.Factory socketHandleViewFactory, @Assisted InputSocket<T> socket) {
         this.socketHandleViewFactory = socketHandleViewFactory;
         this.socket = checkNotNull(socket);
     }

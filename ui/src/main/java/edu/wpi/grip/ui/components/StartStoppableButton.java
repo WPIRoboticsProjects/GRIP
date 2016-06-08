@@ -44,7 +44,8 @@ public final class StartStoppableButton extends ToggleButton {
         StartStoppableButton create(RestartableService startStoppable);
     }
 
-    @Inject StartStoppableButton(@Assisted final RestartableService service) {
+    @Inject
+    StartStoppableButton(@Assisted final RestartableService service) {
         super(null, pickGraphic(service));
         this.service = checkNotNull(service, "RestartableService can not be null");
         this.startStopTooltip = new Tooltip(getButtonActionString());

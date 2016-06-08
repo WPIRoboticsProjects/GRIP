@@ -37,7 +37,8 @@ public class GripPlatform {
         }
     }
 
-    @Inject GripPlatform(EventBus eventBus, Logger logger) {
+    @Inject
+    GripPlatform(EventBus eventBus, Logger logger) {
         checkArgument(!(eventBus instanceof AsyncEventBus), "This class has not been tested to work with the AsyncEventBus");
         this.eventBus = eventBus;
         this.logger = logger;

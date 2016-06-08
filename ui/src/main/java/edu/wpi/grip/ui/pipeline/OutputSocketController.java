@@ -61,7 +61,8 @@ public class OutputSocketController implements Controller {
         OutputSocketController create(OutputSocket socket);
     }
 
-    @Inject OutputSocketController(SocketHandleView.Factory socketHandleFactory, @Assisted OutputSocket socket) {
+    @Inject
+    OutputSocketController(SocketHandleView.Factory socketHandleFactory, @Assisted OutputSocket socket) {
         this.socketHandleFactory = checkNotNull(socketHandleFactory, "Socket Handle factory can not be null");
         this.socket = checkNotNull(socket, "The output socket can not be null");
         this.previewListener = value -> this.socket.setPreviewed(this.preview.isSelected());

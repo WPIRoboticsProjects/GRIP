@@ -27,7 +27,8 @@ public class CheckboxInputSocketController extends InputSocketController<Boolean
         CheckboxInputSocketController create(InputSocket<Boolean> socket);
     }
 
-    @Inject CheckboxInputSocketController(SocketHandleView.Factory socketHandleViewFactory, GripPlatform platform, @Assisted InputSocket<Boolean> socket) {
+    @Inject
+    CheckboxInputSocketController(SocketHandleView.Factory socketHandleViewFactory, GripPlatform platform, @Assisted InputSocket<Boolean> socket) {
         super(socketHandleViewFactory, socket);
         this.platform = platform;
         this.checkBox = new CheckBox();

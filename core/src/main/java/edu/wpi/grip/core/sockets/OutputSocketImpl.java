@@ -24,7 +24,8 @@ public class OutputSocketImpl<T> extends SocketImpl<T> implements OutputSocket<T
     public static class FactoryImpl implements OutputSocket.Factory {
         private final EventBus eventBus;
 
-        @Inject FactoryImpl(EventBus eventBus) {
+        @Inject
+        FactoryImpl(EventBus eventBus) {
             this.eventBus = eventBus;
         }
 

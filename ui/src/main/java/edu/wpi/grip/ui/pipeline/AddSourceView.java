@@ -89,10 +89,11 @@ public class AddSourceView extends HBox {
         AddSourceView create();
     }
 
-    @Inject AddSourceView(EventBus eventBus,
-                          MultiImageFileSource.Factory multiImageSourceFactory,
-                          ImageFileSource.Factory imageSourceFactory,
-                          CameraSource.Factory cameraSourceFactory) {
+    @Inject
+    AddSourceView(EventBus eventBus,
+                  MultiImageFileSource.Factory multiImageSourceFactory,
+                  ImageFileSource.Factory imageSourceFactory,
+                  CameraSource.Factory cameraSourceFactory) {
         this.eventBus = eventBus;
         this.multiImageSourceFactory = multiImageSourceFactory;
         this.imageSourceFactory = imageSourceFactory;

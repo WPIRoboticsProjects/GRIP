@@ -63,7 +63,8 @@ public class NTManager implements Manager, MapNetworkPublisherFactory {
     @Inject private PipelineRunner pipelineRunner;
     @Inject private GRIPMode gripMode;
 
-    @Inject NTManager() {
+    @Inject
+    NTManager() {
         // We may have another instance of this method lying around
         NetworkTable.shutdown();
 

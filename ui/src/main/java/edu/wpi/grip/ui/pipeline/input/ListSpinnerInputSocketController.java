@@ -37,7 +37,8 @@ public class ListSpinnerInputSocketController extends InputSocketController<List
     /**
      * @param socket an input socket where the domain contains all of the possible values to choose from
      */
-    @Inject ListSpinnerInputSocketController(EventBus eventBus, SocketHandleView.Factory socketHandleViewFactory, GripPlatform platform, @Assisted InputSocket<List> socket) {
+    @Inject
+    ListSpinnerInputSocketController(EventBus eventBus, SocketHandleView.Factory socketHandleViewFactory, GripPlatform platform, @Assisted InputSocket<List> socket) {
         super(socketHandleViewFactory, socket);
         this.platform = platform;
 

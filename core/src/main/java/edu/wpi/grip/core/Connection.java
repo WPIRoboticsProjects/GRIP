@@ -36,7 +36,8 @@ public class Connection<T> {
      * @param outputSocket        The socket to listen for changes in.
      * @param inputSocket         A different socket to update when a change occurs in the first.
      */
-    @Inject Connection(EventBus eventBus, ConnectionValidator connectionValidator, @Assisted OutputSocket<? extends T> outputSocket, @Assisted InputSocket<T> inputSocket) {
+    @Inject
+    Connection(EventBus eventBus, ConnectionValidator connectionValidator, @Assisted OutputSocket<? extends T> outputSocket, @Assisted InputSocket<T> inputSocket) {
         this.eventBus = eventBus;
         this.outputSocket = outputSocket;
         this.inputSocket = inputSocket;

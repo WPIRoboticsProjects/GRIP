@@ -42,8 +42,7 @@ public class SocketHandleView extends Button {
     private final Socket socket;
 
     /**
-     * Provides a singleton object to assign the socket being dragged from during dragging to allow for a
-     * connection to be made.
+     * Provides a singleton object to assign the socket being dragged from during dragging to allow for a connection to be made.
      */
     @Singleton
     protected static final class SocketDragService extends DragService<Socket> {
@@ -59,11 +58,12 @@ public class SocketHandleView extends Button {
         SocketHandleView create(Socket socket);
     }
 
-    @Inject SocketHandleView(EventBus eventBus,
-                             Pipeline pipeline,
-                             Connection.Factory<Object> connectionFactory,
-                             SocketDragService socketDragService,
-                             @Assisted Socket socket) {
+    @Inject
+    SocketHandleView(EventBus eventBus,
+                     Pipeline pipeline,
+                     Connection.Factory<Object> connectionFactory,
+                     SocketDragService socketDragService,
+                     @Assisted Socket socket) {
         this.eventBus = eventBus;
         this.socket = socket;
 
@@ -159,8 +159,8 @@ public class SocketHandleView extends Button {
     }
 
     /**
-     * @return The boolean property that indicates if this socket is currently in the middle of being connected to
-     * another socket.  In other words, the user has clicked it, but has not clicked another socket yet.
+     * @return The boolean property that indicates if this socket is currently in the middle of being connected to another socket.  In other words, the user has clicked it, but has not clicked another
+     * socket yet.
      */
     public BooleanProperty connectingProperty() {
         return this.connectingProperty;

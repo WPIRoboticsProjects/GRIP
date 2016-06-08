@@ -40,7 +40,8 @@ public class CVOperations {
     private final ImmutableList<OperationMetaData> coreOperations;
     private final ImmutableList<OperationMetaData> imgprocOperation;
 
-    @Inject CVOperations(EventBus eventBus, InputSocket.Factory isf, OutputSocket.Factory osf) {
+    @Inject
+    CVOperations(EventBus eventBus, InputSocket.Factory isf, OutputSocket.Factory osf) {
         this.eventBus = eventBus;
         final TemplateFactory templateFactory = new TemplateFactory(isf, osf);
         this.coreOperations = ImmutableList.of(

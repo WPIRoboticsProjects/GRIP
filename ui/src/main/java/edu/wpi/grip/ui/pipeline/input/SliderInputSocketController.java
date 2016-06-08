@@ -34,7 +34,8 @@ public class SliderInputSocketController extends InputSocketController<Number> {
      * @param socket An <code>InputSocket</code> with a domain containing two <code>Number</code>s (the min and max
      *               slider values)
      */
-    @Inject SliderInputSocketController(SocketHandleView.Factory socketHandleViewFactory, GripPlatform platform, @Assisted InputSocket<Number> socket) {
+    @Inject
+    SliderInputSocketController(SocketHandleView.Factory socketHandleViewFactory, GripPlatform platform, @Assisted InputSocket<Number> socket) {
         super(socketHandleViewFactory, socket);
         this.platform = platform;
 

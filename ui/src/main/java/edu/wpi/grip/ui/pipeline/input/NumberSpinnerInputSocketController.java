@@ -38,7 +38,8 @@ public class NumberSpinnerInputSocketController extends InputSocketController<Nu
      * @param socket An <code>InputSocket</code> with a domain containing two <code>Number</code>s (the min and max
      *               slider values), or no domain at all.
      */
-    @Inject NumberSpinnerInputSocketController(SocketHandleView.Factory socketHandleViewFactory, GripPlatform platform, @Assisted InputSocket<Number> socket) {
+    @Inject
+    NumberSpinnerInputSocketController(SocketHandleView.Factory socketHandleViewFactory, GripPlatform platform, @Assisted InputSocket<Number> socket) {
         super(socketHandleViewFactory, socket);
         this.platform = platform;
 

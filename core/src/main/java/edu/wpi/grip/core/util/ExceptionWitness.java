@@ -42,7 +42,8 @@ public class ExceptionWitness {
         ExceptionWitness create(Object origin);
     }
 
-    @Inject ExceptionWitness(final EventBus eventBus, @Assisted final Object origin) {
+    @Inject
+    ExceptionWitness(final EventBus eventBus, @Assisted final Object origin) {
         this.eventBus = eventBus;
         this.origin = origin;
     }

@@ -22,12 +22,12 @@ public final class CameraSourceController extends SourceController<CameraSource>
         CameraSourceController create(CameraSource cameraSource);
     }
 
-    @Inject CameraSourceController(
-        final EventBus eventBus,
-        final OutputSocketController.Factory outputSocketControllerFactory,
-        final StartStoppableButton.Factory startStoppableButtonFactory,
-        final ExceptionWitnessResponderButton.Factory exceptionWitnessResponderButtonFactory,
-        @Assisted final CameraSource cameraSource) {
+    @Inject
+    CameraSourceController(final EventBus eventBus,
+                           final OutputSocketController.Factory outputSocketControllerFactory,
+                           final StartStoppableButton.Factory startStoppableButtonFactory,
+                           final ExceptionWitnessResponderButton.Factory exceptionWitnessResponderButtonFactory,
+                           @Assisted final CameraSource cameraSource) {
         super(eventBus, outputSocketControllerFactory, exceptionWitnessResponderButtonFactory, cameraSource);
         this.startStoppableButtonFactory = startStoppableButtonFactory;
     }

@@ -21,11 +21,11 @@ public final class MultiImageFileSourceController extends SourceController<Multi
         MultiImageFileSourceController create(MultiImageFileSource multiImageFileSource);
     }
 
-    @Inject MultiImageFileSourceController(
-        final EventBus eventBus,
-        final OutputSocketController.Factory outputSocketControllerFactory,
-        final ExceptionWitnessResponderButton.Factory exceptionWitnessResponderButtonFactory,
-        @Assisted final MultiImageFileSource multiImageFileSource) {
+    @Inject
+    MultiImageFileSourceController(final EventBus eventBus,
+                                   final OutputSocketController.Factory outputSocketControllerFactory,
+                                   final ExceptionWitnessResponderButton.Factory exceptionWitnessResponderButtonFactory,
+                                   @Assisted final MultiImageFileSource multiImageFileSource) {
         super(eventBus, outputSocketControllerFactory, exceptionWitnessResponderButtonFactory, multiImageFileSource);
     }
 

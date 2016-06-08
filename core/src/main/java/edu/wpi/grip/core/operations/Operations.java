@@ -59,11 +59,12 @@ public class Operations {
 
     private final ImmutableList<OperationMetaData> operations;
 
-    @Inject Operations(EventBus eventBus,
-                       @Named("ntManager") MapNetworkPublisherFactory ntPublisherFactory,
-                       @Named("rosManager") ROSNetworkPublisherFactory rosPublishFactory,
-                       InputSocket.Factory isf,
-                       OutputSocket.Factory osf) {
+    @Inject
+    Operations(EventBus eventBus,
+               @Named("ntManager") MapNetworkPublisherFactory ntPublisherFactory,
+               @Named("rosManager") ROSNetworkPublisherFactory rosPublishFactory,
+               InputSocket.Factory isf,
+               OutputSocket.Factory osf) {
         this.eventBus = checkNotNull(eventBus, "EventBus cannot be null");
         checkNotNull(ntPublisherFactory, "ntPublisherFactory cannot be null");
         checkNotNull(rosPublishFactory, "rosPublishFactory cannot be null");

@@ -67,13 +67,13 @@ public class StepController implements Controller {
         StepController create(Step step);
     }
 
-    @Inject StepController(
-        Pipeline pipeline,
-        InputSocketControllerFactory inputSocketControllerFactory,
-        OutputSocketController.Factory outputSocketControllerFactory,
-        ExceptionWitnessResponderButton.Factory exceptionWitnessResponderButtonFactory,
-        StepDragService stepDragService,
-        @Assisted Step step) {
+    @Inject
+    StepController(Pipeline pipeline,
+                   InputSocketControllerFactory inputSocketControllerFactory,
+                   OutputSocketController.Factory outputSocketControllerFactory,
+                   ExceptionWitnessResponderButton.Factory exceptionWitnessResponderButtonFactory,
+                   StepDragService stepDragService,
+                   @Assisted Step step) {
         this.pipeline = pipeline;
         this.inputSocketControllerFactory = inputSocketControllerFactory;
         this.outputSocketControllerFactory = outputSocketControllerFactory;

@@ -47,7 +47,8 @@ public class OperationController implements Controller {
         OperationController create(OperationMetaData operationMetaData);
     }
 
-    @Inject OperationController(Pipeline pipeline,
+    @Inject
+    OperationController(Pipeline pipeline,
                                 Step.Factory stepFactory,
                                 OperationDragService operationDragService,
                                 @Assisted OperationMetaData operationMetaData) {

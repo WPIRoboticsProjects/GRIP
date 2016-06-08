@@ -24,8 +24,9 @@ public class TextFieldInputSocketController extends InputSocketController<String
         TextFieldInputSocketController create(InputSocket<String> socket);
     }
 
-    @Inject TextFieldInputSocketController(SocketHandleView.Factory socketHandleViewFactory,
-                                           @Assisted InputSocket<String> socket) {
+    @Inject
+    TextFieldInputSocketController(SocketHandleView.Factory socketHandleViewFactory,
+                                   @Assisted InputSocket<String> socket) {
         super(socketHandleViewFactory, socket);
     }
 

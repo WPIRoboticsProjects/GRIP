@@ -45,7 +45,8 @@ public class PipelineRunner implements RestartableService {
     private final AutoRestartingService pipelineService;
 
 
-    @Inject PipelineRunner(EventBus eventBus, Provider<Pipeline> pipelineProvider) {
+    @Inject
+    PipelineRunner(EventBus eventBus, Provider<Pipeline> pipelineProvider) {
         this(eventBus, () -> pipelineProvider.get().getSources(), () -> pipelineProvider.get().getSteps());
     }
 
