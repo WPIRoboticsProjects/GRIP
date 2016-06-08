@@ -87,6 +87,7 @@ public class Exporter {
     VelocityContext context = new VelocityContext();
     context.put("pipeline", tPipeline);
     context.put("tMeth", tempMeth);
+    context.put("fileName", dir.getName());
     StringBuilder templateDirBuilder = new StringBuilder();
     templateDirBuilder.append("src/main/resources/edu/wpi/grip/ui/templates/");
     switch (lang) {
@@ -127,11 +128,11 @@ public class Exporter {
     }
   }
 
-  private void exportJava(VelocityEngine ve, String templateDir, File dir, VelocityContext context) {
+  private void exportJava(VelocityEngine ve, String templateDir, File file, VelocityContext context) {
     Template tm = ve.getTemplate(templateDir + pipelineTemplate);
     StringWriter sw = new StringWriter();
     tm.merge(context, sw);
-    File file = dir.toPath().resolve("Pipeline.java").toFile();
+    
     try (PrintWriter writer = new PrintWriter(file.getAbsolutePath(), "UTF-8")) {
       writer.println(sw);
     } catch (UnsupportedEncodingException | FileNotFoundException e) {

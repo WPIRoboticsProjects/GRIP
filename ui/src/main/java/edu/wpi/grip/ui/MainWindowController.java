@@ -247,7 +247,7 @@ public class MainWindowController {
         dialog.showAndWait();
     }
 
-    public void generate(ActionEvent actionEvent) {
+    public void generate(ActionEvent actionEvent) {/*
         ImageView graphic = new ImageView(new Image("/edu/wpi/grip/ui/icons/settings.png"));
         graphic.setFitWidth(DPIUtility.SMALL_ICON_SIZE);
         graphic.setFitHeight(DPIUtility.SMALL_ICON_SIZE);
@@ -265,6 +265,14 @@ public class MainWindowController {
 		if(temp == null)
 			return;
 		String path = temp.getAbsolutePath();
-		exporter.export(pipeline, lang.get(), temp);
+		*/
+        final FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Export to");
+        fileChooser.getExtensionFilters().add(new ExtensionFilter(Language.JAVA.name, "*.java"));
+        fileChooser.getExtensionFilters().add(new ExtensionFilter(Language.CPP.name, "*.cpp"));
+        fileChooser.getExtensionFilters().add(new ExtensionFilter(Language.PYTHON.name, "*.py"));
+        final File file = fileChooser.showSaveDialog(root.getScene().getWindow());
+        Language lang = Language.get(fileChooser.getSelectedExtensionFilter().getDescription());
+		exporter.export(pipeline, lang, file);
     }
 }
