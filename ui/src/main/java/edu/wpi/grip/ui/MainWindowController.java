@@ -3,6 +3,8 @@ package edu.wpi.grip.ui;
 import com.google.common.base.CaseFormat;
 import com.google.common.eventbus.EventBus;
 import com.google.common.util.concurrent.Service;
+
+import edu.wpi.grip.ui.codegeneration.Language;
 import edu.wpi.grip.core.Palette;
 import edu.wpi.grip.core.Pipeline;
 import edu.wpi.grip.core.PipelineRunner;
@@ -20,12 +22,14 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Parent;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.ChoiceDialog;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.SplitPane;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
+import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 import org.controlsfx.control.StatusBar;
@@ -52,6 +56,8 @@ public class MainWindowController {
     private Pane deployPane;
     @FXML
     private StatusBar statusBar;
+    @FXML
+    private Pane GeneratePane;
     @Inject
     private EventBus eventBus;
     @Inject
@@ -242,7 +248,23 @@ public class MainWindowController {
     }
 
     public void generate(ActionEvent actionEvent) {
-        exporter.export(this.pipeline);
-        //Exporter.printToFile(exporter.stepNames(this.pipeline));
+        ImageView graphic = new ImageView(new Image("/edu/wpi/grip/ui/icons/settings.png"));
+        graphic.setFitWidth(DPIUtility.SMALL_ICON_SIZE);
+        graphic.setFitHeight(DPIUtility.SMALL_ICON_SIZE);
+    	ChoiceDialog<Language> dialog = new ChoiceDialog(Language.JAVA, Language.JAVA, Language.CPP, Language.PYTHON);
+		dialog.setTitle("Language");
+		dialog.setGraphic(graphic);
+		dialog.setHeaderText("Export Language");
+        dialog.getDialogPane().styleProperty().bind(root.styleProperty());
+        dialog.getDialogPane().getStylesheets().setAll(root.getStylesheets());
+		Optional<Language> lang = dialog.showAndWait();
+		if(!lang.isPresent())
+			return;
+		final DirectoryChooser dir = new DirectoryChooser();
+		File temp = dir.showDialog(root.getScene().getWindow());
+		if(temp == null)
+			return;
+		String path = temp.getAbsolutePath();
+		exporter.export(pipeline, lang.get(), temp);
     }
 }

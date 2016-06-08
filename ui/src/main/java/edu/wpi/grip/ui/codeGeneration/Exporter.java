@@ -7,7 +7,9 @@ import com.google.inject.Singleton;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.Velocity;
+import org.apache.velocity.app.VelocityEngine;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -27,7 +29,7 @@ public class Exporter {
 	props.put("velocimacro.library", "src/main/resources/edu/wpi/grip/ui/templates/java/macros.vm");
     Velocity.init(props);
   }
-
+  private final String pipelineTemplate = "pipeline.vm";
   public String stepNames(Pipeline pipeline) {
     StringBuilder out = new StringBuilder();
     for (Step step : getSteps(pipeline)) {
@@ -102,6 +104,48 @@ public class Exporter {
     		
     	}
   }
-
-
+  
+  public void export(Pipeline pipeline, Language lang, File dir){
+	  TPipeline tPipeline = new TPipeline(pipeline);
+	  VelocityContext context = new VelocityContext();
+	  context.put("pipeline", tPipeline);
+	  StringBuilder templateDirBuilder = new StringBuilder();
+	  templateDirBuilder.append("src/main/resources/edu/wpi/grip/ui/templates/");
+	  switch(lang){
+		  case JAVA: templateDirBuilder.append("java"); break;
+		  case PYTHON: templateDirBuilder.append("python"); break;
+		  case CPP: templateDirBuilder.append("cpp"); break;
+		  default: 
+			  throw new IllegalArgumentException(lang.toString()+" is not a supported language for code generation.");
+	  }
+	  templateDirBuilder.append("/");
+	  final String templateDir = templateDirBuilder.toString();
+	  VelocityEngine ve = new VelocityEngine();
+	  Properties props = new Properties();
+	  props.put("velocimacro.library", templateDir+"macros.vm");
+	  ve.init(props);
+	  switch(lang){
+		  case CPP:
+			  
+			  break;
+		  case JAVA:
+			  exportJava(ve,templateDir,dir,context);
+			  break;
+		  case PYTHON:
+			  
+			  break;
+		  
+	  }
+  }
+  private void exportJava(VelocityEngine ve, String templateDir, File dir, VelocityContext context){
+	  Template tm = Velocity.getTemplate(templateDir+pipelineTemplate);
+	    StringWriter sw = new StringWriter();
+	    tm.merge(context, sw);
+	    File file = dir.toPath().resolve("Pipeline.java").toFile();
+	    try (PrintWriter writer = new PrintWriter(file.getAbsolutePath(), "UTF-8")){
+	      	writer.println(sw);
+	    	}catch(UnsupportedEncodingException | FileNotFoundException e){
+	    		
+	    	}
+  }
 }
