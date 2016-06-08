@@ -119,7 +119,7 @@ public class Exporter {
 	  }
   }
   private void exportJava(VelocityEngine ve, String templateDir, File dir, VelocityContext context){
-	  Template tm = Velocity.getTemplate(templateDir+pipelineTemplate);
+	  Template tm = ve.getTemplate(templateDir+pipelineTemplate);
 	    StringWriter sw = new StringWriter();
 	    tm.merge(context, sw);
 	    File file = dir.toPath().resolve("Pipeline.java").toFile();
