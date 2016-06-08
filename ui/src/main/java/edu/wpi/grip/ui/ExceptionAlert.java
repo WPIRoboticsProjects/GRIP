@@ -17,7 +17,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 /**
  * Displays an alert with an exception and provides a place for a user to supply information about what caused the error.
  * Includes a textbox with formatted markdown to allow the issue to be pasted into GitHub easily.
- * Also, provides links with quick access to the githup issue page.
+ * Also, provides links with quick access to the github issue page.
  */
 public final class ExceptionAlert extends Alert {
     private static final String PROJECT_ISSUE_LINK = "https://github.com/WPIRoboticsProjects/GRIP/issues/new?body=Ple" +
