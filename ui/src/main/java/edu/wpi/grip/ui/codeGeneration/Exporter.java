@@ -6,7 +6,6 @@ import com.google.inject.Singleton;
 
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
-import org.apache.velocity.app.Velocity;
 import org.apache.velocity.app.VelocityEngine;
 
 import java.io.File;
@@ -24,11 +23,7 @@ import edu.wpi.grip.ui.codegeneration.java.TPipeline;
 
 @Singleton
 public class Exporter {
-  static{
-	Properties props = new Properties();
-	props.put("velocimacro.library", "src/main/resources/edu/wpi/grip/ui/templates/java/macros.vm");
-    Velocity.init(props);
-  }
+
   private final String pipelineTemplate = "pipeline.vm";
   public String stepNames(Pipeline pipeline) {
     StringBuilder out = new StringBuilder();
@@ -88,29 +83,13 @@ public class Exporter {
     }
     return out.toString();
   }
-
-  public void export(Pipeline pipeline){
-    TPipeline tPipeline = new TPipeline(pipeline);
-    TemplateMethods tempMeth = new TemplateMethods();
-    VelocityContext context = new VelocityContext();
-    context.put("pipeline", tPipeline);
-    context.put("tMeth", tempMeth);
-    String template = "src/main/resources/edu/wpi/grip/ui/templates/java/Pipeline.vm";
-    Template tm = Velocity.getTemplate(template);
-
-    StringWriter sw = new StringWriter();
-    tm.merge(context, sw);
-    try (PrintWriter writer = new PrintWriter("PipelineTest.java", "UTF-8")){
-      	writer.println(sw);
-    	}catch(UnsupportedEncodingException | FileNotFoundException e){
-    		
-    	}
-  }
   
   public void export(Pipeline pipeline, Language lang, File dir){
 	  TPipeline tPipeline = new TPipeline(pipeline);
+	  TemplateMethods tempMeth = new TemplateMethods();
 	  VelocityContext context = new VelocityContext();
 	  context.put("pipeline", tPipeline);
+	  context.put("tMeth", tempMeth);
 	  StringBuilder templateDirBuilder = new StringBuilder();
 	  templateDirBuilder.append("src/main/resources/edu/wpi/grip/ui/templates/");
 	  switch(lang){
