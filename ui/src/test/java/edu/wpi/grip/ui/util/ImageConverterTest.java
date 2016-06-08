@@ -3,16 +3,18 @@ package edu.wpi.grip.ui.util;
 import edu.wpi.grip.core.util.ImageLoadingUtility;
 import edu.wpi.grip.util.Files;
 import edu.wpi.grip.util.ImageWithData;
+
+import java.net.URLDecoder;
+import java.nio.file.Paths;
+
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
+
 import org.bytedeco.javacpp.opencv_core.Mat;
 import org.junit.Test;
 import org.testfx.framework.junit.ApplicationTest;
-
-import java.net.URLDecoder;
-import java.nio.file.Paths;
 
 import static org.bytedeco.javacpp.opencv_imgproc.COLOR_BGR2GRAY;
 import static org.bytedeco.javacpp.opencv_imgproc.cvtColor;
@@ -20,9 +22,8 @@ import static org.junit.Assert.assertEquals;
 
 
 public class ImageConverterTest extends ApplicationTest {
-    private static final ImageWithData
-            gompeiImage = Files.gompeiJpegFile,
-            imageFile = Files.imageFile;
+    private static final ImageWithData gompeiImage = Files.gompeiJpegFile;
+    private static final ImageWithData imageFile = Files.imageFile;
 
     private ImageConverter converter;
 

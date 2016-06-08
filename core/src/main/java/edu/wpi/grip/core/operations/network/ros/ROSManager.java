@@ -2,15 +2,21 @@ package edu.wpi.grip.core.operations.network.ros;
 
 
 import com.google.inject.Singleton;
+
 import edu.wpi.grip.core.operations.network.Manager;
 import edu.wpi.grip.core.util.SinglePermitSemaphore;
+
+import java.util.Optional;
+
 import org.ros.concurrent.CancellableLoop;
 import org.ros.internal.message.Message;
 import org.ros.namespace.GraphName;
-import org.ros.node.*;
+import org.ros.node.AbstractNodeMain;
+import org.ros.node.ConnectedNode;
+import org.ros.node.DefaultNodeMainExecutor;
+import org.ros.node.NodeConfiguration;
+import org.ros.node.NodeMainExecutor;
 import org.ros.node.topic.Publisher;
-
-import java.util.Optional;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 

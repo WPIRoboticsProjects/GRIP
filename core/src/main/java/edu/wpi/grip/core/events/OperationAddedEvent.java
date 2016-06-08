@@ -1,6 +1,7 @@
 package edu.wpi.grip.core.events;
 
 import com.google.common.base.MoreObjects;
+
 import edu.wpi.grip.core.OperationMetaData;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -29,7 +30,7 @@ public class OperationAddedEvent {
     @Override
     public String toString() {
         return MoreObjects.toStringHelper(this)
-                .add("operation", operation)
-                .toString();
+            .add("operation", operation)
+            .toString();
     }
 }

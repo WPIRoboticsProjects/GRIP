@@ -14,7 +14,7 @@ import java.util.concurrent.TimeoutException;
  */
 public interface RestartableService extends Service {
     ImmutableSet<State> VALID_START_STATES =
-            ImmutableSet.<State>builder().add(State.NEW, State.FAILED, State.TERMINATED).build();
+        ImmutableSet.<State>builder().add(State.NEW, State.FAILED, State.TERMINATED).build();
 
     /*
      * We override the startAsync and stopAsync to ensure that the service returned
@@ -34,7 +34,6 @@ public interface RestartableService extends Service {
 
 
     /**
-     *
      * @return
      */
     @Override

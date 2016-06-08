@@ -1,4 +1,3 @@
-
 package edu.wpi.grip.core.operations.composite;
 
 import com.google.common.collect.ImmutableList;
@@ -27,12 +26,12 @@ import static org.bytedeco.javacpp.opencv_core.normalize;
 public class NormalizeOperation implements Operation {
 
     public static final OperationDescription DESCRIPTION =
-            OperationDescription.builder()
-                    .name("Normalize")
-                    .summary("Normalizes or remaps the values of pixels in an image.")
-                    .category(OperationDescription.Category.IMAGE_PROCESSING)
-                    .icon(Icon.iconStream("opencv"))
-                    .build();
+        OperationDescription.builder()
+            .name("Normalize")
+            .summary("Normalizes or remaps the values of pixels in an image.")
+            .category(OperationDescription.Category.IMAGE_PROCESSING)
+            .icon(Icon.iconStream("opencv"))
+            .build();
 
     private enum Type {
 
@@ -83,17 +82,17 @@ public class NormalizeOperation implements Operation {
     @Override
     public List<InputSocket> getInputSockets() {
         return ImmutableList.of(
-                srcSocket,
-                typeSocket,
-                alphaSocket,
-                betaSocket
+            srcSocket,
+            typeSocket,
+            alphaSocket,
+            betaSocket
         );
     }
 
     @Override
     public List<OutputSocket> getOutputSockets() {
         return ImmutableList.of(
-                outputSocket
+            outputSocket
         );
     }
 

@@ -7,21 +7,34 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamOmitField;
-import edu.wpi.grip.core.events.*;
+
+import edu.wpi.grip.core.events.ConnectionAddedEvent;
+import edu.wpi.grip.core.events.ConnectionRemovedEvent;
+import edu.wpi.grip.core.events.ProjectSettingsChangedEvent;
+import edu.wpi.grip.core.events.SourceAddedEvent;
+import edu.wpi.grip.core.events.SourceRemovedEvent;
+import edu.wpi.grip.core.events.StepAddedEvent;
+import edu.wpi.grip.core.events.StepMovedEvent;
+import edu.wpi.grip.core.events.StepRemovedEvent;
 import edu.wpi.grip.core.settings.ProjectSettings;
 import edu.wpi.grip.core.settings.SettingsProvider;
 import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.core.sockets.SocketHint;
 
-import javax.annotation.Nullable;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+
+import javax.annotation.Nullable;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -46,7 +59,7 @@ public class Pipeline implements ConnectionValidator, SettingsProvider {
      * block access to both resources when only one is in use.
      */
 
-    private transient final ReadWriteLock sourceLock = new ReentrantReadWriteLock();
+    private final transient ReadWriteLock sourceLock = new ReentrantReadWriteLock();
     private final List<Source> sources = new ArrayList<>();
     private transient ReadWriteLock stepLock = new ReentrantReadWriteLock();
     private final List<Step> steps = new ArrayList<>();
@@ -60,9 +73,9 @@ public class Pipeline implements ConnectionValidator, SettingsProvider {
         getSteps().forEach(this::removeStep);
         // We collect the list first because the event modifies the list
         this.sources.stream()
-                .map(SourceRemovedEvent::new)
-                .collect(Collectors.toList())
-                .forEach(this.eventBus::post);
+            .map(SourceRemovedEvent::new)
+            .collect(Collectors.toList())
+            .forEach(this.eventBus::post);
     }
 
     private final <R> R readSourcesSafely(Function<List<Source>, R> sourceListFunction) {
@@ -233,7 +246,8 @@ public class Pipeline implements ConnectionValidator, SettingsProvider {
 
     /**
      * Finds the index between the two steps
-     * @param lower The lower step
+     *
+     * @param lower  The lower step
      * @param higher The higher step
      * @return The index that is in between the two of these steps
      */
@@ -262,6 +276,7 @@ public class Pipeline implements ConnectionValidator, SettingsProvider {
 
     /**
      * Adds the step between two other steps.
+     *
      * @param stepToAdd The step to add to the pipeline
      * @param lower     The step to be added above
      * @param higher    The step to be added below
@@ -273,16 +288,15 @@ public class Pipeline implements ConnectionValidator, SettingsProvider {
     }
 
     /**
-     *
      * @param toMove The step to move
-     * @param lower The lower step
+     * @param lower  The lower step
      * @param higher The upper step
      */
     public void moveStepBetween(Step toMove, @Nullable Step lower, @Nullable Step higher) {
         checkNotNull(toMove, "The step to move cannot be null");
         final int index = indexBetween(lower, higher);
         final int currentIndex = readStepsSafely(steps -> steps.indexOf(toMove));
-        moveStep(toMove, index > currentIndex ? index - (currentIndex + 1 ) : index - currentIndex);
+        moveStep(toMove, index > currentIndex ? index - (currentIndex + 1) : index - currentIndex);
     }
 
     public void addStep(int index, Step step) {

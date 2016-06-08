@@ -24,8 +24,7 @@ public class OutputSocketImpl<T> extends SocketImpl<T> implements OutputSocket<T
     public static class FactoryImpl implements OutputSocket.Factory {
         private final EventBus eventBus;
 
-        @Inject
-        FactoryImpl(EventBus eventBus) {
+        @Inject FactoryImpl(EventBus eventBus) {
             this.eventBus = eventBus;
         }
 
@@ -43,7 +42,6 @@ public class OutputSocketImpl<T> extends SocketImpl<T> implements OutputSocket<T
         super(eventBus, socketHint, Direction.OUTPUT);
         this.eventBus = eventBus;
     }
-
 
 
     @Override
@@ -65,18 +63,18 @@ public class OutputSocketImpl<T> extends SocketImpl<T> implements OutputSocket<T
     @Override
     public void resetValueToInitial() {
         this.setValue(this.getSocketHint()
-                .createInitialValue()
-                .orElse(null));
+            .createInitialValue()
+            .orElse(null));
     }
 
 
     @Override
     public String toString() {
         return MoreObjects.toStringHelper(this)
-                .add("socketHint", getSocketHint())
-                .add("value", getValue())
-                .add("previewed", isPreviewed())
-                .add("direction", getDirection())
-                .toString();
+            .add("socketHint", getSocketHint())
+            .add("value", getValue())
+            .add("previewed", isPreviewed())
+            .add("direction", getDirection())
+            .toString();
     }
 }

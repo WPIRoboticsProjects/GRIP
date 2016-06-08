@@ -1,7 +1,8 @@
 package edu.wpi.grip.core.operations.network;
 
-import javax.annotation.concurrent.Immutable;
 import java.util.function.Function;
+
+import javax.annotation.concurrent.Immutable;
 
 /**
  * An adapter to allow booleans to be published from GRIP sockets into a {@link NetworkPublisher}
@@ -11,6 +12,7 @@ import java.util.function.Function;
 @Immutable
 public final class BooleanPublishable implements Publishable {
     private final boolean bool;
+
     public BooleanPublishable(Boolean bool) {
         this.bool = bool.booleanValue();
     }

@@ -1,6 +1,7 @@
 package edu.wpi.grip.core.operations.composite;
 
 import com.google.common.collect.ImmutableList;
+
 import edu.wpi.grip.core.Operation;
 import edu.wpi.grip.core.OperationDescription;
 import edu.wpi.grip.core.sockets.InputSocket;
@@ -23,12 +24,12 @@ import static org.bytedeco.javacpp.opencv_core.inRange;
 public class RGBThresholdOperation extends ThresholdOperation {
 
     public static final OperationDescription DESCRIPTION =
-            OperationDescription.builder()
-                    .name("RGB Threshold")
-                    .summary("Segment an image based on color ranges")
-                    .category(OperationDescription.Category.IMAGE_PROCESSING)
-                    .icon(Icon.iconStream("threshold"))
-                    .build();
+        OperationDescription.builder()
+            .name("RGB Threshold")
+            .summary("Segment an image based on color ranges")
+            .category(OperationDescription.Category.IMAGE_PROCESSING)
+            .icon(Icon.iconStream("threshold"))
+            .build();
 
     private static final Logger logger = Logger.getLogger(RGBThresholdOperation.class.getName());
     private final SocketHint<Mat> inputHint = SocketHints.Inputs.createMatSocketHint("Input", false);
@@ -58,17 +59,17 @@ public class RGBThresholdOperation extends ThresholdOperation {
     @Override
     public List<InputSocket> getInputSockets() {
         return ImmutableList.of(
-                inputSocket,
-                redSocket,
-                greenSocket,
-                blueSocket
+            inputSocket,
+            redSocket,
+            greenSocket,
+            blueSocket
         );
     }
 
     @Override
     public List<OutputSocket> getOutputSockets() {
         return ImmutableList.of(
-                outputSocket
+            outputSocket
         );
     }
 
@@ -87,14 +88,14 @@ public class RGBThresholdOperation extends ThresholdOperation {
 
 
         final Scalar lowScalar = new Scalar(
-                channel3.get(0).doubleValue(),
-                channel2.get(0).doubleValue(),
-                channel1.get(0).doubleValue(), 0);
+            channel3.get(0).doubleValue(),
+            channel2.get(0).doubleValue(),
+            channel1.get(0).doubleValue(), 0);
 
         final Scalar highScalar = new Scalar(
-                channel3.get(1).doubleValue(),
-                channel2.get(1).doubleValue(),
-                channel1.get(1).doubleValue(), 0);
+            channel3.get(1).doubleValue(),
+            channel2.get(1).doubleValue(),
+            channel1.get(1).doubleValue(), 0);
 
         final Mat low = reallocateMatIfInputSizeOrWidthChanged(dataArray, 0, lowScalar, input);
         final Mat high = reallocateMatIfInputSizeOrWidthChanged(dataArray, 1, highScalar, input);

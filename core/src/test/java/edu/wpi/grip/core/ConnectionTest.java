@@ -1,8 +1,15 @@
 package edu.wpi.grip.core;
 
 import com.google.common.eventbus.EventBus;
+
 import edu.wpi.grip.core.events.ConnectionRemovedEvent;
-import edu.wpi.grip.core.sockets.*;
+import edu.wpi.grip.core.sockets.InputSocket;
+import edu.wpi.grip.core.sockets.MockInputSocketFactory;
+import edu.wpi.grip.core.sockets.MockOutputSocketFactory;
+import edu.wpi.grip.core.sockets.OutputSocket;
+import edu.wpi.grip.core.sockets.SocketHint;
+import edu.wpi.grip.core.sockets.SocketHints;
+
 import org.junit.Before;
 import org.junit.Test;
 
@@ -24,12 +31,12 @@ public class ConnectionTest {
     @Before
     public void setUp() {
         eventBus = new EventBus();
-        InputSocket.Factory isf = new MockInputSocketFactory(eventBus);
-        OutputSocket.Factory osf = new MockOutputSocketFactory(eventBus);
 
         fooHint = SocketHints.createNumberSocketHint("foo", 0.0);
         barHint = SocketHints.createNumberSocketHint("bar", 0.0);
 
+        InputSocket.Factory isf = new MockInputSocketFactory(eventBus);
+        OutputSocket.Factory osf = new MockOutputSocketFactory(eventBus);
 
         foo = osf.create(fooHint);
         eventBus.register(foo);
@@ -60,10 +67,10 @@ public class ConnectionTest {
     @Test(expected = IllegalArgumentException.class)
     public void testPipelineSaysConnectionIsInvalid() {
         new Connection(
-                new EventBus(),
-                (outputSocket, inputSocket) -> false,
-                foo,
-                bar
+            new EventBus(),
+            (outputSocket, inputSocket) -> false,
+            foo,
+            bar
         );
     }
 

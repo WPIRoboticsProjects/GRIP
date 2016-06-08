@@ -3,11 +3,13 @@ package edu.wpi.grip.core.util;
 import com.google.common.eventbus.EventBus;
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
+
 import edu.wpi.grip.core.events.ExceptionClearedEvent;
 import edu.wpi.grip.core.events.ExceptionEvent;
 
-import javax.annotation.Nullable;
 import java.util.concurrent.atomic.AtomicBoolean;
+
+import javax.annotation.Nullable;
 
 /**
  * Witnesses and reports exception. <b>This class is not suitable to handle {@link Error Errors}.</b><br />
@@ -29,7 +31,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * }
  * }
  * </pre>
- * <blockquote/>
+ * </blockquote>
  */
 public class ExceptionWitness {
     private final EventBus eventBus;
@@ -40,8 +42,7 @@ public class ExceptionWitness {
         ExceptionWitness create(Object origin);
     }
 
-    @Inject
-    ExceptionWitness(final EventBus eventBus, @Assisted final Object origin) {
+    @Inject ExceptionWitness(final EventBus eventBus, @Assisted final Object origin) {
         this.eventBus = eventBus;
         this.origin = origin;
     }

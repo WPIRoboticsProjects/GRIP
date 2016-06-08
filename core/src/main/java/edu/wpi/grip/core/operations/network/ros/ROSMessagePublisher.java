@@ -2,6 +2,7 @@ package edu.wpi.grip.core.operations.network.ros;
 
 
 import edu.wpi.grip.core.operations.network.NetworkPublisher;
+
 import org.ros.internal.message.Message;
 import org.ros.message.MessageFactory;
 

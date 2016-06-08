@@ -4,7 +4,6 @@ import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.Maps;
 import com.google.common.util.concurrent.MoreExecutors;
 import com.google.common.util.concurrent.Service;
-import org.apache.commons.lang3.StringUtils;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -14,6 +13,8 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Supplier;
+
+import org.apache.commons.lang3.StringUtils;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -49,8 +50,8 @@ public class AutoRestartingService<S extends Service> implements RestartableServ
             // Now that the listener list is clear we can start adding listeners for real.
             addListenersForReal(newDelegate, addedListeners, new RestartListener(), MoreExecutors.directExecutor());
             this.listeners.entrySet()
-                    .forEach(listenerExecutorEntry
-                            -> addListenersForReal(newDelegate, addedListeners, listenerExecutorEntry.getKey(), listenerExecutorEntry.getValue()));
+                .forEach(listenerExecutorEntry
+                    -> addListenersForReal(newDelegate, addedListeners, listenerExecutorEntry.getKey(), listenerExecutorEntry.getValue()));
             return newDelegate;
         };
         // Create the new delegate using the new factory not the one passed to the constructor.
@@ -170,7 +171,7 @@ public class AutoRestartingService<S extends Service> implements RestartableServ
 
     @Override
     public void awaitRunning(final long timeout, final TimeUnit unit)
-            throws TimeoutException {
+        throws TimeoutException {
         delegate.awaitRunning(timeout, unit);
     }
 
@@ -181,7 +182,7 @@ public class AutoRestartingService<S extends Service> implements RestartableServ
 
     @Override
     public void awaitTerminated(final long timeout, final TimeUnit unit)
-            throws TimeoutException {
+        throws TimeoutException {
         delegate.awaitTerminated(timeout, unit);
     }
 

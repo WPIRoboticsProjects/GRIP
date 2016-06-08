@@ -2,6 +2,7 @@ package edu.wpi.grip.ui.pipeline.source;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+
 import edu.wpi.grip.core.Source;
 import edu.wpi.grip.core.sources.CameraSource;
 import edu.wpi.grip.core.sources.MultiImageFileSource;

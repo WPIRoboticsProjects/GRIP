@@ -12,6 +12,7 @@ public interface ConnectionValidator {
     /**
      * Resolves which {@link Socket} is the {@link OutputSocket} and which is the {@link InputSocket}
      * and calls {@link #canConnect(OutputSocket, InputSocket)}
+     *
      * @param socket1 The first socket
      * @param socket2 The second socket
      * @return The return value of {@link #canConnect(OutputSocket, InputSocket)}
@@ -40,8 +41,9 @@ public interface ConnectionValidator {
 
     /**
      * Determines if an output socket can be connected to an input socket
+     *
      * @param outputSocket The output socket to connect to the input socket
-     * @param inputSocket The input socket to accept the output value of the output socket
+     * @param inputSocket  The input socket to accept the output value of the output socket
      * @return True if a valid connection can be made from these two Sockets
      */
     boolean canConnect(OutputSocket<?> outputSocket, InputSocket<?> inputSocket);

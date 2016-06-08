@@ -2,12 +2,13 @@ package edu.wpi.grip.core.sockets;
 
 import com.google.common.base.MoreObjects;
 
-import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.function.Supplier;
+
+import javax.annotation.Nullable;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static org.bytedeco.javacpp.opencv_core.Mat;
@@ -18,7 +19,10 @@ import static org.bytedeco.javacpp.opencv_core.Mat;
  * interface to learn how to talk to <code>Algorithm</code>s.
  */
 public interface SocketHint<T> {
-    enum View {NONE, TEXT, SLIDER, RANGE, SELECT, CHECKBOX}
+
+    enum View {
+        NONE, TEXT, SLIDER, RANGE, SELECT, CHECKBOX
+    }
 
     /**
      * A concrete implementation of the SocketHint class that provides the functionality of a raw SocketHint
@@ -97,11 +101,11 @@ public interface SocketHint<T> {
         @Override
         public String toString() {
             return MoreObjects.toStringHelper(this)
-                    .add("identifier", getIdentifier())
-                    .add("type", getType())
-                    .add("view", getView())
-                    .add("domain", Arrays.toString(getDomain().orElse(null)))
-                    .toString();
+                .add("identifier", getIdentifier())
+                .add("type", getType())
+                .add("view", getView())
+                .add("domain", Arrays.toString(getDomain().orElse(null)))
+                .toString();
         }
     }
 
@@ -248,11 +252,11 @@ public interface SocketHint<T> {
                 initialValueSupplier.orElseThrow(() -> new NoSuchElementException("A View other than `NONE` was supplied but not an initial value"));
             }
             return new BasicSocketHint<>(
-                    this.type,
-                    identifier.orElseThrow(() -> new NoSuchElementException("The identifier was not supplied")),
-                    initialValueSupplier,
-                    view,
-                    domain
+                this.type,
+                identifier.orElseThrow(() -> new NoSuchElementException("The identifier was not supplied")),
+                initialValueSupplier,
+                view,
+                domain
             );
         }
     }

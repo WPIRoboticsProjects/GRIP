@@ -4,16 +4,17 @@ import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Stopwatch;
 import com.google.common.math.IntMath;
 import com.google.common.util.concurrent.AbstractExecutionThreadService;
-import org.bytedeco.javacpp.opencv_core;
-import org.bytedeco.javacv.Frame;
-import org.bytedeco.javacv.FrameGrabber;
-import org.bytedeco.javacv.OpenCVFrameConverter;
 
 import java.io.IOException;
 import java.math.RoundingMode;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
+
+import org.bytedeco.javacpp.opencv_core;
+import org.bytedeco.javacv.Frame;
+import org.bytedeco.javacv.FrameGrabber;
+import org.bytedeco.javacv.OpenCVFrameConverter;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -87,8 +88,9 @@ public class GrabberService extends AbstractExecutionThreadService {
         final long elapsedTime = stopwatch.elapsed(TimeUnit.MILLISECONDS);
         stopwatch.reset();
         stopwatch.start();
-        if (elapsedTime != 0)
+        if (elapsedTime != 0) {
             updater.setFrameRate(IntMath.divide(1000, Math.toIntExact(elapsedTime), RoundingMode.DOWN));
+        }
 
         updater.updatesComplete();
         exceptionClearedCallback.run();

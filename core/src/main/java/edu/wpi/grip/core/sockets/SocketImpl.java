@@ -4,6 +4,7 @@ package edu.wpi.grip.core.sockets;
 import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.eventbus.EventBus;
+
 import edu.wpi.grip.core.Connection;
 import edu.wpi.grip.core.Source;
 import edu.wpi.grip.core.Step;
@@ -19,6 +20,7 @@ import static com.google.common.base.Preconditions.checkState;
 
 /**
  * A concrete implementation of {@link Socket}
+ *
  * @param <T> The type of the value that this socket stores
  */
 public class SocketImpl<T> implements Socket<T> {
@@ -121,9 +123,9 @@ public class SocketImpl<T> implements Socket<T> {
     @Override
     public String toString() {
         return MoreObjects.toStringHelper(this)
-                .add("socketHint", getSocketHint())
-                .add("value", getValue())
-                .add("direction", getDirection())
-                .toString();
+            .add("socketHint", getSocketHint())
+            .add("value", getValue())
+            .add("direction", getDirection())
+            .toString();
     }
 }

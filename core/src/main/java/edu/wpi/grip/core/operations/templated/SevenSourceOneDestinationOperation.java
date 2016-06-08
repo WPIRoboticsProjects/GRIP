@@ -1,6 +1,7 @@
 package edu.wpi.grip.core.operations.templated;
 
 import com.google.common.collect.ImmutableList;
+
 import edu.wpi.grip.core.Operation;
 import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.sockets.OutputSocket;
@@ -27,17 +28,17 @@ final class SevenSourceOneDestinationOperation<T1, T2, T3, T4, T5, T6, T7, R> im
 
     @SuppressWarnings("PMD.ExcessiveParameterList")
     SevenSourceOneDestinationOperation(
-            InputSocket.Factory inputSocketFactory,
-            OutputSocket.Factory outputSocketFactory,
-            SocketHint<T1> t1SocketHint,
-            SocketHint<T2> t2SocketHint,
-            SocketHint<T3> t3SocketHint,
-            SocketHint<T4> t4SocketHint,
-            SocketHint<T5> t5SocketHint,
-            SocketHint<T6> t6SocketHint,
-            SocketHint<T7> t7SocketHint,
-            SocketHint<R> rSocketHint,
-            Performer<T1, T2, T3, T4, T5, T6, T7, R> performer) {
+        InputSocket.Factory inputSocketFactory,
+        OutputSocket.Factory outputSocketFactory,
+        SocketHint<T1> t1SocketHint,
+        SocketHint<T2> t2SocketHint,
+        SocketHint<T3> t3SocketHint,
+        SocketHint<T4> t4SocketHint,
+        SocketHint<T5> t5SocketHint,
+        SocketHint<T6> t6SocketHint,
+        SocketHint<T7> t7SocketHint,
+        SocketHint<R> rSocketHint,
+        Performer<T1, T2, T3, T4, T5, T6, T7, R> performer) {
         this.performer = performer;
         this.input1 = inputSocketFactory.create(t1SocketHint);
         this.input2 = inputSocketFactory.create(t2SocketHint);
@@ -64,14 +65,14 @@ final class SevenSourceOneDestinationOperation<T1, T2, T3, T4, T5, T6, T7, R> im
     @SuppressWarnings("OptionalGetWithoutIsPresent")
     public void perform() {
         performer.perform(
-                input1.getValue().get(),
-                input2.getValue().get(),
-                input3.getValue().get(),
-                input4.getValue().get(),
-                input5.getValue().get(),
-                input6.getValue().get(),
-                input7.getValue().get(),
-                output.getValue().get()
+            input1.getValue().get(),
+            input2.getValue().get(),
+            input3.getValue().get(),
+            input4.getValue().get(),
+            input5.getValue().get(),
+            input6.getValue().get(),
+            input7.getValue().get(),
+            output.getValue().get()
         );
         output.setValue(output.getValue().get());
     }

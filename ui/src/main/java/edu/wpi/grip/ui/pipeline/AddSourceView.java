@@ -2,8 +2,9 @@ package edu.wpi.grip.ui.pipeline;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.eventbus.EventBus;
-import com.google.inject.Inject;
 import com.google.common.net.InetAddresses;
+import com.google.inject.Inject;
+
 import edu.wpi.grip.core.events.SourceAddedEvent;
 import edu.wpi.grip.core.events.UnexpectedThrowableEvent;
 import edu.wpi.grip.core.sources.CameraSource;
@@ -11,19 +12,6 @@ import edu.wpi.grip.core.sources.ImageFileSource;
 import edu.wpi.grip.core.sources.MultiImageFileSource;
 import edu.wpi.grip.ui.util.DPIUtility;
 import edu.wpi.grip.ui.util.SupplierWithIO;
-import javafx.application.Platform;
-import javafx.event.EventHandler;
-import javafx.scene.Parent;
-import javafx.scene.control.*;
-import javafx.scene.image.ImageView;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Priority;
-import javafx.scene.text.Text;
-import javafx.scene.text.TextAlignment;
-import javafx.stage.FileChooser;
-import javafx.stage.FileChooser.ExtensionFilter;
 
 import java.io.File;
 import java.io.IOException;
@@ -34,6 +22,27 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
+
+import javafx.application.Platform;
+import javafx.event.EventHandler;
+import javafx.scene.Parent;
+import javafx.scene.control.Button;
+import javafx.scene.control.ButtonBar;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.ContentDisplay;
+import javafx.scene.control.Control;
+import javafx.scene.control.Dialog;
+import javafx.scene.control.Spinner;
+import javafx.scene.control.TextField;
+import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.text.Text;
+import javafx.scene.text.TextAlignment;
+import javafx.stage.FileChooser;
+import javafx.stage.FileChooser.ExtensionFilter;
 
 /**
  * A box of buttons that let the user add different kinds of {@link edu.wpi.grip.core.Source Source}s.  Depending on which button is pressed,
@@ -80,11 +89,10 @@ public class AddSourceView extends HBox {
         AddSourceView create();
     }
 
-    @Inject
-    AddSourceView(EventBus eventBus,
-                  MultiImageFileSource.Factory multiImageSourceFactory,
-                  ImageFileSource.Factory imageSourceFactory,
-                  CameraSource.Factory cameraSourceFactory) {
+    @Inject AddSourceView(EventBus eventBus,
+                          MultiImageFileSource.Factory multiImageSourceFactory,
+                          ImageFileSource.Factory imageSourceFactory,
+                          CameraSource.Factory cameraSourceFactory) {
         this.eventBus = eventBus;
         this.multiImageSourceFactory = multiImageSourceFactory;
         this.imageSourceFactory = imageSourceFactory;
@@ -106,12 +114,14 @@ public class AddSourceView extends HBox {
                     "*.pbm", "*.pgm", "*.ppm",  // Portable image format
                     "*.sr", "*.ras",            // Sun rasters
                     "*.tiff", "*.tif"           // TIFF files
-                    ),
+                ),
                 new ExtensionFilter("All Files", "*.*"));
 
             final List<File> imageFiles = fileChooser.showOpenMultipleDialog(this.getScene().getWindow());
 
-            if (imageFiles == null) return;
+            if (imageFiles == null) {
+                return;
+            }
 
             // Add a new source for each image .
             if (imageFiles.size() == 1) {
@@ -148,14 +158,14 @@ public class AddSourceView extends HBox {
 
             // If the user clicks OK, add a new camera source
             loadCamera(dialog,
-                    () -> {
-                        final CameraSource cameraSource = cameraSourceFactory.create(cameraIndex.getValue());
-                        cameraSource.initialize();
-                        return cameraSource;
-                    },
-                    e -> {
-                        dialog.errorText.setText(e.getMessage());
-                    });
+                () -> {
+                    final CameraSource cameraSource = cameraSourceFactory.create(cameraIndex.getValue());
+                    cameraSource.initialize();
+                    return cameraSource;
+                },
+                e -> {
+                    dialog.errorText.setText(e.getMessage());
+                });
         });
 
         ipcamButton = addButton("Add IP\nCamera", getClass().getResource("/edu/wpi/grip/ui/icons/add-webcam.png"), mouseEvent -> {
@@ -192,14 +202,14 @@ public class AddSourceView extends HBox {
 
             // If the user clicks OK, add a new camera source
             loadCamera(dialog,
-                    () -> {
-                        final CameraSource cameraSource = cameraSourceFactory.create(cameraAddress.getText());
-                        cameraSource.initialize();
-                        return cameraSource;
-                    },
-                    e -> {
-                        dialog.errorText.setText(e.getMessage());
-                    });
+                () -> {
+                    final CameraSource cameraSource = cameraSourceFactory.create(cameraAddress.getText());
+                    cameraSource.initialize();
+                    return cameraSource;
+                },
+                e -> {
+                    dialog.errorText.setText(e.getMessage());
+                });
         });
     }
 
@@ -256,9 +266,9 @@ public class AddSourceView extends HBox {
     @VisibleForTesting
     void closeDialogs() {
         activeDialog.ifPresent(dialog -> {
-            for ( ButtonType bt : dialog.getDialogPane().getButtonTypes() ) {
-                if ( bt.getButtonData() == ButtonBar.ButtonData.CANCEL_CLOSE ) {
-                    Button cancelButton = ( Button ) dialog.getDialogPane().lookupButton( bt );
+            for (ButtonType bt : dialog.getDialogPane().getButtonTypes()) {
+                if (bt.getButtonData() == ButtonBar.ButtonData.CANCEL_CLOSE) {
+                    Button cancelButton = (Button) dialog.getDialogPane().lookupButton(bt);
                     Platform.runLater(() -> cancelButton.fire());
                     break;
                 }

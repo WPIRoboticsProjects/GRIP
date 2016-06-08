@@ -10,6 +10,7 @@ import com.google.common.util.concurrent.AbstractScheduledService;
 import com.google.common.util.concurrent.MoreExecutors;
 import com.google.inject.Provider;
 import com.google.inject.Singleton;
+
 import edu.wpi.grip.core.events.RenderEvent;
 import edu.wpi.grip.core.events.RunPipelineEvent;
 import edu.wpi.grip.core.events.StopPipelineEvent;
@@ -18,13 +19,14 @@ import edu.wpi.grip.core.util.service.AutoRestartingService;
 import edu.wpi.grip.core.util.service.LoggingListener;
 import edu.wpi.grip.core.util.service.RestartableService;
 
-import javax.annotation.Nullable;
-import javax.inject.Inject;
 import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.function.Supplier;
 import java.util.logging.Logger;
+
+import javax.annotation.Nullable;
+import javax.inject.Inject;
 
 /**
  * Runs the pipeline in a separate thread.
@@ -43,8 +45,7 @@ public class PipelineRunner implements RestartableService {
     private final AutoRestartingService pipelineService;
 
 
-    @Inject
-    PipelineRunner(EventBus eventBus, Provider<Pipeline> pipelineProvider) {
+    @Inject PipelineRunner(EventBus eventBus, Provider<Pipeline> pipelineProvider) {
         this(eventBus, () -> pipelineProvider.get().getSources(), () -> pipelineProvider.get().getSteps());
     }
 
@@ -52,36 +53,40 @@ public class PipelineRunner implements RestartableService {
         this.sourceSupplier = sourceSupplier;
         this.stepSupplier = stepSupplier;
         this.pipelineService = new AutoRestartingService<>(
-                () -> new AbstractScheduledService() {
+            () -> new AbstractScheduledService() {
 
-                    /**
-                     *
-                     * @throws InterruptedException This should never happen.
-                     */
-                    @Override
-                    protected void runOneIteration() throws InterruptedException {
-                        if (!super.isRunning()) return;
-
-                        pipelineFlag.acquire();
-
-                        if (!super.isRunning()) return;
-                        runPipeline(super::isRunning);
-                        // This should not block access to the steps array
-                        if (super.isRunning()) {
-                            eventBus.post(new RenderEvent());
-                        }
+                /**
+                 *
+                 * @throws InterruptedException This should never happen.
+                 */
+                @Override
+                protected void runOneIteration() throws InterruptedException {
+                    if (!super.isRunning()) {
+                        return;
                     }
 
-                    @Override
-                    protected Scheduler scheduler() {
-                        return Scheduler.newFixedRateSchedule(0, 1, TimeUnit.MILLISECONDS);
-                    }
+                    pipelineFlag.acquire();
 
-                    @Override
-                    protected String serviceName() {
-                        return "Pipeline Runner Service";
+                    if (!super.isRunning()) {
+                        return;
+                    }
+                    runPipeline(super::isRunning);
+                    // This should not block access to the steps array
+                    if (super.isRunning()) {
+                        eventBus.post(new RenderEvent());
                     }
                 }
+
+                @Override
+                protected Scheduler scheduler() {
+                    return Scheduler.newFixedRateSchedule(0, 1, TimeUnit.MILLISECONDS);
+                }
+
+                @Override
+                protected String serviceName() {
+                    return "Pipeline Runner Service";
+                }
+            }
         );
         this.pipelineService.addListener(new LoggingListener(logger, PipelineRunner.class), MoreExecutors.directExecutor());
     }

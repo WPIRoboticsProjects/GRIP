@@ -3,13 +3,16 @@ package edu.wpi.grip.ui.preview;
 import com.google.common.eventbus.EventBus;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import edu.wpi.grip.core.sockets.OutputSocket;
+
 import edu.wpi.grip.core.operations.composite.BlobsReport;
 import edu.wpi.grip.core.operations.composite.ContoursReport;
 import edu.wpi.grip.core.operations.composite.LinesReport;
-import edu.wpi.grip.ui.util.GRIPPlatform;
+import edu.wpi.grip.core.sockets.OutputSocket;
+import edu.wpi.grip.ui.util.GripPlatform;
 
-import static org.bytedeco.javacpp.opencv_core.*;
+import static org.bytedeco.javacpp.opencv_core.Mat;
+import static org.bytedeco.javacpp.opencv_core.Point;
+import static org.bytedeco.javacpp.opencv_core.Size;
 
 
 /**
@@ -19,10 +22,9 @@ import static org.bytedeco.javacpp.opencv_core.*;
 public class SocketPreviewViewFactory {
 
     private final EventBus eventBus;
-    private final GRIPPlatform platform;
+    private final GripPlatform platform;
 
-    @Inject
-    SocketPreviewViewFactory(EventBus eventBus, GRIPPlatform gripPlatform) {
+    @Inject SocketPreviewViewFactory(EventBus eventBus, GripPlatform gripPlatform) {
         this.eventBus = eventBus;
         this.platform = gripPlatform;
     }

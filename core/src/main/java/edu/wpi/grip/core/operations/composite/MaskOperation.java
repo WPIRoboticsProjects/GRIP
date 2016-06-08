@@ -1,6 +1,7 @@
 package edu.wpi.grip.core.operations.composite;
 
 import com.google.common.collect.ImmutableList;
+
 import edu.wpi.grip.core.Operation;
 import edu.wpi.grip.core.OperationDescription;
 import edu.wpi.grip.core.sockets.InputSocket;
@@ -20,12 +21,12 @@ import static org.bytedeco.javacpp.opencv_core.bitwise_xor;
 public class MaskOperation implements Operation {
 
     public static final OperationDescription DESCRIPTION =
-            OperationDescription.builder()
-                    .name("Mask")
-                    .summary("Filter out an area of interest in an image using a binary mask.")
-                    .category(OperationDescription.Category.IMAGE_PROCESSING)
-                    .icon(Icon.iconStream("mask"))
-                    .build();
+        OperationDescription.builder()
+            .name("Mask")
+            .summary("Filter out an area of interest in an image using a binary mask.")
+            .category(OperationDescription.Category.IMAGE_PROCESSING)
+            .icon(Icon.iconStream("mask"))
+            .build();
 
     private final SocketHint<Mat> inputHint = SocketHints.Inputs.createMatSocketHint("Input", false);
     private final SocketHint<Mat> maskHint = SocketHints.Inputs.createMatSocketHint("Mask", false);
@@ -48,15 +49,15 @@ public class MaskOperation implements Operation {
     @Override
     public List<InputSocket> getInputSockets() {
         return ImmutableList.of(
-                inputSocket,
-                maskSocket
+            inputSocket,
+            maskSocket
         );
     }
 
     @Override
     public List<OutputSocket> getOutputSockets() {
         return ImmutableList.of(
-                outputSocket
+            outputSocket
         );
     }
 

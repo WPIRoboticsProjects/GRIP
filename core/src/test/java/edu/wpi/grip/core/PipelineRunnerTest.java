@@ -5,6 +5,7 @@ import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import com.google.common.util.concurrent.MoreExecutors;
 import com.google.common.util.concurrent.Service;
+
 import edu.wpi.grip.core.events.ExceptionEvent;
 import edu.wpi.grip.core.events.RenderEvent;
 import edu.wpi.grip.core.events.RunPipelineEvent;
@@ -13,17 +14,19 @@ import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.sockets.MockInputSocket;
 import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.core.util.MockExceptionWitness;
-import net.jodah.concurrentunit.Waiter;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.experimental.runners.Enclosed;
-import org.junit.runner.RunWith;
 
 import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+
+import net.jodah.concurrentunit.Waiter;
+
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.experimental.runners.Enclosed;
+import org.junit.runner.RunWith;
 
 import static com.google.common.truth.Truth.assertThat;
 import static junit.framework.Assert.assertNull;
@@ -96,6 +99,7 @@ public class PipelineRunnerTest {
                     throw new IllegalArgumentException(illegalAugmentExceptionMessage);
                 }
             }
+
             final Operation operation = new OperationThatThrowsExceptionOnPerform();
             final OperationMetaData operationMetaData = new OperationMetaData(OperationDescription.builder().name("OperationThatThrowsExceptionOnPerform").build(), () -> operation);
             class ExceptionEventReceiver {
@@ -108,6 +112,7 @@ public class PipelineRunnerTest {
                     callCount++;
                 }
             }
+
             final ExceptionEventReceiver exceptionEventReceiver = new ExceptionEventReceiver();
             eventBus.register(exceptionEventReceiver);
             eventBus.register(new RenderWaiterResumer(renderWaiter));
@@ -205,8 +210,8 @@ public class PipelineRunnerTest {
         @SuppressWarnings("PMD.AvoidDuplicateLiterals")
         public void testRemovedStepWillNotRun() {
             final PipelineRunner runner = new PipelineRunner(eventBus,
-                    () -> ImmutableList.of(),
-                    () -> ImmutableList.of(runCounterStep));
+                () -> ImmutableList.of(),
+                () -> ImmutableList.of(runCounterStep));
             runner.addListener(failureListener, MoreExecutors.directExecutor());
 
             runner.startAsync().awaitRunning();
@@ -330,19 +335,19 @@ public class PipelineRunnerTest {
 
     interface SimpleOperation extends Operation {
         OperationDescription DESCRIPTION = OperationDescription.builder()
-                .name("Simple Operation")
-                .summary("A simple operation for testing")
-                .build();
+            .name("Simple Operation")
+            .summary("A simple operation for testing")
+            .build();
 
         @Override
         default List<InputSocket> getInputSockets() {
             return ImmutableList.of(
-                    new MockInputSocket("Test Socket") {
-                        @Override
-                        public boolean dirtied() {
-                            return true;
-                        }
+                new MockInputSocket("Test Socket") {
+                    @Override
+                    public boolean dirtied() {
+                        return true;
                     }
+                }
             );
         }
 

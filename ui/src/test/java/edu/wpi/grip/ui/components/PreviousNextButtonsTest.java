@@ -1,9 +1,11 @@
 package edu.wpi.grip.ui.components;
 
 import edu.wpi.grip.core.PreviousNext;
+
 import javafx.scene.Scene;
 import javafx.scene.control.ToggleButton;
 import javafx.stage.Stage;
+
 import org.junit.Ignore;
 import org.junit.Test;
 import org.testfx.framework.junit.ApplicationTest;

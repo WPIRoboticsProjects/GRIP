@@ -8,7 +8,12 @@ import com.github.javaparser.ast.expr.FieldAccessExpr;
 import com.github.javaparser.ast.expr.NormalAnnotationExpr;
 import com.github.javaparser.ast.type.PrimitiveType;
 import com.github.javaparser.ast.type.Type;
-import edu.wpi.gripgenerator.defaults.*;
+
+import edu.wpi.gripgenerator.defaults.DefaultValue;
+import edu.wpi.gripgenerator.defaults.EnumDefaultValue;
+import edu.wpi.gripgenerator.defaults.NullDefaultValue;
+import edu.wpi.gripgenerator.defaults.ObjectDefaultValue;
+import edu.wpi.gripgenerator.defaults.PrimitiveDefaultValue;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -61,6 +66,7 @@ public class DefinedParamType {
 
     /**
      * Used for testing only.
+     *
      * @param type
      * @param param
      */
@@ -70,8 +76,7 @@ public class DefinedParamType {
     }
 
     /**
-     *
-     * @param type The type of param that this should match
+     * @param type      The type of param that this should match
      * @param direction The direction of the param. Will override whatever defaults are set by the method collector
      */
     public DefinedParamType(String type, DefinedParamDirection direction) {
@@ -106,10 +111,6 @@ public class DefinedParamType {
     void setParamAs(Parameter param) {
         checkNotNull(param);
         this.parameter = Optional.of(param);
-//        System.out.println("Param: " + param);
-//        System.out.println("Param w/out comments: " + param.toStringWithoutComments());
-//        System.out.println("Comment: " + param.getComment());
-//        System.out.println("Orphan Comments: " + param.getOrphanComments());
         Pattern defaultPrimitive = Pattern.compile(".*=([\\-a-zA-Z0-9_\\.]*.*)");
         Pattern defaultEnumPrimitive = Pattern.compile(".*=(?:cv::)([\\-a-zA-Z0-9_\\.]*.*)");
 
@@ -144,7 +145,9 @@ public class DefinedParamType {
     }
 
     private Type getRealType() {
-        if (parameter.isPresent()) return parameter.get().getType();
+        if (parameter.isPresent()) {
+            return parameter.get().getType();
+        }
         return createReferenceType(type, 0);
     }
 
@@ -163,10 +166,10 @@ public class DefinedParamType {
         if (parameter.isPresent() && parameter.get().getAnnotations() != null) {
             Parameter param = parameter.get();
             return param.getAnnotations().stream()
-                    .filter(a -> (a.getName().getName().equals("ByVal") || a.getName().getName().equals("ByRef")))
-                    .filter(a -> a instanceof NormalAnnotationExpr)
-                    .map(a -> (NormalAnnotationExpr) a)
-                    .collect(Collectors.toList());
+                .filter(a -> (a.getName().getName().equals("ByVal") || a.getName().getName().equals("ByRef")))
+                .filter(a -> a instanceof NormalAnnotationExpr)
+                .map(a -> (NormalAnnotationExpr) a)
+                .collect(Collectors.toList());
         }
         return Collections.emptyList();
     }
@@ -197,10 +200,13 @@ public class DefinedParamType {
 
     /**
      * Gets the direction of this param it hasn't been assigned prior to calling this method then it is assigned by this call.
+     *
      * @return The direction of this param.
      */
     public DefinedParamDirection getDirection() {
-        if (direction.isPresent()) return direction.get();
+        if (direction.isPresent()) {
+            return direction.get();
+        }
         direction = Optional.of(DefinedParamDirection.INPUT);
         return direction.get();
     }
@@ -220,9 +226,9 @@ public class DefinedParamType {
             return new FieldAccessExpr(createNameExpr(getName()), "value");
         } else if (isIgnored()) {
             return getDefaultValue()
-                    .orElseThrow(() -> new IllegalStateException("Default Value was not present for ignored param " + this.toString()))
-                    .getDefaultValue(this.literalDefaultValue
-                            .orElseThrow(() -> new IllegalStateException("Literal Default Value was not defined for ignored param " + this.toString())));
+                .orElseThrow(() -> new IllegalStateException("Default Value was not present for ignored param " + this.toString()))
+                .getDefaultValue(this.literalDefaultValue
+                    .orElseThrow(() -> new IllegalStateException("Literal Default Value was not defined for ignored param " + this.toString())));
         } else {
             return createNameExpr(getName());
         }

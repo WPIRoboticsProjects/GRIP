@@ -1,13 +1,16 @@
 package edu.wpi.grip.ui.preview;
 
 import com.google.common.eventbus.Subscribe;
-import edu.wpi.grip.core.sockets.OutputSocket;
+
 import edu.wpi.grip.core.events.RenderEvent;
-import edu.wpi.grip.ui.util.GRIPPlatform;
+import edu.wpi.grip.core.sockets.OutputSocket;
+import edu.wpi.grip.ui.util.GripPlatform;
+
 import javafx.application.Platform;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
+
 import org.bytedeco.javacpp.IntPointer;
 
 import static org.bytedeco.javacpp.opencv_core.Point;
@@ -18,13 +21,14 @@ import static org.bytedeco.javacpp.opencv_core.Size;
  */
 public class PointSizeSocketPreviewView<T extends IntPointer> extends SocketPreviewView<T> {
 
-    private final TextField x, y;
-    private final GRIPPlatform platform;
+    private final TextField x;
+    private final TextField y;
+    private final GripPlatform platform;
 
     /**
-     * @param socket   An output socket to preview
+     * @param socket An output socket to preview
      */
-     PointSizeSocketPreviewView(GRIPPlatform platform, OutputSocket<T> socket) {
+    PointSizeSocketPreviewView(GripPlatform platform, OutputSocket<T> socket) {
         super(socket);
         this.platform = platform;
 

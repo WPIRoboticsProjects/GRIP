@@ -1,16 +1,19 @@
 package edu.wpi.grip.ui.components;
 
 import com.google.common.util.concurrent.AbstractIdleService;
+
 import edu.wpi.grip.core.util.service.AutoRestartingService;
 import edu.wpi.grip.core.util.service.RestartableService;
+
+import java.util.concurrent.TimeUnit;
+
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+
 import org.junit.Test;
 import org.testfx.framework.junit.ApplicationTest;
 import org.testfx.matcher.base.NodeMatchers;
 import org.testfx.util.WaitForAsyncUtils;
-
-import java.util.concurrent.TimeUnit;
 
 import static junit.framework.TestCase.assertFalse;
 import static junit.framework.TestCase.assertTrue;

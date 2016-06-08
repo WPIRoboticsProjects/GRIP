@@ -1,12 +1,18 @@
 package edu.wpi.grip.ui;
 
 import com.google.common.base.Throwables;
+
 import javafx.application.HostServices;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.scene.Node;
 import javafx.scene.Parent;
-import javafx.scene.control.*;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
+import javafx.scene.control.ButtonBar;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextArea;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.layout.GridPane;
@@ -20,15 +26,14 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * Also, provides links with quick access to the githup issue page.
  */
 public final class ExceptionAlert extends Alert {
-    private static final String PROJECT_ISSUE_LINK = "https://github.com/WPIRoboticsProjects/GRIP/issues/new?body=Ple" +
-            "ase%20describe%20what%20actions%20we%20can%20take%20to%20reproduce%20the%20bug%20you%20found%2C%20includ" +
-            "ing%20the%20error%20message.";
+    private static final String PROJECT_ISSUE_LINK = "https://github.com/WPIRoboticsProjects/GRIP/issues/new?body="
+        + "Please%20describe%20what%20actions%20we%20can%20take%20to%20reproduce%20the%20bug%20you%20found%2C%20including%20the%20error%20message.";
 
-    private static final String ISSUE_PROMPT_TEXT = "An exception occurred!  Please open an issue on the project " +
-            "GitHub.\nWe value your feedback and want to hear about the problems you encounter.";
+    private static final String ISSUE_PROMPT_TEXT = "An exception occurred!  Please open an issue on the project GitHub.\n"
+        + "We value your feedback and want to hear about the problems you encounter.";
 
-    private static final String systemProperties[] = {
-            "java.version", "javafx.version", "os.name", "os.version", "os.arch",
+    private static final String[] systemProperties = {
+        "java.version", "javafx.version", "os.name", "os.version", "os.arch",
     };
 
     private static final ButtonType COPY = new ButtonType("Copy to Clipboard");
@@ -50,8 +55,8 @@ public final class ExceptionAlert extends Alert {
 
         final ButtonType closeBtnType = new ButtonType(isFatal ? "Quit" : "Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
 
-        String exceptionMessage = generateExceptionMessage(throwable);
-        String systemInfoMessage = generateSystemInfoMessage();
+        final String exceptionMessage = generateExceptionMessage(throwable);
+        final String systemInfoMessage = generateSystemInfoMessage();
 
         this.setTitle(getInitialCause(throwable).getClass().getSimpleName());
         this.setHeaderText((isFatal ? "FATAL: " : "") + message);
@@ -139,9 +144,9 @@ public final class ExceptionAlert extends Alert {
      */
     private String generateExceptionMessage(Throwable throwable) {
         return new StringBuilder(Throwables.getStackTraceAsString(throwable)
-                /* Allow users to maintain anonymity */
-                .replace(System.getProperty("user.home"), "$HOME").replace(System.getProperty("user.name"), "$USER"))
-                .insert(0, "## Stack Trace:\n```java\n").append("\n```").toString();
+            /* Allow users to maintain anonymity */
+            .replace(System.getProperty("user.home"), "$HOME").replace(System.getProperty("user.name"), "$USER"))
+            .insert(0, "## Stack Trace:\n```java\n").append("\n```").toString();
     }
 
     /**

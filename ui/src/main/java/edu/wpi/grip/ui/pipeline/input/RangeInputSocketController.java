@@ -3,16 +3,19 @@ package edu.wpi.grip.ui.pipeline.input;
 import com.google.common.eventbus.Subscribe;
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
-import edu.wpi.grip.core.sockets.InputSocket;
+
 import edu.wpi.grip.core.events.SocketChangedEvent;
+import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.ui.pipeline.SocketHandleView;
+
+import java.util.List;
+
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
-import org.controlsfx.control.RangeSlider;
 
-import java.util.List;
+import org.controlsfx.control.RangeSlider;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
@@ -31,20 +34,19 @@ public class RangeInputSocketController extends InputSocketController<List<Numbe
      * @param socket An <code>InputSocket</code> with a domain containing two <code>Number</code>s (the min and max
      *               slider values)
      */
-    @Inject
-    RangeInputSocketController(SocketHandleView.Factory socketHandleViewFactory, @Assisted InputSocket<List<Number>> socket) {
+    @Inject RangeInputSocketController(SocketHandleView.Factory socketHandleViewFactory, @Assisted InputSocket<List<Number>> socket) {
         super(socketHandleViewFactory, socket);
 
         final Object[] domain = socket.getSocketHint().getDomain().get();
         final List<Number> initialValue = socket.getValue().get();
 
         checkArgument(domain.length == 1 && domain[0] instanceof List,
-                "Sliders must have a domain with a list of two numbers (min and max)");
+            "Sliders must have a domain with a list of two numbers (min and max)");
 
         @SuppressWarnings("unchecked")
         final List<Number> extremes = (List<Number>) domain[0];
         checkArgument(extremes.size() == 2 && extremes.get(0) instanceof Number && extremes.get(1) instanceof Number,
-                "Sliders must have a domain with a list of two numbers (min and max)");
+            "Sliders must have a domain with a list of two numbers (min and max)");
 
         checkArgument(initialValue.size() == 2, "Range sliders must contain two values (low and high)");
 
@@ -86,9 +88,9 @@ public class RangeInputSocketController extends InputSocketController<List<Numbe
         label.setMaxWidth(Double.MAX_VALUE);
         label.setAlignment(Pos.CENTER);
         this.slider.lowValueProperty().addListener(observable ->
-                label.setText(getLowHighLabelText()));
+            label.setText(getLowHighLabelText()));
         this.slider.highValueProperty().addListener(observable ->
-                label.setText(getLowHighLabelText()));
+            label.setText(getLowHighLabelText()));
 
 
         this.setContent(new VBox(this.slider, label));

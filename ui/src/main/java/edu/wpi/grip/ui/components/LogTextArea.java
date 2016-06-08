@@ -1,6 +1,7 @@
 package edu.wpi.grip.ui.components;
 
 import com.google.common.annotations.VisibleForTesting;
+
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.scene.control.TextArea;

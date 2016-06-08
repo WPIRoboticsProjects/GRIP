@@ -2,8 +2,9 @@ package edu.wpi.grip.core;
 
 import com.google.common.base.MoreObjects;
 
-import javax.annotation.concurrent.Immutable;
 import java.util.function.Supplier;
+
+import javax.annotation.concurrent.Immutable;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -44,8 +45,8 @@ public class OperationMetaData {
     @Override
     public String toString() {
         return MoreObjects.toStringHelper(OperationMetaData.class)
-                .add("description", description)
-                .add("operationSupplier", operationSupplier)
-                .toString();
+            .add("description", description)
+            .add("operationSupplier", operationSupplier)
+            .toString();
     }
 }

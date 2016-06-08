@@ -1,15 +1,18 @@
 package edu.wpi.grip.ui.util;
 
 import com.google.common.primitives.UnsignedBytes;
+
+import java.nio.ByteBuffer;
+import java.nio.IntBuffer;
+
 import javafx.application.Platform;
 import javafx.scene.image.Image;
 import javafx.scene.image.PixelFormat;
 import javafx.scene.image.WritableImage;
 
-import java.nio.ByteBuffer;
-import java.nio.IntBuffer;
-
-import static org.bytedeco.javacpp.opencv_core.*;
+import static org.bytedeco.javacpp.opencv_core.CV_8S;
+import static org.bytedeco.javacpp.opencv_core.CV_8U;
+import static org.bytedeco.javacpp.opencv_core.Mat;
 
 /**
  * Utility class for creating a JavaFX image from an OpenCV image.  This used by the preview views to render an image
@@ -38,7 +41,7 @@ public final class ImageConverter {
          * If we are changing it while it is being rendered by the UI thread this could cause
          * a problem in the UI thread.
          */
-        if(!Platform.isFxApplicationThread()) {
+        if (!Platform.isFxApplicationThread()) {
             throw new IllegalStateException("This modifies an FX object. This must be run in the UI Thread");
         }
 
@@ -47,10 +50,10 @@ public final class ImageConverter {
         final int channels = mat.channels();
 
         assert channels == 3 || channels == 1 :
-                "Only 3-channel BGR images or single-channel grayscale images can be converted";
+            "Only 3-channel BGR images or single-channel grayscale images can be converted";
 
         assert mat.depth() == CV_8U || mat.depth() == CV_8S :
-                "Only images with 8 bits per channel can be previewed";
+            "Only images with 8 bits per channel can be previewed";
 
         // Don't try to render empty images.
         if (mat.empty()) {
@@ -92,6 +95,8 @@ public final class ImageConverter {
                 }
 
                 break;
+            default:
+                throw new UnsupportedOperationException("Only 1 or 3 channel images can be shown, tried to show a " + channels + " channel image");
         }
 
         final PixelFormat<IntBuffer> argb = PixelFormat.getIntArgbInstance();

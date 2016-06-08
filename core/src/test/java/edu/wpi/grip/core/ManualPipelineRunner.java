@@ -8,7 +8,7 @@ import com.google.common.eventbus.EventBus;
 public final class ManualPipelineRunner extends PipelineRunner {
 
     public ManualPipelineRunner(EventBus eventBus, Pipeline pipeline) {
-        super(eventBus, ()-> pipeline);
+        super(eventBus, () -> pipeline);
         // This is fine because it is in a test
         eventBus.register(this);
     }

@@ -5,14 +5,34 @@ import com.github.javaparser.ast.body.ModifierSet;
 import com.github.javaparser.ast.body.VariableDeclarator;
 import com.github.javaparser.ast.body.VariableDeclaratorId;
 import com.github.javaparser.ast.comments.BlockComment;
-import com.github.javaparser.ast.expr.*;
+import com.github.javaparser.ast.expr.ArrayAccessExpr;
+import com.github.javaparser.ast.expr.ArrayCreationExpr;
+import com.github.javaparser.ast.expr.ArrayInitializerExpr;
+import com.github.javaparser.ast.expr.CastExpr;
+import com.github.javaparser.ast.expr.EnclosedExpr;
+import com.github.javaparser.ast.expr.Expression;
+import com.github.javaparser.ast.expr.IntegerLiteralExpr;
+import com.github.javaparser.ast.expr.MethodCallExpr;
+import com.github.javaparser.ast.expr.NameExpr;
+import com.github.javaparser.ast.expr.ObjectCreationExpr;
+import com.github.javaparser.ast.expr.VariableDeclarationExpr;
 import com.github.javaparser.ast.stmt.BlockStmt;
 import com.github.javaparser.ast.stmt.ReturnStmt;
-import com.github.javaparser.ast.type.*;
+import com.github.javaparser.ast.type.ClassOrInterfaceType;
+import com.github.javaparser.ast.type.PrimitiveType;
+import com.github.javaparser.ast.type.ReferenceType;
+import com.github.javaparser.ast.type.Type;
+import com.github.javaparser.ast.type.WildcardType;
+
 import edu.wpi.gripgenerator.defaults.DefaultValueCollector;
 import edu.wpi.gripgenerator.settings.DefinedParamType;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class SocketHintDeclarationCollection {
     //Kept around to define the order of the params.
@@ -61,16 +81,16 @@ public class SocketHintDeclarationCollection {
 
     private ArrayAccessExpr arrayAccessExpr(String paramId, int index) {
         return new ArrayAccessExpr(
-                new NameExpr(paramId),
-                new IntegerLiteralExpr(String.valueOf(index))
+            new NameExpr(paramId),
+            new IntegerLiteralExpr(String.valueOf(index))
         );
     }
 
     private MethodCallExpr getOrSetValueExpression(Expression scope, Expression setExpression) {
         return new MethodCallExpr(
-                scope,
-                (setExpression == null ? "getValue" : "setValue"),
-                (setExpression == null ? Collections.emptyList() : Collections.singletonList(setExpression))
+            scope,
+            (setExpression == null ? "getValue" : "setValue"),
+            (setExpression == null ? Collections.emptyList() : Collections.singletonList(setExpression))
         );
     }
 
@@ -86,36 +106,36 @@ public class SocketHintDeclarationCollection {
         inputType.setTypeArgs(Collections.singletonList(type.getType()));
 
         final MethodCallExpr copyExpression = new MethodCallExpr(
-                new MethodCallExpr(
-                        getOrSetValueExpression(
-                                new EnclosedExpr(
-                                        new CastExpr(
-                                                inputType,
-                                                arrayAccessExpr(inputParmId, inputIndex)
-                                        )
-                                ),
-                                null
-                        ),
-                        "get"
-                ),
-                "assignTo",
-                Collections.singletonList(
-                        new MethodCallExpr(
-                                getOrSetValueExpression(
-                                        new EnclosedExpr(
-                                                new CastExpr(
-                                                        outputType,
-                                                        arrayAccessExpr(outputParamId, outputIndex)
-                                                )
-                                        ),
-                                        null
-                                ),
-                                "get"
+            new MethodCallExpr(
+                getOrSetValueExpression(
+                    new EnclosedExpr(
+                        new CastExpr(
+                            inputType,
+                            arrayAccessExpr(inputParmId, inputIndex)
                         )
+                    ),
+                    null
+                ),
+                "get"
+            ),
+            "assignTo",
+            Collections.singletonList(
+                new MethodCallExpr(
+                    getOrSetValueExpression(
+                        new EnclosedExpr(
+                            new CastExpr(
+                                outputType,
+                                arrayAccessExpr(outputParamId, outputIndex)
+                            )
+                        ),
+                        null
+                    ),
+                    "get"
                 )
+            )
         );
         copyExpression.setComment(new BlockComment(
-                " Sets the value of the input Mat to the output because this operation does not have a destination Mat. "
+            " Sets the value of the input Mat to the output because this operation does not have a destination Mat. "
         ));
         return copyExpression;
     }
@@ -126,14 +146,16 @@ public class SocketHintDeclarationCollection {
         int outputIndex = 0;
         for (DefinedParamType paramType : paramTypes) {
             // We still need to increment the values if the param is ignored
-            if (paramType.isIgnored()) continue;
+            if (paramType.isIgnored()) {
+                continue;
+            }
 
             int index;
             String paramId;
             if (inputParamTypes.contains(paramType) && outputParamTypes.contains(paramType)) {
                 if (paramType.getType().toStringWithoutComments().contains("Mat")) {
                     assignments.add(
-                            generateCopyExpression(paramType, inputParamId, inputParamTypes.indexOf(paramType), outputParamId, outputParamTypes.indexOf(paramType))
+                        generateCopyExpression(paramType, inputParamId, inputParamTypes.indexOf(paramType), outputParamId, outputParamTypes.indexOf(paramType))
                     );
                 } else {
                     throw new IllegalStateException("Can not generate Input/Output Socket for type: " + paramType.getType().toString());
@@ -185,30 +207,30 @@ public class SocketHintDeclarationCollection {
                         throw new IllegalStateException("Conversion for type " + paramType.getType() + " is not defined");
                 }
                 assignExpression = new MethodCallExpr(
-                        new EnclosedExpr(
-                                new CastExpr(
-                                        ASTHelper.createReferenceType("Number", 0),
-                                        getValueExpression
-                                )
-                        ),
-                        numberConversionFunction
+                    new EnclosedExpr(
+                        new CastExpr(
+                            ASTHelper.createReferenceType("Number", 0),
+                            getValueExpression
+                        )
+                    ),
+                    numberConversionFunction
                 );
             } else {
                 assignExpression = new CastExpr(
-                        paramType.getTypeBoxedIfPossible(),
-                        getValueExpression
+                    paramType.getTypeBoxedIfPossible(),
+                    getValueExpression
                 );
             }
 
             assignments.add(
-                    new VariableDeclarationExpr(
-                            ModifierSet.FINAL,
-                            paramType.getType(),
-                            Collections.singletonList(
-                                    new VariableDeclarator(
-                                            new VariableDeclaratorId(paramType.getName()), assignExpression)
-                            )
+                new VariableDeclarationExpr(
+                    ModifierSet.FINAL,
+                    paramType.getType(),
+                    Collections.singletonList(
+                        new VariableDeclarator(
+                            new VariableDeclaratorId(paramType.getName()), assignExpression)
                     )
+                )
             );
         }
         return assignments;
@@ -217,21 +239,23 @@ public class SocketHintDeclarationCollection {
     public ObjectCreationExpr getSocketListParam(DefinedParamType definedParamType, ClassOrInterfaceType socketType, String inputOrOutputPostfix) {
         //System.out.println("Generating for default " + (definedParamType.getDefaultValue().isPresent() ? definedParamType.getDefaultValue().get().getName().toString() : "null"));
         return new ObjectCreationExpr(null, socketType, Arrays.asList(
-                new NameExpr("eventBus"),
-                new NameExpr(definedParamType.getName() + inputOrOutputPostfix + SocketHintDeclaration.HINT_POSTFIX)
+            new NameExpr("eventBus"),
+            new NameExpr(definedParamType.getName() + inputOrOutputPostfix + SocketHintDeclaration.HINT_POSTFIX)
         ));
     }
 
     private BlockStmt getInputOrOutputSocketBody(List<DefinedParamType> paramTypes, ClassOrInterfaceType socketType, String inputOrOutputPostfix) {
         List<Expression> passedExpressions = new ArrayList<>();
         for (DefinedParamType inputParam : paramTypes) {
-            if (inputParam.isIgnored()) continue;
+            if (inputParam.isIgnored()) {
+                continue;
+            }
             passedExpressions.add(getSocketListParam(inputParam, socketType, inputOrOutputPostfix));
         }
         BlockStmt returnStatement = new BlockStmt(
-                Arrays.asList(new ReturnStmt(
-                        new ArrayCreationExpr(socketType, 1, new ArrayInitializerExpr(passedExpressions)))
-                )
+            Arrays.asList(new ReturnStmt(
+                new ArrayCreationExpr(socketType, 1, new ArrayInitializerExpr(passedExpressions)))
+            )
         );
         return returnStatement;
     }

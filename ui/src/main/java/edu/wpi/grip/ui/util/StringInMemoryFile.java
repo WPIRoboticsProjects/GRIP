@@ -1,11 +1,11 @@
 package edu.wpi.grip.ui.util;
 
-import net.schmizz.sshj.xfer.InMemorySourceFile;
-
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+
+import net.schmizz.sshj.xfer.InMemorySourceFile;
 
 /**
  * A "file" that can be transfered uses SSHJ's scp routines, but is backed by an in-memory string instead of an actual
@@ -13,7 +13,7 @@ import java.nio.charset.StandardCharsets;
  */
 public class StringInMemoryFile extends InMemorySourceFile {
     private final String name;
-    private final byte [] contentsBytes;
+    private final byte[] contentsBytes;
     private final int permissions;
 
     public StringInMemoryFile(String name, String contents, int permissions) {

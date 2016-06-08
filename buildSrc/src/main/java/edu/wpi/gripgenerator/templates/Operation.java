@@ -4,21 +4,42 @@ import com.github.javaparser.ASTHelper;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.ImportDeclaration;
 import com.github.javaparser.ast.PackageDeclaration;
-import com.github.javaparser.ast.body.*;
+import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
+import com.github.javaparser.ast.body.MethodDeclaration;
+import com.github.javaparser.ast.body.ModifierSet;
+import com.github.javaparser.ast.body.Parameter;
+import com.github.javaparser.ast.body.VariableDeclarator;
+import com.github.javaparser.ast.body.VariableDeclaratorId;
 import com.github.javaparser.ast.comments.BlockComment;
 import com.github.javaparser.ast.comments.JavadocComment;
-import com.github.javaparser.ast.expr.*;
-import com.github.javaparser.ast.stmt.*;
+import com.github.javaparser.ast.expr.AnnotationExpr;
+import com.github.javaparser.ast.expr.Expression;
+import com.github.javaparser.ast.expr.MarkerAnnotationExpr;
+import com.github.javaparser.ast.expr.MethodCallExpr;
+import com.github.javaparser.ast.expr.NameExpr;
+import com.github.javaparser.ast.expr.SingleMemberAnnotationExpr;
+import com.github.javaparser.ast.expr.StringLiteralExpr;
+import com.github.javaparser.ast.expr.VariableDeclarationExpr;
+import com.github.javaparser.ast.stmt.BlockStmt;
+import com.github.javaparser.ast.stmt.ExpressionStmt;
+import com.github.javaparser.ast.stmt.ForeachStmt;
+import com.github.javaparser.ast.stmt.ReturnStmt;
+import com.github.javaparser.ast.stmt.Statement;
 import com.github.javaparser.ast.type.ClassOrInterfaceType;
 import com.github.javaparser.ast.type.VoidType;
 import com.google.common.base.Ascii;
 import com.google.common.base.CaseFormat;
 import com.google.common.collect.Sets;
+
 import edu.wpi.gripgenerator.defaults.DefaultValueCollector;
 import edu.wpi.gripgenerator.settings.DefinedMethod;
 import edu.wpi.gripgenerator.settings.DefinedParamType;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static com.github.javaparser.ASTHelper.createReferenceType;
@@ -54,6 +75,7 @@ public class Operation {
 
     /**
      * Gets the CamelCase formatted name version of the class name.
+     *
      * @return The name to be used as the Class and file name.
      */
     public String getOperationClassName() {
@@ -61,9 +83,9 @@ public class Operation {
         final CaseFormat format;
         if (name.contains("_")) {
             format = CaseFormat.LOWER_UNDERSCORE;
-        } else if(Ascii.isLowerCase(name.charAt(0))) {
+        } else if (Ascii.isLowerCase(name.charAt(0))) {
             format = CaseFormat.LOWER_CAMEL;
-        } else if(Ascii.isUpperCase(name.charAt(0))){
+        } else if (Ascii.isUpperCase(name.charAt(0))) {
             format = CaseFormat.UPPER_CAMEL;
         } else {
             throw new UnsupportedOperationException("Can not convert class name for " + name);
@@ -84,18 +106,18 @@ public class Operation {
      */
     private MethodDeclaration getNameMethod() {
         MethodDeclaration getName = new MethodDeclaration(
-                ModifierSet.PUBLIC,
-                Collections.singletonList(OVERRIDE_ANNOTATION),
-                null,
-                createReferenceType("String", 0),
-                "getName",
-                null, 0,
-                null,
-                null
+            ModifierSet.PUBLIC,
+            Collections.singletonList(OVERRIDE_ANNOTATION),
+            null,
+            createReferenceType("String", 0),
+            "getName",
+            null, 0,
+            null,
+            null
         );
         BlockStmt methodBody = new BlockStmt(
-                Collections.singletonList(new ReturnStmt(
-                        new StringLiteralExpr("CV " + definedMethod.getMethodName())))
+            Collections.singletonList(new ReturnStmt(
+                new StringLiteralExpr("CV " + definedMethod.getMethodName())))
         );
         getName.setBody(methodBody);
         return getName;
@@ -108,18 +130,18 @@ public class Operation {
      */
     private MethodDeclaration getDescriptionMethod() {
         MethodDeclaration getDescription = new MethodDeclaration(
-                ModifierSet.PUBLIC,
-                Collections.singletonList(OVERRIDE_ANNOTATION),
-                null,
-                createReferenceType("String", 0),
-                "getDescription",
-                null, 0,
-                null,
-                null
+            ModifierSet.PUBLIC,
+            Collections.singletonList(OVERRIDE_ANNOTATION),
+            null,
+            createReferenceType("String", 0),
+            "getDescription",
+            null, 0,
+            null,
+            null
         );
         BlockStmt methodBody = new BlockStmt(
-                Collections.singletonList(new ReturnStmt(
-                        new StringLiteralExpr(this.definedMethod.getDescription())))
+            Collections.singletonList(new ReturnStmt(
+                new StringLiteralExpr(this.definedMethod.getDescription())))
         );
         getDescription.setBody(methodBody);
         return getDescription;
@@ -127,14 +149,14 @@ public class Operation {
 
     private MethodDeclaration getCategoryMethod() {
         MethodDeclaration getCategory = new MethodDeclaration(
-                ModifierSet.PUBLIC,
-                Collections.singletonList(OVERRIDE_ANNOTATION),
-                null,
-                createReferenceType("Category", 0),
-                "getCategory",
-                null, 0,
-                null,
-                null
+            ModifierSet.PUBLIC,
+            Collections.singletonList(OVERRIDE_ANNOTATION),
+            null,
+            createReferenceType("Category", 0),
+            "getCategory",
+            null, 0,
+            null,
+            null
         );
         getCategory.setBody(new BlockStmt(Collections.singletonList(new ReturnStmt(new NameExpr("Category.OPENCV")))));
         return getCategory;
@@ -147,17 +169,17 @@ public class Operation {
      */
     private MethodDeclaration getCreateInputSocketsMethod() {
         return new MethodDeclaration(
-                ModifierSet.PUBLIC,
-                Arrays.asList(OVERRIDE_ANNOTATION, SUPPRESS_ANNOTATION),
-                null,
-                SocketHintDeclarationCollection.getSocketReturnParam("InputSocket"),
-                "createInputSockets",
-                Collections.singletonList(
-                        new Parameter(createReferenceType("EventBus", 0), new VariableDeclaratorId("eventBus"))
-                ),
-                0,
-                null,
-                socketHintDeclarationCollection.getInputSocketBody()
+            ModifierSet.PUBLIC,
+            Arrays.asList(OVERRIDE_ANNOTATION, SUPPRESS_ANNOTATION),
+            null,
+            SocketHintDeclarationCollection.getSocketReturnParam("InputSocket"),
+            "createInputSockets",
+            Collections.singletonList(
+                new Parameter(createReferenceType("EventBus", 0), new VariableDeclaratorId("eventBus"))
+            ),
+            0,
+            null,
+            socketHintDeclarationCollection.getInputSocketBody()
         );
     }
 
@@ -168,26 +190,26 @@ public class Operation {
      */
     private MethodDeclaration getCreateOutputSocketsMethod() {
         return new MethodDeclaration(
-                ModifierSet.PUBLIC,
-                Arrays.asList(OVERRIDE_ANNOTATION, SUPPRESS_ANNOTATION),
-                null,
-                SocketHintDeclarationCollection.getSocketReturnParam("OutputSocket"),
-                "createOutputSockets",
-                Collections.singletonList(
-                        new Parameter(createReferenceType("EventBus", 0), new VariableDeclaratorId("eventBus"))
-                ),
-                0,
-                null,
-                socketHintDeclarationCollection.getOutputSocketBody()
+            ModifierSet.PUBLIC,
+            Arrays.asList(OVERRIDE_ANNOTATION, SUPPRESS_ANNOTATION),
+            null,
+            SocketHintDeclarationCollection.getSocketReturnParam("OutputSocket"),
+            "createOutputSockets",
+            Collections.singletonList(
+                new Parameter(createReferenceType("EventBus", 0), new VariableDeclaratorId("eventBus"))
+            ),
+            0,
+            null,
+            socketHintDeclarationCollection.getOutputSocketBody()
         );
     }
 
 
     private Expression getFunctionCallExpression() {
         return new MethodCallExpr(
-                new NameExpr(definedMethod.getParentObjectName()),
-                definedMethod.getMethodName(),
-                operationParams.stream().map(DefinedParamType::getLiteralExpression).collect(Collectors.toList())
+            new NameExpr(definedMethod.getParentObjectName()),
+            definedMethod.getMethodName(),
+            operationParams.stream().map(DefinedParamType::getLiteralExpression).collect(Collectors.toList())
         );
     }
 
@@ -206,44 +228,44 @@ public class Operation {
         final String outputSocketForEachVariableId = "outputSocket";
 
         performStatement.addAll(
-                Arrays.asList(
-                                /* Make the operation function call */
-                        new ExpressionStmt(
-                                getFunctionCallExpression()
-                        ),
-                                /*
-                                 * Afterwards iterate over all of the output sockets and call setValue using the value
-                                 * stored.
-                                 */
-                        new ForeachStmt(
-                                new VariableDeclarationExpr(
-                                        0,
-                                        ASTHelper.createReferenceType("OutputSocket", 0),
-                                        Collections.singletonList(
-                                                new VariableDeclarator(
-                                                        new VariableDeclaratorId(outputSocketForEachVariableId)
-                                                )
-                                        )
-                                ),
-                                new NameExpr(outputParamId),
-                                new BlockStmt(
-                                        Collections.singletonList(
-                                                new ExpressionStmt(
-                                                        new MethodCallExpr(
-                                                                new NameExpr(outputSocketForEachVariableId),
-                                                                "setValueOptional",
-                                                                Collections.singletonList(
-                                                                        new MethodCallExpr(
-                                                                                new NameExpr(outputSocketForEachVariableId),
-                                                                                "getValue"
-                                                                        )
-                                                                )
-                                                        )
-                                                )
-                                        )
-                                )
+            Arrays.asList(
+                /* Make the operation function call */
+                new ExpressionStmt(
+                    getFunctionCallExpression()
+                ),
+                /*
+                 * Afterwards iterate over all of the output sockets and call setValue using the value
+                 * stored.
+                 */
+                new ForeachStmt(
+                    new VariableDeclarationExpr(
+                        0,
+                        ASTHelper.createReferenceType("OutputSocket", 0),
+                        Collections.singletonList(
+                            new VariableDeclarator(
+                                new VariableDeclaratorId(outputSocketForEachVariableId)
+                            )
                         )
+                    ),
+                    new NameExpr(outputParamId),
+                    new BlockStmt(
+                        Collections.singletonList(
+                            new ExpressionStmt(
+                                new MethodCallExpr(
+                                    new NameExpr(outputSocketForEachVariableId),
+                                    "setValueOptional",
+                                    Collections.singletonList(
+                                        new MethodCallExpr(
+                                            new NameExpr(outputSocketForEachVariableId),
+                                            "getValue"
+                                        )
+                                    )
+                                )
+                            )
+                        )
+                    )
                 )
+            )
         );
 
 
@@ -254,20 +276,20 @@ public class Operation {
         String inputParamId = "inputs";
         String outputParamId = "outputs";
         return new MethodDeclaration(
-                ModifierSet.PUBLIC,
-                Arrays.asList(OVERRIDE_ANNOTATION),
-                null,
-                new VoidType(),
-                "perform",
-                Arrays.asList(
-                        new Parameter(SocketHintDeclarationCollection.getSocketReturnParam("InputSocket"), new VariableDeclaratorId(inputParamId)),
-                        new Parameter(SocketHintDeclarationCollection.getSocketReturnParam("OutputSocket"), new VariableDeclaratorId(outputParamId))
-                ),
-                0,
-                null,
-                new BlockStmt(
-                        getPerformExpressionList(inputParamId, outputParamId)
-                )
+            ModifierSet.PUBLIC,
+            Arrays.asList(OVERRIDE_ANNOTATION),
+            null,
+            new VoidType(),
+            "perform",
+            Arrays.asList(
+                new Parameter(SocketHintDeclarationCollection.getSocketReturnParam("InputSocket"), new VariableDeclaratorId(inputParamId)),
+                new Parameter(SocketHintDeclarationCollection.getSocketReturnParam("OutputSocket"), new VariableDeclaratorId(outputParamId))
+            ),
+            0,
+            null,
+            new BlockStmt(
+                getPerformExpressionList(inputParamId, outputParamId)
+            )
         );
     }
 
@@ -277,21 +299,19 @@ public class Operation {
      * @return
      */
     private ClassOrInterfaceDeclaration getClassDeclaration() {
-//        System.out.println("Generating: " + getOperationClassName());
-//        System.out.println(definedMethod.methodToString());
         ClassOrInterfaceDeclaration operation = new ClassOrInterfaceDeclaration(ModifierSet.PUBLIC, false, getOperationClassName());
         operation.setImplements(Collections.singletonList(iOperation));
         operation.setJavaDoc(javadocComment);
         operation.setComment(new BlockComment(
-                " * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *\n" +
-                        " * ===== THIS CODE HAS BEEN DYNAMICALLY GENERATED! DO NOT MODIFY! ==== *\n" +
-                        " * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * "));
+            " * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *\n"
+                + " * ===== THIS CODE HAS BEEN DYNAMICALLY GENERATED! DO NOT MODIFY! ==== *\n"
+                + " * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * "));
         operation.setMembers(socketHintDeclarationCollection
-                .getAllSocketHints()
-                .stream()
-                .map(SocketHintDeclaration::getDeclaration)
-                .filter(declaration -> declaration != null)
-                .collect(Collectors.toList()));
+            .getAllSocketHints()
+            .stream()
+            .map(SocketHintDeclaration::getDeclaration)
+            .filter(declaration -> declaration != null)
+            .collect(Collectors.toList()));
         ASTHelper.addMember(operation, getNameMethod());
         ASTHelper.addMember(operation, getDescriptionMethod());
         ASTHelper.addMember(operation, getCategoryMethod());
@@ -308,16 +328,16 @@ public class Operation {
      */
     public CompilationUnit getDeclaration() {
         Set<ImportDeclaration> importList = Sets.newHashSet(
-                OPERATION_IMPORT,
-                CV_CORE_IMPORT,
-                SOCKETS_IMPORT,
-                EVENT_BUS_IMPORT
+            OPERATION_IMPORT,
+            CV_CORE_IMPORT,
+            SOCKETS_IMPORT,
+            EVENT_BUS_IMPORT
         );
         importList.addAll(getAdditionalImports());
         return new CompilationUnit(
-                packageDec,
-                new ArrayList<>(importList),
-                Collections.singletonList(getClassDeclaration())
+            packageDec,
+            new ArrayList<>(importList),
+            Collections.singletonList(getClassDeclaration())
         );
     }
 }

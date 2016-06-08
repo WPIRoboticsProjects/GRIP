@@ -1,14 +1,13 @@
 package edu.wpi.grip.core.operations.composite;
 
 import com.google.common.collect.ImmutableList;
+
 import edu.wpi.grip.core.Operation;
 import edu.wpi.grip.core.OperationDescription;
 import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.core.sockets.SocketHints;
 import edu.wpi.grip.core.util.Icon;
-import org.bytedeco.javacpp.BytePointer;
-import org.bytedeco.javacpp.IntPointer;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -18,6 +17,9 @@ import java.net.Socket;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import org.bytedeco.javacpp.BytePointer;
+import org.bytedeco.javacpp.IntPointer;
 
 import static org.bytedeco.javacpp.opencv_core.Mat;
 import static org.bytedeco.javacpp.opencv_imgcodecs.CV_IMWRITE_JPEG_QUALITY;
@@ -33,12 +35,12 @@ import static org.bytedeco.javacpp.opencv_imgcodecs.imencode;
 public class PublishVideoOperation implements Operation {
 
     public static final OperationDescription DESCRIPTION =
-            OperationDescription.builder()
-                    .name("Publish Video")
-                    .summary("Publish an M_JPEG stream to the dashboard.")
-                    .category(OperationDescription.Category.NETWORK)
-                    .icon(Icon.iconStream("publish-video"))
-                    .build();
+        OperationDescription.builder()
+            .name("Publish Video")
+            .summary("Publish an M_JPEG stream to the dashboard.")
+            .category(OperationDescription.Category.NETWORK)
+            .icon(Icon.iconStream("publish-video"))
+            .build();
 
     private final Logger logger = Logger.getLogger(PublishVideoOperation.class.getName());
 
@@ -106,7 +108,9 @@ public class PublishVideoOperation implements Operation {
 
                             // Copy the image data into a pre-allocated buffer, growing it if necessary
                             bufferSize = imagePointer.limit();
-                            if (bufferSize > buffer.length) buffer = new byte[imagePointer.limit()];
+                            if (bufferSize > buffer.length) {
+                                buffer = new byte[imagePointer.limit()];
+                            }
                             imagePointer.get(buffer, 0, bufferSize);
                         }
 
@@ -140,8 +144,8 @@ public class PublishVideoOperation implements Operation {
     @Override
     public List<InputSocket> getInputSockets() {
         return ImmutableList.of(
-                inputSocket,
-                qualitySocket
+            inputSocket,
+            qualitySocket
         );
     }
 
@@ -173,6 +177,6 @@ public class PublishVideoOperation implements Operation {
     public synchronized void cleanUp() {
         // Stop the video server if there are no Publish Video steps left
         serverThread.interrupt();
-        numSteps --;
+        numSteps--;
     }
 }

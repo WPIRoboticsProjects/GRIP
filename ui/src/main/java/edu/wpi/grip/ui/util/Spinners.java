@@ -1,15 +1,15 @@
 package edu.wpi.grip.ui.util;
 
 
+import java.text.NumberFormat;
+import java.text.ParsePosition;
+import java.util.Optional;
+
 import javafx.scene.control.Spinner;
 import javafx.scene.control.SpinnerValueFactory;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextFormatter;
 import javafx.util.StringConverter;
-
-import java.text.NumberFormat;
-import java.text.ParsePosition;
-import java.util.Optional;
 
 /**
  * Utility methods to set up spinners in a safe way.

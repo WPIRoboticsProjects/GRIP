@@ -2,8 +2,10 @@ package edu.wpi.grip.core.sockets;
 
 
 import com.google.common.eventbus.EventBus;
+
 import edu.wpi.grip.core.Connection;
 import edu.wpi.grip.core.MockConnection;
+
 import org.junit.Before;
 import org.junit.Test;
 
@@ -46,8 +48,8 @@ public class LinkedSocketHintTest {
         final InputSocket connectedLinkedInputSocket = linkedSocketHint.linkedInputSocket("A");
 
         final Connection connection = new MockConnection<>(eventBus,
-                (outputSocket, inputSocket) -> true,
-                booleanOutputSocket, connectedLinkedInputSocket);
+            (outputSocket, inputSocket) -> true,
+            booleanOutputSocket, connectedLinkedInputSocket);
         connectedLinkedInputSocket.addConnection(connection);
 
         // Then

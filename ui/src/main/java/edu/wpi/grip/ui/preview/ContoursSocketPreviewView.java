@@ -1,11 +1,13 @@
 package edu.wpi.grip.ui.preview;
 
 import com.google.common.eventbus.Subscribe;
-import edu.wpi.grip.core.sockets.OutputSocket;
+
 import edu.wpi.grip.core.events.RenderEvent;
 import edu.wpi.grip.core.operations.composite.ContoursReport;
-import edu.wpi.grip.ui.util.GRIPPlatform;
+import edu.wpi.grip.core.sockets.OutputSocket;
+import edu.wpi.grip.ui.util.GripPlatform;
 import edu.wpi.grip.ui.util.ImageConverter;
+
 import javafx.application.Platform;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
@@ -13,7 +15,10 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
 
-import static org.bytedeco.javacpp.opencv_core.*;
+import static org.bytedeco.javacpp.opencv_core.CV_8UC3;
+import static org.bytedeco.javacpp.opencv_core.Mat;
+import static org.bytedeco.javacpp.opencv_core.Scalar;
+import static org.bytedeco.javacpp.opencv_core.bitwise_xor;
 import static org.bytedeco.javacpp.opencv_imgproc.drawContours;
 
 /**
@@ -27,21 +32,21 @@ public final class ContoursSocketPreviewView extends SocketPreviewView<ContoursR
     private final Label infoLabel = new Label();
     private final CheckBox colorContours;
     private final Mat tmp = new Mat();
-    private final GRIPPlatform platform;
+    private final GripPlatform platform;
 
-    private final static Scalar[] CONTOUR_COLORS = new Scalar[]{
-            Scalar.RED,
-            Scalar.YELLOW,
-            Scalar.GREEN,
-            Scalar.CYAN,
-            Scalar.BLUE,
-            Scalar.MAGENTA,
+    private static final Scalar[] CONTOUR_COLORS = new Scalar[] {
+        Scalar.RED,
+        Scalar.YELLOW,
+        Scalar.GREEN,
+        Scalar.CYAN,
+        Scalar.BLUE,
+        Scalar.MAGENTA,
     };
 
     /**
-     * @param socket   An output socket to preview
+     * @param socket An output socket to preview
      */
-    public ContoursSocketPreviewView(GRIPPlatform platform, OutputSocket<ContoursReport> socket) {
+    public ContoursSocketPreviewView(GripPlatform platform, OutputSocket<ContoursReport> socket) {
         super(socket);
         this.platform = platform;
         this.colorContours = new CheckBox("Color Contours");

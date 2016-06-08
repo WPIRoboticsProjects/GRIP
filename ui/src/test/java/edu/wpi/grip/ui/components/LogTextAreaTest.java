@@ -3,6 +3,7 @@ package edu.wpi.grip.ui.components;
 
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
 import org.testfx.framework.junit.ApplicationTest;
@@ -38,7 +39,7 @@ public class LogTextAreaTest extends ApplicationTest {
 
     @Test
     public void testAddingReallyLongLineOfText() {
-        final String INITIAL_TEXT = StringUtils.rightPad("Initial string", LogTextArea.MAX_STRING_LENGTH - 3 , "Long\n");
+        final String INITIAL_TEXT = StringUtils.rightPad("Initial string", LogTextArea.MAX_STRING_LENGTH - 3, "Long\n");
         logTextArea.addLineToLog(INITIAL_TEXT);
         assertEquals("Text was not added to logger", INITIAL_TEXT + "\n", logTextArea.getText());
     }

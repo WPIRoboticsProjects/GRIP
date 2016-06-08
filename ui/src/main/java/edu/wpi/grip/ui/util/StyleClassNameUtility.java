@@ -36,6 +36,19 @@ public final class StyleClassNameUtility {
     }
 
     /**
+     * Return the CSS class name for a connection.
+     *
+     * @param connection The connection to get the class name for.
+     * @return The CSS class for the connection in the pipeline. To use as a css selector then prepend the string with a '.'
+     */
+    public static String classNameFor(Connection connection) {
+        return "connection-"
+            + connection.getOutputSocket().getSocketHint().getIdentifier()
+            + "-to-"
+            + connection.getInputSocket().getSocketHint().getIdentifier();
+    }
+
+    /**
      * Return the CSS Class name for a {@link Step} that holds this {@link Operation}
      *
      * @param operation The operation to get the step's class name for
@@ -53,26 +66,12 @@ public final class StyleClassNameUtility {
         return ".pipeline ." + classNameForStepHolding(operation) + " .socket-handle.input";
     }
 
-
     public static String cssSelectorForOutputSocketHandleOn(Step step) {
         return cssSelectorForOutputSocketHandleOnStepHolding(step.getOperationDescription());
     }
 
     public static String cssSelectorForInputSocketHandleOn(Step step) {
         return cssSelectorForInputSocketHandleOnStepHolding(step.getOperationDescription());
-    }
-
-    /**
-     * Return the CSS class name for a connection.
-     *
-     * @param connection The connection to get the class name for.
-     * @return The CSS class for the connection in the pipeline. To use as a css selector then prepend the string with a '.'
-     */
-    public static String classNameFor(Connection connection) {
-        return "connection-" +
-                connection.getOutputSocket().getSocketHint().getIdentifier()
-                + "-to-" +
-                connection.getInputSocket().getSocketHint().getIdentifier();
     }
 
     private static StringBuilder shortNameFor(OperationDescription operationDescription) {

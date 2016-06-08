@@ -3,16 +3,24 @@ package edu.wpi.grip.ui.util;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
+
 import edu.wpi.grip.ui.Controller;
+
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
-
-import java.util.*;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -101,6 +109,13 @@ public final class ControllerMap<C extends Controller, N extends Node> implement
     }
 
     /**
+     * @see List#add(Object)
+     */
+    public boolean add(C controller) {
+        return add(size(), controller);
+    }
+
+    /**
      * Adds all of the Nodes from this collection of controllers to the observable list at the
      * specified index in the Observable List
      *
@@ -112,13 +127,6 @@ public final class ControllerMap<C extends Controller, N extends Node> implement
     public boolean addAll(int index, Collection<C> controllers) {
         controllerNodeMap.putAll(controllers.stream().collect(Collectors.toMap(Function.identity(), c -> (N) c.getRoot())));
         return addAllNodesToObservable(index, (List<N>) controllers.stream().map(Controller::getRoot).collect(Collectors.toList()));
-    }
-
-    /**
-     * @see List#add(Object)
-     */
-    public boolean add(C controller) {
-        return add(size(), controller);
     }
 
     /**
@@ -241,7 +249,6 @@ public final class ControllerMap<C extends Controller, N extends Node> implement
     }
 
     /**
-     *
      * @return An unmodifiable set of of values for this map.
      */
     @Override

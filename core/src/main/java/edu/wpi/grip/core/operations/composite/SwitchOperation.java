@@ -2,6 +2,7 @@ package edu.wpi.grip.core.operations.composite;
 
 
 import com.google.common.collect.ImmutableList;
+
 import edu.wpi.grip.core.Operation;
 import edu.wpi.grip.core.OperationDescription;
 import edu.wpi.grip.core.sockets.InputSocket;
@@ -20,11 +21,11 @@ import java.util.List;
 public class SwitchOperation implements Operation {
 
     public static final OperationDescription DESCRIPTION =
-            OperationDescription.builder()
-                    .name("Switch")
-                    .summary("Switch between two possible input sockets using a boolean")
-                    .category(OperationDescription.Category.LOGICAL)
-                    .build();
+        OperationDescription.builder()
+            .name("Switch")
+            .summary("Switch between two possible input sockets using a boolean")
+            .category(OperationDescription.Category.LOGICAL)
+            .build();
 
     private final InputSocket<Boolean> switcherSocket;
     private final InputSocket inputSocket1; // Intentionally using raw types
@@ -46,16 +47,16 @@ public class SwitchOperation implements Operation {
     @Override
     public List<InputSocket> getInputSockets() {
         return ImmutableList.of(
-                switcherSocket,
-                inputSocket1,
-                inputSocket2
+            switcherSocket,
+            inputSocket1,
+            inputSocket2
         );
     }
 
     @Override
     public List<OutputSocket> getOutputSockets() {
         return ImmutableList.of(
-                outputSocket
+            outputSocket
         );
     }
 

@@ -1,6 +1,7 @@
 package edu.wpi.grip.core.operations.composite;
 
 import com.google.common.collect.ImmutableList;
+
 import edu.wpi.grip.core.Operation;
 import edu.wpi.grip.core.OperationDescription;
 import edu.wpi.grip.core.sockets.InputSocket;
@@ -19,23 +20,23 @@ import java.util.stream.Collectors;
 public class FilterLinesOperation implements Operation {
 
     public static final OperationDescription DESCRIPTION =
-            OperationDescription.builder()
-                    .name("Filter Lines")
-                    .summary("Filter only lines from a Find Lines operation that fit certain criteria")
-                    .category(OperationDescription.Category.FEATURE_DETECTION)
-                    .icon(Icon.iconStream("filter-lines"))
-                    .build();
+        OperationDescription.builder()
+            .name("Filter Lines")
+            .summary("Filter only lines from a Find Lines operation that fit certain criteria")
+            .category(OperationDescription.Category.FEATURE_DETECTION)
+            .icon(Icon.iconStream("filter-lines"))
+            .build();
 
     private final SocketHint<LinesReport> inputHint =
-            new SocketHint.Builder<>(LinesReport.class).identifier("Lines").build();
+        new SocketHint.Builder<>(LinesReport.class).identifier("Lines").build();
 
     private final SocketHint<Number> minLengthHint = SocketHints.Inputs.createNumberSpinnerSocketHint("Min Length", 20);
 
     private final SocketHint<List<Number>> angleHint = SocketHints.Inputs.createNumberListRangeSocketHint("Angle", 0, 360);
 
     private final SocketHint<LinesReport> outputHint =
-            new SocketHint.Builder<>(LinesReport.class)
-                    .identifier("Lines").initialValueSupplier(LinesReport::new).build();
+        new SocketHint.Builder<>(LinesReport.class)
+            .identifier("Lines").initialValueSupplier(LinesReport::new).build();
 
 
     private final InputSocket<LinesReport> inputSocket;
@@ -55,16 +56,16 @@ public class FilterLinesOperation implements Operation {
     @Override
     public List<InputSocket> getInputSockets() {
         return ImmutableList.of(
-                inputSocket,
-                minLengthSocket,
-                angleSocket
+            inputSocket,
+            minLengthSocket,
+            angleSocket
         );
     }
 
     @Override
     public List<OutputSocket> getOutputSockets() {
         return ImmutableList.of(
-                linesOutputSocket
+            linesOutputSocket
         );
     }
 
@@ -77,10 +78,10 @@ public class FilterLinesOperation implements Operation {
         final double maxAngle = angleSocket.getValue().get().get(1).doubleValue();
 
         List<LinesReport.Line> lines = inputLines.getLines().stream()
-                .filter(line -> line.lengthSquared() >= minLengthSquared)
-                .filter(line -> (line.angle() >= minAngle && line.angle() <= maxAngle)
-                        || (line.angle() + 180.0 >= minAngle && line.angle() + 180.0 <= maxAngle))
-                .collect(Collectors.toList());
+            .filter(line -> line.lengthSquared() >= minLengthSquared)
+            .filter(line -> (line.angle() >= minAngle && line.angle() <= maxAngle)
+                || (line.angle() + 180.0 >= minAngle && line.angle() + 180.0 <= maxAngle))
+            .collect(Collectors.toList());
 
         linesOutputSocket.setValue(new LinesReport(inputLines.getLineSegmentDetector(), inputLines.getInput(), lines));
     }

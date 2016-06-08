@@ -3,17 +3,19 @@ package edu.wpi.grip.ui.pipeline.input;
 import com.google.common.eventbus.Subscribe;
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
-import edu.wpi.grip.core.sockets.InputSocket;
+
 import edu.wpi.grip.core.events.SocketChangedEvent;
+import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.ui.pipeline.SocketHandleView;
-import edu.wpi.grip.ui.util.GRIPPlatform;
+import edu.wpi.grip.ui.util.GripPlatform;
 import edu.wpi.grip.ui.util.Spinners;
+
+import java.text.NumberFormat;
+
 import javafx.beans.InvalidationListener;
 import javafx.fxml.FXML;
 import javafx.scene.control.Spinner;
 import javafx.scene.control.SpinnerValueFactory;
-
-import java.text.NumberFormat;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
@@ -22,11 +24,11 @@ import static com.google.common.base.Preconditions.checkArgument;
  */
 public class NumberSpinnerInputSocketController extends InputSocketController<Number> {
 
-    private final static Number[] DEFAULT_DOMAIN = new Double[]{-Double.MAX_VALUE, Double.MAX_VALUE};
+    private static final Number[] DEFAULT_DOMAIN = new Double[] {-Double.MAX_VALUE, Double.MAX_VALUE};
 
     private final SpinnerValueFactory<Double> valueFactory;
     private final InvalidationListener updateSocketFromSpinner;
-    private final GRIPPlatform platform;
+    private final GripPlatform platform;
 
     public interface Factory {
         NumberSpinnerInputSocketController create(InputSocket<Number> socket);
@@ -36,8 +38,7 @@ public class NumberSpinnerInputSocketController extends InputSocketController<Nu
      * @param socket An <code>InputSocket</code> with a domain containing two <code>Number</code>s (the min and max
      *               slider values), or no domain at all.
      */
-    @Inject
-    NumberSpinnerInputSocketController(SocketHandleView.Factory socketHandleViewFactory, GRIPPlatform platform, @Assisted InputSocket<Number> socket) {
+    @Inject NumberSpinnerInputSocketController(SocketHandleView.Factory socketHandleViewFactory, GripPlatform platform, @Assisted InputSocket<Number> socket) {
         super(socketHandleViewFactory, socket);
         this.platform = platform;
 
@@ -58,7 +59,7 @@ public class NumberSpinnerInputSocketController extends InputSocketController<Nu
         super.initialize();
         final Spinner<Double> spinner = new Spinner<>(this.valueFactory);
         Spinners.makeEditableSafely(spinner, NumberFormat.getNumberInstance(),
-                getSocket().getSocketHint().createInitialValue().get().doubleValue());
+            getSocket().getSocketHint().createInitialValue().get().doubleValue());
         spinner.disableProperty().bind(this.getHandle().connectedProperty());
 
         this.setContent(spinner);

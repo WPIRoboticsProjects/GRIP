@@ -1,13 +1,15 @@
 package edu.wpi.grip.core;
 
 import com.google.common.eventbus.Subscribe;
+
 import edu.wpi.grip.core.events.OperationAddedEvent;
 
-import javax.inject.Singleton;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
+
+import javax.inject.Singleton;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -24,14 +26,15 @@ public class Palette {
     public void onOperationAdded(OperationAddedEvent event) {
         final OperationMetaData operation = event.getOperation();
         map(operation.getDescription().name(), operation);
-        for(String alias : operation.getDescription().aliases()) {
+        for (String alias : operation.getDescription().aliases()) {
             map(alias, operation);
         }
     }
 
     /**
      * Maps the key to the given operation
-     * @param key The key the operation should be mapped to
+     *
+     * @param key       The key the operation should be mapped to
      * @param operation The operation to map the key to
      * @throws IllegalArgumentException if the key is already in the {@link #operations} map.
      */

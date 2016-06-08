@@ -2,8 +2,9 @@ package edu.wpi.grip.core.events;
 
 import edu.wpi.grip.core.util.ExceptionWitness;
 
-import javax.annotation.Nullable;
 import java.util.Optional;
+
+import javax.annotation.Nullable;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 

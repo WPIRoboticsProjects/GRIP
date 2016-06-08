@@ -1,9 +1,9 @@
 package edu.wpi.grip.core.operations.network;
 
 
-import org.junit.Test;
-
 import java.util.Optional;
+
+import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 
@@ -16,7 +16,7 @@ public class NetworkPublisherTest {
         }
 
         @Override
-        public void close(){
+        public void close() {
             /* no-op */
         }
     }

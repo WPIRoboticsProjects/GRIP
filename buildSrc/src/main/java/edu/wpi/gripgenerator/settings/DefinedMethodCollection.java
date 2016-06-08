@@ -4,11 +4,19 @@ import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
+
 import edu.wpi.gripgenerator.defaults.DefaultValueCollector;
 import edu.wpi.gripgenerator.templates.Operation;
 import edu.wpi.gripgenerator.templates.OperationList;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public class DefinedMethodCollection {
@@ -53,12 +61,13 @@ public class DefinedMethodCollection {
 
     /**
      * Gets the default direction for a given param's Variable Identifier
+     *
      * @param check The Variable identifier to check
      * @return The direction this has been mapped to
      */
     public Optional<DefinedParamType.DefinedParamDirection> getDefaultDirection(String check) {
-        for(DefinedParamType.DefinedParamDirection direction : DefinedParamType.DefinedParamDirection.values()){
-            if(directionDefault.getOrDefault(direction, Collections.EMPTY_SET).contains(check)){
+        for (DefinedParamType.DefinedParamDirection direction : DefinedParamType.DefinedParamDirection.values()) {
+            if (directionDefault.getOrDefault(direction, Collections.EMPTY_SET).contains(check)) {
                 return Optional.of(direction);
             }
         }

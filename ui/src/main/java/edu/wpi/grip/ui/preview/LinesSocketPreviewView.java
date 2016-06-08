@@ -1,11 +1,15 @@
 package edu.wpi.grip.ui.preview;
 
 import com.google.common.eventbus.Subscribe;
-import edu.wpi.grip.core.sockets.OutputSocket;
+
 import edu.wpi.grip.core.events.RenderEvent;
 import edu.wpi.grip.core.operations.composite.LinesReport;
-import edu.wpi.grip.ui.util.GRIPPlatform;
+import edu.wpi.grip.core.sockets.OutputSocket;
+import edu.wpi.grip.ui.util.GripPlatform;
 import edu.wpi.grip.ui.util.ImageConverter;
+
+import java.util.List;
+
 import javafx.application.Platform;
 import javafx.geometry.Orientation;
 import javafx.scene.control.CheckBox;
@@ -14,12 +18,18 @@ import javafx.scene.control.Separator;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
+
 import org.bytedeco.javacpp.opencv_core;
 
-import java.util.List;
-
-import static org.bytedeco.javacpp.opencv_core.*;
-import static org.bytedeco.javacpp.opencv_imgproc.*;
+import static org.bytedeco.javacpp.opencv_core.LINE_8;
+import static org.bytedeco.javacpp.opencv_core.Mat;
+import static org.bytedeco.javacpp.opencv_core.Point;
+import static org.bytedeco.javacpp.opencv_core.Scalar;
+import static org.bytedeco.javacpp.opencv_core.bitwise_xor;
+import static org.bytedeco.javacpp.opencv_imgproc.CV_GRAY2BGR;
+import static org.bytedeco.javacpp.opencv_imgproc.circle;
+import static org.bytedeco.javacpp.opencv_imgproc.cvtColor;
+import static org.bytedeco.javacpp.opencv_imgproc.line;
 
 /**
  * A <code>SocketPreviewView</code> that previews sockets containing containing the result of a line detection
@@ -31,13 +41,13 @@ public class LinesSocketPreviewView extends SocketPreviewView<LinesReport> {
     private final ImageView imageView = new ImageView();
     private final Label infoLabel = new Label();
     private final Mat tmp = new Mat();
-    private final GRIPPlatform platform;
+    private final GripPlatform platform;
     private boolean showInputImage = false;
 
     /**
-     * @param socket   An output socket to preview
+     * @param socket An output socket to preview
      */
-    public LinesSocketPreviewView(GRIPPlatform platform, OutputSocket<LinesReport> socket) {
+    public LinesSocketPreviewView(GripPlatform platform, OutputSocket<LinesReport> socket) {
         super(socket);
         this.platform = platform;
 

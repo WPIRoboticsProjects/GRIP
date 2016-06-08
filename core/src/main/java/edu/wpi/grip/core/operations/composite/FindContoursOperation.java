@@ -1,6 +1,7 @@
 package edu.wpi.grip.core.operations.composite;
 
 import com.google.common.collect.ImmutableList;
+
 import edu.wpi.grip.core.Operation;
 import edu.wpi.grip.core.OperationDescription;
 import edu.wpi.grip.core.sockets.InputSocket;
@@ -24,21 +25,21 @@ import static org.bytedeco.javacpp.opencv_imgproc.findContours;
 public class FindContoursOperation implements Operation {
 
     public static final OperationDescription DESCRIPTION =
-            OperationDescription.builder()
-                    .name("Find Contours")
-                    .summary("Detects contours in a binary image.")
-                    .category(OperationDescription.Category.FEATURE_DETECTION)
-                    .icon(Icon.iconStream("find-contours"))
-                    .build();
+        OperationDescription.builder()
+            .name("Find Contours")
+            .summary("Detects contours in a binary image.")
+            .category(OperationDescription.Category.FEATURE_DETECTION)
+            .icon(Icon.iconStream("find-contours"))
+            .build();
 
     private final SocketHint<Mat> inputHint =
-            new SocketHint.Builder<>(Mat.class).identifier("Input").build();
+        new SocketHint.Builder<>(Mat.class).identifier("Input").build();
 
     private final SocketHint<Boolean> externalHint =
-            SocketHints.createBooleanSocketHint("External Only", false);
+        SocketHints.createBooleanSocketHint("External Only", false);
 
     private final SocketHint<ContoursReport> contoursHint = new SocketHint.Builder<>(ContoursReport.class)
-            .identifier("Contours").initialValueSupplier(ContoursReport::new).build();
+        .identifier("Contours").initialValueSupplier(ContoursReport::new).build();
 
 
     private final InputSocket<Mat> inputSocket;
@@ -56,15 +57,15 @@ public class FindContoursOperation implements Operation {
     @Override
     public List<InputSocket> getInputSockets() {
         return ImmutableList.of(
-                inputSocket,
-                externalSocket
+            inputSocket,
+            externalSocket
         );
     }
 
     @Override
     public List<OutputSocket> getOutputSockets() {
         return ImmutableList.of(
-                contoursSocket
+            contoursSocket
         );
     }
 
@@ -86,7 +87,7 @@ public class FindContoursOperation implements Operation {
         // when processing the contours manually in code (so, not in a graphical pipeline).
         MatVector contours = new MatVector();
         findContours(tmp, contours, externalOnly ? CV_RETR_EXTERNAL : CV_RETR_LIST,
-                CV_CHAIN_APPROX_TC89_KCOS);
+            CV_CHAIN_APPROX_TC89_KCOS);
 
         contoursSocket.setValue(new ContoursReport(contours, input.rows(), input.cols()));
     }

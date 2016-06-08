@@ -1,12 +1,12 @@
 package edu.wpi.grip.core.sources;
 
+import java.util.function.Supplier;
+
 import org.bytedeco.javacpp.opencv_core.Mat;
 import org.bytedeco.javacv.Frame;
 import org.bytedeco.javacv.FrameGrabber;
 import org.bytedeco.javacv.OpenCVFrameConverter;
 import org.junit.Test;
-
-import java.util.function.Supplier;
 
 import static com.google.common.truth.Truth.assertThat;
 import static org.junit.Assert.assertTrue;
@@ -45,18 +45,20 @@ public class GrabberServiceTest {
 
     private static GrabberService createSimpleGrabberService(Supplier<FrameGrabber> frameGrabberSupplier, CameraSourceUpdater updater) {
         return new GrabberService("",
-                frameGrabberSupplier,
-                updater,
-                () -> {});
+            frameGrabberSupplier,
+            updater,
+            () -> {
+            });
     }
 
     @Test
     @SuppressWarnings("PMD.JUnitTestsShouldIncludeAssert")
     public void testConstructorDoesNotThrowExceptionIfFrameGrabberExceptionDoes() {
         new GrabberService("",
-                () -> new ConstructorThrowingFrameGrabber(),
-                new SimpleUpdater(),
-                () -> {});
+            () -> new ConstructorThrowingFrameGrabber(),
+            new SimpleUpdater(),
+            () -> {
+            });
         // This is all we are testing. This should just work without a problem.
     }
 
@@ -78,12 +80,12 @@ public class GrabberServiceTest {
         final String exceptionMessage = "Start: Kaboom!";
         try {
             final GrabberService grabberService = createSimpleGrabberService(
-                    () -> new SimpleMockFrameGrabber() {
-                        @Override
-                        public void start() throws FrameGrabber.Exception {
-                            throw new FrameGrabber.Exception(exceptionMessage);
-                        }
-                    });
+                () -> new SimpleMockFrameGrabber() {
+                    @Override
+                    public void start() throws FrameGrabber.Exception {
+                        throw new FrameGrabber.Exception(exceptionMessage);
+                    }
+                });
             grabberService.startUp();
             fail("Should have thrown an exception when starting");
         } catch (GrabberService.GrabberServiceException e) {
@@ -99,12 +101,12 @@ public class GrabberServiceTest {
         final String exceptionMessage = "Grab: Kaboom!";
         try {
             final GrabberService grabberService = createSimpleGrabberService(
-                    () -> new SimpleMockFrameGrabber() {
-                        @Override
-                        public Frame grab() throws FrameGrabber.Exception {
-                            throw new FrameGrabber.Exception(exceptionMessage);
-                        }
-                    });
+                () -> new SimpleMockFrameGrabber() {
+                    @Override
+                    public Frame grab() throws FrameGrabber.Exception {
+                        throw new FrameGrabber.Exception(exceptionMessage);
+                    }
+                });
             try {
                 grabberService.startUp();
             } catch (GrabberService.GrabberServiceException e) {
@@ -125,12 +127,12 @@ public class GrabberServiceTest {
     public void testRunOnceThrowsExceptionWhenNullFrameIsReturned() throws GrabberService.GrabberServiceException {
         try {
             final GrabberService grabberService = createSimpleGrabberService(
-                    () -> new SimpleMockFrameGrabber() {
-                        @Override
-                        public Frame grab() {
-                            return null;
-                        }
-                    });
+                () -> new SimpleMockFrameGrabber() {
+                    @Override
+                    public Frame grab() {
+                        return null;
+                    }
+                });
             try {
                 grabberService.startUp();
             } catch (GrabberService.GrabberServiceException e) {
@@ -151,12 +153,12 @@ public class GrabberServiceTest {
     public void testRunOnceThrowsExceptionWhenEmptyFrameIsReturned() throws GrabberService.GrabberServiceException {
         try {
             final GrabberService grabberService = createSimpleGrabberService(
-                    () -> new SimpleMockFrameGrabber() {
-                        @Override
-                        public Frame grab() {
-                            return new Frame();
-                        }
-                    });
+                () -> new SimpleMockFrameGrabber() {
+                    @Override
+                    public Frame grab() {
+                        return new Frame();
+                    }
+                });
             try {
                 grabberService.startUp();
             } catch (GrabberService.GrabberServiceException e) {

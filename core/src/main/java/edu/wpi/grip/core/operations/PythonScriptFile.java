@@ -2,20 +2,22 @@ package edu.wpi.grip.core.operations;
 
 
 import com.google.auto.value.AutoValue;
+
 import edu.wpi.grip.core.OperationMetaData;
 import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.core.sockets.SocketHint;
-import org.python.core.PyFunction;
-import org.python.core.PyObject;
-import org.python.core.PyString;
-import org.python.core.PySystemState;
-import org.python.util.PythonInterpreter;
 
 import java.io.IOException;
 import java.net.URL;
 import java.util.List;
 import java.util.Properties;
+
+import org.python.core.PyFunction;
+import org.python.core.PyObject;
+import org.python.core.PyString;
+import org.python.core.PySystemState;
+import org.python.util.PythonInterpreter;
 
 /**
  * Converts a string of Python Code or a Python File into something the {@link PythonScriptOperation} can handle
@@ -51,11 +53,11 @@ public abstract class PythonScriptFile {
         final List<SocketHint<PyObject>> outputSocketHints = interpreter.get("outputs", List.class);
         final PyFunction performFunction = interpreter.get("perform", PyFunction.class);
         return new AutoValue_PythonScriptFile(
-                name == null ? alternativeName : name.toString(),
-                summary == null ? "" : summary.toString(),
-                inputSocketHints,
-                outputSocketHints,
-                performFunction);
+            name == null ? alternativeName : name.toString(),
+            summary == null ? "" : summary.toString(),
+            inputSocketHints,
+            outputSocketHints,
+            performFunction);
     }
 
     public abstract String name();

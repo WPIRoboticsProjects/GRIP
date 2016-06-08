@@ -1,6 +1,7 @@
 package edu.wpi.grip.core.operations.composite;
 
 import com.google.common.collect.ImmutableList;
+
 import edu.wpi.grip.core.Operation;
 import edu.wpi.grip.core.OperationDescription;
 import edu.wpi.grip.core.sockets.InputSocket;
@@ -31,58 +32,62 @@ import static org.bytedeco.javacpp.opencv_imgproc.convexHull;
 public class FilterContoursOperation implements Operation {
 
     public static final OperationDescription DESCRIPTION =
-            OperationDescription.builder()
-                    .name("Filter Contours")
-                    .summary("Find contours matching certain criteria")
-                    .category(OperationDescription.Category.FEATURE_DETECTION)
-                    .icon(Icon.iconStream("find-contours"))
-                    .build();
+        OperationDescription.builder()
+            .name("Filter Contours")
+            .summary("Find contours matching certain criteria")
+            .category(OperationDescription.Category.FEATURE_DETECTION)
+            .icon(Icon.iconStream("find-contours"))
+            .build();
 
     private final SocketHint<ContoursReport> contoursHint = new SocketHint.Builder<>(ContoursReport.class)
-            .identifier("Contours").initialValueSupplier(ContoursReport::new).build();
+        .identifier("Contours").initialValueSupplier(ContoursReport::new).build();
 
     private final SocketHint<Number> minAreaHint =
-            SocketHints.Inputs.createNumberSpinnerSocketHint("Min Area", 0, 0, Integer.MAX_VALUE);
+        SocketHints.Inputs.createNumberSpinnerSocketHint("Min Area", 0, 0, Integer.MAX_VALUE);
 
     private final SocketHint<Number> minPerimeterHint =
-            SocketHints.Inputs.createNumberSpinnerSocketHint("Min Perimeter", 0, 0, Integer.MAX_VALUE);
+        SocketHints.Inputs.createNumberSpinnerSocketHint("Min Perimeter", 0, 0, Integer.MAX_VALUE);
 
     private final SocketHint<Number> minWidthHint =
-            SocketHints.Inputs.createNumberSpinnerSocketHint("Min Width", 0, 0, Integer.MAX_VALUE);
+        SocketHints.Inputs.createNumberSpinnerSocketHint("Min Width", 0, 0, Integer.MAX_VALUE);
 
     private final SocketHint<Number> maxWidthHint =
-            SocketHints.Inputs.createNumberSpinnerSocketHint("Max Width", 1000, 0, Integer.MAX_VALUE);
+        SocketHints.Inputs.createNumberSpinnerSocketHint("Max Width", 1000, 0, Integer.MAX_VALUE);
 
     private final SocketHint<Number> minHeightHint =
-            SocketHints.Inputs.createNumberSpinnerSocketHint("Min Height", 0, 0, Integer.MAX_VALUE);
+        SocketHints.Inputs.createNumberSpinnerSocketHint("Min Height", 0, 0, Integer.MAX_VALUE);
 
     private final SocketHint<Number> maxHeightHint =
-            SocketHints.Inputs.createNumberSpinnerSocketHint("Max Height", 1000, 0, Integer.MAX_VALUE);
+        SocketHints.Inputs.createNumberSpinnerSocketHint("Max Height", 1000, 0, Integer.MAX_VALUE);
 
     private final SocketHint<List<Number>> solidityHint =
-            SocketHints.Inputs.createNumberListRangeSocketHint("Solidity", 0, 100);
+        SocketHints.Inputs.createNumberListRangeSocketHint("Solidity", 0, 100);
 
     private final SocketHint<Number> minVertexHint =
-            SocketHints.Inputs.createNumberSpinnerSocketHint("Min Vertices", 0, 0, Integer.MAX_VALUE);
+        SocketHints.Inputs.createNumberSpinnerSocketHint("Min Vertices", 0, 0, Integer.MAX_VALUE);
 
     private final SocketHint<Number> maxVertexHint =
-            SocketHints.Inputs.createNumberSpinnerSocketHint("Max Vertices", 1000000, 0, Integer.MAX_VALUE);
+        SocketHints.Inputs.createNumberSpinnerSocketHint("Max Vertices", 1000000, 0, Integer.MAX_VALUE);
 
     private final SocketHint<Number> minRatioHint =
-            SocketHints.Inputs.createNumberSpinnerSocketHint("Min Ratio", 0, 0, Integer.MAX_VALUE);
+        SocketHints.Inputs.createNumberSpinnerSocketHint("Min Ratio", 0, 0, Integer.MAX_VALUE);
 
     private final SocketHint<Number> maxRatioHint =
-            SocketHints.Inputs.createNumberSpinnerSocketHint("Max Ratio", 1000, 0, Integer.MAX_VALUE);
+        SocketHints.Inputs.createNumberSpinnerSocketHint("Max Ratio", 1000, 0, Integer.MAX_VALUE);
 
 
     private final InputSocket<ContoursReport> contoursSocket;
     private final InputSocket<Number> minAreaSocket;
     private final InputSocket<Number> minPerimeterSocket;
-    private final InputSocket<Number> minWidthSocket, maxWidthSocket;
-    private final InputSocket<Number> minHeightSocket, maxHeightSocket;
+    private final InputSocket<Number> minWidthSocket;
+    private final InputSocket<Number> maxWidthSocket;
+    private final InputSocket<Number> minHeightSocket;
+    private final InputSocket<Number> maxHeightSocket;
     private final InputSocket<List<Number>> soliditySocket;
-    private final InputSocket<Number> minVertexSocket, maxVertexSocket;
-    private final InputSocket<Number> minRatioSocket, maxRatioSocket;
+    private final InputSocket<Number> minVertexSocket;
+    private final InputSocket<Number> maxVertexSocket;
+    private final InputSocket<Number> minRatioSocket;
+    private final InputSocket<Number> maxRatioSocket;
 
     private final OutputSocket<ContoursReport> outputSocket;
 
@@ -106,25 +111,25 @@ public class FilterContoursOperation implements Operation {
     @Override
     public List<InputSocket> getInputSockets() {
         return ImmutableList.of(
-                contoursSocket,
-                minAreaSocket,
-                minPerimeterSocket,
-                minWidthSocket,
-                maxWidthSocket,
-                minHeightSocket,
-                maxHeightSocket,
-                soliditySocket,
-                maxVertexSocket,
-                minVertexSocket,
-                minRatioSocket,
-                maxRatioSocket
+            contoursSocket,
+            minAreaSocket,
+            minPerimeterSocket,
+            minWidthSocket,
+            maxWidthSocket,
+            minHeightSocket,
+            maxHeightSocket,
+            soliditySocket,
+            maxVertexSocket,
+            minVertexSocket,
+            minRatioSocket,
+            maxRatioSocket
         );
     }
 
     @Override
     public List<OutputSocket> getOutputSockets() {
         return ImmutableList.of(
-                outputSocket
+            outputSocket
         );
     }
 
@@ -157,21 +162,35 @@ public class FilterContoursOperation implements Operation {
             final Mat contour = inputContours.get(i);
 
             final Rect bb = boundingRect(contour);
-            if (bb.width() < minWidth || bb.width() > maxWidth) continue;
-            if (bb.height() < minHeight || bb.height() > maxHeight) continue;
+            if (bb.width() < minWidth || bb.width() > maxWidth) {
+                continue;
+            }
+            if (bb.height() < minHeight || bb.height() > maxHeight) {
+                continue;
+            }
 
             final double area = contourArea(contour);
-            if (area < minArea) continue;
-            if (arcLength(contour, true) < minPerimeter) continue;
+            if (area < minArea) {
+                continue;
+            }
+            if (arcLength(contour, true) < minPerimeter) {
+                continue;
+            }
 
             convexHull(contour, hull);
             final double solidity = 100 * area / contourArea(hull);
-            if (solidity < minSolidity || solidity > maxSolidity) continue;
+            if (solidity < minSolidity || solidity > maxSolidity) {
+                continue;
+            }
 
-            if (contour.rows() < minVertexCount || contour.rows() > maxVertexCount) continue;
+            if (contour.rows() < minVertexCount || contour.rows() > maxVertexCount) {
+                continue;
+            }
 
             final double ratio = bb.width() / bb.height();
-            if (ratio < minRatio || ratio > maxRatio) continue;
+            if (ratio < minRatio || ratio > maxRatio) {
+                continue;
+            }
 
             outputContours.put(filteredContourCount++, contour);
         }
@@ -179,6 +198,6 @@ public class FilterContoursOperation implements Operation {
         outputContours.resize(filteredContourCount);
 
         outputSocket.setValue(new ContoursReport(outputContours,
-                inputSocket.getValue().get().getRows(), inputSocket.getValue().get().getCols()));
+            inputSocket.getValue().get().getRows(), inputSocket.getValue().get().getCols()));
     }
 }

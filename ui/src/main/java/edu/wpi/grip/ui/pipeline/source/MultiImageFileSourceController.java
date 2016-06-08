@@ -4,10 +4,12 @@ package edu.wpi.grip.ui.pipeline.source;
 import com.google.common.eventbus.EventBus;
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
+
 import edu.wpi.grip.core.sources.MultiImageFileSource;
 import edu.wpi.grip.ui.components.ExceptionWitnessResponderButton;
 import edu.wpi.grip.ui.components.PreviousNextButtons;
 import edu.wpi.grip.ui.pipeline.OutputSocketController;
+
 import javafx.fxml.FXML;
 
 /**
@@ -19,12 +21,11 @@ public final class MultiImageFileSourceController extends SourceController<Multi
         MultiImageFileSourceController create(MultiImageFileSource multiImageFileSource);
     }
 
-    @Inject
-    MultiImageFileSourceController(
-            final EventBus eventBus,
-            final OutputSocketController.Factory outputSocketControllerFactory,
-            final ExceptionWitnessResponderButton.Factory exceptionWitnessResponderButtonFactory,
-            @Assisted final MultiImageFileSource multiImageFileSource) {
+    @Inject MultiImageFileSourceController(
+        final EventBus eventBus,
+        final OutputSocketController.Factory outputSocketControllerFactory,
+        final ExceptionWitnessResponderButton.Factory exceptionWitnessResponderButtonFactory,
+        @Assisted final MultiImageFileSource multiImageFileSource) {
         super(eventBus, outputSocketControllerFactory, exceptionWitnessResponderButtonFactory, multiImageFileSource);
     }
 

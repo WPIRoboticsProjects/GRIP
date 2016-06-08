@@ -4,16 +4,21 @@ package edu.wpi.grip.core.operations.network.ros;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+
+import java.io.File;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
 import org.ros.address.InetAddressFactory;
 import org.ros.exception.RosRuntimeException;
 import org.ros.namespace.GraphName;
 import org.ros.namespace.NameResolver;
 import org.ros.node.NodeConfiguration;
-
-import java.io.File;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.*;
 
 /**
  * This class is copied from {@link org.ros.internal.loader.CommandLineLoader}
@@ -47,11 +52,11 @@ public class ROSLoader {
     }
 
     private void parseArgv() {
-        Iterator i$ = this.argv.iterator();
+        Iterator iterator = this.argv.iterator();
 
-        while(i$.hasNext()) {
-            String argument = (String)i$.next();
-            if(argument.contains(":=")) {
+        while (iterator.hasNext()) {
+            String argument = (String) iterator.next();
+            if (argument.contains(":=")) {
                 this.remappingArguments.add(argument);
             } else {
                 this.nodeArguments.add(argument);
@@ -71,25 +76,25 @@ public class ROSLoader {
         nodeConfiguration.setRosRoot(this.getRosRoot());
         nodeConfiguration.setRosPackagePath(this.getRosPackagePath());
         nodeConfiguration.setMasterUri(this.getMasterUri());
-        if(this.specialRemappings.containsKey("__name")) {
-            nodeConfiguration.setNodeName((String)this.specialRemappings.get("__name"));
+        if (this.specialRemappings.containsKey("__name")) {
+            nodeConfiguration.setNodeName((String) this.specialRemappings.get("__name"));
         }
 
         return nodeConfiguration;
     }
 
     private void parseRemappingArguments() {
-        Iterator i$ = this.remappingArguments.iterator();
+        Iterator iterator = this.remappingArguments.iterator();
 
-        while(i$.hasNext()) {
-            String remapping = (String)i$.next();
+        while (iterator.hasNext()) {
+            String remapping = (String) iterator.next();
             Preconditions.checkState(remapping.contains(":="));
             String[] remap = remapping.split(":=");
-            if(remap.length > 2) {
+            if (remap.length > 2) {
                 throw new IllegalArgumentException("Invalid remapping argument: " + remapping);
             }
 
-            if(remapping.startsWith("__")) {
+            if (remapping.startsWith("__")) {
                 this.specialRemappings.put(remap[0], remap[1]);
             } else {
                 this.remappings.put(GraphName.of(remap[0]), GraphName.of(remap[1]));
@@ -100,10 +105,10 @@ public class ROSLoader {
 
     private NameResolver buildParentResolver() {
         GraphName namespace = GraphName.root();
-        if(this.specialRemappings.containsKey("__ns")) {
-            namespace = GraphName.of((String)this.specialRemappings.get("__ns")).toGlobal();
-        } else if(this.environment.containsKey("ROS_NAMESPACE")) {
-            namespace = GraphName.of((String)this.environment.get("ROS_NAMESPACE")).toGlobal();
+        if (this.specialRemappings.containsKey("__ns")) {
+            namespace = GraphName.of((String) this.specialRemappings.get("__ns")).toGlobal();
+        } else if (this.environment.containsKey("ROS_NAMESPACE")) {
+            namespace = GraphName.of((String) this.environment.get("ROS_NAMESPACE")).toGlobal();
         }
 
         return new NameResolver(namespace, this.remappings);
@@ -111,12 +116,12 @@ public class ROSLoader {
 
     private String getHost() {
         String host = InetAddressFactory.newLoopback().getHostAddress();
-        if(this.specialRemappings.containsKey("__ip")) {
-            host = (String)this.specialRemappings.get("__ip");
-        } else if(this.environment.containsKey("ROS_IP")) {
-            host = (String)this.environment.get("ROS_IP");
-        } else if(this.environment.containsKey("ROS_HOSTNAME")) {
-            host = (String)this.environment.get("ROS_HOSTNAME");
+        if (this.specialRemappings.containsKey("__ip")) {
+            host = (String) this.specialRemappings.get("__ip");
+        } else if (this.environment.containsKey("ROS_IP")) {
+            host = (String) this.environment.get("ROS_IP");
+        } else if (this.environment.containsKey("ROS_HOSTNAME")) {
+            host = (String) this.environment.get("ROS_HOSTNAME");
         }
 
         return host;
@@ -126,10 +131,10 @@ public class ROSLoader {
         URI uri = NodeConfiguration.DEFAULT_MASTER_URI;
 
         try {
-            if(this.specialRemappings.containsKey("__master")) {
-                uri = new URI((String)this.specialRemappings.get("__master"));
-            } else if(this.environment.containsKey("ROS_MASTER_URI")) {
-                uri = new URI((String)this.environment.get("ROS_MASTER_URI"));
+            if (this.specialRemappings.containsKey("__master")) {
+                uri = new URI((String) this.specialRemappings.get("__master"));
+            } else if (this.environment.containsKey("ROS_MASTER_URI")) {
+                uri = new URI((String) this.environment.get("ROS_MASTER_URI"));
             }
 
             return uri;
@@ -139,20 +144,20 @@ public class ROSLoader {
     }
 
     private File getRosRoot() {
-        return this.environment.containsKey("ROS_ROOT")?new File((String)this.environment.get("ROS_ROOT")):null;
+        return this.environment.containsKey("ROS_ROOT") ? new File((String) this.environment.get("ROS_ROOT")) : null;
     }
 
     private List<File> getRosPackagePath() {
-        if(!this.environment.containsKey("ROS_PACKAGE_PATH")) {
+        if (!this.environment.containsKey("ROS_PACKAGE_PATH")) {
             return Lists.newArrayList();
         } else {
-            String rosPackagePath = (String)this.environment.get("ROS_PACKAGE_PATH");
-            ArrayList paths = Lists.newArrayList();
-            String[] arr$ = rosPackagePath.split(File.pathSeparator);
-            int len$ = arr$.length;
+            String rosPackagePath = this.environment.get("ROS_PACKAGE_PATH");
+            ArrayList<File> paths = Lists.newArrayList();
+            String[] arr = rosPackagePath.split(File.pathSeparator);
+            int len = arr.length;
 
-            for(int i$ = 0; i$ < len$; ++i$) {
-                String path = arr$[i$];
+            for (int i = 0; i < len; ++i) {
+                String path = arr[i];
                 paths.add(new File(path));
             }
 

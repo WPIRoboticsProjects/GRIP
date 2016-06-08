@@ -2,6 +2,7 @@ package edu.wpi.grip.core;
 
 
 import com.google.common.collect.ImmutableList;
+
 import edu.wpi.grip.core.sockets.OutputSocket;
 
 import java.io.IOException;

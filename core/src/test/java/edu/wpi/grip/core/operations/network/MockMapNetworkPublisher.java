@@ -17,17 +17,17 @@ public class MockMapNetworkPublisher<T> extends MapNetworkPublisher<T> implement
     }
 
     @Override
+    protected void doPublish() {
+
+    }
+
+    @Override
     protected void doPublish(Map<String, T> publishMap) {
 
     }
 
     @Override
     protected void doPublishSingle(T value) {
-
-    }
-
-    @Override
-    protected void doPublish() {
 
     }
 

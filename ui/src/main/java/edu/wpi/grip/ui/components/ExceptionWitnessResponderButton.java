@@ -5,16 +5,26 @@ import com.google.common.base.Throwables;
 import com.google.common.eventbus.Subscribe;
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
+
 import edu.wpi.grip.core.events.ExceptionClearedEvent;
 import edu.wpi.grip.core.events.ExceptionEvent;
 import edu.wpi.grip.ui.util.DPIUtility;
-import javafx.animation.*;
+
+import java.util.Optional;
+
+import javafx.animation.FadeTransition;
+import javafx.animation.Transition;
 import javafx.application.Platform;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.VPos;
 import javafx.scene.Parent;
-import javafx.scene.control.*;
+import javafx.scene.control.Accordion;
+import javafx.scene.control.Button;
+import javafx.scene.control.ContentDisplay;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.TitledPane;
+import javafx.scene.control.Tooltip;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
@@ -22,10 +32,9 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import javafx.util.Duration;
+
 import org.apache.commons.lang3.text.WordUtils;
 import org.controlsfx.control.PopOver;
-
-import java.util.Optional;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -34,7 +43,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
  */
 public final class ExceptionWitnessResponderButton extends Button {
     @VisibleForTesting
-    @SuppressWarnings({"PMD.DefaultPackage", "PMD.FieldDeclarationsShouldBeAtStartOfClass"})
+    @SuppressWarnings( {"PMD.DefaultPackage", "PMD.FieldDeclarationsShouldBeAtStartOfClass"})
     static final String STYLE_CLASS = "exception-witness-responder-button";
 
     private final Object origin;
@@ -51,7 +60,7 @@ public final class ExceptionWitnessResponderButton extends Button {
 
     protected static class ExceptionPopOver extends PopOver {
         @VisibleForTesting
-        @SuppressWarnings({"PMD.DefaultPackage", "PMD.FieldDeclarationsShouldBeAtStartOfClass"})
+        @SuppressWarnings( {"PMD.DefaultPackage", "PMD.FieldDeclarationsShouldBeAtStartOfClass"})
         static final String STYLE_CLASS = "error-pop-over";
 
         private final Text errorMessage = new Text();
@@ -102,7 +111,7 @@ public final class ExceptionWitnessResponderButton extends Button {
         private void assignFromExceptionEvent(ExceptionEvent event) {
             final int wrapNumber = 80;
             final String errorMessageText =
-                    WordUtils.wrap(event.getMessage(), wrapNumber, null, true);
+                WordUtils.wrap(event.getMessage(), wrapNumber, null, true);
             errorMessage.setText(errorMessageText);
             if (event.getException().isPresent()) {
                 final Exception exception = event.getException().get();
@@ -124,8 +133,7 @@ public final class ExceptionWitnessResponderButton extends Button {
     /**
      * @param origin The same origin that is passed to the {@link edu.wpi.grip.core.util.ExceptionWitness}
      */
-    @Inject
-    ExceptionWitnessResponderButton(@Assisted Object origin, @Assisted String popOverTitle) {
+    @Inject ExceptionWitnessResponderButton(@Assisted Object origin, @Assisted String popOverTitle) {
         super();
 
         this.origin = checkNotNull(origin, "The origin can not be null");
@@ -133,7 +141,7 @@ public final class ExceptionWitnessResponderButton extends Button {
         this.tooltip = new Tooltip();
         this.getStyleClass().add(STYLE_CLASS);
 
-        ImageView icon = new ImageView("/edu/wpi/grip/ui/icons/warning.png");
+        final ImageView icon = new ImageView("/edu/wpi/grip/ui/icons/warning.png");
 
         setOnMouseClicked(event -> getPopover().show(this));
         setVisible(false);

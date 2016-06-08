@@ -158,11 +158,13 @@
             <property name="arrayInitIndent" value="4"/>
         </module>
         <module name="AbbreviationAsWordInName">
-            <property name="ignoreFinal" value="false"/>
+            <property name="ignoreFinal" value="true"/>
             <property name="allowedAbbreviationLength" value="4"/> <!-- Allow 'GRIP' in all caps -->
         </module>
         <module name="OverloadMethodsDeclarationOrder"/>
-        <module name="VariableDeclarationUsageDistance"/>
+        <module name="VariableDeclarationUsageDistance">
+            <property name="allowedDistance" value="5"/>
+        </module>
         <module name="CustomImportOrder">
             <property name="specialImportsRegExp" value="^.*$"/>
             <property name="sortImportsInGroupAlphabetically" value="true"/>

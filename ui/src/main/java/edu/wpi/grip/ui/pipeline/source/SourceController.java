@@ -3,22 +3,24 @@ package edu.wpi.grip.ui.pipeline.source;
 import com.google.common.eventbus.EventBus;
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
-import edu.wpi.grip.core.sockets.OutputSocket;
+
 import edu.wpi.grip.core.Source;
 import edu.wpi.grip.core.events.SourceRemovedEvent;
+import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.ui.Controller;
 import edu.wpi.grip.ui.annotations.ParametrizedController;
 import edu.wpi.grip.ui.components.ExceptionWitnessResponderButton;
 import edu.wpi.grip.ui.pipeline.OutputSocketController;
 import edu.wpi.grip.ui.pipeline.StepController;
 import edu.wpi.grip.ui.util.ControllerMap;
+
+import java.util.Collection;
+
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-
-import java.util.Collection;
 
 /**
  * A JavaFX control that represents a {@link Source}.  <code>SourceController</code>s are somewhat analogous to
@@ -52,12 +54,11 @@ public class SourceController<S extends Source> implements Controller {
         SourceController<S> create(S source);
     }
 
-    @Inject
-    SourceController(
-            final EventBus eventBus,
-            final OutputSocketController.Factory outputSocketControllerFactory,
-            final ExceptionWitnessResponderButton.Factory exceptionWitnessResponderButtonFactory,
-            @Assisted final S source) {
+    @Inject SourceController(
+        final EventBus eventBus,
+        final OutputSocketController.Factory outputSocketControllerFactory,
+        final ExceptionWitnessResponderButton.Factory exceptionWitnessResponderButtonFactory,
+        @Assisted final S source) {
         this.eventBus = eventBus;
         this.outputSocketControllerFactory = outputSocketControllerFactory;
         this.exceptionWitnessResponderButtonFactory = exceptionWitnessResponderButtonFactory;

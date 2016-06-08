@@ -4,11 +4,18 @@ import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import com.google.inject.Singleton;
 import com.sun.javafx.application.PlatformImpl;
+
 import edu.wpi.grip.core.Connection;
 import edu.wpi.grip.core.Pipeline;
 import edu.wpi.grip.core.Source;
 import edu.wpi.grip.core.Step;
-import edu.wpi.grip.core.events.*;
+import edu.wpi.grip.core.events.ConnectionAddedEvent;
+import edu.wpi.grip.core.events.ConnectionRemovedEvent;
+import edu.wpi.grip.core.events.SourceAddedEvent;
+import edu.wpi.grip.core.events.SourceRemovedEvent;
+import edu.wpi.grip.core.events.StepAddedEvent;
+import edu.wpi.grip.core.events.StepMovedEvent;
+import edu.wpi.grip.core.events.StepRemovedEvent;
 import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.ui.annotations.ParametrizedController;
@@ -18,6 +25,13 @@ import edu.wpi.grip.ui.pipeline.input.InputSocketController;
 import edu.wpi.grip.ui.pipeline.source.SourceController;
 import edu.wpi.grip.ui.pipeline.source.SourceControllerFactory;
 import edu.wpi.grip.ui.util.ControllerMap;
+
+import java.util.Collection;
+import java.util.Map;
+import java.util.NavigableMap;
+import java.util.TreeMap;
+import java.util.stream.Collectors;
+
 import javafx.beans.InvalidationListener;
 import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.collections.ObservableList;
@@ -34,11 +48,6 @@ import javafx.scene.layout.VBox;
 
 import javax.annotation.Nullable;
 import javax.inject.Inject;
-import java.util.Collection;
-import java.util.Map;
-import java.util.NavigableMap;
-import java.util.TreeMap;
-import java.util.stream.Collectors;
 
 /**
  * A JavaFX controller for the pipeline.  This controller renders a list of steps.
@@ -153,36 +162,37 @@ public final class PipelineController {
         // Then we need to figure out where to put it in the pipeline
         // First create a map of every node in the steps list to its x position
         final Map<Double, Node> positionMapping = stepsMapManager
-                .entrySet()
-                .stream()
-                .collect(
-                        Collectors
-                                .toMap(e -> calculateMiddleXPosOfNodeInParent(e.getValue()),
-                                        Map.Entry::getValue));
+            .entrySet()
+            .stream()
+            .collect(
+                Collectors
+                    .toMap(e -> calculateMiddleXPosOfNodeInParent(e.getValue()),
+                        Map.Entry::getValue));
 
         // A tree map is an easy way to sort the values
         final NavigableMap<Double, Node> sortedPositionMapping
-                = new TreeMap<>(positionMapping);
+            = new TreeMap<>(positionMapping);
 
         // Now we find the sockets that are to the immediate left and
         // immediate right of the drop point
 
         // These can be null
-        final Map.Entry<Double, Node>
-                lowerEntry = sortedPositionMapping.floorEntry(x),
-                higherEntry = sortedPositionMapping.ceilingEntry(x);
+        final Map.Entry<Double, Node> lowerEntry = sortedPositionMapping.floorEntry(x);
+        final Map.Entry<Double, Node> higherEntry = sortedPositionMapping.ceilingEntry(x);
         // These can be null
         final StepController
-                lowerStepController =
-                lowerEntry == null ?
-                        null : stepsMapManager.getWithNode(lowerEntry.getValue());
+            lowerStepController =
+            lowerEntry == null
+                ? null
+                : stepsMapManager.getWithNode(lowerEntry.getValue());
         final StepController
-                higherStepController =
-                higherEntry == null ?
-                        null : stepsMapManager.getWithNode(higherEntry.getValue());
+            higherStepController =
+            higherEntry == null
+                ? null
+                : stepsMapManager.getWithNode(higherEntry.getValue());
         return new StepPair(
-                lowerStepController == null ? null : lowerStepController.getStep(),
-                higherStepController == null ? null : higherStepController.getStep()
+            lowerStepController == null ? null : lowerStepController.getStep(),
+            higherStepController == null ? null : higherStepController.getStep()
         );
     }
 
@@ -308,9 +318,9 @@ public final class PipelineController {
                     final Node inputHandle = inputSocketController.getHandle();
 
                     final Bounds outputSocketBounds =
-                            root.sceneToLocal(outputHandle.localToScene(outputHandle.getLayoutBounds()));
+                        root.sceneToLocal(outputHandle.localToScene(outputHandle.getLayoutBounds()));
                     final Bounds inputSocketBounds =
-                            root.sceneToLocal(inputHandle.localToScene(inputHandle.getLayoutBounds()));
+                        root.sceneToLocal(inputHandle.localToScene(inputHandle.getLayoutBounds()));
 
                     final double x1 = outputSocketBounds.getMinX() + outputSocketBounds.getWidth() / 2.0;
                     final double y1 = outputSocketBounds.getMinY() + outputSocketBounds.getHeight() / 2.0;

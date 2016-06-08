@@ -7,12 +7,13 @@ import com.google.inject.Injector;
 import edu.wpi.grip.core.Pipeline;
 import edu.wpi.grip.core.operations.OperationsFactory;
 import edu.wpi.grip.util.Files;
-import edu.wpi.grip.util.GRIPCoreTestModule;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import edu.wpi.grip.util.GripCoreTestModule;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.Reader;
 import java.net.URI;
 
 import org.junit.After;
@@ -32,12 +33,12 @@ public class CompatibilityTest {
     private static final URI testphotoURI = Files.testphotoURI; //The location of the photo source for the test
     private static final URI testprojectURI = Files.testprojectURI; //The location of the save file for the test
 
-    private GRIPCoreTestModule testModule;
+    private GripCoreTestModule testModule;
     private Pipeline pipeline;
 
     @Before
     public void setUp() throws Exception {
-        testModule = new GRIPCoreTestModule();
+        testModule = new GripCoreTestModule();
         testModule.setUp();
         //Set up the stuff we need for the core functionality for GRIP
         final Injector injector = Guice.createInjector(testModule);
@@ -48,7 +49,7 @@ public class CompatibilityTest {
 
         //Add the operations so that GRIP will recognize them
         OperationsFactory.create(eventBus).addOperations();
-//        CVOperations.addOperations(eventBus);
+        //CVOperations.addOperations(eventBus);
 
         //Set up the test project file to work with this machine
         String fileName = testprojectURI.toString().substring(5);
@@ -59,16 +60,17 @@ public class CompatibilityTest {
 
         Reader temp = new FileReader(file);
         BufferedReader reader = new BufferedReader(temp);
-        String line = "", oldtext = "";
+        String line = "";
+        String oldText = "";
         while ((line = reader.readLine()) != null) {
-            oldtext += line + "\r\n";
+            oldText += line + "\r\n";
         }
         reader.close();
-        String newtext = oldtext.replaceAll("REPLACEME", photoFileName);//This gives the correct location of the test photo needed to the project file
+        String newText = oldText.replaceAll("REPLACEME", photoFileName);//This gives the correct location of the test photo needed to the project file
 
         //Write the altered project file text
         FileWriter writer2 = new FileWriter(file);
-        writer2.write(newtext);
+        writer2.write(newText);
 
         writer2.close();
 

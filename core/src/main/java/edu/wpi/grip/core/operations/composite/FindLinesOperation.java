@@ -1,6 +1,7 @@
 package edu.wpi.grip.core.operations.composite;
 
 import com.google.common.collect.ImmutableList;
+
 import edu.wpi.grip.core.Operation;
 import edu.wpi.grip.core.OperationDescription;
 import edu.wpi.grip.core.sockets.InputSocket;
@@ -8,10 +9,11 @@ import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.core.sockets.SocketHint;
 import edu.wpi.grip.core.sockets.SocketHints;
 import edu.wpi.grip.core.util.Icon;
-import org.bytedeco.javacpp.indexer.FloatIndexer;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import org.bytedeco.javacpp.indexer.FloatIndexer;
 
 import static org.bytedeco.javacpp.opencv_core.Mat;
 import static org.bytedeco.javacpp.opencv_imgproc.COLOR_BGR2GRAY;
@@ -24,16 +26,16 @@ import static org.bytedeco.javacpp.opencv_imgproc.cvtColor;
 public class FindLinesOperation implements Operation {
 
     public static final OperationDescription DESCRIPTION =
-            OperationDescription.builder()
-                    .name("Find Lines")
-                    .summary("Detects line segments in an image.")
-                    .category(OperationDescription.Category.FEATURE_DETECTION)
-                    .icon(Icon.iconStream("find-lines"))
-                    .build();
+        OperationDescription.builder()
+            .name("Find Lines")
+            .summary("Detects line segments in an image.")
+            .category(OperationDescription.Category.FEATURE_DETECTION)
+            .icon(Icon.iconStream("find-lines"))
+            .build();
 
     private final SocketHint<Mat> inputHint = SocketHints.Inputs.createMatSocketHint("Input", false);
     private final SocketHint<LinesReport> linesHint = new SocketHint.Builder<>(LinesReport.class)
-            .identifier("Lines").initialValueSupplier(LinesReport::new).build();
+        .identifier("Lines").initialValueSupplier(LinesReport::new).build();
 
 
     private final InputSocket<Mat> inputSocket;
@@ -48,14 +50,14 @@ public class FindLinesOperation implements Operation {
     @Override
     public List<InputSocket> getInputSockets() {
         return ImmutableList.of(
-                inputSocket
+            inputSocket
         );
     }
 
     @Override
     public List<OutputSocket> getOutputSockets() {
         return ImmutableList.of(
-                linesReportSocket
+            linesReportSocket
         );
     }
 

@@ -3,11 +3,13 @@ package edu.wpi.grip.core;
 import com.google.common.eventbus.EventBus;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
+
 import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.core.sockets.Socket;
 import edu.wpi.grip.core.util.MockExceptionWitness;
-import edu.wpi.grip.util.GRIPCoreTestModule;
+import edu.wpi.grip.util.GripCoreTestModule;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -17,7 +19,7 @@ import static org.junit.Assert.assertEquals;
 public class StepTest {
     private EventBus eventBus;
     private OperationMetaData additionMeta;
-    private GRIPCoreTestModule testModule = new GRIPCoreTestModule();
+    private GripCoreTestModule testModule = new GripCoreTestModule();
 
     @Before
     public void setUp() {

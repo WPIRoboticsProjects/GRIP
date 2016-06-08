@@ -3,10 +3,12 @@ package edu.wpi.grip.ui.pipeline.input;
 import com.google.common.eventbus.Subscribe;
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
-import edu.wpi.grip.core.sockets.InputSocket;
+
 import edu.wpi.grip.core.events.SocketChangedEvent;
+import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.ui.pipeline.SocketHandleView;
-import edu.wpi.grip.ui.util.GRIPPlatform;
+import edu.wpi.grip.ui.util.GripPlatform;
+
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
@@ -22,7 +24,7 @@ public class SliderInputSocketController extends InputSocketController<Number> {
 
     private final Slider slider;
     private final Label label;
-    private final GRIPPlatform platform;
+    private final GripPlatform platform;
 
     public interface Factory {
         SliderInputSocketController create(InputSocket<Number> socket);
@@ -32,15 +34,14 @@ public class SliderInputSocketController extends InputSocketController<Number> {
      * @param socket An <code>InputSocket</code> with a domain containing two <code>Number</code>s (the min and max
      *               slider values)
      */
-    @Inject
-    SliderInputSocketController(SocketHandleView.Factory socketHandleViewFactory, GRIPPlatform platform, @Assisted InputSocket<Number> socket) {
+    @Inject SliderInputSocketController(SocketHandleView.Factory socketHandleViewFactory, GripPlatform platform, @Assisted InputSocket<Number> socket) {
         super(socketHandleViewFactory, socket);
         this.platform = platform;
 
         final Number[] domain = socket.getSocketHint().getDomain().get();
 
         checkArgument(domain.length == 2,
-                "Sliders must have a domain with two numbers (min and max)");
+            "Sliders must have a domain with two numbers (min and max)");
 
         final double min = domain[0].doubleValue();
         final double max = domain[1].doubleValue();
@@ -57,7 +58,7 @@ public class SliderInputSocketController extends InputSocketController<Number> {
         label.setMaxWidth(Double.MAX_VALUE);
         label.setAlignment(Pos.CENTER);
         this.slider.valueProperty().addListener(observable ->
-                label.setText(String.format("%.0f", this.slider.getValue())));
+            label.setText(String.format("%.0f", this.slider.getValue())));
     }
 
     @Override
@@ -71,7 +72,7 @@ public class SliderInputSocketController extends InputSocketController<Number> {
     @Subscribe
     public void updateSliderValue(SocketChangedEvent event) {
         if (event.isRegarding(this.getSocket())) {
-            platform.runAsSoonAsPossible(()-> this.slider.setValue(this.getSocket().getValue().get().doubleValue()));
+            platform.runAsSoonAsPossible(() -> this.slider.setValue(this.getSocket().getValue().get().doubleValue()));
         }
     }
 }

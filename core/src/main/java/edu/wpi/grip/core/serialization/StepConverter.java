@@ -7,16 +7,18 @@ import com.thoughtworks.xstream.converters.MarshallingContext;
 import com.thoughtworks.xstream.converters.UnmarshallingContext;
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
+
+import edu.wpi.grip.core.OperationMetaData;
 import edu.wpi.grip.core.Palette;
 import edu.wpi.grip.core.Pipeline;
 import edu.wpi.grip.core.Step;
-import edu.wpi.grip.core.OperationMetaData;
 import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.core.sockets.Socket;
 
-import javax.inject.Inject;
 import java.util.Optional;
+
+import javax.inject.Inject;
 
 /**
  * An XStream converter that converts a {@link Step} to and from a serialized representation.
@@ -26,7 +28,7 @@ import java.util.Optional;
  */
 public class StepConverter implements Converter {
 
-    private final static String NAME_ATTRIBUTE = "name";
+    private static final String NAME_ATTRIBUTE = "name";
 
     @Inject
     private EventBus eventBus;

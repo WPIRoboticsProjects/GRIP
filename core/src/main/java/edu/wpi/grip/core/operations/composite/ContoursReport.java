@@ -1,17 +1,22 @@
 package edu.wpi.grip.core.operations.composite;
 
 import com.google.auto.value.AutoValue;
-import edu.wpi.grip.core.sockets.NoSocketTypeLabel;
+
 import edu.wpi.grip.core.operations.network.PublishValue;
 import edu.wpi.grip.core.operations.network.Publishable;
+import edu.wpi.grip.core.sockets.NoSocketTypeLabel;
 import edu.wpi.grip.core.sockets.Socket;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static org.bytedeco.javacpp.opencv_core.*;
-import static org.bytedeco.javacpp.opencv_imgproc.*;
+import static org.bytedeco.javacpp.opencv_core.Mat;
+import static org.bytedeco.javacpp.opencv_core.MatVector;
+import static org.bytedeco.javacpp.opencv_core.Rect;
+import static org.bytedeco.javacpp.opencv_imgproc.boundingRect;
+import static org.bytedeco.javacpp.opencv_imgproc.contourArea;
+import static org.bytedeco.javacpp.opencv_imgproc.convexHull;
 
 /**
  * The output of {@link FindContoursOperation}.  This stores a list of contours (which is basically a list of points) in
@@ -20,7 +25,9 @@ import static org.bytedeco.javacpp.opencv_imgproc.*;
  */
 @NoSocketTypeLabel
 public final class ContoursReport implements Publishable {
-    private final int rows, cols;
+
+    private final int rows;
+    private final int cols;
     private final MatVector contours;
     private Optional<Rect[]> boundingBoxes = Optional.empty();
 
@@ -51,7 +58,7 @@ public final class ContoursReport implements Publishable {
     }
 
     @AutoValue
-    public static abstract class Contour {
+    public abstract static class Contour {
         static Contour create(double area, double centerX, double centerY, double width, double height, double solidity) {
             return new AutoValue_ContoursReport_Contour(area, centerX, centerY, width, height, solidity);
         }
@@ -71,12 +78,12 @@ public final class ContoursReport implements Publishable {
 
     public List<Contour> getProcessedContours() {
         final List<Contour> processedContours = new ArrayList<>((int) contours.size());
-        double area[] = getArea();
-        double centerX[] = getCenterX();
-        double centerY[] = getCenterY();
-        double width[] = getWidth();
-        double height[] = getHeights();
-        double solidity[] = getSolidity();
+        double[] area = getArea();
+        double[] centerX = getCenterX();
+        double[] centerY = getCenterY();
+        double[] width = getWidth();
+        double[] height = getHeights();
+        double[] solidity = getSolidity();
         for (int i = 0; i < contours.size(); i++) {
             processedContours.add(Contour.create(area[i], centerX[i], centerY[i], width[i], height[i], solidity[i]));
         }

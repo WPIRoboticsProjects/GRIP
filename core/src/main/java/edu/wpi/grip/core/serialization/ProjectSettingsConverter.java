@@ -4,8 +4,9 @@ import com.google.common.eventbus.EventBus;
 import com.thoughtworks.xstream.converters.UnmarshallingContext;
 import com.thoughtworks.xstream.converters.reflection.ReflectionConverter;
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;
-import edu.wpi.grip.core.settings.ProjectSettings;
+
 import edu.wpi.grip.core.events.ProjectSettingsChangedEvent;
+import edu.wpi.grip.core.settings.ProjectSettings;
 
 import javax.inject.Inject;
 

@@ -6,6 +6,7 @@ import com.thoughtworks.xstream.converters.MarshallingContext;
 import com.thoughtworks.xstream.converters.UnmarshallingContext;
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
+
 import edu.wpi.grip.core.Pipeline;
 import edu.wpi.grip.core.Source;
 import edu.wpi.grip.core.Step;
@@ -14,10 +15,11 @@ import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.core.sockets.Socket;
 import edu.wpi.grip.core.sockets.SocketHint;
 
-import javax.inject.Inject;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.inject.Inject;
 
 /**
  * An XStream converter for serializing and deserializing sockets.  Socket elements include indexes to indicate where
@@ -29,10 +31,10 @@ import java.util.List;
  */
 public class SocketConverter implements Converter {
 
-    final private static String STEP_ATTRIBUTE = "step";
-    final private static String SOURCE_ATTRIBUTE = "source";
-    final private static String SOCKET_ATTRIBUTE = "socket";
-    final private static String PREVIEWED_ATTRIBUTE = "previewed";
+    private static final String STEP_ATTRIBUTE = "step";
+    private static final String SOURCE_ATTRIBUTE = "source";
+    private static final String SOCKET_ATTRIBUTE = "socket";
+    private static final String PREVIEWED_ATTRIBUTE = "previewed";
 
     @Inject
     private Pipeline pipeline;
@@ -48,8 +50,9 @@ public class SocketConverter implements Converter {
 
             // Save the location of the socket in the pipeline.
             socket.getStep().ifPresent(step -> {
-                final List<? extends Socket> sockets = socket.getDirection() == Socket.Direction.INPUT ?
-                        step.getInputSockets() : step.getOutputSockets();
+                final List<? extends Socket> sockets = (socket.getDirection() == Socket.Direction.INPUT)
+                    ? step.getInputSockets()
+                    : step.getOutputSockets();
                 writer.addAttribute(STEP_ATTRIBUTE, String.valueOf(pipeline.getSteps().indexOf(step)));
                 writer.addAttribute(SOCKET_ATTRIBUTE, String.valueOf(sockets.indexOf(socket)));
             });
@@ -67,8 +70,8 @@ public class SocketConverter implements Converter {
 
             // Save the value of input sockets that could possibly have been set with the GUI
             if (socket.getDirection() == Socket.Direction.INPUT
-                    && socket.getConnections().isEmpty()
-                    && socket.getSocketHint().getView() != SocketHint.View.NONE) {
+                && socket.getConnections().isEmpty()
+                && socket.getSocketHint().getView() != SocketHint.View.NONE) {
                 writer.startNode("value");
                 if (List.class.isAssignableFrom(socket.getSocketHint().getType()) && socket.getValue().isPresent()) {
                     // XStream doesn't have a built-in converter for lists other than ArrayList
@@ -110,8 +113,9 @@ public class SocketConverter implements Converter {
                 final int socketIndex = Integer.parseInt(reader.getAttribute(SOCKET_ATTRIBUTE));
 
                 final Step step = pipeline.getSteps().get(stepIndex);
-                socket = direction == Socket.Direction.INPUT ?
-                        step.getInputSockets().get(socketIndex) : step.getOutputSockets().get(socketIndex);
+                socket = (direction == Socket.Direction.INPUT)
+                    ? step.getInputSockets().get(socketIndex)
+                    : step.getOutputSockets().get(socketIndex);
             } else if (reader.getAttribute(SOURCE_ATTRIBUTE) != null) {
                 final int sourceIndex = Integer.parseInt(reader.getAttribute(SOURCE_ATTRIBUTE));
                 final int socketIndex = Integer.parseInt(reader.getAttribute(SOCKET_ATTRIBUTE));

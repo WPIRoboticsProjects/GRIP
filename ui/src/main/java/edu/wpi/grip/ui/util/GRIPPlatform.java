@@ -5,12 +5,13 @@ import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import javafx.application.Platform;
 
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import javafx.application.Platform;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -19,7 +20,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * @see <a href="http://news.kynosarges.org/2014/05/01/simulating-platform-runandwait/">Source</a>
  */
 @Singleton
-public class GRIPPlatform {
+public class GripPlatform {
 
     private final EventBus eventBus;
     private final Logger logger;
@@ -36,8 +37,7 @@ public class GRIPPlatform {
         }
     }
 
-    @Inject
-    GRIPPlatform(EventBus eventBus, Logger logger) {
+    @Inject GripPlatform(EventBus eventBus, Logger logger) {
         checkArgument(!(eventBus instanceof AsyncEventBus), "This class has not been tested to work with the AsyncEventBus");
         this.eventBus = eventBus;
         this.logger = logger;
@@ -82,7 +82,7 @@ public class GRIPPlatform {
         Platform.runLater(() -> {
             try {
                 // If the calling thread was interrupted then don't run this event.
-                if(!callingThread.isInterrupted()) {
+                if (!callingThread.isInterrupted()) {
                     event.getAction().run();
                 }
             } finally {

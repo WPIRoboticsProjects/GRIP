@@ -2,10 +2,17 @@ package edu.wpi.grip.ui.pipeline;
 
 
 import com.google.common.eventbus.EventBus;
+
 import edu.wpi.grip.core.sources.CameraSource;
 import edu.wpi.grip.core.sources.MockCameraSource;
+
+import java.io.IOException;
+import java.util.Optional;
+import java.util.Properties;
+
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+
 import org.junit.After;
 import org.junit.Test;
 import org.junit.experimental.runners.Enclosed;
@@ -13,10 +20,6 @@ import org.junit.runner.RunWith;
 import org.testfx.framework.junit.ApplicationTest;
 import org.testfx.matcher.base.NodeMatchers;
 import org.testfx.util.WaitForAsyncUtils;
-
-import java.io.IOException;
-import java.util.Optional;
-import java.util.Properties;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;

@@ -1,6 +1,7 @@
 package edu.wpi.grip.core.operations.composite;
 
 import com.google.common.collect.ImmutableList;
+
 import edu.wpi.grip.core.Operation;
 import edu.wpi.grip.core.OperationDescription;
 import edu.wpi.grip.core.sockets.InputSocket;
@@ -23,12 +24,12 @@ import static org.bytedeco.javacpp.opencv_features2d.SimpleBlobDetector;
 public class FindBlobsOperation implements Operation {
 
     public static final OperationDescription DESCRIPTION =
-            OperationDescription.builder()
-                    .name("Find Blobs")
-                    .summary("Detects groups of pixels in an image.")
-                    .category(OperationDescription.Category.FEATURE_DETECTION)
-                    .icon(Icon.iconStream("find-blobs"))
-                    .build();
+        OperationDescription.builder()
+            .name("Find Blobs")
+            .summary("Detects groups of pixels in an image.")
+            .category(OperationDescription.Category.FEATURE_DETECTION)
+            .icon(Icon.iconStream("find-blobs"))
+            .build();
 
     private final SocketHint<Mat> inputHint = SocketHints.Inputs.createMatSocketHint("Input", false);
     private final SocketHint<Number> minAreaHint = SocketHints.Inputs.createNumberSpinnerSocketHint("Min Area", 1);
@@ -36,9 +37,9 @@ public class FindBlobsOperation implements Operation {
     private final SocketHint<Boolean> colorHint = SocketHints.createBooleanSocketHint("Dark Blobs", false);
 
     private final SocketHint<BlobsReport> blobsHint = new SocketHint.Builder<>(BlobsReport.class)
-            .identifier("Blobs")
-            .initialValueSupplier(BlobsReport::new)
-            .build();
+        .identifier("Blobs")
+        .initialValueSupplier(BlobsReport::new)
+        .build();
 
     private final InputSocket<Mat> inputSocket;
     private final InputSocket<Number> minAreaSocket;
@@ -59,17 +60,17 @@ public class FindBlobsOperation implements Operation {
     @Override
     public List<InputSocket> getInputSockets() {
         return ImmutableList.of(
-                inputSocket,
-                minAreaSocket,
-                circularitySocket,
-                colorSocket
+            inputSocket,
+            minAreaSocket,
+            circularitySocket,
+            colorSocket
         );
     }
 
     @Override
     public List<OutputSocket> getOutputSockets() {
         return ImmutableList.of(
-                outputSocket
+            outputSocket
         );
     }
 
@@ -83,16 +84,16 @@ public class FindBlobsOperation implements Operation {
 
 
         final SimpleBlobDetector blobDetector = SimpleBlobDetector.create(new SimpleBlobDetector.Params()
-                .filterByArea(true)
-                .minArea(minArea.intValue())
-                .maxArea(Integer.MAX_VALUE)
+            .filterByArea(true)
+            .minArea(minArea.intValue())
+            .maxArea(Integer.MAX_VALUE)
 
-                .filterByColor(true)
-                .blobColor(darkBlobs ? (byte) 0 : (byte) 255)
+            .filterByColor(true)
+            .blobColor(darkBlobs ? (byte) 0 : (byte) 255)
 
-                .filterByCircularity(true)
-                .minCircularity(circularity.get(0).floatValue())
-                .maxCircularity(circularity.get(1).floatValue()));
+            .filterByCircularity(true)
+            .minCircularity(circularity.get(0).floatValue())
+            .maxCircularity(circularity.get(1).floatValue()));
 
         // Detect the blobs and store them in the output BlobsReport
         final KeyPointVector keyPointVector = new KeyPointVector();

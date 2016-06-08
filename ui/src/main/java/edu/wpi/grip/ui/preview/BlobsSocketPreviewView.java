@@ -1,11 +1,13 @@
 package edu.wpi.grip.ui.preview;
 
 import com.google.common.eventbus.Subscribe;
-import edu.wpi.grip.core.sockets.OutputSocket;
+
 import edu.wpi.grip.core.events.RenderEvent;
 import edu.wpi.grip.core.operations.composite.BlobsReport;
-import edu.wpi.grip.ui.util.GRIPPlatform;
+import edu.wpi.grip.core.sockets.OutputSocket;
+import edu.wpi.grip.ui.util.GripPlatform;
 import edu.wpi.grip.ui.util.ImageConverter;
+
 import javafx.application.Platform;
 import javafx.geometry.Orientation;
 import javafx.scene.control.CheckBox;
@@ -15,8 +17,14 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
 
-import static org.bytedeco.javacpp.opencv_core.*;
-import static org.bytedeco.javacpp.opencv_imgproc.*;
+import static org.bytedeco.javacpp.opencv_core.LINE_8;
+import static org.bytedeco.javacpp.opencv_core.Mat;
+import static org.bytedeco.javacpp.opencv_core.Point;
+import static org.bytedeco.javacpp.opencv_core.Scalar;
+import static org.bytedeco.javacpp.opencv_core.bitwise_xor;
+import static org.bytedeco.javacpp.opencv_imgproc.CV_GRAY2BGR;
+import static org.bytedeco.javacpp.opencv_imgproc.circle;
+import static org.bytedeco.javacpp.opencv_imgproc.cvtColor;
 
 /**
  * A SocketPreviewView for BlobsReports that shows the original image with circles overlayed onto it,
@@ -28,13 +36,13 @@ public class BlobsSocketPreviewView extends SocketPreviewView<BlobsReport> {
     private final ImageView imageView = new ImageView();
     private final Label infoLabel = new Label();
     private final Mat tmp = new Mat();
-    private final GRIPPlatform platform;
+    private final GripPlatform platform;
     private boolean showInputImage = false;
 
     /**
-     * @param socket   An output socket to preview
+     * @param socket An output socket to preview
      */
-    public BlobsSocketPreviewView(GRIPPlatform platform, OutputSocket<BlobsReport> socket) {
+    public BlobsSocketPreviewView(GripPlatform platform, OutputSocket<BlobsReport> socket) {
         super(socket);
         this.platform = platform;
         final CheckBox show = new CheckBox("Show Input Image");

@@ -5,18 +5,31 @@ import com.google.common.eventbus.EventBus;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.util.Modules;
-import edu.wpi.grip.core.*;
+
+import edu.wpi.grip.core.AdditionOperation;
+import edu.wpi.grip.core.Connection;
+import edu.wpi.grip.core.MockStep;
+import edu.wpi.grip.core.OperationMetaData;
+import edu.wpi.grip.core.Pipeline;
+import edu.wpi.grip.core.Step;
+import edu.wpi.grip.core.SubtractionOperation;
 import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.core.util.MockExceptionWitness;
-import edu.wpi.grip.ui.GRIPUIModule;
+import edu.wpi.grip.ui.GripUIModule;
 import edu.wpi.grip.ui.util.StyleClassNameUtility;
 import edu.wpi.grip.ui.util.TestAnnotationFXMLLoader;
-import edu.wpi.grip.util.GRIPCoreTestModule;
+import edu.wpi.grip.util.GripCoreTestModule;
+
+import java.util.List;
+import java.util.Optional;
+import java.util.concurrent.TimeUnit;
+
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.input.MouseButton;
 import javafx.stage.Stage;
+
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 import org.junit.After;
@@ -25,10 +38,6 @@ import org.testfx.framework.junit.ApplicationTest;
 import org.testfx.matcher.base.NodeMatchers;
 import org.testfx.util.WaitForAsyncUtils;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.concurrent.TimeUnit;
-
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.TestCase.fail;
 import static org.testfx.api.FxAssert.verifyThat;
@@ -36,7 +45,7 @@ import static org.testfx.api.FxAssert.verifyThatIter;
 
 public class PipelineUITest extends ApplicationTest {
 
-    private GRIPCoreTestModule testModule;
+    private GripCoreTestModule testModule;
     private EventBus eventBus;
     private OperationMetaData additionOperation;
     private OperationMetaData subtractionOperation;
@@ -45,14 +54,14 @@ public class PipelineUITest extends ApplicationTest {
 
     @Override
     public void start(Stage stage) {
-        testModule = new GRIPCoreTestModule();
+        testModule = new GripCoreTestModule();
         testModule.setUp();
-        final Injector injector = Guice.createInjector(Modules.override(testModule).with(new GRIPUIModule()));
+        final Injector injector = Guice.createInjector(Modules.override(testModule).with(new GripUIModule()));
         eventBus = injector.getInstance(EventBus.class);
         pipeline = injector.getInstance(Pipeline.class);
         InputSocket.Factory isf = injector.getInstance(InputSocket.Factory.class);
         OutputSocket.Factory osf = injector.getInstance(OutputSocket.Factory.class);
-        additionOperation = new OperationMetaData(AdditionOperation.DESCRIPTION, () ->new AdditionOperation(isf, osf));
+        additionOperation = new OperationMetaData(AdditionOperation.DESCRIPTION, () -> new AdditionOperation(isf, osf));
         subtractionOperation = new OperationMetaData(SubtractionOperation.DESCRIPTION, () -> new SubtractionOperation(isf, osf));
         pipelineController = injector.getInstance(PipelineController.class);
         final Scene scene = new Scene(TestAnnotationFXMLLoader.load(pipelineController), 800, 600);
@@ -79,7 +88,7 @@ public class PipelineUITest extends ApplicationTest {
 
         // When
         drag(StyleClassNameUtility.cssSelectorForOutputSocketHandleOn(addStep), MouseButton.PRIMARY)
-                .dropTo(StyleClassNameUtility.cssSelectorForInputSocketHandleOn(subtractStep));
+            .dropTo(StyleClassNameUtility.cssSelectorForInputSocketHandleOn(subtractStep));
 
         // Then
         Connection connection = assertStepConnected("The add step did not connect to the subtract step", addStep, subtractStep);
@@ -110,8 +119,8 @@ public class PipelineUITest extends ApplicationTest {
                 assertEquals("Moving a step resulting in the number of steps changing", 3, stepsNodes.size());
 
                 return pipelineController.findStepController(step1).getRoot().equals(stepsNodes.get(0))
-                        && pipelineController.findStepController(step3).getRoot().equals(stepsNodes.get(1))
-                        && pipelineController.findStepController(step2).getRoot().equals(stepsNodes.get(2));
+                    && pipelineController.findStepController(step3).getRoot().equals(stepsNodes.get(1))
+                    && pipelineController.findStepController(step2).getRoot().equals(stepsNodes.get(2));
             }
 
             @Override
@@ -125,9 +134,9 @@ public class PipelineUITest extends ApplicationTest {
         for (OutputSocket inputSocket : output.getOutputSockets()) {
             for (InputSocket outputSocket : input.getInputSockets()) {
                 Optional<Connection> connection = inputSocket
-                        .getConnections()
-                        .stream()
-                        .filter(c -> outputSocket.getConnections().contains(c)).findFirst();
+                    .getConnections()
+                    .stream()
+                    .filter(c -> outputSocket.getConnections().contains(c)).findFirst();
                 if (connection.isPresent()) {
                     return connection.get();
                 }

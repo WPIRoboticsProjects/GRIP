@@ -1,27 +1,30 @@
 package edu.wpi.grip.ui.util;
 
 import com.google.common.eventbus.EventBus;
+
+import java.util.logging.Logger;
+
 import javafx.application.Platform;
 import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
+
 import net.jodah.concurrentunit.Waiter;
+
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.Timeout;
 import org.testfx.framework.junit.ApplicationTest;
 
-import java.util.logging.Logger;
-
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-public class GRIPPlatformTest extends ApplicationTest {
+public class GripPlatformTest extends ApplicationTest {
 
     private EventBus eventBus;
-    private GRIPPlatform platform;
-    private GRIPPlatform unRegisteredPlatform;
+    private GripPlatform platform;
+    private GripPlatform unRegisteredPlatform;
 
     @Rule
     public Timeout globalTimeout = Timeout.seconds(10); // 10 seconds max per method tested
@@ -36,11 +39,11 @@ public class GRIPPlatformTest extends ApplicationTest {
     @Before
     public void setUp() {
         this.eventBus = new EventBus();
-        this.platform = new GRIPPlatform(eventBus, Logger.getLogger(GRIPPlatform.class.getName()));
+        this.platform = new GripPlatform(eventBus, Logger.getLogger(GripPlatform.class.getName()));
         eventBus.register(this.platform);
 
         // This one should not be registered on the event bus!
-        this.unRegisteredPlatform = new GRIPPlatform(eventBus, Logger.getLogger(GRIPPlatform.class.getName()));
+        this.unRegisteredPlatform = new GripPlatform(eventBus, Logger.getLogger(GripPlatform.class.getName()));
     }
 
     @Test
@@ -62,7 +65,7 @@ public class GRIPPlatformTest extends ApplicationTest {
                 hasRun[0] = true;
             });
             assertTrue("When running in the JavaFX thread this should have run immediately in the same thread",
-                    hasRun[0]);
+                hasRun[0]);
         });
     }
 
@@ -79,7 +82,7 @@ public class GRIPPlatformTest extends ApplicationTest {
 
     @Test
     public void testRunAsSoonAsPossibleWillNotCallIfInterrupted() throws Exception {
-        final boolean hasRun [] = {false};
+        final boolean[] hasRun = {false};
 
         Thread.currentThread().interrupt();
         platform.runAsSoonAsPossible(() -> {

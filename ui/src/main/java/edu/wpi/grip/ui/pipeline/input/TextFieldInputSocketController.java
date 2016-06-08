@@ -2,9 +2,11 @@ package edu.wpi.grip.ui.pipeline.input;
 
 import com.google.common.eventbus.Subscribe;
 import com.google.inject.assistedinject.Assisted;
-import edu.wpi.grip.core.sockets.InputSocket;
+
 import edu.wpi.grip.core.events.SocketChangedEvent;
+import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.ui.pipeline.SocketHandleView;
+
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.TextField;
@@ -12,7 +14,7 @@ import javafx.scene.control.TextField;
 import javax.inject.Inject;
 
 /**
- * An {@link InputSocketView} that lets the user set the value of a number with a {@link javafx.scene.control.TextField}
+ * An {@link InputSocketController} that lets the user set the value of a number with a {@link javafx.scene.control.TextField}
  */
 public class TextFieldInputSocketController extends InputSocketController<String> {
 
@@ -22,9 +24,8 @@ public class TextFieldInputSocketController extends InputSocketController<String
         TextFieldInputSocketController create(InputSocket<String> socket);
     }
 
-    @Inject
-    TextFieldInputSocketController(SocketHandleView.Factory socketHandleViewFactory,
-                                          @Assisted InputSocket<String> socket) {
+    @Inject TextFieldInputSocketController(SocketHandleView.Factory socketHandleViewFactory,
+                                           @Assisted InputSocket<String> socket) {
         super(socketHandleViewFactory, socket);
     }
 
@@ -37,7 +38,9 @@ public class TextFieldInputSocketController extends InputSocketController<String
         textField.setPromptText(getSocket().getSocketHint().getIdentifier());
         textField.disableProperty().bind(this.getHandle().connectedProperty());
         textField.focusedProperty().addListener(observable -> {
-            if (!textField.isFocused()) getSocket().setValue(textField.getText());
+            if (!textField.isFocused()) {
+                getSocket().setValue(textField.getText());
+            }
         });
 
         setContent(textField);

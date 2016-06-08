@@ -3,6 +3,7 @@ package edu.wpi.gripgenerator;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
+
 import edu.wpi.gripgenerator.settings.DefinedMethod;
 import edu.wpi.gripgenerator.settings.DefinedMethodCollection;
 
@@ -19,7 +20,9 @@ public class OpenCVMethodVisitor extends VoidVisitorAdapter<Map<String, Compilat
 
     private DefinedMethodCollection getDefinedCollectionMatchingParentOf(MethodDeclaration declaration) {
         for (DefinedMethodCollection collection : collections) {
-            if (collection.matchesParent(declaration)) return collection;
+            if (collection.matchesParent(declaration)) {
+                return collection;
+            }
         }
         return null;
     }

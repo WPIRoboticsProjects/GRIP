@@ -2,6 +2,7 @@ package edu.wpi.grip.core.operations;
 
 
 import com.google.common.eventbus.EventBus;
+
 import edu.wpi.grip.core.operations.network.MapNetworkPublisherFactory;
 import edu.wpi.grip.core.operations.network.MockMapNetworkPublisher;
 import edu.wpi.grip.core.operations.network.ros.JavaToMessageConverter;
@@ -40,7 +41,7 @@ public class OperationsFactory {
     public static Operations create(EventBus eventBus) {
 
         return create(eventBus, MockMapNetworkPublisher::new, MockROSMessagePublisher::new,
-                new MockInputSocketFactory(eventBus), new MockOutputSocketFactory(eventBus));
+            new MockInputSocketFactory(eventBus), new MockOutputSocketFactory(eventBus));
     }
 
     public static Operations create(EventBus eventBus,

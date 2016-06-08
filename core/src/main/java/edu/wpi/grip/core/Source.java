@@ -2,6 +2,7 @@ package edu.wpi.grip.core;
 
 import com.google.common.collect.ImmutableList;
 import com.google.inject.Inject;
+
 import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.core.sources.CameraSource;
 import edu.wpi.grip.core.sources.ImageFileSource;
@@ -31,11 +32,16 @@ public abstract class Source {
         MultiImageFileSource.Factory multiImageFactory;
 
         @Override
-        public Source create(Class type, Properties properties) throws IOException {
-            if (type.isAssignableFrom(CameraSource.class)) return cameraFactory.create(properties);
-            else if (type.isAssignableFrom(ImageFileSource.class)) return imageFactory.create(properties);
-            else if (type.isAssignableFrom(MultiImageFileSource.class)) return multiImageFactory.create(properties);
-            else throw new IllegalArgumentException(type + " was not a valid type");
+        public Source create(Class<?> type, Properties properties) throws IOException {
+            if (type.isAssignableFrom(CameraSource.class)) {
+                return cameraFactory.create(properties);
+            } else if (type.isAssignableFrom(ImageFileSource.class)) {
+                return imageFactory.create(properties);
+            } else if (type.isAssignableFrom(MultiImageFileSource.class)) {
+                return multiImageFactory.create(properties);
+            } else {
+                throw new IllegalArgumentException(type + " was not a valid type");
+            }
         }
     }
 

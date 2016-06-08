@@ -1,6 +1,9 @@
 package edu.wpi.grip.ui.dragging;
 
 
+import java.util.Collections;
+import java.util.Optional;
+
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
@@ -9,9 +12,6 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.DataFormat;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
-
-import java.util.Collections;
-import java.util.Optional;
 
 /**
  * A service to provide data transfer capabilities between two controllers.

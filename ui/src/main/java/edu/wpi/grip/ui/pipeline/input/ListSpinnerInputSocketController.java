@@ -4,10 +4,15 @@ import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
-import edu.wpi.grip.core.sockets.InputSocket;
+
 import edu.wpi.grip.core.events.SocketChangedEvent;
+import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.ui.pipeline.SocketHandleView;
-import edu.wpi.grip.ui.util.GRIPPlatform;
+import edu.wpi.grip.ui.util.GripPlatform;
+
+import java.util.Arrays;
+import java.util.List;
+
 import javafx.beans.InvalidationListener;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -16,9 +21,6 @@ import javafx.scene.control.Spinner;
 import javafx.scene.control.SpinnerValueFactory;
 import javafx.util.StringConverter;
 
-import java.util.Arrays;
-import java.util.List;
-
 /**
  * An {@link InputSocketController} that lets the user set the value with a {@link Spinner}
  */
@@ -26,7 +28,7 @@ public class ListSpinnerInputSocketController extends InputSocketController<List
 
     private final SpinnerValueFactory<List> valueFactory;
     private final InvalidationListener updateSocketFromSpinner;
-    private final GRIPPlatform platform;
+    private final GripPlatform platform;
 
     public interface Factory {
         ListSpinnerInputSocketController create(InputSocket<List> socket);
@@ -35,8 +37,7 @@ public class ListSpinnerInputSocketController extends InputSocketController<List
     /**
      * @param socket an input socket where the domain contains all of the possible values to choose from
      */
-    @Inject
-    ListSpinnerInputSocketController(EventBus eventBus, SocketHandleView.Factory socketHandleViewFactory, GRIPPlatform platform, @Assisted InputSocket<List> socket) {
+    @Inject ListSpinnerInputSocketController(EventBus eventBus, SocketHandleView.Factory socketHandleViewFactory, GripPlatform platform, @Assisted InputSocket<List> socket) {
         super(socketHandleViewFactory, socket);
         this.platform = platform;
 
@@ -59,8 +60,10 @@ public class ListSpinnerInputSocketController extends InputSocketController<List
         final Spinner<List> spinner = new Spinner<>(this.valueFactory);
         spinner.setEditable(true);
         spinner.disableProperty().bind(this.getHandle().connectedProperty());
-        spinner.focusedProperty().addListener((s, ov, nv) -> {// Code found at http://stackoverflow.com/questions/32340476/manually-typing-in-text-in-javafx-spinner-is-not-updating-the-value-unless-user
-            if (nv) return;
+        spinner.focusedProperty().addListener((s, ov, nv) -> { // Code found at http://stackoverflow.com/questions/32340476/manually-typing-in-text-in-javafx-spinner-is-not-updating-the-value-unless-user
+            if (nv) {
+                return;
+            }
             commitEditorText(spinner);
         });
         this.setContent(spinner);
@@ -85,7 +88,9 @@ public class ListSpinnerInputSocketController extends InputSocketController<List
 
     // Code found at http://stackoverflow.com/questions/32340476/manually-typing-in-text-in-javafx-spinner-is-not-updating-the-value-unless-user
     private <T> void commitEditorText(Spinner<T> spinner) {
-        if (!spinner.isEditable()) return;
+        if (!spinner.isEditable()) {
+            return;
+        }
         String text = spinner.getEditor().getText();
         SpinnerValueFactory<T> valueFactory = spinner.getValueFactory();
         if (valueFactory != null) {

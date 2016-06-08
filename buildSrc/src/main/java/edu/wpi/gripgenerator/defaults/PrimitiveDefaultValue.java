@@ -1,7 +1,13 @@
 package edu.wpi.gripgenerator.defaults;
 
 import com.github.javaparser.ast.ImportDeclaration;
-import com.github.javaparser.ast.expr.*;
+import com.github.javaparser.ast.expr.ArrayCreationExpr;
+import com.github.javaparser.ast.expr.ArrayInitializerExpr;
+import com.github.javaparser.ast.expr.BooleanLiteralExpr;
+import com.github.javaparser.ast.expr.CharLiteralExpr;
+import com.github.javaparser.ast.expr.DoubleLiteralExpr;
+import com.github.javaparser.ast.expr.Expression;
+import com.github.javaparser.ast.expr.IntegerLiteralExpr;
 import com.github.javaparser.ast.type.PrimitiveType;
 import com.github.javaparser.ast.type.Type;
 
@@ -40,37 +46,38 @@ public class PrimitiveDefaultValue extends DefaultValue {
             case Boolean:
                 this.viewValue = "CHECKBOX";
                 this.domainValue = createDomainValueExpression(
-                        new BooleanLiteralExpr(true),
-                        new BooleanLiteralExpr(false)
+                    new BooleanLiteralExpr(true),
+                    new BooleanLiteralExpr(false)
                 );
                 break;
             case Int:
                 this.viewValue = "TEXT";
                 this.domainValue = createDomainValueExpression(
-                        new IntegerLiteralExpr("Integer.MIN_VALUE"),
-                        new IntegerLiteralExpr("Integer.MAX_VALUE")
+                    new IntegerLiteralExpr("Integer.MIN_VALUE"),
+                    new IntegerLiteralExpr("Integer.MAX_VALUE")
                 );
                 break;
             case Float:
                 this.viewValue = "TEXT";
                 this.domainValue = createDomainValueExpression(
-                        new DoubleLiteralExpr("-Float.MAX_VALUE"),
-                        new DoubleLiteralExpr("Float.MAX_VALUE")
+                    new DoubleLiteralExpr("-Float.MAX_VALUE"),
+                    new DoubleLiteralExpr("Float.MAX_VALUE")
                 );
                 break;
             case Double:
                 this.viewValue = "TEXT";
                 this.domainValue = createDomainValueExpression(
-                        new DoubleLiteralExpr("-Double.MAX_VALUE"),
-                        new DoubleLiteralExpr("Double.MAX_VALUE")
+                    new DoubleLiteralExpr("-Double.MAX_VALUE"),
+                    new DoubleLiteralExpr("Double.MAX_VALUE")
                 );
                 break;
             case Char:
                 this.viewValue = "TEXT";
                 this.domainValue = createDomainValueExpression(
-                        new CharLiteralExpr(Character.toString(Character.MIN_VALUE)),
-                        new CharLiteralExpr(Character.toString(Character.MAX_VALUE))
+                    new CharLiteralExpr(Character.toString(Character.MIN_VALUE)),
+                    new CharLiteralExpr(Character.toString(Character.MAX_VALUE))
                 );
+                break;
             default:
                 throw new UnsupportedOperationException("Type " + type.getType() + " is not supported.");
         }
@@ -84,9 +91,9 @@ public class PrimitiveDefaultValue extends DefaultValue {
      */
     private Expression createDomainValueExpression(Expression... expressions) {
         return new ArrayCreationExpr(type.toBoxedType(), 1,
-                new ArrayInitializerExpr(
-                        Arrays.asList(expressions)
-                )
+            new ArrayInitializerExpr(
+                Arrays.asList(expressions)
+            )
         );
     }
 
@@ -107,7 +114,9 @@ public class PrimitiveDefaultValue extends DefaultValue {
 
     @Override
     public Expression getDefaultValue(String defaultValue) {
-        if (this.defaultOverride.isPresent()) defaultValue = this.defaultOverride.get();
+        if (this.defaultOverride.isPresent()) {
+            defaultValue = this.defaultOverride.get();
+        }
         switch (type.getType()) {
             case Boolean:
                 return new BooleanLiteralExpr(Boolean.valueOf(defaultValue));

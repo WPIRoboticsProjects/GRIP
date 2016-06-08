@@ -1,7 +1,7 @@
-
 package edu.wpi.grip.core.operations.composite;
 
 import com.google.common.collect.ImmutableList;
+
 import edu.wpi.grip.core.Operation;
 import edu.wpi.grip.core.OperationDescription;
 import edu.wpi.grip.core.sockets.InputSocket;
@@ -12,8 +12,19 @@ import edu.wpi.grip.core.util.Icon;
 
 import java.util.List;
 
-import static org.bytedeco.javacpp.opencv_core.*;
-import static org.bytedeco.javacpp.opencv_imgproc.*;
+import static org.bytedeco.javacpp.opencv_core.CV_32SC1;
+import static org.bytedeco.javacpp.opencv_core.CV_8UC1;
+import static org.bytedeco.javacpp.opencv_core.CV_8UC3;
+import static org.bytedeco.javacpp.opencv_core.LINE_8;
+import static org.bytedeco.javacpp.opencv_core.Mat;
+import static org.bytedeco.javacpp.opencv_core.MatVector;
+import static org.bytedeco.javacpp.opencv_core.Point;
+import static org.bytedeco.javacpp.opencv_core.Scalar;
+import static org.bytedeco.javacpp.opencv_core.bitwise_not;
+import static org.bytedeco.javacpp.opencv_imgproc.CV_FILLED;
+import static org.bytedeco.javacpp.opencv_imgproc.circle;
+import static org.bytedeco.javacpp.opencv_imgproc.drawContours;
+import static org.bytedeco.javacpp.opencv_imgproc.watershed;
 
 /**
  * GRIP {@link Operation} for
@@ -22,18 +33,18 @@ import static org.bytedeco.javacpp.opencv_imgproc.*;
 public class WatershedOperation implements Operation {
 
     public static final OperationDescription DESCRIPTION =
-            OperationDescription.builder()
-                    .name("Watershed")
-                    .summary("Isolates overlapping objects from the background and each other")
-                    .category(OperationDescription.Category.FEATURE_DETECTION)
-                    .icon(Icon.iconStream("opencv"))
-                    .build();
+        OperationDescription.builder()
+            .name("Watershed")
+            .summary("Isolates overlapping objects from the background and each other")
+            .category(OperationDescription.Category.FEATURE_DETECTION)
+            .icon(Icon.iconStream("opencv"))
+            .build();
 
     private final SocketHint<Mat> srcHint = SocketHints.Inputs.createMatSocketHint("Input", false);
     private final SocketHint<ContoursReport> contoursHint = new SocketHint.Builder<>(ContoursReport.class)
-            .identifier("Contours")
-            .initialValueSupplier(ContoursReport::new)
-            .build();
+        .identifier("Contours")
+        .initialValueSupplier(ContoursReport::new)
+        .build();
 
     private final SocketHint<Mat> outputHint = SocketHints.Inputs.createMatSocketHint("Output", true);
 
@@ -50,15 +61,15 @@ public class WatershedOperation implements Operation {
     @Override
     public List<InputSocket> getInputSockets() {
         return ImmutableList.of(
-                srcSocket,
-                contoursSocket
+            srcSocket,
+            contoursSocket
         );
     }
 
     @Override
     public List<OutputSocket> getOutputSockets() {
         return ImmutableList.of(
-                outputSocket
+            outputSocket
         );
     }
 

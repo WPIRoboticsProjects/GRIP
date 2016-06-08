@@ -2,8 +2,10 @@ package edu.wpi.grip.core.sockets;
 
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
+
 import edu.wpi.grip.core.events.SocketChangedEvent;
 import edu.wpi.grip.core.events.SocketPreviewChangedEvent;
+
 import org.junit.Before;
 import org.junit.Test;
 
@@ -46,8 +48,8 @@ public class SocketTest {
 
     @Test
     public void testSocketChangedEvent() throws Exception {
-        final boolean[] handled = new boolean[]{false};
-        final Double[] value = new Double[]{0.0};
+        final boolean[] handled = new boolean[] {false};
+        final Double[] value = new Double[] {0.0};
         Object eventHandler = new Object() {
             @Subscribe
             public void onSocketChanged(SocketChangedEvent e) {
@@ -69,13 +71,13 @@ public class SocketTest {
         SocketHint<Number> sh = SocketHints.createNumberSocketHint("foo", 0);
         OutputSocket<Number> socket = new OutputSocketImpl<>(eventBus, sh);
 
-        final boolean[] handled = new boolean[]{false};
+        final boolean[] handled = new boolean[] {false};
         Object eventHandler = new Object() {
             @Subscribe
             public void onSocketPreviewed(SocketPreviewChangedEvent e) {
                 handled[0] = true;
                 assertTrue("A preview event fired for a socket but the socket was not labeled as able to be previewed",
-                        socket.isPreviewed());
+                    socket.isPreviewed());
             }
         };
 

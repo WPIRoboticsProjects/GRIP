@@ -1,21 +1,24 @@
 package edu.wpi.grip.ui.util;
 
 import com.google.common.base.Throwables;
+
 import edu.wpi.grip.ui.Controller;
+
+import java.util.Arrays;
+
 import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
+
 import org.junit.Test;
 import org.testfx.framework.junit.ApplicationTest;
-
-import java.util.Arrays;
 
 import static org.junit.Assert.assertEquals;
 
 public class ControllerMapTest extends ApplicationTest {
 
     private static final String SIZE_OF_CONTROLLER_NOT_SAME_STRING =
-            "The size of the controller was not the same";
+        "The size of the controller was not the same";
 
     private MockPane mockPane;
 
@@ -98,7 +101,7 @@ public class ControllerMapTest extends ApplicationTest {
             final MockController mockController = new MockController();
             mockPane.controllerMap.add(mockController);
             assertEquals(SIZE_OF_CONTROLLER_NOT_SAME_STRING,
-                    mockController, mockPane.controllerMap.getWithNode(mockController.getRoot()));
+                mockController, mockPane.controllerMap.getWithNode(mockController.getRoot()));
         });
     }
 

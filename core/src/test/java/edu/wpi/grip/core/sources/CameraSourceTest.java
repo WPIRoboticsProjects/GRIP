@@ -7,13 +7,23 @@ import com.google.common.eventbus.Subscribe;
 import com.google.common.util.concurrent.Service;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
+
 import edu.wpi.grip.core.events.UnexpectedThrowableEvent;
 import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.core.util.ImageLoadingUtility;
 import edu.wpi.grip.core.util.MockExceptionWitness;
 import edu.wpi.grip.util.Files;
-import edu.wpi.grip.util.GRIPCoreTestModule;
+import edu.wpi.grip.util.GripCoreTestModule;
+
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.Queue;
+import java.util.concurrent.TimeoutException;
+
 import net.jodah.concurrentunit.Waiter;
+
 import org.bytedeco.javacpp.indexer.Indexer;
 import org.bytedeco.javacpp.opencv_core.Mat;
 import org.bytedeco.javacv.Frame;
@@ -25,13 +35,6 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.Timeout;
 
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.Queue;
-import java.util.concurrent.TimeoutException;
-
 import static com.google.common.truth.Truth.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -40,7 +43,7 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 public class CameraSourceTest {
-    private GRIPCoreTestModule testModule;
+    private GripCoreTestModule testModule;
     private CameraSource.Factory cameraSourceFactory;
     private CameraSource cameraSourceWithMockGrabber;
     private MockFrameGrabberFactory mockFrameGrabberFactory;
@@ -62,7 +65,7 @@ public class CameraSourceTest {
             for (int y = 0; y < frameIdx.rows(); y++) {
                 for (int x = 0; x < frameIdx.cols(); x++) {
                     for (int z = 0; z < frameIdx.channels(); z++) {
-                        frameIdx.putDouble(new int[]{y, x, z}, y + x + z);
+                        frameIdx.putDouble(new int[] {y, x, z}, y + x + z);
                     }
                 }
             }
@@ -122,7 +125,7 @@ public class CameraSourceTest {
 
     @Before
     public void setUp() throws Exception {
-        this.testModule = new GRIPCoreTestModule();
+        this.testModule = new GripCoreTestModule();
         testModule.setUp();
         final Injector injector = Guice.createInjector(testModule);
         this.cameraSourceFactory = injector.getInstance(CameraSource.Factory.class);
@@ -137,14 +140,15 @@ public class CameraSourceTest {
                 });
             }
         }
+
         eventBus.register(new UnhandledExceptionWitness());
         this.mockFrameGrabberFactory = new MockFrameGrabberFactory();
         this.cameraSourceWithMockGrabber = new CameraSource(
-                eventBus,
-                osf,
-                mockFrameGrabberFactory,
-                origin -> new MockExceptionWitness(eventBus, origin),
-                0);
+            eventBus,
+            osf,
+            mockFrameGrabberFactory,
+            origin -> new MockExceptionWitness(eventBus, origin),
+            0);
     }
 
     @After
@@ -163,7 +167,7 @@ public class CameraSourceTest {
     public void testCallingStopAndStartDoesNotDeadlock() throws Exception {
         assertEquals("Service did not start new", Service.State.NEW, cameraSourceWithMockGrabber.state());
         // Run this a hundred time to ensure that there isn't a situation where this can deadlock
-        for(int i = 0; i < 100; i++) {
+        for (int i = 0; i < 100; i++) {
             cameraSourceWithMockGrabber.startAsync().awaitRunning();
             assertTrue("The camera source was not started after calling startAsync", cameraSourceWithMockGrabber.isRunning());
             cameraSourceWithMockGrabber.stopAsync().awaitTerminated();
@@ -251,7 +255,7 @@ public class CameraSourceTest {
         try {
             source.stopAndAwait();
             fail("This should have failed");
-        } catch(IllegalStateException e) {
+        } catch (IllegalStateException e) {
             assertThat(e.getCause()).isNotNull();
             assertThat(e.getCause().getCause()).isNotNull();
             assertThat(e.getCause().getCause()).hasMessage(GRABBER_START_MESSAGE);
@@ -271,6 +275,7 @@ public class CameraSourceTest {
             public FrameGrabber create(int deviceNumber) {
                 return new SimpleMockFrameGrabber() {
                     private OpenCVFrameConverter.ToMat converter = new OpenCVFrameConverter.ToMat();
+
                     @Override
                     public Frame grab() throws Exception {
                         try {
@@ -279,7 +284,7 @@ public class CameraSourceTest {
                             Thread.currentThread().interrupt();
                             throw new FrameGrabber.Exception("Thread interrupted", e);
                         }
-                        if (!waiterQueue.isEmpty()){
+                        if (!waiterQueue.isEmpty()) {
                             waiterQueue.poll().resume();
                         }
                         return converter.convert(image);
@@ -300,7 +305,7 @@ public class CameraSourceTest {
         source.updateOutputSockets();
 
         assertNotEquals("The frame rate was not updated when the camera was running",
-                Double.valueOf(0), source.createOutputSockets().get(1).getValue().get());
+            Double.valueOf(0), source.createOutputSockets().get(1).getValue().get());
 
         try {
             source.stopAndAwait();

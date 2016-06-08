@@ -2,7 +2,6 @@ package edu.wpi.grip.core.operations.network;
 
 import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.sockets.SocketHints;
-import org.apache.commons.lang3.tuple.Pair;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -13,6 +12,8 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import org.apache.commons.lang3.tuple.Pair;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -50,60 +51,60 @@ public abstract class PublishAnnotatedOperation<D, P extends Publishable> extend
         this.publishType = publishType;
         this.converter = converter;
         this.publisher = publisherFactory.create(valueMethodStream()
-                .map(m -> m.getAnnotation(PublishValue.class).key())
-                .filter(k -> !k.isEmpty())
-                .collect(Collectors.toSet()));
+            .map(m -> m.getAnnotation(PublishValue.class).key())
+            .filter(k -> !k.isEmpty())
+            .collect(Collectors.toSet()));
 
         // Make sure there's at least one method to call
         valueMethodStream()
-                .findAny()
-                .orElseThrow(() -> new IllegalArgumentException("A Publishable type must have at least one method annotated with @PublishValue"));
+            .findAny()
+            .orElseThrow(() -> new IllegalArgumentException("A Publishable type must have at least one method annotated with @PublishValue"));
 
         // Make sure keys and weights are distinct
         valueMethodStream()
+            .map(m -> m.getAnnotation(PublishValue.class))
+            .filter(a -> valueMethodStream()
                 .map(m -> m.getAnnotation(PublishValue.class))
-                .filter(a -> valueMethodStream()
-                        .map(m -> m.getAnnotation(PublishValue.class))
-                        .anyMatch(a0 -> !a.equals(a0) && (a.key().equals(a0.key()) || a.weight() == a0.weight())))
-                .findAny()
-                .ifPresent(x -> {
-                    throw new IllegalArgumentException("Keys and weights must be distinct");
-                });
+                .anyMatch(a0 -> !a.equals(a0) && (a.key().equals(a0.key()) || a.weight() == a0.weight())))
+            .findAny()
+            .ifPresent(x -> {
+                throw new IllegalArgumentException("Keys and weights must be distinct");
+            });
 
         // Make sure all methods are non-static
         valueMethodStream()
-                .filter(m -> Modifier.isStatic(m.getModifiers()))
-                .findAny()
-                .ifPresent(x -> {
-                    throw new IllegalArgumentException("Methods annotated with @PublishValue must be non-static");
-                });
+            .filter(m -> Modifier.isStatic(m.getModifiers()))
+            .findAny()
+            .ifPresent(x -> {
+                throw new IllegalArgumentException("Methods annotated with @PublishValue must be non-static");
+            });
 
         // Make sure all methods are public
         valueMethodStream()
-                .filter(m -> !Modifier.isPublic(m.getModifiers()))
-                .findAny()
-                .ifPresent(x -> {
-                    throw new IllegalArgumentException("Methods annotated with @PublishValue must be public");
-                });
+            .filter(m -> !Modifier.isPublic(m.getModifiers()))
+            .findAny()
+            .ifPresent(x -> {
+                throw new IllegalArgumentException("Methods annotated with @PublishValue must be public");
+            });
 
         // Make sure annotated methods don't take parameters
         valueMethodStream()
-                .filter(m -> m.getParameterCount() > 0)
-                .findAny()
-                .ifPresent(x -> {
-                    throw new IllegalArgumentException("Methods annotated with @PublishValue cannot take parameters");
-                });
+            .filter(m -> m.getParameterCount() > 0)
+            .findAny()
+            .ifPresent(x -> {
+                throw new IllegalArgumentException("Methods annotated with @PublishValue cannot take parameters");
+            });
 
         // Make sure all methods have keys
         if (valueMethodStream()
+            .map(m -> m.getAnnotation(PublishValue.class))
+            .filter(a -> a.key().isEmpty())
+            .count() > 0
+            &&
+            valueMethodStream()
                 .map(m -> m.getAnnotation(PublishValue.class))
-                .filter(a -> a.key().isEmpty())
-                .count() > 0
-                &&
-                valueMethodStream()
-                        .map(m -> m.getAnnotation(PublishValue.class))
-                        .filter(a -> !a.key().isEmpty())
-                        .count() > 0) {
+                .filter(a -> !a.key().isEmpty())
+                .count() > 0) {
             throw new IllegalArgumentException("If a method has no key, it can be the only one annotated with @PublishValue in the class");
         }
     }
@@ -114,17 +115,17 @@ public abstract class PublishAnnotatedOperation<D, P extends Publishable> extend
      */
     protected Stream<Method> valueMethodStream() {
         return Stream.of(publishType.getMethods())
-                .filter(m -> m.isAnnotationPresent(PublishValue.class))
-                .sorted(Comparator.comparing(m -> m.getAnnotation(PublishValue.class).weight()));
+            .filter(m -> m.isAnnotationPresent(PublishValue.class))
+            .sorted(Comparator.comparing(m -> m.getAnnotation(PublishValue.class).weight()));
     }
 
     @Override
     protected List<InputSocket<Boolean>> createFlagSockets() {
         return valueMethodStream()
-                .map(m -> m.getAnnotation(PublishValue.class).key())
-                .map(name -> SocketHints.createBooleanSocketHint("Publish " + name, true))
-                .map(isf::create)
-                .collect(Collectors.toList());
+            .map(m -> m.getAnnotation(PublishValue.class).key())
+            .map(name -> SocketHints.createBooleanSocketHint("Publish " + name, true))
+            .map(isf::create)
+            .collect(Collectors.toList());
     }
 
     @Override
@@ -132,8 +133,8 @@ public abstract class PublishAnnotatedOperation<D, P extends Publishable> extend
         publisher.setName(nameSocket.getValue().get());
         D data = dataSocket.getValue().get();
         Map<String, Object> dataMap = valueMethodStream()
-                .map(m -> Pair.of(m.getAnnotation(PublishValue.class).key(), get(m, converter.apply(data))))
-                .collect(Collectors.toMap(Pair::getLeft, Pair::getRight));
+            .map(m -> Pair.of(m.getAnnotation(PublishValue.class).key(), get(m, converter.apply(data))))
+            .collect(Collectors.toMap(Pair::getLeft, Pair::getRight));
         publisher.publish(dataMap);
     }
 

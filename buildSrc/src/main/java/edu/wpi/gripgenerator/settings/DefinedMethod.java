@@ -3,6 +3,7 @@ package edu.wpi.gripgenerator.settings;
 import com.github.javaparser.ast.ImportDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.body.Parameter;
+
 import edu.wpi.gripgenerator.defaults.DefaultValueCollector;
 
 import java.util.ArrayList;
@@ -121,11 +122,16 @@ public final class DefinedMethod {
      */
     public boolean isMatch(List<Parameter> params) {
         // Check if the last param was a wildcard
-        if (this.isCompleteList && paramTypes.size() != params.size()) return false;
-        else if (paramTypes.size() > params.size()) return false;
+        if (this.isCompleteList && paramTypes.size() != params.size()) {
+            return false;
+        } else if (paramTypes.size() > params.size()) {
+            return false;
+        }
 
         for (int i = 0; i < paramTypes.size(); i++) {
-            if (!paramTypes.get(i).isMatch(params.get(i))) return false;
+            if (!paramTypes.get(i).isMatch(params.get(i))) {
+                return false;
+            }
         }
         return true;
     }
@@ -161,7 +167,9 @@ public final class DefinedMethod {
      * @return true if finalization succeeds or has already been completed.
      */
     protected boolean finalizeParamTypes(DefaultValueCollector collector) {
-        if (finalized) return true;
+        if (finalized) {
+            return true;
+        }
         this.finalized = true;
         if (bestMatchMethod.isPresent()) {
             final MethodDeclaration declaration = bestMatchMethod.get();
@@ -182,8 +190,8 @@ public final class DefinedMethod {
                  * Sets the defined params direction given the mapping provided to the collector in the File Parser.
                  */
                 collectionOf
-                        .getDefaultDirection(param.getId().getName())
-                        .ifPresent(definedParamType::trySetDirection);
+                    .getDefaultDirection(param.getId().getName())
+                    .ifPresent(definedParamType::trySetDirection);
 
                 definedParamType.setParamAs(param);
 
@@ -192,7 +200,7 @@ public final class DefinedMethod {
                     definedParamType.setDefaultValue(collector.getDefaultValueFor(defaultValue));
                 }
 
-                if (collectionOf.shouldIgnore(param.getId().getName())){
+                if (collectionOf.shouldIgnore(param.getId().getName())) {
                     definedParamType.setIgnored();
                 }
             }
@@ -225,13 +233,14 @@ public final class DefinedMethod {
     }
 
     public String toSimpleString() {
-        return "DefinedMethod{" +
-                "methodName='" + methodName + '\'' +
-                ", paramTypes=" + paramTypes +
-                ", isCompleteList=" + isCompleteList +
-                ", collectionOf=" + collectionOf +
-                ", description=" + description +
-                '}';
+        return String.format(
+            "DefinedMethod{methodName='%s', paramTypes=%s, isCompleteList=%s, collectionOf=%s, description=%s}",
+            methodName,
+            paramTypes,
+            isCompleteList,
+            collectionOf,
+            description
+        );
     }
 
     public String methodToString() {

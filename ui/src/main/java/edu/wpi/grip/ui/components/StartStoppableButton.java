@@ -5,9 +5,14 @@ import com.google.common.base.CaseFormat;
 import com.google.common.util.concurrent.Service;
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
+
 import edu.wpi.grip.core.util.service.RestartableService;
 import edu.wpi.grip.core.util.service.SingleActionListener;
 import edu.wpi.grip.ui.util.DPIUtility;
+
+import java.util.Arrays;
+import java.util.List;
+
 import javafx.animation.FadeTransition;
 import javafx.animation.Transition;
 import javafx.application.Platform;
@@ -20,9 +25,6 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.util.Duration;
-
-import java.util.Arrays;
-import java.util.List;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -42,8 +44,7 @@ public final class StartStoppableButton extends ToggleButton {
         StartStoppableButton create(RestartableService startStoppable);
     }
 
-    @Inject
-    StartStoppableButton(@Assisted final RestartableService service) {
+    @Inject StartStoppableButton(@Assisted final RestartableService service) {
         super(null, pickGraphic(service));
         this.service = checkNotNull(service, "RestartableService can not be null");
         this.startStopTooltip = new Tooltip(getButtonActionString());

@@ -2,10 +2,16 @@ package edu.wpi.grip.ui;
 
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
-import edu.wpi.grip.core.*;
+
+import edu.wpi.grip.core.Operation;
+import edu.wpi.grip.core.OperationDescription;
+import edu.wpi.grip.core.OperationMetaData;
+import edu.wpi.grip.core.Pipeline;
+import edu.wpi.grip.core.Step;
 import edu.wpi.grip.ui.annotations.ParametrizedController;
 import edu.wpi.grip.ui.dragging.OperationDragService;
 import edu.wpi.grip.ui.util.StyleClassNameUtility;
+
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tooltip;
@@ -41,11 +47,10 @@ public class OperationController implements Controller {
         OperationController create(OperationMetaData operationMetaData);
     }
 
-    @Inject
-    OperationController(Pipeline pipeline,
-                        Step.Factory stepFactory,
-                        OperationDragService operationDragService,
-                        @Assisted OperationMetaData operationMetaData) {
+    @Inject OperationController(Pipeline pipeline,
+                                Step.Factory stepFactory,
+                                OperationDragService operationDragService,
+                                @Assisted OperationMetaData operationMetaData) {
         this.pipeline = pipeline;
         this.stepFactory = stepFactory;
         this.operationDragService = operationDragService;

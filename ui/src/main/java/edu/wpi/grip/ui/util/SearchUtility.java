@@ -12,8 +12,12 @@ public class SearchUtility {
      * or minor typos
      */
     public static boolean fuzzyContains(String text, String query) {
-        if (query.isEmpty()) return true;
-        if (text.isEmpty()) return false;
+        if (query.isEmpty()) {
+            return true;
+        }
+        if (text.isEmpty()) {
+            return false;
+        }
 
         // Normalize the capitalization and whitespace (which are currently both pretty inconsistent among operations)
         text = text.toUpperCase().replaceAll("[^a-zA-Z]", "");
@@ -27,7 +31,9 @@ public class SearchUtility {
 
             for (int i = 0; i < substrCount; i++) {
                 final String subname = text.substring(i, i + substrLength);
-                if (StringUtils.getLevenshteinDistance(query, subname, 1) != -1) return true;
+                if (StringUtils.getLevenshteinDistance(query, subname, 1) != -1) {
+                    return true;
+                }
             }
 
             return false;

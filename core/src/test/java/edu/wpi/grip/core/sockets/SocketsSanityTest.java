@@ -3,7 +3,9 @@ package edu.wpi.grip.core.sockets;
 import com.google.common.testing.AbstractPackageSanityTests;
 
 public class SocketsSanityTest extends AbstractPackageSanityTests {
-    enum TestEnum {A, B, C}
+    enum TestEnum {
+        A, B, C
+    }
 
     public SocketsSanityTest() {
         super();

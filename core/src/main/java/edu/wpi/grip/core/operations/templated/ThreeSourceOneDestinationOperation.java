@@ -2,6 +2,7 @@ package edu.wpi.grip.core.operations.templated;
 
 
 import com.google.common.collect.ImmutableList;
+
 import edu.wpi.grip.core.Operation;
 import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.sockets.OutputSocket;
@@ -23,9 +24,9 @@ final class ThreeSourceOneDestinationOperation<T1, T2, T3, R> implements Operati
     }
 
     ThreeSourceOneDestinationOperation(
-            InputSocket.Factory inputSocketFactory,
-            OutputSocket.Factory outputSocketFactory,
-            SocketHint<T1> t1SocketHint, SocketHint<T2> t2SocketHint, SocketHint<T3> t3SocketHint, SocketHint<R> rSocketHint, Performer<T1, T2, T3, R> performer) {
+        InputSocket.Factory inputSocketFactory,
+        OutputSocket.Factory outputSocketFactory,
+        SocketHint<T1> t1SocketHint, SocketHint<T2> t2SocketHint, SocketHint<T3> t3SocketHint, SocketHint<R> rSocketHint, Performer<T1, T2, T3, R> performer) {
         this.performer = performer;
         this.input1 = inputSocketFactory.create(t1SocketHint);
         this.input2 = inputSocketFactory.create(t2SocketHint);

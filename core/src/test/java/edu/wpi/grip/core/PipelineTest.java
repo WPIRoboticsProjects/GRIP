@@ -3,26 +3,35 @@ package edu.wpi.grip.core;
 import com.google.common.eventbus.EventBus;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
+
 import edu.wpi.grip.core.events.ConnectionAddedEvent;
 import edu.wpi.grip.core.events.ConnectionRemovedEvent;
 import edu.wpi.grip.core.events.SourceAddedEvent;
 import edu.wpi.grip.core.events.SourceRemovedEvent;
-import edu.wpi.grip.core.sockets.*;
-import edu.wpi.grip.util.GRIPCoreTestModule;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import edu.wpi.grip.core.sockets.InputSocket;
+import edu.wpi.grip.core.sockets.MockInputSocket;
+import edu.wpi.grip.core.sockets.MockOutputSocket;
+import edu.wpi.grip.core.sockets.OutputSocket;
+import edu.wpi.grip.core.sockets.SocketHint;
+import edu.wpi.grip.core.sockets.SocketHints;
+import edu.wpi.grip.util.GripCoreTestModule;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.Arrays;
 import java.util.Collections;
 
-import static org.junit.Assert.*;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 public class PipelineTest {
 
-    private GRIPCoreTestModule testModule;
+    private GripCoreTestModule testModule;
     private Step.Factory stepFactory;
     private EventBus eventBus;
     private Pipeline pipeline;
@@ -43,7 +52,7 @@ public class PipelineTest {
 
     @Before
     public void setUp() {
-        testModule = new GRIPCoreTestModule();
+        testModule = new GripCoreTestModule();
         testModule.setUp();
         final Injector injector = Guice.createInjector(testModule);
         stepFactory = injector.getInstance(Step.Factory.class);
@@ -196,12 +205,12 @@ public class PipelineTest {
         Step step1 = stepFactory.create(new OperationMetaData(AdditionOperation.DESCRIPTION, () -> new AdditionOperation(isf, osf)));
         Step step2 = stepFactory.create(new OperationMetaData(AdditionOperation.DESCRIPTION, () -> new AdditionOperation(isf, osf)));
 
-        InputSocket<Double> a1 = (InputSocket<Double>) step1.getInputSockets().get(0);
-        InputSocket<Double> b1 = (InputSocket<Double>) step1.getInputSockets().get(1);
-        OutputSocket<Double> sum1 = (OutputSocket<Double>) step1.getOutputSockets().get(0);
-        InputSocket<Double> a2 = (InputSocket<Double>) step2.getInputSockets().get(0);
-        InputSocket<Double> b2 = (InputSocket<Double>) step2.getInputSockets().get(1);
-        OutputSocket<Double> sum2 = (OutputSocket<Double>) step2.getOutputSockets().get(0);
+        final InputSocket<Double> a1 = step1.getInputSockets().get(0);
+        final InputSocket<Double> b1 = step1.getInputSockets().get(1);
+        final OutputSocket<Double> sum1 = step1.getOutputSockets().get(0);
+        final InputSocket<Double> a2 = step2.getInputSockets().get(0);
+        final InputSocket<Double> b2 = step2.getInputSockets().get(1);
+        final OutputSocket<Double> sum2 = step2.getOutputSockets().get(0);
 
         // The result of this is the following equalities:
         //      sum1 = a1+b1
@@ -232,12 +241,12 @@ public class PipelineTest {
         Step step1 = stepFactory.create(new OperationMetaData(AdditionOperation.DESCRIPTION, () -> new AdditionOperation(isf, osf)));
         Step step2 = stepFactory.create(new OperationMetaData(AdditionOperation.DESCRIPTION, () -> new AdditionOperation(isf, osf)));
 
-        InputSocket<Double> a1 = (InputSocket<Double>) step1.getInputSockets().get(0);
-        InputSocket<Double> b1 = (InputSocket<Double>) step1.getInputSockets().get(1);
-        OutputSocket<Double> sum1 = (OutputSocket<Double>) step1.getOutputSockets().get(0);
-        InputSocket<Double> a2 = (InputSocket<Double>) step2.getInputSockets().get(0);
-        InputSocket<Double> b2 = (InputSocket<Double>) step2.getInputSockets().get(1);
-        OutputSocket<Double> sum2 = (OutputSocket<Double>) step2.getOutputSockets().get(0);
+        final InputSocket<Double> a1 = step1.getInputSockets().get(0);
+        final InputSocket<Double> b1 = step1.getInputSockets().get(1);
+        final OutputSocket<Double> sum1 = step1.getOutputSockets().get(0);
+        final InputSocket<Double> a2 = step2.getInputSockets().get(0);
+        final InputSocket<Double> b2 = step2.getInputSockets().get(1);
+        final OutputSocket<Double> sum2 = step2.getOutputSockets().get(0);
 
         a2.setValue(0.0);
 
@@ -284,42 +293,39 @@ public class PipelineTest {
 
     @Test
     public void testAddBetweenSteps() {
-        final Step
-                stepToAdd = new MockStep(),
-                lowerStep = new MockStep(),
-                upperStep = new MockStep();
+        final Step stepToAdd = new MockStep();
+        final Step lowerStep = new MockStep();
+        final Step upperStep = new MockStep();
         pipeline.addStep(lowerStep);
         pipeline.addStep(upperStep);
 
         pipeline.addStepBetween(stepToAdd, lowerStep, upperStep);
         assertEquals("The step was not added to the middle of the pipeline",
-                Arrays.asList(lowerStep, stepToAdd, upperStep), pipeline.getSteps());
+            Arrays.asList(lowerStep, stepToAdd, upperStep), pipeline.getSteps());
     }
 
     @Test
     public void testAddBetweenNullAndStep() {
-        final Step
-                stepToAdd = new MockStep(),
-                lowerStep = new MockStep(),
-                upperStep = new MockStep();
+        final Step stepToAdd = new MockStep();
+        final Step lowerStep = new MockStep();
+        final Step upperStep = new MockStep();
         pipeline.addStep(lowerStep);
         pipeline.addStep(upperStep);
         pipeline.addStepBetween(stepToAdd, null, lowerStep);
         assertEquals("The step was not added to the begining of the pipeline",
-                Arrays.asList(stepToAdd, lowerStep, upperStep), pipeline.getSteps());
+            Arrays.asList(stepToAdd, lowerStep, upperStep), pipeline.getSteps());
     }
 
     @Test
     public void testAddBetweenStepAndNull() {
-        final Step
-                stepToAdd = new MockStep(),
-                lowerStep = new MockStep(),
-                upperStep = new MockStep();
+        final Step stepToAdd = new MockStep();
+        final Step lowerStep = new MockStep();
+        final Step upperStep = new MockStep();
         pipeline.addStep(lowerStep);
         pipeline.addStep(upperStep);
         pipeline.addStepBetween(stepToAdd, upperStep, null);
         assertEquals("The step was not added to the end of the pipeline",
-                Arrays.asList(lowerStep, upperStep, stepToAdd), pipeline.getSteps());
+            Arrays.asList(lowerStep, upperStep, stepToAdd), pipeline.getSteps());
     }
 
     @Test
@@ -327,15 +333,14 @@ public class PipelineTest {
         final Step stepToAdd = new MockStep();
         pipeline.addStepBetween(stepToAdd, null, null);
         assertEquals("The step should have been added to the pipeline",
-                Collections.singletonList(stepToAdd), pipeline.getSteps());
+            Collections.singletonList(stepToAdd), pipeline.getSteps());
     }
 
     @Test(expected = AssertionError.class)
     public void testAddBetweenStepsOutOfOrder() {
-        final Step
-                stepToAdd = new MockStep(),
-                lowerStep = new MockStep(),
-                upperStep = new MockStep();
+        final Step stepToAdd = new MockStep();
+        final Step lowerStep = new MockStep();
+        final Step upperStep = new MockStep();
         pipeline.addStep(lowerStep);
         pipeline.addStep(upperStep);
 
@@ -344,31 +349,29 @@ public class PipelineTest {
 
     @Test
     public void testMoveStepToLeft() {
-        final Step
-                stepToMove = new MockStep(),
-                lowerStep = new MockStep(),
-                upperStep = new MockStep();
+        final Step stepToMove = new MockStep();
+        final Step lowerStep = new MockStep();
+        final Step upperStep = new MockStep();
         pipeline.addStep(lowerStep);
         pipeline.addStep(upperStep);
         pipeline.addStep(stepToMove);
         pipeline.moveStepBetween(stepToMove, lowerStep, upperStep);
 
         assertEquals("The step should have been moved within the pipeline",
-                Arrays.asList(lowerStep, stepToMove, upperStep), pipeline.getSteps());
+            Arrays.asList(lowerStep, stepToMove, upperStep), pipeline.getSteps());
     }
 
     @Test
     public void testMoveStepToRight() {
-        final Step
-                stepToMove = new MockStep(),
-                lowerStep = new MockStep(),
-                upperStep = new MockStep();
+        final Step stepToMove = new MockStep();
+        final Step lowerStep = new MockStep();
+        final Step upperStep = new MockStep();
         pipeline.addStep(stepToMove);
         pipeline.addStep(lowerStep);
         pipeline.addStep(upperStep);
         pipeline.moveStepBetween(stepToMove, lowerStep, upperStep);
 
         assertEquals("The step should have been moved within the pipeline",
-                Arrays.asList(lowerStep, stepToMove, upperStep), pipeline.getSteps());
+            Arrays.asList(lowerStep, stepToMove, upperStep), pipeline.getSteps());
     }
 }

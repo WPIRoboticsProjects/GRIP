@@ -1,19 +1,21 @@
 package edu.wpi.grip.core.operations;
 
 import com.google.common.collect.ImmutableList;
+
 import edu.wpi.grip.core.Operation;
 import edu.wpi.grip.core.OperationDescription;
 import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.core.util.Icon;
-import org.python.core.Py;
-import org.python.core.PyObject;
-import org.python.core.PySequence;
 
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
+
+import org.python.core.Py;
+import org.python.core.PyObject;
+import org.python.core.PySequence;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -60,11 +62,11 @@ public class PythonScriptOperation implements Operation {
 
     public static OperationDescription descriptionFor(PythonScriptFile pythonScriptFile) {
         return OperationDescription.builder()
-                .name(pythonScriptFile.name())
-                .summary(pythonScriptFile.summary())
-                .icon(Icon.iconStream("python"))
-                .category(OperationDescription.Category.MISCELLANEOUS)
-                .build();
+            .name(pythonScriptFile.name())
+            .summary(pythonScriptFile.summary())
+            .icon(Icon.iconStream("python"))
+            .category(OperationDescription.Category.MISCELLANEOUS)
+            .build();
     }
 
 
@@ -75,12 +77,12 @@ public class PythonScriptOperation implements Operation {
         this.scriptFile = checkNotNull(scriptFile);
 
         this.inputSockets = scriptFile.inputSocketHints().stream()
-                .map(isf::create)
-                .collect(Collectors.toList());
+            .map(isf::create)
+            .collect(Collectors.toList());
 
         this.outputSockets = scriptFile.outputSocketHints().stream()
-                .map(osf::create)
-                .collect(Collectors.toList());
+            .map(osf::create)
+            .collect(Collectors.toList());
     }
 
 

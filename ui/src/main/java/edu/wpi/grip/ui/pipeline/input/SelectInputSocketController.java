@@ -3,17 +3,19 @@ package edu.wpi.grip.ui.pipeline.input;
 import com.google.common.eventbus.Subscribe;
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
-import edu.wpi.grip.core.sockets.InputSocket;
+
 import edu.wpi.grip.core.events.SocketChangedEvent;
+import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.ui.pipeline.SocketHandleView;
-import edu.wpi.grip.ui.util.GRIPPlatform;
+import edu.wpi.grip.ui.util.GripPlatform;
+
+import java.util.Arrays;
+
 import javafx.beans.InvalidationListener;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.ChoiceBox;
-
-import java.util.Arrays;
 
 /**
  * An {@link InputSocketController} that shows a drop-down menu containing all of the possible values for the socket
@@ -22,7 +24,7 @@ public class SelectInputSocketController<T> extends InputSocketController<T> {
 
     private final ChoiceBox<T> choiceBox;
     private final InvalidationListener updateSocketFromChoiceBox;
-    private final GRIPPlatform platform;
+    private final GripPlatform platform;
 
     public interface Factory<T> {
         SelectInputSocketController<T> create(InputSocket<T> socket);
@@ -31,8 +33,7 @@ public class SelectInputSocketController<T> extends InputSocketController<T> {
     /**
      * @param socket an input socket where the domain contains all of the possible values to choose from
      */
-    @Inject
-    SelectInputSocketController(SocketHandleView.Factory socketHandleViewFactory, GRIPPlatform platform, @Assisted InputSocket<T> socket) {
+    @Inject SelectInputSocketController(SocketHandleView.Factory socketHandleViewFactory, GripPlatform platform, @Assisted InputSocket<T> socket) {
         super(socketHandleViewFactory, socket);
         this.platform = platform;
 

@@ -23,12 +23,12 @@ import static org.bytedeco.javacpp.opencv_imgproc.cvtColor;
 public class DesaturateOperation implements Operation {
 
     public static final OperationDescription DESCRIPTION =
-            OperationDescription.builder()
-                    .name("Desaturate")
-                    .summary("Convert a color image into shades of gray.")
-                    .category(OperationDescription.Category.IMAGE_PROCESSING)
-                    .icon(Icon.iconStream("desaturate"))
-                    .build();
+        OperationDescription.builder()
+            .name("Desaturate")
+            .summary("Convert a color image into shades of gray.")
+            .category(OperationDescription.Category.IMAGE_PROCESSING)
+            .icon(Icon.iconStream("desaturate"))
+            .build();
 
     private final SocketHint<Mat> inputHint = SocketHints.Inputs.createMatSocketHint("Input", false);
     private final SocketHint<Mat> outputHint = SocketHints.Outputs.createMatSocketHint("Output");
@@ -45,14 +45,14 @@ public class DesaturateOperation implements Operation {
     @Override
     public List<InputSocket> getInputSockets() {
         return ImmutableList.of(
-                inputSocket
+            inputSocket
         );
     }
 
     @Override
     public List<OutputSocket> getOutputSockets() {
         return ImmutableList.of(
-                outputSocket
+            outputSocket
         );
     }
 

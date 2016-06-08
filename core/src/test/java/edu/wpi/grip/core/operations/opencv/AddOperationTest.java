@@ -1,15 +1,18 @@
 package edu.wpi.grip.core.operations.opencv;
 
 import com.google.common.eventbus.EventBus;
+
 import edu.wpi.grip.core.AddOperation;
-import edu.wpi.grip.core.sockets.*;
+import edu.wpi.grip.core.sockets.InputSocket;
+import edu.wpi.grip.core.sockets.OutputSocket;
+
+import java.util.List;
+
 import org.bytedeco.javacpp.opencv_core;
 import org.bytedeco.javacpp.opencv_core.Mat;
 import org.bytedeco.javacpp.opencv_core.Scalar;
 import org.junit.Before;
 import org.junit.Test;
-
-import java.util.List;
 
 import static org.junit.Assert.assertTrue;
 
@@ -52,10 +55,11 @@ public class AddOperationTest {
         // Given
         List<InputSocket> inputs = addition.getInputSockets();
         List<OutputSocket> outputs = addition.getOutputSockets();
-        InputSocket a = inputs.get(0), b = inputs.get(1);
+        InputSocket a = inputs.get(0);
+        InputSocket b = inputs.get(1);
         OutputSocket c = outputs.get(0);
 
-        int sz[] = {256, 256};
+        int[] sz = {256, 256};
 
         a.setValue(new Mat(2, sz, opencv_core.CV_8U, Scalar.all(1)));
         b.setValue(new Mat(2, sz, opencv_core.CV_8U, Scalar.all(2)));

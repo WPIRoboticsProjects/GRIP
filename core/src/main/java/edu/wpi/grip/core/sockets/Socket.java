@@ -5,9 +5,10 @@ import edu.wpi.grip.core.Connection;
 import edu.wpi.grip.core.Source;
 import edu.wpi.grip.core.Step;
 
-import javax.annotation.Nullable;
 import java.util.Optional;
 import java.util.Set;
+
+import javax.annotation.Nullable;
 
 /**
  * A Socket is an abstract wrapper for a value that can be updated and passed around operations.  Sockets contain a set of hints
@@ -19,7 +20,10 @@ import java.util.Set;
  * @param <T> The type of the value that this socket stores
  */
 public interface Socket<T> {
-    enum Direction {INPUT, OUTPUT}
+
+    enum Direction {
+        INPUT, OUTPUT
+    }
 
     /**
      * @return A hint at what sort of data is in this socket.

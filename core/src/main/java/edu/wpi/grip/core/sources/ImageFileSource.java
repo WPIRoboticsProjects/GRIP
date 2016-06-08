@@ -6,14 +6,13 @@ import com.google.common.io.Files;
 import com.google.inject.assistedinject.Assisted;
 import com.google.inject.assistedinject.AssistedInject;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
+
 import edu.wpi.grip.core.Source;
 import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.core.sockets.SocketHint;
 import edu.wpi.grip.core.sockets.SocketHints;
 import edu.wpi.grip.core.util.ExceptionWitness;
 import edu.wpi.grip.core.util.ImageLoadingUtility;
-import org.bytedeco.javacpp.opencv_core.Mat;
-import org.bytedeco.javacpp.opencv_imgcodecs;
 
 import java.io.File;
 import java.io.IOException;
@@ -21,6 +20,9 @@ import java.net.URLDecoder;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.Properties;
+
+import org.bytedeco.javacpp.opencv_core.Mat;
+import org.bytedeco.javacpp.opencv_imgcodecs;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -50,30 +52,28 @@ public final class ImageFileSource extends Source {
      * @param exceptionWitnessFactory Factory to create the exceptionWitness
      * @param file                    The location on the file system where the image exists.
      */
-    @AssistedInject
-    ImageFileSource(
-            final EventBus eventBus,
-            final OutputSocket.Factory outputSocketFactory,
-            final ExceptionWitness.Factory exceptionWitnessFactory,
-            @Assisted final File file) {
+    @AssistedInject ImageFileSource(
+        final EventBus eventBus,
+        final OutputSocket.Factory outputSocketFactory,
+        final ExceptionWitness.Factory exceptionWitnessFactory,
+        @Assisted final File file) {
         this(eventBus, outputSocketFactory, exceptionWitnessFactory, URLDecoder.decode(Paths.get(file.toURI()).toString()));
     }
 
 
-    @AssistedInject
-    ImageFileSource(
-            final EventBus eventBus,
-            final OutputSocket.Factory outputSocketFactory,
-            final ExceptionWitness.Factory exceptionWitnessFactory,
-            @Assisted final Properties properties) {
+    @AssistedInject ImageFileSource(
+        final EventBus eventBus,
+        final OutputSocket.Factory outputSocketFactory,
+        final ExceptionWitness.Factory exceptionWitnessFactory,
+        @Assisted final Properties properties) {
         this(eventBus, outputSocketFactory, exceptionWitnessFactory, properties.getProperty(PATH_PROPERTY));
     }
 
     private ImageFileSource(
-            final EventBus eventBus,
-            final OutputSocket.Factory outputSocketFactory,
-            final ExceptionWitness.Factory exceptionWitnessFactory,
-            final String path) {
+        final EventBus eventBus,
+        final OutputSocket.Factory outputSocketFactory,
+        final ExceptionWitness.Factory exceptionWitnessFactory,
+        final String path) {
         super(exceptionWitnessFactory);
         this.eventBus = checkNotNull(eventBus, "Event Bus was null.");
         this.path = checkNotNull(path, "Path can not be null");
@@ -100,7 +100,7 @@ public final class ImageFileSource extends Source {
     @Override
     public List<OutputSocket> createOutputSockets() {
         return ImmutableList.of(
-                outputSocket
+            outputSocket
         );
     }
 

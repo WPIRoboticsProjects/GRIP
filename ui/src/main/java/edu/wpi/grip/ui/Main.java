@@ -7,7 +7,8 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.util.Modules;
 import com.sun.javafx.application.PlatformImpl;
-import edu.wpi.grip.core.GRIPCoreModule;
+
+import edu.wpi.grip.core.GripCoreModule;
 import edu.wpi.grip.core.PipelineRunner;
 import edu.wpi.grip.core.events.UnexpectedThrowableEvent;
 import edu.wpi.grip.core.operations.CVOperations;
@@ -17,6 +18,14 @@ import edu.wpi.grip.core.serialization.Project;
 import edu.wpi.grip.core.sources.GRIPSourcesHardwareModule;
 import edu.wpi.grip.core.util.SafeShutdown;
 import edu.wpi.grip.ui.util.DPIUtility;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
@@ -27,12 +36,6 @@ import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
 import javax.inject.Inject;
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class Main extends Application {
 
@@ -64,13 +67,13 @@ public class Main extends Application {
 
         if (parameters.contains("--headless")) {
             // If --headless was specified on the command line, run in headless mode (only use the core module)
-            injector = Guice.createInjector(new GRIPCoreModule(), new GRIPNetworkModule(), new GRIPSourcesHardwareModule());
+            injector = Guice.createInjector(new GripCoreModule(), new GRIPNetworkModule(), new GRIPSourcesHardwareModule());
             injector.injectMembers(this);
 
             parameters.remove("--headless");
         } else {
             // Otherwise, run with both the core and UI modules, and show the JavaFX stage
-            injector = Guice.createInjector(Modules.override(new GRIPCoreModule(), new GRIPNetworkModule(), new GRIPSourcesHardwareModule()).with(new GRIPUIModule()));
+            injector = Guice.createInjector(Modules.override(new GripCoreModule(), new GRIPNetworkModule(), new GRIPSourcesHardwareModule()).with(new GripUIModule()));
             injector.injectMembers(this);
 
             System.setProperty("prism.lcdtext", "false");

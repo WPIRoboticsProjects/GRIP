@@ -4,16 +4,22 @@ import com.google.common.eventbus.EventBus;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.util.Modules;
+
 import edu.wpi.grip.core.OperationMetaData;
 import edu.wpi.grip.core.Palette;
 import edu.wpi.grip.core.Step;
 import edu.wpi.grip.core.operations.OperationsFactory;
 import edu.wpi.grip.core.sockets.InputSocket;
-import edu.wpi.grip.ui.GRIPUIModule;
-import edu.wpi.grip.util.GRIPCoreTestModule;
+import edu.wpi.grip.ui.GripUIModule;
+import edu.wpi.grip.util.GripCoreTestModule;
+
+import java.util.Arrays;
+import java.util.Collection;
+
 import javafx.scene.Scene;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -21,27 +27,24 @@ import org.junit.runners.Parameterized;
 import org.testfx.framework.junit.ApplicationTest;
 import org.testfx.matcher.base.NodeMatchers;
 
-import java.util.Arrays;
-import java.util.Collection;
-
 import static org.testfx.api.FxAssert.verifyThat;
 
 
 @RunWith(Parameterized.class)
 public class InputSocketControllerFactoryTest extends ApplicationTest {
 
-    private GRIPCoreTestModule testModule;
+    private GripCoreTestModule testModule;
     private Step.Factory stepFactory;
     private InputSocketControllerFactory inputSocketControllerFactory;
     private GridPane gridPane;
 
     private final OperationMetaData operationMeta;
-    @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
+    @SuppressWarnings( {"PMD.UnusedPrivateField", "PMD.SingularField"})
     private final String name;
 
     @Parameterized.Parameters(name = "{index}: operation({0})={1}")
     public static Collection<Object[]> data() {
-        GRIPCoreTestModule testModule = new GRIPCoreTestModule();
+        GripCoreTestModule testModule = new GripCoreTestModule();
         testModule.setUp();
 
         Injector injector = Guice.createInjector(testModule);
@@ -76,9 +79,9 @@ public class InputSocketControllerFactoryTest extends ApplicationTest {
 
     @Override
     public void start(Stage stage) {
-        testModule = new GRIPCoreTestModule();
+        testModule = new GripCoreTestModule();
         testModule.setUp();
-        Injector injector = Guice.createInjector(Modules.override(testModule).with(new GRIPUIModule()));
+        Injector injector = Guice.createInjector(Modules.override(testModule).with(new GripUIModule()));
         inputSocketControllerFactory = injector.getInstance(InputSocketControllerFactory.class);
         stepFactory = injector.getInstance(Step.Factory.class);
         gridPane = new GridPane();

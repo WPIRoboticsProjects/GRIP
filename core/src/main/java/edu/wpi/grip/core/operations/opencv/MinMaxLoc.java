@@ -1,16 +1,18 @@
 package edu.wpi.grip.core.operations.opencv;
 
 import com.google.common.collect.ImmutableList;
+
 import edu.wpi.grip.core.OperationDescription;
 import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.core.sockets.SocketHint;
 import edu.wpi.grip.core.sockets.SocketHints;
+
+import java.util.List;
+
 import org.bytedeco.javacpp.opencv_core;
 import org.bytedeco.javacpp.opencv_core.Mat;
 import org.bytedeco.javacpp.opencv_core.Point;
-
-import java.util.List;
 
 /**
  * Operation to call {@link opencv_core#minMaxLoc}
@@ -18,22 +20,19 @@ import java.util.List;
 public class MinMaxLoc implements CVOperation {
 
     public static final OperationDescription DESCRIPTION =
-            CVOperation.defaultBuilder()
-                    .name("Find Min and Max")
-                    .summary("Find the global minimum and manimum in a single channel grayscale image.")
-                    .build();
+        CVOperation.defaultBuilder()
+            .name("Find Min and Max")
+            .summary("Find the global minimum and manimum in a single channel grayscale image.")
+            .build();
 
-    private final SocketHint<Mat>
-            srcInputHint = SocketHints.Inputs.createMatSocketHint("Image", false),
-            maskInputHint = SocketHints.Inputs.createMatSocketHint("Mask", true);
+    private final SocketHint<Mat> srcInputHint = SocketHints.Inputs.createMatSocketHint("Image", false);
+    private final SocketHint<Mat> maskInputHint = SocketHints.Inputs.createMatSocketHint("Mask", true);
 
-    private final SocketHint<Number>
-            minValOutputHint = SocketHints.Outputs.createNumberSocketHint("Min Val", 0),
-            maxValOutputHint = SocketHints.Outputs.createNumberSocketHint("Max Val", 0);
+    private final SocketHint<Number> minValOutputHint = SocketHints.Outputs.createNumberSocketHint("Min Val", 0);
+    private final SocketHint<Number> maxValOutputHint = SocketHints.Outputs.createNumberSocketHint("Max Val", 0);
 
-    private final SocketHint<Point>
-            minLocOutputHint = SocketHints.Outputs.createPointSocketHint("Min Loc"),
-            maxLocOutputHint = SocketHints.Outputs.createPointSocketHint("Max Loc");
+    private final SocketHint<Point> minLocOutputHint = SocketHints.Outputs.createPointSocketHint("Min Loc");
+    private final SocketHint<Point> maxLocOutputHint = SocketHints.Outputs.createPointSocketHint("Max Loc");
 
     private final InputSocket<Mat> srcSocket;
     private final InputSocket<Mat> maskSocket;
@@ -56,18 +55,18 @@ public class MinMaxLoc implements CVOperation {
     @Override
     public List<InputSocket> getInputSockets() {
         return ImmutableList.of(
-                srcSocket,
-                maskSocket
+            srcSocket,
+            maskSocket
         );
     }
 
     @Override
     public List<OutputSocket> getOutputSockets() {
         return ImmutableList.of(
-                minValSocket,
-                maxValSocket,
-                minLocSocket,
-                maxLocSocket
+            minValSocket,
+            maxValSocket,
+            minLocSocket,
+            maxLocSocket
         );
     }
 
@@ -75,9 +74,11 @@ public class MinMaxLoc implements CVOperation {
     public void perform() {
         final Mat src = srcSocket.getValue().get();
         Mat mask = maskSocket.getValue().get();
-        if (mask.empty()) mask = null;
-        final double minVal[] = new double[1];
-        final double maxVal[] = new double[1];
+        if (mask.empty()) {
+            mask = null;
+        }
+        final double[] minVal = new double[1];
+        final double[] maxVal = new double[1];
         final Point minLoc = minLocSocket.getValue().get();
         final Point maxLoc = maxLocSocket.getValue().get();
 

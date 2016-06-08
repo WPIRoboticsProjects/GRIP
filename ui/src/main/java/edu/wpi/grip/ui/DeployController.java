@@ -5,6 +5,7 @@ import com.google.common.eventbus.Subscribe;
 import com.google.common.hash.Hashing;
 import com.google.common.io.LineReader;
 import com.google.common.io.Resources;
+
 import edu.wpi.grip.core.events.ProjectSettingsChangedEvent;
 import edu.wpi.grip.core.events.StopPipelineEvent;
 import edu.wpi.grip.core.serialization.Project;
@@ -12,6 +13,20 @@ import edu.wpi.grip.core.settings.ProjectSettings;
 import edu.wpi.grip.core.settings.SettingsProvider;
 import edu.wpi.grip.ui.components.LogTextArea;
 import edu.wpi.grip.ui.util.StringInMemoryFile;
+
+import java.io.DataInputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.InterruptedIOException;
+import java.io.StringWriter;
+import java.net.URL;
+import java.net.URLDecoder;
+import java.net.UnknownHostException;
+import java.nio.charset.StandardCharsets;
+import java.util.Optional;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.BooleanProperty;
@@ -21,6 +36,9 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleButton;
+
+import javax.inject.Inject;
+
 import net.schmizz.sshj.SSHClient;
 import net.schmizz.sshj.common.StreamCopier;
 import net.schmizz.sshj.connection.channel.direct.Session;
@@ -28,16 +46,6 @@ import net.schmizz.sshj.userauth.UserAuthException;
 import net.schmizz.sshj.xfer.FileSystemFile;
 import net.schmizz.sshj.xfer.LoggingTransferListener;
 import net.schmizz.sshj.xfer.scp.SCPFileTransfer;
-
-import javax.inject.Inject;
-import java.io.*;
-import java.net.URL;
-import java.net.URLDecoder;
-import java.net.UnknownHostException;
-import java.nio.charset.StandardCharsets;
-import java.util.Optional;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * JavaFX controller for the deploy tool.
@@ -47,10 +55,10 @@ import java.util.logging.Logger;
  * based on the project settings.
  */
 public class DeployController {
-    private final static String GRIP_JAR = "grip.jar";
-    private final static String GRIP_WRAPPER = "grip";
-    private final static URL LOCAL_GRIP_URL = Project.class.getProtectionDomain().getCodeSource().getLocation();
-    private final static String LOCAL_GRIP_PATH = URLDecoder.decode(LOCAL_GRIP_URL.getPath());
+    private static final String GRIP_JAR = "grip.jar";
+    private static final String GRIP_WRAPPER = "grip";
+    private static final URL LOCAL_GRIP_URL = Project.class.getProtectionDomain().getCodeSource().getLocation();
+    private static final String LOCAL_GRIP_PATH = URLDecoder.decode(LOCAL_GRIP_URL.getPath());
 
     @FXML
     private TextField address;
@@ -94,7 +102,7 @@ public class DeployController {
     public void initialize() {
         deploying.addListener((o, b, d) -> progress.setProgress(d ? ProgressIndicator.INDETERMINATE_PROGRESS : 0));
         command.bind(Bindings.concat(javaHome.textProperty(), "/bin/java ", jvmArgs.textProperty(), " -jar '",
-                deployDir.textProperty(), "/", GRIP_JAR, "' '", deployDir.textProperty(), "/", projectFile.textProperty(), "'"));
+            deployDir.textProperty(), "/", GRIP_JAR, "' '", deployDir.textProperty(), "/", projectFile.textProperty(), "'"));
 
         scrollPauseButton.selectedProperty().bindBidirectional(console.pausedScrollProperty());
         console.setOnScroll(event -> {
@@ -170,8 +178,9 @@ public class DeployController {
                 public StreamCopier.Listener file(String name, long size) {
                     setStatusAsync("Uploading " + name, false);
                     return transferred -> {
-                        if (isNotCanceled())
+                        if (isNotCanceled()) {
                             Platform.runLater(() -> progress.setProgress((double) transferred / size));
+                        }
                     };
                 }
             });
@@ -208,10 +217,10 @@ public class DeployController {
             // Upload the project file and a wrapper script with the JVM arguments.  These are very small and change
             // often, so we might as well upload them every time.
             scp.upload(new StringInMemoryFile(GRIP_WRAPPER,
-                    "PID=$(ps aux | grep " + GRIP_JAR + "| grep -v grep | awk '{print $1}')\n"
-                            + "if [ $PID ]; then kill -9 $PID; fi\n"
-                            + "echo \"" + commandStr + "\"\n"
-                            + commandStr, 0755), pathStr);
+                "PID=$(ps aux | grep " + GRIP_JAR + "| grep -v grep | awk '{print $1}')\n"
+                    + "if [ $PID ]; then kill -9 $PID; fi\n"
+                    + "echo \"" + commandStr + "\"\n"
+                    + commandStr, 0755), pathStr);
             scp.upload(new StringInMemoryFile(projectFile.getText(), projectWriter.toString()), pathStr);
 
             // Stop the pipeline before running it remotely, so the two instances of GRIP don't try to publish to the

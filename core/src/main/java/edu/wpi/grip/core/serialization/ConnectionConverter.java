@@ -7,11 +7,12 @@ import com.thoughtworks.xstream.converters.MarshallingContext;
 import com.thoughtworks.xstream.converters.UnmarshallingContext;
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
+
 import edu.wpi.grip.core.Connection;
+import edu.wpi.grip.core.events.ConnectionAddedEvent;
 import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.core.sockets.Socket;
-import edu.wpi.grip.core.events.ConnectionAddedEvent;
 
 import javax.inject.Inject;
 

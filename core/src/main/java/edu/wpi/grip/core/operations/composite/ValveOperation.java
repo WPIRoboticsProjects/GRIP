@@ -2,6 +2,7 @@ package edu.wpi.grip.core.operations.composite;
 
 
 import com.google.common.collect.ImmutableList;
+
 import edu.wpi.grip.core.Operation;
 import edu.wpi.grip.core.OperationDescription;
 import edu.wpi.grip.core.sockets.InputSocket;
@@ -16,11 +17,11 @@ import java.util.Optional;
 public class ValveOperation implements Operation {
 
     public static OperationDescription DESCRIPTION =
-            OperationDescription.builder()
-                    .name("Valve")
-                    .summary("Toggle an output socket on or off using a boolean")
-                    .category(OperationDescription.Category.LOGICAL)
-                    .build();
+        OperationDescription.builder()
+            .name("Valve")
+            .summary("Toggle an output socket on or off using a boolean")
+            .category(OperationDescription.Category.LOGICAL)
+            .build();
 
     private final InputSocket<Boolean> switcherSocket;
     private final InputSocket inputSocket; // Intentionally using raw types
@@ -40,15 +41,15 @@ public class ValveOperation implements Operation {
     @Override
     public List<InputSocket> getInputSockets() {
         return ImmutableList.of(
-                switcherSocket,
-                inputSocket
+            switcherSocket,
+            inputSocket
         );
     }
 
     @Override
     public List<OutputSocket> getOutputSockets() {
         return ImmutableList.of(
-                outputSocket
+            outputSocket
         );
     }
 

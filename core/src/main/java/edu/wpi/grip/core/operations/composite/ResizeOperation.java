@@ -1,6 +1,7 @@
 package edu.wpi.grip.core.operations.composite;
 
 import com.google.common.collect.ImmutableList;
+
 import edu.wpi.grip.core.Operation;
 import edu.wpi.grip.core.OperationDescription;
 import edu.wpi.grip.core.sockets.InputSocket;
@@ -27,12 +28,12 @@ import static org.bytedeco.javacpp.opencv_imgproc.resize;
 public class ResizeOperation implements Operation {
 
     public static final OperationDescription DESCRIPTION =
-            OperationDescription.builder()
-                    .name("Resize Image")
-                    .summary("Scale an image to an exact size")
-                    .category(OperationDescription.Category.IMAGE_PROCESSING)
-                    .icon(Icon.iconStream("resize"))
-                    .build();
+        OperationDescription.builder()
+            .name("Resize Image")
+            .summary("Scale an image to an exact size")
+            .category(OperationDescription.Category.IMAGE_PROCESSING)
+            .icon(Icon.iconStream("resize"))
+            .build();
 
     private final InputSocket<Mat> inputSocket;
     private final InputSocket<Number> widthSocket;
@@ -74,17 +75,17 @@ public class ResizeOperation implements Operation {
     @Override
     public List<InputSocket> getInputSockets() {
         return ImmutableList.of(
-                inputSocket,
-                widthSocket,
-                heightSocket,
-                interpolationSocket
+            inputSocket,
+            widthSocket,
+            heightSocket,
+            interpolationSocket
         );
     }
 
     @Override
     public List<OutputSocket> getOutputSockets() {
         return ImmutableList.of(
-                outputSocket
+            outputSocket
         );
     }
 

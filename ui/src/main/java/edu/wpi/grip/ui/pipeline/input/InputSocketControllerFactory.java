@@ -1,6 +1,7 @@
 package edu.wpi.grip.ui.pipeline.input;
 
 import com.google.inject.Inject;
+
 import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.sockets.SocketHint;
 
@@ -48,7 +49,7 @@ public final class InputSocketControllerFactory {
                     return (InputSocketController<T>) textFieldInputSocketController.create((InputSocket<String>) socket);
                 } else {
                     throw new IllegalArgumentException("Could not create view for socket.  SPINNER views must be Number or List. "
-                            + socket.toString());
+                        + socket.toString());
                 }
 
             case SLIDER:
@@ -56,7 +57,7 @@ public final class InputSocketControllerFactory {
                     return (InputSocketController<T>) sliderInputSocketControllerFactory.create((InputSocket<Number>) socket);
                 } else {
                     throw new IllegalArgumentException("Could not create view for socket.  SLIDER views must be Numbers. "
-                            + socket.toString());
+                        + socket.toString());
                 }
 
             case RANGE:
@@ -64,7 +65,7 @@ public final class InputSocketControllerFactory {
                     return (InputSocketController<T>) rangeInputSocketControllerFactory.create((InputSocket<List<Number>>) socket);
                 } else {
                     throw new IllegalArgumentException("Could not create view for socket.  RANGE views must be Lists. "
-                            + socket.toString());
+                        + socket.toString());
                 }
 
             case SELECT:
@@ -75,7 +76,7 @@ public final class InputSocketControllerFactory {
                     return (InputSocketController<T>) checkboxInputSocketControllerFactory.create((InputSocket<Boolean>) socket);
                 } else {
                     throw new IllegalArgumentException("Could not create view for socket.  CHECKBOX views must be Booleans. "
-                            + socket.toString());
+                        + socket.toString());
                 }
 
             default:

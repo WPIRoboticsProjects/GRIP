@@ -2,13 +2,15 @@ package edu.wpi.grip.core;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableSet;
+
 import edu.wpi.grip.core.util.Icon;
 
-import javax.annotation.Nullable;
-import javax.annotation.concurrent.Immutable;
 import java.io.InputStream;
 import java.util.Optional;
 import java.util.Set;
+
+import javax.annotation.Nullable;
+import javax.annotation.concurrent.Immutable;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -89,15 +91,27 @@ public class OperationDescription {
 
     @Override
     public boolean equals(@Nullable Object o) {
-        if (this == o) return true;
-        if (!(o instanceof OperationDescription)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof OperationDescription)) {
+            return false;
+        }
 
         OperationDescription that = (OperationDescription) o;
 
-        if (name() != null ? !name().equals(that.name()) : that.name() != null) return false;
-        if (summary() != null ? !summary().equals(that.summary()) : that.summary() != null) return false;
-        if (category() != that.category()) return false;
-        if (icon() != null ? !icon().equals(that.icon()) : that.icon() != null) return false;
+        if (name() != null ? !name().equals(that.name()) : that.name() != null) {
+            return false;
+        }
+        if (summary() != null ? !summary().equals(that.summary()) : that.summary() != null) {
+            return false;
+        }
+        if (category() != that.category()) {
+            return false;
+        }
+        if (icon() != null ? !icon().equals(that.icon()) : that.icon() != null) {
+            return false;
+        }
         return aliases() != null ? aliases().equals(that.aliases()) : that.aliases() == null;
 
     }
@@ -115,11 +129,11 @@ public class OperationDescription {
     @Override
     public String toString() {
         return MoreObjects.toStringHelper(this)
-                .add("name", name())
-                .add("summary", summary())
-                .add("aliases", aliases())
-                .add("category", category())
-                .toString();
+            .add("name", name())
+            .add("summary", summary())
+            .add("aliases", aliases())
+            .add("category", category())
+            .toString();
     }
 
     /**
@@ -131,8 +145,8 @@ public class OperationDescription {
      */
     public static Builder builder() {
         return new Builder()
-                .category(Category.MISCELLANEOUS)
-                .icon(null);
+            .category(Category.MISCELLANEOUS)
+            .icon(null);
     }
 
     /**
@@ -196,11 +210,11 @@ public class OperationDescription {
          */
         public OperationDescription build() {
             return new OperationDescription(
-                    name,
-                    summary,
-                    category,
-                    icon,
-                    aliases);
+                name,
+                summary,
+                category,
+                icon,
+                aliases);
         }
     }
 

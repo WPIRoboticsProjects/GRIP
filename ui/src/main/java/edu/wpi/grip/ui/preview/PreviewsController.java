@@ -4,12 +4,16 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import com.sun.javafx.application.PlatformImpl;
+
 import edu.wpi.grip.core.Pipeline;
 import edu.wpi.grip.core.Source;
 import edu.wpi.grip.core.Step;
 import edu.wpi.grip.core.events.SocketPreviewChangedEvent;
 import edu.wpi.grip.core.events.StepMovedEvent;
 import edu.wpi.grip.core.sockets.OutputSocket;
+
+import java.util.Comparator;
+
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -18,7 +22,6 @@ import javafx.scene.layout.HBox;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
-import java.util.Comparator;
 
 /**
  * Controller for a container that automatically shows previews of all sockets marked as "previewed".
@@ -64,12 +67,12 @@ public class PreviewsController {
             } else {
                 // When a socket is no longer marked as previewed, find and remove the view associated with it
                 previews.stream()
-                        .filter(view -> event.isRegarding(view.getSocket()))
-                        .findFirst()
-                        .ifPresent(preview -> {
-                            previews.remove(preview);
-                            eventBus.unregister(preview);
-                        });
+                    .filter(view -> event.isRegarding(view.getSocket()))
+                    .findFirst()
+                    .ifPresent(preview -> {
+                        previews.remove(preview);
+                        eventBus.unregister(preview);
+                    });
             }
         });
     }
@@ -93,8 +96,8 @@ public class PreviewsController {
         final ImmutableList<Step> steps = pipeline.getSteps();
 
         final Comparator<SocketPreviewView<?>> comparePreviews =
-                Comparator.comparing(SocketPreviewView::getSocket,
-                        (OutputSocket<?> a, OutputSocket<?> b) -> compareSockets(a, b, steps, sources));
+            Comparator.comparing(SocketPreviewView::getSocket,
+                (OutputSocket<?> a, OutputSocket<?> b) -> compareSockets(a, b, steps, sources));
         FXCollections.sort(previews, comparePreviews);
     }
 
@@ -109,34 +112,36 @@ public class PreviewsController {
      */
     private static int compareSockets(OutputSocket<?> a, OutputSocket<?> b, ImmutableList<Step> steps, ImmutableList<Source> sources) {
         if (a.getStep().isPresent() && b.getStep().isPresent()) {
-            final Step stepA = a.getStep().get(), stepB = b.getStep().get();
+            final Step stepA = a.getStep().get();
+            final Step stepB = b.getStep().get();
 
             if (stepA == stepB) {
                 // If both sockets are in the same step, order them based on which is first in the step
                 return stepA.getOutputSockets().stream()
-                        .filter(socket -> socket == a || socket == b)
-                        .findFirst().get() == a ? -1 : 1;
+                    .filter(socket -> socket == a || socket == b)
+                    .findFirst().get() == a ? -1 : 1;
             } else {
                 // If both sockets are in different steps, order them based on which step is first
                 return steps.stream()
-                        .filter(step -> step == stepA || step == stepB)
-                        .findFirst().get() == stepA ? -1 : 1;
+                    .filter(step -> step == stepA || step == stepB)
+                    .findFirst().get() == stepA ? -1 : 1;
             }
         }
 
         if (a.getSource().isPresent() && b.getSource().isPresent()) {
-            final Source sourceA = a.getSource().get(), sourceB = b.getSource().get();
+            final Source sourceA = a.getSource().get();
+            final Source sourceB = b.getSource().get();
 
             if (sourceA == sourceB) {
                 // If both sockets are in the same source, order them based on which is first in the source
                 return sourceA.getOutputSockets().stream()
-                        .filter(socket -> socket == a || socket == b)
-                        .findFirst().get() == a ? -1 : 1;
+                    .filter(socket -> socket == a || socket == b)
+                    .findFirst().get() == a ? -1 : 1;
             } else {
                 // If both sockets are from sources, order them based on the order of the sources in the pipeline
                 return sources.stream()
-                        .filter(source -> source == sourceA || source == sourceB)
-                        .findFirst().get() == sourceA ? -1 : 1;
+                    .filter(source -> source == sourceA || source == sourceB)
+                    .findFirst().get() == sourceA ? -1 : 1;
             }
         }
 

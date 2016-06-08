@@ -2,12 +2,14 @@ package edu.wpi.grip.ui;
 
 import edu.wpi.grip.core.settings.ProjectSettings;
 import edu.wpi.grip.ui.util.DPIUtility;
+
 import javafx.scene.Parent;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.DialogPane;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+
 import org.controlsfx.control.PropertySheet;
 import org.controlsfx.property.BeanPropertyUtils;
 

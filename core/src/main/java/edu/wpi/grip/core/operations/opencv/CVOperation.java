@@ -8,8 +8,8 @@ public interface CVOperation extends Operation {
 
     static OperationDescription.Builder defaultBuilder() {
         return OperationDescription.builder()
-                .category(OperationDescription.Category.OPENCV)
-                .icon(Icon.iconStream("opencv"));
+            .category(OperationDescription.Category.OPENCV)
+            .icon(Icon.iconStream("opencv"));
     }
 
     static OperationDescription defaults(String name, String description) {

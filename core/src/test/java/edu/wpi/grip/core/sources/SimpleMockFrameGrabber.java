@@ -3,8 +3,7 @@ package edu.wpi.grip.core.sources;
 import org.bytedeco.javacv.Frame;
 import org.bytedeco.javacv.FrameGrabber;
 
-@SuppressWarnings({"PMD.AvoidThrowingRawExceptionTypes", "PMD.SignatureDeclareThrowsException"})
-class SimpleMockFrameGrabber extends FrameGrabber {
+@SuppressWarnings( {"PMD.AvoidThrowingRawExceptionTypes", "PMD.SignatureDeclareThrowsException"}) class SimpleMockFrameGrabber extends FrameGrabber {
 
     @Override
     public void start() throws Exception {

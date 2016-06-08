@@ -15,8 +15,7 @@ import java.lang.annotation.Target;
  * @see ProjectSettingsBeanInfo
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.FIELD)
-@interface Setting {
+@Target(ElementType.FIELD) @interface Setting {
     String label();
 
     String description();

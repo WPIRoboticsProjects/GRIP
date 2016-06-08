@@ -1,18 +1,21 @@
 package edu.wpi.grip.ui.components;
 
 import com.google.common.eventbus.EventBus;
+
 import edu.wpi.grip.core.util.ExceptionWitness;
 import edu.wpi.grip.core.util.MockExceptionWitness;
+
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
+
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+
 import org.junit.Ignore;
 import org.junit.Test;
 import org.testfx.framework.junit.ApplicationTest;
 import org.testfx.matcher.base.NodeMatchers;
 import org.testfx.util.WaitForAsyncUtils;
-
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 
 import static org.testfx.api.FxAssert.verifyThat;
 
@@ -37,7 +40,7 @@ public class ExceptionWitnessResponderButtonTest extends ApplicationTest {
     public void testOnExceptionEvent() throws Exception {
         flagNewException();
         WaitForAsyncUtils.waitFor(2, TimeUnit.SECONDS,
-                () -> NodeMatchers.isVisible().matches(lookup("." + ExceptionWitnessResponderButton.STYLE_CLASS).query()));
+            () -> NodeMatchers.isVisible().matches(lookup("." + ExceptionWitnessResponderButton.STYLE_CLASS).query()));
     }
 
     @Test
@@ -45,7 +48,7 @@ public class ExceptionWitnessResponderButtonTest extends ApplicationTest {
         flagNewException();
         witness.clearException();
         WaitForAsyncUtils.waitFor(2, TimeUnit.SECONDS,
-                () -> NodeMatchers.isInvisible().matches(lookup("." + ExceptionWitnessResponderButton.STYLE_CLASS).query()));
+            () -> NodeMatchers.isInvisible().matches(lookup("." + ExceptionWitnessResponderButton.STYLE_CLASS).query()));
     }
 
     @Test
@@ -53,17 +56,17 @@ public class ExceptionWitnessResponderButtonTest extends ApplicationTest {
     public void testPopoverAppears() throws TimeoutException {
         flagNewException();
         WaitForAsyncUtils.waitFor(2, TimeUnit.SECONDS,
-                () -> NodeMatchers.isVisible().matches(lookup("." + ExceptionWitnessResponderButton.STYLE_CLASS).query()));
+            () -> NodeMatchers.isVisible().matches(lookup("." + ExceptionWitnessResponderButton.STYLE_CLASS).query()));
         clickOn("." + ExceptionWitnessResponderButton.STYLE_CLASS);
         WaitForAsyncUtils.waitFor(2, TimeUnit.SECONDS,
-                () -> NodeMatchers.isVisible().matches(lookup("." + ExceptionWitnessResponderButton.ExceptionPopOver.STYLE_CLASS).query()));
+            () -> NodeMatchers.isVisible().matches(lookup("." + ExceptionWitnessResponderButton.ExceptionPopOver.STYLE_CLASS).query()));
     }
 
     @Test
     public void testPopoverDoesNotHaveStackTracePaneWhenWarningIsFlagged() throws Exception {
         flagWarning();
         WaitForAsyncUtils.waitFor(2, TimeUnit.SECONDS,
-                () -> NodeMatchers.isVisible().matches(lookup("." + ExceptionWitnessResponderButton.STYLE_CLASS).query()));
+            () -> NodeMatchers.isVisible().matches(lookup("." + ExceptionWitnessResponderButton.STYLE_CLASS).query()));
         clickOn("." + ExceptionWitnessResponderButton.STYLE_CLASS);
         verifyThat("Stack Trace", NodeMatchers.isInvisible());
     }
@@ -72,8 +75,8 @@ public class ExceptionWitnessResponderButtonTest extends ApplicationTest {
         try {
             throw new IllegalStateException("Illegal State");
         } catch (IllegalStateException e) {
-            witness.flagException(e, "An Illegal Message that is really, really, really, really, really, really, really, " +
-                    "really, really, really, really, really, really, really, really, really, really, long!");
+            witness.flagException(e, "An Illegal Message that is really, really, really, really, really, really, really, "
+                + "really, really, really, really, really, really, really, really, really, really, long!");
         }
     }
 

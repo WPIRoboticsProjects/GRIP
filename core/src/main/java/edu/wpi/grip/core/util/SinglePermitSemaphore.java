@@ -12,6 +12,7 @@ public class SinglePermitSemaphore {
 
     /**
      * Acquires the permit
+     *
      * @throws InterruptedException
      */
     public void acquire() throws InterruptedException {
@@ -21,7 +22,7 @@ public class SinglePermitSemaphore {
         // Every time release is called another permit is added.
         // We need to clean up any old permits that we may have been given.
         semaphore.acquire(
-                Math.max(0, semaphore.availablePermits()));
+            Math.max(0, semaphore.availablePermits()));
     }
 
     /**

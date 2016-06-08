@@ -45,6 +45,11 @@ public abstract class MapNetworkPublisher<T> extends NetworkPublisher<Map<String
     }
 
     /**
+     * Publishes nothing.
+     */
+    protected abstract void doPublish();
+
+    /**
      * Publishes a key value mapping
      *
      * @param publishMap The mapping of keys to values to be published
@@ -57,9 +62,4 @@ public abstract class MapNetworkPublisher<T> extends NetworkPublisher<Map<String
      * @param value The value to be published
      */
     protected abstract void doPublishSingle(T value);
-
-    /**
-     * Publishes nothing.
-     */
-    protected abstract void doPublish();
 }

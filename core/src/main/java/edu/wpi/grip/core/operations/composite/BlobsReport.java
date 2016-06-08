@@ -1,6 +1,7 @@
 package edu.wpi.grip.core.operations.composite;
 
 import com.google.common.base.MoreObjects;
+
 import edu.wpi.grip.core.operations.network.PublishValue;
 import edu.wpi.grip.core.operations.network.Publishable;
 import edu.wpi.grip.core.sockets.NoSocketTypeLabel;
@@ -19,7 +20,9 @@ public class BlobsReport implements Publishable {
     private final List<Blob> blobs;
 
     public static class Blob {
-        public final double x, y, size;
+        public final double x;
+        public final double y;
+        public final double size;
 
         protected Blob(double x, double y, double size) {
             this.x = x;
@@ -30,10 +33,10 @@ public class BlobsReport implements Publishable {
         @Override
         public String toString() {
             return MoreObjects.toStringHelper(this)
-                    .add("x", x)
-                    .add("y", y)
-                    .add("size", size)
-                    .toString();
+                .add("x", x)
+                .add("y", y)
+                .add("size", size)
+                .toString();
         }
     }
 

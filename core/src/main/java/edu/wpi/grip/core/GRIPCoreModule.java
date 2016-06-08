@@ -9,6 +9,7 @@ import com.google.inject.matcher.Matchers;
 import com.google.inject.spi.InjectionListener;
 import com.google.inject.spi.TypeEncounter;
 import com.google.inject.spi.TypeListener;
+
 import edu.wpi.grip.core.events.UnexpectedThrowableEvent;
 import edu.wpi.grip.core.serialization.Project;
 import edu.wpi.grip.core.settings.SettingsProvider;
@@ -22,17 +23,25 @@ import edu.wpi.grip.core.sources.MultiImageFileSource;
 import edu.wpi.grip.core.util.ExceptionWitness;
 import edu.wpi.grip.core.util.GRIPMode;
 
-import javax.annotation.Nullable;
 import java.io.IOException;
-import java.util.logging.*;
+import java.util.logging.FileHandler;
+import java.util.logging.Handler;
+import java.util.logging.Level;
+import java.util.logging.LogManager;
+import java.util.logging.LogRecord;
+import java.util.logging.Logger;
+import java.util.logging.SimpleFormatter;
+import java.util.logging.StreamHandler;
+
+import javax.annotation.Nullable;
 
 /**
  * A Guice {@link com.google.inject.Module} for GRIP's core package.  This is where instances of {@link Pipeline},
  * {@link Palette}, {@link Project}, etc... are created.
  */
 @SuppressWarnings("PMD.MoreThanOneLogger")
-public class GRIPCoreModule extends AbstractModule {
-    private static final Logger logger = Logger.getLogger(GRIPCoreModule.class.getName());
+public class GripCoreModule extends AbstractModule {
+    private static final Logger logger = Logger.getLogger(GripCoreModule.class.getName());
 
     private final EventBus eventBus;
 
@@ -48,7 +57,7 @@ public class GRIPCoreModule extends AbstractModule {
                 globalLogger.removeHandler(handler);
             }
 
-            final Handler fileHandler = new FileHandler("%h/GRIP.log");//Log to the file "GRIPlogger.log"
+            final Handler fileHandler = new FileHandler("%h/GRIP.log"); //Log to the file "GRIPlogger.log"
 
             //Set level to handler and logger
             fileHandler.setLevel(Level.FINE);
@@ -70,14 +79,14 @@ public class GRIPCoreModule extends AbstractModule {
 
             globalLogger.addHandler(sh); // Add stream handler
 
-            globalLogger.addHandler(fileHandler);//Add the handler to the global logger
+            globalLogger.addHandler(fileHandler); //Add the handler to the global logger
 
-            fileHandler.setFormatter(new SimpleFormatter());//log in text, not xml
+            fileHandler.setFormatter(new SimpleFormatter()); //log in text, not xml
 
-            globalLogger.config("Configuration done.");//Log that we are done setting up the logger
+            globalLogger.config("Configuration done."); //Log that we are done setting up the logger
             globalLogger.config("GRIP Version: " + edu.wpi.grip.core.Main.class.getPackage().getImplementationVersion());
 
-        } catch (IOException exception) {//Something happened setting up file IO
+        } catch (IOException exception) { //Something happened setting up file IO
             throw new IllegalStateException("Failed to configure the Logger", exception);
         }
     }
@@ -85,7 +94,7 @@ public class GRIPCoreModule extends AbstractModule {
     /*
      * This class should not be used in tests. Use GRIPCoreTestModule for tests.
      */
-    public GRIPCoreModule() {
+    public GripCoreModule() {
         this.eventBus = new EventBus(this::onSubscriberException);
         // TODO: HACK! Don't assign the global thread handler to an instance method. Creates global state.
         Thread.setDefaultUncaughtExceptionHandler(this::onThreadException);
@@ -117,14 +126,14 @@ public class GRIPCoreModule extends AbstractModule {
         bind(InputSocket.Factory.class).to(InputSocketImpl.FactoryImpl.class);
         bind(OutputSocket.Factory.class).to(OutputSocketImpl.FactoryImpl.class);
         install(new FactoryModuleBuilder()
-                .implement(CameraSource.class, CameraSource.class)
-                .build(CameraSource.Factory.class));
+            .implement(CameraSource.class, CameraSource.class)
+            .build(CameraSource.Factory.class));
         install(new FactoryModuleBuilder()
-                .implement(ImageFileSource.class, ImageFileSource.class)
-                .build(ImageFileSource.Factory.class));
+            .implement(ImageFileSource.class, ImageFileSource.class)
+            .build(ImageFileSource.Factory.class));
         install(new FactoryModuleBuilder()
-                .implement(MultiImageFileSource.class, MultiImageFileSource.class)
-                .build(MultiImageFileSource.Factory.class));
+            .implement(MultiImageFileSource.class, MultiImageFileSource.class)
+            .build(MultiImageFileSource.Factory.class));
 
         install(new FactoryModuleBuilder().build(ExceptionWitness.Factory.class));
     }
@@ -143,7 +152,7 @@ public class GRIPCoreModule extends AbstractModule {
      * We intentionally catch the throwable because we can't be sure what will happen.
      * We drop the last throwable because we clearly have a problem beyond our control.
      */
-    @SuppressWarnings({"PMD.AvoidCatchingThrowable", "PMD.EmptyCatchBlock"})
+    @SuppressWarnings( {"PMD.AvoidCatchingThrowable", "PMD.EmptyCatchBlock"})
     protected void onThreadException(Thread thread, Throwable exception) {
         // Don't do anything outside of a try catch block when dealing with thread death
         try {

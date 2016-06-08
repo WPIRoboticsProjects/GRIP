@@ -2,6 +2,7 @@ package edu.wpi.grip.core.operations.composite;
 
 
 import com.google.common.collect.ImmutableList;
+
 import edu.wpi.grip.core.Operation;
 import edu.wpi.grip.core.OperationDescription;
 import edu.wpi.grip.core.sockets.InputSocket;
@@ -26,12 +27,12 @@ import static org.bytedeco.javacpp.opencv_imgproc.cvtColor;
 public class HSLThresholdOperation extends ThresholdOperation {
 
     public static final OperationDescription DESCRIPTION =
-            OperationDescription.builder()
-                    .name("HSL Threshold")
-                    .summary("Segment an image based on hue, saturation, and luminance ranges.")
-                    .category(OperationDescription.Category.IMAGE_PROCESSING)
-                    .icon(Icon.iconStream("threshold"))
-                    .build();
+        OperationDescription.builder()
+            .name("HSL Threshold")
+            .summary("Segment an image based on hue, saturation, and luminance ranges.")
+            .category(OperationDescription.Category.IMAGE_PROCESSING)
+            .icon(Icon.iconStream("threshold"))
+            .build();
 
     private static final Logger logger = Logger.getLogger(HSLThresholdOperation.class.getName());
     private final SocketHint<Mat> inputHint = SocketHints.Inputs.createMatSocketHint("Input", false);
@@ -60,17 +61,17 @@ public class HSLThresholdOperation extends ThresholdOperation {
     @Override
     public List<InputSocket> getInputSockets() {
         return ImmutableList.of(
-                inputSocket,
-                hueSocket,
-                saturationSocket,
-                luminanceSocket
+            inputSocket,
+            hueSocket,
+            saturationSocket,
+            luminanceSocket
         );
     }
 
     @Override
     public List<OutputSocket> getOutputSockets() {
         return ImmutableList.of(
-                outputSocket
+            outputSocket
         );
     }
 
@@ -90,14 +91,14 @@ public class HSLThresholdOperation extends ThresholdOperation {
 
         // Intentionally 1, 3, 2. This maps to the HLS open cv expects
         final Scalar lowScalar = new Scalar(
-                channel1.get(0).doubleValue(),
-                channel3.get(0).doubleValue(),
-                channel2.get(0).doubleValue(), 0);
+            channel1.get(0).doubleValue(),
+            channel3.get(0).doubleValue(),
+            channel2.get(0).doubleValue(), 0);
 
         final Scalar highScalar = new Scalar(
-                channel1.get(1).doubleValue(),
-                channel3.get(1).doubleValue(),
-                channel2.get(1).doubleValue(), 0);
+            channel1.get(1).doubleValue(),
+            channel3.get(1).doubleValue(),
+            channel2.get(1).doubleValue(), 0);
 
         final Mat low = reallocateMatIfInputSizeOrWidthChanged(dataArray, 0, lowScalar, input);
         final Mat high = reallocateMatIfInputSizeOrWidthChanged(dataArray, 1, highScalar, input);

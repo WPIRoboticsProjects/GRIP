@@ -1,6 +1,7 @@
 package edu.wpi.grip.core.events;
 
 import com.google.common.base.MoreObjects;
+
 import edu.wpi.grip.core.Source;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -32,7 +33,7 @@ public class SourceRemovedEvent {
     @Override
     public String toString() {
         return MoreObjects.toStringHelper(this)
-                .add("source", source)
-                .toString();
+            .add("source", source)
+            .toString();
     }
 }

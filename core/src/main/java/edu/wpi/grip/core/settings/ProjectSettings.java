@@ -17,12 +17,12 @@ public class ProjectSettings implements Cloneable {
     @Setting(label = "FRC team number", description = "The team number, if used for FRC")
     private int teamNumber = 0;
 
-    @Setting(label = "NetworkTables server address", description = "The host that runs the NetworkTables server. If " +
-            "not specified and NetworkTables is used, the hostname is derived from the team number.")
+    @Setting(label = "NetworkTables server address", description = "The host that runs the NetworkTables server. If "
+        + "not specified and NetworkTables is used, the hostname is derived from the team number.")
     private String publishAddress = computeFRCAddress(teamNumber);
 
-    @Setting(label = "Deploy address", description = "The remote host that grip should be deployed to. " +
-            "If not specified, the hostname is derived from the team number.")
+    @Setting(label = "Deploy address", description = "The remote host that grip should be deployed to. "
+        + "If not specified, the hostname is derived from the team number.")
     private String deployAddress = computeFRCAddress(teamNumber);
 
     @Setting(label = "Deploy directory", description = "The directory on the remote host to deploy GRIP to.")
@@ -65,7 +65,9 @@ public class ProjectSettings implements Cloneable {
     }
 
     public void setPublishAddress(@Nullable String publishAddress) {
-        if (publishAddress != null) this.publishAddress = publishAddress;
+        if (publishAddress != null) {
+            this.publishAddress = publishAddress;
+        }
     }
 
     public String getPublishAddress() {
@@ -73,7 +75,9 @@ public class ProjectSettings implements Cloneable {
     }
 
     public void setDeployAddress(@Nullable String deployAddress) {
-        if (deployAddress != null) this.deployAddress = deployAddress;
+        if (deployAddress != null) {
+            this.deployAddress = deployAddress;
+        }
     }
 
     public String getDeployAddress() {
@@ -85,7 +89,9 @@ public class ProjectSettings implements Cloneable {
     }
 
     public void setDeployDir(@Nullable String deployDir) {
-        if (deployDir != null) this.deployDir = deployDir;
+        if (deployDir != null) {
+            this.deployDir = deployDir;
+        }
     }
 
     public String getDeployUser() {
@@ -93,7 +99,9 @@ public class ProjectSettings implements Cloneable {
     }
 
     public void setDeployUser(@Nullable String deployUser) {
-        if (deployUser != null) this.deployUser = deployUser;
+        if (deployUser != null) {
+            this.deployUser = deployUser;
+        }
     }
 
     public String getDeployJavaHome() {
@@ -101,7 +109,9 @@ public class ProjectSettings implements Cloneable {
     }
 
     public void setDeployJavaHome(@Nullable String deployJavaHome) {
-        if (deployJavaHome != null) this.deployJavaHome = deployJavaHome;
+        if (deployJavaHome != null) {
+            this.deployJavaHome = deployJavaHome;
+        }
     }
 
     public String getDeployJvmOptions() {
@@ -109,7 +119,9 @@ public class ProjectSettings implements Cloneable {
     }
 
     public void setDeployJvmOptions(@Nullable String deployJvmOptions) {
-        if (deployJvmOptions != null) this.deployJvmOptions = deployJvmOptions;
+        if (deployJvmOptions != null) {
+            this.deployJvmOptions = deployJvmOptions;
+        }
     }
 
     private String computeFRCAddress(int teamNumber) {
@@ -119,14 +131,14 @@ public class ProjectSettings implements Cloneable {
     @Override
     public String toString() {
         return MoreObjects.toStringHelper(this)
-                .add("deployAddress", deployAddress)
-                .add("deployDir", deployDir)
-                .add("deployUser", deployUser)
-                .add("deployJavaHome", deployJavaHome)
-                .add("deployJvmOptions", deployJvmOptions)
-                .add("publishAddress", publishAddress)
-                .add("teamNumber", teamNumber)
-                .toString();
+            .add("deployAddress", deployAddress)
+            .add("deployDir", deployDir)
+            .add("deployUser", deployUser)
+            .add("deployJavaHome", deployJavaHome)
+            .add("deployJvmOptions", deployJvmOptions)
+            .add("publishAddress", publishAddress)
+            .add("teamNumber", teamNumber)
+            .toString();
     }
 
     @Override

@@ -12,6 +12,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * Concrete implementation of the {@link InputSocket}
+ *
  * @param <T> The type of the value that this socket stores
  */
 @XStreamAlias("grip:Input")
@@ -25,8 +26,7 @@ public class InputSocketImpl<T> extends SocketImpl<T> implements InputSocket<T> 
     public static class FactoryImpl implements Factory {
         private final EventBus eventBus;
 
-        @Inject
-        FactoryImpl(EventBus eventBus) {
+        @Inject FactoryImpl(EventBus eventBus) {
             this.eventBus = eventBus;
         }
 

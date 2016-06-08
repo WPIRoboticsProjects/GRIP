@@ -7,12 +7,14 @@ import com.thoughtworks.xstream.converters.MarshallingContext;
 import com.thoughtworks.xstream.converters.UnmarshallingContext;
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
+
 import edu.wpi.grip.core.Source;
 import edu.wpi.grip.core.events.SourceAddedEvent;
 
-import javax.inject.Inject;
 import java.io.IOException;
 import java.util.Properties;
+
+import javax.inject.Inject;
 
 /**
  * XStream converter for sources.

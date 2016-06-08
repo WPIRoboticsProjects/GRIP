@@ -1,6 +1,7 @@
 package edu.wpi.grip.core.operations.composite;
 
 import edu.wpi.grip.core.Operation;
+
 import org.bytedeco.javacpp.opencv_core.Mat;
 import org.bytedeco.javacpp.opencv_core.Scalar;
 
@@ -17,8 +18,8 @@ public abstract class ThresholdOperation<O extends ThresholdOperation<O>> implem
      */
     protected Mat reallocateMatIfInputSizeOrWidthChanged(final Mat[] dataArray, final int index, final Scalar value, final Mat input) {
         if (dataArray[index].size().width() != input.size().width()
-                || dataArray[index].size().height() != input.size().height()
-                || dataArray[index].type() != input.type()) {
+            || dataArray[index].size().height() != input.size().height()
+            || dataArray[index].type() != input.type()) {
             return dataArray[index] = new Mat(input.size(), input.type(), value);
         } else {
             return dataArray[index].put(value);

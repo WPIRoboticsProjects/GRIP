@@ -41,7 +41,7 @@ public class ProjectSettingsBeanInfo extends SimpleBeanInfo {
 
                 if (setting != null) {
                     PropertyDescriptor descriptor = new PropertyDescriptor(property, ProjectSettings.class,
-                            "get" + caseConverter.convert(property), "set" + caseConverter.convert(property));
+                        "get" + caseConverter.convert(property), "set" + caseConverter.convert(property));
                     descriptor.setDisplayName(setting.label());
                     descriptor.setShortDescription(setting.description());
                     propertyDescriptors.add(descriptor);

@@ -1,4 +1,3 @@
-
 package edu.wpi.grip.core.operations.composite;
 
 import com.google.common.collect.ImmutableList;
@@ -11,9 +10,9 @@ import edu.wpi.grip.core.sockets.SocketHint;
 import edu.wpi.grip.core.sockets.SocketHints;
 import edu.wpi.grip.core.util.Icon;
 
-import org.bytedeco.javacpp.opencv_core.Mat;
-
 import java.util.List;
+
+import org.bytedeco.javacpp.opencv_core.Mat;
 
 import static org.bytedeco.javacpp.opencv_core.CV_8U;
 import static org.bytedeco.javacpp.opencv_imgproc.CV_DIST_C;
@@ -28,12 +27,12 @@ import static org.bytedeco.javacpp.opencv_imgproc.distanceTransform;
 public class DistanceTransformOperation implements Operation {
 
     public static final OperationDescription DESCRIPTION =
-            OperationDescription.builder()
-                    .name("Distance Transform")
-                    .summary("Sets the values of pixels in a binary image to their distance to the nearest black pixel.")
-                    .category(OperationDescription.Category.IMAGE_PROCESSING)
-                    .icon(Icon.iconStream("opencv"))
-                    .build();
+        OperationDescription.builder()
+            .name("Distance Transform")
+            .summary("Sets the values of pixels in a binary image to their distance to the nearest black pixel.")
+            .category(OperationDescription.Category.IMAGE_PROCESSING)
+            .icon(Icon.iconStream("opencv"))
+            .build();
 
     private enum Type {
 
@@ -103,16 +102,16 @@ public class DistanceTransformOperation implements Operation {
     @Override
     public List<InputSocket> getInputSockets() {
         return ImmutableList.of(
-                srcSocket,
-                typeSocket,
-                maskSizeSocket
+            srcSocket,
+            typeSocket,
+            maskSizeSocket
         );
     }
 
     @Override
     public List<OutputSocket> getOutputSockets() {
         return ImmutableList.of(
-                outputSocket
+            outputSocket
         );
     }
 

@@ -3,15 +3,17 @@ package edu.wpi.grip.ui.pipeline.input;
 import com.google.common.eventbus.Subscribe;
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
-import edu.wpi.grip.core.sockets.InputSocket;
+
 import edu.wpi.grip.core.events.SocketChangedEvent;
+import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.ui.pipeline.SocketHandleView;
-import edu.wpi.grip.ui.util.GRIPPlatform;
+import edu.wpi.grip.ui.util.GripPlatform;
+
+import java.util.Optional;
+
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ContentDisplay;
-
-import java.util.Optional;
 
 /**
  * An {@link InputSocketController} for booleans that shows a checkbox for the user to turn on or off
@@ -19,14 +21,13 @@ import java.util.Optional;
 public class CheckboxInputSocketController extends InputSocketController<Boolean> {
 
     private final CheckBox checkBox;
-    private final GRIPPlatform platform;
+    private final GripPlatform platform;
 
     public interface Factory {
         CheckboxInputSocketController create(InputSocket<Boolean> socket);
     }
 
-    @Inject
-    CheckboxInputSocketController(SocketHandleView.Factory socketHandleViewFactory, GRIPPlatform platform, @Assisted InputSocket<Boolean> socket) {
+    @Inject CheckboxInputSocketController(SocketHandleView.Factory socketHandleViewFactory, GripPlatform platform, @Assisted InputSocket<Boolean> socket) {
         super(socketHandleViewFactory, socket);
         this.platform = platform;
         this.checkBox = new CheckBox();

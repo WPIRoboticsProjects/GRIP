@@ -1,6 +1,7 @@
 package edu.wpi.grip.core.operations.composite;
 
 import com.google.common.collect.ImmutableList;
+
 import edu.wpi.grip.core.Operation;
 import edu.wpi.grip.core.OperationDescription;
 import edu.wpi.grip.core.sockets.InputSocket;
@@ -8,12 +9,13 @@ import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.core.sockets.SocketHint;
 import edu.wpi.grip.core.sockets.SocketHints;
 import edu.wpi.grip.core.util.Icon;
-import org.bytedeco.javacpp.opencv_core.Mat;
-import org.bytedeco.javacpp.opencv_core.Scalar;
 
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import org.bytedeco.javacpp.opencv_core.Mat;
+import org.bytedeco.javacpp.opencv_core.Scalar;
 
 import static org.bytedeco.javacpp.opencv_core.inRange;
 import static org.bytedeco.javacpp.opencv_imgproc.COLOR_BGR2HSV;
@@ -25,12 +27,12 @@ import static org.bytedeco.javacpp.opencv_imgproc.cvtColor;
 public class HSVThresholdOperation extends ThresholdOperation {
 
     public static final OperationDescription DESCRIPTION =
-            OperationDescription.builder()
-                    .name("HSV Threshold")
-                    .summary("Segment an image based on hue, saturation, and value ranges.")
-                    .category(OperationDescription.Category.IMAGE_PROCESSING)
-                    .icon(Icon.iconStream("threshold"))
-                    .build();
+        OperationDescription.builder()
+            .name("HSV Threshold")
+            .summary("Segment an image based on hue, saturation, and value ranges.")
+            .category(OperationDescription.Category.IMAGE_PROCESSING)
+            .icon(Icon.iconStream("threshold"))
+            .build();
 
     private static final Logger logger = Logger.getLogger(HSVThresholdOperation.class.getName());
     private final SocketHint<Mat> inputHint = SocketHints.Inputs.createMatSocketHint("Input", false);
@@ -59,17 +61,17 @@ public class HSVThresholdOperation extends ThresholdOperation {
     @Override
     public List<InputSocket> getInputSockets() {
         return ImmutableList.of(
-                inputSocket,
-                hueSocket,
-                saturationSocket,
-                valueSocket
+            inputSocket,
+            hueSocket,
+            saturationSocket,
+            valueSocket
         );
     }
 
     @Override
     public List<OutputSocket> getOutputSockets() {
         return ImmutableList.of(
-                outputSocket
+            outputSocket
         );
     }
 
@@ -88,13 +90,13 @@ public class HSVThresholdOperation extends ThresholdOperation {
         final Mat output = outputSocket.getValue().get();
 
         final Scalar lowScalar = new Scalar(
-                channel1.get(0).doubleValue(),
-                channel2.get(0).doubleValue(),
-                channel3.get(0).doubleValue(), 0);
+            channel1.get(0).doubleValue(),
+            channel2.get(0).doubleValue(),
+            channel3.get(0).doubleValue(), 0);
         final Scalar highScalar = new Scalar(
-                channel1.get(1).doubleValue(),
-                channel2.get(1).doubleValue(),
-                channel3.get(1).doubleValue(), 0);
+            channel1.get(1).doubleValue(),
+            channel2.get(1).doubleValue(),
+            channel3.get(1).doubleValue(), 0);
 
         final Mat low = reallocateMatIfInputSizeOrWidthChanged(dataArray, 0, lowScalar, input);
         final Mat high = reallocateMatIfInputSizeOrWidthChanged(dataArray, 1, highScalar, input);

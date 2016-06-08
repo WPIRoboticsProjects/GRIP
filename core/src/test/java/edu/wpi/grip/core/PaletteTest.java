@@ -1,13 +1,15 @@
 package edu.wpi.grip.core;
 
 import com.google.common.eventbus.EventBus;
+
 import edu.wpi.grip.core.events.OperationAddedEvent;
-import org.junit.Before;
-import org.junit.Test;
 
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Optional;
+
+import org.junit.Before;
+import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 
@@ -22,10 +24,10 @@ public class PaletteTest {
         palette = new Palette();
         eventBus.register(palette);
         operation = new OperationMetaData(OperationDescription.builder()
-                .name("Find Target")
-                .summary("")
-                .build(),
-                () -> null);
+            .name("Find Target")
+            .summary("")
+            .build(),
+            () -> null);
     }
 
     @Test

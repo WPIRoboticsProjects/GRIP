@@ -3,6 +3,7 @@ package edu.wpi.grip.ui.pipeline;
 import edu.wpi.grip.core.Connection;
 import edu.wpi.grip.ui.util.DPIUtility;
 import edu.wpi.grip.ui.util.StyleClassNameUtility;
+
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.geometry.Point2D;

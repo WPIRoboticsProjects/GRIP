@@ -4,6 +4,7 @@ import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
+
 import edu.wpi.grip.core.events.ExceptionClearedEvent;
 import edu.wpi.grip.core.events.ExceptionEvent;
 import edu.wpi.grip.core.operations.CVOperations;
@@ -12,11 +13,12 @@ import edu.wpi.grip.core.operations.network.GRIPNetworkModule;
 import edu.wpi.grip.core.serialization.Project;
 import edu.wpi.grip.core.sources.GRIPSourcesHardwareModule;
 
-import javax.inject.Inject;
 import java.io.File;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import javax.inject.Inject;
 
 /**
  * Main driver class for headless mode
@@ -32,7 +34,7 @@ public class Main {
 
     @SuppressWarnings("PMD.SystemPrintln")
     public static void main(String[] args) throws IOException, InterruptedException {
-        final Injector injector = Guice.createInjector(new GRIPCoreModule(), new GRIPNetworkModule(), new GRIPSourcesHardwareModule());
+        final Injector injector = Guice.createInjector(new GripCoreModule(), new GRIPNetworkModule(), new GRIPSourcesHardwareModule());
         injector.getInstance(Main.class).start(args);
     }
 
@@ -66,10 +68,10 @@ public class Main {
     @Subscribe
     public final void onExceptionEvent(ExceptionEvent event) {
         Logger.getLogger(event.getOrigin().getClass().getName()).log(
-                Level.SEVERE,
-                event.getMessage(),
-                // The throwable can be null
-                event.getException().orElse(null)
+            Level.SEVERE,
+            event.getMessage(),
+            // The throwable can be null
+            event.getException().orElse(null)
         );
     }
 

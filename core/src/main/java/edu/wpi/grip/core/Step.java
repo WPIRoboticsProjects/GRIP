@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
+
 import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.core.sockets.Socket;
@@ -51,11 +52,11 @@ public class Step {
             final List<OutputSocket> outputSockets = operation.getOutputSockets();
 
             final Step step = new Step(
-                    operation,
-                    operationData.getDescription(),
-                    inputSockets,
-                    outputSockets,
-                    exceptionWitnessFactory
+                operation,
+                operationData.getDescription(),
+                inputSockets,
+                outputSockets,
+                exceptionWitnessFactory
             );
 
             for (Socket<?> socket : inputSockets) {

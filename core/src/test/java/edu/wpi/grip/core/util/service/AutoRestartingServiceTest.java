@@ -3,9 +3,6 @@ package edu.wpi.grip.core.util.service;
 import com.google.common.util.concurrent.AbstractExecutionThreadService;
 import com.google.common.util.concurrent.MoreExecutors;
 import com.google.common.util.concurrent.Service;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
 
 import java.util.LinkedList;
 import java.util.concurrent.CountDownLatch;
@@ -13,8 +10,17 @@ import java.util.concurrent.Executor;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
 import static com.google.common.truth.Truth.assertThat;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 /**
  * Many of these mock service objects are copied from Guava's test framework.
@@ -50,7 +56,7 @@ public class AutoRestartingServiceTest {
     @After
     public void tearDown() {
         assertNull("exceptions should not be propagated to uncaught exception handlers",
-                thrownByExecutionThread);
+            thrownByExecutionThread);
     }
 
     @Test

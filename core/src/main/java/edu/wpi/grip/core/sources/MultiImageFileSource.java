@@ -6,6 +6,7 @@ import com.google.common.math.IntMath;
 import com.google.inject.assistedinject.Assisted;
 import com.google.inject.assistedinject.AssistedInject;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
+
 import edu.wpi.grip.core.PreviousNext;
 import edu.wpi.grip.core.Source;
 import edu.wpi.grip.core.events.SourceHasPendingUpdateEvent;
@@ -14,7 +15,6 @@ import edu.wpi.grip.core.sockets.SocketHint;
 import edu.wpi.grip.core.sockets.SocketHints;
 import edu.wpi.grip.core.util.ExceptionWitness;
 import edu.wpi.grip.core.util.ImageLoadingUtility;
-import org.bytedeco.javacpp.opencv_core.Mat;
 
 import java.io.File;
 import java.io.IOException;
@@ -26,6 +26,8 @@ import java.util.Optional;
 import java.util.Properties;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
+
+import org.bytedeco.javacpp.opencv_core.Mat;
 
 import static com.google.common.base.Preconditions.checkElementIndex;
 
@@ -61,44 +63,41 @@ public final class MultiImageFileSource extends Source implements PreviousNext {
      * @param files                   A list of files to be loaded.
      * @param index                   The index to use as the first file that is in the socket.
      */
-    @AssistedInject
-    MultiImageFileSource(
-            final EventBus eventBus,
-            final OutputSocket.Factory outputSocketFactory,
-            final ExceptionWitness.Factory exceptionWitnessFactory,
-            @Assisted final List<File> files,
-            @Assisted final int index) {
+    @AssistedInject MultiImageFileSource(
+        final EventBus eventBus,
+        final OutputSocket.Factory outputSocketFactory,
+        final ExceptionWitness.Factory exceptionWitnessFactory,
+        @Assisted final List<File> files,
+        @Assisted final int index) {
         this(eventBus, outputSocketFactory, exceptionWitnessFactory, files.stream()
-                .map(file -> URLDecoder.decode(Paths.get(file.toURI()).toString()))
-                .collect(Collectors.toList()).toArray(new String[files.size()]), index);
+            .map(file -> URLDecoder.decode(Paths.get(file.toURI()).toString()))
+            .collect(Collectors.toList()).toArray(new String[files.size()]), index);
     }
 
-    @AssistedInject
-    MultiImageFileSource(
-            final EventBus eventBus,
-            final OutputSocket.Factory outputSocketFactory,
-            final ExceptionWitness.Factory exceptionWitnessFactory,
-            @Assisted final List<File> files) {
+    @AssistedInject MultiImageFileSource(
+        final EventBus eventBus,
+        final OutputSocket.Factory outputSocketFactory,
+        final ExceptionWitness.Factory exceptionWitnessFactory,
+        @Assisted final List<File> files) {
         this(eventBus, outputSocketFactory, exceptionWitnessFactory, files, 0);
     }
 
     /**
      * Used only for serialization
      */
-    @AssistedInject
-    MultiImageFileSource(final EventBus eventBus,
-                         final OutputSocket.Factory outputSocketFactory,
-                         final ExceptionWitness.Factory exceptionWitnessFactory,
-                         @Assisted final Properties properties) {
+    @AssistedInject MultiImageFileSource(final EventBus eventBus,
+                                         final OutputSocket.Factory outputSocketFactory,
+                                         final ExceptionWitness.Factory exceptionWitnessFactory,
+                                         @Assisted final Properties properties) {
         this(eventBus, outputSocketFactory, exceptionWitnessFactory, pathsFromProperties(properties), indexFromProperties(properties));
     }
 
     private MultiImageFileSource(
-            final EventBus eventBus,
-            final OutputSocket.Factory outputSocketFactory,
-            final ExceptionWitness.Factory exceptionWitnessFactory,
-            final String[] paths,
-            final int index) {
+        final EventBus eventBus,
+        final OutputSocket.Factory outputSocketFactory,
+        final ExceptionWitness.Factory exceptionWitnessFactory,
+        final String[] paths,
+        final int index) {
         super(exceptionWitnessFactory);
         this.eventBus = eventBus;
         this.outputSocket = outputSocketFactory.create(imageOutputHint);
@@ -121,7 +120,7 @@ public final class MultiImageFileSource extends Source implements PreviousNext {
     @Override
     protected List<OutputSocket> createOutputSockets() {
         return ImmutableList.of(
-                outputSocket
+            outputSocket
         );
     }
 
@@ -160,7 +159,9 @@ public final class MultiImageFileSource extends Source implements PreviousNext {
             assert currentIndex >= 0 : "The current index should never be less than zero";
             assert currentIndex < listSize : "The current index should always be less than the size of the list";
             // No need to do any more calculations because there is no change.
-            if (delta == 0) return currentIndex;
+            if (delta == 0) {
+                return currentIndex;
+            }
             return IntMath.mod(currentIndex + delta, listSize);
         });
         return images[newMatIndex];

@@ -2,12 +2,13 @@ package edu.wpi.grip.util;
 
 
 import edu.wpi.grip.core.util.ImageLoadingUtility;
-import org.bytedeco.javacpp.opencv_core.Mat;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.URLDecoder;
 import java.nio.file.Paths;
+
+import org.bytedeco.javacpp.opencv_core.Mat;
 
 import static org.junit.Assert.assertEquals;
 
@@ -25,7 +26,7 @@ public class ImageWithData {
     public Mat createMat() {
         try {
             final Mat data = new Mat();
-            ImageLoadingUtility.loadImage(URLDecoder.decode(Paths.get(file.toURI()).toString()),data);
+            ImageLoadingUtility.loadImage(URLDecoder.decode(Paths.get(file.toURI()).toString()), data);
             return data;
         } catch (IOException e) {
             throw new AssertionError("Can not load image", e);

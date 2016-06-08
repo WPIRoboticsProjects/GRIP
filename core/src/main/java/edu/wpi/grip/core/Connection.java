@@ -5,7 +5,12 @@ import com.google.common.eventbus.Subscribe;
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
-import edu.wpi.grip.core.events.*;
+
+import edu.wpi.grip.core.events.ConnectionAddedEvent;
+import edu.wpi.grip.core.events.ConnectionRemovedEvent;
+import edu.wpi.grip.core.events.SocketChangedEvent;
+import edu.wpi.grip.core.events.SourceRemovedEvent;
+import edu.wpi.grip.core.events.StepRemovedEvent;
 import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.sockets.OutputSocket;
 
@@ -31,8 +36,7 @@ public class Connection<T> {
      * @param outputSocket        The socket to listen for changes in.
      * @param inputSocket         A different socket to update when a change occurs in the first.
      */
-    @Inject
-    Connection(EventBus eventBus, ConnectionValidator connectionValidator, @Assisted OutputSocket<? extends T> outputSocket, @Assisted InputSocket<T> inputSocket) {
+    @Inject Connection(EventBus eventBus, ConnectionValidator connectionValidator, @Assisted OutputSocket<? extends T> outputSocket, @Assisted InputSocket<T> inputSocket) {
         this.eventBus = eventBus;
         this.outputSocket = outputSocket;
         this.inputSocket = inputSocket;

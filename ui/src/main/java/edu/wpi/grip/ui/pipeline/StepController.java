@@ -1,6 +1,7 @@
 package edu.wpi.grip.ui.pipeline;
 
 import com.google.inject.assistedinject.Assisted;
+
 import edu.wpi.grip.core.Pipeline;
 import edu.wpi.grip.core.Step;
 import edu.wpi.grip.core.sockets.InputSocket;
@@ -13,6 +14,10 @@ import edu.wpi.grip.ui.pipeline.input.InputSocketController;
 import edu.wpi.grip.ui.pipeline.input.InputSocketControllerFactory;
 import edu.wpi.grip.ui.util.ControllerMap;
 import edu.wpi.grip.ui.util.StyleClassNameUtility;
+
+import java.io.InputStream;
+import java.util.Collection;
+
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.Labeled;
@@ -22,8 +27,6 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
 import javax.inject.Inject;
-import java.io.InputStream;
-import java.util.Collection;
 
 /**
  * A JavaFX control that shows a step in the pipeline.  This control shows the name of the operation as well as a list
@@ -64,14 +67,13 @@ public class StepController implements Controller {
         StepController create(Step step);
     }
 
-    @Inject
-    StepController(
-            Pipeline pipeline,
-            InputSocketControllerFactory inputSocketControllerFactory,
-            OutputSocketController.Factory outputSocketControllerFactory,
-            ExceptionWitnessResponderButton.Factory exceptionWitnessResponderButtonFactory,
-            StepDragService stepDragService,
-            @Assisted Step step) {
+    @Inject StepController(
+        Pipeline pipeline,
+        InputSocketControllerFactory inputSocketControllerFactory,
+        OutputSocketController.Factory outputSocketControllerFactory,
+        ExceptionWitnessResponderButton.Factory exceptionWitnessResponderButtonFactory,
+        StepDragService stepDragService,
+        @Assisted Step step) {
         this.pipeline = pipeline;
         this.inputSocketControllerFactory = inputSocketControllerFactory;
         this.outputSocketControllerFactory = outputSocketControllerFactory;

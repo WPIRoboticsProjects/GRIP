@@ -7,6 +7,7 @@ import com.google.inject.matcher.Matchers;
 import com.google.inject.spi.InjectionListener;
 import com.google.inject.spi.TypeEncounter;
 import com.google.inject.spi.TypeListener;
+
 import edu.wpi.grip.core.Source;
 import edu.wpi.grip.core.util.GRIPMode;
 import edu.wpi.grip.ui.annotations.ParametrizedController;
@@ -15,18 +16,26 @@ import edu.wpi.grip.ui.components.StartStoppableButton;
 import edu.wpi.grip.ui.pipeline.OutputSocketController;
 import edu.wpi.grip.ui.pipeline.SocketHandleView;
 import edu.wpi.grip.ui.pipeline.StepController;
-import edu.wpi.grip.ui.pipeline.input.*;
+import edu.wpi.grip.ui.pipeline.input.CheckboxInputSocketController;
+import edu.wpi.grip.ui.pipeline.input.InputSocketController;
+import edu.wpi.grip.ui.pipeline.input.ListSpinnerInputSocketController;
+import edu.wpi.grip.ui.pipeline.input.NumberSpinnerInputSocketController;
+import edu.wpi.grip.ui.pipeline.input.RangeInputSocketController;
+import edu.wpi.grip.ui.pipeline.input.SelectInputSocketController;
+import edu.wpi.grip.ui.pipeline.input.SliderInputSocketController;
+import edu.wpi.grip.ui.pipeline.input.TextFieldInputSocketController;
 import edu.wpi.grip.ui.pipeline.source.CameraSourceController;
 import edu.wpi.grip.ui.pipeline.source.MultiImageFileSourceController;
 import edu.wpi.grip.ui.pipeline.source.SourceController;
-import javafx.fxml.FXMLLoader;
 
 import java.io.IOException;
+
+import javafx.fxml.FXMLLoader;
 
 /**
  * A Guice {@link com.google.inject.Module} for GRIP's UI package.
  */
-public class GRIPUIModule extends AbstractModule {
+public class GripUIModule extends AbstractModule {
     @Override
     protected void configure() {
         bind(GRIPMode.class).toInstance(GRIPMode.GUI);
@@ -40,9 +49,9 @@ public class GRIPUIModule extends AbstractModule {
                     }
                     try {
                         FXMLLoader.load(i.getClass().getResource(
-                                i.getClass().getAnnotation(ParametrizedController.class).url()),
-                                null, null,
-                                c -> i
+                            i.getClass().getAnnotation(ParametrizedController.class).url()),
+                            null, null,
+                            c -> i
                         );
                     } catch (IOException e) {
                         throw new IllegalStateException("Failed to load FXML", e);
@@ -53,8 +62,8 @@ public class GRIPUIModule extends AbstractModule {
 
 
         install(new FactoryModuleBuilder()
-                .implement(StepController.class, StepController.class)
-                .build(StepController.Factory.class));
+            .implement(StepController.class, StepController.class)
+            .build(StepController.Factory.class));
 
         // Source Factories
         install(new FactoryModuleBuilder().build(new TypeLiteral<SourceController.BaseSourceControllerFactory<Source>>() {

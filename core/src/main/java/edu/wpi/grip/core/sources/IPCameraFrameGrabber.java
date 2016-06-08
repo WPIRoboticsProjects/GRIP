@@ -23,14 +23,6 @@
 
 package edu.wpi.grip.core.sources;
 
-import org.bytedeco.javacpp.BytePointer;
-import org.bytedeco.javacpp.Loader;
-import org.bytedeco.javacv.Frame;
-import org.bytedeco.javacv.FrameConverter;
-import org.bytedeco.javacv.FrameGrabber;
-import org.bytedeco.javacv.OpenCVFrameConverter;
-
-import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
@@ -41,7 +33,20 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.concurrent.TimeUnit;
 
-import static org.bytedeco.javacpp.opencv_core.*;
+import javax.imageio.ImageIO;
+
+import org.bytedeco.javacpp.BytePointer;
+import org.bytedeco.javacpp.Loader;
+import org.bytedeco.javacv.Frame;
+import org.bytedeco.javacv.FrameConverter;
+import org.bytedeco.javacv.FrameGrabber;
+import org.bytedeco.javacv.OpenCVFrameConverter;
+
+import static org.bytedeco.javacpp.opencv_core.CV_8UC1;
+import static org.bytedeco.javacpp.opencv_core.CvMat;
+import static org.bytedeco.javacpp.opencv_core.IplImage;
+import static org.bytedeco.javacpp.opencv_core.cvMat;
+import static org.bytedeco.javacpp.opencv_core.cvReleaseImage;
 import static org.bytedeco.javacpp.opencv_imgcodecs.cvDecodeImage;
 
 // This is here because FrameGrabber has an exception called Exception which triggers PMD
@@ -104,7 +109,7 @@ public class IPCameraFrameGrabber extends FrameGrabber {
     public void stop() throws Exception {
         // Our fix. This ensures that restart doesn't null pointer.
         // https://github.com/bytedeco/javacv/issues/299
-        if(input != null) {
+        if (input != null) {
             try {
                 input.close();
                 input = null;
@@ -162,7 +167,7 @@ public class IPCameraFrameGrabber extends FrameGrabber {
                 }
             }
         }
-        
+
         // find embedded jpeg in stream
         final String subheader = sb.toString().toLowerCase();
         //log.debug(subheader);

@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 import com.google.common.eventbus.Subscribe;
 import com.google.inject.Singleton;
+
 import edu.wpi.first.wpilibj.networktables.NetworkTable;
 import edu.wpi.first.wpilibj.networktables.NetworkTablesJNI;
 import edu.wpi.first.wpilibj.tables.ITable;
@@ -15,7 +16,6 @@ import edu.wpi.grip.core.operations.network.MapNetworkPublisherFactory;
 import edu.wpi.grip.core.settings.ProjectSettings;
 import edu.wpi.grip.core.util.GRIPMode;
 
-import javax.inject.Inject;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
@@ -24,6 +24,8 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import javax.inject.Inject;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -43,23 +45,25 @@ public class NTManager implements Manager, MapNetworkPublisherFactory {
      * and
      * https://github.com/PeterJohnson/ntcore/blob/e6054f543a6ab10aa27af6cace855da66d67ee44/include/ntcore_c.h#L39
      */
-    private final static Map<Integer, Level> ntLogLevels = new HashMap<Integer, Level>() {{
-        put(40, Level.SEVERE);
-        put(30, Level.WARNING);
-        put(20, Level.INFO);
-        put(10, Level.FINE);
-        put(9, Level.FINE);
-        put(8, Level.FINE);
-        put(7, Level.FINER);
-        put(6, Level.FINEST);
-    }};
+    private static final Map<Integer, Level> ntLogLevels = new HashMap<Integer, Level>() {
+        {
+            put(40, Level.SEVERE);
+            put(30, Level.WARNING);
+            put(20, Level.INFO);
+            put(10, Level.FINE);
+            put(9, Level.FINE);
+            put(8, Level.FINE);
+            put(7, Level.FINER);
+            put(6, Level.FINEST);
+        }
+    };
+
     private final Logger logger = Logger.getLogger(getClass().getName());
 
     @Inject private PipelineRunner pipelineRunner;
     @Inject private GRIPMode gripMode;
 
-    @Inject
-    NTManager() {
+    @Inject NTManager() {
         // We may have another instance of this method lying around
         NetworkTable.shutdown();
 
@@ -128,6 +132,11 @@ public class NTManager implements Manager, MapNetworkPublisherFactory {
         }
 
         @Override
+        public void doPublish() {
+            deleteOldTable(name.get());
+        }
+
+        @Override
         protected void doPublish(Map<String, P> publishValueMap) {
             publishValueMap.forEach(getTable()::putValue);
             Sets.difference(keys, publishValueMap.keySet()).forEach(getTable()::delete);
@@ -139,14 +148,10 @@ public class NTManager implements Manager, MapNetworkPublisherFactory {
             getRootTable().putValue(name.get(), value);
         }
 
-        @Override
-        public void doPublish() {
-            deleteOldTable(name.get());
-        }
-
 
         private void deleteOldTable(String tableName) {
-            final ITable root, subTable;
+            final ITable root;
+            final ITable subTable;
             synchronized (NetworkTable.class) {
                 root = getRootTable();
                 subTable = root.getSubTable(tableName);
@@ -157,7 +162,7 @@ public class NTManager implements Manager, MapNetworkPublisherFactory {
 
         @Override
         public void close() {
-            if(name.isPresent()) {
+            if (name.isPresent()) {
                 deleteOldTable(name.get());
             }
             synchronized (NetworkTable.class) {
@@ -184,7 +189,7 @@ public class NTManager implements Manager, MapNetworkPublisherFactory {
     }
 
     @Override
-    public <P>MapNetworkPublisher<P> create(Set<String> keys) {
+    public <P> MapNetworkPublisher<P> create(Set<String> keys) {
         // Keep track of ever publisher created.
         publisherCount.getAndAdd(1);
         return new NTPublisher<>(keys);

@@ -1,6 +1,7 @@
 package edu.wpi.grip.ui.preview;
 
 import edu.wpi.grip.core.sockets.OutputSocket;
+
 import javafx.scene.control.TitledPane;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -13,7 +14,7 @@ public abstract class SocketPreviewView<T> extends TitledPane {
     private final OutputSocket<T> socket;
 
     /**
-     * @param socket   An output socket to preview
+     * @param socket An output socket to preview
      */
     protected SocketPreviewView(OutputSocket<T> socket) {
         this.socket = checkNotNull(socket);

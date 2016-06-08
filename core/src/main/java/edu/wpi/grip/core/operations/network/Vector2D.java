@@ -1,9 +1,9 @@
 package edu.wpi.grip.core.operations.network;
 
 
-import javax.annotation.concurrent.Immutable;
-
 import java.util.function.Function;
+
+import javax.annotation.concurrent.Immutable;
 
 import static org.bytedeco.javacpp.opencv_core.Point;
 import static org.bytedeco.javacpp.opencv_core.Size;
@@ -17,7 +17,8 @@ import static org.bytedeco.javacpp.opencv_core.Size;
 @Immutable
 public final class Vector2D implements Publishable {
 
-    private final double x, y;
+    private final double x;
+    private final double y;
 
     public Vector2D(Point point) {
         this.x = point.x();

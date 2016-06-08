@@ -5,6 +5,7 @@ import com.google.common.eventbus.Subscribe;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.google.inject.assistedinject.Assisted;
+
 import edu.wpi.grip.core.Connection;
 import edu.wpi.grip.core.Pipeline;
 import edu.wpi.grip.core.events.ConnectionAddedEvent;
@@ -14,16 +15,17 @@ import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.core.sockets.Socket;
 import edu.wpi.grip.ui.dragging.DragService;
+
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.css.PseudoClass;
 import javafx.scene.control.Button;
 import javafx.scene.control.Tooltip;
 import javafx.scene.input.TransferMode;
-
-import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
  * The bubble next to each socket that connections go in and out of
@@ -50,19 +52,18 @@ public class SocketHandleView extends Button {
         }
     }
 
-    final private BooleanProperty connectingProperty = new SimpleBooleanProperty(this, "connecting", false);
-    final private BooleanProperty connectedProperty = new SimpleBooleanProperty(this, "connected", false);
+    private final BooleanProperty connectingProperty = new SimpleBooleanProperty(this, "connecting", false);
+    private final BooleanProperty connectedProperty = new SimpleBooleanProperty(this, "connected", false);
 
     public interface Factory {
         SocketHandleView create(Socket socket);
     }
 
-    @Inject
-    SocketHandleView(EventBus eventBus,
-                     Pipeline pipeline,
-                     Connection.Factory<Object> connectionFactory,
-                     SocketDragService socketDragService,
-                     @Assisted Socket socket) {
+    @Inject SocketHandleView(EventBus eventBus,
+                             Pipeline pipeline,
+                             Connection.Factory<Object> connectionFactory,
+                             SocketDragService socketDragService,
+                             @Assisted Socket socket) {
         this.eventBus = eventBus;
         this.socket = socket;
 
@@ -71,10 +72,10 @@ public class SocketHandleView extends Button {
         this.getStyleClass().addAll("socket-handle", socket.getDirection().toString().toLowerCase());
 
         this.connectingProperty.addListener((observableValue, oldValue, isConnecting) ->
-                this.pseudoClassStateChanged(CONNECTING_PSEUDO_CLASS, isConnecting));
+            this.pseudoClassStateChanged(CONNECTING_PSEUDO_CLASS, isConnecting));
 
         this.connectedProperty.addListener((observableValue, oldValue, isConnected) ->
-                this.pseudoClassStateChanged(CONNECTED_PSEUDO_CLASS, isConnected));
+            this.pseudoClassStateChanged(CONNECTED_PSEUDO_CLASS, isConnected));
 
         this.connectedProperty().set(!this.socket.getConnections().isEmpty());
 
@@ -84,9 +85,9 @@ public class SocketHandleView extends Button {
 
             // Post a new ConnectionRemovedEvent for each connection
             connections.stream()
-                    .map(ConnectionRemovedEvent::new)
-                    .collect(Collectors.toList())
-                    .forEach(this.eventBus::post);
+                .map(ConnectionRemovedEvent::new)
+                .collect(Collectors.toList())
+                .forEach(this.eventBus::post);
         });
 
         // When the user starts dragging a socket handle, starting forming a connection.  This involves keeping a
@@ -102,7 +103,7 @@ public class SocketHandleView extends Button {
         // connecting property if it's not the socket that the user started dragging from, since that one is supposed
         // to be dragged away.
         this.setOnDragExited(dragEvent -> {
-            socketDragService.getValue().ifPresent( other -> {
+            socketDragService.getValue().ifPresent(other -> {
                 this.connectingProperty.set(this.socket == other);
             });
         });

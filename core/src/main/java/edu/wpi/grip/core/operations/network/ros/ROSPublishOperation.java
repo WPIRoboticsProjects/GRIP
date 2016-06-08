@@ -11,17 +11,18 @@ import java.util.List;
 
 /**
  * An operation that can publish a type to ROS using the java to message converter
+ *
  * @param <D> The type of the socket that is taken as an input to be published
  */
 public class ROSPublishOperation<D> extends NetworkPublishOperation<D> {
 
     public static OperationDescription descriptionFor(Class<?> dataType) {
         return OperationDescription.builder()
-                .name("ROSPublish " + dataType.getSimpleName())
-                .summary("Publishes a " + dataType.getSimpleName() + " to a ROS node")
-                .icon(Icon.iconStream("rosorg-logo"))
-                .category(OperationDescription.Category.NETWORK)
-                .build();
+            .name("ROSPublish " + dataType.getSimpleName())
+            .summary("Publishes a " + dataType.getSimpleName() + " to a ROS node")
+            .icon(Icon.iconStream("rosorg-logo"))
+            .category(OperationDescription.Category.NETWORK)
+            .build();
     }
 
     private final JavaToMessageConverter<D, ?> converter;

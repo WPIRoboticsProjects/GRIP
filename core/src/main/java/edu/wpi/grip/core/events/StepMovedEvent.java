@@ -1,6 +1,7 @@
 package edu.wpi.grip.core.events;
 
 import com.google.common.base.MoreObjects;
+
 import edu.wpi.grip.core.Step;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -32,8 +33,8 @@ public class StepMovedEvent {
     @Override
     public String toString() {
         return MoreObjects.toStringHelper(this)
-                .add("step", step)
-                .add("distance", distance)
-                .toString();
+            .add("step", step)
+            .add("distance", distance)
+            .toString();
     }
 }

@@ -1,11 +1,14 @@
 package edu.wpi.grip.ui.pipeline;
 
 import com.google.common.eventbus.EventBus;
+
 import edu.wpi.grip.core.sockets.MockOutputSocket;
 import edu.wpi.grip.ui.util.TestAnnotationFXMLLoader;
+
 import javafx.scene.Scene;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
+
 import org.junit.Test;
 import org.testfx.framework.junit.ApplicationTest;
 import org.testfx.util.WaitForAsyncUtils;
@@ -34,11 +37,11 @@ public class OutputSocketControllerTest extends ApplicationTest {
         initiallyPreviewedOutputSocket = new InitiallyPreviewedOutputSocket("Initially previewed");
 
         final SocketHandleView.Factory socketHandleFactory
-                = socket -> new SocketHandleView(new EventBus(), null, null, new SocketHandleView.SocketDragService(), socket);
+            = socket -> new SocketHandleView(new EventBus(), null, null, new SocketHandleView.SocketDragService(), socket);
         defaultOutputSocketController =
-                new OutputSocketController(socketHandleFactory, outputSocket);
+            new OutputSocketController(socketHandleFactory, outputSocket);
         initiallyPreviewedOutputSocketController =
-                new OutputSocketController(socketHandleFactory, initiallyPreviewedOutputSocket);
+            new OutputSocketController(socketHandleFactory, initiallyPreviewedOutputSocket);
 
         final GridPane gridPane = new GridPane();
         gridPane.add(TestAnnotationFXMLLoader.load(defaultOutputSocketController), 0, 0);

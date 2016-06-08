@@ -1,6 +1,7 @@
 package edu.wpi.grip.core.operations.composite;
 
 import com.google.common.collect.ImmutableList;
+
 import edu.wpi.grip.core.Operation;
 import edu.wpi.grip.core.OperationDescription;
 import edu.wpi.grip.core.sockets.InputSocket;
@@ -13,7 +14,10 @@ import java.util.List;
 
 import static org.bytedeco.javacpp.opencv_core.Mat;
 import static org.bytedeco.javacpp.opencv_core.Size;
-import static org.bytedeco.javacpp.opencv_imgproc.*;
+import static org.bytedeco.javacpp.opencv_imgproc.GaussianBlur;
+import static org.bytedeco.javacpp.opencv_imgproc.bilateralFilter;
+import static org.bytedeco.javacpp.opencv_imgproc.blur;
+import static org.bytedeco.javacpp.opencv_imgproc.medianBlur;
 
 /**
  * An {@link Operation} that softens an image using one of several different filters
@@ -24,12 +28,12 @@ public class BlurOperation implements Operation {
      * Describes this operation. This is used by the 'Operations' class to add operations to GRIP.
      */
     public static final OperationDescription DESCRIPTION =
-            OperationDescription.builder()
-                    .name("Blur")
-                    .summary("Blurs an image to remove noise")
-                    .category(OperationDescription.Category.IMAGE_PROCESSING)
-                    .icon(Icon.iconStream("blur"))
-                    .build();
+        OperationDescription.builder()
+            .name("Blur")
+            .summary("Blurs an image to remove noise")
+            .category(OperationDescription.Category.IMAGE_PROCESSING)
+            .icon(Icon.iconStream("blur"))
+            .build();
 
     private enum Type {
         BOX("Box Blur"), GAUSSIAN("Gaussian Blur"), MEDIAN("Median Filter"), BILATERAL_FILTER("Bilateral Filter");
@@ -69,16 +73,16 @@ public class BlurOperation implements Operation {
     @Override
     public List<InputSocket> getInputSockets() {
         return ImmutableList.of(
-                inputSocket,
-                typeSocket,
-                radiusSocket
+            inputSocket,
+            typeSocket,
+            radiusSocket
         );
     }
 
     @Override
     public List<OutputSocket> getOutputSockets() {
         return ImmutableList.of(
-                outputSocket
+            outputSocket
         );
     }
 

@@ -3,6 +3,7 @@ package edu.wpi.grip.ui;
 import com.google.common.base.CaseFormat;
 import com.google.common.eventbus.EventBus;
 import com.google.common.util.concurrent.Service;
+
 import edu.wpi.grip.core.Palette;
 import edu.wpi.grip.core.Pipeline;
 import edu.wpi.grip.core.PipelineRunner;
@@ -14,6 +15,11 @@ import edu.wpi.grip.core.util.SafeShutdown;
 import edu.wpi.grip.core.util.service.SingleActionListener;
 import edu.wpi.grip.ui.components.StartStoppableButton;
 import edu.wpi.grip.ui.util.DPIUtility;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.Optional;
+
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.Parent;
@@ -29,12 +35,10 @@ import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
-import org.controlsfx.control.StatusBar;
 
 import javax.inject.Inject;
-import java.io.File;
-import java.io.IOException;
-import java.util.Optional;
+
+import org.controlsfx.control.StatusBar;
 
 /**
  * The Controller for the application window.
@@ -78,9 +82,9 @@ public class MainWindowController {
         pipelineRunner.addListener(new SingleActionListener(() -> {
             final Service.State state = pipelineRunner.state();
             final String stateMessage =
-                    state.equals(Service.State.TERMINATED)  ?
-                            "Stopped" :
-                            CaseFormat.UPPER_UNDERSCORE.converterTo(CaseFormat.UPPER_CAMEL).convert(state.toString());
+                state.equals(Service.State.TERMINATED)
+                    ? "Stopped"
+                    : CaseFormat.UPPER_UNDERSCORE.converterTo(CaseFormat.UPPER_CAMEL).convert(state.toString());
             statusBar.setText(" Pipeline " + stateMessage);
         }), Platform::runLater);
 
@@ -97,7 +101,7 @@ public class MainWindowController {
             final ButtonType dontSave = ButtonType.NO;
             final ButtonType cancel = ButtonType.CANCEL;
 
-            final Dialog<ButtonType> dialog = new Dialog();
+            final Dialog<ButtonType> dialog = new Dialog<>();
             dialog.getDialogPane().getStylesheets().addAll(root.getStylesheets());
             dialog.getDialogPane().setStyle(root.getStyle());
             dialog.setTitle("Save Project?");
@@ -150,8 +154,8 @@ public class MainWindowController {
             final FileChooser fileChooser = new FileChooser();
             fileChooser.setTitle("Open Project");
             fileChooser.getExtensionFilters().addAll(
-                    new ExtensionFilter("GRIP File", "*.grip"),
-                    new ExtensionFilter("All Files", "*", "*.*"));
+                new ExtensionFilter("GRIP File", "*.grip"),
+                new ExtensionFilter("All Files", "*", "*.*"));
 
             project.getFile().ifPresent(file -> fileChooser.setInitialDirectory(file.getParentFile()));
 

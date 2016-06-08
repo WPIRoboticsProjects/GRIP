@@ -1,8 +1,8 @@
 package edu.wpi.grip.core.operations.composite;
 
-import edu.wpi.grip.core.sockets.NoSocketTypeLabel;
 import edu.wpi.grip.core.operations.network.PublishValue;
 import edu.wpi.grip.core.operations.network.Publishable;
+import edu.wpi.grip.core.sockets.NoSocketTypeLabel;
 import edu.wpi.grip.core.sockets.Socket;
 
 import java.util.Collections;
@@ -27,7 +27,10 @@ public class LinesReport implements Publishable {
     private final List<Line> lines;
 
     public static class Line {
-        public final double x1, y1, x2, y2;
+        public final double x1;
+        public final double y1;
+        public final double x2;
+        public final double y2;
 
         public Line(double x1, double y1, double x2, double y2) {
             this.x1 = x1;

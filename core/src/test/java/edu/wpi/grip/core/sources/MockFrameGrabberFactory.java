@@ -1,8 +1,8 @@
 package edu.wpi.grip.core.sources;
 
-import org.bytedeco.javacv.FrameGrabber;
-
 import java.net.MalformedURLException;
+
+import org.bytedeco.javacv.FrameGrabber;
 
 /**
  * Frame Grabber Factory that mocks out the frame grabber that it returns

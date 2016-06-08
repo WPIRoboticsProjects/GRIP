@@ -9,6 +9,7 @@ import com.google.common.util.concurrent.MoreExecutors;
 import com.google.inject.assistedinject.Assisted;
 import com.google.inject.assistedinject.AssistedInject;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
+
 import edu.wpi.grip.core.Source;
 import edu.wpi.grip.core.events.SourceHasPendingUpdateEvent;
 import edu.wpi.grip.core.events.SourceRemovedEvent;
@@ -19,10 +20,6 @@ import edu.wpi.grip.core.util.ExceptionWitness;
 import edu.wpi.grip.core.util.service.AutoRestartingService;
 import edu.wpi.grip.core.util.service.LoggingListener;
 import edu.wpi.grip.core.util.service.RestartableService;
-import org.bytedeco.javacpp.opencv_core.Mat;
-import org.bytedeco.javacv.FrameGrabber;
-import org.bytedeco.javacv.OpenCVFrameGrabber;
-import org.bytedeco.javacv.VideoInputFrameGrabber;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -37,6 +34,11 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Supplier;
 import java.util.logging.Logger;
 
+import org.bytedeco.javacpp.opencv_core.Mat;
+import org.bytedeco.javacv.FrameGrabber;
+import org.bytedeco.javacv.OpenCVFrameGrabber;
+import org.bytedeco.javacv.VideoInputFrameGrabber;
+
 /**
  * Provides a way to generate a constantly updated {@link Mat} from a camera
  */
@@ -49,26 +51,26 @@ public class CameraSource extends Source implements RestartableService {
      * default path allows the Axis M1011 cameras used in FRC to work when only an IP address is supplied.
      */
     public static final String DEFAULT_IP_CAMERA_PATH = "/mjpg/video.mjpg";
-    private static final int
-            /**
-             * Connecting to a device can take the most time.
-             * This should have a little bit of leeway.
-             *
-             * On a fairly decent computer with a great internet connection 7 seconds is more than enough.
-             * This value has been doubled to ensure that people running computers that may be older
-             * or have firewalls that will slow down connecting can still use the device.
-             */
-            IP_CAMERA_CONNECTION_TIMEOUT = 14;
-    private static final int
-            /**
-             * Reading from an existing connection shouldn't take that long.
-             * If it does we should really give up and try to reconnect.
-             */
-            IP_CAMERA_READ_TIMEOUT = 5;
+
+    /**
+     * Connecting to a device can take the most time.
+     * This should have a little bit of leeway.
+     * <p>
+     * On a fairly decent computer with a great internet connection 7 seconds is more than enough.
+     * This value has been doubled to ensure that people running computers that may be older
+     * or have firewalls that will slow down connecting can still use the device.
+     */
+    private static final int IP_CAMERA_CONNECTION_TIMEOUT = 14;
+
+    /**
+     * Reading from an existing connection shouldn't take that long.
+     * If it does we should really give up and try to reconnect.
+     */
+    private static final int IP_CAMERA_READ_TIMEOUT = 5;
     private static final TimeUnit IP_CAMERA_TIMEOUT_UNIT = TimeUnit.SECONDS;
 
-    private final static String DEVICE_NUMBER_PROPERTY = "deviceNumber";
-    private final static String ADDRESS_PROPERTY = "address";
+    private static final String DEVICE_NUMBER_PROPERTY = "deviceNumber";
+    private static final String ADDRESS_PROPERTY = "address";
     private static final Logger logger = Logger.getLogger(CameraSource.class.getName());
 
     private final EventBus eventBus;
@@ -123,10 +125,10 @@ public class CameraSource extends Source implements RestartableService {
                 addressProperty += DEFAULT_IP_CAMERA_PATH;
             }
             return new IPCameraFrameGrabber(
-                    addressProperty,
-                    IP_CAMERA_CONNECTION_TIMEOUT,
-                    IP_CAMERA_READ_TIMEOUT,
-                    IP_CAMERA_TIMEOUT_UNIT);
+                addressProperty,
+                IP_CAMERA_CONNECTION_TIMEOUT,
+                IP_CAMERA_READ_TIMEOUT,
+                IP_CAMERA_TIMEOUT_UNIT);
         }
     }
 
@@ -136,13 +138,12 @@ public class CameraSource extends Source implements RestartableService {
      * @param eventBus     The EventBus to attach to
      * @param deviceNumber The device number of the webcam
      */
-    @AssistedInject
-    CameraSource(
-            final EventBus eventBus,
-            final OutputSocket.Factory outputSocketFactory,
-            final FrameGrabberFactory grabberFactory,
-            final ExceptionWitness.Factory exceptionWitnessFactory,
-            @Assisted final int deviceNumber) throws IOException {
+    @AssistedInject CameraSource(
+        final EventBus eventBus,
+        final OutputSocket.Factory outputSocketFactory,
+        final FrameGrabberFactory grabberFactory,
+        final ExceptionWitness.Factory exceptionWitnessFactory,
+        @Assisted final int deviceNumber) throws IOException {
         this(eventBus, outputSocketFactory, grabberFactory, exceptionWitnessFactory, createProperties(deviceNumber));
     }
 
@@ -152,26 +153,24 @@ public class CameraSource extends Source implements RestartableService {
      * @param eventBus The EventBus to attach to
      * @param address  A URL to stream video from an IP camera
      */
-    @AssistedInject
-    CameraSource(
-            final EventBus eventBus,
-            final OutputSocket.Factory outputSocketFactory,
-            final FrameGrabberFactory grabberFactory,
-            final ExceptionWitness.Factory exceptionWitnessFactory,
-            @Assisted final String address) throws IOException {
+    @AssistedInject CameraSource(
+        final EventBus eventBus,
+        final OutputSocket.Factory outputSocketFactory,
+        final FrameGrabberFactory grabberFactory,
+        final ExceptionWitness.Factory exceptionWitnessFactory,
+        @Assisted final String address) throws IOException {
         this(eventBus, outputSocketFactory, grabberFactory, exceptionWitnessFactory, createProperties(address));
     }
 
     /**
      * Used for serialization
      */
-    @AssistedInject
-    CameraSource(
-            final EventBus eventBus,
-            final OutputSocket.Factory outputSocketFactory,
-            final FrameGrabberFactory grabberFactory,
-            final ExceptionWitness.Factory exceptionWitnessFactory,
-            @Assisted final Properties properties) throws MalformedURLException {
+    @AssistedInject CameraSource(
+        final EventBus eventBus,
+        final OutputSocket.Factory outputSocketFactory,
+        final FrameGrabberFactory grabberFactory,
+        final ExceptionWitness.Factory exceptionWitnessFactory,
+        @Assisted final Properties properties) throws MalformedURLException {
         super(exceptionWitnessFactory);
         this.eventBus = eventBus;
         this.frameOutputSocket = outputSocketFactory.create(imageOutputHint);
@@ -195,8 +194,7 @@ public class CameraSource extends Source implements RestartableService {
                 }
             };
         } else {
-            throw new IllegalArgumentException("Cannot initialize CameraSource without either a device number or " +
-                    "address");
+            throw new IllegalArgumentException("Cannot initialize CameraSource without either a device number or address");
         }
 
         /* This must be initialized in the constructor otherwise the grabber supplier won't be present */
@@ -229,7 +227,7 @@ public class CameraSource extends Source implements RestartableService {
                 } else {
                     // Rethrow as an uncaught exception if this is not an exception we expected.
                     Optional.ofNullable(Thread.getDefaultUncaughtExceptionHandler())
-                            .ifPresent(handler -> handler.uncaughtException(Thread.currentThread(), failure));
+                        .ifPresent(handler -> handler.uncaughtException(Thread.currentThread(), failure));
                 }
             }
         }, MoreExecutors.directExecutor());
@@ -244,8 +242,8 @@ public class CameraSource extends Source implements RestartableService {
     @Override
     public List<OutputSocket> createOutputSockets() {
         return ImmutableList.of(
-                frameOutputSocket,
-                frameRateOutputSocket
+            frameOutputSocket,
+            frameRateOutputSocket
         );
     }
 

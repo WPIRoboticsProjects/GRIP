@@ -72,8 +72,8 @@ public class FileParser {
      * @return A map of the filename with the compilation units
      */
     public static Map<String, CompilationUnit> generateAllSourceCode() {
-        URL INPUT_URL = FileParser.class.getResource("/org/bytedeco/javacpp/opencv_core.txt");
-        CompilationUnit compilationUnit = readFile(INPUT_URL);
+        URL openCvCoreUrl = FileParser.class.getResource("/org/bytedeco/javacpp/opencv_core.txt");
+        CompilationUnit compilationUnit = readFile(openCvCoreUrl);
         Map<String, CompilationUnit> returnMap = new HashMap<>();
         DefaultValueCollector collector = new DefaultValueCollector();
         collector.add(new PrimitiveDefaultValue(new PrimitiveType(PrimitiveType.Primitive.Double)) {
@@ -103,11 +103,10 @@ public class FileParser {
         } else {
             System.err.print("Invalid File input");
         }
-        URL INPUT_URL2 = FileParser.class.getResource("/org/bytedeco/javacpp/opencv_imgproc.txt");
-        compilationUnit = readFile(INPUT_URL2);
+        URL openCvImgprocUrl = FileParser.class.getResource("/org/bytedeco/javacpp/opencv_imgproc.txt");
+        compilationUnit = readFile(openCvImgprocUrl);
         if (compilationUnit != null) {
             returnMap.putAll(parseOpenImgprc(compilationUnit, collector, operationList));
-
         }
         return returnMap;
     }

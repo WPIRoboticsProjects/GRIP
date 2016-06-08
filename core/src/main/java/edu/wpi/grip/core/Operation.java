@@ -13,14 +13,12 @@ public interface Operation {
 
     /**
      * @return A list of sockets for the inputs that the operation expects.
-     *
      * @implNote The returned list should be immutable (i.e. read-only)
      */
     List<InputSocket> getInputSockets();
 
     /**
      * @return A list of sockets for the outputs that the operation produces.
-     *
      * @implNote The returned list should be immutable (i.e. read-only)
      */
     List<OutputSocket> getOutputSockets();

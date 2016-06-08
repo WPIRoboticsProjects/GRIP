@@ -2,7 +2,8 @@ package edu.wpi.grip.util;
 
 
 import com.google.common.eventbus.SubscriberExceptionContext;
-import edu.wpi.grip.core.GRIPCoreModule;
+
+import edu.wpi.grip.core.GripCoreModule;
 import edu.wpi.grip.core.sources.CameraSource;
 import edu.wpi.grip.core.sources.MockFrameGrabberFactory;
 
@@ -26,14 +27,14 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * This is done to ensure that exceptions always get dumped for the test
  * that has just run.
  */
-public class GRIPCoreTestModule extends GRIPCoreModule {
+public class GripCoreTestModule extends GripCoreModule {
     private static volatile boolean instanceAlive = false;
 
     private final ConcurrentLinkedQueue<ThreadThrowablePair> threadExceptions = new ConcurrentLinkedQueue<>();
     private final ConcurrentLinkedQueue<SubscriberThrowablePair> subscriberExceptions = new ConcurrentLinkedQueue<>();
     private boolean setUp = false;
 
-    public GRIPCoreTestModule() {
+    public GripCoreTestModule() {
         super();
         assert !instanceAlive : "There is a GRIPCoreTestModule that did not have it's `tearDown` method called.";
     }

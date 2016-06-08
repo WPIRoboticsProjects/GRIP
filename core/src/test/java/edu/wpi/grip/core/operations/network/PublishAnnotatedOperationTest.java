@@ -1,10 +1,10 @@
 package edu.wpi.grip.core.operations.network;
 
 import com.google.common.eventbus.EventBus;
+
 import edu.wpi.grip.core.Operation;
 import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.sockets.MockInputSocketFactory;
-import org.junit.Test;
 
 import java.util.List;
 import java.util.Map;
@@ -12,8 +12,12 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
 
+import org.junit.Test;
+
 import static junit.framework.TestCase.assertTrue;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.fail;
 
 /**
  * Tests for error handling in the publish operations' reflection stuff.
@@ -217,6 +221,11 @@ public class PublishAnnotatedOperationTest {
             }
 
             @Override
+            protected void doPublish() {
+                fail("This should not have run");
+            }
+
+            @Override
             protected void doPublish(Map<String, T> publishMap) {
                 assertTrue("The first key didn't get passed to the map", publishMap.containsKey(SimpleReport.KEY_1));
                 assertTrue("The second key didn't get passed to the map", publishMap.containsKey(SimpleReport.KEY_2));
@@ -227,12 +236,8 @@ public class PublishAnnotatedOperationTest {
             protected void doPublishSingle(T value) {
                 fail("This should not have run");
             }
-
-            @Override
-            protected void doPublish() {
-                fail("This should not have run");
-            }
         }
+
         // Cannot be method reference due to JDK/javac bug 8144673
         final MapNetworkPublisherFactory factory = new MapNetworkPublisherFactory() {
             @Override
@@ -255,9 +260,9 @@ public class PublishAnnotatedOperationTest {
     @Test
     public void testPublishProperlyResolvesSocketType() {
         TestPublishAnnotatedOperation<SimpleReport> testPublishAnnotatedOperation
-                = new TestPublishAnnotatedOperation<>(SimpleReport.class);
+            = new TestPublishAnnotatedOperation<>(SimpleReport.class);
         assertEquals("Socket types were not the same",
-                testPublishAnnotatedOperation.getSocketType(),
-                SimpleReport.class);
+            testPublishAnnotatedOperation.getSocketType(),
+            SimpleReport.class);
     }
 }

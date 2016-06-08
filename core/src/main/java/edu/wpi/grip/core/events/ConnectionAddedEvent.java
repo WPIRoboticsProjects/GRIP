@@ -1,6 +1,7 @@
 package edu.wpi.grip.core.events;
 
 import com.google.common.base.MoreObjects;
+
 import edu.wpi.grip.core.Connection;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -29,7 +30,7 @@ public class ConnectionAddedEvent implements RunPipelineEvent {
     @Override
     public String toString() {
         return MoreObjects.toStringHelper(this)
-                .add("connection", connection)
-                .toString();
+            .add("connection", connection)
+            .toString();
     }
 }

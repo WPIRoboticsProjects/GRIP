@@ -1,23 +1,25 @@
 package edu.wpi.grip.core.operations.opencv;
 
 import com.google.common.collect.ImmutableList;
+
 import edu.wpi.grip.core.OperationDescription;
 import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.core.sockets.SocketHint;
 import edu.wpi.grip.core.sockets.SocketHints;
-import org.bytedeco.javacpp.opencv_core.Mat;
-import org.bytedeco.javacpp.opencv_core.Size;
 
 import java.util.List;
+
+import org.bytedeco.javacpp.opencv_core.Mat;
+import org.bytedeco.javacpp.opencv_core.Size;
 
 public class MatFieldAccessor implements CVOperation {
 
     public static final OperationDescription DESCRIPTION =
-             CVOperation.defaultBuilder()
-                    .name("Get Mat Info")
-                    .summary("Provide access to the various elements and properties of an image.")
-                    .build();
+        CVOperation.defaultBuilder()
+            .name("Get Mat Info")
+            .summary("Provide access to the various elements and properties of an image.")
+            .build();
 
     private static final Mat defaultsMat = new Mat();
     private final SocketHint<Mat> matHint = SocketHints.Inputs.createMatSocketHint("Input", false);
@@ -52,19 +54,19 @@ public class MatFieldAccessor implements CVOperation {
     @Override
     public List<InputSocket> getInputSockets() {
         return ImmutableList.of(
-                inputSocket
+            inputSocket
         );
     }
 
     @Override
     public List<OutputSocket> getOutputSockets() {
         return ImmutableList.of(
-                sizeSocket,
-                emptySocket,
-                channelsSocket,
-                colsSocket,
-                rowsSocket,
-                highValueSocket
+            sizeSocket,
+            emptySocket,
+            channelsSocket,
+            colsSocket,
+            rowsSocket,
+            highValueSocket
         );
     }
 

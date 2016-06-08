@@ -1,10 +1,10 @@
 package edu.wpi.grip.core.util;
 
+import java.security.Permission;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-
-import java.security.Permission;
 
 import static com.google.common.truth.Truth.assertThat;
 
@@ -15,9 +15,9 @@ public class SafeShutdownTest {
     protected static void setUpSecurityManager() {
         oldManager = System.getSecurityManager();
         System.setSecurityManager(new SecurityManager() {
-            public void checkPermission( Permission permission ) {
-                if( permission.getName().contains("exitVM") ) {
-                    throw new IllegalStateException(SHUTDOWN_EXCEPTION_MESSAGE) ;
+            public void checkPermission(Permission permission) {
+                if (permission.getName().contains("exitVM")) {
+                    throw new IllegalStateException(SHUTDOWN_EXCEPTION_MESSAGE);
                 }
             }
         });
@@ -29,7 +29,7 @@ public class SafeShutdownTest {
 
 
     @Before
-    public void setUp(){
+    public void setUp() {
         setUpSecurityManager();
     }
 
@@ -49,7 +49,6 @@ public class SafeShutdownTest {
         }
 
     }
-
 
 
 }

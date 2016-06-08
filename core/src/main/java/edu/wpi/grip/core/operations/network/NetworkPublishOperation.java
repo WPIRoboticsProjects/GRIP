@@ -2,6 +2,7 @@ package edu.wpi.grip.core.operations.network;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.reflect.TypeToken;
+
 import edu.wpi.grip.core.Operation;
 import edu.wpi.grip.core.OperationDescription;
 import edu.wpi.grip.core.sockets.InputSocket;
@@ -23,17 +24,18 @@ public abstract class NetworkPublishOperation<D> implements Operation {
      * OperationDescription builder that has the icon default to "publish" and the category to "NETWORK".
      */
     protected static final OperationDescription.Builder defaultBuilder =
-            OperationDescription.builder()
-                    .icon(Icon.iconStream("publish"))
-                    .category(OperationDescription.Category.NETWORK);
+        OperationDescription.builder()
+            .icon(Icon.iconStream("publish"))
+            .category(OperationDescription.Category.NETWORK);
 
 
     protected final Class<D> dataType;
 
     private final SocketHint<D> dataHint =
-            new SocketHint.Builder<>((Class<D>)new TypeToken<D>(getClass()){}.getRawType())
-                    .identifier("Data")
-                    .build();
+        new SocketHint.Builder<>((Class<D>) new TypeToken<D>(getClass()) {
+        }.getRawType())
+            .identifier("Data")
+            .build();
     private final SocketHint<String> nameHint = SocketHints.Inputs.createTextSocketHint("Name", "");
 
     protected final InputSocket<D> dataSocket;
@@ -50,10 +52,10 @@ public abstract class NetworkPublishOperation<D> implements Operation {
     @Override
     public List<InputSocket> getInputSockets() {
         return ImmutableList.<InputSocket>builder()
-                .add(dataSocket)
-                .add(nameSocket)
-                .addAll(createFlagSockets())
-                .build();
+            .add(dataSocket)
+            .add(nameSocket)
+            .addAll(createFlagSockets())
+            .build();
     }
 
     /**

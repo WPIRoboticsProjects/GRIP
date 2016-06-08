@@ -5,13 +5,22 @@ import com.google.common.reflect.ClassPath;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.converters.reflection.PureJavaReflectionProvider;
+
 import edu.wpi.grip.core.Pipeline;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.io.Reader;
+import java.io.Writer;
+import java.nio.charset.StandardCharsets;
+import java.util.Optional;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
-import java.io.*;
-import java.nio.charset.StandardCharsets;
-import java.util.Optional;
 
 /**
  * Helper for saving and loading a processing pipeline to and from a file
@@ -40,18 +49,18 @@ public class Project {
         try {
             ClassPath cp = ClassPath.from(getClass().getClassLoader());
             cp.getAllClasses()
-                    .stream()
-                    .filter(ci -> ci.getPackageName().startsWith("edu.wpi.grip"))
-                    .map(ClassPath.ClassInfo::load)
-                    .filter(clazz -> clazz.isAnnotationPresent(XStreamAlias.class))
-                    .forEach(clazz -> {
-                        try {
-                            xstream.processAnnotations(clazz);
-                        } catch (InternalError e) {
-                            throw new AssertionError("Failed to load class: " + clazz.getName(), e);
-                        }
+                .stream()
+                .filter(ci -> ci.getPackageName().startsWith("edu.wpi.grip"))
+                .map(ClassPath.ClassInfo::load)
+                .filter(clazz -> clazz.isAnnotationPresent(XStreamAlias.class))
+                .forEach(clazz -> {
+                    try {
+                        xstream.processAnnotations(clazz);
+                    } catch (InternalError e) {
+                        throw new AssertionError("Failed to load class: " + clazz.getName(), e);
+                    }
 
-                    });
+                });
         } catch (IOException e) {
             throw new AssertionError("Could not load classes for XStream annotation processing", e);
         }
