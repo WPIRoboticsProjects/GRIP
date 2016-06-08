@@ -6,6 +6,6 @@
 	 * @param type Type of threshold to appy.
 	 * @param dst output Image.
 	 */
-	private void ${step.javaName()}(Mat src, double threshold, double maxVal, int type, Mat dst){
+	private void $tMeth.javaName($step.name())(Mat src, double threshold, double maxVal, int type, Mat dst){
 		Imgproc.threshold(src, dst, threshold, maxVal, type);
 	}

@@ -7,7 +7,7 @@
 	 * @param darkBlobs The boolean that determines if light or dark blobs are found.
 	 * @param blobList The output where the MatOfKeyPoint is stored.
 	 */
-    private void ${step.javaName()}(Mat input, double minArea, double[] circularity,
+    private void $tMeth.javaName($step.name())(Mat input, double minArea, double[] circularity,
     Boolean darkBlobs, MatOfKeyPoint blobList){
         FeatureDetector blobDet = FeatureDetector.create(FeatureDetector.SIMPLEBLOB);
 

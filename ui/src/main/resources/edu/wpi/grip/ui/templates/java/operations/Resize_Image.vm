@@ -8,7 +8,7 @@
     	 * @param interpolation The type of interpolation.
     	 * @param output The image in which to store the output.
     	 */
-	private void ${step.javaName()}(Mat input, double width, double height, Interpolation
+	private void $tMeth.javaName($step.name())(Mat input, double width, double height, Interpolation
 	interpolation, Mat output){
 		Imgproc.resize(input, output, new Size(width, height), 0.0, 0.0, interpolation.value);
 	}

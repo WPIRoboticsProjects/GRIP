@@ -6,7 +6,7 @@
 	 * @param maskSize the size of the mask.
 	 * @param output The image in which to store the output.
 	 */
-	private void ${step.javaName()}(Mat input,Boolean externalOnly, List<MatOfPoint> contours){
+	private void $tMeth.javaName($step.name())(Mat input,Boolean externalOnly, List<MatOfPoint> contours){
 		Mat hierarchy = new Mat();
 		int mode;
 		if(externalOnly){

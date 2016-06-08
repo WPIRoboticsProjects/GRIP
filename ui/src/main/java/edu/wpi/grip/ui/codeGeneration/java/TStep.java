@@ -31,10 +31,6 @@ public class TStep {
     return this.name;
   }
 
-  public String javaName() {
-    return CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.LOWER_CAMEL, this.name.replaceAll("\\s",""));
-  }
-
   public List<TInput> getInputs() {
     return inputs;
   }
@@ -52,26 +48,5 @@ public class TStep {
   }
 
   public int num(){ return stepNum;}
-  
-  public String callOp() {
-    String num = "S" + this.stepNum;
-    StringBuilder out = new StringBuilder();
-    out.append(this.javaName());
-    out.append("(");
-    for (TInput input : inputs) {
-      out.append(input.name() +num + ", ");
-    }
-    if(this.name().equals("Threshold_Moving")){
-      out.append("this.lastImage" + num + ", ");
-    }
-    if (!outputs.isEmpty()) {
-      for (int i = 0; i < outputs.size() - 1; i++) {
-        out.append(outputs.get(i).name() + ", ");
-      }
-      out.append(outputs.get(outputs.size() - 1).name());
-    }
-    out.append(")");
-    return out.toString();
-  }
 
 }

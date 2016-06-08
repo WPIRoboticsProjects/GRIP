@@ -5,7 +5,7 @@
 	 * @param lastImage The mat where the previous image is stored.
 	 * @param output The image in which to store the output.
 	 */
-	private void ${step.javaName()}(Mat input, Mat lastImage, Mat output){
+	private void $tMeth.javaName($step.name())(Mat input, Mat lastImage, Mat output){
 		Size lastSize = lastImage.size();
 		Size inputSize = input.size();
 		if (!lastImage.empty() && lastSize.height == inputSize.height && lastSize.width == inputSize.width) {

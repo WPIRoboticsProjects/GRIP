@@ -5,7 +5,7 @@
 	 * @param mask The binary image that is used to filter.
 	 * @param output The image in which to store the output.
 	 */
-	private void ${step.javaName()}(Mat input, Mat mask, Mat output){
+	private void $tMeth.javaName($step.name())(Mat input, Mat mask, Mat output){
 		mask.convertTo(mask, CvType.CV_8UC1);
 		Core.bitwise_xor(output, output, output);
 		input.copyTo(output, mask);

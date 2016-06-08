@@ -89,8 +89,10 @@ public class Exporter {
 
   public void export(Pipeline pipeline){
     TPipeline tPipeline = new TPipeline(pipeline);
+    TemplateMethods tempMeth = new TemplateMethods();
     VelocityContext context = new VelocityContext();
     context.put("pipeline", tPipeline);
+    context.put("tMeth", tempMeth);
     String template = "src/main/resources/edu/wpi/grip/ui/templates/java/Pipeline.vm";
     Template tm = Velocity.getTemplate(template);
 

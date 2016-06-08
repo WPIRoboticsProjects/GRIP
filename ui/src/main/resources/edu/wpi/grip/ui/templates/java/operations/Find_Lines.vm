@@ -22,7 +22,7 @@
 	 * @param input The image on which to perform the find lines.
 	 * @param lineList The output where the lines are stored.
 	 */
-	private void ${step.javaName()}(Mat input, List<Line> lineList){
+	private void $tMeth.javaName($step.name())(Mat input, List<Line> lineList){
 		final LineSegmentDetector lsd = Imgproc.createLineSegmentDetector();
 		final Mat lines = new Mat();
 		if (input.channels() == 1) {

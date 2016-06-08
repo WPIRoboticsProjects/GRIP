@@ -4,6 +4,6 @@
 	 * @param code conversion code.
 	 * @param dst converted Image.
 	 */
-	private void ${step.javaName()}(Mat src, int code, Mat dst){
+	private void $tMeth.javaName($step.name())(Mat src, int code, Mat dst){
 		Imgproc.cvtColor(src, dst, code);
 	}

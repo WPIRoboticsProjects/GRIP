@@ -22,7 +22,7 @@
 		$output.type() $output.name() = new $output.type()();
 #end
 #end
-		$step.callOp();
+		$tMeth.callJavaOp($step);
 #foreach($output in $step.getOutputs())
 		outputs.put("$output.name()", $output.name());
 #end

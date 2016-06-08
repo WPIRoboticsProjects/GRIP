@@ -8,7 +8,7 @@
 	 * @param borderValue value to be used for a constant border.
 	 * @param dst Output Image.
 	 */
-	private void ${step.javaName()}(Mat src, Mat kernel, Point anchor, double iterations, int
+	private void $tMeth.javaName($step.name())(Mat src, Mat kernel, Point anchor, double iterations, int
 	borderType,
 		Scalar borderValue, Mat dst){
 		if(kernel == null){

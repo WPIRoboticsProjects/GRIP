@@ -67,7 +67,7 @@
 	 * @param maskSize the size of the mask.
 	 * @param output The image in which to store the output.
 	 */
-	private void ${step.javaName()}(Mat input,Distance_TransformType type, MaskSize maskSize, Mat
+	private void $tMeth.javaName($step.name())(Mat input,Distance_TransformType type, MaskSize maskSize, Mat
 	output){
 		Imgproc.distanceTransform(input, output, type.value, maskSize.value);
 		output.convertTo(output, -1);
