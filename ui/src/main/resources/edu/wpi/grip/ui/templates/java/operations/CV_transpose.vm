@@ -3,6 +3,6 @@
 	 * @param src the source Mat.
 	 * @param dst the transpose of src.
 	 */
-	public static void ${step.javaName()}(Mat src, Mat dst){
+	private void $tMeth.javaName($step.name())(Mat src, Mat dst){
 		Core.transpose(src, dst);
 	}

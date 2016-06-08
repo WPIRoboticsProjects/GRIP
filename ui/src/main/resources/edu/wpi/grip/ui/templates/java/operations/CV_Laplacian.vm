@@ -7,6 +7,7 @@
 	 * @param borderType pixel extrapolation method.
 	 * @param dst Ouput of Laplacian. 
 	 */
-	public static void ${step.javaName()}(Mat src, double size, double scale, double delta, int borderType, Mat dst){
+	private static void $tMeth.javaName($step.name())(Mat src, double size, double scale, double delta, int
+	borderType, Mat dst){
 		Imgproc.Laplacian(src, dst, 0, (int) size, scale, delta, borderType);
 	}

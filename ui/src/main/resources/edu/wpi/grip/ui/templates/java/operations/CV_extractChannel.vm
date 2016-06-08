@@ -4,6 +4,6 @@
 	 * @param channel zero indexed channel number to extract.
 	 * @param dst output image.
 	 */
-	public static void ${step.name()}(Mat src, double channel, Mat dst){
+	private void $tMeth.javaName($step.name())(Mat src, double channel, Mat dst){
 		Core.extractChannel(src,dst,(int) channel);
 	}

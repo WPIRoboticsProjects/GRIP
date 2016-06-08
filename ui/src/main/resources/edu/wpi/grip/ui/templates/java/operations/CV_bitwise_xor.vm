@@ -4,6 +4,6 @@
 	 * @param src2 The second image to use.
 	 * @param dst the result image when the xor is performed.
 	 */
-	public static void ${step.javaName()}(Mat src1, Mat src2, Mat dst){
+	private void $tMeth.javaName($step.name())(Mat src1, Mat src2, Mat dst){
 		Core.bitwise_xor(src1,src2,dst);
 	}

@@ -1,13 +1,13 @@
-    public static class Blob {
-        public final double x, y, size;
-
-        protected Blob(double x, double y, double size) {
-            this.x = x;
-            this.y = y;
-            this.size = size;
-        }
-    }
-    public static void ${step.javaName()}(Mat input, double minArea, double[] circularity,
+	/**
+	 * Detects groups of pixels in an image.
+	 *
+	 * @param input The image on which to perform the find blobs.
+	 * @param minArea The minimum size of a blob that will be found
+	 * @param circularity The minimum and maximum circularity of blobs that will be found
+	 * @param darkBlobs The boolean that determines if light or dark blobs are found.
+	 * @param blobList The output where the MatOfKeyPoint is stored.
+	 */
+    private void $tMeth.javaName($step.name())(Mat input, double minArea, double[] circularity,
     Boolean darkBlobs, MatOfKeyPoint blobList){
         FeatureDetector blobDet = FeatureDetector.create(FeatureDetector.SIMPLEBLOB);
 
@@ -24,13 +24,23 @@
             config.append("<minRepeatability>2</minRepeatability>\n");
             config.append("<minDistBetweenBlobs>10.</minDistBetweenBlobs>\n");
             config.append("<filterByColor>1</filterByColor>\n");
-            config.append("<blobColor>"+(darkBlobs ? 0 : 255)+"</blobColor>\n");
+            config.append("<blobColor>");
+            config.append((darkBlobs ? 0 : 255));
+            config.append("</blobColor>\n");
             config.append("<filterByArea>1</filterByArea>\n");
-            config.append("<minArea>"+minArea+"</minArea>\n");
-            config.append("<maxArea>"+Integer.MAX_VALUE+"</maxArea>\n");
+            config.append("<minArea>");
+            config.append(minArea);
+            config.append("</minArea>\n");
+            config.append("<maxArea>");
+            config.append(Integer.MAX_VALUE);
+            config.append("</maxArea>\n");
             config.append("<filterByCircularity>1</filterByCircularity>\n");
-            config.append("<minCircularity>"+circularity[0]+"</minCircularity>\n");
-            config.append("<maxCircularity>"+circularity[1]+"</maxCircularity>\n");
+            config.append("<minCircularity>");
+            config.append(circularity[0]);
+            config.append("</minCircularity>\n");
+            config.append("<maxCircularity>");
+            config.append(circularity[1]);
+            config.append("</maxCircularity>\n");
             config.append("<filterByInertia>1</filterByInertia>\n");
             config.append("<minInertiaRatio>1.0000000149011612e-01</minInertiaRatio>\n");
             config.append("<maxInertiaRatio>3.4028234663852886e+38</maxInertiaRatio>\n");

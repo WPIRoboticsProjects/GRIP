@@ -10,7 +10,8 @@
 	 */
 	#set( $Num = "Number" )
 	#set( $bool = "Boolean" )
-	public static void ${step.javaName()}(Mat src, Size size, #MutOf($bool) empty, #MutOf($Num) channels, #MutOf($Num) cols, #MutOf($Num) rows, #MutOf($Num) highestValue){
+	private void $tMeth.javaName($step.name())(Mat src, Size size, #MutOf($bool) empty, #MutOf($Num) channels,
+	#MutOf($Num) cols, #MutOf($Num) rows, #MutOf($Num) highestValue){
 		empty.set(Boolean.valueOf(src.empty()));
 		channels.set(Integer.valueOf(src.channels()));
 		cols.set(Integer.valueOf(src.cols()));

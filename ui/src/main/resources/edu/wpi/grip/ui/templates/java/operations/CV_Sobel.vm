@@ -9,6 +9,7 @@
 	 * @param borderType pixel extrapolation method.
 	 * @param dst Image that is output of Sobel.
 	 */
-	public static void ${step.javaName()}(Mat src, double dx, double dy, double kSize, double scale, double delta, int borderType, Mat dst){
+	private void $tMeth.javaName($step.name())(Mat src, double dx, double dy, double kSize, double scale,
+	double delta, int borderType, Mat dst){
 		Imgproc.Sobel(src, dst, 0, (int) dx, (int) dy, (int) kSize, scale, delta, borderType);
 	}

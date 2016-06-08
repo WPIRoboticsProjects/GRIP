@@ -29,12 +29,12 @@ import org.opencv.imgproc.*;
 public class Pipeline{
 
 	//This map links the Outputs with their names
-	protected Map<String,Object> outputs;
+	private Map<String,Object> outputs;
 #foreach($source in $pipeline.getSources())
-	protected ${source.type()} $source.value();
+	private ${source.type()} $source.value();
 #end
 #foreach($moving in $pipeline.getMovingThresholds())
-    protected Mat lastImageS$moving.num() = new Mat();
+    private Mat lastImageS$moving.num() = new Mat();
 #end
 
 
