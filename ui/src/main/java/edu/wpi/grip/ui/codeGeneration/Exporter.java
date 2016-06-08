@@ -1,7 +1,6 @@
 package edu.wpi.grip.ui.codegeneration;
 
 
-import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
 import org.apache.velocity.Template;
@@ -15,6 +14,7 @@ import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.util.List;
 import java.util.Properties;
+
 import edu.wpi.grip.core.Pipeline;
 import edu.wpi.grip.core.Step;
 import edu.wpi.grip.core.sockets.InputSocket;
@@ -25,6 +25,7 @@ import edu.wpi.grip.ui.codegeneration.java.TPipeline;
 public class Exporter {
 
   private final String pipelineTemplate = "pipeline.vm";
+
   public String stepNames(Pipeline pipeline) {
     StringBuilder out = new StringBuilder();
     for (Step step : getSteps(pipeline)) {
@@ -45,7 +46,7 @@ public class Exporter {
       String type = TemplateMethods.parseSocketType(input);
       String name = TemplateMethods.parseSocketName(input);
       String value = TemplateMethods.parseSocketValue(input);
-      out.append(createClass(type, name, value) +  " \n");
+      out.append(createClass(type, name, value) + " \n");
       out.append(type + "\n");
     }
     out.append(step.getOperationDescription().summary() + "\n");
@@ -53,25 +54,21 @@ public class Exporter {
   }
 
   public static String createClass(String type, String name, String value) {
-    if(type.contains("Enum")){
+    if (type.contains("Enum")) {
       return "int " + name + " = Imgproc." + value;
-    }
-    else if(type.equals("Type")){
+    } else if (type.equals("Type")) {
       return "String " + name + " = \"" + value + "\"";
-    }
-    else if(type.equals("List")){
+    } else if (type.equals("List")) {
       StringBuilder out = new StringBuilder();
-      out.append("double min" + name +" = "+ value.substring(1,value.indexOf(","))+ "\n");
-      out.append("double max" + name +" = "+ value.substring(value.indexOf(",")+1,value.lastIndexOf
+      out.append("double min" + name + " = " + value.substring(1, value.indexOf(",")) + "\n");
+      out.append("double max" + name + " = " + value.substring(value.indexOf(",") + 1, value.lastIndexOf
           ("]")));
       return out.toString();
-    }
-    else{
+    } else {
       return type + " " + name + " = " + value;
     }
 
   }
-
 
 
   public String getOutputNames(Step step) {
@@ -83,50 +80,57 @@ public class Exporter {
     }
     return out.toString();
   }
-  
-  public void export(Pipeline pipeline, Language lang, File dir){
-	  TPipeline tPipeline = new TPipeline(pipeline);
-	  TemplateMethods tempMeth = new TemplateMethods();
-	  VelocityContext context = new VelocityContext();
-	  context.put("pipeline", tPipeline);
-	  context.put("tMeth", tempMeth);
-	  StringBuilder templateDirBuilder = new StringBuilder();
-	  templateDirBuilder.append("src/main/resources/edu/wpi/grip/ui/templates/");
-	  switch(lang){
-		  case JAVA: templateDirBuilder.append("java"); break;
-		  case PYTHON: templateDirBuilder.append("python"); break;
-		  case CPP: templateDirBuilder.append("cpp"); break;
-		  default: 
-			  throw new IllegalArgumentException(lang.toString()+" is not a supported language for code generation.");
-	  }
-	  templateDirBuilder.append("/");
-	  final String templateDir = templateDirBuilder.toString();
-	  VelocityEngine ve = new VelocityEngine();
-	  Properties props = new Properties();
-	  props.put("velocimacro.library", templateDir+"macros.vm");
-	  ve.init(props);
-	  switch(lang){
-		  case CPP:
-			  
-			  break;
-		  case JAVA:
-			  exportJava(ve,templateDir,dir,context);
-			  break;
-		  case PYTHON:
-			  
-			  break;
-		  
-	  }
+
+  public void export(Pipeline pipeline, Language lang, File dir) {
+    TPipeline tPipeline = new TPipeline(pipeline);
+    TemplateMethods tempMeth = new TemplateMethods();
+    VelocityContext context = new VelocityContext();
+    context.put("pipeline", tPipeline);
+    context.put("tMeth", tempMeth);
+    StringBuilder templateDirBuilder = new StringBuilder();
+    templateDirBuilder.append("src/main/resources/edu/wpi/grip/ui/templates/");
+    switch (lang) {
+      case JAVA:
+        templateDirBuilder.append("java");
+        break;
+      case PYTHON:
+        templateDirBuilder.append("python");
+        break;
+      case CPP:
+        templateDirBuilder.append("cpp");
+        break;
+      default:
+        throw new IllegalArgumentException(lang.toString() + " is not a supported language for code generation.");
+    }
+    templateDirBuilder.append("/");
+    final String templateDir = templateDirBuilder.toString();
+    VelocityEngine ve = new VelocityEngine();
+    Properties props = new Properties();
+    props.put("velocimacro.library", templateDir + "macros.vm");
+    ve.init(props);
+    switch (lang) {
+      case CPP:
+
+        break;
+      case JAVA:
+        exportJava(ve, templateDir, dir, context);
+        break;
+      case PYTHON:
+
+        break;
+
+    }
   }
-  private void exportJava(VelocityEngine ve, String templateDir, File dir, VelocityContext context){
-	  Template tm = ve.getTemplate(templateDir+pipelineTemplate);
-	    StringWriter sw = new StringWriter();
-	    tm.merge(context, sw);
-	    File file = dir.toPath().resolve("Pipeline.java").toFile();
-	    try (PrintWriter writer = new PrintWriter(file.getAbsolutePath(), "UTF-8")){
-	      	writer.println(sw);
-	    	}catch(UnsupportedEncodingException | FileNotFoundException e){
-	    		
-	    	}
+
+  private void exportJava(VelocityEngine ve, String templateDir, File dir, VelocityContext context) {
+    Template tm = ve.getTemplate(templateDir + pipelineTemplate);
+    StringWriter sw = new StringWriter();
+    tm.merge(context, sw);
+    File file = dir.toPath().resolve("Pipeline.java").toFile();
+    try (PrintWriter writer = new PrintWriter(file.getAbsolutePath(), "UTF-8")) {
+      writer.println(sw);
+    } catch (UnsupportedEncodingException | FileNotFoundException e) {
+
+    }
   }
 }

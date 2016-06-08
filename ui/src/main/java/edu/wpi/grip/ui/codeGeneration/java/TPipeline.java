@@ -51,7 +51,7 @@ public class TPipeline {
       for (InputSocket input : pipeline.getSteps().get(i).getInputSockets()) {
         TInput tInput;
         String type = TemplateMethods.parseSocketType(input);
-        if(type.equals("Type")){
+        if (type.equals("Type")) {
           type = steps.get(i).name() + "Type";
         }
         type = type.replace("Number", "Double");
@@ -71,11 +71,10 @@ public class TPipeline {
   }
 
   protected TInput createInput(String type, String name, String value) {
-    if(type.equals("Number")){
-      if(value.contains(".")){
+    if (type.equals("Number")) {
+      if (value.contains(".")) {
         type = "Double";
-      }
-      else{
+      } else {
         type = "Integer";
       }
     }
@@ -85,18 +84,16 @@ public class TPipeline {
       numSources++;
       value = "source" + s;
     } else if (value.contains("null")) {
-        value = "null";
+      value = "null";
     }
 
     if (type.contains("CoreEnum")) {
       return new TInput("Integer", name, "Core." + value);
-    } else if(type.contains("Enum")){
+    } else if (type.contains("Enum")) {
       return new TInput("Integer", name, "Imgproc." + value);
-    }
-    else if(type.equals("MaskSize") || type.contains("Type") || type.equals("Interpolation")){
-      return new TInput(type, name, type + ".get(\"" + value+"\")");
-    }
-    else if (type.equals("String") ) {
+    } else if (type.equals("MaskSize") || type.contains("Type") || type.equals("Interpolation")) {
+      return new TInput(type, name, type + ".get(\"" + value + "\")");
+    } else if (type.equals("String")) {
       return new TInput(type, name, "\"" + value + "\"");
     } else if (type.equals("List")) {
       return new TInput("double[]", name, "{" + value.substring(1, value.length() - 1) + "}");
@@ -115,22 +112,22 @@ public class TPipeline {
 
   public List<TStep> getUniqueSteps() {
     List<TStep> out = new ArrayList<TStep>();
-    for (TStep step: steps) {
-        out.removeIf(s -> s.name().equals(step.name()));
-        out.add(step);
+    for (TStep step : steps) {
+      out.removeIf(s -> s.name().equals(step.name()));
+      out.add(step);
     }
     return out;
   }
 
-  public int getNumSources(){
+  public int getNumSources() {
     return numSources;
   }
 
-  public List<TSocket> getSources(){
+  public List<TSocket> getSources() {
     List<TSocket> sources = new ArrayList<TSocket>();
-    for(TStep step: steps){
-      for(TInput input: step.getInputs()){
-        if(input.value().contains("source")){
+    for (TStep step : steps) {
+      for (TInput input : step.getInputs()) {
+        if (input.value().contains("source")) {
           sources.add(input);
         }
       }
@@ -138,12 +135,12 @@ public class TPipeline {
     return sources;
   }
 
-  public List<TStep> getMovingThresholds(){
+  public List<TStep> getMovingThresholds() {
     List<TStep> moving = new ArrayList<TStep>();
-    for(TStep step: steps){
-        if(step.name().equals("Threshold_Moving")){
-          moving.add(step);
-        }
+    for (TStep step : steps) {
+      if (step.name().equals("Threshold_Moving")) {
+        moving.add(step);
+      }
     }
     return moving;
   }

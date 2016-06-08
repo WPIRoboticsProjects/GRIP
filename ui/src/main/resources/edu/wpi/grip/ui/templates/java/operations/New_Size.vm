@@ -7,4 +7,4 @@
 	private void $tMeth.javaName($step.name())(double width, double height, Size size){
 		size.height = height;
 		size.width = width;
-	} 
+	}

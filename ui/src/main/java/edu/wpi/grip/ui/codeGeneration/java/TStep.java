@@ -1,7 +1,5 @@
 package edu.wpi.grip.ui.codegeneration.java;
 
-import com.google.common.base.CaseFormat;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,15 +36,17 @@ public class TStep {
   public List<TOutput> getOutputs() {
     return outputs;
   }
-  
-  public TInput getInput(int idx){
-	  return inputs.get(idx);
-  }
-  
-  public TOutput getOutput(int idx){
-	  return outputs.get(idx);
+
+  public TInput getInput(int idx) {
+    return inputs.get(idx);
   }
 
-  public int num(){ return stepNum;}
+  public TOutput getOutput(int idx) {
+    return outputs.get(idx);
+  }
+
+  public int num() {
+    return stepNum;
+  }
 
 }

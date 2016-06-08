@@ -1,11 +1,12 @@
-    /**
-     * Filters out lines that do not meet certain criteria
-     *
-     * @param inputs The lines that will be filtered.
-     * @param minLength The minimum lenght of a line to be kept.
-     * @param angle The minimum and maximum angle of a line to be kept.
-     * @param outputs The output lines after the filter.
-     */
+#parse("src/main/resources/edu/wpi/grip/ui/templates/java/operations/Lines.vm")
+	/**
+	 * Filters out lines that do not meet certain criteria
+	 *
+	 * @param inputs The lines that will be filtered.
+	 * @param minLength The minimum lenght of a line to be kept.
+	 * @param angle The minimum and maximum angle of a line to be kept.
+	 * @param outputs The output lines after the filter.
+	 */
 	private void $tMeth.javaName($step.name())(List<Line> inputs,double minLength,double[] angle, List<Line>
 	outputs){
 		outputs = inputs.stream()

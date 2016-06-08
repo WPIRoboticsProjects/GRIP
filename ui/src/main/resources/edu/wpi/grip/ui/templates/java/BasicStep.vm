@@ -1,4 +1,4 @@
-            //input
+		//input
 #foreach($input in $step.getInputs())
 #if( $input.mutable() )##Is Mutable
 #if( $input.hasValue() )##Has a set value
