@@ -87,7 +87,7 @@ public class Exporter {
     VelocityContext context = new VelocityContext();
     context.put("pipeline", tPipeline);
     context.put("tMeth", tempMeth);
-    context.put("fileName", dir.getName());
+    context.put("fileName", dir.getName().substring(0, dir.getName().lastIndexOf(".")));
     StringBuilder templateDirBuilder = new StringBuilder();
     templateDirBuilder.append("src/main/resources/edu/wpi/grip/ui/templates/");
     switch (lang) {

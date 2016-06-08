@@ -247,31 +247,17 @@ public class MainWindowController {
         dialog.showAndWait();
     }
 
-    public void generate(ActionEvent actionEvent) {/*
-        ImageView graphic = new ImageView(new Image("/edu/wpi/grip/ui/icons/settings.png"));
-        graphic.setFitWidth(DPIUtility.SMALL_ICON_SIZE);
-        graphic.setFitHeight(DPIUtility.SMALL_ICON_SIZE);
-    	ChoiceDialog<Language> dialog = new ChoiceDialog(Language.JAVA, Language.JAVA, Language.CPP, Language.PYTHON);
-		dialog.setTitle("Language");
-		dialog.setGraphic(graphic);
-		dialog.setHeaderText("Export Language");
-        dialog.getDialogPane().styleProperty().bind(root.styleProperty());
-        dialog.getDialogPane().getStylesheets().setAll(root.getStylesheets());
-		Optional<Language> lang = dialog.showAndWait();
-		if(!lang.isPresent())
-			return;
-		final DirectoryChooser dir = new DirectoryChooser();
-		File temp = dir.showDialog(root.getScene().getWindow());
-		if(temp == null)
-			return;
-		String path = temp.getAbsolutePath();
-		*/
+    public void generate(ActionEvent actionEvent) {
         final FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Export to");
         fileChooser.getExtensionFilters().add(new ExtensionFilter(Language.JAVA.name, "*.java"));
         fileChooser.getExtensionFilters().add(new ExtensionFilter(Language.CPP.name, "*.cpp"));
         fileChooser.getExtensionFilters().add(new ExtensionFilter(Language.PYTHON.name, "*.py"));
+        fileChooser.setInitialFileName("Pipeline");
         final File file = fileChooser.showSaveDialog(root.getScene().getWindow());
+        if(file==null){
+        	return;
+        }
         Language lang = Language.get(fileChooser.getSelectedExtensionFilter().getDescription());
 		exporter.export(pipeline, lang, file);
     }
