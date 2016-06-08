@@ -1,13 +1,12 @@
 package edu.wpi.grip.ui.codegeneration;
 
 
-import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
-
+import org.apache.velocity.exception.ResourceNotFoundException;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
@@ -20,10 +19,9 @@ import edu.wpi.grip.core.Step;
 import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.ui.codegeneration.java.TPipeline;
-
+import edu.wpi.grip.core.util.ExceptionWitness;
 @Singleton
 public class Exporter {
-
   private final String pipelineTemplate = "pipeline.vm";
   public String stepNames(Pipeline pipeline) {
     StringBuilder out = new StringBuilder();
@@ -105,6 +103,7 @@ public class Exporter {
 	  Properties props = new Properties();
 	  props.put("velocimacro.library", templateDir+"macros.vm");
 	  ve.init(props);
+	  try{
 	  switch(lang){
 		  case CPP:
 			  
@@ -115,7 +114,11 @@ public class Exporter {
 		  case PYTHON:
 			  
 			  break;
-		  
+	  }
+	  } catch(ResourceNotFoundException e){
+		  String error = e.getMessage();
+		  String missingOperation = error.substring(error.lastIndexOf("/")+1,error.lastIndexOf("."));
+		  throw new UnsupportedOperationException("The operation "+ missingOperation + " is not supported for export to "+lang.toString());
 	  }
   }
   private void exportJava(VelocityEngine ve, String templateDir, File dir, VelocityContext context){
