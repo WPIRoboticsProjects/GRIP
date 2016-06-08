@@ -89,11 +89,16 @@ allprojects {
     apply plugin: 'application'
     apply plugin: 'jacoco'
     apply plugin: 'net.ltgt.errorprone'
+    apply plugin: 'checkstyle'
 
     configurations.errorprone {
         resolutionStrategy.force 'com.google.errorprone:error_prone_core:2.0.9'
     }
 
+    checkstyle {
+        configFile = new File(rootDir, "checkstyle.xml")
+        toolVersion = '6.19'
+    }
 
     repositories {
         mavenCentral()
