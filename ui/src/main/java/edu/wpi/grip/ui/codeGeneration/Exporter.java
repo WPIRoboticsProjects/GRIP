@@ -7,6 +7,7 @@ import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
 import org.apache.velocity.exception.ResourceNotFoundException;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
@@ -20,7 +21,7 @@ import edu.wpi.grip.core.Step;
 import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.ui.codegeneration.java.TPipeline;
-import edu.wpi.grip.core.util.ExceptionWitness;
+
 @Singleton
 public class Exporter {
   private final String pipelineTemplate = "pipeline.vm";
@@ -79,44 +80,51 @@ public class Exporter {
     }
     return out.toString();
   }
-  public void export(Pipeline pipeline, Language lang, File dir){
-	  TPipeline tPipeline = new TPipeline(pipeline);
-	  TemplateMethods tempMeth = new TemplateMethods();
-	  VelocityContext context = new VelocityContext();
-	  context.put("pipeline", tPipeline);
-	  context.put("tMeth", tempMeth);
-	  StringBuilder templateDirBuilder = new StringBuilder();
-	  templateDirBuilder.append("src/main/resources/edu/wpi/grip/ui/templates/");
-	  switch(lang){
-		  case JAVA: templateDirBuilder.append("java"); break;
-		  case PYTHON: templateDirBuilder.append("python"); break;
-		  case CPP: templateDirBuilder.append("cpp"); break;
-		  default: 
-			  throw new IllegalArgumentException(lang.toString()+" is not a supported language for code generation.");
-	  }
-	  templateDirBuilder.append("/");
-	  final String templateDir = templateDirBuilder.toString();
-	  VelocityEngine ve = new VelocityEngine();
-	  Properties props = new Properties();
-	  props.put("velocimacro.library", templateDir+"macros.vm");
-	  ve.init(props);
-	  try{
-	  switch(lang){
-		  case CPP:
-			  
-			  break;
-		  case JAVA:
-			  exportJava(ve,templateDir,dir,context);
-			  break;
-		  case PYTHON:
-			  
-			  break;
-	  }
-	  } catch(ResourceNotFoundException e){
-		  String error = e.getMessage();
-		  String missingOperation = error.substring(error.lastIndexOf("/")+1,error.lastIndexOf("."));
-		  throw new UnsupportedOperationException("The operation "+ missingOperation + " is not supported for export to "+lang.toString());
-	  }
+
+  public void export(Pipeline pipeline, Language lang, File dir) {
+    TPipeline tPipeline = new TPipeline(pipeline);
+    TemplateMethods tempMeth = new TemplateMethods();
+    VelocityContext context = new VelocityContext();
+    context.put("pipeline", tPipeline);
+    context.put("tMeth", tempMeth);
+    StringBuilder templateDirBuilder = new StringBuilder();
+    templateDirBuilder.append("src/main/resources/edu/wpi/grip/ui/templates/");
+    switch (lang) {
+      case JAVA:
+        templateDirBuilder.append("java");
+        break;
+      case PYTHON:
+        templateDirBuilder.append("python");
+        break;
+      case CPP:
+        templateDirBuilder.append("cpp");
+        break;
+      default:
+        throw new IllegalArgumentException(lang.toString() + " is not a supported language for code generation.");
+    }
+    templateDirBuilder.append("/");
+    final String templateDir = templateDirBuilder.toString();
+    VelocityEngine ve = new VelocityEngine();
+    Properties props = new Properties();
+    props.put("velocimacro.library", templateDir + "macros.vm");
+    ve.init(props);
+    try {
+      switch (lang) {
+        case CPP:
+
+          break;
+        case JAVA:
+          exportJava(ve, templateDir, dir, context);
+          break;
+        case PYTHON:
+
+          break;
+      }
+    } catch (ResourceNotFoundException e) {
+      String error = e.getMessage();
+      String missingOperation = error.substring(error.lastIndexOf("/") + 1, error.lastIndexOf("."));
+      throw new UnsupportedOperationException("The operation " + missingOperation + " is not supported for export to " + lang.toString());
+    }
   }
 
   private void exportJava(VelocityEngine ve, String templateDir, File dir, VelocityContext context) {
