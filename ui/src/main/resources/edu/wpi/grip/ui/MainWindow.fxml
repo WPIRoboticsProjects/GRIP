@@ -132,6 +132,19 @@
                     </graphic>
                 </MenuItem>
                 <MenuItem text="Generate Code" onAction="#generate">
+                    <graphic>
+                        <ImageView styleClass="menu-graphic">
+                            <fitWidth>
+                                <DPIUtility fx:constant="SMALL_ICON_SIZE"/>
+                            </fitWidth>
+                            <fitHeight>
+                                <DPIUtility fx:constant="SMALL_ICON_SIZE"/>
+                            </fitHeight>
+                            <image>
+                                <Image url="@icons/export.png"/>
+                            </image>
+                        </ImageView>
+                    </graphic>
                 </MenuItem>
             </Menu>
         </MenuBar>
