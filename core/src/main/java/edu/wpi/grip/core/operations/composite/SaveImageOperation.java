@@ -13,8 +13,8 @@ import edu.wpi.grip.core.util.Icon;
 import org.bytedeco.javacpp.BytePointer;
 import org.bytedeco.javacpp.IntPointer;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -51,8 +51,8 @@ public class SaveImageOperation implements Operation {
 
     private final FileManager fileManager;
     private final BytePointer imagePointer = new BytePointer();
-    private Stopwatch stopwatch = Stopwatch.createStarted();
-    private SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd_HHmmss.SSS");
+    private final Stopwatch stopwatch = Stopwatch.createStarted();
+    private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmssSSS");
 
     public SaveImageOperation(InputSocket.Factory inputSocketFactory, OutputSocket.Factory outputSocketFactory, FileManager fileManager) {
         this.fileManager = fileManager;
@@ -104,6 +104,6 @@ public class SaveImageOperation implements Operation {
         }
         imagePointer.get(buffer, 0, bufferSize);
 
-        fileManager.saveImage(buffer, format.format(new Date()) + ".jpeg");
+        fileManager.saveImage(buffer, LocalDateTime.now().format(formatter) + ".jpeg");
     }
 }
