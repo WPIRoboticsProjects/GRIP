@@ -1,8 +1,6 @@
 package edu.wpi.grip.core.operations.network;
 
 
-import java.util.function.Function;
-
 import javax.annotation.concurrent.Immutable;
 
 import static org.bytedeco.javacpp.opencv_core.Point;
@@ -11,8 +9,6 @@ import static org.bytedeco.javacpp.opencv_core.Size;
 /**
  * A type publishable to a NetworkPublisher that consists of two numbers.  JavaCV {@link Point}s and {@link Size}s are
  * converted into this.
- *
- * @see PublishAnnotatedOperation#PublishAnnotatedOperation(MapNetworkPublisherFactory, Function)
  */
 @Immutable
 public final class Vector2D implements Publishable {

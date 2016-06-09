@@ -8,6 +8,7 @@ import edu.wpi.grip.core.operations.network.MapNetworkPublisherFactory;
 import edu.wpi.grip.core.settings.ProjectSettings;
 import edu.wpi.grip.core.util.GripMode;
 
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 import com.google.common.eventbus.Subscribe;
@@ -18,7 +19,6 @@ import edu.wpi.first.wpilibj.networktables.NetworkTablesJNI;
 import edu.wpi.first.wpilibj.tables.ITable;
 
 import java.io.File;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -46,18 +46,16 @@ public class NTManager implements Manager, MapNetworkPublisherFactory {
      * and
      * https://github.com/PeterJohnson/ntcore/blob/e6054f543a6ab10aa27af6cace855da66d67ee44/include/ntcore_c.h#L39
      */
-    private static final Map<Integer, Level> ntLogLevels = new HashMap<Integer, Level>() {
-        {
-            put(40, Level.SEVERE);
-            put(30, Level.WARNING);
-            put(20, Level.INFO);
-            put(10, Level.FINE);
-            put(9, Level.FINE);
-            put(8, Level.FINE);
-            put(7, Level.FINER);
-            put(6, Level.FINEST);
-        }
-    };
+    private static final Map<Integer, Level> ntLogLevels = ImmutableMap.<Integer, Level>builder()
+        .put(40, Level.SEVERE)
+        .put(30, Level.WARNING)
+        .put(20, Level.INFO)
+        .put(10, Level.FINE)
+        .put(9, Level.FINE)
+        .put(8, Level.FINE)
+        .put(7, Level.FINER)
+        .put(6, Level.FINEST)
+        .build();
 
     private final Logger logger = Logger.getLogger(getClass().getName());
 

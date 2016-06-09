@@ -32,7 +32,10 @@
         <property name="eachLine" value="true" />
     </module>
 
+    <module name="NewlineAtEndOfFile" />
+
     <module name="TreeWalker">
+        <module name="AvoidNestedBlocks" />
         <module name="OuterTypeFilename" />
         <module name="IllegalTokenText">
             <property name="tokens" value="STRING_LITERAL, CHAR_LITERAL" />
@@ -48,7 +51,6 @@
             <property name="max" value="200" />
             <property name="ignorePattern" value="^package.*|^import.*|a href|href|http://|https://|ftp://" />
         </module>
-        <module name="AvoidStarImport" />
         <module name="OneTopLevelClass" />
         <module name="NoLineWrap" />
         <module name="EmptyBlock">
@@ -56,9 +58,14 @@
             <property name="tokens" value="LITERAL_TRY, LITERAL_FINALLY, LITERAL_IF, LITERAL_ELSE, LITERAL_SWITCH" />
         </module>
         <module name="NeedBraces" />
-        <module name="LeftCurly">
-            <property name="maxLineLength" value="100" />
+        <module name="NoWhitespaceAfter" />
+        <module name="NoWhitespaceBefore">
+            <property name="allowLineBreaks" value="true" />
+            <property name="tokens" value="COMMA, POST_INC, POST_DEC, DOT" />
         </module>
+        <module name="SimplifyBooleanExpression" />
+        <module name="WhitespaceAfter" />
+        <module name="LeftCurly" />
         <module name="RightCurly" />
         <module name="RightCurly">
             <property name="option" value="alone" />
@@ -165,12 +172,15 @@
         <module name="VariableDeclarationUsageDistance">
             <property name="allowedDistance" value="5" />
         </module>
+        <module name="AvoidStarImport" />
         <module name="CustomImportOrder">
             <property name="specialImportsRegExp" value="^edu\.wpi\.grip\..*$" />
             <property name="thirdPartyPackageRegExp" value="^(?!edu\.wpi\.grip\.).*$" />
             <property name="sortImportsInGroupAlphabetically" value="true" />
             <property name="customImportOrderRules" value="SPECIAL_IMPORTS###THIRD_PARTY_PACKAGE###STATIC" />
         </module>
+        <module name="RedundantImport" />
+        <module name="UnusedImports" />
         <module name="MethodParamPad" />
         <module name="OperatorWrap">
             <property name="option" value="NL" />
@@ -193,7 +203,8 @@
                      value="Method name ''{0}'' must match pattern ''{1}''." />
         </module>
         <module name="EmptyCatchBlock">
-            <property name="exceptionVariableName" value="expected" />
+            <property name="exceptionVariableName" value="expected|ignore" />
+            <property name="commentFormat" value=".*" />
         </module>
         <module name="CommentsIndentation" />
     </module>

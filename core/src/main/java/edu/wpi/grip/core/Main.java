@@ -60,7 +60,7 @@ public class Main {
         // This is done in order to indicate to the user using the deployment UI that this is running
         logger.log(Level.INFO, "SUCCESS! The project is running in headless mode!");
         // There's nothing more to do in the main thread since we're in headless mode - sleep forever
-        for (; ; ) {
+        while (true) {
             Thread.sleep(Integer.MAX_VALUE);
         }
     }

@@ -156,11 +156,11 @@ public class IPCameraFrameGrabber extends FrameGrabber {
             if (c > 0) {
                 sb.append((char) c);
                 if (c == 13) {
-                    sb.append((char) input.read());// '10'+
+                    sb.append((char) input.read()); // '10'+
                     c = input.read();
                     sb.append((char) c);
                     if (c == 13) {
-                        sb.append((char) input.read());// '10'
+                        sb.append((char) input.read()); // '10'
                         break; // done with subheader
                     }
 
@@ -191,10 +191,10 @@ public class IPCameraFrameGrabber extends FrameGrabber {
         ensureBufferCapacity(contentLength);
 
         input.readFully(pixelBuffer, 0, contentLength);
-        input.read();// \r
-        input.read();// \n
-        input.read();// \r
-        input.read();// \n
+        input.read(); // \r
+        input.read(); // \n
+        input.read(); // \r
+        input.read(); // \n
 
         return pixelBuffer;
     }

@@ -66,7 +66,7 @@ public class CompatibilityTest {
             oldText += line + "\r\n";
         }
         reader.close();
-        String newText = oldText.replaceAll("REPLACEME", photoFileName);//This gives the correct location of the test photo needed to the project file
+        String newText = oldText.replaceAll("REPLACEME", photoFileName); //This gives the correct location of the test photo needed to the project file
 
         //Write the altered project file text
         FileWriter writer2 = new FileWriter(file);
