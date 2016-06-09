@@ -10,6 +10,9 @@ import java.util.logging.Logger;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+/**
+ * Implementation of {@code FileManager}.  Saves files into a directory named GRIP in the user's home folder.
+ */
 @Singleton
 public class GripFileManager implements FileManager {
 
