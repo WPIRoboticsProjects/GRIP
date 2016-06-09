@@ -97,7 +97,7 @@ allprojects {
 
     checkstyle {
         configFile = new File(rootDir, "checkstyle.xml")
-        toolVersion = '6.18' // can't use 6.19, it messes with the "check" task
+        toolVersion = '6.19'
     }
 
     repositories {
@@ -129,8 +129,6 @@ allprojects {
             html.enabled = true
         }
     }
-
-    check.dependsOn jacocoTestReport
 
     tasks.withType(Javadoc) {
         source compileJava.source
@@ -377,7 +375,6 @@ task jacocoRootReport(type: JacocoReport, group: 'Coverage reports') {
         executionData = files(executionData.findAll { it.exists() })
     }
 }
-check.dependsOn jacocoRootReport
 
 task wrapper(type: Wrapper) {
     gradleVersion = '2.13'
