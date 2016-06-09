@@ -48,7 +48,7 @@ public class GRIPCoreModule extends AbstractModule {
                 globalLogger.removeHandler(handler);
             }
 
-            final Handler fileHandler = new FileHandler("%h/GRIP.log");//Log to the file "GRIPlogger.log"
+            final Handler fileHandler = new FileHandler("%t/GRIP.log");//Log to the file "GRIPlogger.log"
 
             //Set level to handler and logger
             fileHandler.setLevel(Level.FINE);
