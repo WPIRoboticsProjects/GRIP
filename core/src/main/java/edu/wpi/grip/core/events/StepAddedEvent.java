@@ -1,8 +1,8 @@
 package edu.wpi.grip.core.events;
 
-import com.google.common.base.MoreObjects;
-
 import edu.wpi.grip.core.Step;
+
+import com.google.common.base.MoreObjects;
 
 import java.util.OptionalInt;
 

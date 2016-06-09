@@ -1,18 +1,17 @@
 package edu.wpi.grip.core.serialization;
 
+import edu.wpi.grip.core.events.ProjectSettingsChangedEvent;
+import edu.wpi.grip.core.settings.ProjectSettings;
+
 import com.google.common.eventbus.EventBus;
 import com.thoughtworks.xstream.converters.UnmarshallingContext;
 import com.thoughtworks.xstream.converters.reflection.ReflectionConverter;
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 
-import edu.wpi.grip.core.events.ProjectSettingsChangedEvent;
-import edu.wpi.grip.core.settings.ProjectSettings;
-
 import javax.inject.Inject;
 
 /**
  * XStream converter for {@link ProjectSettings}.
- * <p>
  * Settings are serialized using XStream's built-in reflection serialization. The only catch is that a
  * {@link ProjectSettingsChangedEvent} must be posted after new settings are loaded.
  */

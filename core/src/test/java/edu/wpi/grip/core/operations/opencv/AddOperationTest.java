@@ -1,10 +1,10 @@
 package edu.wpi.grip.core.operations.opencv;
 
-import com.google.common.eventbus.EventBus;
-
 import edu.wpi.grip.core.AddOperation;
 import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.sockets.OutputSocket;
+
+import com.google.common.eventbus.EventBus;
 
 import java.util.List;
 

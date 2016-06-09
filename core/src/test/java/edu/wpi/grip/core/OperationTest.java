@@ -1,11 +1,11 @@
 package edu.wpi.grip.core;
 
-import com.google.common.eventbus.EventBus;
-
 import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.sockets.MockInputSocketFactory;
 import edu.wpi.grip.core.sockets.MockOutputSocketFactory;
 import edu.wpi.grip.core.sockets.OutputSocket;
+
+import com.google.common.eventbus.EventBus;
 
 import java.util.List;
 

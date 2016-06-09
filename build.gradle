@@ -30,7 +30,7 @@ def getGitCommit = { ->
 idea.project {
     ipr.withXml { provider ->
         def node = provider.asNode()
-        def compilerConfig = node.component.find { it.'@name' == 'CompilerConfiguration'}
+        def compilerConfig = node.component.find { it.'@name' == 'CompilerConfiguration' }
         compilerConfig.annotationProcessing[0].'@enabled' = 'true'
 //        def ccfg = node.component.find { it.@name == 'CompilerConfiguration' }
 //        ccfg.remove(ccfg.annotationProcessing)
@@ -100,6 +100,12 @@ allprojects {
         toolVersion = '6.19'
     }
 
+    tasks.withType(Checkstyle) {
+        // Remove checkstyle dependencies on compilation
+        // (This neuters :core:checkstyleGenerated, but since that's not needed anyway, who cares)
+        it.dependsOn = []
+    }
+
     repositories {
         mavenCentral()
         jcenter()
@@ -144,7 +150,7 @@ allprojects {
     test {
         testLogging {
             if (project.hasProperty('logTests')) {
-                events  "started", "passed", "skipped", "failed"
+                events "started", "passed", "skipped", "failed"
             } else {
                 events "failed"
             }

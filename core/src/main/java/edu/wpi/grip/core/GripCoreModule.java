@@ -1,15 +1,5 @@
 package edu.wpi.grip.core;
 
-import com.google.common.eventbus.EventBus;
-import com.google.common.eventbus.SubscriberExceptionContext;
-import com.google.inject.AbstractModule;
-import com.google.inject.TypeLiteral;
-import com.google.inject.assistedinject.FactoryModuleBuilder;
-import com.google.inject.matcher.Matchers;
-import com.google.inject.spi.InjectionListener;
-import com.google.inject.spi.TypeEncounter;
-import com.google.inject.spi.TypeListener;
-
 import edu.wpi.grip.core.events.UnexpectedThrowableEvent;
 import edu.wpi.grip.core.serialization.Project;
 import edu.wpi.grip.core.settings.SettingsProvider;
@@ -22,6 +12,16 @@ import edu.wpi.grip.core.sources.ImageFileSource;
 import edu.wpi.grip.core.sources.MultiImageFileSource;
 import edu.wpi.grip.core.util.ExceptionWitness;
 import edu.wpi.grip.core.util.GripMode;
+
+import com.google.common.eventbus.EventBus;
+import com.google.common.eventbus.SubscriberExceptionContext;
+import com.google.inject.AbstractModule;
+import com.google.inject.TypeLiteral;
+import com.google.inject.assistedinject.FactoryModuleBuilder;
+import com.google.inject.matcher.Matchers;
+import com.google.inject.spi.InjectionListener;
+import com.google.inject.spi.TypeEncounter;
+import com.google.inject.spi.TypeListener;
 
 import java.io.IOException;
 import java.util.logging.FileHandler;

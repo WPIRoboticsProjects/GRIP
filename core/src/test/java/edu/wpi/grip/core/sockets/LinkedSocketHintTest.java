@@ -1,10 +1,10 @@
 package edu.wpi.grip.core.sockets;
 
 
-import com.google.common.eventbus.EventBus;
-
 import edu.wpi.grip.core.Connection;
 import edu.wpi.grip.core.MockConnection;
+
+import com.google.common.eventbus.EventBus;
 
 import org.junit.Before;
 import org.junit.Test;

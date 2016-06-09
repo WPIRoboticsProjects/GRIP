@@ -1,14 +1,14 @@
 package edu.wpi.grip.ui.components;
 
 
+import edu.wpi.grip.core.util.service.RestartableService;
+import edu.wpi.grip.core.util.service.SingleActionListener;
+import edu.wpi.grip.ui.util.DPIUtility;
+
 import com.google.common.base.CaseFormat;
 import com.google.common.util.concurrent.Service;
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
-
-import edu.wpi.grip.core.util.service.RestartableService;
-import edu.wpi.grip.core.util.service.SingleActionListener;
-import edu.wpi.grip.ui.util.DPIUtility;
 
 import java.util.Arrays;
 import java.util.List;

@@ -1,13 +1,13 @@
 package edu.wpi.grip.ui.pipeline.source;
 
-import com.google.common.eventbus.EventBus;
-import com.google.inject.Inject;
-import com.google.inject.assistedinject.Assisted;
-
 import edu.wpi.grip.core.sources.CameraSource;
 import edu.wpi.grip.ui.components.ExceptionWitnessResponderButton;
 import edu.wpi.grip.ui.components.StartStoppableButton;
 import edu.wpi.grip.ui.pipeline.OutputSocketController;
+
+import com.google.common.eventbus.EventBus;
+import com.google.inject.Inject;
+import com.google.inject.assistedinject.Assisted;
 
 import javafx.fxml.FXML;
 

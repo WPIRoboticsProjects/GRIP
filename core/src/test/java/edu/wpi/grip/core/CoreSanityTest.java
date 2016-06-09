@@ -1,8 +1,5 @@
 package edu.wpi.grip.core;
 
-import com.google.common.testing.AbstractPackageSanityTests;
-import com.google.common.util.concurrent.Service;
-
 import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.sockets.MockInputSocket;
 import edu.wpi.grip.core.sockets.MockOutputSocket;
@@ -11,6 +8,9 @@ import edu.wpi.grip.core.sockets.Socket;
 import edu.wpi.grip.core.sockets.SocketHint;
 import edu.wpi.grip.core.sockets.SocketHints;
 import edu.wpi.grip.core.util.service.SingleActionListener;
+
+import com.google.common.testing.AbstractPackageSanityTests;
+import com.google.common.util.concurrent.Service;
 
 import java.util.Arrays;
 

@@ -1,9 +1,5 @@
 package edu.wpi.grip.ui;
 
-import com.google.common.base.CaseFormat;
-import com.google.common.eventbus.EventBus;
-import com.google.common.util.concurrent.Service;
-
 import edu.wpi.grip.core.Palette;
 import edu.wpi.grip.core.Pipeline;
 import edu.wpi.grip.core.PipelineRunner;
@@ -15,6 +11,10 @@ import edu.wpi.grip.core.util.SafeShutdown;
 import edu.wpi.grip.core.util.service.SingleActionListener;
 import edu.wpi.grip.ui.components.StartStoppableButton;
 import edu.wpi.grip.ui.util.DPIUtility;
+
+import com.google.common.base.CaseFormat;
+import com.google.common.eventbus.EventBus;
+import com.google.common.util.concurrent.Service;
 
 import java.io.File;
 import java.io.IOException;
@@ -130,7 +130,6 @@ public class MainWindowController {
 
     /**
      * Delete everything in the current project.
-     * <p>
      * If there are any steps in the pipeline, an "are you sure?" dialog is shown.
      */
     @FXML
@@ -143,7 +142,6 @@ public class MainWindowController {
 
     /**
      * Show a dialog for the user to pick a file to open a project from.
-     * <p>
      * If there are any steps in the pipeline, an "are you sure?" dialog is shown. (TODO)
      *
      * @throws IOException

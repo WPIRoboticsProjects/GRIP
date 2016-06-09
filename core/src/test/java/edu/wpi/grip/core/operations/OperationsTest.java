@@ -1,11 +1,11 @@
 package edu.wpi.grip.core.operations;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.eventbus.EventBus;
-
 import edu.wpi.grip.core.OperationMetaData;
 import edu.wpi.grip.core.Step;
 import edu.wpi.grip.core.util.MockExceptionWitness;
+
+import com.google.common.collect.ImmutableList;
+import com.google.common.eventbus.EventBus;
 
 import java.util.Arrays;
 import java.util.Collection;

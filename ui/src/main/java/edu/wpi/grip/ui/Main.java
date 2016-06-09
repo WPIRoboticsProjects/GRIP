@@ -1,13 +1,5 @@
 package edu.wpi.grip.ui;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.eventbus.EventBus;
-import com.google.common.eventbus.Subscribe;
-import com.google.inject.Guice;
-import com.google.inject.Injector;
-import com.google.inject.util.Modules;
-import com.sun.javafx.application.PlatformImpl;
-
 import edu.wpi.grip.core.GripCoreModule;
 import edu.wpi.grip.core.PipelineRunner;
 import edu.wpi.grip.core.events.UnexpectedThrowableEvent;
@@ -18,6 +10,14 @@ import edu.wpi.grip.core.serialization.Project;
 import edu.wpi.grip.core.sources.GripSourcesHardwareModule;
 import edu.wpi.grip.core.util.SafeShutdown;
 import edu.wpi.grip.ui.util.DPIUtility;
+
+import com.google.common.annotations.VisibleForTesting;
+import com.google.common.eventbus.EventBus;
+import com.google.common.eventbus.Subscribe;
+import com.google.inject.Guice;
+import com.google.inject.Injector;
+import com.google.inject.util.Modules;
+import com.sun.javafx.application.PlatformImpl;
 
 import java.io.File;
 import java.io.IOException;

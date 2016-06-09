@@ -1,11 +1,11 @@
 package edu.wpi.grip.ui.pipeline.input;
 
-import com.google.common.eventbus.Subscribe;
-import com.google.inject.assistedinject.Assisted;
-
 import edu.wpi.grip.core.events.SocketChangedEvent;
 import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.ui.pipeline.SocketHandleView;
+
+import com.google.common.eventbus.Subscribe;
+import com.google.inject.assistedinject.Assisted;
 
 import javafx.application.Platform;
 import javafx.fxml.FXML;

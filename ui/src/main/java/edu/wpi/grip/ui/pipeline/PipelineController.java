@@ -1,10 +1,5 @@
 package edu.wpi.grip.ui.pipeline;
 
-import com.google.common.eventbus.EventBus;
-import com.google.common.eventbus.Subscribe;
-import com.google.inject.Singleton;
-import com.sun.javafx.application.PlatformImpl;
-
 import edu.wpi.grip.core.Connection;
 import edu.wpi.grip.core.Pipeline;
 import edu.wpi.grip.core.Source;
@@ -25,6 +20,11 @@ import edu.wpi.grip.ui.pipeline.input.InputSocketController;
 import edu.wpi.grip.ui.pipeline.source.SourceController;
 import edu.wpi.grip.ui.pipeline.source.SourceControllerFactory;
 import edu.wpi.grip.ui.util.ControllerMap;
+
+import com.google.common.eventbus.EventBus;
+import com.google.common.eventbus.Subscribe;
+import com.google.inject.Singleton;
+import com.sun.javafx.application.PlatformImpl;
 
 import java.util.Collection;
 import java.util.Map;

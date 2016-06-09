@@ -1,10 +1,5 @@
 package edu.wpi.grip.ui.pipeline;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.eventbus.EventBus;
-import com.google.common.net.InetAddresses;
-import com.google.inject.Inject;
-
 import edu.wpi.grip.core.events.SourceAddedEvent;
 import edu.wpi.grip.core.events.UnexpectedThrowableEvent;
 import edu.wpi.grip.core.sources.CameraSource;
@@ -12,6 +7,11 @@ import edu.wpi.grip.core.sources.ImageFileSource;
 import edu.wpi.grip.core.sources.MultiImageFileSource;
 import edu.wpi.grip.ui.util.DPIUtility;
 import edu.wpi.grip.ui.util.SupplierWithIO;
+
+import com.google.common.annotations.VisibleForTesting;
+import com.google.common.eventbus.EventBus;
+import com.google.common.net.InetAddresses;
+import com.google.inject.Inject;
 
 import java.io.File;
 import java.io.IOException;

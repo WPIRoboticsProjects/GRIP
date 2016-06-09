@@ -1,9 +1,5 @@
 package edu.wpi.grip.core;
 
-import com.google.common.eventbus.EventBus;
-import com.google.inject.Guice;
-import com.google.inject.Injector;
-
 import edu.wpi.grip.core.events.ConnectionAddedEvent;
 import edu.wpi.grip.core.events.ConnectionRemovedEvent;
 import edu.wpi.grip.core.events.SourceAddedEvent;
@@ -15,6 +11,10 @@ import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.core.sockets.SocketHint;
 import edu.wpi.grip.core.sockets.SocketHints;
 import edu.wpi.grip.util.GripCoreTestModule;
+
+import com.google.common.eventbus.EventBus;
+import com.google.inject.Guice;
+import com.google.inject.Injector;
 
 import java.io.IOException;
 import java.net.URISyntaxException;

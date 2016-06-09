@@ -1,11 +1,5 @@
 package edu.wpi.grip.ui.pipeline;
 
-import com.google.common.eventbus.EventBus;
-import com.google.common.eventbus.Subscribe;
-import com.google.inject.Inject;
-import com.google.inject.Singleton;
-import com.google.inject.assistedinject.Assisted;
-
 import edu.wpi.grip.core.Connection;
 import edu.wpi.grip.core.Pipeline;
 import edu.wpi.grip.core.events.ConnectionAddedEvent;
@@ -15,6 +9,12 @@ import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.core.sockets.Socket;
 import edu.wpi.grip.ui.dragging.DragService;
+
+import com.google.common.eventbus.EventBus;
+import com.google.common.eventbus.Subscribe;
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
+import com.google.inject.assistedinject.Assisted;
 
 import java.util.Optional;
 import java.util.Set;
@@ -29,7 +29,6 @@ import javafx.scene.input.TransferMode;
 
 /**
  * The bubble next to each socket that connections go in and out of
- * <p>
  * This class handles the drag-and-drop events that allow users to add and remove connections.
  */
 public class SocketHandleView extends Button {

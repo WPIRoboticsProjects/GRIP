@@ -1,12 +1,12 @@
 package edu.wpi.grip.core.operations;
 
-import com.google.common.collect.ImmutableList;
-
 import edu.wpi.grip.core.Operation;
 import edu.wpi.grip.core.OperationDescription;
 import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.core.util.Icon;
+
+import com.google.common.collect.ImmutableList;
 
 import java.util.List;
 import java.util.logging.Level;
@@ -24,30 +24,24 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * A class that implements an operation using Jython.  This enables users to write plugins for the application as
  * Python scripts.  Python script plugins should have global lists of SocketHints called "inputs" and "outputs" that
  * declare what parameters the script accepts and what outputs in produces. For example,
- * <p>
  * <pre>{@code
  *    import edu.wpi.grip.core as grip
  *    import java.lang.Integer
- *
  *    inputs = [
  *        grip.SocketHint("a", java.lang.Integer, grip.SocketHint.View.SLIDER, (0, 100), 75),
  *        grip.SocketHint("b", java.lang.Integer, grip.SocketHint.View.SLIDER, (0, 100), 25),
  *    ]
- *
  *    outputs = [
  *        grip.SocketHint("c", java.lang.Integer),
  *    ]
  * }</pre>
- * <p>
  * The script should also define a function "perform", which takes the same number of parameters as there are inputs
  * and returns the values for the outputs.  It can return a single value if there's one output, or a sequence type for
  * any number of values.
- * <p>
  * <pre>{@code
  * def perform(a, b):
  * return a + b
  * }</pre>
- * <p>
  * Lastly, the script can optionally have global "name" and "summary" strings to provide the user with more
  * information about what the operation does.
  */
@@ -104,10 +98,8 @@ public class PythonScriptOperation implements Operation {
 
     /**
      * Perform the operation by calling a function in the Python script.
-     * <p>
      * This method adapts each of the inputs into Python objects, calls the Python function, and then converts the
      * outputs of the function back into Java objects and assigns them to the outputs array.
-     * <p>
      * The Python function should return a tuple, list, or other sequence containing the outputs.  If there is only
      * one output, it can just return a value.  Either way, the number of inputs and outputs should match up with the
      * number of parameters and return values of the function.

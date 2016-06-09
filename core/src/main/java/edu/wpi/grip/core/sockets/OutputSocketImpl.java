@@ -1,12 +1,12 @@
 package edu.wpi.grip.core.sockets;
 
 
+import edu.wpi.grip.core.events.SocketPreviewChangedEvent;
+
 import com.google.common.base.MoreObjects;
 import com.google.common.eventbus.EventBus;
 import com.google.inject.Inject;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
-
-import edu.wpi.grip.core.events.SocketPreviewChangedEvent;
 
 /**
  * A concrete implementation of the {@link OutputSocket}

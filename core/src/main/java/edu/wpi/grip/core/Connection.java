@@ -1,11 +1,5 @@
 package edu.wpi.grip.core;
 
-import com.google.common.eventbus.EventBus;
-import com.google.common.eventbus.Subscribe;
-import com.google.inject.Inject;
-import com.google.inject.assistedinject.Assisted;
-import com.thoughtworks.xstream.annotations.XStreamAlias;
-
 import edu.wpi.grip.core.events.ConnectionAddedEvent;
 import edu.wpi.grip.core.events.ConnectionRemovedEvent;
 import edu.wpi.grip.core.events.SocketChangedEvent;
@@ -13,6 +7,12 @@ import edu.wpi.grip.core.events.SourceRemovedEvent;
 import edu.wpi.grip.core.events.StepRemovedEvent;
 import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.sockets.OutputSocket;
+
+import com.google.common.eventbus.EventBus;
+import com.google.common.eventbus.Subscribe;
+import com.google.inject.Inject;
+import com.google.inject.assistedinject.Assisted;
+import com.thoughtworks.xstream.annotations.XStreamAlias;
 
 import static com.google.common.base.Preconditions.checkArgument;
 

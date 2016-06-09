@@ -1,8 +1,8 @@
 package edu.wpi.grip.core.events;
 
-import com.google.common.base.MoreObjects;
-
 import edu.wpi.grip.core.sockets.Socket;
+
+import com.google.common.base.MoreObjects;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -10,7 +10,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * This event is sent when the state of a socket (connected vs. disconnected) is changed.  Specifically, this will only
  * be called if the number of connections either goes to zero when it was non-zero, or when it was zero and one is
  * added.
- * <p>
  * The GUI listens to this event to determine how to render sockets and whether or not so show input controls for them.
  */
 public class SocketConnectedChangedEvent {

@@ -1,19 +1,19 @@
 package edu.wpi.grip.core.sources;
 
 
-import com.google.common.base.Throwables;
-import com.google.common.eventbus.EventBus;
-import com.google.common.eventbus.Subscribe;
-import com.google.common.util.concurrent.Service;
-import com.google.inject.Guice;
-import com.google.inject.Injector;
-
 import edu.wpi.grip.core.events.UnexpectedThrowableEvent;
 import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.core.util.ImageLoadingUtility;
 import edu.wpi.grip.core.util.MockExceptionWitness;
 import edu.wpi.grip.util.Files;
 import edu.wpi.grip.util.GripCoreTestModule;
+
+import com.google.common.base.Throwables;
+import com.google.common.eventbus.EventBus;
+import com.google.common.eventbus.Subscribe;
+import com.google.common.util.concurrent.Service;
+import com.google.inject.Guice;
+import com.google.inject.Injector;
 
 import java.io.IOException;
 import java.net.MalformedURLException;

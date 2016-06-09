@@ -1,6 +1,14 @@
 package edu.wpi.grip.core;
 
 
+import edu.wpi.grip.core.events.RenderEvent;
+import edu.wpi.grip.core.events.RunPipelineEvent;
+import edu.wpi.grip.core.events.StopPipelineEvent;
+import edu.wpi.grip.core.util.SinglePermitSemaphore;
+import edu.wpi.grip.core.util.service.AutoRestartingService;
+import edu.wpi.grip.core.util.service.LoggingListener;
+import edu.wpi.grip.core.util.service.RestartableService;
+
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.ImmutableList;
 import com.google.common.eventbus.AllowConcurrentEvents;
@@ -10,14 +18,6 @@ import com.google.common.util.concurrent.AbstractScheduledService;
 import com.google.common.util.concurrent.MoreExecutors;
 import com.google.inject.Provider;
 import com.google.inject.Singleton;
-
-import edu.wpi.grip.core.events.RenderEvent;
-import edu.wpi.grip.core.events.RunPipelineEvent;
-import edu.wpi.grip.core.events.StopPipelineEvent;
-import edu.wpi.grip.core.util.SinglePermitSemaphore;
-import edu.wpi.grip.core.util.service.AutoRestartingService;
-import edu.wpi.grip.core.util.service.LoggingListener;
-import edu.wpi.grip.core.util.service.RestartableService;
 
 import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;

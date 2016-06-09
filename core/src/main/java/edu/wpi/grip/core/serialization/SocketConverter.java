@@ -1,12 +1,5 @@
 package edu.wpi.grip.core.serialization;
 
-import com.thoughtworks.xstream.converters.ConversionException;
-import com.thoughtworks.xstream.converters.Converter;
-import com.thoughtworks.xstream.converters.MarshallingContext;
-import com.thoughtworks.xstream.converters.UnmarshallingContext;
-import com.thoughtworks.xstream.io.HierarchicalStreamReader;
-import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
-
 import edu.wpi.grip.core.Pipeline;
 import edu.wpi.grip.core.Source;
 import edu.wpi.grip.core.Step;
@@ -14,6 +7,13 @@ import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.core.sockets.Socket;
 import edu.wpi.grip.core.sockets.SocketHint;
+
+import com.thoughtworks.xstream.converters.ConversionException;
+import com.thoughtworks.xstream.converters.Converter;
+import com.thoughtworks.xstream.converters.MarshallingContext;
+import com.thoughtworks.xstream.converters.UnmarshallingContext;
+import com.thoughtworks.xstream.io.HierarchicalStreamReader;
+import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
@@ -25,7 +25,6 @@ import javax.inject.Inject;
  * An XStream converter for serializing and deserializing sockets.  Socket elements include indexes to indicate where
  * in the pipeline they are.  Input sockets can include values if specified, and output sockets can include boolean
  * attributes indicating if they are previewed.
- * <p>
  * Deserializing a socket doesn't create the socket itself - this is done when the step is created.  Instead, this
  * converter is used to reference particular sockets when defining values, previewed flags, and connections.
  */

@@ -1,11 +1,11 @@
 package edu.wpi.grip.core.sources;
 
-import com.google.common.eventbus.EventBus;
-
 import edu.wpi.grip.core.sockets.MockOutputSocketFactory;
 import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.util.Files;
 import edu.wpi.grip.util.ImageWithData;
+
+import com.google.common.eventbus.EventBus;
 
 import java.io.File;
 import java.io.IOException;

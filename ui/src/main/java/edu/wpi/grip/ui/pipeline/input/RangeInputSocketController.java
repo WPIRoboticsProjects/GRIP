@@ -1,12 +1,12 @@
 package edu.wpi.grip.ui.pipeline.input;
 
-import com.google.common.eventbus.Subscribe;
-import com.google.inject.Inject;
-import com.google.inject.assistedinject.Assisted;
-
 import edu.wpi.grip.core.events.SocketChangedEvent;
 import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.ui.pipeline.SocketHandleView;
+
+import com.google.common.eventbus.Subscribe;
+import com.google.inject.Inject;
+import com.google.inject.assistedinject.Assisted;
 
 import java.util.List;
 
@@ -34,7 +34,8 @@ public class RangeInputSocketController extends InputSocketController<List<Numbe
      * @param socket An <code>InputSocket</code> with a domain containing two <code>Number</code>s (the min and max
      *               slider values)
      */
-    @Inject RangeInputSocketController(SocketHandleView.Factory socketHandleViewFactory, @Assisted InputSocket<List<Number>> socket) {
+    @Inject
+    RangeInputSocketController(SocketHandleView.Factory socketHandleViewFactory, @Assisted InputSocket<List<Number>> socket) {
         super(socketHandleViewFactory, socket);
 
         final Object[] domain = socket.getSocketHint().getDomain().get();

@@ -1,13 +1,5 @@
 package edu.wpi.grip.ui;
 
-import com.google.inject.AbstractModule;
-import com.google.inject.TypeLiteral;
-import com.google.inject.assistedinject.FactoryModuleBuilder;
-import com.google.inject.matcher.Matchers;
-import com.google.inject.spi.InjectionListener;
-import com.google.inject.spi.TypeEncounter;
-import com.google.inject.spi.TypeListener;
-
 import edu.wpi.grip.core.Source;
 import edu.wpi.grip.core.util.GripMode;
 import edu.wpi.grip.ui.annotations.ParametrizedController;
@@ -27,6 +19,14 @@ import edu.wpi.grip.ui.pipeline.input.TextFieldInputSocketController;
 import edu.wpi.grip.ui.pipeline.source.CameraSourceController;
 import edu.wpi.grip.ui.pipeline.source.MultiImageFileSourceController;
 import edu.wpi.grip.ui.pipeline.source.SourceController;
+
+import com.google.inject.AbstractModule;
+import com.google.inject.TypeLiteral;
+import com.google.inject.assistedinject.FactoryModuleBuilder;
+import com.google.inject.matcher.Matchers;
+import com.google.inject.spi.InjectionListener;
+import com.google.inject.spi.TypeEncounter;
+import com.google.inject.spi.TypeListener;
 
 import java.io.IOException;
 

@@ -1,15 +1,15 @@
 package edu.wpi.grip.core;
 
-import com.google.common.eventbus.EventBus;
-import com.google.inject.Guice;
-import com.google.inject.Injector;
-
 import edu.wpi.grip.core.operations.PythonScriptFile;
 import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.core.sockets.Socket;
 import edu.wpi.grip.core.util.MockExceptionWitness;
 import edu.wpi.grip.util.GripCoreTestModule;
+
+import com.google.common.eventbus.EventBus;
+import com.google.inject.Guice;
+import com.google.inject.Injector;
 
 import org.junit.After;
 import org.junit.Before;

@@ -1,16 +1,16 @@
 package edu.wpi.grip.ui.pipeline;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.eventbus.Subscribe;
-import com.google.inject.Inject;
-import com.google.inject.assistedinject.Assisted;
-
 import edu.wpi.grip.core.events.SocketPreviewChangedEvent;
 import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.core.sockets.Socket;
 import edu.wpi.grip.core.sockets.SocketHint;
 import edu.wpi.grip.ui.Controller;
 import edu.wpi.grip.ui.annotations.ParametrizedController;
+
+import com.google.common.annotations.VisibleForTesting;
+import com.google.common.eventbus.Subscribe;
+import com.google.inject.Inject;
+import com.google.inject.assistedinject.Assisted;
 
 import javafx.beans.InvalidationListener;
 import javafx.fxml.FXML;

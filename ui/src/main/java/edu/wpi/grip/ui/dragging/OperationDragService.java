@@ -1,10 +1,10 @@
 package edu.wpi.grip.ui.dragging;
 
 
-import com.google.inject.Singleton;
-
 import edu.wpi.grip.core.Operation;
 import edu.wpi.grip.core.OperationMetaData;
+
+import com.google.inject.Singleton;
 
 /**
  * Service for dragging an {@link Operation} from the {@link edu.wpi.grip.ui.pipeline.PipelineController}

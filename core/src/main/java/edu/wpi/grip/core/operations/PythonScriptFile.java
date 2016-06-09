@@ -1,12 +1,12 @@
 package edu.wpi.grip.core.operations;
 
 
-import com.google.auto.value.AutoValue;
-
 import edu.wpi.grip.core.OperationMetaData;
 import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.core.sockets.SocketHint;
+
+import com.google.auto.value.AutoValue;
 
 import java.io.IOException;
 import java.net.URL;

@@ -1,13 +1,13 @@
 package edu.wpi.grip.ui.pipeline.input;
 
-import com.google.common.eventbus.Subscribe;
-import com.google.inject.Inject;
-import com.google.inject.assistedinject.Assisted;
-
 import edu.wpi.grip.core.events.SocketChangedEvent;
 import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.ui.pipeline.SocketHandleView;
 import edu.wpi.grip.ui.util.GripPlatform;
+
+import com.google.common.eventbus.Subscribe;
+import com.google.inject.Inject;
+import com.google.inject.assistedinject.Assisted;
 
 import java.util.Arrays;
 
@@ -33,7 +33,8 @@ public class SelectInputSocketController<T> extends InputSocketController<T> {
     /**
      * @param socket an input socket where the domain contains all of the possible values to choose from
      */
-    @Inject SelectInputSocketController(SocketHandleView.Factory socketHandleViewFactory, GripPlatform platform, @Assisted InputSocket<T> socket) {
+    @Inject
+    SelectInputSocketController(SocketHandleView.Factory socketHandleViewFactory, GripPlatform platform, @Assisted InputSocket<T> socket) {
         super(socketHandleViewFactory, socket);
         this.platform = platform;
 

@@ -1,14 +1,14 @@
 package edu.wpi.grip.ui.preview;
 
-import com.google.common.eventbus.EventBus;
-import com.google.inject.Inject;
-import com.google.inject.Singleton;
-
 import edu.wpi.grip.core.operations.composite.BlobsReport;
 import edu.wpi.grip.core.operations.composite.ContoursReport;
 import edu.wpi.grip.core.operations.composite.LinesReport;
 import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.ui.util.GripPlatform;
+
+import com.google.common.eventbus.EventBus;
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
 
 import static org.bytedeco.javacpp.opencv_core.Mat;
 import static org.bytedeco.javacpp.opencv_core.Point;
@@ -24,7 +24,8 @@ public class SocketPreviewViewFactory {
     private final EventBus eventBus;
     private final GripPlatform platform;
 
-    @Inject SocketPreviewViewFactory(EventBus eventBus, GripPlatform gripPlatform) {
+    @Inject
+    SocketPreviewViewFactory(EventBus eventBus, GripPlatform gripPlatform) {
         this.eventBus = eventBus;
         this.platform = gripPlatform;
     }

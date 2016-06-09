@@ -1,15 +1,15 @@
 package edu.wpi.grip.ui.preview;
 
-import com.google.common.eventbus.EventBus;
-import com.google.inject.Guice;
-import com.google.inject.Injector;
-import com.google.inject.util.Modules;
-
 import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.core.sockets.SocketHint;
 import edu.wpi.grip.ui.GripUiModule;
 import edu.wpi.grip.ui.util.MockGripPlatform;
 import edu.wpi.grip.util.GripCoreTestModule;
+
+import com.google.common.eventbus.EventBus;
+import com.google.inject.Guice;
+import com.google.inject.Injector;
+import com.google.inject.util.Modules;
 
 import javafx.scene.Scene;
 import javafx.stage.Stage;

@@ -1,12 +1,12 @@
 package edu.wpi.grip.ui.preview;
 
-import com.google.common.eventbus.Subscribe;
-
 import edu.wpi.grip.core.events.RenderEvent;
 import edu.wpi.grip.core.operations.composite.ContoursReport;
 import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.ui.util.GripPlatform;
 import edu.wpi.grip.ui.util.ImageConverter;
+
+import com.google.common.eventbus.Subscribe;
 
 import javafx.application.Platform;
 import javafx.scene.control.CheckBox;

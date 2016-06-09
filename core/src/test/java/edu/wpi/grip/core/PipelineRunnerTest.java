@@ -1,11 +1,5 @@
 package edu.wpi.grip.core;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.eventbus.EventBus;
-import com.google.common.eventbus.Subscribe;
-import com.google.common.util.concurrent.MoreExecutors;
-import com.google.common.util.concurrent.Service;
-
 import edu.wpi.grip.core.events.ExceptionEvent;
 import edu.wpi.grip.core.events.RenderEvent;
 import edu.wpi.grip.core.events.RunPipelineEvent;
@@ -14,6 +8,12 @@ import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.sockets.MockInputSocket;
 import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.core.util.MockExceptionWitness;
+
+import com.google.common.collect.ImmutableList;
+import com.google.common.eventbus.EventBus;
+import com.google.common.eventbus.Subscribe;
+import com.google.common.util.concurrent.MoreExecutors;
+import com.google.common.util.concurrent.Service;
 
 import java.io.IOException;
 import java.util.List;

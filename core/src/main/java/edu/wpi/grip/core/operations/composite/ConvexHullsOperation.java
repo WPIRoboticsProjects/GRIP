@@ -1,12 +1,12 @@
 package edu.wpi.grip.core.operations.composite;
 
-import com.google.common.collect.ImmutableList;
-
 import edu.wpi.grip.core.Operation;
 import edu.wpi.grip.core.OperationDescription;
 import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.core.sockets.SocketHint;
+
+import com.google.common.collect.ImmutableList;
 
 import java.util.List;
 
@@ -15,7 +15,6 @@ import static org.bytedeco.javacpp.opencv_imgproc.convexHull;
 
 /**
  * An {@link Operation} that finds the convex hull of each of a list of contours.
- * <p>
  * This can help remove holes in detected shapes, making them easier to analyze.
  */
 public class ConvexHullsOperation implements Operation {

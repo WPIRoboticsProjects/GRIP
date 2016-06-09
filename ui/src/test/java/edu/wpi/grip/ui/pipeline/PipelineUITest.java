@@ -1,11 +1,5 @@
 package edu.wpi.grip.ui.pipeline;
 
-import com.google.common.collect.Lists;
-import com.google.common.eventbus.EventBus;
-import com.google.inject.Guice;
-import com.google.inject.Injector;
-import com.google.inject.util.Modules;
-
 import edu.wpi.grip.core.AdditionOperation;
 import edu.wpi.grip.core.Connection;
 import edu.wpi.grip.core.MockStep;
@@ -20,6 +14,12 @@ import edu.wpi.grip.ui.GripUiModule;
 import edu.wpi.grip.ui.util.StyleClassNameUtility;
 import edu.wpi.grip.ui.util.TestAnnotationFXMLLoader;
 import edu.wpi.grip.util.GripCoreTestModule;
+
+import com.google.common.collect.Lists;
+import com.google.common.eventbus.EventBus;
+import com.google.inject.Guice;
+import com.google.inject.Injector;
+import com.google.inject.util.Modules;
 
 import java.util.List;
 import java.util.Optional;

@@ -1,11 +1,11 @@
 package edu.wpi.grip.core.operations.composite;
 
-import com.google.auto.value.AutoValue;
-
 import edu.wpi.grip.core.operations.network.PublishValue;
 import edu.wpi.grip.core.operations.network.Publishable;
 import edu.wpi.grip.core.sockets.NoSocketTypeLabel;
 import edu.wpi.grip.core.sockets.Socket;
+
+import com.google.auto.value.AutoValue;
 
 import java.util.ArrayList;
 import java.util.List;

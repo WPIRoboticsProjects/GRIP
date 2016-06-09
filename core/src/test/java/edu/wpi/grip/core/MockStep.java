@@ -1,8 +1,8 @@
 package edu.wpi.grip.core;
 
-import com.google.common.eventbus.EventBus;
-
 import edu.wpi.grip.core.util.MockExceptionWitness;
+
+import com.google.common.eventbus.EventBus;
 
 import java.util.Collections;
 

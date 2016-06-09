@@ -1,11 +1,6 @@
 package edu.wpi.grip.core.operations;
 
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.collect.ImmutableList;
-import com.google.common.eventbus.EventBus;
-import com.google.inject.Inject;
-
 import edu.wpi.grip.core.OperationMetaData;
 import edu.wpi.grip.core.events.OperationAddedEvent;
 import edu.wpi.grip.core.operations.opencv.CVOperation;
@@ -23,6 +18,11 @@ import edu.wpi.grip.generated.opencv_imgproc.enumeration.ColorConversionCodesEnu
 import edu.wpi.grip.generated.opencv_imgproc.enumeration.ColormapTypesEnum;
 import edu.wpi.grip.generated.opencv_imgproc.enumeration.InterpolationFlagsEnum;
 import edu.wpi.grip.generated.opencv_imgproc.enumeration.ThresholdTypesEnum;
+
+import com.google.common.annotations.VisibleForTesting;
+import com.google.common.collect.ImmutableList;
+import com.google.common.eventbus.EventBus;
+import com.google.inject.Inject;
 
 import org.bytedeco.javacpp.opencv_core;
 import org.bytedeco.javacpp.opencv_core.Point;

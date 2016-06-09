@@ -1,14 +1,14 @@
 package edu.wpi.grip.ui.components;
 
+import edu.wpi.grip.core.events.ExceptionClearedEvent;
+import edu.wpi.grip.core.events.ExceptionEvent;
+import edu.wpi.grip.ui.util.DPIUtility;
+
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Throwables;
 import com.google.common.eventbus.Subscribe;
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
-
-import edu.wpi.grip.core.events.ExceptionClearedEvent;
-import edu.wpi.grip.core.events.ExceptionEvent;
-import edu.wpi.grip.ui.util.DPIUtility;
 
 import java.util.Optional;
 

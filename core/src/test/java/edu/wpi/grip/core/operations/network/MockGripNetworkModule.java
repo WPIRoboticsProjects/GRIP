@@ -1,10 +1,10 @@
 package edu.wpi.grip.core.operations.network;
 
-import com.google.inject.AbstractModule;
-import com.google.inject.name.Names;
-
 import edu.wpi.grip.core.operations.network.ros.MockROSManager;
 import edu.wpi.grip.core.operations.network.ros.ROSNetworkPublisherFactory;
+
+import com.google.inject.AbstractModule;
+import com.google.inject.name.Names;
 
 /**
  * A mock of {@Link GRIPNetworkModule} for testing.

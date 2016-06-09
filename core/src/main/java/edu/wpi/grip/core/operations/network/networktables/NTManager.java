@@ -1,5 +1,13 @@
 package edu.wpi.grip.core.operations.network.networktables;
 
+import edu.wpi.grip.core.PipelineRunner;
+import edu.wpi.grip.core.events.ProjectSettingsChangedEvent;
+import edu.wpi.grip.core.operations.network.Manager;
+import edu.wpi.grip.core.operations.network.MapNetworkPublisher;
+import edu.wpi.grip.core.operations.network.MapNetworkPublisherFactory;
+import edu.wpi.grip.core.settings.ProjectSettings;
+import edu.wpi.grip.core.util.GripMode;
+
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 import com.google.common.eventbus.Subscribe;
@@ -8,13 +16,6 @@ import com.google.inject.Singleton;
 import edu.wpi.first.wpilibj.networktables.NetworkTable;
 import edu.wpi.first.wpilibj.networktables.NetworkTablesJNI;
 import edu.wpi.first.wpilibj.tables.ITable;
-import edu.wpi.grip.core.PipelineRunner;
-import edu.wpi.grip.core.events.ProjectSettingsChangedEvent;
-import edu.wpi.grip.core.operations.network.Manager;
-import edu.wpi.grip.core.operations.network.MapNetworkPublisher;
-import edu.wpi.grip.core.operations.network.MapNetworkPublisherFactory;
-import edu.wpi.grip.core.settings.ProjectSettings;
-import edu.wpi.grip.core.util.GripMode;
 
 import java.io.File;
 import java.util.HashMap;

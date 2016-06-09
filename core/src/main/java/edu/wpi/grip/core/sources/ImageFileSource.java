@@ -1,18 +1,18 @@
 package edu.wpi.grip.core.sources;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.eventbus.EventBus;
-import com.google.common.io.Files;
-import com.google.inject.assistedinject.Assisted;
-import com.google.inject.assistedinject.AssistedInject;
-import com.thoughtworks.xstream.annotations.XStreamAlias;
-
 import edu.wpi.grip.core.Source;
 import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.core.sockets.SocketHint;
 import edu.wpi.grip.core.sockets.SocketHints;
 import edu.wpi.grip.core.util.ExceptionWitness;
 import edu.wpi.grip.core.util.ImageLoadingUtility;
+
+import com.google.common.collect.ImmutableList;
+import com.google.common.eventbus.EventBus;
+import com.google.common.io.Files;
+import com.google.inject.assistedinject.Assisted;
+import com.google.inject.assistedinject.AssistedInject;
+import com.thoughtworks.xstream.annotations.XStreamAlias;
 
 import java.io.File;
 import java.io.IOException;
@@ -52,7 +52,8 @@ public final class ImageFileSource extends Source {
      * @param exceptionWitnessFactory Factory to create the exceptionWitness
      * @param file                    The location on the file system where the image exists.
      */
-    @AssistedInject ImageFileSource(
+    @AssistedInject
+    ImageFileSource(
         final EventBus eventBus,
         final OutputSocket.Factory outputSocketFactory,
         final ExceptionWitness.Factory exceptionWitnessFactory,
@@ -61,7 +62,8 @@ public final class ImageFileSource extends Source {
     }
 
 
-    @AssistedInject ImageFileSource(
+    @AssistedInject
+    ImageFileSource(
         final EventBus eventBus,
         final OutputSocket.Factory outputSocketFactory,
         final ExceptionWitness.Factory exceptionWitnessFactory,

@@ -1,10 +1,5 @@
 package edu.wpi.grip.ui.pipeline.input;
 
-import com.google.common.eventbus.EventBus;
-import com.google.inject.Guice;
-import com.google.inject.Injector;
-import com.google.inject.util.Modules;
-
 import edu.wpi.grip.core.OperationMetaData;
 import edu.wpi.grip.core.Palette;
 import edu.wpi.grip.core.Step;
@@ -12,6 +7,11 @@ import edu.wpi.grip.core.operations.OperationsFactory;
 import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.ui.GripUiModule;
 import edu.wpi.grip.util.GripCoreTestModule;
+
+import com.google.common.eventbus.EventBus;
+import com.google.inject.Guice;
+import com.google.inject.Injector;
+import com.google.inject.util.Modules;
 
 import java.util.Arrays;
 import java.util.Collection;

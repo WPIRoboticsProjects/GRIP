@@ -1,12 +1,12 @@
 package edu.wpi.grip.core.operations.templated;
 
 
-import com.google.common.collect.ImmutableList;
-
 import edu.wpi.grip.core.Operation;
 import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.core.sockets.SocketHint;
+
+import com.google.common.collect.ImmutableList;
 
 import java.util.List;
 

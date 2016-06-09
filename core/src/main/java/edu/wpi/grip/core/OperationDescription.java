@@ -1,9 +1,9 @@
 package edu.wpi.grip.core;
 
+import edu.wpi.grip.core.util.Icon;
+
 import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableSet;
-
-import edu.wpi.grip.core.util.Icon;
 
 import java.io.InputStream;
 import java.util.Optional;
@@ -138,7 +138,6 @@ public class OperationDescription {
 
     /**
      * Creates a new {@link Builder} instance to create a new {@code OperationDescription} object.
-     * <p>
      * The created descriptor has a default category of {@link Category#MISCELLANEOUS MISCELLANEOUS} and no icon; use
      * the {@link Builder#category(Category) .category()} and {@link Builder#icon(Icon) .icon()} methods to
      * override the default values.

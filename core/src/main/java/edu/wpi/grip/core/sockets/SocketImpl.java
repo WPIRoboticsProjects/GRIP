@@ -1,15 +1,15 @@
 package edu.wpi.grip.core.sockets;
 
 
-import com.google.common.base.MoreObjects;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.eventbus.EventBus;
-
 import edu.wpi.grip.core.Connection;
 import edu.wpi.grip.core.Source;
 import edu.wpi.grip.core.Step;
 import edu.wpi.grip.core.events.SocketChangedEvent;
 import edu.wpi.grip.core.events.SocketConnectedChangedEvent;
+
+import com.google.common.base.MoreObjects;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.eventbus.EventBus;
 
 import java.util.HashSet;
 import java.util.Optional;

@@ -13,7 +13,6 @@ import javax.annotation.Nullable;
 /**
  * A Socket is an abstract wrapper for a value that can be updated and passed around operations.  Sockets contain a set of hints
  * about the data they contain, as well as an actual value.
- * <p>
  * Sockets that are given to operations are {@link InputSocket InputSockets}, and sockets that operations store their
  * results are {@link OutputSocket OutputSockets}.
  *

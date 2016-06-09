@@ -1,13 +1,13 @@
 package edu.wpi.grip.core;
 
-import com.google.common.collect.ImmutableList;
-import com.google.inject.Inject;
-
 import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.core.sources.CameraSource;
 import edu.wpi.grip.core.sources.ImageFileSource;
 import edu.wpi.grip.core.sources.MultiImageFileSource;
 import edu.wpi.grip.core.util.ExceptionWitness;
+
+import com.google.common.collect.ImmutableList;
+import com.google.inject.Inject;
 
 import java.io.IOException;
 import java.util.List;

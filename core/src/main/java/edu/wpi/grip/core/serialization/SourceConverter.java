@@ -1,5 +1,8 @@
 package edu.wpi.grip.core.serialization;
 
+import edu.wpi.grip.core.Source;
+import edu.wpi.grip.core.events.SourceAddedEvent;
+
 import com.google.common.eventbus.EventBus;
 import com.thoughtworks.xstream.converters.ConversionException;
 import com.thoughtworks.xstream.converters.Converter;
@@ -8,9 +11,6 @@ import com.thoughtworks.xstream.converters.UnmarshallingContext;
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 
-import edu.wpi.grip.core.Source;
-import edu.wpi.grip.core.events.SourceAddedEvent;
-
 import java.io.IOException;
 import java.util.Properties;
 
@@ -18,11 +18,9 @@ import javax.inject.Inject;
 
 /**
  * XStream converter for sources.
- * <p>
  * Sources typically consist of some static configuration (like a device number, URL, or file path), as well as some
  * sort of connection.  Since we only need to serialize this static state and then later use it to set the state of a
  * new instance, sources are simply serialized by saving the result of {@link Source#getProperties()}.
- * <p>
  * To deserialize a source, we create a new instance of the appropriate class and then call
  * {@link edu.wpi.grip.core.Source.SourceFactory#create(Class, Properties)} with the deserialized properties.
  */

@@ -1,7 +1,5 @@
 package edu.wpi.grip.core.operations.composite;
 
-import com.google.common.collect.ImmutableList;
-
 import edu.wpi.grip.core.Operation;
 import edu.wpi.grip.core.OperationDescription;
 import edu.wpi.grip.core.sockets.InputSocket;
@@ -9,6 +7,8 @@ import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.core.sockets.SocketHint;
 import edu.wpi.grip.core.sockets.SocketHints;
 import edu.wpi.grip.core.util.Icon;
+
+import com.google.common.collect.ImmutableList;
 
 import java.util.List;
 
@@ -24,7 +24,6 @@ import static org.bytedeco.javacpp.opencv_imgproc.convexHull;
  * An {@link Operation} that takes in a list of contours and outputs a list of any contours in the input that match
  * all of several criteria.  Right now, the user can specify a minimum area, minimum perimeter, and ranges for width
  * and height.
- * <p>
  * This is useful because running a Find Contours on a real-life image typically leads to many small undesirable
  * contours from noise and small objects, as well as contours that do not meet the expected characteristics of the
  * feature we're actually looking for.  So, this operation can help narrow them down.

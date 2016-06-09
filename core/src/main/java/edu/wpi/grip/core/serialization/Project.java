@@ -1,12 +1,12 @@
 package edu.wpi.grip.core.serialization;
 
+import edu.wpi.grip.core.Pipeline;
+
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.reflect.ClassPath;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.converters.reflection.PureJavaReflectionProvider;
-
-import edu.wpi.grip.core.Pipeline;
 
 import java.io.File;
 import java.io.FileInputStream;

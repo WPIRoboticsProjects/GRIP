@@ -1,9 +1,9 @@
 package edu.wpi.grip.ui.components;
 
-import com.google.common.util.concurrent.AbstractIdleService;
-
 import edu.wpi.grip.core.util.service.AutoRestartingService;
 import edu.wpi.grip.core.util.service.RestartableService;
+
+import com.google.common.util.concurrent.AbstractIdleService;
 
 import java.util.concurrent.TimeUnit;
 

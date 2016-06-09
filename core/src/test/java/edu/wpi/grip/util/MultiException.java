@@ -20,7 +20,6 @@ public final class MultiException extends RuntimeException {
     /**
      * Given a collection of exceptions, returns a {@link RuntimeException}, with
      * the following rules:
-     * <p>
      * <ul>
      * <li>If {@code exceptions} has a single exception and that exception is a
      * {@link RuntimeException}, return it
@@ -30,7 +29,6 @@ public final class MultiException extends RuntimeException {
      * <li>Otherwise, return an instance of {@link MultiException} that wraps
      * the first exception in the {@code exceptions} collection.
      * </ul>
-     * <p>
      * <p>Though this method takes any {@link Collection}, it often makes most
      * sense to pass a {@link java.util.List} or some other collection that
      * preserves the order in which the exceptions got added.

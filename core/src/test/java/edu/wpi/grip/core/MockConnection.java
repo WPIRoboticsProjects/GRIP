@@ -1,11 +1,11 @@
 package edu.wpi.grip.core;
 
 
-import com.google.common.eventbus.EventBus;
-import com.google.inject.assistedinject.Assisted;
-
 import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.sockets.OutputSocket;
+
+import com.google.common.eventbus.EventBus;
+import com.google.inject.assistedinject.Assisted;
 
 public class MockConnection<T> extends Connection<T> {
 

@@ -1,11 +1,6 @@
 package edu.wpi.grip.ui;
 
 
-import com.google.common.eventbus.EventBus;
-import com.google.inject.Guice;
-import com.google.inject.Injector;
-import com.google.inject.util.Modules;
-
 import edu.wpi.grip.core.AddOperation;
 import edu.wpi.grip.core.AdditionOperation;
 import edu.wpi.grip.core.OperationMetaData;
@@ -18,6 +13,11 @@ import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.ui.util.DPIUtility;
 import edu.wpi.grip.ui.util.StyleClassNameUtility;
 import edu.wpi.grip.util.GripCoreTestModule;
+
+import com.google.common.eventbus.EventBus;
+import com.google.inject.Guice;
+import com.google.inject.Injector;
+import com.google.inject.util.Modules;
 
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;

@@ -1,11 +1,5 @@
 package edu.wpi.grip.ui;
 
-import com.google.common.eventbus.EventBus;
-import com.google.common.eventbus.Subscribe;
-import com.google.common.hash.Hashing;
-import com.google.common.io.LineReader;
-import com.google.common.io.Resources;
-
 import edu.wpi.grip.core.events.ProjectSettingsChangedEvent;
 import edu.wpi.grip.core.events.StopPipelineEvent;
 import edu.wpi.grip.core.serialization.Project;
@@ -13,6 +7,12 @@ import edu.wpi.grip.core.settings.ProjectSettings;
 import edu.wpi.grip.core.settings.SettingsProvider;
 import edu.wpi.grip.ui.components.LogTextArea;
 import edu.wpi.grip.ui.util.StringInMemoryFile;
+
+import com.google.common.eventbus.EventBus;
+import com.google.common.eventbus.Subscribe;
+import com.google.common.hash.Hashing;
+import com.google.common.io.LineReader;
+import com.google.common.io.Resources;
 
 import java.io.DataInputStream;
 import java.io.IOException;
@@ -49,7 +49,6 @@ import net.schmizz.sshj.xfer.scp.SCPFileTransfer;
 
 /**
  * JavaFX controller for the deploy tool.
- * <p>
  * This basically uploads a headless version of GRIP and the current project to a remote target using SSH, then
  * runs it remotely.  The default values for all fields are based on typical settings for FRC, with the address
  * based on the project settings.

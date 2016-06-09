@@ -1,13 +1,13 @@
 package edu.wpi.grip.core.operations.composite;
 
-import com.google.common.collect.ImmutableList;
-
 import edu.wpi.grip.core.Operation;
 import edu.wpi.grip.core.OperationDescription;
 import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.core.sockets.SocketHints;
 import edu.wpi.grip.core.util.Icon;
+
+import com.google.common.collect.ImmutableList;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -29,7 +29,6 @@ import static org.bytedeco.javacpp.opencv_imgcodecs.imencode;
  * Publish an M-JPEG stream with the protocol used by SmartDashboard and the FRC Dashboard.  This allows FRC teams to
  * view video streams on their dashboard during competition even when GRIP has exclusive access to the camera.  In
  * addition, an intermediate processed image in the pipeline could be published instead.
- * <p>
  * Based on WPILib's CameraServer class: https://github.com/robotpy/allwpilib/blob/master/wpilibj/src/athena/java/edu/wpi/first/wpilibj/CameraServer.java
  */
 public class PublishVideoOperation implements Operation {

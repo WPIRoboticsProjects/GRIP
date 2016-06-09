@@ -1,13 +1,5 @@
 package edu.wpi.grip.core.serialization;
 
-import com.google.common.eventbus.EventBus;
-import com.thoughtworks.xstream.converters.ConversionException;
-import com.thoughtworks.xstream.converters.Converter;
-import com.thoughtworks.xstream.converters.MarshallingContext;
-import com.thoughtworks.xstream.converters.UnmarshallingContext;
-import com.thoughtworks.xstream.io.HierarchicalStreamReader;
-import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
-
 import edu.wpi.grip.core.OperationMetaData;
 import edu.wpi.grip.core.Palette;
 import edu.wpi.grip.core.Pipeline;
@@ -16,13 +8,20 @@ import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.core.sockets.Socket;
 
+import com.google.common.eventbus.EventBus;
+import com.thoughtworks.xstream.converters.ConversionException;
+import com.thoughtworks.xstream.converters.Converter;
+import com.thoughtworks.xstream.converters.MarshallingContext;
+import com.thoughtworks.xstream.converters.UnmarshallingContext;
+import com.thoughtworks.xstream.io.HierarchicalStreamReader;
+import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
+
 import java.util.Optional;
 
 import javax.inject.Inject;
 
 /**
  * An XStream converter that converts a {@link Step} to and from a serialized representation.
- * <p>
  * To serialize a step, we just store an attribute with the name of the step.  To deserialize it, we have to look up
  * the operation with that name in the palette.
  */

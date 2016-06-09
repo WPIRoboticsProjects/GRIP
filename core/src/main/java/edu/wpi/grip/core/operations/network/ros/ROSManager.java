@@ -1,10 +1,10 @@
 package edu.wpi.grip.core.operations.network.ros;
 
 
-import com.google.inject.Singleton;
-
 import edu.wpi.grip.core.operations.network.Manager;
 import edu.wpi.grip.core.util.SinglePermitSemaphore;
+
+import com.google.inject.Singleton;
 
 import java.util.Optional;
 

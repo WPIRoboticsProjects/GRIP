@@ -1,10 +1,10 @@
 package edu.wpi.grip.core.operations.network;
 
-import com.google.common.eventbus.EventBus;
-
 import edu.wpi.grip.core.Operation;
 import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.sockets.MockInputSocketFactory;
+
+import com.google.common.eventbus.EventBus;
 
 import java.util.List;
 import java.util.Map;

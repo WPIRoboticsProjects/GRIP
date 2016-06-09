@@ -1,12 +1,5 @@
 package edu.wpi.grip.core.sources;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.eventbus.EventBus;
-import com.google.common.math.IntMath;
-import com.google.inject.assistedinject.Assisted;
-import com.google.inject.assistedinject.AssistedInject;
-import com.thoughtworks.xstream.annotations.XStreamAlias;
-
 import edu.wpi.grip.core.PreviousNext;
 import edu.wpi.grip.core.Source;
 import edu.wpi.grip.core.events.SourceHasPendingUpdateEvent;
@@ -15,6 +8,13 @@ import edu.wpi.grip.core.sockets.SocketHint;
 import edu.wpi.grip.core.sockets.SocketHints;
 import edu.wpi.grip.core.util.ExceptionWitness;
 import edu.wpi.grip.core.util.ImageLoadingUtility;
+
+import com.google.common.collect.ImmutableList;
+import com.google.common.eventbus.EventBus;
+import com.google.common.math.IntMath;
+import com.google.inject.assistedinject.Assisted;
+import com.google.inject.assistedinject.AssistedInject;
+import com.thoughtworks.xstream.annotations.XStreamAlias;
 
 import java.io.File;
 import java.io.IOException;
@@ -63,7 +63,8 @@ public final class MultiImageFileSource extends Source implements PreviousNext {
      * @param files                   A list of files to be loaded.
      * @param index                   The index to use as the first file that is in the socket.
      */
-    @AssistedInject MultiImageFileSource(
+    @AssistedInject
+    MultiImageFileSource(
         final EventBus eventBus,
         final OutputSocket.Factory outputSocketFactory,
         final ExceptionWitness.Factory exceptionWitnessFactory,
@@ -74,7 +75,8 @@ public final class MultiImageFileSource extends Source implements PreviousNext {
             .collect(Collectors.toList()).toArray(new String[files.size()]), index);
     }
 
-    @AssistedInject MultiImageFileSource(
+    @AssistedInject
+    MultiImageFileSource(
         final EventBus eventBus,
         final OutputSocket.Factory outputSocketFactory,
         final ExceptionWitness.Factory exceptionWitnessFactory,
@@ -85,10 +87,11 @@ public final class MultiImageFileSource extends Source implements PreviousNext {
     /**
      * Used only for serialization
      */
-    @AssistedInject MultiImageFileSource(final EventBus eventBus,
-                                         final OutputSocket.Factory outputSocketFactory,
-                                         final ExceptionWitness.Factory exceptionWitnessFactory,
-                                         @Assisted final Properties properties) {
+    @AssistedInject
+    MultiImageFileSource(final EventBus eventBus,
+                         final OutputSocket.Factory outputSocketFactory,
+                         final ExceptionWitness.Factory exceptionWitnessFactory,
+                         @Assisted final Properties properties) {
         this(eventBus, outputSocketFactory, exceptionWitnessFactory, pathsFromProperties(properties), indexFromProperties(properties));
     }
 

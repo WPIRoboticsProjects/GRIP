@@ -1,11 +1,11 @@
 package edu.wpi.grip.util;
 
 
-import com.google.common.eventbus.SubscriberExceptionContext;
-
 import edu.wpi.grip.core.GripCoreModule;
 import edu.wpi.grip.core.sources.CameraSource;
 import edu.wpi.grip.core.sources.MockFrameGrabberFactory;
+
+import com.google.common.eventbus.SubscriberExceptionContext;
 
 import java.util.ArrayList;
 import java.util.List;

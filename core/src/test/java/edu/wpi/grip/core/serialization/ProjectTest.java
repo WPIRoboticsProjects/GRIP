@@ -1,11 +1,5 @@
 package edu.wpi.grip.core.serialization;
 
-import com.google.common.eventbus.EventBus;
-import com.google.inject.Guice;
-import com.google.inject.Injector;
-import com.google.inject.Key;
-import com.google.inject.TypeLiteral;
-
 import edu.wpi.grip.core.AddOperation;
 import edu.wpi.grip.core.AdditionOperation;
 import edu.wpi.grip.core.Connection;
@@ -24,6 +18,12 @@ import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.core.sources.ImageFileSource;
 import edu.wpi.grip.util.Files;
 import edu.wpi.grip.util.GripCoreTestModule;
+
+import com.google.common.eventbus.EventBus;
+import com.google.inject.Guice;
+import com.google.inject.Injector;
+import com.google.inject.Key;
+import com.google.inject.TypeLiteral;
 
 import java.io.Reader;
 import java.io.StringReader;

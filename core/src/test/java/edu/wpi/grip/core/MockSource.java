@@ -1,9 +1,9 @@
 package edu.wpi.grip.core;
 
 
-import com.google.common.collect.ImmutableList;
-
 import edu.wpi.grip.core.sockets.OutputSocket;
+
+import com.google.common.collect.ImmutableList;
 
 import java.io.IOException;
 import java.util.List;

@@ -1,8 +1,8 @@
 package edu.wpi.grip.core.events;
 
-import com.google.common.base.MoreObjects;
-
 import edu.wpi.grip.core.Source;
+
+import com.google.common.base.MoreObjects;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 

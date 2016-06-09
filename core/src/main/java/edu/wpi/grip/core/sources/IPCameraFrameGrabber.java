@@ -204,7 +204,6 @@ public class IPCameraFrameGrabber extends FrameGrabber {
      * is grabbed improves performance by reducing the frequency of garbage collections.  In a simple test, the
      * unmodified version of IPCameraFrameGrabber caused about 200MB of allocations within 13 seconds.  In this
      * version, almost no additional heap space is typically allocated per frame.
-     * <p>
      * The downside to this is that the returned frames can't really be modified, so this probably won't go upstream,
      * but it's useful for us because in GRIP we don't operate on images in-place.
      */

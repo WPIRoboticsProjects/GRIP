@@ -15,7 +15,6 @@ import static org.bytedeco.javacpp.opencv_imgproc.createLineSegmentDetector;
 /**
  * This class contains the results of a line detection algorithm.  It has an input matrix (the image supplied to
  * the algorithm), and and output matrix, which contains every line found in its rows.
- * <p>
  * This is used by FindLinesOperation as the type of its output socket, allowing other classes (like GUI previews
  * and line filtering operations) to have a type-safe way of operating on line detection results and not just any
  * random matrix.

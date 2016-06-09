@@ -1,10 +1,10 @@
 package edu.wpi.grip.core;
 
 
-import com.google.common.collect.ImmutableList;
-
 import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.sockets.OutputSocket;
+
+import com.google.common.collect.ImmutableList;
 
 import java.util.List;
 

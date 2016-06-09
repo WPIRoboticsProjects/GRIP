@@ -1,10 +1,10 @@
 package edu.wpi.grip.ui.pipeline;
 
 
-import com.google.common.eventbus.EventBus;
-
 import edu.wpi.grip.core.sources.CameraSource;
 import edu.wpi.grip.core.sources.MockCameraSource;
+
+import com.google.common.eventbus.EventBus;
 
 import java.io.IOException;
 import java.util.Optional;

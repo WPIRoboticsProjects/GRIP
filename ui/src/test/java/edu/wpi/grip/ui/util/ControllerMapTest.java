@@ -1,8 +1,8 @@
 package edu.wpi.grip.ui.util;
 
-import com.google.common.base.Throwables;
-
 import edu.wpi.grip.ui.Controller;
+
+import com.google.common.base.Throwables;
 
 import java.util.Arrays;
 

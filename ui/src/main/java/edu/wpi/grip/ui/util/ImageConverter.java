@@ -24,10 +24,8 @@ public final class ImageConverter {
 
     /**
      * Convert a BGR-formatted OpenCV {@link Mat} into a JavaFX {@link Image}.
-     * <p>
      * JavaFX understands ARGB pixel data, so one way to turn a Mat into a JavaFX image is to shift around the bytes
      * from the Mat into an int array of pixels.
-     * <p>
      * This is also possible to do by using JavaCV, but the JavaCV method involves several intermediate conversions
      * (Mat -> Frame -> BufferedImage -> JavaFX Image) and is way too slow to use for a real-time video.
      *

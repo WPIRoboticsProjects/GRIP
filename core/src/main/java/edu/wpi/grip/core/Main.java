@@ -1,10 +1,5 @@
 package edu.wpi.grip.core;
 
-import com.google.common.eventbus.EventBus;
-import com.google.common.eventbus.Subscribe;
-import com.google.inject.Guice;
-import com.google.inject.Injector;
-
 import edu.wpi.grip.core.events.ExceptionClearedEvent;
 import edu.wpi.grip.core.events.ExceptionEvent;
 import edu.wpi.grip.core.operations.CVOperations;
@@ -12,6 +7,11 @@ import edu.wpi.grip.core.operations.Operations;
 import edu.wpi.grip.core.operations.network.GripNetworkModule;
 import edu.wpi.grip.core.serialization.Project;
 import edu.wpi.grip.core.sources.GripSourcesHardwareModule;
+
+import com.google.common.eventbus.EventBus;
+import com.google.common.eventbus.Subscribe;
+import com.google.inject.Guice;
+import com.google.inject.Injector;
 
 import java.io.File;
 import java.io.IOException;

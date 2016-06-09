@@ -19,7 +19,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * Publishes data to a specific network protocol.
- * <p>
  * This looks at {@link PublishValue} annotations on accessor methods in a class to generate the data to publish.
  */
 public abstract class PublishAnnotatedOperation<D, P extends Publishable> extends NetworkPublishOperation<D> {

@@ -1,10 +1,10 @@
 package edu.wpi.grip.core.util;
 
-import com.google.common.eventbus.EventBus;
-import com.google.common.eventbus.Subscribe;
-
 import edu.wpi.grip.core.events.ExceptionClearedEvent;
 import edu.wpi.grip.core.events.ExceptionEvent;
+
+import com.google.common.eventbus.EventBus;
+import com.google.common.eventbus.Subscribe;
 
 import java.util.Optional;
 

@@ -1,13 +1,5 @@
 package edu.wpi.grip.core;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.eventbus.EventBus;
-import com.google.common.eventbus.Subscribe;
-import com.google.inject.Inject;
-import com.google.inject.Singleton;
-import com.thoughtworks.xstream.annotations.XStreamAlias;
-import com.thoughtworks.xstream.annotations.XStreamOmitField;
-
 import edu.wpi.grip.core.events.ConnectionAddedEvent;
 import edu.wpi.grip.core.events.ConnectionRemovedEvent;
 import edu.wpi.grip.core.events.ProjectSettingsChangedEvent;
@@ -21,6 +13,14 @@ import edu.wpi.grip.core.settings.SettingsProvider;
 import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.core.sockets.SocketHint;
+
+import com.google.common.collect.ImmutableList;
+import com.google.common.eventbus.EventBus;
+import com.google.common.eventbus.Subscribe;
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
+import com.thoughtworks.xstream.annotations.XStreamAlias;
+import com.thoughtworks.xstream.annotations.XStreamOmitField;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -42,7 +42,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 /**
  * Pipeline has the list of steps in a computer vision algorithm, as well as the set of connections between the inputs
  * and outputs of different steps.
- * <p>
  * The pipeline class is responsible for listening for other components of the application (such as the GUI) adding
  * or removing steps and connections, and for registering and unregistering them from the event bus when appropriate.
  */

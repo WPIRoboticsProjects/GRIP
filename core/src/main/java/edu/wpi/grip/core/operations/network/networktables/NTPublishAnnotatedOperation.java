@@ -14,7 +14,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * An operation that publishes any type that implements {@link Publishable} to NetworkTables.
- * <p>
  * To be publishable, a type should have one or more accessor methods annotated with {@link PublishValue}.  This is done
  * with annotations instead of methods
  *

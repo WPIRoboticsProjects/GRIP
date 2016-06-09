@@ -1,10 +1,10 @@
 package edu.wpi.grip.core.sockets;
 
-import com.google.common.eventbus.EventBus;
-import com.google.common.eventbus.Subscribe;
-
 import edu.wpi.grip.core.events.SocketChangedEvent;
 import edu.wpi.grip.core.events.SocketPreviewChangedEvent;
+
+import com.google.common.eventbus.EventBus;
+import com.google.common.eventbus.Subscribe;
 
 import org.junit.Before;
 import org.junit.Test;

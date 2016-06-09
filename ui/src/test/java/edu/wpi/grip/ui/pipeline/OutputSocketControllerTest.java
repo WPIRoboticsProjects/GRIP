@@ -1,9 +1,9 @@
 package edu.wpi.grip.ui.pipeline;
 
-import com.google.common.eventbus.EventBus;
-
 import edu.wpi.grip.core.sockets.MockOutputSocket;
 import edu.wpi.grip.ui.util.TestAnnotationFXMLLoader;
+
+import com.google.common.eventbus.EventBus;
 
 import javafx.scene.Scene;
 import javafx.scene.layout.GridPane;

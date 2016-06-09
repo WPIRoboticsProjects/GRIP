@@ -1,13 +1,13 @@
 package edu.wpi.grip.core.serialization;
 
-import com.google.common.eventbus.EventBus;
-import com.google.inject.Guice;
-import com.google.inject.Injector;
-
 import edu.wpi.grip.core.Pipeline;
 import edu.wpi.grip.core.operations.OperationsFactory;
 import edu.wpi.grip.util.Files;
 import edu.wpi.grip.util.GripCoreTestModule;
+
+import com.google.common.eventbus.EventBus;
+import com.google.inject.Guice;
+import com.google.inject.Injector;
 
 import java.io.BufferedReader;
 import java.io.File;

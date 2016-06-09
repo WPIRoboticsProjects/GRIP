@@ -1,9 +1,9 @@
 package edu.wpi.grip.core.sources;
 
-import com.google.common.eventbus.EventBus;
-
 import edu.wpi.grip.core.sockets.MockOutputSocketFactory;
 import edu.wpi.grip.core.util.MockExceptionWitness;
+
+import com.google.common.eventbus.EventBus;
 
 import java.io.IOException;
 

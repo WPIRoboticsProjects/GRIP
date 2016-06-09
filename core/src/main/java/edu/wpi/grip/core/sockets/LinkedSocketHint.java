@@ -1,8 +1,8 @@
 package edu.wpi.grip.core.sockets;
 
-import com.thoughtworks.xstream.annotations.XStreamAlias;
-
 import edu.wpi.grip.core.Connection;
+
+import com.thoughtworks.xstream.annotations.XStreamAlias;
 
 import java.util.HashSet;
 import java.util.Optional;

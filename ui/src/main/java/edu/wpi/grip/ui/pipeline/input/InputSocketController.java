@@ -1,13 +1,13 @@
 package edu.wpi.grip.ui.pipeline.input;
 
-import com.google.inject.Inject;
-import com.google.inject.assistedinject.Assisted;
-
 import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.sockets.Socket;
 import edu.wpi.grip.ui.Controller;
 import edu.wpi.grip.ui.annotations.ParametrizedController;
 import edu.wpi.grip.ui.pipeline.SocketHandleView;
+
+import com.google.inject.Inject;
+import com.google.inject.assistedinject.Assisted;
 
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
@@ -23,7 +23,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * A JavaFX input that renders an {@link InputSocket} that is an input to a step.  This includes an identifier, a handle
  * for connections, and an optional input (if a view is specified in the socket hint) that lets the user manually
  * change the parameters of a step.
- * <p>
  * Subclasses of {@code InputSocketController} control what sort of input is used (for example, a slider or a checkbox)
  */
 @ParametrizedController(url = "InputSocket.fxml")

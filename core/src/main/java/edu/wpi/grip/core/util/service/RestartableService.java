@@ -9,7 +9,6 @@ import java.util.concurrent.TimeoutException;
 /**
  * This interface defines a {@link Service} that breaks the guarantee that
  * the {@link State#FAILED} and {@link State#TERMINATED} states are terminal states.
- * <p>
  * Instead, as long as the service is in a non running state the service can be started.
  */
 public interface RestartableService extends Service {

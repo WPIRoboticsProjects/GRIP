@@ -1,9 +1,5 @@
 package edu.wpi.grip.ui.pipeline.source;
 
-import com.google.common.eventbus.EventBus;
-import com.google.inject.Inject;
-import com.google.inject.assistedinject.Assisted;
-
 import edu.wpi.grip.core.Source;
 import edu.wpi.grip.core.events.SourceRemovedEvent;
 import edu.wpi.grip.core.sockets.OutputSocket;
@@ -13,6 +9,10 @@ import edu.wpi.grip.ui.components.ExceptionWitnessResponderButton;
 import edu.wpi.grip.ui.pipeline.OutputSocketController;
 import edu.wpi.grip.ui.pipeline.StepController;
 import edu.wpi.grip.ui.util.ControllerMap;
+
+import com.google.common.eventbus.EventBus;
+import com.google.inject.Inject;
+import com.google.inject.assistedinject.Assisted;
 
 import java.util.Collection;
 
@@ -54,7 +54,8 @@ public class SourceController<S extends Source> implements Controller {
         SourceController<S> create(S source);
     }
 
-    @Inject SourceController(
+    @Inject
+    SourceController(
         final EventBus eventBus,
         final OutputSocketController.Factory outputSocketControllerFactory,
         final ExceptionWitnessResponderButton.Factory exceptionWitnessResponderButtonFactory,

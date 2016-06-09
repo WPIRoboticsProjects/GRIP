@@ -1,5 +1,11 @@
 package edu.wpi.grip.core.serialization;
 
+import edu.wpi.grip.core.Connection;
+import edu.wpi.grip.core.events.ConnectionAddedEvent;
+import edu.wpi.grip.core.sockets.InputSocket;
+import edu.wpi.grip.core.sockets.OutputSocket;
+import edu.wpi.grip.core.sockets.Socket;
+
 import com.google.common.eventbus.EventBus;
 import com.thoughtworks.xstream.converters.ConversionException;
 import com.thoughtworks.xstream.converters.Converter;
@@ -8,17 +14,10 @@ import com.thoughtworks.xstream.converters.UnmarshallingContext;
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 
-import edu.wpi.grip.core.Connection;
-import edu.wpi.grip.core.events.ConnectionAddedEvent;
-import edu.wpi.grip.core.sockets.InputSocket;
-import edu.wpi.grip.core.sockets.OutputSocket;
-import edu.wpi.grip.core.sockets.Socket;
-
 import javax.inject.Inject;
 
 /**
  * An XStream converter that marshals and unmarshals {@link Connection}s.
- * <p>
  * A marshalled connection stores indexes indicating the output and input sockets it connects.
  */
 public class ConnectionConverter<T> implements Converter {

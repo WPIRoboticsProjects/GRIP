@@ -1,11 +1,11 @@
 package edu.wpi.grip.core.util;
 
+import edu.wpi.grip.core.events.ExceptionClearedEvent;
+import edu.wpi.grip.core.events.ExceptionEvent;
+
 import com.google.common.eventbus.EventBus;
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
-
-import edu.wpi.grip.core.events.ExceptionClearedEvent;
-import edu.wpi.grip.core.events.ExceptionEvent;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -85,7 +85,6 @@ public class ExceptionWitness {
 
     /**
      * Indicate that there isn't currently an exception.
-     * <p>
      * Clears the exception state and posts an {@link ExceptionClearedEvent}.
      * This method can be called every time that there isn't an exception as an {@link ExceptionClearedEvent} will
      * only be posted when there was previously an exception flagged.

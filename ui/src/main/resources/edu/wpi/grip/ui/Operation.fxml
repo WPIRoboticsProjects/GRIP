@@ -3,7 +3,9 @@
 <?import edu.wpi.grip.ui.util.DPIUtility?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.RowConstraints?>
 <GridPane maxHeight="-Infinity" maxWidth="Infinity" minHeight="-Infinity" minWidth="NaN" styleClass="operation"
           fx:controller="edu.wpi.grip.ui.OperationController"
           fx:id="root"
@@ -12,24 +14,24 @@
     <children>
         <ImageView fx:id="icon" styleClass="operation-icon" GridPane.columnIndex="0" GridPane.rowSpan="2">
             <fitWidth>
-                <DPIUtility fx:constant="LARGE_ICON_SIZE"/>
+                <DPIUtility fx:constant="LARGE_ICON_SIZE" />
             </fitWidth>
             <fitHeight>
-                <DPIUtility fx:constant="LARGE_ICON_SIZE"/>
+                <DPIUtility fx:constant="LARGE_ICON_SIZE" />
             </fitHeight>
         </ImageView>
-        <Label fx:id="name" styleClass="operation-name" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+        <Label fx:id="name" styleClass="operation-name" GridPane.columnIndex="1" GridPane.rowIndex="0" />
         <Label fx:id="description" styleClass="operation-description" GridPane.columnIndex="1" GridPane.rowIndex="1"
                textOverrun="WORD_ELLIPSIS">
             <maxHeight>
-                <DPIUtility fx:constant="LARGE_ICON_SIZE"/>
+                <DPIUtility fx:constant="LARGE_ICON_SIZE" />
             </maxHeight>
         </Label>
     </children>
     <columnConstraints>
-        <ColumnConstraints/>
+        <ColumnConstraints />
     </columnConstraints>
     <rowConstraints>
-        <RowConstraints/>
+        <RowConstraints />
     </rowConstraints>
 </GridPane>

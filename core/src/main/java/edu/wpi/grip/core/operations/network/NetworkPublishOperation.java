@@ -1,8 +1,5 @@
 package edu.wpi.grip.core.operations.network;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.reflect.TypeToken;
-
 import edu.wpi.grip.core.Operation;
 import edu.wpi.grip.core.OperationDescription;
 import edu.wpi.grip.core.sockets.InputSocket;
@@ -10,6 +7,9 @@ import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.core.sockets.SocketHint;
 import edu.wpi.grip.core.sockets.SocketHints;
 import edu.wpi.grip.core.util.Icon;
+
+import com.google.common.collect.ImmutableList;
+import com.google.common.reflect.TypeToken;
 
 import java.util.List;
 

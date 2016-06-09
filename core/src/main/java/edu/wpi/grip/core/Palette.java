@@ -1,8 +1,8 @@
 package edu.wpi.grip.core;
 
-import com.google.common.eventbus.Subscribe;
-
 import edu.wpi.grip.core.events.OperationAddedEvent;
+
+import com.google.common.eventbus.Subscribe;
 
 import java.util.Collection;
 import java.util.LinkedHashMap;

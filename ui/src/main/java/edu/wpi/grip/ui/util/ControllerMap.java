@@ -1,10 +1,10 @@
 package edu.wpi.grip.ui.util;
 
 
+import edu.wpi.grip.ui.Controller;
+
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
-
-import edu.wpi.grip.ui.Controller;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -28,7 +28,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * Keeps track of the Nodes in an observable list and provides mapping from a {@link Node}
  * to its respective {@link Controller}. This makes it easy to keep track of what controller
  * is mapped to what node without having to use a secondary backing list with index comparisons.
- * <p>
  * This utility also provides helpful functionality like sorting the nodes in the list using a
  * comparator.
  *

@@ -1,10 +1,10 @@
 package edu.wpi.grip.core.operations.network.ros;
 
-import com.google.common.reflect.TypeToken;
-
 import edu.wpi.grip.core.operations.composite.BlobsReport;
 import edu.wpi.grip.core.operations.composite.ContoursReport;
 import edu.wpi.grip.core.operations.composite.LinesReport;
+
+import com.google.common.reflect.TypeToken;
 
 import java.util.List;
 import java.util.function.BiConsumer;

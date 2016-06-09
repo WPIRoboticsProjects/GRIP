@@ -1,9 +1,9 @@
 package edu.wpi.grip.ui.components;
 
-import com.google.common.eventbus.EventBus;
-
 import edu.wpi.grip.core.util.ExceptionWitness;
 import edu.wpi.grip.core.util.MockExceptionWitness;
+
+import com.google.common.eventbus.EventBus;
 
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;

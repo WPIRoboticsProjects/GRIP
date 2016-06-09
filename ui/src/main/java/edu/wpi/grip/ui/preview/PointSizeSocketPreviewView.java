@@ -1,10 +1,10 @@
 package edu.wpi.grip.ui.preview;
 
-import com.google.common.eventbus.Subscribe;
-
 import edu.wpi.grip.core.events.RenderEvent;
 import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.ui.util.GripPlatform;
+
+import com.google.common.eventbus.Subscribe;
 
 import javafx.application.Platform;
 import javafx.scene.control.Label;

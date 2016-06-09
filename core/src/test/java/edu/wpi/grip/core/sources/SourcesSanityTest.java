@@ -1,12 +1,12 @@
 package edu.wpi.grip.core.sources;
 
 
-import com.google.common.testing.AbstractPackageSanityTests;
-import com.google.common.util.concurrent.Service;
-
 import edu.wpi.grip.core.util.ExceptionWitness;
 import edu.wpi.grip.core.util.MockExceptionWitness;
 import edu.wpi.grip.core.util.service.SingleActionListener;
+
+import com.google.common.testing.AbstractPackageSanityTests;
+import com.google.common.util.concurrent.Service;
 
 import java.util.Arrays;
 

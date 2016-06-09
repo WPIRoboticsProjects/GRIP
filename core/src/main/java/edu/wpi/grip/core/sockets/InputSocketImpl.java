@@ -1,12 +1,12 @@
 package edu.wpi.grip.core.sockets;
 
 
+import edu.wpi.grip.core.Connection;
+
 import com.google.common.eventbus.EventBus;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
-
-import edu.wpi.grip.core.Connection;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 

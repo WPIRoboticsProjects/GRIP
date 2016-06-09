@@ -1,15 +1,6 @@
 package edu.wpi.grip.core.sources;
 
 
-import com.google.common.base.StandardSystemProperty;
-import com.google.common.collect.ImmutableList;
-import com.google.common.eventbus.EventBus;
-import com.google.common.eventbus.Subscribe;
-import com.google.common.util.concurrent.MoreExecutors;
-import com.google.inject.assistedinject.Assisted;
-import com.google.inject.assistedinject.AssistedInject;
-import com.thoughtworks.xstream.annotations.XStreamAlias;
-
 import edu.wpi.grip.core.Source;
 import edu.wpi.grip.core.events.SourceHasPendingUpdateEvent;
 import edu.wpi.grip.core.events.SourceRemovedEvent;
@@ -20,6 +11,15 @@ import edu.wpi.grip.core.util.ExceptionWitness;
 import edu.wpi.grip.core.util.service.AutoRestartingService;
 import edu.wpi.grip.core.util.service.LoggingListener;
 import edu.wpi.grip.core.util.service.RestartableService;
+
+import com.google.common.base.StandardSystemProperty;
+import com.google.common.collect.ImmutableList;
+import com.google.common.eventbus.EventBus;
+import com.google.common.eventbus.Subscribe;
+import com.google.common.util.concurrent.MoreExecutors;
+import com.google.inject.assistedinject.Assisted;
+import com.google.inject.assistedinject.AssistedInject;
+import com.thoughtworks.xstream.annotations.XStreamAlias;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -55,7 +55,6 @@ public class CameraSource extends Source implements RestartableService {
     /**
      * Connecting to a device can take the most time.
      * This should have a little bit of leeway.
-     * <p>
      * On a fairly decent computer with a great internet connection 7 seconds is more than enough.
      * This value has been doubled to ensure that people running computers that may be older
      * or have firewalls that will slow down connecting can still use the device.
@@ -138,7 +137,8 @@ public class CameraSource extends Source implements RestartableService {
      * @param eventBus     The EventBus to attach to
      * @param deviceNumber The device number of the webcam
      */
-    @AssistedInject CameraSource(
+    @AssistedInject
+    CameraSource(
         final EventBus eventBus,
         final OutputSocket.Factory outputSocketFactory,
         final FrameGrabberFactory grabberFactory,
@@ -153,7 +153,8 @@ public class CameraSource extends Source implements RestartableService {
      * @param eventBus The EventBus to attach to
      * @param address  A URL to stream video from an IP camera
      */
-    @AssistedInject CameraSource(
+    @AssistedInject
+    CameraSource(
         final EventBus eventBus,
         final OutputSocket.Factory outputSocketFactory,
         final FrameGrabberFactory grabberFactory,
@@ -165,7 +166,8 @@ public class CameraSource extends Source implements RestartableService {
     /**
      * Used for serialization
      */
-    @AssistedInject CameraSource(
+    @AssistedInject
+    CameraSource(
         final EventBus eventBus,
         final OutputSocket.Factory outputSocketFactory,
         final FrameGrabberFactory grabberFactory,
