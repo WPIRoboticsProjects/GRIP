@@ -7,6 +7,7 @@ import com.google.inject.Injector;
 import com.google.inject.util.Modules;
 import edu.wpi.grip.core.*;
 import edu.wpi.grip.core.events.OperationAddedEvent;
+import edu.wpi.grip.core.operations.network.MockGRIPNetworkModule;
 import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.ui.util.DPIUtility;
@@ -39,7 +40,8 @@ public class MainWindowTest extends ApplicationTest {
     public void start(Stage stage) throws Exception {
         testModule.setUp();
 
-        Injector injector = Guice.createInjector(Modules.override(testModule).with(new GRIPUIModule()));
+        Injector injector = Guice.createInjector(
+                Modules.override(testModule, new MockGRIPNetworkModule()).with(new GRIPUIModule()));
 
         final Parent root =
                 FXMLLoader.load(Main.class.getResource("MainWindow.fxml"), null, null, injector::getInstance);

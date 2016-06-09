@@ -140,7 +140,11 @@ allprojects {
     // Turn on test results
     test {
         testLogging {
-            events "failed"
+            if (project.hasProperty('logTests')) {
+                events  "started", "passed", "skipped", "failed"
+            } else {
+                events "failed"
+            }
             exceptionFormat "full"
         }
         doFirst {
