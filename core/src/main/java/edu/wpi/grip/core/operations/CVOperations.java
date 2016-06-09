@@ -1,6 +1,7 @@
 package edu.wpi.grip.core.operations;
 
 
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.ImmutableList;
 import com.google.common.eventbus.EventBus;
 import com.google.inject.Inject;
@@ -60,7 +61,7 @@ public class CVOperations {
                         templateFactory.createAllMatTwoSource(opencv_core::bitwise_and)),
 
                 new OperationMetaData(CVOperation.defaults("CV bitwise_not", "Calculate per-element bit-wise inversion of an image."),
-                        templateFactory.createAllMatTwoSource(opencv_core::bitwise_not)),
+                        templateFactory.createAllMatOneSource(opencv_core::bitwise_not)),
 
                 new OperationMetaData(CVOperation.defaults("CV bitwise_or", "Calculate the per-element bit-wise disjunction of two images."),
                         templateFactory.createAllMatTwoSource(opencv_core::bitwise_or)),
@@ -203,7 +204,7 @@ public class CVOperations {
                                 new SocketHint.Builder<>(Scalar.class).identifier("borderValue").initialValueSupplier(opencv_imgproc::morphologyDefaultBorderValue).build(),
                                 SocketHints.Outputs.createMatSocketHint("dst"),
                                 (src, kernel, anchor, iterations, borderType, borderValue, dst) -> {
-                                    opencv_imgproc.dilate(src, kernel, dst, anchor, iterations.intValue(), borderType.value, borderValue);
+                                    opencv_imgproc.dilate(src, dst, kernel, anchor, iterations.intValue(), borderType.value, borderValue);
                                 }
                         )),
 
@@ -217,7 +218,7 @@ public class CVOperations {
                                 new SocketHint.Builder<>(Scalar.class).identifier("borderValue").initialValueSupplier(opencv_imgproc::morphologyDefaultBorderValue).build(),
                                 SocketHints.Outputs.createMatSocketHint("dst"),
                                 (src, kernel, anchor, iterations, borderType, borderValue, dst) -> {
-                                    opencv_imgproc.erode(src, kernel, dst, anchor, iterations.intValue(), borderType.value, borderValue);
+                                    opencv_imgproc.erode(src, dst, kernel, anchor, iterations.intValue(), borderType.value, borderValue);
                                 }
                         )),
 
@@ -277,7 +278,7 @@ public class CVOperations {
                         templateFactory.create(
                                 SocketHints.Inputs.createMatSocketHint("src", false),
                                 new SocketHint.Builder<>(Size.class).identifier("dsize").initialValueSupplier(() -> new Size(0, 0)).build(),
-                                SocketHints.Inputs.createNumberSpinnerSocketHint("fx", .25), SocketHints.Inputs.createNumberSpinnerSocketHint("fx", .25),
+                                SocketHints.Inputs.createNumberSpinnerSocketHint("fx", .25), SocketHints.Inputs.createNumberSpinnerSocketHint("fy", .25),
                                 SocketHints.createEnumSocketHint("interpolation", InterpolationFlagsEnum.INTER_LINEAR),
                                 SocketHints.Outputs.createMatSocketHint("dst"),
                                 (src, dsize, fx, fy, interpolation, dst) -> {
@@ -312,6 +313,14 @@ public class CVOperations {
                                 }
                         ))
         );
+    }
+
+    /**
+     * All of the operations that this list supplies
+     */
+    @VisibleForTesting
+    ImmutableList<OperationMetaData> operations() {
+        return ImmutableList.<OperationMetaData>builder().addAll(coreOperations).addAll(imgprocOperation).build();
     }
 
     public void addOperations() {

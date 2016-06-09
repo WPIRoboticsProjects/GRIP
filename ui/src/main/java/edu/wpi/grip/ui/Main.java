@@ -24,6 +24,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
+import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
 import javax.inject.Inject;
@@ -72,6 +73,12 @@ public class Main extends Application {
             // Otherwise, run with both the core and UI modules, and show the JavaFX stage
             injector = Guice.createInjector(Modules.override(new GRIPCoreModule(), new GripFileModule(), new GRIPNetworkModule(), new GRIPSourcesHardwareModule()).with(new GRIPUIModule()));
             injector.injectMembers(this);
+
+            System.setProperty("prism.lcdtext", "false");
+            Font.loadFont(this.getClass().getResource("roboto/Roboto-Regular.ttf").openStream(), -1);
+            Font.loadFont(this.getClass().getResource("roboto/Roboto-Bold.ttf").openStream(), -1);
+            Font.loadFont(this.getClass().getResource("roboto/Roboto-Italic.ttf").openStream(), -1);
+            Font.loadFont(this.getClass().getResource("roboto/Roboto-BoldItalic.ttf").openStream(), -1);
 
             root = FXMLLoader.load(Main.class.getResource("MainWindow.fxml"), null, null, injector::getInstance);
             root.setStyle("-fx-font-size: " + DPIUtility.FONT_SIZE + "px");

@@ -6,7 +6,7 @@ build_script:
 
 # to run your custom scripts instead of automatic tests
 test_script:
-  - gradlew.bat check --stacktrace -Pheadless=true
+  - gradlew.bat check --stacktrace -Pheadless=true -PlogTests
 
 platform:
   - x64

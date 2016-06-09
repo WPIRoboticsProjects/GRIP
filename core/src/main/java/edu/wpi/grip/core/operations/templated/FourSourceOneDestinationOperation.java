@@ -32,6 +32,7 @@ final class FourSourceOneDestinationOperation<T1, T2, T3, T4, R> implements Oper
         this.input3 = inputSocketFactory.create(t3SocketHint);
         this.input4 = inputSocketFactory.create(t4SocketHint);
         this.output = outputSocketFactory.create(rSocketHint);
+        assert output.getValue().isPresent() : TemplateFactory.ASSERTION_MESSAGE;
     }
 
 

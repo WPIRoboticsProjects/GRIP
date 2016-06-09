@@ -1,69 +1,55 @@
 package edu.wpi.grip.core.operations;
 
-import com.google.common.base.Throwables;
+import com.google.common.collect.ImmutableList;
 import com.google.common.eventbus.EventBus;
-import com.google.common.eventbus.Subscribe;
 import edu.wpi.grip.core.OperationMetaData;
 import edu.wpi.grip.core.Step;
-import edu.wpi.grip.core.events.OperationAddedEvent;
 import edu.wpi.grip.core.util.MockExceptionWitness;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+import org.junit.runners.Parameterized.Parameter;
+import org.junit.runners.Parameterized.Parameters;
 
-import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
-import java.util.Optional;
 
-//import edu.wpi.grip.generated.CVOperations;
-
+@RunWith(Parameterized.class)
 public class OperationsTest {
-    private List<OperationMetaData> operationList;
-    private Optional<Throwable> throwableOptional;
-    private EventBus eventBus;
 
-    private class OperationGrabber {
-        @Subscribe
-        public void onOperationAddedEvent(OperationAddedEvent event) {
-            operationList.add(event.getOperation());
-        }
+    @Parameter
+    public OperationMetaData operationMetaData;
+
+    @Parameters(name = "{index}: Operation({0})")
+    public static Collection<Object[]> data() {
+        EventBus eventBus = new EventBus();
+        List<OperationMetaData> operationMetaDatas =
+                ImmutableList.<OperationMetaData>builder()
+                        .addAll(
+                                OperationsFactory
+                                        .create(eventBus)
+                                        .operations())
+                        .addAll(
+                                OperationsFactory
+                                        .createCV(eventBus)
+                                        .operations())
+                        .build();
+
+        Object[][] params = new Object[operationMetaDatas.size()][1];
+        final int[] index = {0};
+        operationMetaDatas.forEach(operationMeta -> {
+            params[index[0]][0] = operationMeta;
+            index[0]++;
+        });
+        return Arrays.asList(params);
     }
 
-
-    @Before
-    public void setUp() {
-        this.operationList = new ArrayList<>();
-        this.throwableOptional = Optional.empty();
-        this.eventBus = new EventBus((exception, context) -> throwableOptional = Optional.of(exception));
-
-        this.eventBus.register(new OperationGrabber());
-    }
-
-    @After
-    public void afterTest() {
-        if (throwableOptional.isPresent()) {
-            throw Throwables.propagate(throwableOptional.get());
-        }
-    }
 
     @Test
-    public void testCreateAllCVSteps() {
-        OperationsFactory.createCV(eventBus).addOperations();
-        for (OperationMetaData operationMeta : operationList) {
-            final Step step =
-                    new Step.Factory((origin) -> new MockExceptionWitness(eventBus, origin)).create(operationMeta);
-            step.setRemoved();
-        }
-    }
-
-    @Test
-    public void testCreateAllCoreSteps() {
-        OperationsFactory.create(eventBus)
-                .addOperations();
-        for (OperationMetaData operationMeta : operationList) {
-            final Step step =
-                    new Step.Factory((origin) -> new MockExceptionWitness(eventBus, origin)).create(operationMeta);
-            step.setRemoved();
-        }
+    public void testCreateAllSteps() {
+        final Step step =
+                new Step.Factory((origin) -> new MockExceptionWitness(new EventBus(), origin)).create(operationMetaData);
+        step.setRemoved();
     }
 }

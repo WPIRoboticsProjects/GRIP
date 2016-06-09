@@ -44,6 +44,7 @@ final class SixSourceOneDestinationOperation<T1, T2, T3, T4, T5, T6, R> implemen
         this.input5 = inputSocketFactory.create(t5SocketHint);
         this.input6 = inputSocketFactory.create(t6SocketHint);
         this.output = outputSocketFactory.create(rSocketHint);
+        assert output.getValue().isPresent() : TemplateFactory.ASSERTION_MESSAGE;
     }
 
 

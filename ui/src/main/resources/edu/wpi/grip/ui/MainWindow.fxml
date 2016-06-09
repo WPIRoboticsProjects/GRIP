@@ -20,7 +20,7 @@
             <Menu text="File">
                 <MenuItem text="New" onAction="#newProject">
                     <accelerator>
-                        <KeyCodeCombination alt="UP" code="N" control="DOWN" meta="UP" shift="UP" shortcut="UP"/>
+                        <KeyCodeCombination alt="UP" code="N" control="UP" meta="UP" shift="UP" shortcut="DOWN"/>
                     </accelerator>
                     <graphic>
                         <ImageView>
@@ -38,7 +38,7 @@
                 </MenuItem>
                 <MenuItem text="Open" onAction="#openProject">
                     <accelerator>
-                        <KeyCodeCombination alt="UP" code="O" control="DOWN" meta="UP" shift="UP" shortcut="UP"/>
+                        <KeyCodeCombination alt="UP" code="O" control="UP" meta="UP" shift="UP" shortcut="DOWN"/>
                     </accelerator>
                     <graphic>
                         <ImageView>
@@ -56,7 +56,7 @@
                 </MenuItem>
                 <MenuItem text="Save" onAction="#saveProject">
                     <accelerator>
-                        <KeyCodeCombination alt="UP" code="S" control="DOWN" meta="UP" shift="UP" shortcut="UP"/>
+                        <KeyCodeCombination alt="UP" code="S" control="UP" meta="UP" shift="UP" shortcut="DOWN"/>
                     </accelerator>
                     <graphic>
                         <ImageView>
@@ -74,7 +74,7 @@
                 </MenuItem>
                 <MenuItem text="Save As" onAction="#saveProjectAs">
                     <accelerator>
-                        <KeyCodeCombination alt="UP" code="S" control="DOWN" meta="UP" shift="DOWN" shortcut="UP"/>
+                        <KeyCodeCombination alt="UP" code="S" control="UP" meta="UP" shift="DOWN" shortcut="DOWN"/>
                     </accelerator>
                     <graphic>
                         <ImageView>
@@ -93,14 +93,14 @@
                 <SeparatorMenuItem/>
                 <MenuItem text="Exit" onAction="#quit">
                     <accelerator>
-                        <KeyCodeCombination alt="UP" code="Q" control="DOWN" meta="UP" shift="UP" shortcut="UP"/>
+                        <KeyCodeCombination alt="UP" code="Q" control="UP" meta="UP" shift="UP" shortcut="DOWN"/>
                     </accelerator>
                 </MenuItem>
             </Menu>
             <Menu text="Tools">
                 <MenuItem text="Deploy" onAction="#deploy">
                     <accelerator>
-                        <KeyCodeCombination alt="UP" code="R" control="DOWN" meta="UP" shift="UP" shortcut="UP"/>
+                        <KeyCodeCombination alt="UP" code="R" control="UP" meta="UP" shift="UP" shortcut="DOWN"/>
                     </accelerator>
                     <graphic>
                         <ImageView styleClass="menu-graphic">
@@ -132,6 +132,23 @@
                     </graphic>
                 </MenuItem>
             </Menu>
+            <Menu text="Help">
+                <MenuItem text="About" onAction="#showProjectAboutDialog">
+                    <graphic>
+                        <ImageView styleClass="menu-graphic">
+                            <fitWidth>
+                                <DPIUtility fx:constant="SMALL_ICON_SIZE"/>
+                            </fitWidth>
+                            <fitHeight>
+                                <DPIUtility fx:constant="SMALL_ICON_SIZE"/>
+                            </fitHeight>
+                            <image>
+                                <Image url="@icons/grip.png"/>
+                            </image>
+                        </ImageView>
+                    </graphic>
+                </MenuItem>
+            </Menu>
         </MenuBar>
         <SplitPane dividerPositions="0.6" orientation="VERTICAL" VBox.vgrow="ALWAYS">
             <items>
@@ -148,9 +165,9 @@
     </children>
     <fx:define>
         <fx:include source="Deploy.fxml" fx:id="deployPane"/>
+        <fx:include source="AboutDialog.fxml" fx:id="aboutPane"/>
     </fx:define>
     <stylesheets>
-        <URL value="@roboto/Roboto.css"/>
         <URL value="@GRIP.css"/>
     </stylesheets>
 </VBox>

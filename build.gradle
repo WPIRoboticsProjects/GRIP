@@ -140,7 +140,11 @@ allprojects {
     // Turn on test results
     test {
         testLogging {
-            events "failed"
+            if (project.hasProperty('logTests')) {
+                events  "started", "passed", "skipped", "failed"
+            } else {
+                events "failed"
+            }
             exceptionFormat "full"
         }
         doFirst {
@@ -168,12 +172,12 @@ project(":core") {
     repositories {
         flatDir {
             dirs 'libs'
-            maven {
-                url = "http://first.wpi.edu/FRC/roborio/maven/development"
-            }
-            maven {
-                url = "https://github.com/WPIRoboticsProjects/rosjava_mvn_repo/raw/master"
-            }
+        }
+        maven {
+            url = "http://first.wpi.edu/FRC/roborio/maven/development"
+        }
+        maven {
+            url = "https://github.com/WPIRoboticsProjects/rosjava_mvn_repo/raw/master"
         }
     }
 

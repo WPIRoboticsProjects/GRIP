@@ -17,6 +17,7 @@ import edu.wpi.grip.ui.util.DPIUtility;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.SplitPane;
@@ -26,6 +27,8 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
+import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import org.controlsfx.control.StatusBar;
 
 import javax.inject.Inject;
@@ -49,6 +52,8 @@ public class MainWindowController {
     @FXML
     private Pane deployPane;
     @FXML
+    private Pane aboutPane;
+    @FXML
     private StatusBar statusBar;
     @Inject
     private EventBus eventBus;
@@ -64,6 +69,8 @@ public class MainWindowController {
     private Palette palette;
     @Inject
     private Project project;
+
+    private Stage aboutDialogStage;
 
     public void initialize() {
         pipelineView.prefHeightProperty().bind(bottomPane.heightProperty());
@@ -207,6 +214,21 @@ public class MainWindowController {
                 eventBus.post(new ProjectSettingsChangedEvent(projectSettings));
             }
         });
+    }
+
+    @FXML
+    public void showProjectAboutDialog() throws IOException {
+        if (aboutDialogStage == null) {
+            aboutDialogStage = new Stage();
+            aboutDialogStage.setScene(new Scene(aboutPane));
+            aboutDialogStage.initStyle(StageStyle.UTILITY);
+            aboutDialogStage.focusedProperty().addListener((observable, oldvalue, newvalue) -> {
+                if (oldvalue) {
+                    aboutDialogStage.hide();
+                }
+            });
+        }
+        aboutDialogStage.show();
     }
 
     @FXML
