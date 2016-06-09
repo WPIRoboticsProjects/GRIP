@@ -2,6 +2,7 @@ package edu.wpi.grip.core.operations;
 
 
 import com.google.common.eventbus.EventBus;
+import edu.wpi.grip.core.FileManager;
 import edu.wpi.grip.core.operations.network.MapNetworkPublisherFactory;
 import edu.wpi.grip.core.operations.network.MockMapNetworkPublisher;
 import edu.wpi.grip.core.operations.network.ros.JavaToMessageConverter;
@@ -11,6 +12,7 @@ import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.sockets.MockInputSocketFactory;
 import edu.wpi.grip.core.sockets.MockOutputSocketFactory;
 import edu.wpi.grip.core.sockets.OutputSocket;
+import edu.wpi.grip.core.util.MockFileManager;
 
 import java.util.Optional;
 
@@ -38,17 +40,16 @@ public class OperationsFactory {
     }
 
     public static Operations create(EventBus eventBus) {
-
-        return create(eventBus, MockMapNetworkPublisher::new, MockROSMessagePublisher::new,
-                new MockInputSocketFactory(eventBus), new MockOutputSocketFactory(eventBus));
+        return create(eventBus, MockMapNetworkPublisher::new, MockROSMessagePublisher::new, new MockFileManager(), new MockInputSocketFactory(eventBus), new MockOutputSocketFactory(eventBus));
     }
 
     public static Operations create(EventBus eventBus,
                                     MapNetworkPublisherFactory mapFactory,
                                     ROSNetworkPublisherFactory rosFactory,
+                                    FileManager fileManager,
                                     InputSocket.Factory isf,
                                     OutputSocket.Factory osf) {
-        return new Operations(eventBus, mapFactory, rosFactory, isf, osf);
+        return new Operations(eventBus, mapFactory, rosFactory, fileManager, isf, osf);
     }
 
     public static CVOperations createCV(EventBus eventBus) {

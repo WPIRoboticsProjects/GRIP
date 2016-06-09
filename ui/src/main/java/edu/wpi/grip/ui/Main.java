@@ -15,6 +15,7 @@ import edu.wpi.grip.core.operations.Operations;
 import edu.wpi.grip.core.operations.network.GRIPNetworkModule;
 import edu.wpi.grip.core.serialization.Project;
 import edu.wpi.grip.core.sources.GRIPSourcesHardwareModule;
+import edu.wpi.grip.core.GripFileModule;
 import edu.wpi.grip.core.util.SafeShutdown;
 import edu.wpi.grip.ui.util.DPIUtility;
 import javafx.application.Application;
@@ -63,13 +64,13 @@ public class Main extends Application {
 
         if (parameters.contains("--headless")) {
             // If --headless was specified on the command line, run in headless mode (only use the core module)
-            injector = Guice.createInjector(new GRIPCoreModule(), new GRIPNetworkModule(), new GRIPSourcesHardwareModule());
+            injector = Guice.createInjector(new GRIPCoreModule(), new GripFileModule(), new GRIPNetworkModule(), new GRIPSourcesHardwareModule());
             injector.injectMembers(this);
 
             parameters.remove("--headless");
         } else {
             // Otherwise, run with both the core and UI modules, and show the JavaFX stage
-            injector = Guice.createInjector(Modules.override(new GRIPCoreModule(), new GRIPNetworkModule(), new GRIPSourcesHardwareModule()).with(new GRIPUIModule()));
+            injector = Guice.createInjector(Modules.override(new GRIPCoreModule(), new GripFileModule(), new GRIPNetworkModule(), new GRIPSourcesHardwareModule()).with(new GRIPUIModule()));
             injector.injectMembers(this);
 
             root = FXMLLoader.load(Main.class.getResource("MainWindow.fxml"), null, null, injector::getInstance);
