@@ -10,7 +10,7 @@ import edu.wpi.grip.core.Palette;
 import edu.wpi.grip.core.Step;
 import edu.wpi.grip.core.operations.OperationsFactory;
 import edu.wpi.grip.core.sockets.InputSocket;
-import edu.wpi.grip.ui.GripUIModule;
+import edu.wpi.grip.ui.GripUiModule;
 import edu.wpi.grip.util.GripCoreTestModule;
 
 import java.util.Arrays;
@@ -81,7 +81,7 @@ public class InputSocketControllerFactoryTest extends ApplicationTest {
     public void start(Stage stage) {
         testModule = new GripCoreTestModule();
         testModule.setUp();
-        Injector injector = Guice.createInjector(Modules.override(testModule).with(new GripUIModule()));
+        Injector injector = Guice.createInjector(Modules.override(testModule).with(new GripUiModule()));
         inputSocketControllerFactory = injector.getInstance(InputSocketControllerFactory.class);
         stepFactory = injector.getInstance(Step.Factory.class);
         gridPane = new GridPane();

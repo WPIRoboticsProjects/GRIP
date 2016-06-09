@@ -21,7 +21,7 @@ import edu.wpi.grip.core.sources.CameraSource;
 import edu.wpi.grip.core.sources.ImageFileSource;
 import edu.wpi.grip.core.sources.MultiImageFileSource;
 import edu.wpi.grip.core.util.ExceptionWitness;
-import edu.wpi.grip.core.util.GRIPMode;
+import edu.wpi.grip.core.util.GripMode;
 
 import java.io.IOException;
 import java.util.logging.FileHandler;
@@ -102,7 +102,7 @@ public class GripCoreModule extends AbstractModule {
 
     @Override
     protected void configure() {
-        bind(GRIPMode.class).toInstance(GRIPMode.HEADLESS);
+        bind(GripMode.class).toInstance(GripMode.HEADLESS);
 
         // Register any injected object on the event bus
         bindListener(Matchers.any(), new TypeListener() {

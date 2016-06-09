@@ -9,7 +9,7 @@ import edu.wpi.grip.core.operations.network.ros.ROSNetworkPublisherFactory;
 /**
  * A mock of {@Link GRIPNetworkModule} for testing.
  */
-public final class MockGRIPNetworkModule extends AbstractModule {
+public final class MockGripNetworkModule extends AbstractModule {
     @Override
     protected void configure() {
         bind(MapNetworkPublisherFactory.class)

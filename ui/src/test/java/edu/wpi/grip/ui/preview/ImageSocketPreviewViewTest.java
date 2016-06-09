@@ -7,7 +7,7 @@ import com.google.inject.util.Modules;
 
 import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.core.sockets.SocketHint;
-import edu.wpi.grip.ui.GripUIModule;
+import edu.wpi.grip.ui.GripUiModule;
 import edu.wpi.grip.ui.util.MockGripPlatform;
 import edu.wpi.grip.util.Files;
 import edu.wpi.grip.util.GripCoreTestModule;
@@ -33,7 +33,7 @@ public class ImageSocketPreviewViewTest extends ApplicationTest {
         testModule = new GripCoreTestModule();
         testModule.setUp();
 
-        final Injector injector = Guice.createInjector(Modules.override(testModule).with(new GripUIModule()));
+        final Injector injector = Guice.createInjector(Modules.override(testModule).with(new GripUiModule()));
         final ImageSocketPreviewView imageSocketPreviewView =
             new ImageSocketPreviewView(new MockGripPlatform(new EventBus()),
                 injector.getInstance(OutputSocket.Factory.class)

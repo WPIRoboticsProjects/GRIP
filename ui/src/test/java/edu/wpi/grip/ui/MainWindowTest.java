@@ -12,7 +12,7 @@ import edu.wpi.grip.core.OperationMetaData;
 import edu.wpi.grip.core.Pipeline;
 import edu.wpi.grip.core.PipelineRunner;
 import edu.wpi.grip.core.events.OperationAddedEvent;
-import edu.wpi.grip.core.operations.network.MockGRIPNetworkModule;
+import edu.wpi.grip.core.operations.network.MockGripNetworkModule;
 import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.ui.util.DPIUtility;
@@ -48,7 +48,7 @@ public class MainWindowTest extends ApplicationTest {
         testModule.setUp();
 
         Injector injector = Guice.createInjector(
-            Modules.override(testModule, new MockGRIPNetworkModule()).with(new GripUIModule()));
+            Modules.override(testModule, new MockGripNetworkModule()).with(new GripUiModule()));
 
         final Parent root =
             FXMLLoader.load(Main.class.getResource("MainWindow.fxml"), null, null, injector::getInstance);

@@ -14,7 +14,7 @@ import edu.wpi.grip.core.operations.network.ros.ROSNetworkPublisherFactory;
  * can define "Static State" that can cause other tests to fail in
  * unexpected ways if not properly cleaned up.
  */
-public final class GRIPNetworkModule extends AbstractModule {
+public final class GripNetworkModule extends AbstractModule {
     @Override
     protected void configure() {
         bind(MapNetworkPublisherFactory.class)

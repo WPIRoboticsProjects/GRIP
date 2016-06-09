@@ -36,7 +36,7 @@ public class GripCoreTestModule extends GripCoreModule {
 
     public GripCoreTestModule() {
         super();
-        assert !instanceAlive : "There is a GRIPCoreTestModule that did not have it's `tearDown` method called.";
+        assert !instanceAlive : "There is a GripCoreTestModule that did not have it's `tearDown` method called.";
     }
 
     public void setUp() {
@@ -70,7 +70,7 @@ public class GripCoreTestModule extends GripCoreModule {
 
     @Override
     protected void configure() {
-        assert setUp : "The GRIPCoreTestModule handler was not set up. Call 'setUp' before passing the injector";
+        assert setUp : "The GripCoreTestModule handler was not set up. Call 'setUp' before passing the injector";
         bind(CameraSource.FrameGrabberFactory.class).to(MockFrameGrabberFactory.class);
         super.configure();
     }

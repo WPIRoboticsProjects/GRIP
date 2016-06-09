@@ -14,7 +14,7 @@ import edu.wpi.grip.core.operations.network.Manager;
 import edu.wpi.grip.core.operations.network.MapNetworkPublisher;
 import edu.wpi.grip.core.operations.network.MapNetworkPublisherFactory;
 import edu.wpi.grip.core.settings.ProjectSettings;
-import edu.wpi.grip.core.util.GRIPMode;
+import edu.wpi.grip.core.util.GripMode;
 
 import java.io.File;
 import java.util.HashMap;
@@ -61,7 +61,7 @@ public class NTManager implements Manager, MapNetworkPublisherFactory {
     private final Logger logger = Logger.getLogger(getClass().getName());
 
     @Inject private PipelineRunner pipelineRunner;
-    @Inject private GRIPMode gripMode;
+    @Inject private GripMode gripMode;
 
     @Inject
     NTManager() {
@@ -80,7 +80,7 @@ public class NTManager implements Manager, MapNetworkPublisherFactory {
         // When in headless mode, start and stop the pipeline based on the "GRIP/run" key.  This allows robot programs
         // to control GRIP without actually restarting the process.
         NetworkTable.getTable("GRIP").addTableListener("run", (source, key, value, isNew) -> {
-            if (gripMode == GRIPMode.HEADLESS) {
+            if (gripMode == GripMode.HEADLESS) {
                 if (!(value instanceof Boolean)) {
                     logger.warning("NetworkTables value GRIP/run should be a boolean!");
                     return;

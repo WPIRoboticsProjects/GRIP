@@ -37,7 +37,7 @@ public class ROSManager implements Manager, ROSNetworkPublisherFactory {
     /**
      * A node to publish GRIP messages with
      */
-    private static class GRIPPublisherNode extends AbstractNodeMain {
+    private static class GripPublisherNode extends AbstractNodeMain {
         private static final GraphName GRIP_ROOT = GraphName.of("GRIP/publisher");
         private final java.lang.String publishType;
         private final SinglePermitSemaphore semaphore = new SinglePermitSemaphore();
@@ -46,7 +46,7 @@ public class ROSManager implements Manager, ROSNetworkPublisherFactory {
 
         private final GraphName nodeName;
 
-        public GRIPPublisherNode(java.lang.String publishType, GraphName nodeName) {
+        public GripPublisherNode(java.lang.String publishType, GraphName nodeName) {
             super();
             this.publishType = publishType;
             this.nodeName = GRIP_ROOT.join(nodeName);
@@ -85,16 +85,16 @@ public class ROSManager implements Manager, ROSNetworkPublisherFactory {
     private static final class ROSNetworkPublisher<C extends JavaToMessageConverter> extends ROSMessagePublisher {
         private final C converter;
         private Optional<java.lang.String> name = Optional.empty();
-        private Optional<GRIPPublisherExecutorPair> publisherExecutor = Optional.empty();
+        private Optional<GripPublisherExecutorPair> publisherExecutor = Optional.empty();
 
         /**
          * Defines a mapping between the publisher and the executor that is running the publisher.
          */
-        private static class GRIPPublisherExecutorPair {
-            private final GRIPPublisherNode publisher;
+        private static class GripPublisherExecutorPair {
+            private final GripPublisherNode publisher;
             private final NodeMainExecutor nodeMainExecutor;
 
-            private GRIPPublisherExecutorPair(GRIPPublisherNode publisher, NodeMainExecutor nodeMainExecutor) {
+            private GripPublisherExecutorPair(GripPublisherNode publisher, NodeMainExecutor nodeMainExecutor) {
                 this.publisher = checkNotNull(publisher, "publisher cannot be null");
                 this.nodeMainExecutor = checkNotNull(nodeMainExecutor, "nodeMainExecutor, cannot be null");
             }
@@ -105,8 +105,8 @@ public class ROSManager implements Manager, ROSNetworkPublisherFactory {
             this.converter = checkNotNull(converter, "Converter cannot be null");
         }
 
-        private GRIPPublisherNode createNewPublisher() {
-            return new GRIPPublisherNode(converter.getType(), GraphName.of(name.get()));
+        private GripPublisherNode createNewPublisher() {
+            return new GripPublisherNode(converter.getType(), GraphName.of(name.get()));
         }
 
         @Override
@@ -121,11 +121,11 @@ public class ROSManager implements Manager, ROSNetworkPublisherFactory {
             // The executor will run the node
             final NodeMainExecutor nodeMainExecutor = DefaultNodeMainExecutor.newDefault();
             // The new node to be executed
-            final GRIPPublisherNode gripPublisherNode = createNewPublisher();
+            final GripPublisherNode gripPublisherNode = createNewPublisher();
             // Start the node running
             nodeMainExecutor.execute(gripPublisherNode, configuration);
             // Save the new instance of the publisher
-            publisherExecutor = Optional.of(new GRIPPublisherExecutorPair(gripPublisherNode, nodeMainExecutor));
+            publisherExecutor = Optional.of(new GripPublisherExecutorPair(gripPublisherNode, nodeMainExecutor));
         }
 
         @Override

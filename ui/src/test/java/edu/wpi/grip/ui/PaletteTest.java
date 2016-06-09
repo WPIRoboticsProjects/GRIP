@@ -40,7 +40,7 @@ public class PaletteTest extends ApplicationTest {
     public void start(Stage stage) throws IOException {
         testModule.setUp();
 
-        Injector injector = Guice.createInjector(Modules.override(testModule).with(new GripUIModule()));
+        Injector injector = Guice.createInjector(Modules.override(testModule).with(new GripUiModule()));
         eventBus = injector.getInstance(EventBus.class);
 
         FXMLLoader loader = new FXMLLoader(getClass().getResource("Palette.fxml"));

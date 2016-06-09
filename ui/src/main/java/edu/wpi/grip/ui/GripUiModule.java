@@ -9,7 +9,7 @@ import com.google.inject.spi.TypeEncounter;
 import com.google.inject.spi.TypeListener;
 
 import edu.wpi.grip.core.Source;
-import edu.wpi.grip.core.util.GRIPMode;
+import edu.wpi.grip.core.util.GripMode;
 import edu.wpi.grip.ui.annotations.ParametrizedController;
 import edu.wpi.grip.ui.components.ExceptionWitnessResponderButton;
 import edu.wpi.grip.ui.components.StartStoppableButton;
@@ -35,10 +35,10 @@ import javafx.fxml.FXMLLoader;
 /**
  * A Guice {@link com.google.inject.Module} for GRIP's UI package.
  */
-public class GripUIModule extends AbstractModule {
+public class GripUiModule extends AbstractModule {
     @Override
     protected void configure() {
-        bind(GRIPMode.class).toInstance(GRIPMode.GUI);
+        bind(GripMode.class).toInstance(GripMode.GUI);
 
         bindListener(Matchers.any(), new TypeListener() {
             @Override

@@ -7,7 +7,7 @@ import com.google.inject.util.Modules;
 
 import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.core.sockets.SocketHint;
-import edu.wpi.grip.ui.GripUIModule;
+import edu.wpi.grip.ui.GripUiModule;
 import edu.wpi.grip.ui.util.MockGripPlatform;
 import edu.wpi.grip.util.GripCoreTestModule;
 
@@ -39,7 +39,7 @@ public class PointSizeSocketPreviewViewTest {
         public void start(Stage stage) {
             testModule = new GripCoreTestModule();
             testModule.setUp();
-            final Injector injector = Guice.createInjector(Modules.override(testModule).with(new GripUIModule()));
+            final Injector injector = Guice.createInjector(Modules.override(testModule).with(new GripUiModule()));
             final OutputSocket<Point> pointOutputSocket =
                 injector.getInstance(OutputSocket.Factory.class)
                     .create(new SocketHint.Builder<>(Point.class)
@@ -79,7 +79,7 @@ public class PointSizeSocketPreviewViewTest {
         public void start(Stage stage) {
             testModule = new GripCoreTestModule();
             testModule.setUp();
-            final Injector injector = Guice.createInjector(Modules.override(testModule).with(new GripUIModule()));
+            final Injector injector = Guice.createInjector(Modules.override(testModule).with(new GripUiModule()));
             final OutputSocket<Size> sizeOutputSocket =
                 injector.getInstance(OutputSocket.Factory.class)
                     .create(new SocketHint.Builder<>(Size.class)

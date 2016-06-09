@@ -9,9 +9,9 @@ import edu.wpi.grip.core.events.ExceptionClearedEvent;
 import edu.wpi.grip.core.events.ExceptionEvent;
 import edu.wpi.grip.core.operations.CVOperations;
 import edu.wpi.grip.core.operations.Operations;
-import edu.wpi.grip.core.operations.network.GRIPNetworkModule;
+import edu.wpi.grip.core.operations.network.GripNetworkModule;
 import edu.wpi.grip.core.serialization.Project;
-import edu.wpi.grip.core.sources.GRIPSourcesHardwareModule;
+import edu.wpi.grip.core.sources.GripSourcesHardwareModule;
 
 import java.io.File;
 import java.io.IOException;
@@ -34,7 +34,7 @@ public class Main {
 
     @SuppressWarnings("PMD.SystemPrintln")
     public static void main(String[] args) throws IOException, InterruptedException {
-        final Injector injector = Guice.createInjector(new GripCoreModule(), new GRIPNetworkModule(), new GRIPSourcesHardwareModule());
+        final Injector injector = Guice.createInjector(new GripCoreModule(), new GripNetworkModule(), new GripSourcesHardwareModule());
         injector.getInstance(Main.class).start(args);
     }
 

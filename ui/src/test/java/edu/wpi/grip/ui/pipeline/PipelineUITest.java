@@ -16,7 +16,7 @@ import edu.wpi.grip.core.SubtractionOperation;
 import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.core.util.MockExceptionWitness;
-import edu.wpi.grip.ui.GripUIModule;
+import edu.wpi.grip.ui.GripUiModule;
 import edu.wpi.grip.ui.util.StyleClassNameUtility;
 import edu.wpi.grip.ui.util.TestAnnotationFXMLLoader;
 import edu.wpi.grip.util.GripCoreTestModule;
@@ -56,7 +56,7 @@ public class PipelineUITest extends ApplicationTest {
     public void start(Stage stage) {
         testModule = new GripCoreTestModule();
         testModule.setUp();
-        final Injector injector = Guice.createInjector(Modules.override(testModule).with(new GripUIModule()));
+        final Injector injector = Guice.createInjector(Modules.override(testModule).with(new GripUiModule()));
         eventBus = injector.getInstance(EventBus.class);
         pipeline = injector.getInstance(Pipeline.class);
         InputSocket.Factory isf = injector.getInstance(InputSocket.Factory.class);

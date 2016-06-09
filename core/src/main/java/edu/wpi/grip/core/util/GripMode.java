@@ -5,6 +5,6 @@ package edu.wpi.grip.core.util;
  * <p>
  * To the get the mode, this can be injected into a class (ie: @Inject private GRIPMode mode;)
  */
-public enum GRIPMode {
+public enum GripMode {
     GUI, HEADLESS
 }
