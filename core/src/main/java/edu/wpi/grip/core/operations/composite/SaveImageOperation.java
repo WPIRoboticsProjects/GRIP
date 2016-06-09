@@ -52,7 +52,7 @@ public class SaveImageOperation implements Operation {
     private final FileManager fileManager;
     private final BytePointer imagePointer = new BytePointer();
     private final Stopwatch stopwatch = Stopwatch.createStarted();
-    private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmssSSS");
+    private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd_HH-mm-ss-SSS");
 
     public SaveImageOperation(InputSocket.Factory inputSocketFactory, OutputSocket.Factory outputSocketFactory, FileManager fileManager) {
         this.fileManager = fileManager;
@@ -89,7 +89,7 @@ public class SaveImageOperation implements Operation {
         }
 
         // don't save new image until period expires
-        if (stopwatch.elapsed(TimeUnit.NANOSECONDS) < periodSocket.getValue().get().doubleValue()*1000000000L) {
+        if (stopwatch.elapsed(TimeUnit.MILLISECONDS) < periodSocket.getValue().get().doubleValue()*1000L) {
             return;
         }
         stopwatch.reset();
