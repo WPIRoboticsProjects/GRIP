@@ -97,7 +97,7 @@ allprojects {
 
     checkstyle {
         configFile = new File(rootDir, "checkstyle.xml")
-        toolVersion = '6.19'
+        toolVersion = '6.18' // can't use 6.19, it messes with the "check" task
     }
 
     repositories {
