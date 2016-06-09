@@ -2,9 +2,11 @@ package edu.wpi.grip.util;
 
 
 import com.google.common.eventbus.SubscriberExceptionContext;
+import edu.wpi.grip.core.FileManager;
 import edu.wpi.grip.core.GRIPCoreModule;
 import edu.wpi.grip.core.sources.CameraSource;
 import edu.wpi.grip.core.sources.MockFrameGrabberFactory;
+import edu.wpi.grip.core.util.MockFileManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -71,6 +73,7 @@ public class GRIPCoreTestModule extends GRIPCoreModule {
     protected void configure() {
         assert setUp : "The GRIPCoreTestModule handler was not set up. Call 'setUp' before passing the injector";
         bind(CameraSource.FrameGrabberFactory.class).to(MockFrameGrabberFactory.class);
+        bind(FileManager.class).to(MockFileManager.class);
         super.configure();
     }
 

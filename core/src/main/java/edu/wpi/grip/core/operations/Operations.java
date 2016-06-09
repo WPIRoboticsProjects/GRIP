@@ -5,6 +5,7 @@ import com.google.common.eventbus.EventBus;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.google.inject.name.Named;
+import edu.wpi.grip.core.FileManager;
 import edu.wpi.grip.core.OperationMetaData;
 import edu.wpi.grip.core.events.OperationAddedEvent;
 import edu.wpi.grip.core.operations.composite.*;
@@ -38,11 +39,13 @@ public class Operations {
     Operations(EventBus eventBus,
                @Named("ntManager") MapNetworkPublisherFactory ntPublisherFactory,
                @Named("rosManager") ROSNetworkPublisherFactory rosPublishFactory,
+               FileManager fileManager,
                InputSocket.Factory isf,
                OutputSocket.Factory osf) {
         this.eventBus = checkNotNull(eventBus, "EventBus cannot be null");
         checkNotNull(ntPublisherFactory, "ntPublisherFactory cannot be null");
         checkNotNull(rosPublishFactory, "rosPublishFactory cannot be null");
+        checkNotNull(fileManager,"fileManager cannot be null");
         this.operations = ImmutableList.of(
                 // Composite operations
                 new OperationMetaData(BlurOperation.DESCRIPTION, () -> new BlurOperation(isf, osf)),
@@ -61,7 +64,7 @@ public class Operations {
                 new OperationMetaData(PublishVideoOperation.DESCRIPTION, () -> new PublishVideoOperation(isf)),
                 new OperationMetaData(ResizeOperation.DESCRIPTION, () -> new ResizeOperation(isf, osf)),
                 new OperationMetaData(RGBThresholdOperation.DESCRIPTION, () -> new RGBThresholdOperation(isf, osf)),
-                new OperationMetaData(SaveImageOperation.DESCRIPTION, () -> new SaveImageOperation(isf, osf)),
+                new OperationMetaData(SaveImageOperation.DESCRIPTION, () -> new SaveImageOperation(isf, osf, fileManager)),
                 new OperationMetaData(SwitchOperation.DESCRIPTION, () -> new SwitchOperation(isf, osf)),
                 new OperationMetaData(ValveOperation.DESCRIPTION, () -> new ValveOperation(isf, osf)),
                 new OperationMetaData(WatershedOperation.DESCRIPTION, () -> new WatershedOperation(isf, osf)),

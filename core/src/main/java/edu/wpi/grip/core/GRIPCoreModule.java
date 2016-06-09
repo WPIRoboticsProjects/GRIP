@@ -105,6 +105,8 @@ public class GRIPCoreModule extends AbstractModule {
 
         bind(EventBus.class).toInstance(eventBus);
 
+        bind(FileManager.class).to(GripFileManager.class);
+
         // Allow for just injecting the settings provider, instead of the whole pipeline
         bind(SettingsProvider.class).to(Pipeline.class);
 
