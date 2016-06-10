@@ -32,7 +32,7 @@
         <property name="eachLine" value="true" />
     </module>
 
-    <module name="NewlineAtEndOfFile" />
+    <!--<module name="NewlineAtEndOfFile" />--> <!-- Screwed up on Appveyor for some reason -->
 
     <module name="TreeWalker">
         <module name="AvoidNestedBlocks" />
