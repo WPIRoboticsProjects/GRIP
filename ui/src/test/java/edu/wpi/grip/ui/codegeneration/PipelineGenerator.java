@@ -10,31 +10,34 @@ import edu.wpi.grip.core.Step;
 import edu.wpi.grip.core.events.ConnectionAddedEvent;
 import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.sockets.OutputSocket;
-import edu.wpi.grip.core.Connection.Factory;
+import edu.wpi.grip.core.Connection;
 import edu.wpi.grip.core.OperationMetaData;
 import edu.wpi.grip.core.util.ExceptionWitness;
 import edu.wpi.grip.core.util.MockExceptionWitness;
 public class PipelineGenerator {
-	@Inject
 	private Pipeline pipeline;
-	@Inject
 	private Exporter exporter;
-	@Inject
 	private EventBus eventBus;
-	@Inject
-	private Factory factory;
+	private Connection.Factory<Object> factory;
+	public PipelineGenerator(Pipeline pipe, EventBus evtBus, Connection.Factory<Object> factory){
+		pipeline = pipe;
+		eventBus = evtBus;
+		this.factory = factory;
+	}
 	final File codeDir = Paths.get("ui", "src","test","java","edu","wpi","grip","ui","codegeneration").toFile();
 	
-	public void addStep(OperationMetaData data){
+	public Step addStep(OperationMetaData data){
 		Step step = new Step.Factory(MockExceptionWitness.MOCK_FACTORY).create(data);
 		pipeline.addStep(step);
+		return step;
 	}
 	
-	public <T> boolean connect (OutputSocket<? extends T> out, InputSocket<T> inp ){
-		eventBus.post(new ConnectionAddedEvent(factory.create(out, inp)));
+	public <T> void connect (OutputSocket<? extends T> out, InputSocket<T> inp ){
+		eventBus.post(new ConnectionAddedEvent(factory.create(out, (InputSocket<Object>) inp)));
 	}
 	
 	public void export(String fileName){
-		exporter.export(pipeline, Language.JAVA, codeDir.toPath().resolve(fileName).toFile());
+		exporter.export(pipeline, Language.JAVA, codeDir.toPath().resolve(fileName).toFile(), false);
 	}
+
 }
