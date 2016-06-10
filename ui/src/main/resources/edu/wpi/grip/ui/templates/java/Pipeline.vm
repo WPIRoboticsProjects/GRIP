@@ -37,7 +37,11 @@ public class $fileName{
 #foreach($moving in $pipeline.getMovingThresholds())
     private Mat lastImageS$moving.num() = new Mat();
 #end
-
+#if($loadLib)
+	static{
+		System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
+	}
+#end
 
 	/**
 	 * This constructor sets up the pipeline
