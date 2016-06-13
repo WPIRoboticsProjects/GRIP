@@ -1,25 +1,13 @@
 		//input
 #foreach($input in $step.getInputs())
-#if( $input.mutable() )##Is Mutable
-#if( $input.hasValue() )##Has a set value
-		$input.baseType() $input.name()$c = $input.value();
-#else##Has Connected Socket
-		$input.baseType() $input.name()$c = ${input.value()}.get().$input.baseType()Value();
-#end##end Has a set value
-#else##Not Mutable
-#if ( $input.type() == "FlipCode" )
-		$input.type() $input.name()$c = FlipCode.$input.value();
-#else
-		$input.type() $input.name()$c = $input.value();
-#end
-#end##end Is Mutable
+#newInput($input)
 #end
 		//output
 #foreach($output in $step.getOutputs())
 #if( $output.mutable() )
 		#MutOf($output.type()) $output.name() = new #MutOf($output.type())();
 #else
-		$output.type() $output.name() = new $output.type()();
+		#socketType($output.type()) $output.name() = new #socketType($output.type())();
 #end
 #end
 		$tMeth.callJavaOp($step);

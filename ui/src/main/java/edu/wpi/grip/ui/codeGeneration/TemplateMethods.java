@@ -54,12 +54,6 @@ public class TemplateMethods {
           .equals(socket.getSocketHint().getType())) {
         type += "CoreEnum";
       }
-    } else if (type.equals("ContoursReport")) {
-      type = "ArrayList<MatOfPoint>";
-    } else if (type.equals("BlobsReport")) {
-      type = "MatOfKeyPoint";
-    } else if (type.equals("LinesReport")) {
-      type = "ArrayList<Line>";
     }
     return type;
   }

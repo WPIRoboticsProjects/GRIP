@@ -14,6 +14,10 @@ import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.ui.codegeneration.TemplateMethods;
 
 
+/**
+ * TPipeline(template pipeline) is a data structure that holds the information about a pipeline
+ * needed by the velocity templates to generate code.
+ */
 public class TPipeline {
 
   protected List<TStep> steps;
@@ -22,6 +26,11 @@ public class TPipeline {
   private Map<InputSocket, TOutput> connections;
 
 
+  /**
+   * Creates a Tpipeline from a pipeline
+   *
+   * @param pipeline The current grip pipeline.
+   */
   public TPipeline(Pipeline pipeline) {
     this.steps = new ArrayList<TStep>();
     this.numSources = 0;
@@ -30,6 +39,11 @@ public class TPipeline {
     set(pipeline);
   }
 
+  /**
+   * sets up the entire Tpipeline by creating the Tsteps
+   *
+   * @param pipeline The grip pipeline used to create the TPipeline.
+   */
   public void set(Pipeline pipeline) {
     int count = 0;
     for (Step step : pipeline.getSteps()) {
@@ -70,14 +84,22 @@ public class TPipeline {
     }
   }
 
+  /**
+   * Creates a TInput for a TStep
+   *
+   * @param type  The data type of the input
+   * @param name  The name of the input
+   * @param value The value of the input
+   * @return The generated TInput.
+   */
   protected TInput createInput(String type, String name, String value) {
-    if (type.equals("Number")) {
+    /*if (type.equals("Number")) {
       if (value.contains(".")) {
         type = "Double";
       } else {
         type = "Integer";
       }
-    }
+    }*/
     if (value.contains("Optional.empty") || value.contains("Connection") || value.contains
         ("ContoursReport")) {
       int s = numSources;
@@ -86,20 +108,7 @@ public class TPipeline {
     } else if (value.contains("null")) {
       value = "null";
     }
-
-    if (type.contains("CoreEnum")) {
-      return new TInput("Integer", name, "Core." + value);
-    } else if (type.contains("Enum")) {
-      return new TInput("Integer", name, "Imgproc." + value);
-    } else if (type.equals("MaskSize") || type.contains("Type") || type.equals("Interpolation")) {
-      return new TInput(type, name, type + ".get(\"" + value + "\")");
-    } else if (type.equals("String")) {
-      return new TInput(type, name, "\"" + value + "\"");
-    } else if (type.equals("List")) {
-      return new TInput("double[]", name, "{" + value.substring(1, value.length() - 1) + "}");
-    } else {
-      return new TInput(type, name, value);
-    }
+    return new TInput(type, name, value);
   }
 
   public List<TStep> getSteps() {
@@ -123,6 +132,11 @@ public class TPipeline {
     return numSources;
   }
 
+  /**
+   * Returns a list of all of the sources in a the pipeline.
+   *
+   * @return the list of sources.
+   */
   public List<TSocket> getSources() {
     List<TSocket> sources = new ArrayList<TSocket>();
     for (TStep step : steps) {
@@ -135,6 +149,11 @@ public class TPipeline {
     return sources;
   }
 
+  /**
+   * creates a list of all of the Moving_Threshold operations.
+   *
+   * @return the list of Moving_Threshold operations.
+   */
   public List<TStep> getMovingThresholds() {
     List<TStep> moving = new ArrayList<TStep>();
     for (TStep step : steps) {

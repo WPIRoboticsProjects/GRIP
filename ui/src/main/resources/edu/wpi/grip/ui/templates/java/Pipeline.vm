@@ -32,7 +32,7 @@ public class $fileName{
 	//This map links the Outputs with their names
 	private Map<String,Object> outputs;
 #foreach($source in $pipeline.getSources())
-	private ${source.type()} $source.value();
+	private #socketType(${source.type()}) $source.value();
 #end
 #foreach($moving in $pipeline.getMovingThresholds())
     private Mat lastImageS$moving.num() = new Mat();
@@ -64,9 +64,9 @@ public class $fileName{
 #foreach($source in $pipeline.getSources())
 	/**
 	 * This method is a generated setter for $source.value().
-	 * @param source the $source.type() to set
+	 * @param source the #socketType($source.type()) to set
 	 */
-	public void set${source.value()}(${source.type()} ${source.value()}){
+	public void set${source.value()}(#socketType(${source.type()}) ${source.value()}){
 		this.$source.value() = ${source.value()};
 	}
 #end
@@ -74,13 +74,13 @@ public class $fileName{
 #foreach($output in $step.getOutputs())
 	/**
 	 * This method is a generated getter for the output of a $step.name().
-	 * @return ${output.baseType()} output from $step.name().
+	 * @return #socketType(${output.baseType()}) output from $step.name().
 	 */
-	public ${output.baseType()} get${output.name()}(){
+	public #socketType(${output.baseType()}) get${output.name()}(){
 #if( $output.mutable() ) #set($needsMut = true)
 		return ((#MutOf(${output.type()})) outputs.get("${output.name()}")).get();
 #else
-		return (${output.type()}) outputs.get("${output.name()}");
+		return (#socketType(${output.type()})) outputs.get("${output.name()}");
 #end
 	}
 #end

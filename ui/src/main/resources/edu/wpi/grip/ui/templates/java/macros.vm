@@ -1,2 +1,35 @@
 #macro ( MutOf $obj )
 MutableOf<$obj>#end
+
+#macro ( newInput $input)
+#if( $input.mutable() )##Is Mutable
+#if( $input.hasValue() )##Has a set value
+		$input.baseType() $input.name()$c = $input.value();
+#else##Has Connected Socket
+		$input.baseType() $input.name()$c = ${input.value()}.get().$input.baseType()Value();
+#end##end Has a set value
+#else##Not Mutable
+#if ( $input.type() == "FlipCode" )
+		$input.type() $input.name()$c = FlipCode.$input.value();
+#elseif ($input.type().contains("CoreEnum"))
+		Integer $input.name()$c = Core.$input.value();
+#elseif ($input.type().contains("Enum"))
+		Integer $input.name()$c = Imgproc.$input.value();
+#elseif ($input.type().equals("MaskSize") || $input.type().contains("Type") || $input.type().equals("Interpolation"))
+		$input.type() $input.name()$c = ${input.type()}.get("${input.value()}");
+#elseif ($input.type().equals("String"))
+		$input.type() $input.name()$c = "$input.value()";
+#elseif ($input.type().equals("List"))
+#set($inputEndValue = $input.value().length() - 1)
+		double[] $input.name()$c = {$input.value().substring(1,$inputEndValue)};
+#else
+		#socketType($input.type()) $input.name()$c = $input.value();
+#end
+#end#end
+
+
+#macro (socketType $type)#if ($type.equals("ContoursReport"))
+ArrayList<MatOfPoint>#elseif ($type.equals("BlobsReport"))
+MatOfKeyPoint#elseif ($type.equals("LinesReport"))
+ArrayList<Line>#else
+$type#end#end
