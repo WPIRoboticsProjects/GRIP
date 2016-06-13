@@ -81,13 +81,14 @@ public class Exporter {
     return out.toString();
   }
 
-  public void export(Pipeline pipeline, Language lang, File dir) {
+  public void export(Pipeline pipeline, Language lang, File dir, boolean loadLib) {
     TPipeline tPipeline = new TPipeline(pipeline);
     TemplateMethods tempMeth = new TemplateMethods();
     VelocityContext context = new VelocityContext();
     context.put("pipeline", tPipeline);
     context.put("tMeth", tempMeth);
     context.put("fileName", dir.getName().substring(0, dir.getName().lastIndexOf(".")));
+    context.put("loadLib", loadLib);
     StringBuilder templateDirBuilder = new StringBuilder();
     templateDirBuilder.append("src/main/resources/edu/wpi/grip/ui/templates/");
     switch (lang) {

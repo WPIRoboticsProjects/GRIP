@@ -281,6 +281,6 @@ public class MainWindowController {
         	return;
         }
         Language lang = Language.get(fileChooser.getSelectedExtensionFilter().getDescription());
-		exporter.export(pipeline, lang, file);
+		exporter.export(pipeline, lang, file, true);
     }
 }
