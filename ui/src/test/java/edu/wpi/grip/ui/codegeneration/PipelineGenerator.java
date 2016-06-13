@@ -15,14 +15,16 @@ import edu.wpi.grip.core.OperationMetaData;
 import edu.wpi.grip.core.util.ExceptionWitness;
 import edu.wpi.grip.core.util.MockExceptionWitness;
 public class PipelineGenerator {
+	@Inject
 	private Pipeline pipeline;
+	@Inject
 	private Exporter exporter;
+	@Inject
 	private EventBus eventBus;
+	@Inject
 	private Connection.Factory<Object> factory;
-	public PipelineGenerator(Pipeline pipe, EventBus evtBus, Connection.Factory<Object> factory){
-		pipeline = pipe;
-		eventBus = evtBus;
-		this.factory = factory;
+	public PipelineGenerator(){
+		
 	}
 	final File codeDir = Paths.get("ui", "src","test","java","edu","wpi","grip","ui","codegeneration").toFile();
 	

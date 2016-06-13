@@ -11,7 +11,7 @@ import org.junit.Test;
 import com.google.common.eventbus.EventBus;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
-
+import javax.inject.Inject;
 import edu.wpi.grip.core.Connection;
 import edu.wpi.grip.core.OperationMetaData;
 import edu.wpi.grip.core.Pipeline;
@@ -27,30 +27,29 @@ import edu.wpi.grip.util.GRIPCoreTestModule;
 
 public class BlurGenerator {
     private GRIPCoreTestModule testModule;
-    private Step.Factory stepFactory;
+    @Inject
     private EventBus eventBus;
+    @Inject
     private Pipeline pipeline;
+    @Inject
     private InputSocket.Factory isf;
+    @Inject
     private OutputSocket.Factory osf;
-    private Connection.Factory<Object> connFact;
-    ImageFileSource.Factory imgfac;
+    @Inject
+    private ImageFileSource.Factory imgfac;
+    private PipelineGenerator gen;
     @Before
     public void setUp(){
         testModule = new GRIPCoreTestModule();
         testModule.setUp();
         System.out.println("About to configure CoreTestModule");
         final Injector injector = Guice.createInjector(testModule);
-        stepFactory = injector.getInstance(Step.Factory.class);
-        eventBus = injector.getInstance(EventBus.class);
-        pipeline = injector.getInstance(Pipeline.class);
-        isf = injector.getInstance(InputSocket.Factory.class);
-        osf = injector.getInstance(OutputSocket.Factory.class);
-        connFact = injector.getInstance(Connection.Factory.class);
-        imgfac = injector.getInstance(ImageFileSource.Factory.class);
+        injector.injectMembers(this);
+        gen = new PipelineGenerator();
+        injector.injectMembers(gen);
     }
 	@Test
-	public void GenerateAndRun() {
-		PipelineGenerator gen = new PipelineGenerator(pipeline, eventBus, connFact);
+	public void generateAndRun() {
 		Step step = gen.addStep(new OperationMetaData(BlurOperation.DESCRIPTION, () -> new BlurOperation(isf,osf)));	
 		eventBus.post(new SourceAddedEvent(imgfac.create(new File("src/test/resources/edu/wpi/grip/images/gompei.jpeg"))));
 		OutputSocket imgOut = pipeline.getSources().get(0).getOutputSockets().get(0);
