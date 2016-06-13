@@ -116,4 +116,30 @@ public class TemplateMethods {
     }
   }
 
+  public static String callCOp(TStep step){
+    String num = "S" + step.num();
+    StringBuilder out = new StringBuilder();
+    out.append(cName(step.name()));
+    out.append("(");
+    for (TInput input : step.getInputs()) {
+      out.append(input.name());
+      out.append(num);
+      out.append(", ");
+    }
+    if (step.name().equals("Threshold_Moving")) {
+      out.append("this.lastImage");
+      out.append(num);
+      out.append(", ");
+    }
+    if (!step.getOutputs().isEmpty()) {
+      for (int i = 0; i < step.getOutputs().size() - 1; i++) {
+        out.append(step.getOutputs().get(i).name());
+        out.append(", ");
+      }
+      out.append(step.getOutputs().get(step.getOutputs().size() - 1).name());
+    }
+    out.append(")");
+    return out.toString();
+  }
+
 }

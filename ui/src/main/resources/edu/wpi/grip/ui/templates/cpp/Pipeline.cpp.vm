@@ -1,5 +1,48 @@
-#**
-This creates the complete C++ pipeline.
-*#
+\#include "${fileName}.h"
+$fileName::$fileName() {
+}
+
+void $fileName::Process(){
+#foreach($step in $pipeline.getSteps())
+#set($c = "S" + $step.num())
+	//Step$step.num(): $step.name():
+#parse("src/main/resources/edu/wpi/grip/ui/templates/cpp/CV Step.vm")
+
+	#end
+}
+
+#foreach($source in $pipeline.getSources())
+/**
+ * This method is a generated setter for $source.value().
+ * @param source the $source.type() to set
+ */
+void $fileName::set${source.value()}(#cType(${source.type()}) ${source.value()}){
+	this.$source.value() = ${source.value()};
+}
+#end
+
+#foreach($step in $pipeline.getSteps())
+#foreach($output in $step.getOutputs())
+/**
+ * This method is a generated getter for the output of a $step.name().
+ * @return ${output.baseType()} output from $step.name().
+ */
+$output.type() $fileName::get${output.name()}(){
+	return ($output.type()) outputs["${output.name()}"];
+}
+#end
+#end
+
+#foreach($step in $pipeline.getUniqueSteps())
+#set($toParse = "src/main/resources/edu/wpi/grip/ui/templates/cpp/operations/" + $step.name())
+#set($toParse = $toParse + ".vm")
+#parse($toParse)
+
+#end
+
+
+
+
+
 
 

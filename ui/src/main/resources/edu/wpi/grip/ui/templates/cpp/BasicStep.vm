@@ -1,0 +1,21 @@
+	//input
+#foreach($input in $step.getInputs())
+#if( $input.hasValue() )##Has a set value
+	$input.baseType() $input.name()$c = $input.value();
+#else##Has Connected Socket
+	$input.baseType() $input.name()$c = ${input.value()}.get().$input.baseType()Value();
+#end##end Has a set value
+#if ( $input.type() == "FlipCode" )
+	$input.type() $input.name()$c = FlipCode.$input.value();
+#else
+	$input.type() $input.name()$c = $input.value();
+#end
+#end
+	//output
+#foreach($output in $step.getOutputs())
+	$output.type() $output.name();
+#end
+	$tMeth.callCOp($step);
+#foreach($output in $step.getOutputs())
+	outputs["$output.name()"] $output.name();
+#end

@@ -1,21 +1,25 @@
 /#pragma once
 
-class Pipeline{
+class $fileName{
 	private:
-#forEach( $source in $pipeline.getSources() )
-		#cType( $source.type() ) *$source.name();
-#end
-#forEach ( $step in $pipeline.getUniqueSteps() )
-		void #func($step);
-#end
-	public:
-		void Process();
-#forEach( $source in $pipeline.getSources() )
-		void #setter($source);
-#end
-#forEach( $step in $pipeline.getSteps() )
-#forEach( $out in $step.getOutputs() )
-		$out.type() #getter($out $step $velocityCount);
-#end
-#end
+		std::unordered_map<std::string,Object*> outputs;
+	#foreach( $source in $pipeline.getSources())
+          #cType($source.type()) *$source.name();
+    #end
+
+    #foreach($moving in $pipeline.getMovingThresholds())
+          private Mat lastImageS$moving.num() = new Mat();
+    #end
+
+    public:
+          void Process();
+    #foreach($source in $pipeline.getSources())
+          void #setter($source);
+    #end
+
+    #foreach( $step in $pipeline.getSteps() )
+    #foreach( $out in $step.getOutputs() )
+          #cType($out.type()) get${out.name()}();
+	#end
+	#end
 }

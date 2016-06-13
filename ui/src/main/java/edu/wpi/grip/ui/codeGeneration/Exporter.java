@@ -112,7 +112,7 @@ public class Exporter {
     try {
       switch (lang) {
         case CPP:
-
+          exportC(ve, templateDir, dir, context);
           break;
         case JAVA:
           exportJava(ve, templateDir, dir, context);
@@ -132,8 +132,32 @@ public class Exporter {
     Template tm = ve.getTemplate(templateDir + pipelineTemplate);
     StringWriter sw = new StringWriter();
     tm.merge(context, sw);
-    
+
     try (PrintWriter writer = new PrintWriter(file.getAbsolutePath(), "UTF-8")) {
+      writer.println(sw);
+    } catch (UnsupportedEncodingException | FileNotFoundException e) {
+
+    }
+  }
+
+  private void exportC(VelocityEngine ve, String templateDir, File file, VelocityContext
+      context) {
+    Template tm = ve.getTemplate(templateDir + "Pipeline.cpp.vm");
+    StringWriter sw = new StringWriter();
+    tm.merge(context, sw);
+
+    try (PrintWriter writer = new PrintWriter(file.getAbsolutePath(), "UTF-8")) {
+      writer.println(sw);
+    } catch (UnsupportedEncodingException | FileNotFoundException e) {
+
+    }
+
+    tm = ve.getTemplate(templateDir + "Pipeline.h.vm");
+    sw = new StringWriter();
+    tm.merge(context, sw);
+
+    try (PrintWriter writer = new PrintWriter(file.getParentFile().getAbsolutePath() +
+        "/Pipeline.h", "UTF-8")) {
       writer.println(sw);
     } catch (UnsupportedEncodingException | FileNotFoundException e) {
 

@@ -6,19 +6,10 @@ int
 #elseif( $type == "Boolean" || "boolean")
 bool
 #else
-$type#end
+$type#end #end
 
-#macro( cName $name )
-TemplateMethods.cName($name)#end
-
-#macro( func $step )
-#cName($step.name())(#forEach($inp in $step.getInputs()) #cType($inp.type()) *$inp.name(), #end #forEach($out in $step.getOutputs()) #cType($out.type()) *#cName($out.name())#if($velocityCount < $step.getOutputs().size()),#end#end)#end
-
-#macro( setter $source )
+#macro(setter $source)
 Set$source.value()($source.type() *$source.value())#end
 
-#macro( getter $out $step $countplusone)#set( $cnt = countplusone -1)
-GetStep$step.num()Output$cnt()#end
-
-#macro( classMethod )
-Pipeline::#end
+#macro( func $step )
+$tMeth.cName($step.name())(#foreach($inp in $step.getInputs()) #cType($inp.type()) *$inp.name(), #end#foreach($out in $step.getOutputs()) #cType($out.type()) *#cName($out.name())#if($velocityCount <$step.getOutputs().size()), #end#end)#end
