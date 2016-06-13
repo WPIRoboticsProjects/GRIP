@@ -22,65 +22,20 @@ import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.ui.codegeneration.java.TPipeline;
 
+/**
+ * Primary class for creating files and setting up code generation.
+ */
 @Singleton
 public class Exporter {
-  private final String pipelineTemplate = "pipeline.vm";
+  private final String pipelineTemplate = "Pipeline.vm";
 
-  public String stepNames(Pipeline pipeline) {
-    StringBuilder out = new StringBuilder();
-    for (Step step : getSteps(pipeline)) {
-      out.append(step.getOperationDescription().name() + " \n");
-      out.append(getInputNames(step));
-      out.append(getOutputNames(step));
-    }
-    return out.toString();
-  }
-
-  public List<Step> getSteps(Pipeline pipeline) {
-    return pipeline.getSteps();
-  }
-
-  public String getInputNames(Step step) {
-    StringBuilder out = new StringBuilder();
-    for (InputSocket input : step.getInputSockets()) {
-      String type = TemplateMethods.parseSocketType(input);
-      String name = TemplateMethods.parseSocketName(input);
-      String value = TemplateMethods.parseSocketValue(input);
-      out.append(createClass(type, name, value) + " \n");
-      out.append(type + "\n");
-    }
-    out.append(step.getOperationDescription().summary() + "\n");
-    return out.toString();
-  }
-
-  public static String createClass(String type, String name, String value) {
-    if (type.contains("Enum")) {
-      return "int " + name + " = Imgproc." + value;
-    } else if (type.equals("Type")) {
-      return "String " + name + " = \"" + value + "\"";
-    } else if (type.equals("List")) {
-      StringBuilder out = new StringBuilder();
-      out.append("double min" + name + " = " + value.substring(1, value.indexOf(",")) + "\n");
-      out.append("double max" + name + " = " + value.substring(value.indexOf(",") + 1, value.lastIndexOf
-          ("]")));
-      return out.toString();
-    } else {
-      return type + " " + name + " = " + value;
-    }
-
-  }
-
-
-  public String getOutputNames(Step step) {
-    StringBuilder out = new StringBuilder();
-    for (OutputSocket output : step.getOutputSockets()) {
-      out.append("    " + output.getSocketHint().getType().getSimpleName() + ": " + output.getSocketHint()
-          .getIdentifier() +
-          " \n");
-    }
-    return out.toString();
-  }
-
+  /**
+   * Creates a TPipeline from the current pipeline and generates code to the target location
+   * @param pipeline The current pipeline that will be exported
+   * @param lang The language that will be exported into
+   * @param dir The location that the generated code will be placed
+   * @param loadLib Should be true when not in testing. Only false if in testing.
+   */
   public void export(Pipeline pipeline, Language lang, File dir, boolean loadLib) {
     TPipeline tPipeline = new TPipeline(pipeline);
     TemplateMethods tempMeth = new TemplateMethods();
@@ -91,19 +46,7 @@ public class Exporter {
     context.put("loadLib", loadLib);
     StringBuilder templateDirBuilder = new StringBuilder();
     templateDirBuilder.append("src/main/resources/edu/wpi/grip/ui/templates/");
-    switch (lang) {
-      case JAVA:
-        templateDirBuilder.append("java");
-        break;
-      case PYTHON:
-        templateDirBuilder.append("python");
-        break;
-      case CPP:
-        templateDirBuilder.append("cpp");
-        break;
-      default:
-        throw new IllegalArgumentException(lang.toString() + " is not a supported language for code generation.");
-    }
+    templateDirBuilder.append(lang.filePath());
     templateDirBuilder.append("/");
     final String templateDir = templateDirBuilder.toString();
     VelocityEngine ve = new VelocityEngine();
@@ -111,16 +54,9 @@ public class Exporter {
     props.put("velocimacro.library", templateDir + "macros.vm");
     ve.init(props);
     try {
-      switch (lang) {
-        case CPP:
-          exportC(ve, templateDir, dir, context);
-          break;
-        case JAVA:
-          exportJava(ve, templateDir, dir, context);
-          break;
-        case PYTHON:
-
-          break;
+      generateCode(ve, templateDir, dir, context);
+      if(lang.equals(Language.CPP)){
+        generateH(ve,templateDir,dir,context);
       }
     } catch (ResourceNotFoundException e) {
       String error = e.getMessage();
@@ -129,7 +65,17 @@ public class Exporter {
     }
   }
 
-  private void exportJava(VelocityEngine ve, String templateDir, File file, VelocityContext context) {
+
+  /**
+   * Creates a file and generates code in it using templates.
+   * @param ve The velocity engine used with the desired properties.
+   * @param templateDir The directory of the velocity templates that will be used.
+   * @param file The location to put the file.
+   * @param context The velocity context including the java files that will be used by the
+   *                templates.
+   */
+  private void generateCode(VelocityEngine ve, String templateDir, File file, VelocityContext
+      context) {
     Template tm = ve.getTemplate(templateDir + pipelineTemplate);
     StringWriter sw = new StringWriter();
     tm.merge(context, sw);
@@ -141,20 +87,18 @@ public class Exporter {
     }
   }
 
-  private void exportC(VelocityEngine ve, String templateDir, File file, VelocityContext
+  /**
+   * Code to generate the .h file if the export type is c++
+   * @param ve The velocity engine used with the desired properties.
+   * @param templateDir The directory of the velocity templates that will be used.
+   * @param file The location to put the file.
+   * @param context The velocity context including the java files that will be used by the
+   *                templates.
+   */
+  private void generateH(VelocityEngine ve, String templateDir, File file, VelocityContext
       context) {
-    Template tm = ve.getTemplate(templateDir + "Pipeline.cpp.vm");
+    Template tm = ve.getTemplate(templateDir + "Pipeline.h.vm");
     StringWriter sw = new StringWriter();
-    tm.merge(context, sw);
-
-    try (PrintWriter writer = new PrintWriter(file.getAbsolutePath(), "UTF-8")) {
-      writer.println(sw);
-    } catch (UnsupportedEncodingException | FileNotFoundException e) {
-
-    }
-
-    tm = ve.getTemplate(templateDir + "Pipeline.h.vm");
-    sw = new StringWriter();
     tm.merge(context, sw);
 
     try (PrintWriter writer = new PrintWriter(file.getParentFile().getAbsolutePath() +

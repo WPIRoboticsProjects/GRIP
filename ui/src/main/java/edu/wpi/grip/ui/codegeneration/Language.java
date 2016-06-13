@@ -20,4 +20,19 @@ public enum Language {
   public String toString() {
     return name;
   }
+
+
+  public String filePath() {
+    switch (this) {
+      case JAVA:
+        return "java";
+      case PYTHON:
+        return "python";
+      case CPP:
+        return "cpp";
+      default:
+        throw new IllegalArgumentException(this.toString() + " is not a supported language for " +
+            "code generation.");
+    }
+  }
 }
