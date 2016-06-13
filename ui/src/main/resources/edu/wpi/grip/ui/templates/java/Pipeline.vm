@@ -58,7 +58,6 @@ public class $fileName{
 	 * This constructor sets up the pipeline
 	 */
 	public $fileName(){
-		outputs = new HashMap<String,Object>();
 	}
 
 	/**
@@ -88,11 +87,7 @@ public class $fileName{
 	 * @return #socketType(${output.baseType()}) output from $step.name().
 	 */
 	public #socketType(${output.baseType()}) get${output.name()}(){
-#if( $output.mutable() ) #set($needsMut = true)
-		return ${output.name()}.get();
-#else
-		$output.name();
-#end
+		return $output.name();
 	}
 #end
 #end
