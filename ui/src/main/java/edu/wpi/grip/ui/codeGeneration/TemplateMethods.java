@@ -11,8 +11,8 @@ import edu.wpi.grip.core.sockets.Socket;
 import edu.wpi.grip.core.sockets.SocketHint;
 import edu.wpi.grip.generated.opencv_core.enumeration.BorderTypesEnum;
 import edu.wpi.grip.generated.opencv_core.enumeration.CmpTypesEnum;
-import edu.wpi.grip.ui.codegeneration.java.TInput;
-import edu.wpi.grip.ui.codegeneration.java.TStep;
+import edu.wpi.grip.ui.codegeneration.data.TInput;
+import edu.wpi.grip.ui.codegeneration.data.TStep;
 
 public abstract class TemplateMethods {
 

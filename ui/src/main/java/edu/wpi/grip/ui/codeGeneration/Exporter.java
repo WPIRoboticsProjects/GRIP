@@ -20,7 +20,7 @@ import edu.wpi.grip.core.Pipeline;
 import edu.wpi.grip.core.Step;
 import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.sockets.OutputSocket;
-import edu.wpi.grip.ui.codegeneration.java.TPipeline;
+import edu.wpi.grip.ui.codegeneration.data.TPipeline;
 
 /**
  * Primary class for creating files and setting up code generation.

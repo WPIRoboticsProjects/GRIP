@@ -1,6 +1,6 @@
 package edu.wpi.grip.ui.codegeneration;
 
-import edu.wpi.grip.ui.codegeneration.java.TStep;
+import edu.wpi.grip.ui.codegeneration.data.TStep;
 
 /**
  * Created by Toby on 6/13/16.
