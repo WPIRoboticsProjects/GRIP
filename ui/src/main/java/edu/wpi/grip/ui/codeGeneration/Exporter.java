@@ -38,7 +38,7 @@ public class Exporter {
    */
   public void export(Pipeline pipeline, Language lang, File dir, boolean loadLib) {
     TPipeline tPipeline = new TPipeline(pipeline);
-    TemplateMethods tempMeth = new TemplateMethods();
+    TemplateMethods tempMeth = TemplateMethods.get(lang);
     VelocityContext context = new VelocityContext();
     context.put("pipeline", tPipeline);
     context.put("tMeth", tempMeth);

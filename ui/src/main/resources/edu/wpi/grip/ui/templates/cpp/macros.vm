@@ -12,4 +12,4 @@ $type#end #end
 Set$source.value()($source.type() *$source.value())#end
 
 #macro( func $step )
-$tMeth.cName($step.name())(#foreach($inp in $step.getInputs()) #cType($inp.type()) *$inp.name(), #end#foreach($out in $step.getOutputs()) #cType($out.type()) *#cName($out.name())#if($velocityCount <$step.getOutputs().size()), #end#end)#end
+$tMeth.name($step.name())(#foreach($inp in $step.getInputs()) #cType($inp.type()) *$inp.name(), #end#foreach($out in $step.getOutputs()) #cType($out.type()) *#cName($out.name())#if($velocityCount <$step.getOutputs().size()), #end#end)#end

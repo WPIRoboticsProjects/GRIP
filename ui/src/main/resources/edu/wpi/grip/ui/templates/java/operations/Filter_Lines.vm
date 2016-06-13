@@ -7,7 +7,7 @@
 	 * @param angle The minimum and maximum angle of a line to be kept.
 	 * @param outputs The output lines after the filter.
 	 */
-	private void $tMeth.javaName($step.name())(List<Line> inputs,double minLength,double[] angle, List<Line>
+	private void $tMeth.name($step.name())(List<Line> inputs,double minLength,double[] angle, List<Line>
 	outputs){
 		outputs = inputs.stream()
 				.filter(line -> line.lengthSquared() >= Math.pow(minLength,2))

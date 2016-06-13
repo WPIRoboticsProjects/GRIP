@@ -20,6 +20,6 @@
 	 * @param flipcode FlipCode of which direction to flip.
 	 * @param dst flipped version of the Image.
 	 */
-	private void $tMeth.javaName($step.name())(Mat src, FlipCode flipcode, Mat dst){
+	private void $tMeth.name($step.name())(Mat src, FlipCode flipcode, Mat dst){
 		Core.flip(src,dst,flipcode.value);
 	}

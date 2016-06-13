@@ -7,7 +7,7 @@
 	 * @param gradient if the L2 norm should be used.
 	 * @param edges output of the canny.
 	 */
-	private void $tMeth.javaName($step.name())(Mat image, double thres1, double thres2, double apertureSize,
+	private void $tMeth.name($step.name())(Mat image, double thres1, double thres2, double apertureSize,
 	boolean gradient, Mat edges){
 		Imgproc.Canny(image, edges, thres1, thres2, (int) apertureSize, gradient);
 	}

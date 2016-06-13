@@ -10,7 +10,7 @@
 		#socketType($output.type()) $output.name() = new #socketType($output.type())();
 #end
 #end
-		$tMeth.callJavaOp($step);
+		$tMeth.callOp($step);
 #foreach($output in $step.getOutputs())
 		outputs.put("$output.name()", $output.name());
 #end

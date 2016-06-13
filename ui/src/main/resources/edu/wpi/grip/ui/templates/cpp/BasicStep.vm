@@ -15,7 +15,7 @@
 #foreach($output in $step.getOutputs())
 	$output.type() $output.name();
 #end
-	$tMeth.callCOp($step);
+	$tMeth.callOp($step);
 #foreach($output in $step.getOutputs())
 	outputs["$output.name()"] $output.name();
 #end

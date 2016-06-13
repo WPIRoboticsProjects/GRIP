@@ -9,7 +9,7 @@
 	 * @param shift Number of decimal places in the points.
 	 * @param dst output image.
 	 */
-	private void $tMeth.javaName($step.name())(Mat src, Point pt1, Point pt2, Scalar color, double thickness,
+	private void $tMeth.name($step.name())(Mat src, Point pt1, Point pt2, Scalar color, double thickness,
 	 int lineType, double shift, Mat dst){
 		src.copyTo(dst);
 		if(color == null){

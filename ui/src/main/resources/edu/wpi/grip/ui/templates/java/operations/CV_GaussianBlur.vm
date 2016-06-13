@@ -7,7 +7,7 @@
 	 * @param borderType pixel extrapolation method.
 	 * @param dst the output image.
 	 */
-	private void $tMeth.javaName($step.name())(Mat src, Size kSize, double sigmaX, double sigmaY, int
+	private void $tMeth.name($step.name())(Mat src, Size kSize, double sigmaX, double sigmaY, int
 	borderType, Mat dst){
 		if(kSize == null){
 			kSize = new Size(1,1);

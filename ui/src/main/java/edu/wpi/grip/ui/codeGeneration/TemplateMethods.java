@@ -14,23 +14,31 @@ import edu.wpi.grip.generated.opencv_core.enumeration.CmpTypesEnum;
 import edu.wpi.grip.ui.codegeneration.java.TInput;
 import edu.wpi.grip.ui.codegeneration.java.TStep;
 
-public class TemplateMethods {
+public abstract class TemplateMethods {
 
-  private Pipeline pipeline;
-  private Map<Connection, String> connections;
-  private int numOutputs;
-  private int numSources;
+  protected Map<Connection, String> connections;
+  protected int numOutputs;
+  protected int numSources;
 
-  public TemplateMethods() {
+  protected TemplateMethods() {
     connections = new HashMap<Connection, String>();
     numOutputs = 0;
     numSources = 0;
   }
 
-  public void setPipeline(Pipeline pipeline) {
-    this.pipeline = pipeline;
+  public static TemplateMethods get(Language lang){
+    switch (lang) {
+      case JAVA:
+        return new JavaTMethods();
+      case PYTHON:
+        return new CppTMethods();
+      case CPP:
+        return new PythonTMethods();
+      default:
+        throw new IllegalArgumentException(lang.toString()
+            + " is not a supported language for code generation.");
+    }
   }
-
   public static String parseSocketValue(Socket socket) {
     String value = socket.getValue().toString();
     if (socket.getSocketHint().getView().equals(SocketHint.View.NONE)) {
@@ -58,82 +66,8 @@ public class TemplateMethods {
     return type;
   }
 
-  public static String opName(String name) {
-    if (name.contains("CV ")) {
-      return name.substring(3);
-    } else return name;
-  }
+  public abstract String name(String name);
 
-  public static String javaName(String name) {
-    return CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.LOWER_CAMEL, name.replaceAll("\\s", ""));
-  }
-
-  public static String callJavaOp(TStep step) {
-    String num = "S" + step.num();
-    StringBuilder out = new StringBuilder();
-    out.append(javaName(step.name()));
-    out.append("(");
-    for (TInput input : step.getInputs()) {
-      out.append(input.name());
-      out.append(num);
-      out.append(", ");
-    }
-    if (step.name().equals("Threshold_Moving")) {
-      out.append("this.lastImage");
-      out.append(num);
-      out.append(", ");
-    }
-    if (!step.getOutputs().isEmpty()) {
-      for (int i = 0; i < step.getOutputs().size() - 1; i++) {
-        out.append(step.getOutputs().get(i).name());
-        out.append(", ");
-      }
-      out.append(step.getOutputs().get(step.getOutputs().size() - 1).name());
-    }
-    out.append(")");
-    return out.toString();
-  }
-
-  public static String cName(String name) {
-    // name is something like "CV_medianBlur" or "Find_Contours"
-    if (name.startsWith("CV_")) {
-      // OpenCV operation
-      String op = name.replaceFirst("CV_", "");
-      if (op.contains("_")) {
-        return "CV" + CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, op.toLowerCase());
-      } else {
-        return "CV" + CaseFormat.LOWER_CAMEL.to(CaseFormat.UPPER_CAMEL, op);
-      }
-    } else {
-      // GRIP operation
-      return CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, name.toUpperCase());
-    }
-  }
-
-  public static String callCOp(TStep step){
-    String num = "S" + step.num();
-    StringBuilder out = new StringBuilder();
-    out.append(cName(step.name()));
-    out.append("(");
-    for (TInput input : step.getInputs()) {
-      out.append(input.name());
-      out.append(num);
-      out.append(", ");
-    }
-    if (step.name().equals("Threshold_Moving")) {
-      out.append("this.lastImage");
-      out.append(num);
-      out.append(", ");
-    }
-    if (!step.getOutputs().isEmpty()) {
-      for (int i = 0; i < step.getOutputs().size() - 1; i++) {
-        out.append(step.getOutputs().get(i).name());
-        out.append(", ");
-      }
-      out.append(step.getOutputs().get(step.getOutputs().size() - 1).name());
-    }
-    out.append(")");
-    return out.toString();
-  }
+  public abstract String callOp(TStep step);
 
 }

@@ -4,6 +4,6 @@
 	 * @param kSize size of blur.
 	 * @param dst output of blur.
 	 */
-	private void $tMeth.javaName($step.name())(Mat src, double kSize, Mat dst){
+	private void $tMeth.name($step.name())(Mat src, double kSize, Mat dst){
 		Imgproc.medianBlur(src, dst, (int) kSize);
 	}

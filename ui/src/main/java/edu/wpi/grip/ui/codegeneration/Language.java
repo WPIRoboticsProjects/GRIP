@@ -31,8 +31,8 @@ public enum Language {
       case CPP:
         return "cpp";
       default:
-        throw new IllegalArgumentException(this.toString() + " is not a supported language for " +
-            "code generation.");
+        throw new IllegalArgumentException(this.toString()
+            + " is not a supported language for code generation.");
     }
   }
 }

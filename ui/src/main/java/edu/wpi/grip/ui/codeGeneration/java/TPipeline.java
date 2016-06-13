@@ -93,13 +93,6 @@ public class TPipeline {
    * @return The generated TInput.
    */
   protected TInput createInput(String type, String name, String value) {
-    /*if (type.equals("Number")) {
-      if (value.contains(".")) {
-        type = "Double";
-      } else {
-        type = "Integer";
-      }
-    }*/
     if (value.contains("Optional.empty") || value.contains("Connection") || value.contains
         ("ContoursReport")) {
       int s = numSources;
@@ -111,14 +104,18 @@ public class TPipeline {
     return new TInput(type, name, value);
   }
 
+  /**
+   * used in Pipeline.vm to get all of the TSteps
+   * @return the TSteps that are in the TPipeline
+   */
   public List<TStep> getSteps() {
     return this.steps;
   }
 
-  public static String updateOp(String opName) {
-    return TemplateMethods.opName(opName);
-  }
-
+  /**
+   * Creates a list of the unique operations in a pipeline.
+   * @return A list of the unique steps.
+   */
   public List<TStep> getUniqueSteps() {
     List<TStep> out = new ArrayList<TStep>();
     for (TStep step : steps) {
@@ -128,13 +125,16 @@ public class TPipeline {
     return out;
   }
 
+  /**
+   * returns the total number of sources
+   * @return the number of sources
+   */
   public int getNumSources() {
     return numSources;
   }
 
   /**
    * Returns a list of all of the sources in a the pipeline.
-   *
    * @return the list of sources.
    */
   public List<TSocket> getSources() {

@@ -40,7 +40,7 @@
 	 * @param doubleRadius The radius for the blur.
 	 * @param output The image in which to store the output.
 	 */
-	private void $tMeth.javaName($step.name())(Mat input, BlurType type, double doubleRadius, Mat
+	private void $tMeth.name($step.name())(Mat input, BlurType type, double doubleRadius, Mat
 	output){
 		int radius = (int) (doubleRadius+0.5);
 		int kernelSize;
