@@ -4,7 +4,6 @@ package edu.wpi.grip.ui.codegeneration.data;
 public class TSocket {
   protected String type;
   protected String name;
-  private static final String MutableOf = "MutableOf<";
 
   public TSocket(String type, String name) {
     this(type);

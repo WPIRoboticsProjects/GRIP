@@ -5,12 +5,12 @@
 		//output
 #foreach($output in $step.getOutputs())
 #if( $output.mutable() )
-		#MutOf($output.type()) $output.name() = new #MutOf($output.type())();
-#else
-		#socketType($output.type()) $output.name() = new #socketType($output.type())();
+		#MutOf($output.type()) mutOf$output.name() = new #MutOf($output.type())();
 #end
 #end
 		$tMeth.callOp($step);
 #foreach($output in $step.getOutputs())
-		outputs.put("$output.name()", $output.name());
+#if( $output.mutable() )
+		$output.name() = mutOf${output.name()}.get();
+#end
 #end

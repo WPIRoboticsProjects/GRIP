@@ -29,14 +29,25 @@ import org.opencv.imgproc.*;
 */
 public class $fileName{
 
-	//This map links the Outputs with their names
-	private Map<String,Object> outputs;
+	//outputs
+#foreach($step in $pipeline.getSteps())
+#foreach($out in $step.getOutputs())
+	private #socketType(${out.type()}) $out.name()#if(!$out.mutable()) = new #socketType(${out.type()})()#end;
+#end
+#end
+
+	//sources
 #foreach($source in $pipeline.getSources())
 	private #socketType(${source.type()}) $source.value();
+#end
+#if($pipeline.getMovingThresholds().size() gt 0)
+
+	//moving thresholds
 #end
 #foreach($moving in $pipeline.getMovingThresholds())
     private Mat lastImageS$moving.num() = new Mat();
 #end
+
 #if($loadLib)
 	static{
 		System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
@@ -78,9 +89,9 @@ public class $fileName{
 	 */
 	public #socketType(${output.baseType()}) get${output.name()}(){
 #if( $output.mutable() ) #set($needsMut = true)
-		return ((#MutOf(${output.type()})) outputs.get("${output.name()}")).get();
+		return ${output.name()}.get();
 #else
-		return (#socketType(${output.type()})) outputs.get("${output.name()}");
+		$output.name();
 #end
 	}
 #end

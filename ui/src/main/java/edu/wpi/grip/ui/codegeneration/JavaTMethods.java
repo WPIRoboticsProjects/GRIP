@@ -35,11 +35,14 @@ public class JavaTMethods extends TemplateMethods  {
       out.append(", ");
     }
     if (!step.getOutputs().isEmpty()) {
-      for (int i = 0; i < step.getOutputs().size() - 1; i++) {
-        out.append(step.getOutputs().get(i).name());
+      for (int i = 0; i < step.getOutputs().size(); i++) {
+        if(step.getOutput(i).mutable()){
+        	out.append("mutOf");
+        }
+    	out.append(step.getOutputs().get(i).name());
         out.append(", ");
       }
-      out.append(step.getOutputs().get(step.getOutputs().size() - 1).name());
+      out.delete(out.length()-2, out.length());//removes the unneeded ", "
     }
     out.append(")");
     return out.toString();
