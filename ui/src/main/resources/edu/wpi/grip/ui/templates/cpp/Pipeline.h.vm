@@ -1,25 +1,38 @@
-/#pragma once
+#pragma once
+\#include <opencv2/objdetect/objdetect.hpp>
+\#include <opencv2/highgui/highgui.hpp>
+\#include <opencv2/imgproc/imgproc.hpp>
+\#include <opencv2/core/core.hpp>
+using namespace cv;
 
 class $fileName{
 	private:
-		std::unordered_map<std::string,Object*> outputs;
-	#foreach( $source in $pipeline.getSources())
-          #cType($source.type()) *$source.name();
-    #end
+#foreach( $source in $pipeline.getSources())
+		#cType($source.type()) *$source.value();
+#end
+#foreach($step in $pipeline.getSteps())
+#foreach($output in $step.getOutputs())
+		#cType($output.type()) *$output.name();
+#end
+#end
+#foreach($moving in $pipeline.getMovingThresholds())
+		private Mat lastImageS$moving.num() = new Mat();
+#end
+#foreach($step in $pipeline.getUniqueSteps())
+#set($toParse = "src/main/resources/edu/wpi/grip/ui/templates/cpp/operations/" + $step.name())
+#set($toParse = $toParse + ".vm")
+#parse($toParse)
+#end
 
-    #foreach($moving in $pipeline.getMovingThresholds())
-          private Mat lastImageS$moving.num() = new Mat();
-    #end
-
-    public:
-          void Process();
-    #foreach($source in $pipeline.getSources())
-          void #setter($source);
-    #end
-
-    #foreach( $step in $pipeline.getSteps() )
-    #foreach( $out in $step.getOutputs() )
-          #cType($out.type()) get${out.name()}();
-	#end
-	#end
-}
+	public:
+		$fileName();
+		void Process();
+#foreach($source in $pipeline.getSources())
+		void #setter($source);
+#end
+#foreach( $step in $pipeline.getSteps() )
+#foreach( $out in $step.getOutputs() )
+		#cType($out.type())* get${out.name()}();
+#end
+#end
+};

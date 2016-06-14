@@ -1,5 +1,13 @@
 \#include "${fileName}.h"
 $fileName::$fileName() {
+#foreach( $source in $pipeline.getSources())
+	this->$source.value() = new #cType($source.type())();
+#end
+#foreach($step in $pipeline.getSteps())
+#foreach($output in $step.getOutputs())
+	this->$output.name() = new #cType($output.type())();
+#end
+#end
 }
 
 void $fileName::Process(){
@@ -8,7 +16,7 @@ void $fileName::Process(){
 	//Step$step.num(): $step.name():
 #parse("src/main/resources/edu/wpi/grip/ui/templates/cpp/CV Step.vm")
 
-	#end
+#end
 }
 
 #foreach($source in $pipeline.getSources())
@@ -16,8 +24,8 @@ void $fileName::Process(){
  * This method is a generated setter for $source.value().
  * @param source the $source.type() to set
  */
-void $fileName::set${source.value()}(#cType(${source.type()}) ${source.value()}){
-	this.$source.value() = ${source.value()};
+void $fileName::set${source.value()}(#cType(${source.type()}) *${source.value()}){
+	this->$source.value() = ${source.value()};
 }
 #end
 
@@ -27,18 +35,12 @@ void $fileName::set${source.value()}(#cType(${source.type()}) ${source.value()})
  * This method is a generated getter for the output of a $step.name().
  * @return ${output.baseType()} output from $step.name().
  */
-$output.type() $fileName::get${output.name()}(){
-	return ($output.type()) outputs["${output.name()}"];
+$output.type()* $fileName::get${output.name()}(){
+	return this->${output.name()};
 }
 #end
 #end
 
-#foreach($step in $pipeline.getUniqueSteps())
-#set($toParse = "src/main/resources/edu/wpi/grip/ui/templates/cpp/operations/" + $step.name())
-#set($toParse = $toParse + ".vm")
-#parse($toParse)
-
-#end
 
 
 

@@ -31,9 +31,9 @@ public abstract class TemplateMethods {
       case JAVA:
         return new JavaTMethods();
       case PYTHON:
-        return new CppTMethods();
-      case CPP:
         return new PythonTMethods();
+      case CPP:
+        return new CppTMethods();
       default:
         throw new IllegalArgumentException(lang.toString()
             + " is not a supported language for code generation.");

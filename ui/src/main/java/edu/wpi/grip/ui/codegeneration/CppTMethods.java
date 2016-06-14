@@ -25,20 +25,23 @@ public class CppTMethods extends TemplateMethods  {
     out.append(name(step.name()));
     out.append("(");
     for (TInput input : step.getInputs()) {
+      out.append("&");
       out.append(input.name());
       out.append(num);
       out.append(", ");
     }
     if (step.name().equals("Threshold_Moving")) {
-      out.append("this.lastImage");
+      out.append("this->lastImage");
       out.append(num);
       out.append(", ");
     }
     if (!step.getOutputs().isEmpty()) {
       for (int i = 0; i < step.getOutputs().size() - 1; i++) {
+        out.append("this->");
         out.append(step.getOutputs().get(i).name());
         out.append(", ");
       }
+      out.append("this->");
       out.append(step.getOutputs().get(step.getOutputs().size() - 1).name());
     }
     out.append(")");
