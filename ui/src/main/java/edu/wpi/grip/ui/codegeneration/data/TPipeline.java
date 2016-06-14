@@ -1,4 +1,4 @@
-package edu.wpi.grip.ui.codegeneration.java;
+package edu.wpi.grip.ui.codegeneration.data;
 
 
 import java.util.ArrayList;

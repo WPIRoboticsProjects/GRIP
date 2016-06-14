@@ -29,13 +29,31 @@ import org.opencv.imgproc.*;
 */
 public class $fileName{
 
-	//This map links the Outputs with their names
-	private Map<String,Object> outputs;
+	//outputs
+#foreach($step in $pipeline.getSteps())
+#foreach($out in $step.getOutputs())
+	private #socketType(${out.type()}) $out.name()#if(!$out.mutable()) = new #socketType(${out.type()})()#end;
+#end
+#end
+
+	//sources
 #foreach($source in $pipeline.getSources())
 	private #socketType(${source.type()}) $source.value();
 #end
+#if($pipeline.getMovingThresholds().size() gt 0)
+
+	//moving thresholds
+#end
 #foreach($moving in $pipeline.getMovingThresholds())
     private Mat lastImageS$moving.num() = new Mat();
+#end
+#foreach($step in $pipeline.getSteps())
+#set($boolNum = $velocityCount - 1)
+#if($step.name() == "Switch" || $step.name() == "Valve")
+#set($boolInp = $step.getInput(0))
+#set($boolName = "$boolInp.name()S")
+	private boolean $boolName${boolNum}#if($boolInp.hasValue()) = $boolInp.value()#end;
+#end
 #end
 #if($loadLib)
 	static{
@@ -47,7 +65,6 @@ public class $fileName{
 	 * This constructor sets up the pipeline
 	 */
 	public $fileName(){
-		outputs = new HashMap<String,Object>();
 	}
 
 	/**
@@ -61,6 +78,7 @@ public class $fileName{
 
 #end
 	}
+
 #foreach($source in $pipeline.getSources())
 	/**
 	 * This method is a generated setter for $source.value().
@@ -69,6 +87,23 @@ public class $fileName{
 	public void set${source.value()}(#socketType(${source.type()}) ${source.value()}){
 		this.$source.value() = ${source.value()};
 	}
+
+#end
+#foreach($step in $pipeline.getSteps())
+#set($boolNum = $velocityCount - 1)
+#if($step.name() == "Switch" || $step.name() == "Valve")
+#set($boolInp = $step.getInput(0))
+#set($boolName = "$boolInp.name()S")
+#if($boolInp.hasValue())
+	/**
+	 * This method is a generated setter for the condition of $step.name() $boolNum
+	 * @param the condition to set
+	 */
+	 public void set$step.name()${boolNum}(boolean value){
+	 	$boolName$boolNum = value;
+	 }
+#end
+#end
 #end
 #foreach($step in $pipeline.getSteps())
 #foreach($output in $step.getOutputs())
@@ -77,11 +112,7 @@ public class $fileName{
 	 * @return #socketType(${output.baseType()}) output from $step.name().
 	 */
 	public #socketType(${output.baseType()}) get${output.name()}(){
-#if( $output.mutable() ) #set($needsMut = true)
-		return ((#MutOf(${output.type()})) outputs.get("${output.name()}")).get();
-#else
-		return (#socketType(${output.type()})) outputs.get("${output.name()}");
-#end
+		return $output.name();
 	}
 #end
 #end
