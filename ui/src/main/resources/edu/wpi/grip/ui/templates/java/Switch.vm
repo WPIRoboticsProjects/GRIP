@@ -1,10 +1,8 @@
 #set($needsMut = true)
 		//input
 #set($boolInp = $step.getInput(0))
-#if( $boolInp.hasValue() )##Has a set value
-		$boolInp.baseType() $boolInp.name()$c = $boolInp.value();
-#else##Has Connected Socket
-		$boolInp.baseType() $boolInp.name()$c = ${boolInp.value()}.$boolInp.baseType()Value();
+#if(!$boolInp.hasValue() )
+		$boolInp.name()$c = ${boolInp.value()}.$boolInp.baseType()Value();
 #end
 #set( $inputTrue = $step.getInput(1) )
 #if( $inputTrue.mutable() )##Is Mutable
