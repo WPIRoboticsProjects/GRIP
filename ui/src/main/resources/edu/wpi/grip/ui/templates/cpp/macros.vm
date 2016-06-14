@@ -1,5 +1,8 @@
 #macro( cType $type )#if( $type == "Double" )
-double#elseif( $type == "Integer" )
+double#elseif ($type.equals("ContoursReport"))
+vector<vector<Point> >#elseif ($type.equals("BlobsReport"))
+vector<KeyPoint>#elseif ($type.equals("LinesReport"))
+vector<Line>#elseif( $type == "Integer" )
 int#elseif( $type == "Boolean" || "boolean")
 bool#else
 $type#end #end
@@ -11,14 +14,14 @@ set$source.value()(#cType($source.type()) *$source.value())#end
 $tMeth.name($step.name())(#foreach($inp in $step.getInputs()) #cType($inp.type()) *$inp.name(), #end#foreach($out in $step.getOutputs()) #cType($out.type()) *#cName($out.name())#if($velocityCount <$step.getOutputs().size()), #end#end)#end
 
 #macro ( newInput $input)
-#if ( $input.type() == "FlipCode" )
-	$input.type() $input.name()$c = FlipCode.$input.value();
-#elseif ($input.type().contains("CoreEnum"))
+#if ($input.type().contains("CoreEnum"))
 	int $input.name()$c = $input.value();
 #elseif ($input.type().contains("Enum"))
 	int $input.name()$c = $input.value();
-#elseif ($input.type().equals("MaskSize") || $input.type().contains("Type") || $input.type().equals("Interpolation"))
-	$input.type() $input.name()$c = ${input.type()}.get("${input.value()}");
+#elseif ($input.type().equals("MaskSize") || $input.type().equals("BlurType"))
+    String $input.name()$c = "${input.value()}";
+#elseif ( $input.type().contains("Type") || $input.type().equals("Interpolation") ||$input.type() == "FlipCode" )
+	int $input.name()$c = $input.value();
 #elseif ($input.type().equals("String"))
 	$input.type() $input.name()$c = "$input.value()";
 #elseif ($input.type().equals("List"))
@@ -26,7 +29,7 @@ $tMeth.name($step.name())(#foreach($inp in $step.getInputs()) #cType($inp.type()
 	double[] $input.name()$c = {$input.value().substring(1,$inputEndValue)};
 #elseif ($input.value().equals("null"))
 	#cType($input.type()) $input.name()$c;
-#elseif ($input.value().contains("source"))
+#elseif ($input.value().contains("source") || $input.value().contains("output"))
 	#cType($input.type()) $input.name()$c= *$input.value();
 #else
 	#cType($input.type()) $input.name()$c = $input.value();

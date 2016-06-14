@@ -27,7 +27,9 @@ import edu.wpi.grip.ui.codegeneration.data.TPipeline;
  */
 @Singleton
 public class Exporter {
-  private final String pipelineTemplate = "Pipeline.vm";
+  private static String PIPELINE_TEMPLATE = "Pipeline.vm";
+  private static String PIPELINE_HTEMPLATE = "Pipeline.h.vm";
+  private static String PIPELINE_HNAME= "/Pipeline.h";
 
   /**
    * Creates a TPipeline from the current pipeline and generates code to the target location
@@ -46,7 +48,7 @@ public class Exporter {
     context.put("loadLib", loadLib);
     StringBuilder templateDirBuilder = new StringBuilder();
     templateDirBuilder.append("src/main/resources/edu/wpi/grip/ui/templates/");
-    templateDirBuilder.append(lang.filePath());
+    templateDirBuilder.append(lang.filePath);
     templateDirBuilder.append("/");
     final String templateDir = templateDirBuilder.toString();
     VelocityEngine ve = new VelocityEngine();
@@ -76,7 +78,7 @@ public class Exporter {
    */
   private void generateCode(VelocityEngine ve, String templateDir, File file, VelocityContext
       context) {
-    Template tm = ve.getTemplate(templateDir + pipelineTemplate);
+    Template tm = ve.getTemplate(templateDir + PIPELINE_TEMPLATE);
     StringWriter sw = new StringWriter();
     tm.merge(context, sw);
 
@@ -97,12 +99,12 @@ public class Exporter {
    */
   private void generateH(VelocityEngine ve, String templateDir, File file, VelocityContext
       context) {
-    Template tm = ve.getTemplate(templateDir + "Pipeline.h.vm");
+    Template tm = ve.getTemplate(templateDir + PIPELINE_HTEMPLATE);
     StringWriter sw = new StringWriter();
     tm.merge(context, sw);
 
     try (PrintWriter writer = new PrintWriter(file.getParentFile().getAbsolutePath() +
-        "/Pipeline.h", "UTF-8")) {
+        PIPELINE_HNAME, "UTF-8")) {
       writer.println(sw);
     } catch (UnsupportedEncodingException | FileNotFoundException e) {
 

@@ -5,9 +5,7 @@ import com.google.common.base.CaseFormat;
 import edu.wpi.grip.ui.codegeneration.data.TInput;
 import edu.wpi.grip.ui.codegeneration.data.TStep;
 
-/**
- * Created by Toby on 6/13/16.
- */
+
 public class JavaTMethods extends TemplateMethods  {
   public JavaTMethods(){
     super();

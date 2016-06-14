@@ -8,7 +8,7 @@
 		 * @param dst output image.
 		 */
 		void $tMeth.name($step.name())(Mat *src, Size *dSize, double *fx, double *fy, int *interpolation, Mat *dst){
-			if(dSize){
+			if(!dSize){
 				Size dSize(0,0);
 			}
 			resize(*src, *dst, *dSize, *fx, *fy, *interpolation);
