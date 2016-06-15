@@ -1,0 +1,26 @@
+	/**
+	 * Finds all line segments in an image.
+	 *
+	 * @param input The image on which to perform the find lines.
+	 * @param lineList The output where the lines are stored.
+	 */
+	void $tMeth.name($step.name())(Mat *input, vector<Line> *lineList){
+		Ptr<LineSegmentDetector> lsd = createLineSegmentDetector(LSD_REFINE_STD);
+		Mat lines;
+		if (input->channels() == 1) {
+			lsd->detect(*input, lines);
+		} else {
+			// The line detector works on a single channel.  If the input is a color image, we can just give the line
+			// detector a grayscale version of it
+			Mat tmp;
+			cvtColor(*input, tmp, COLOR_BGR2GRAY);
+			lsd->detect(tmp, lines);
+		}
+		// Store the lines in the LinesReport object
+		if (!lines.empty()) {
+			float tmp[4];
+			for (int i = 0; i < lines.rows; i++) {
+				lineList->push_back(Line(tmp[0], tmp[1], tmp[2], tmp[3]));
+			}
+		}
+	}

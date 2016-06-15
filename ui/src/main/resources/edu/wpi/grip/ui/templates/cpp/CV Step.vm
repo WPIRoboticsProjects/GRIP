@@ -1,7 +1,1 @@
-#if( $step.name() != "Valve" && $step.name() != "Switch" )
 #parse("src/main/resources/edu/wpi/grip/ui/templates/cpp/BasicStep.vm")
-#elseif( $step.name() == "Valve" )##Valve
-#parse("src/main/resources/edu/wpi/grip/ui/templates/cpp/Valve.vm")
-#else##Switch
-#parse("src/main/resources/edu/wpi/grip/ui/templates/cpp/Switch.vm")
-#end

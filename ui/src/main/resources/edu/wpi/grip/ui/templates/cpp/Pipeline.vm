@@ -8,6 +8,9 @@ $fileName::$fileName() {
 	this->$output.name() = new #cType($output.type())();
 #end
 #end
+#foreach($moving in $pipeline.getMovingThresholds())
+		this->lastImageS$moving.num() = new Mat();
+#end
 }
 
 void $fileName::Process(){
@@ -35,7 +38,7 @@ void $fileName::set${source.value()}(#cType(${source.type()}) *${source.value()}
  * This method is a generated getter for the output of a $step.name().
  * @return ${output.baseType()} output from $step.name().
  */
-$output.type()* $fileName::get${output.name()}(){
+#cType($output.type())* $fileName::get${output.name()}(){
 	return this->${output.name()};
 }
 #end

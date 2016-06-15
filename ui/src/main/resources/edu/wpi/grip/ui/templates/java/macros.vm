@@ -11,11 +11,11 @@ MutableOf<$obj>#end
 #else##Not Mutable
 #if ( $input.type() == "FlipCode" )
 		$input.type() $input.name()$c = FlipCode.$input.value();
-#elseif ($input.type().contains("CoreEnum"))
-		Integer $input.name()$c = Core.$input.value();
+#elseif ($input.type().equals("Interpolation"))
+		int $input.name()$c = Interpolation::$input.value();
 #elseif ($input.type().contains("Enum"))
-		Integer $input.name()$c = Imgproc.$input.value();
-#elseif ($input.type().equals("MaskSize") || $input.type().contains("Type") || $input.type().equals("Interpolation"))
+		int $input.name()$c = $input.value();
+#elseif ($input.type().equals("MaskSize") || $input.type().contains("Type"))
 		$input.type() $input.name()$c = ${input.type()}.get("${input.value()}");
 #elseif ($input.type().equals("String"))
 		$input.type() $input.name()$c = "$input.value()";

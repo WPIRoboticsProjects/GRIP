@@ -1,0 +1,19 @@
+	/**
+	 * Filters out lines that do not meet certain criteria
+	 *
+	 * @param inputs The lines that will be filtered.
+	 * @param minLength The minimum length of a line to be kept.
+	 * @param angle The minimum and maximum angle of a line to be kept.
+	 * @param outputs The output lines after the filter.
+	 */
+	void $tMeth.name($step.name())(vector<Line> *inputs,double *minLength,double angle[2],
+	vector<Line> *outputs){
+		for(Line line: *inputs){
+			if(line.lengthSquared()>pow(*minLength,2)){
+				if((line.angle() >= angle[0] && line.angle() <= angle[1])||
+						(line.angle() + 180.0 >= angle[0] && line.angle() + 180.0 <=angle[1])){
+					outputs->push_back(line);
+				}
+			}
+		}
+	}

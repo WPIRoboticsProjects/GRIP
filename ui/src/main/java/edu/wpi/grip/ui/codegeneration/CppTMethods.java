@@ -5,8 +5,8 @@ import com.google.common.base.CaseFormat;
 import edu.wpi.grip.ui.codegeneration.data.TInput;
 import edu.wpi.grip.ui.codegeneration.data.TStep;
 
-public class CppTMethods extends TemplateMethods  {
-  public CppTMethods(){
+public class CppTMethods extends TemplateMethods {
+  public CppTMethods() {
     super();
   }
 
@@ -19,10 +19,15 @@ public class CppTMethods extends TemplateMethods  {
   public String callOp(TStep step) {
     String num = "S" + step.num();
     StringBuilder out = new StringBuilder();
+    if (step.name().equals("Switch")||step.name().equals("Valve")) {
+      out.append("pipeline");
+    }
     out.append(name(step.name()));
     out.append("(");
     for (TInput input : step.getInputs()) {
-      out.append("&");
+      if (!input.type().equals("List")) {
+        out.append("&");
+      }
       out.append(input.name());
       out.append(num);
       out.append(", ");

@@ -3,7 +3,7 @@
 	 * Filters out lines that do not meet certain criteria
 	 *
 	 * @param inputs The lines that will be filtered.
-	 * @param minLength The minimum lenght of a line to be kept.
+	 * @param minLength The minimum length of a line to be kept.
 	 * @param angle The minimum and maximum angle of a line to be kept.
 	 * @param outputs The output lines after the filter.
 	 */

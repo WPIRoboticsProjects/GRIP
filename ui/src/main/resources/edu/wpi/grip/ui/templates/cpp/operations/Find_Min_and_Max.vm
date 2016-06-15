@@ -1,0 +1,13 @@
+	/**
+	 * Finds the minimum and maximum values of the Mat as well as the associated Points.
+	 * @param src the Mat to find min and max for.
+	 * @param mask the Mat to use as a mask for the operation.
+	 * @param minVal the minimum value found in the Mat.
+	 * @param maxVal the maximum value found in the Mat.
+	 * @param minLoc the location of the minimum value.
+	 * @param maxLoc the location of the maximum value.
+	 */
+	void $tMeth.name($step.name())(Mat *src, Mat *mask, double *minVal, double
+	*maxVal, Point *minLoc, Point *maxLoc){
+		minMaxLoc(*src, minVal, maxVal, minLoc, maxLoc, *mask);
+	}

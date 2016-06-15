@@ -1,5 +1,6 @@
-#macro( cType $type )#if( $type == "Double" )
-double#elseif ($type.equals("ContoursReport"))
+#macro( cType $type )#if( $type == "Double" || $type == "Number")
+double#elseif($type.equals("Object"))
+Mat#elseif ($type.equals("ContoursReport"))
 vector<vector<Point> >#elseif ($type.equals("BlobsReport"))
 vector<KeyPoint>#elseif ($type.equals("LinesReport"))
 vector<Line>#elseif( $type == "Integer" )
@@ -26,7 +27,7 @@ $tMeth.name($step.name())(#foreach($inp in $step.getInputs()) #cType($inp.type()
 	$input.type() $input.name()$c = "$input.value()";
 #elseif ($input.type().equals("List"))
 #set($inputEndValue = $input.value().length() - 1)
-	double[] $input.name()$c = {$input.value().substring(1,$inputEndValue)};
+	double $input.name()${c}[] = {$input.value().substring(1,$inputEndValue)};
 #elseif ($input.value().equals("null"))
 	#cType($input.type()) $input.name()$c;
 #elseif ($input.value().contains("source") || $input.value().contains("output"))

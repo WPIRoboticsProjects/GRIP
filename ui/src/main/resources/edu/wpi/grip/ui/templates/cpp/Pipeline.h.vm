@@ -1,8 +1,10 @@
+#set($lines = false)
 #pragma once
 \#include <opencv2/objdetect/objdetect.hpp>
 \#include <opencv2/highgui/highgui.hpp>
 \#include <opencv2/imgproc/imgproc.hpp>
 \#include <opencv2/core/core.hpp>
+\#include <opencv2/features2d.hpp>
 \#include <iostream>
 \#include <stdio.h>
 \#include <stdlib.h>
@@ -10,6 +12,12 @@ using namespace cv;
 using namespace std;
 using namespace cv;
 
+#foreach($step in $pipeline.getUniqueSteps())
+#if($step.name() == "Find_Lines" || $step.name() == "Filter_Lines")
+#parse("src/main/resources/edu/wpi/grip/ui/templates/cpp/operations/Lines.vm")
+
+#end
+#end
 class $fileName{
 	private:
 #foreach( $source in $pipeline.getSources())
@@ -21,7 +29,7 @@ class $fileName{
 #end
 #end
 #foreach($moving in $pipeline.getMovingThresholds())
-		private Mat lastImageS$moving.num() = new Mat();
+		Mat *lastImageS$moving.num();
 #end
 #foreach($step in $pipeline.getUniqueSteps())
 #set($toParse = "src/main/resources/edu/wpi/grip/ui/templates/cpp/operations/" + $step.name())
@@ -41,3 +49,4 @@ class $fileName{
 #end
 #end
 };
+
