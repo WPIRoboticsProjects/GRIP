@@ -1,11 +1,8 @@
 package edu.wpi.grip.core.operations.network.http;
 
-import com.google.common.eventbus.EventBus;
-
 import edu.wpi.grip.core.events.RunStartedEvent;
 import edu.wpi.grip.core.events.RunStoppedEvent;
 import edu.wpi.grip.core.http.ContextStore;
-import edu.wpi.grip.core.http.GenericHandler;
 import edu.wpi.grip.core.http.GripServer;
 import edu.wpi.grip.core.http.GripServerTest;
 import edu.wpi.grip.core.operations.network.NumberPublishable;
@@ -13,10 +10,7 @@ import edu.wpi.grip.core.settings.ProjectSettings;
 import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.sockets.MockInputSocketFactory;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.lang.reflect.Field;
-import java.util.Set;
+import com.google.common.eventbus.EventBus;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -29,6 +23,9 @@ import org.apache.http.util.EntityUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;

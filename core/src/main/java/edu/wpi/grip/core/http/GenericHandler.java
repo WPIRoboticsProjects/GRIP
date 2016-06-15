@@ -1,10 +1,7 @@
 package edu.wpi.grip.core.http;
 
 import java.io.IOException;
-import java.util.HashSet;
-import java.util.Set;
 
-import javax.annotation.Nullable;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
