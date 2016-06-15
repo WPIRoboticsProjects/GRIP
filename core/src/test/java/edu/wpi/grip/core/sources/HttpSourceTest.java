@@ -3,6 +3,7 @@ package edu.wpi.grip.core.sources;
 
 import com.google.common.eventbus.EventBus;
 
+import edu.wpi.grip.core.http.ContextStore;
 import edu.wpi.grip.core.http.GripServer;
 import edu.wpi.grip.core.http.GripServerTest;
 import edu.wpi.grip.core.settings.ProjectSettings;
@@ -44,11 +45,12 @@ public class HttpSourceTest {
     @Before
     public void setUp() throws URIException, URISyntaxException {
         GripServer.JettyServerFactory f = new GripServerTest.TestServerFactory();
-        server = GripServerTest.makeServer(f, ProjectSettings::new);
+        ContextStore contextStore = new ContextStore();
+        server = GripServerTest.makeServer(contextStore, f, ProjectSettings::new);
         server.start();
         EventBus eventBus = new EventBus();
         OutputSocket.Factory osf = new MockOutputSocketFactory(eventBus);
-        source = new HttpSource(origin -> new MockExceptionWitness(eventBus, origin), eventBus, osf, server, GripServer.IMAGE_UPLOAD_PATH);
+        source = new HttpSource(origin -> new MockExceptionWitness(eventBus, origin), eventBus, osf, server, contextStore, GripServer.IMAGE_UPLOAD_PATH);
 
         logoFile = new File(Files.class.getResource("/edu/wpi/grip/images/GRIP_Logo.png").toURI());
         postClient = HttpClients.createDefault();

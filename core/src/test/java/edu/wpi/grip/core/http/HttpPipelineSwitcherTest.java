@@ -31,7 +31,7 @@ public class HttpPipelineSwitcherTest {
 
     @Before
     public void setUp() {
-        server = new GripServer(new GripServerTest.TestServerFactory(), ProjectSettings::new);
+        server = new GripServer(new ContextStore(), new GripServerTest.TestServerFactory(), ProjectSettings::new);
         client = HttpClients.createDefault();
         server.start();
     }
@@ -44,7 +44,7 @@ public class HttpPipelineSwitcherTest {
                 fail("This should not have been called");
             }
         };
-        pipelineSwitcher = new HttpPipelineSwitcher(project, GRIPMode.HEADLESS);
+        pipelineSwitcher = new HttpPipelineSwitcher(new ContextStore(), project, GRIPMode.HEADLESS);
         server.addHandler(pipelineSwitcher);
         HttpResponse response = doGet(GripServer.PIPELINE_UPLOAD_PATH);
         EntityUtils.consume(response.getEntity());
@@ -61,7 +61,7 @@ public class HttpPipelineSwitcherTest {
                 assertEquals("Payload was not converted correctly", payload, projectXml);
             }
         };
-        pipelineSwitcher = new HttpPipelineSwitcher(project, GRIPMode.HEADLESS);
+        pipelineSwitcher = new HttpPipelineSwitcher(new ContextStore(), project, GRIPMode.HEADLESS);
         server.addHandler(pipelineSwitcher);
         HttpResponse response = doPost(GripServer.PIPELINE_UPLOAD_PATH, payload);
         EntityUtils.consume(response.getEntity());
@@ -77,7 +77,7 @@ public class HttpPipelineSwitcherTest {
                 didRun[0] = true;
             }
         };
-        pipelineSwitcher = new HttpPipelineSwitcher(project, GRIPMode.HEADLESS);
+        pipelineSwitcher = new HttpPipelineSwitcher(new ContextStore(), project, GRIPMode.HEADLESS);
         server.addHandler(pipelineSwitcher);
         HttpResponse response = doPost(GripServer.PIPELINE_UPLOAD_PATH, "dummy data");
         assertEquals("HTTP status should be 201 Created", 201, response.getStatusLine().getStatusCode());
@@ -93,7 +93,7 @@ public class HttpPipelineSwitcherTest {
                 fail("Project should not be opened");
             }
         };
-        pipelineSwitcher = new HttpPipelineSwitcher(project, GRIPMode.GUI);
+        pipelineSwitcher = new HttpPipelineSwitcher(new ContextStore(), project, GRIPMode.GUI);
         server.addHandler(pipelineSwitcher);
         HttpResponse response = doPost(GripServer.PIPELINE_UPLOAD_PATH, "dummy data");
         assertEquals("HTTP status should be 500 Internal Error", 500, response.getStatusLine().getStatusCode());

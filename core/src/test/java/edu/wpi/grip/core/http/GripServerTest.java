@@ -56,12 +56,12 @@ public class GripServerTest {
     /**
      * Public factory method for testing.
      */
-    public static GripServer makeServer(GripServer.JettyServerFactory factory, SettingsProvider settingsProvider) {
-        return new GripServer(factory, settingsProvider);
+    public static GripServer makeServer(ContextStore store, GripServer.JettyServerFactory factory, SettingsProvider settingsProvider) {
+        return new GripServer(store, factory, settingsProvider);
     }
 
     public GripServerTest() {
-        instance = new GripServer(new TestServerFactory(), ProjectSettings::new);
+        instance = new GripServer(new ContextStore(), new TestServerFactory(), ProjectSettings::new);
         instance.start();
 
         client = new DefaultHttpClient();
@@ -72,7 +72,7 @@ public class GripServerTest {
     public void testAddRemoveHandler() throws IOException {
         String path = "/testAddRemoveHandler";
         boolean[] didRun = {false};
-        Handler h = new PedanticHandler(path) {
+        Handler h = new PedanticHandler(new ContextStore(), path) {
             @Override
             protected void handleIfPassed(String target, Request baseRequest, HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
                 didRun[0] = true;
@@ -94,7 +94,7 @@ public class GripServerTest {
     public void testSuccessfulHandler() throws IOException {
         String path = "/testSuccessfulHandler";
         boolean[] didRun = {false};
-        Handler h = new PedanticHandler(path) {
+        Handler h = new PedanticHandler(new ContextStore(), path) {
             @Override
             protected void handleIfPassed(String target, Request baseRequest, HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
                 didRun[0] = true;
@@ -110,7 +110,7 @@ public class GripServerTest {
     public void testUnsuccessfulPostHandler() throws Exception {
         String path = "/testUnsuccessfulPostHandler";
         boolean[] didRun = {false};
-        Handler h = new PedanticHandler(path) {
+        Handler h = new PedanticHandler(new ContextStore(), path) {
             @Override
             protected void handleIfPassed(String target, Request baseRequest, HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
                 didRun[0] = true;

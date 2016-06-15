@@ -114,12 +114,12 @@ public class GripServer {
     }
 
     @Inject
-    GripServer(JettyServerFactory serverFactory, SettingsProvider settingsProvider) {
+    GripServer(ContextStore contextStore, JettyServerFactory serverFactory, SettingsProvider settingsProvider) {
         this.port = settingsProvider.getProjectSettings().getServerPort();
         this.serverFactory = serverFactory;
         this.server = serverFactory.create(port);
         this.server.setHandler(handlers);
-        handlers.addHandler(new NoContextHandler());
+        handlers.addHandler(new NoContextHandler(contextStore));
 
         Runtime.getRuntime().addShutdownHook(new Thread(this::stop));
     }
@@ -182,7 +182,14 @@ public class GripServer {
      */
     public void restart() {
         try {
-            stop();
+            if (state == State.RUNNING) {
+                try {
+                    server.stop();
+                } catch (Exception ex) {
+                    throw new GripServerException("Could not stop Jetty server", ex);
+                }
+                state = State.STOPPED;
+            }
             server = serverFactory.create(port);
             start();
         } catch (GripServerException | IllegalStateException ex) {

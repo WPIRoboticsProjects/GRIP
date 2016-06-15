@@ -1,5 +1,6 @@
 package edu.wpi.grip.core.sources;
 
+import edu.wpi.grip.core.http.ContextStore;
 import edu.wpi.grip.core.http.GripServer;
 import edu.wpi.grip.core.http.PedanticHandler;
 
@@ -55,8 +56,8 @@ public final class HttpImageHandler extends PedanticHandler {
     /**
      * Creates an image handler on the default upload path {@code /GRIP/upload/image}
      */
-    public HttpImageHandler() {
-        this(GripServer.IMAGE_UPLOAD_PATH);
+    public HttpImageHandler(ContextStore store) {
+        this(store, GripServer.IMAGE_UPLOAD_PATH);
     }
 
     /**
@@ -64,8 +65,8 @@ public final class HttpImageHandler extends PedanticHandler {
      *
      * @param path the path on the server that images will be uploaded to
      */
-    public HttpImageHandler(String path) {
-        super(path, true);
+    public HttpImageHandler(ContextStore store, String path) {
+        super(store, path, true);
         callbacks = new ArrayList<>();
     }
 

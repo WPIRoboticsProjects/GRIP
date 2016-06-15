@@ -4,6 +4,7 @@ import com.google.common.eventbus.EventBus;
 
 import edu.wpi.grip.core.events.RunStartedEvent;
 import edu.wpi.grip.core.events.RunStoppedEvent;
+import edu.wpi.grip.core.http.ContextStore;
 import edu.wpi.grip.core.http.GenericHandler;
 import edu.wpi.grip.core.http.GripServer;
 import edu.wpi.grip.core.http.GripServerTest;
@@ -51,10 +52,10 @@ public class HttpPublisherTest {
     @Before
     public void setUp() {
         eventBus = new EventBus();
+        ContextStore contextStore = new ContextStore();
         InputSocket.Factory isf = new MockInputSocketFactory(eventBus);
-        server = GripServerTest.makeServer(new GripServerTest.TestServerFactory(), ProjectSettings::new);
-        unclaimDataHandler();
-        dataHandler = new DataHandler();
+        server = GripServerTest.makeServer(contextStore, new GripServerTest.TestServerFactory(), ProjectSettings::new);
+        dataHandler = new DataHandler(contextStore);
         eventBus.register(dataHandler);
 
         operation = new HttpPublishOperation<Number, NumberPublishable, Double>(new HttpPublishManager(server, dataHandler), NumberPublishable::new) {};
@@ -63,18 +64,6 @@ public class HttpPublisherTest {
 
         server.addHandler(dataHandler);
         server.start();
-    }
-
-    private void unclaimDataHandler() {
-        try {
-            Field f = GenericHandler.class.getDeclaredField("claimedContexts");
-            f.setAccessible(true);
-            @SuppressWarnings("unchecked")
-            Set<String> claimedContexts = (Set<String>) f.get(null);
-            claimedContexts.remove(GripServer.DATA_PATH);
-        } catch (IllegalAccessException | NoSuchFieldException e) {
-            throw new AssertionError("Could not unclaim /GRIP/data", e);
-        }
     }
 
     @SuppressWarnings("unchecked")

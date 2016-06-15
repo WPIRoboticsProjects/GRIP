@@ -21,22 +21,24 @@ public abstract class PedanticHandler extends GenericHandler {
     /**
      * Creates a new handler for the given context. That context will not be claimed.
      *
+     * @param store the {@code ContextStore} to store this context in
      * @param context the context for this handler
-     * @see GenericHandler#GenericHandler(String)
+     * @see GenericHandler#GenericHandler(ContextStore, String)
      */
-    protected PedanticHandler(String context) {
-        super(context);
+    protected PedanticHandler(ContextStore store, String context) {
+        super(store, context);
     }
 
     /**
      * Creates a new handler for the given context.
      *
+     * @param store the {@code ContextStore} to store this context in
      * @param context the context for this handler
      * @param doClaim if the context should be claimed
-     * @see GenericHandler#GenericHandler(String, boolean)
+     * @see GenericHandler#GenericHandler(ContextStore, String, boolean)
      */
-    protected PedanticHandler(String context, boolean doClaim) {
-        super(context, doClaim);
+    protected PedanticHandler(ContextStore store, String context, boolean doClaim) {
+        super(store, context, doClaim);
     }
 
     @Override

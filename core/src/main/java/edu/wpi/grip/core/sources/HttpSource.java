@@ -10,6 +10,7 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
 import edu.wpi.grip.core.Source;
 import edu.wpi.grip.core.events.SourceHasPendingUpdateEvent;
 import edu.wpi.grip.core.events.SourceRemovedEvent;
+import edu.wpi.grip.core.http.ContextStore;
 import edu.wpi.grip.core.http.GripServer;
 import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.core.sockets.SocketHint;
@@ -62,21 +63,25 @@ public class HttpSource extends Source {
     HttpSource(
             ExceptionWitness.Factory exceptionWitnessFactory,
             EventBus eventBus,
+            OutputSocket.Factory osf,
             GripServer server,
+            ContextStore store,
             @Assisted Properties properties) {
-        this(exceptionWitnessFactory, eventBus, server, properties.getProperty(PATH_PROPERTY));
+        this(exceptionWitnessFactory, eventBus, osf, server, store, properties.getProperty(PATH_PROPERTY));
     }
 
     @AssistedInject
     HttpSource(
             ExceptionWitness.Factory exceptionWitnessFactory,
             EventBus eventBus,
+            OutputSocket.Factory osf,
             GripServer server,
+            ContextStore store,
             @Assisted String path) {
         super(exceptionWitnessFactory);
         this.path = path;
-        this.imageHandler = handlers.computeIfAbsent(path, HttpImageHandler::new);
-        this.imageOutput = new OutputSocket<>(eventBus, outputHint);
+        this.imageHandler = handlers.computeIfAbsent(path, p -> new HttpImageHandler(store, p));
+        this.imageOutput = osf.create(outputHint);
         this.eventBus = eventBus;
         // Will add the handler only when the first HttpSource is created -- no-op every subsequent time
         // (Otherwise, multiple handlers would be getting called and it'd be a mess)

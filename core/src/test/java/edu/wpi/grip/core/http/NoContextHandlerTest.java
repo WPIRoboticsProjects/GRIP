@@ -27,8 +27,9 @@ import static org.junit.Assert.assertEquals;
 
 public class NoContextHandlerTest {
 
+    private final ContextStore contextStore = new ContextStore();
     private HandlerCollection handlers = new HandlerCollection();
-    private NoContextHandler handler = new NoContextHandler();
+    private NoContextHandler handler = new NoContextHandler(contextStore);
     private Server server;
     private DefaultHttpClient client;
 
@@ -78,7 +79,7 @@ public class NoContextHandlerTest {
     private class ClaimingHandler extends PedanticHandler {
 
         private ClaimingHandler(String context, boolean doClaim) {
-            super(context, doClaim);
+            super(contextStore, context, doClaim);
         }
 
         @Override

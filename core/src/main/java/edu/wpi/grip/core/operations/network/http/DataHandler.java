@@ -3,10 +3,12 @@ package edu.wpi.grip.core.operations.network.http;
 import com.google.common.eventbus.Subscribe;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
 import edu.wpi.grip.core.events.RunStartedEvent;
 import edu.wpi.grip.core.events.RunStoppedEvent;
+import edu.wpi.grip.core.http.ContextStore;
 import edu.wpi.grip.core.http.GripServer;
 import edu.wpi.grip.core.http.PedanticHandler;
 
@@ -51,8 +53,9 @@ public final class DataHandler extends PedanticHandler {
      */
     private final AtomicBoolean staleData;
 
-    DataHandler() {
-        super(GripServer.DATA_PATH, true);
+    @Inject
+    DataHandler(ContextStore store) {
+        super(store, GripServer.DATA_PATH, true);
         this.dataSuppliers = new HashMap<>();
         this.gson = new GsonBuilder()
                 .setPrettyPrinting()

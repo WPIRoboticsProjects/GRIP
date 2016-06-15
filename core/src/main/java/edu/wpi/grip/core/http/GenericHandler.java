@@ -16,15 +16,11 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * Generic Jetty handler.
  * <p>
  * Instances of this class can either claim a context, preventing other instances from handling
- * events on that context, or not, in which case it will run on any context. The second type may use
- * {@link #isClaimed(String) isClaimed} to check if a context has been claimed if it shouldn't run on a claimed context.
+ * events on that context, or not, in which case it will run on any context.
  */
 public abstract class GenericHandler extends AbstractHandler {
 
-    /**
-     * Claimed contexts.
-     */
-    private static final Set<String> claimedContexts = new HashSet<>();
+    private final ContextStore contextStore;
 
     /**
      * The context that this handles.
@@ -51,6 +47,7 @@ public abstract class GenericHandler extends AbstractHandler {
      */
     protected GenericHandler() {
         super();
+        contextStore = new ContextStore();
         context = null;
     }
 
@@ -60,11 +57,12 @@ public abstract class GenericHandler extends AbstractHandler {
      * Note that the context <strong>is case sensitive</strong>.
      * </p>
      *
+     * @param store   the context store to use to check for claimed contexts
      * @param context the context for this handler
      * @throws IllegalArgumentException if the given context has already been claimed
      */
-    protected GenericHandler(String context) {
-        this(context, false);
+    protected GenericHandler(ContextStore store, String context) {
+        this(store, context, false);
     }
 
     /**
@@ -73,36 +71,26 @@ public abstract class GenericHandler extends AbstractHandler {
      * Note that the context <strong>is case sensitive</strong>.
      * </p>
      *
+     * @param store   the context store to use to check for claimed contexts
      * @param context the context for this handler
      * @param doClaim flag marking if the given context should be claimed
      * @throws IllegalArgumentException if the given context has already been claimed
      */
-    protected GenericHandler(String context, boolean doClaim) {
+    protected GenericHandler(ContextStore store, String context, boolean doClaim) {
         super();
         checkNotNull(context);
-        if (isClaimed(context)) {
-            throw new IllegalArgumentException("The given context has already been claimed: " + context);
-        }
-        this.context = context;
         if (doClaim) {
-            claimContext();
+            store.record(context);
         }
-    }
-
-    /**
-     * Claims the context. Fails if that context has already been claimed and not released.
-     *
-     * @return true if the context was claimed, false if it has already been claimed
-     */
-    protected boolean claimContext() {
-        return claimedContexts.add(context);
+        this.contextStore = store;
+        this.context = context;
     }
 
     /**
      * Releases the context that this handles, allowing it to be claimed by another handler.
      */
     protected void releaseContext() {
-        claimedContexts.remove(context);
+        contextStore.erase(context);
     }
 
     /**
@@ -110,16 +98,6 @@ public abstract class GenericHandler extends AbstractHandler {
      */
     public String getContext() {
         return context;
-    }
-
-    /**
-     * Checks if the given context has been claimed. Returns {@code false} if given {@code null}.
-     *
-     * @param context the context to check
-     * @return true if the context has been claimed, false if not
-     */
-    protected static boolean isClaimed(@Nullable String context) {
-        return claimedContexts.contains(context);
     }
 
     // Static helper methods

@@ -1,6 +1,7 @@
 package edu.wpi.grip.core.sources;
 
 
+import edu.wpi.grip.core.http.ContextStore;
 import edu.wpi.grip.core.http.GripServer;
 import edu.wpi.grip.core.http.GripServerTest;
 import edu.wpi.grip.core.settings.ProjectSettings;
@@ -26,7 +27,7 @@ public class SourcesSanityTest extends AbstractPackageSanityTests {
     GripServer.JettyServerFactory serverFactory = new GripServerTest.TestServerFactory();
     ProjectSettings projectSettings = new ProjectSettings();
     projectSettings.setServerPort(8080);
-    GripServer server = GripServerTest.makeServer(serverFactory, () -> projectSettings);
+    GripServer server = GripServerTest.makeServer(new ContextStore(), serverFactory, () -> projectSettings);
     setDefault(GripServer.class, server);
   }
 }

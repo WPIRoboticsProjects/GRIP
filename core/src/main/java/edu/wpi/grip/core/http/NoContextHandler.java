@@ -14,13 +14,23 @@ import org.eclipse.jetty.server.Request;
  */
 class NoContextHandler extends GenericHandler {
 
+    private final ContextStore store;
+
     private static final String notFoundMessage = "<h1>404 - Not Found</h1>There is no context for path: '%s'";
 
-    // implicit call to super() -- no context is claimed
+    /**
+     * Creates a new {@code NoContextHandler} that handles every context not in the given {@code ContextStore}.
+     *
+     * @param store Any context not in this {@code ContextStore} will get a {@code 404 Not Found} error.
+     */
+    public NoContextHandler(ContextStore store) {
+        super();
+        this.store = store;
+    }
 
     @Override
     public void handle(String target, Request baseRequest, HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-        if (isClaimed(target)) {
+        if (store.contains(target)) {
             // Let the appropriate handler handle this
             return;
         }

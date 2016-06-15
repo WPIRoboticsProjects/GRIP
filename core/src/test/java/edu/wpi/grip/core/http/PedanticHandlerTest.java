@@ -26,6 +26,7 @@ import static org.junit.Assert.assertTrue;
 
 public class PedanticHandlerTest {
 
+    private final ContextStore contextStore = new ContextStore();
     private HandlerCollection handlers;
     private MockHandler handler1, handler2, handler3;
     private Server server;
@@ -112,11 +113,11 @@ public class PedanticHandlerTest {
         private boolean didRun = false;
 
         MockHandler(String context) {
-            super(context);
+            super(contextStore, context);
         }
 
         MockHandler(String context, boolean doClaim) {
-            super(context, doClaim);
+            super(contextStore, context, doClaim);
         }
 
         @Override

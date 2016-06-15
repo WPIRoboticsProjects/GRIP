@@ -82,9 +82,6 @@ public class GripCoreTestModule extends GripCoreModule {
     // HTTP server injection bindings
     bind(GripServer.JettyServerFactory.class).to(GripServerTest.TestServerFactory.class);
     bind(GripServer.class).asEagerSingleton();
-    bind(MapNetworkPublisherFactory.class)
-        .annotatedWith(Names.named("httpManager"))
-        .to(HttpPublishManager.class);
   }
 
   @Override

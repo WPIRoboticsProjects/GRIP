@@ -16,6 +16,7 @@ import static org.junit.Assert.assertTrue;
 public class GenericHandlerTest {
 
     private GenericHandler gh;
+    private final ContextStore store = new ContextStore();
 
     @Test(expected = NullPointerException.class)
     public void testNullContext() {
@@ -35,7 +36,7 @@ public class GenericHandlerTest {
     public void testClaim() {
         String context = "testClaim";
         gh = new MockGenericHandler(context, true);
-        assertTrue("Context should have been claimed", GenericHandler.isClaimed(context));
+        assertTrue("Context should have been claimed", store.contains(context));
         gh = new MockGenericHandler(context, true); // Should throw IllegalArgumentException
     }
 
@@ -53,18 +54,18 @@ public class GenericHandlerTest {
         }
     }
 
-    private static class MockGenericHandler extends GenericHandler {
+    private class MockGenericHandler extends GenericHandler {
 
         MockGenericHandler() {
             super();
         }
 
         MockGenericHandler(String context) {
-            super(context);
+            super(store, context);
         }
 
         MockGenericHandler(String context, boolean doClaim) {
-            super(context, doClaim);
+            super(store, context, doClaim);
         }
 
         @Override

@@ -27,8 +27,8 @@ public class HttpPipelineSwitcher extends PedanticHandler {
     private final GRIPMode mode;
 
     @Inject
-    HttpPipelineSwitcher(Project project, GRIPMode mode) {
-        super(GripServer.PIPELINE_UPLOAD_PATH, true);
+    HttpPipelineSwitcher(ContextStore store, Project project, GRIPMode mode) {
+        super(store, GripServer.PIPELINE_UPLOAD_PATH, true);
         this.project = project;
         this.mode = mode;
     }
