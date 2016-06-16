@@ -1,5 +1,5 @@
 #**
-This creates the java OpenCV Filter Contours function
+This creates the C++ OpenCV Filter Contours function
 *#
 	/**
 	 * Filters through contours.
@@ -25,22 +25,17 @@ This creates the java OpenCV Filter Contours function
 		vector<vector<Point> > hull;
 		for (vector<Point> contour: *inputContours) {
 			Rect bb = boundingRect(contour);
-			if (bb.width < *minWidth || bb.width > *maxWidth)
-				continue;
-			if (bb.height < *minHeight || bb.height > *maxHeight)
-				continue;
+			if (bb.width < *minWidth || bb.width > *maxWidth) continue;
+			if (bb.height < *minHeight || bb.height > *maxHeight) continue;
 			double area = contourArea(contour);
-			if (area < *minArea)
-				continue;
-			if (arcLength(contour, true) < *minPerimeter)
-				continue;
+			if (area < *minArea) continue;
+			if (arcLength(contour, true) < *minPerimeter) continue;
 			convexHull(contour, hull);
-
 			double solid = 100 * area / contourArea(hull);
 			if (solid < solidity[0] || solid > solidity[1]) continue;
 			if (contour.size() < *minVertexCount || contour.size() > *maxVertexCount)	continue;
 			double ratio = bb.width / bb.height;
 			if (ratio < *minRatio || ratio > *maxRatio)	continue;
-				output->push_back(contour);
+			output->push_back(contour);
 		}
 	}

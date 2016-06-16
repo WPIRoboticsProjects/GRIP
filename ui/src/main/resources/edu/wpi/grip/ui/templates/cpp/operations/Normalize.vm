@@ -1,9 +1,3 @@
-	enum NormalizeType {
-	   INF = NORM_INF,
-	   L1 = NORM_L1,
-	   L2 = NORM_L2,
-	   MINMAX = NORM_MINMAX
-	   };
 	/**
 	 * Normalizes or remaps the values of pixels in an image.
 	 *

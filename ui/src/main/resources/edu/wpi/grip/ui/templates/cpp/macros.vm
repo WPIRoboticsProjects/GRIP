@@ -1,4 +1,4 @@
-#macro( cType $type )#if( $type == "Double" || $type == "Number")
+#macro( cType $type )#if( $type.equals("Double") || $type.equals("Number"))
 double#elseif($type.equals("Object"))
 Mat#elseif ($type.equals("ContoursReport"))
 vector<vector<Point> >#elseif ($type.equals("BlobsReport"))
@@ -19,10 +19,12 @@ $tMeth.name($step.name())(#foreach($inp in $step.getInputs()) #cType($inp.type()
 	int $input.name()$c = $input.value();
 #elseif ($input.type().contains("Enum"))
 	int $input.name()$c = $input.value();
-#elseif ($input.type().equals("MaskSize") || $input.type().equals("BlurType"))
-    String $input.name()$c = "${input.value()}";
-#elseif ( $input.type().contains("Type") || $input.type().equals("Interpolation") ||$input.type() == "FlipCode" )
-	int $input.name()$c = $input.value();
+#elseif ($input.type().equals("MaskSize") )
+    String $input.name()$c = "$input.value()";
+#elseif ($input.type().equals("FlipCode") || $input.type().equals("BlurType") )
+	$input.type() $input.name()$c = $input.type()::#cvVal($input.value());
+#elseif ( $input.type().contains("Type") || $input.type().equals("Interpolation"))
+	int $input.name()$c = #cvVal($input.value());
 #elseif ($input.type().equals("String"))
 	$input.type() $input.name()$c = "$input.value()";
 #elseif ($input.type().equals("List"))
@@ -35,3 +37,20 @@ $tMeth.name($step.name())(#foreach($inp in $step.getInputs()) #cType($inp.type()
 #else
 	#cType($input.type()) $input.name()$c = $input.value();
 #end#end
+
+#macro (cvVal $value)#if($value.equals("INF"))
+NORM_INF#elseif($value.equals("L1"))
+NORM_L1#elseif($value.equals("L2"))
+NORM_L2#elseif($value.equals("MINMAX"))
+NORM_MINMAX#elseif($value.equals("None"))
+INTER_NEAREST#elseif($value.equals("Linear"))
+INTER_LINEAR#elseif($value.equals("Cubic"))
+INTER_CUBIC#elseif($value.equals("Lanczos"))
+INTER_LANCZOS4#elseif($value.equals("Area"))
+INTER_AREA#elseif($value.equals("Box Blur"))
+BOX#elseif($value.equals("Gaussian Blur"))
+GAUSSIAN#elseif($value.equals("Median Filter"))
+MEDIAN#elseif($value.equals("Bilateral Filter"))
+BILATERAL#else
+$value#end#end
+

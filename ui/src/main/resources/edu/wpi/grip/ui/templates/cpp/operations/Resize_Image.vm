@@ -1,10 +1,3 @@
-	enum class Interpolation {
-		None = INTER_NEAREST,
-		Linear = INTER_LINEAR,
-		Cubic = INTER_CUBIC,
-		Lanczos = INTER_LANCZOS4,
-		Area = INTER_AREA
-		};
 	/**
 	 * Scales and image to an exact size.
 	 *

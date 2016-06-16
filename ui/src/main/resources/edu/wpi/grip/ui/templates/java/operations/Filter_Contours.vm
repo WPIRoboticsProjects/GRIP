@@ -27,21 +27,17 @@ This creates the java OpenCV Filter Contours function
 		for (int i = 0; i < inputContours.size(); i++) {
 			final MatOfPoint contour = inputContours.get(i);
 			final Rect bb = Imgproc.boundingRect(contour);
-			if (bb.width < minWidth || bb.width > maxWidth)
-				continue;
-			if (bb.height < minHeight || bb.height > maxHeight)
-				continue;
+			if (bb.width < minWidth || bb.width > maxWidth) continue;
+			if (bb.height < minHeight || bb.height > maxHeight) continue;
 			final double area = Imgproc.contourArea(contour);
-			if (area < minArea)
-				continue;
-			if (Imgproc.arcLength(new MatOfPoint2f(contour.toArray()), true) < minPerimeter)
-				continue;
+			if (area < minArea) continue;
+			if (Imgproc.arcLength(new MatOfPoint2f(contour.toArray()), true) < minPerimeter) continue;
 			Imgproc.convexHull(contour, hull);
 			MatOfPoint mopHull = new MatOfPoint();
 			mopHull.create((int) hull.size().height, 1, CvType.CV_32SC2);
 			for (int j = 0; j < hull.size().height; j++) {
 				int index = (int) hull.get(j, 0)[0];
-				double[] point = new double[] { contour.get(index, 0)[0], contour.get(index, 0)[1] };
+				double[] point = new double[] { contour.get(index, 0)[0], contour.get(index, 0)[1]};
 				mopHull.put(j, 0, point);
 			}
 			final double solid = 100 * area / Imgproc.contourArea(mopHull);
@@ -49,6 +45,6 @@ This creates the java OpenCV Filter Contours function
 			if (contour.rows() < minVertexCount || contour.rows() > maxVertexCount)	continue;
 			final double ratio = bb.width / bb.height;
 			if (ratio < minRatio || ratio > maxRatio)	continue;
-				output.add(contour);
+			output.add(contour);
 		}
 	}

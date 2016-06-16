@@ -8,7 +8,7 @@
 		X_AXIS = 0,
 		Y_AXIS = 1,
 		BOTH_AXES = -1,
-	}	
+	};
 	
 	/**
 	 * Flips an image along X, Y or both axes.
@@ -16,6 +16,6 @@
 	 * @param flipcode FlipCode of which direction to flip.
 	 * @param dst flipped version of the Image.
 	 */
-	void $tMeth.name($step.name())(Mat *src, int *flipcode, Mat *dst){
+	void $tMeth.name($step.name())(Mat *src, FlipCode *flipcode, Mat *dst){
 		flip(*src,*dst,*flipcode);
 	}
