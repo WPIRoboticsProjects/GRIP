@@ -17,7 +17,7 @@ void $fileName::Process(){
 #foreach($step in $pipeline.getSteps())
 #set($c = "S" + $step.num())
 	//Step$step.num(): $step.name():
-#parse("src/main/resources/edu/wpi/grip/ui/templates/cpp/CV Step.vm")
+#parse("src/main/resources/edu/wpi/grip/ui/templates/cpp/Step.vm")
 
 #end
 }

@@ -8,7 +8,7 @@
 	 * @param borderValue value to be used for a constant border.
 	 * @param dst Output Image.
 	 */
-	private void $tMeth.name($step.name())(Mat *src, Mat *kernel, Point *anchor, double
+	void $tMeth.name($step.name())(Mat *src, Mat *kernel, Point *anchor, double
 	*iterations, int *borderType, Scalar *borderValue, Mat *dst){
 		if(!kernel){
 			Mat kernel();

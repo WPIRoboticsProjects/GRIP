@@ -12,7 +12,7 @@
 	void $tMeth.name($step.name())(Mat *input, BlurType *type, double *doubleRadius, Mat *output){
 		int radius = (int) (*doubleRadius+0.5);
 		int kernelSize;
-		switch(type){
+		switch(*type){
 			case BOX:
 				kernelSize = 2*radius+1;
 				blur(*input,*output,Size(kernelSize, kernelSize));

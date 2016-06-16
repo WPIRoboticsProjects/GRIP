@@ -35,6 +35,7 @@ class $fileName{
 #set($toParse = "src/main/resources/edu/wpi/grip/ui/templates/cpp/operations/" + $step.name())
 #set($toParse = $toParse + ".vm")
 #parse($toParse)
+
 #end
 
 	public:

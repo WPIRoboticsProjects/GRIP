@@ -1,4 +1,4 @@
-#if ( $step.name() == "Switch" )
+#if ($step.name() == "Switch")
 #parse("src/main/resources/edu/wpi/grip/ui/templates/java/Switch.vm")
 #elseif ( $step.name() == "Valve")
 #parse("src/main/resources/edu/wpi/grip/ui/templates/java/Valve.vm")

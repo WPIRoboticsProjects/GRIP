@@ -6,5 +6,5 @@
 	 * @param dst Result image.
 	 */
 	void $tMeth.name($step.name())(Mat *src1, Mat *src2, double *scale, Mat *dst){
-		multiply(*src1, *src2, dst, scale);
+		multiply(*src1, *src2, *dst, *scale);
 	}

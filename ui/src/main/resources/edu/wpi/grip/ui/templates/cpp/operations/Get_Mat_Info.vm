@@ -11,11 +11,11 @@
 	void $tMeth.name($step.name())(Mat *src, Size *size, bool *empty, double *channels,
 	double *cols, double *rows, double *highestValue){
 		*empty = src->empty();
-		*channels = src_>channels();
-		*cols = src->cols();
-		*rows = src->rows();
-		double *lowestValue;
-		minMaxLoc(*src,lowestValue, highestValue);
+		*channels = src->channels();
+		*cols = src->cols;
+		*rows = src->rows;
+		double lowestValue;
+		minMaxLoc(*src, &lowestValue, highestValue);
 		Size matSize = src->size();
 		size->height = matSize.height;
 		size->width = matSize.width;

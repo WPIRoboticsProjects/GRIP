@@ -1,20 +1,20 @@
-#macro( cType $type )#if( $type.equals("Double") || $type.equals("Number"))
+#macro(cType $type)#if($type.equals("Double") || $type.equals("Number"))
 double#elseif($type.equals("Object"))
 Mat#elseif ($type.equals("ContoursReport"))
 vector<vector<Point> >#elseif ($type.equals("BlobsReport"))
 vector<KeyPoint>#elseif ($type.equals("LinesReport"))
-vector<Line>#elseif( $type == "Integer" )
-int#elseif( $type == "Boolean" || "boolean")
+vector<Line>#elseif($type == "Integer" )
+int#elseif($type == "Boolean" || "boolean")
 bool#else
 $type#end #end
 
 #macro(setter $source)
 set$source.value()(#cType($source.type()) *$source.value())#end
 
-#macro( func $step )
+#macro(func $step)
 $tMeth.name($step.name())(#foreach($inp in $step.getInputs()) #cType($inp.type()) *$inp.name(), #end#foreach($out in $step.getOutputs()) #cType($out.type()) *#cName($out.name())#if($velocityCount <$step.getOutputs().size()), #end#end)#end
 
-#macro ( newInput $input)
+#macro (newInput $input)
 #if ($input.type().contains("CoreEnum"))
 	int $input.name()$c = $input.value();
 #elseif ($input.type().contains("Enum"))

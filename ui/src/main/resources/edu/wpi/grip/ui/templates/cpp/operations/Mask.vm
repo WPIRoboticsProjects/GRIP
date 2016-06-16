@@ -6,7 +6,7 @@
 		 * @param output The image in which to store the output.
 		 */
 		void $tMeth.name($step.name())(Mat *input, Mat *mask, Mat *output){
-			mask.convertTo(&mask, CV_8UC1);
-			bitwise_xor(&output, &output, &output);
-			input.copyTo(&output, &mask);
+			mask->convertTo(*mask, CV_8UC1);
+			bitwise_xor(*output, *output, *output);
+			input->copyTo(*output, *mask);
 		}

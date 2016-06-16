@@ -1,20 +1,20 @@
-#macro ( MutOf $obj )
+#macro (MutOf $obj)
 MutableOf<$obj>#end
 
-#macro ( newInput $input)
-#if( $input.mutable() )##Is Mutable
-#if( $input.hasValue() )##Has a set value
+#macro (newInput $input)
+#if($input.mutable())##Is Mutable
+#if($input.hasValue())##Has a set value
 		$input.baseType() $input.name()$c = $input.value();
 #else##Has Connected Socket
 		$input.baseType() $input.name()$c = ${input.value()}.get().$input.baseType()Value();
 #end##end Has a set value
 #else##Not Mutable
-#if ( $input.type() == "FlipCode" )
+#if ($input.type() == "FlipCode")
 		$input.type() $input.name()$c = FlipCode.$input.value();
-#elseif ($input.type().equals("Interpolation"))
-		int $input.name()$c = Interpolation::$input.value();
+#elseif ($input.type().contains("CoreEnum"))
+		int $input.name()$c = Core.$input.value();
 #elseif ($input.type().contains("Enum"))
-		int $input.name()$c = $input.value();
+		int $input.name()$c = Imgproc.$input.value();
 #elseif ($input.type().equals("MaskSize") || $input.type().contains("Type"))
 		$input.type() $input.name()$c = ${input.type()}.get("${input.value()}");
 #elseif ($input.type().equals("String"))

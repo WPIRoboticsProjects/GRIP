@@ -12,7 +12,7 @@
 	void $tMeth.name($step.name())(Mat *src, Point *pt1, Point *pt2, Scalar *color, double *thickness, int *lineType, double *shift, Mat *dst){
 		src->copyTo(*dst);
 		if(!color){
-			Scalar color(1.0,1.0,1.0)
+			Scalar color(1.0,1.0,1.0);
 		}
 		rectangle(*dst, *pt1, *pt2, *color, (int) *thickness, *lineType, (int) *shift);
 	}

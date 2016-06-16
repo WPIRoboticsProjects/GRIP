@@ -9,6 +9,6 @@
 	 */
 	void $tMeth.name($step.name())(Mat *input, double hue[], double sat[], double val[], Mat *out){
 		cvtColor(*input, *out, COLOR_BGR2HSV);
-		Core.inRange(*out,Scalar(hue[0], sat[0] ,val[0]), Scalar(hue[1], sat[1] ,val[1])
+		inRange(*out,Scalar(hue[0], sat[0] ,val[0]), Scalar(hue[1], sat[1] ,val[1])
 		, *out);
 	}

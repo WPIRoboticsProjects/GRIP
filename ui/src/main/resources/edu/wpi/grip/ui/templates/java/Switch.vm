@@ -1,39 +1,39 @@
 #set($needsMut = true)
 		//input
 #set($boolInp = $step.getInput(0))
-#if(!$boolInp.hasValue() )
+#if(!$boolInp.hasValue())
 		$boolInp.name()$c = ${boolInp.value()}.$boolInp.baseType()Value();
 #end
-#set( $inputTrue = $step.getInput(1) )
-#if( $inputTrue.mutable() )##Is Mutable
-#if( $inputTrue.number() )##Is Number
+#set($inputTrue = $step.getInput(1))
+#if($inputTrue.mutable())##Is Mutable
+#if($inputTrue.number())##Is Number
 		Number $inputTrue.name()$c = ${inputTrue.value()};
 #else##Not number
 		$inputTrue.type() $inputTrue.name()$c = ${inputTrue.value()};
 #end##end Is Number
 #else##Not Mutable
-#if ( $inputTrue.type() == "FlipCode" )
+#if ($inputTrue.type() == "FlipCode")
 		$inputTrue.type() $inputTrue.name()$c = FlipCode.$inputTrue.value();
 #else
 		$inputTrue.type() $inputTrue.name()$c = $inputTrue.value();
 #end
 #end##end Is Mutable
-#set( $inputFalse = $step.getInput(2) )
-#if( $inputFalse.mutable() )##Is Mutable
-#if( $inputFalse.number() )##Is Number
+#set($inputFalse = $step.getInput(2))
+#if($inputFalse.mutable())##Is Mutable
+#if($inputFalse.number())##Is Number
 		Number $inputFalse.name()$c = ${inputFalse.value()};
 #else##Not number
 		$inputFalse.type() $inputFalse.name()$c = ${inputFalse.value()};
 #end##end Is Number
 #else##Not Mutable
-#if ( $inputFalse.type() == "FlipCode" )
+#if($inputFalse.type() == "FlipCode")
 		$inputFalse.type() $inputFalse.name()$c = FlipCode.$inputFalse.value();
 #else
 		$inputFalse.type() $inputFalse.name()$c = $inputFalse.value();
 #end
 #end##end Is Mutable
-#set( $out = $step.getOutput(0) )
-#set ( $outMutName = "mutOf" + $out.name() )
+#set($out = $step.getOutput(0))
+#set($outMutName = "mutOf" + $out.name())
 		//output
 		#MutOf($out.baseType()) $outMutName = new #MutOf($out.baseType())();
 		pipelineSwitch($boolInp.name()$c, $inputTrue.name()$c, $inputFalse.name()$c, $outMutName);
