@@ -1,0 +1,34 @@
+#macro( input $inp $c)
+self.__$inp.name()$c#end
+
+
+#macro( newInput $inp $c)
+#if($inp.type().contains("Type"))
+#input($inp $c) = ${inp.type()}.$inp.value().replaceAll(' ','_')#elseif($inp.hasValue())
+#if($inp.value().contains("source"))
+#input($inp $c) = self.__$inp.value()#else
+#input($inp $c) = $inp.value()#end
+#else##connected socket
+#input($inp $c) = self.__$inp.value()#end#end
+
+#macro( needs $enum )
+#set($BooleanThatDoesNotMatter = $enums.add($enum))#end
+
+#macro( addToList $list $ele)
+#set($BooleanThatDoesNotMatter = $list.add($ele))#end
+
+#macro( type $socket )
+#set($type = $socket.type())
+#if($type.equals("Mat"))
+numpy.ndarray#else
+$type
+#end
+#end
+
+#macro( setter $src )
+    def set_${src.value()}(self, value):
+        'Sets $src.value() to given value checking for correct type'
+        assert isinstance(value, #type($src)) , "Source must be of type #type($src)"
+        #input($src) = value
+    
+#end

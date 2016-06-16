@@ -1,0 +1,40 @@
+#set($enums = [])
+import cv2
+import numpy
+from enum import Enum
+
+class $fileName:
+    'Class that runs the Pipeline. Set all sources before calling process'
+    
+    def __init__(self):
+        'initializes all values to presets or None if need to be set'
+#foreach($src in $pipeline.getSources())
+        self.__$src.value() = None
+#end
+#foreach($step in $pipeline.getSteps())
+#set($c = "s" + $step.num())
+#foreach($input in $step.getInputs())
+        #newInput($input $c)
+
+#end
+#end
+    
+    def process(self):
+        print("not done yet")
+    
+#foreach($source in $pipeline.getSources())
+#setter($source)
+#end
+#foreach($step in $pipeline.getUniqueSteps())
+#set($toParse = "src/main/resources/edu/wpi/grip/ui/templates/python/operations/" + $step.name())
+#set($toParse = $toParse + ".vm")
+#parse($toParse)
+    
+#end
+#set($addedEnums = [])
+#foreach($enum in $enums)
+#if(!$addedEnums.contains($enum))
+#parse("src/main/resources/edu/wpi/grip/ui/templates/python/enums/${enum}.vm")
+#add($addedEnums $enum)
+#end
+#end
