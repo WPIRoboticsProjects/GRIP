@@ -10,5 +10,5 @@
         elif(type is BlurType.Median_Filter):
             ksize = 2*round(radius)+1
             return cv2.medianBlur(src, ksize)
-        else :
+        else:
             return cv2.bilateralFilter(src,-1,round(radius),round(radius))
