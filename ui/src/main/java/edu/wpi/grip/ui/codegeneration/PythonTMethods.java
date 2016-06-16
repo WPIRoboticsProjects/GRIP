@@ -2,6 +2,7 @@ package edu.wpi.grip.ui.codegeneration;
 
 import com.google.common.base.CaseFormat;
 
+import edu.wpi.grip.ui.codegeneration.data.TInput;
 import edu.wpi.grip.ui.codegeneration.data.TStep;
 
 
@@ -12,11 +13,19 @@ public class PythonTMethods extends TemplateMethods  {
 
   @Override
   public String name(String name) {
-	  return CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.LOWER_UNDERSCORE, name.replaceAll("\\s", ""));
+	  return "__".concat(CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.LOWER_UNDERSCORE, name.replaceAll("\\s", "")));
   }
 
   @Override
   public String callOp(TStep step) {
-    return null;
+	  StringBuilder method = new StringBuilder();
+	  method.append("self.").append(name(step.name())).append("(");
+	  for(TInput inp : step.getInputs()){
+		  method.append("self.__").append(inp.name()).
+		  append("s").append(step.num()).append(", ");
+	  }
+	  method.delete(method.length()-2, method.length());
+	  method.append(")");
+    return method.toString();
   }
 }

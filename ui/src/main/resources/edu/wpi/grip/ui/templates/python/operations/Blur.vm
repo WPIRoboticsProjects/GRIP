@@ -1,6 +1,6 @@
-    #needs("BlurType")
+#needs("BlurType")
     @staticmethod
-    def blur(src, type, radius):
+    def __blur(src, type, radius):
         if(type is BlurType.Box_Blur):
             ksize = 2*round(radius)+1
             return cv2.blur(src,(ksize,ksize))
@@ -11,4 +11,4 @@
             ksize = 2*round(radius)+1
             return cv2.medianBlur(src, ksize)
         else :
-           return cv2.bilateralFilter(src,-1,round(radius),round(radius))
+            return cv2.bilateralFilter(src,-1,round(radius),round(radius))

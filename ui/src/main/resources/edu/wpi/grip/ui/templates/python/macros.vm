@@ -9,7 +9,7 @@ self.__$inp.name()$c#end
 #input($inp $c) = self.__$inp.value()#else
 #input($inp $c) = $inp.value()#end
 #else##connected socket
-#input($inp $c) = self.__$inp.value()#end#end
+#input($inp $c) = self.$inp.value()#end#end
 
 #macro( needs $enum )
 #set($BooleanThatDoesNotMatter = $enums.add($enum))#end
@@ -29,6 +29,9 @@ $type
     def set_${src.value()}(self, value):
         'Sets $src.value() to given value checking for correct type'
         assert isinstance(value, #type($src)) , "Source must be of type #type($src)"
-        #input($src) = value
+        self.__$src.value() = value
     
 #end
+
+#macro( output $out )
+self.$out.name()#end

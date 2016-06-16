@@ -1,0 +1,10 @@
+        #Step $step.num(): $step.name()
+#foreach($inp in $step.getInputs())
+#if(!$inp.hasValue()||$inp.value().contains("source"))
+#set($c = "s"+$step.num())
+        #newInput($inp $c)
+
+#end#end
+        (#foreach($out in $step.getOutputs())
+#output($out)#if($velocityCount<$step.getOutputs().size()),#end #end
+) = $tMeth.callOp($step)

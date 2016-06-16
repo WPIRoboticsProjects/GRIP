@@ -17,10 +17,16 @@ class $fileName:
         #newInput($input $c)
 
 #end
+#foreach($output in $step.getOutputs())
+        #output($output) = None
+#end
 #end
     
     def process(self):
-        print("not done yet")
+#foreach($step in $pipeline.getSteps())
+#parse("src/main/resources/edu/wpi/grip/ui/templates/python/step.vm")
+
+#end
     
 #foreach($source in $pipeline.getSources())
 #setter($source)
@@ -31,10 +37,11 @@ class $fileName:
 #parse($toParse)
     
 #end
+
 #set($addedEnums = [])
 #foreach($enum in $enums)
 #if(!$addedEnums.contains($enum))
 #parse("src/main/resources/edu/wpi/grip/ui/templates/python/enums/${enum}.vm")
-#add($addedEnums $enum)
+#addToList($addedEnums $enum)
 #end
 #end
