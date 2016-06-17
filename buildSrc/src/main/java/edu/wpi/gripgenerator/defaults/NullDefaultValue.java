@@ -10,37 +10,37 @@ import java.util.Set;
 
 public class NullDefaultValue extends DefaultValue {
 
-    public NullDefaultValue() {
-        super("", "null");
-    }
+  public NullDefaultValue() {
+    super("", "null");
+  }
 
-    @Override
-    public ImportDeclaration getImportDeclaration() {
-        return null;
-    }
+  @Override
+  public ImportDeclaration getImportDeclaration() {
+    return null;
+  }
 
-    @Override
-    protected Set<String> getDefaultValues() {
-        return null;
-    }
+  @Override
+  protected Set<String> getDefaultValues() {
+    return null;
+  }
 
-    @Override
-    public Expression getDefaultValue(String defaultValue) {
-        return new NullLiteralExpr();
-    }
+  @Override
+  public Expression getDefaultValue(String defaultValue) {
+    return new NullLiteralExpr();
+  }
 
-    @Override
-    public String getSocketBuilderInitalValueMethodNameToUse() {
-        return "initialValue";
-    }
+  @Override
+  public String getSocketBuilderInitalValueMethodNameToUse() {
+    return "initialValue";
+  }
 
-    @Override
-    public String getViewType() {
-        return "NONE";
-    }
+  @Override
+  public String getViewType() {
+    return "NONE";
+  }
 
-    @Override
-    public Optional<Type> getType() {
-        return Optional.empty();
-    }
+  @Override
+  public Optional<Type> getType() {
+    return Optional.empty();
+  }
 }

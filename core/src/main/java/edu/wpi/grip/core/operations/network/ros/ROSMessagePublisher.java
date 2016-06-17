@@ -12,13 +12,13 @@ import org.ros.message.MessageFactory;
  */
 public abstract class ROSMessagePublisher extends NetworkPublisher<ROSMessagePublisher.Converter> {
 
-    @FunctionalInterface
-    public interface Converter {
-        /**
-         * @param m              The message to store the data in
-         * @param messageFactory A factory to create anny additional messages needed
-         */
-        void convert(Message m, MessageFactory messageFactory);
-    }
+  @FunctionalInterface
+  public interface Converter {
+    /**
+     * @param m              The message to store the data in.
+     * @param messageFactory A factory to create anny additional messages needed.
+     */
+    void convert(Message m, MessageFactory messageFactory);
+  }
 
 }

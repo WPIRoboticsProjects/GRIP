@@ -29,124 +29,125 @@ import javafx.scene.layout.VBox;
 import javax.inject.Inject;
 
 /**
- * A JavaFX control that shows a step in the pipeline.  This control shows the name of the operation as well as a list
- * of input sockets and output sockets.
+ * A JavaFX control that shows a step in the pipeline.  This control shows the name of the operation
+ * as well as a list of input sockets and output sockets.
  */
 @ParametrizedController(url = "Step.fxml")
 public class StepController implements Controller {
 
-    @FXML
-    private VBox root;
-    @FXML
-    private Labeled title;
-    @FXML
-    private ImageView icon;
-    @FXML
-    private HBox buttons;
-    @FXML
-    private VBox inputs;
-    @FXML
-    private VBox outputs;
+  private final Pipeline pipeline;
+  private final InputSocketControllerFactory inputSocketControllerFactory;
+  private final OutputSocketController.Factory outputSocketControllerFactory;
+  private final ExceptionWitnessResponderButton.Factory exceptionWitnessResponderButtonFactory;
+  private final StepDragService stepDragService;
+  private final Step step;
+  @FXML
+  private VBox root;
+  @FXML
+  private Labeled title;
+  @FXML
+  private ImageView icon;
+  @FXML
+  private HBox buttons;
+  @FXML
+  private VBox inputs;
+  @FXML
+  private VBox outputs;
+  private ControllerMap<InputSocketController, Node> inputSocketMapManager;
+  private ControllerMap<OutputSocketController, Node> outputSocketMapManager;
 
-    private final Pipeline pipeline;
-    private final InputSocketControllerFactory inputSocketControllerFactory;
-    private final OutputSocketController.Factory outputSocketControllerFactory;
-    private final ExceptionWitnessResponderButton.Factory exceptionWitnessResponderButtonFactory;
-    private final StepDragService stepDragService;
-    private final Step step;
+  @Inject
+  StepController(Pipeline pipeline,
+                 InputSocketControllerFactory inputSocketControllerFactory,
+                 OutputSocketController.Factory outputSocketControllerFactory,
+                 ExceptionWitnessResponderButton.Factory exceptionWitnessResponderButtonFactory,
+                 StepDragService stepDragService,
+                 @Assisted Step step) {
+    this.pipeline = pipeline;
+    this.inputSocketControllerFactory = inputSocketControllerFactory;
+    this.outputSocketControllerFactory = outputSocketControllerFactory;
+    this.exceptionWitnessResponderButtonFactory = exceptionWitnessResponderButtonFactory;
+    this.stepDragService = stepDragService;
+    this.step = step;
+  }
 
-    private ControllerMap<InputSocketController, Node> inputSocketMapManager;
-    private ControllerMap<OutputSocketController, Node> outputSocketMapManager;
+  @FXML
+  private void initialize() {
+    inputSocketMapManager = new ControllerMap<>(inputs.getChildren());
+    outputSocketMapManager = new ControllerMap<>(outputs.getChildren());
 
-    /**
-     * Used for assisted injects.  Guice will automatically create an instance of this interface so we can create
-     * step controllers.  This lets us use injection with StepController even though it requires a {@link Step}
-     * (which is not an injected dependency).
-     */
-    public interface Factory {
-        StepController create(Step step);
+    root.getStyleClass().add(StyleClassNameUtility.classNameFor(step));
+    title.setText(step.getOperationDescription().name());
+    step.getOperationDescription().icon().ifPresent(icon -> this.icon.setImage(
+        new Image(InputStream.class.cast(icon))));
+    buttons.getChildren().add(0, exceptionWitnessResponderButtonFactory.create(step, "Step Error"));
+
+    // Add a SocketControlView for each input socket and output socket
+    for (InputSocket<?> inputSocket : step.getInputSockets()) {
+      inputSocketMapManager.add(inputSocketControllerFactory.create(inputSocket));
     }
 
-    @Inject
-    StepController(Pipeline pipeline,
-                   InputSocketControllerFactory inputSocketControllerFactory,
-                   OutputSocketController.Factory outputSocketControllerFactory,
-                   ExceptionWitnessResponderButton.Factory exceptionWitnessResponderButtonFactory,
-                   StepDragService stepDragService,
-                   @Assisted Step step) {
-        this.pipeline = pipeline;
-        this.inputSocketControllerFactory = inputSocketControllerFactory;
-        this.outputSocketControllerFactory = outputSocketControllerFactory;
-        this.exceptionWitnessResponderButtonFactory = exceptionWitnessResponderButtonFactory;
-        this.stepDragService = stepDragService;
-        this.step = step;
+    for (OutputSocket<?> outputSocket : step.getOutputSockets()) {
+      outputSocketMapManager.add(outputSocketControllerFactory.create(outputSocket));
     }
 
-    @FXML
-    private void initialize() {
-        inputSocketMapManager = new ControllerMap<>(inputs.getChildren());
-        outputSocketMapManager = new ControllerMap<>(outputs.getChildren());
+    root.setOnDragDetected(event -> {
+      stepDragService.beginDrag(this.step, root, "step");
+      event.consume();
+    });
 
-        root.getStyleClass().add(StyleClassNameUtility.classNameFor(step));
-        title.setText(step.getOperationDescription().name());
-        step.getOperationDescription().icon().ifPresent(icon -> this.icon.setImage(new Image(InputStream.class.cast(icon))));
-        buttons.getChildren().add(0, exceptionWitnessResponderButtonFactory.create(step, "Step Error"));
+    root.setOnDragDone(event -> {
+      stepDragService.completeDrag();
+      event.consume();
+    });
 
-        // Add a SocketControlView for each input socket and output socket
-        for (InputSocket<?> inputSocket : step.getInputSockets()) {
-            inputSocketMapManager.add(inputSocketControllerFactory.create(inputSocket));
-        }
+  }
 
-        for (OutputSocket<?> outputSocket : step.getOutputSockets()) {
-            outputSocketMapManager.add(outputSocketControllerFactory.create(outputSocket));
-        }
+  /**
+   * An unmodifiable collection of {@link InputSocketController}s corresponding to the input sockets
+   * of this step.
+   */
+  public Collection<InputSocketController> getInputSockets() {
+    return inputSocketMapManager.keySet();
+  }
 
-        root.setOnDragDetected(event -> {
-            stepDragService.beginDrag(this.step, root, "step");
-            event.consume();
-        });
+  /**
+   * An unmodifiable collection of {@link InputSocketController}s corresponding to the output
+   * sockets of this step.
+   */
+  public Collection<OutputSocketController> getOutputSockets() {
+    return outputSocketMapManager.keySet();
+  }
 
-        root.setOnDragDone(event -> {
-            stepDragService.completeDrag();
-            event.consume();
-        });
+  public VBox getRoot() {
+    return root;
+  }
 
-    }
+  public Step getStep() {
+    return step;
+  }
 
-    /**
-     * @return An unmodifiable collection of {@link InputSocketController}s corresponding to the input sockets of this step
-     */
-    public Collection<InputSocketController> getInputSockets() {
-        return inputSocketMapManager.keySet();
-    }
+  @FXML
+  private void deleteStep() {
+    pipeline.removeStep(step);
+  }
 
-    /**
-     * @return An unmodifiable collection of {@link InputSocketController}s corresponding to the output sockets of this step
-     */
-    public Collection<OutputSocketController> getOutputSockets() {
-        return outputSocketMapManager.keySet();
-    }
+  @FXML
+  private void moveStepLeft() {
+    pipeline.moveStep(step, -1);
+  }
 
-    public VBox getRoot() {
-        return root;
-    }
+  @FXML
+  private void moveStepRight() {
+    pipeline.moveStep(step, +1);
+  }
 
-    public Step getStep() {
-        return step;
-    }
-
-    @FXML
-    private void deleteStep() {
-        pipeline.removeStep(step);
-    }
-
-    @FXML
-    private void moveStepLeft() {
-        pipeline.moveStep(step, -1);
-    }
-
-    @FXML
-    private void moveStepRight() {
-        pipeline.moveStep(step, +1);
-    }
+  /**
+   * Used for assisted injects.  Guice will automatically create an instance of this interface so we
+   * can create step controllers.  This lets us use injection with StepController even though it
+   * requires a {@link Step} (which is not an injected dependency).
+   */
+  public interface Factory {
+    StepController create(Step step);
+  }
 }

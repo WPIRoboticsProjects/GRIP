@@ -7,19 +7,19 @@ import com.google.common.eventbus.EventBus;
  */
 public final class ManualPipelineRunner extends PipelineRunner {
 
-    public ManualPipelineRunner(EventBus eventBus, Pipeline pipeline) {
-        super(eventBus, () -> pipeline);
-        // This is fine because it is in a test
-        eventBus.register(this);
-    }
+  public ManualPipelineRunner(EventBus eventBus, Pipeline pipeline) {
+    super(eventBus, () -> pipeline);
+    // This is fine because it is in a test
+    eventBus.register(this);
+  }
 
-    @Override
-    public PipelineRunner startAsync() {
-        throw new UnsupportedOperationException();
-    }
+  @Override
+  public PipelineRunner startAsync() {
+    throw new UnsupportedOperationException();
+  }
 
-    public void runPipeline() {
-        super.runPipeline();
-    }
+  public void runPipeline() {
+    super.runPipeline();
+  }
 
 }

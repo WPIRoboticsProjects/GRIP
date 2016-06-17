@@ -12,30 +12,32 @@ import com.google.inject.assistedinject.Assisted;
 import javafx.fxml.FXML;
 
 /**
- * Provides controls for a {@link CameraSource}
+ * Provides controls for a {@link CameraSource}.
  */
 public final class CameraSourceController extends SourceController<CameraSource> {
 
-    private final StartStoppableButton.Factory startStoppableButtonFactory;
+  private final StartStoppableButton.Factory startStoppableButtonFactory;
 
-    public interface Factory {
-        CameraSourceController create(CameraSource cameraSource);
-    }
+  @Inject
+  CameraSourceController(
+      final EventBus eventBus,
+      final OutputSocketController.Factory outputSocketControllerFactory,
+      final StartStoppableButton.Factory startStoppableButtonFactory,
+      final ExceptionWitnessResponderButton.Factory exceptionWitnessResponderButtonFactory,
+      @Assisted final CameraSource cameraSource) {
+    super(eventBus, outputSocketControllerFactory, exceptionWitnessResponderButtonFactory,
+        cameraSource);
+    this.startStoppableButtonFactory = startStoppableButtonFactory;
+  }
 
-    @Inject
-    CameraSourceController(final EventBus eventBus,
-                           final OutputSocketController.Factory outputSocketControllerFactory,
-                           final StartStoppableButton.Factory startStoppableButtonFactory,
-                           final ExceptionWitnessResponderButton.Factory exceptionWitnessResponderButtonFactory,
-                           @Assisted final CameraSource cameraSource) {
-        super(eventBus, outputSocketControllerFactory, exceptionWitnessResponderButtonFactory, cameraSource);
-        this.startStoppableButtonFactory = startStoppableButtonFactory;
-    }
+  @FXML
+  public void initialize() throws Exception {
+    super.initialize();
+    addControls(startStoppableButtonFactory.create(getSource()));
+  }
 
-    @FXML
-    public void initialize() throws Exception {
-        super.initialize();
-        addControls(startStoppableButtonFactory.create(getSource()));
-    }
+  public interface Factory {
+    CameraSourceController create(CameraSource cameraSource);
+  }
 
 }

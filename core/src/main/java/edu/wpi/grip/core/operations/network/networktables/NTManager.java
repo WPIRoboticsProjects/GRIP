@@ -35,163 +35,166 @@ import static com.google.common.base.Preconditions.checkNotNull;
  */
 @Singleton
 public class NTManager implements Manager, MapNetworkPublisherFactory {
-    /*
-     * Nasty hack that is unavoidable because of how NetworkTables works.
-     */
-    private static final AtomicInteger publisherCount = new AtomicInteger(0);
+  /*
+   * Nasty hack that is unavoidable because of how NetworkTables works.
+   */
+  private static final AtomicInteger publisherCount = new AtomicInteger(0);
 
-    /**
-     * Information from:
-     * https://github.com/PeterJohnson/ntcore/blob/master/src/Log.h
-     * and
-     * https://github.com/PeterJohnson/ntcore/blob/e6054f543a6ab10aa27af6cace855da66d67ee44/include/ntcore_c.h#L39
-     */
-    private static final Map<Integer, Level> ntLogLevels = ImmutableMap.<Integer, Level>builder()
-        .put(40, Level.SEVERE)
-        .put(30, Level.WARNING)
-        .put(20, Level.INFO)
-        .put(10, Level.FINE)
-        .put(9, Level.FINE)
-        .put(8, Level.FINE)
-        .put(7, Level.FINER)
-        .put(6, Level.FINEST)
-        .build();
+  /**
+   * Information from: https://github.com/PeterJohnson/ntcore/blob/master/src/Log.h and
+   * https://github.com/PeterJohnson/ntcore/blob/e6054f543a6ab10aa27af6cace855da66d67ee44
+   * /include/ntcore_c.h#L39
+   */
+  private static final Map<Integer, Level> ntLogLevels = ImmutableMap.<Integer, Level>builder()
+      .put(40, Level.SEVERE)
+      .put(30, Level.WARNING)
+      .put(20, Level.INFO)
+      .put(10, Level.FINE)
+      .put(9, Level.FINE)
+      .put(8, Level.FINE)
+      .put(7, Level.FINER)
+      .put(6, Level.FINEST)
+      .build();
 
-    private final Logger logger = Logger.getLogger(getClass().getName());
+  private final Logger logger = Logger.getLogger(getClass().getName());
 
-    @Inject private PipelineRunner pipelineRunner;
-    @Inject private GripMode gripMode;
+  @Inject
+  private PipelineRunner pipelineRunner;
+  @Inject
+  private GripMode gripMode;
 
-    @Inject
-    NTManager() {
-        // We may have another instance of this method lying around
-        NetworkTable.shutdown();
+  @Inject
+  NTManager() {
+    // We may have another instance of this method lying around
+    NetworkTable.shutdown();
 
-        // Redirect NetworkTables log messages to our own log files.  This gets rid of console spam, and it also lets
-        // us grep through NetworkTables messages just like any other messages.
-        NetworkTablesJNI.setLogger((level, file, line, msg) -> {
-            String filename = new File(file).getName();
-            logger.log(ntLogLevels.get(level), String.format("NetworkTables: %s:%d %s", filename, line, msg));
-        }, 0);
+    // Redirect NetworkTables log messages to our own log files.  This gets rid of console spam,
+    // and it also lets
+    // us grep through NetworkTables messages just like any other messages.
+    NetworkTablesJNI.setLogger((level, file, line, msg) -> {
+      String filename = new File(file).getName();
+      logger.log(ntLogLevels.get(level), String.format("NetworkTables: %s:%d %s", filename, line,
+          msg));
+    }, 0);
 
-        NetworkTable.setClientMode();
+    NetworkTable.setClientMode();
 
-        // When in headless mode, start and stop the pipeline based on the "GRIP/run" key.  This allows robot programs
-        // to control GRIP without actually restarting the process.
-        NetworkTable.getTable("GRIP").addTableListener("run", (source, key, value, isNew) -> {
-            if (gripMode == GripMode.HEADLESS) {
-                if (!(value instanceof Boolean)) {
-                    logger.warning("NetworkTables value GRIP/run should be a boolean!");
-                    return;
-                }
+    // When in headless mode, start and stop the pipeline based on the "GRIP/run" key.  This
+    // allows robot programs
+    // to control GRIP without actually restarting the process.
+    NetworkTable.getTable("GRIP").addTableListener("run", (source, key, value, isNew) -> {
+      if (gripMode == GripMode.HEADLESS) {
+        if (!(value instanceof Boolean)) {
+          logger.warning("NetworkTables value GRIP/run should be a boolean!");
+          return;
+        }
 
-                if ((Boolean) value) {
-                    if (!pipelineRunner.isRunning()) {
-                        logger.info("Starting GRIP from NetworkTables");
-                        pipelineRunner.startAsync();
-                    }
-                } else if (pipelineRunner.isRunning()) {
-                    logger.info("Stopping GRIP from NetworkTables");
-                    pipelineRunner.stopAsync();
+        if ((Boolean) value) {
+          if (!pipelineRunner.isRunning()) {
+            logger.info("Starting GRIP from NetworkTables");
+            pipelineRunner.startAsync();
+          }
+        } else if (pipelineRunner.isRunning()) {
+          logger.info("Stopping GRIP from NetworkTables");
+          pipelineRunner.stopAsync();
 
-                }
-            }
-        }, true);
+        }
+      }
+    }, true);
 
-        NetworkTable.shutdown();
+    NetworkTable.shutdown();
+  }
+
+  /**
+   * Change the server address according to the project setting.
+   */
+  @Subscribe
+  public void updateSettings(ProjectSettingsChangedEvent event) {
+    final ProjectSettings projectSettings = event.getProjectSettings();
+
+    synchronized (NetworkTable.class) {
+      NetworkTable.shutdown();
+      NetworkTable.setIPAddress(projectSettings.getPublishAddress());
+    }
+  }
+
+  @Override
+  public <P> MapNetworkPublisher<P> create(Set<String> keys) {
+    // Keep track of ever publisher created.
+    publisherCount.getAndAdd(1);
+    return new NTPublisher<>(keys);
+  }
+
+  private static final class NTPublisher<P> extends MapNetworkPublisher<P> {
+    private final ImmutableSet<String> keys;
+    private Optional<String> name = Optional.empty();
+
+    protected NTPublisher(Set<String> keys) {
+      super(keys);
+      this.keys = ImmutableSet.copyOf(keys);
     }
 
-    /**
-     * Change the server address according to the project setting.
-     */
-    @Subscribe
-    public void updateSettings(ProjectSettingsChangedEvent event) {
-        final ProjectSettings projectSettings = event.getProjectSettings();
-
-        synchronized (NetworkTable.class) {
-            NetworkTable.shutdown();
-            NetworkTable.setIPAddress(projectSettings.getPublishAddress());
-        }
-    }
-
-    private static final class NTPublisher<P> extends MapNetworkPublisher<P> {
-        private final ImmutableSet<String> keys;
-        private Optional<String> name = Optional.empty();
-
-        protected NTPublisher(Set<String> keys) {
-            super(keys);
-            this.keys = ImmutableSet.copyOf(keys);
-        }
-
-        @Override
-        protected void publishNameChanged(Optional<String> oldName, String newName) {
-            if (oldName.isPresent()) {
-                deleteOldTable(oldName.get());
-            }
-            this.name = Optional.of(newName);
-        }
-
-        @Override
-        public void doPublish() {
-            deleteOldTable(name.get());
-        }
-
-        @Override
-        protected void doPublish(Map<String, P> publishValueMap) {
-            publishValueMap.forEach(getTable()::putValue);
-            Sets.difference(keys, publishValueMap.keySet()).forEach(getTable()::delete);
-        }
-
-        @Override
-        protected void doPublishSingle(P value) {
-            checkNotNull(value, "value cannot be null");
-            getRootTable().putValue(name.get(), value);
-        }
-
-
-        private void deleteOldTable(String tableName) {
-            final ITable root;
-            final ITable subTable;
-            synchronized (NetworkTable.class) {
-                root = getRootTable();
-                subTable = root.getSubTable(tableName);
-            }
-            keys.forEach(subTable::delete);
-            root.delete(tableName);
-        }
-
-        @Override
-        public void close() {
-            if (name.isPresent()) {
-                deleteOldTable(name.get());
-            }
-            synchronized (NetworkTable.class) {
-                // This publisher is no longer used.
-                if (NTManager.publisherCount.addAndGet(-1) == 0) {
-                    // We are the last publisher so shut it down
-                    NetworkTable.shutdown();
-                }
-            }
-        }
-
-        private ITable getTable() {
-            synchronized (NetworkTable.class) {
-                return getRootTable().getSubTable(name.get());
-            }
-        }
-
-        private static ITable getRootTable() {
-            NetworkTable.flush();
-            synchronized (NetworkTable.class) {
-                return NetworkTable.getTable("GRIP");
-            }
-        }
+    private static ITable getRootTable() {
+      NetworkTable.flush();
+      synchronized (NetworkTable.class) {
+        return NetworkTable.getTable("GRIP");
+      }
     }
 
     @Override
-    public <P> MapNetworkPublisher<P> create(Set<String> keys) {
-        // Keep track of ever publisher created.
-        publisherCount.getAndAdd(1);
-        return new NTPublisher<>(keys);
+    protected void publishNameChanged(Optional<String> oldName, String newName) {
+      if (oldName.isPresent()) {
+        deleteOldTable(oldName.get());
+      }
+      this.name = Optional.of(newName);
     }
+
+    @Override
+    public void doPublish() {
+      deleteOldTable(name.get());
+    }
+
+    @Override
+    protected void doPublish(Map<String, P> publishValueMap) {
+      publishValueMap.forEach(getTable()::putValue);
+      Sets.difference(keys, publishValueMap.keySet()).forEach(getTable()::delete);
+    }
+
+    @Override
+    protected void doPublishSingle(P value) {
+      checkNotNull(value, "value cannot be null");
+      getRootTable().putValue(name.get(), value);
+    }
+
+    private void deleteOldTable(String tableName) {
+      final ITable root;
+      final ITable subTable;
+      synchronized (NetworkTable.class) {
+        root = getRootTable();
+        subTable = root.getSubTable(tableName);
+      }
+      keys.forEach(subTable::delete);
+      root.delete(tableName);
+    }
+
+    @Override
+    public void close() {
+      if (name.isPresent()) {
+        deleteOldTable(name.get());
+      }
+      synchronized (NetworkTable.class) {
+        // This publisher is no longer used.
+        if (NTManager.publisherCount.addAndGet(-1) == 0) {
+          // We are the last publisher so shut it down
+          NetworkTable.shutdown();
+        }
+      }
+    }
+
+    private ITable getTable() {
+      synchronized (NetworkTable.class) {
+        return getRootTable().getSubTable(name.get());
+      }
+    }
+  }
 }
