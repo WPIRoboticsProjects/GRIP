@@ -1,6 +1,7 @@
 #needs("BlurType")
     @staticmethod
-    def __blur(src, type, radius):
+    def $tMeth.name($step.name())(src, type, radius):
+        'Softens an image using one of several filters.'
         if(type is BlurType.Box_Blur):
             ksize = 2*round(radius)+1
             return cv2.blur(src,(ksize,ksize))

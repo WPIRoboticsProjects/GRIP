@@ -1,0 +1,4 @@
+    @staticmethod
+    def $tMeth.name($step.name())(src, dSize, fx, fy, interpolation):
+        'Resizes an Image.'
+        return cv2.resize(src, dSize, fx=fx, fy=fy, interpolation=interpolation)

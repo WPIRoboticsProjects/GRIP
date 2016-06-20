@@ -15,7 +15,7 @@ MutableOf<$obj>#end
 		int $input.name()$c = Core.$input.value();
 #elseif ($input.type().contains("Enum"))
 		int $input.name()$c = Imgproc.$input.value();
-#elseif ($input.type().equals("MaskSize") || $input.type().contains("Type"))
+#elseif ($input.type().equals("MaskSize") || $input.type().contains("Type") || $input.type().equals("Interpolation"))
 		$input.type() $input.name()$c = ${input.type()}.get("${input.value()}");
 #elseif ($input.type().equals("String"))
 		$input.type() $input.name()$c = "$input.value()";

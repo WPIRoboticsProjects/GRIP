@@ -1,0 +1,4 @@
+    @staticmethod
+    def $tMeth.name($step.name())(src1):
+        'Computes the per element inverse of an image.'
+        return cv2.bitwise_not(src1)

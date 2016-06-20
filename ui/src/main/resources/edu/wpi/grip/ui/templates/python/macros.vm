@@ -6,7 +6,14 @@ self.__$inp.name()$c#end
 #if($inp.type().contains("Type"))
 #input($inp $c) = ${inp.type()}.$inp.value().replaceAll(' ','_')#elseif($inp.hasValue())
 #if($inp.value().contains("source"))
-#input($inp $c) = self.__$inp.value()#else
+#input($inp $c) = self.__$inp.value()#elseif ($inp.type().contains("Enum"))
+#input($inp $c) = cv2.$inp.value()#elseif($inp.value().equals("null"))
+#input($inp $c) = None#elseif($inp.value().equals("false"))
+#input($inp $c) = False#elseif($inp.value().equals("true"))
+#input($inp $c) = True#elseif ($inp.type().equals("List"))
+#set($inputEndValue = $inp.value().length() - 1)
+#input($inp $c) = [$inp.value().substring(1,$inputEndValue)];#elseif ($inp.type().equals("String"))
+#input($inp $c) = "$inp.value()"#else
 #input($inp $c) = $inp.value()#end
 #else##connected socket
 #input($inp $c) = self.$inp.value()#end#end
@@ -28,7 +35,13 @@ $type
 #macro( setter $src )
     def set_${src.value()}(self, value):
         'Sets $src.value() to given value checking for correct type'
+#if($src.type().equals("ContoursReport"))
+        assert isinstance(value, list)
+        for element in value:
+            assert isinstance(element, numpy.ndarray)
+#else
         assert isinstance(value, #type($src)) , "Source must be of type #type($src)"
+#end
         self.__$src.value() = value
     
 #end

@@ -1,0 +1,4 @@
+    @staticmethod
+    def $tMeth.name($step.name())(input_contours):
+        'Converts a color image into shades of grey'
+        return cv2.convexHull(input_contours)

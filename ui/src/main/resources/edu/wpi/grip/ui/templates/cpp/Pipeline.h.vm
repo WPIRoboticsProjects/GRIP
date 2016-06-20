@@ -24,6 +24,16 @@ class $fileName{
 		#cType($source.type()) *$source.value();
 #end
 #foreach($step in $pipeline.getSteps())
+#set($boolNum = $velocityCount - 1)
+#if($step.name() == "Switch" || $step.name() == "Valve")
+#set($boolInp = $step.getInput(0))
+#set($boolName = "$boolInp.name()S")
+#if($boolInp.hasValue())
+		bool $boolName$boolNum;
+#end
+#end
+#end
+#foreach($step in $pipeline.getSteps())
 #foreach($output in $step.getOutputs())
 		#cType($output.type()) *$output.name();
 #end
@@ -43,6 +53,16 @@ class $fileName{
 		void Process();
 #foreach($source in $pipeline.getSources())
 		void #setter($source);
+#end
+#foreach($step in $pipeline.getSteps())
+#set($boolNum = $velocityCount - 1)
+#if($step.name() == "Switch" || $step.name() == "Valve")
+#set($boolInp = $step.getInput(0))
+#set($boolName = "$boolInp.name()S")
+#if($boolInp.hasValue())
+	 void set$step.name()${boolNum}(bool value);
+#end
+#end
 #end
 #foreach( $step in $pipeline.getSteps() )
 #foreach( $out in $step.getOutputs() )

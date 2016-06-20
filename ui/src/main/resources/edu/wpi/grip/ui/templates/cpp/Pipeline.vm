@@ -4,6 +4,16 @@ $fileName::$fileName() {
 	this->$source.value() = new #cType($source.type())();
 #end
 #foreach($step in $pipeline.getSteps())
+#set($boolNum = $velocityCount - 1)
+#if($step.name() == "Switch" || $step.name() == "Valve")
+#set($boolInp = $step.getInput(0))
+#set($boolName = "$boolInp.name()S")
+#if($boolInp.hasValue())
+		this->$boolName$boolNum = true;
+#end
+#end
+#end
+#foreach($step in $pipeline.getSteps())
 #foreach($output in $step.getOutputs())
 	this->$output.name() = new #cType($output.type())();
 #end
@@ -31,7 +41,22 @@ void $fileName::set${source.value()}(#cType(${source.type()}) *${source.value()}
 	this->$source.value() = ${source.value()};
 }
 #end
-
+#foreach($step in $pipeline.getSteps())
+#set($boolNum = $velocityCount - 1)
+#if($step.name() == "Switch" || $step.name() == "Valve")
+#set($boolInp = $step.getInput(0))
+#set($boolName = "$boolInp.name()S")
+#if($boolInp.hasValue())
+/**
+ * This method is a generated setter for the condition of $step.name() $boolNum
+ * @param the condition to set
+ */
+void Pipeline::set$step.name()${boolNum}(bool value){
+	$boolName$boolNum = value;
+}
+#end
+#end
+#end
 #foreach($step in $pipeline.getSteps())
 #foreach($output in $step.getOutputs())
 /**

@@ -1,0 +1,4 @@
+    @staticmethod
+    def $tMeth.name($step.name())(src1, src2, compare):
+        'Compares two Mats using designated method'
+        return cv2.compare(src1, src2, compare)

@@ -11,7 +11,7 @@
 	void $tMeth.name($step.name())(Mat *src, Mat *kernel, Point *anchor, double
 	*iterations, int *borderType, Scalar *borderValue, Mat *dst){
 		if(!kernel){
-			Mat kernel();
+			Mat kernel;
 		}
 		if(!anchor){
 			Point anchor(-1,-1);

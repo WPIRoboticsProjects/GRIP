@@ -1,0 +1,4 @@
+    @staticmethod
+    def $tMeth.name($step.name())(src, code):
+        'Converts an image from one color space to another'
+        return cv2.cvtColor(src, code)

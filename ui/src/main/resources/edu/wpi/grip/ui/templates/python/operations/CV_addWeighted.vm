@@ -1,0 +1,4 @@
+    @staticmethod
+    def $tMeth.name($step.name())(src1, alpha, src2, beta, gamma):
+        'Computes the weighted addition of two Mats'
+        return cv2.addWeighted(src1, alpha, src2, beta, gamma)

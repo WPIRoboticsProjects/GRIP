@@ -1,5 +1,5 @@
     @staticmethod
-    def __desaturate(src):
+    def $tMeth.name($step.name())(src):
         (a, b, channels) = src.shape
         if(channels == 1):
             return numpy.copy(src)
