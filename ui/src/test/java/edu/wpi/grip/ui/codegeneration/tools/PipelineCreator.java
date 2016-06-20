@@ -23,7 +23,7 @@ public class PipelineCreator {
 			fileManager.setLocation(StandardLocation.CLASS_OUTPUT, Arrays.asList(PipelineGenerator.codeDir));
 		} catch (IOException e1) {
 			e1.printStackTrace();
-			fail("FileManager could not set output location");
+			fail("FileManager could not set output location "+errorBase(fileName));
 		}
 		compiler.getTask(null, fileManager, null, null, null, fileManager.getJavaFileObjects(PipelineGenerator.codeDir.toPath().resolve(fileName).toFile())).call();
 		try {
@@ -37,7 +37,7 @@ public class PipelineCreator {
 			return Class.forName(fileName.replace(".java", ""));
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
-			fail("Unable to load class");
+			fail("Unable to load class "+errorBase(fileName));
 		}
 		return null;
 	}
@@ -49,5 +49,9 @@ public class PipelineCreator {
 	public static void clean(String fileName){
 		PipelineGenerator.codeDir.toPath().resolve(fileName).toFile().deleteOnExit();
 		PipelineGenerator.codeDir.toPath().resolve(fileName.replace(".java", ".class")).toFile().deleteOnExit();
+	}
+	
+	private static String errorBase(String fileName){
+		return "for "+fileName;
 	}
 }
