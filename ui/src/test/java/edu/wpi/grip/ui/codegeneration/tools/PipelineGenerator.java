@@ -1,10 +1,11 @@
-package edu.wpi.grip.ui.codegeneration;
+package edu.wpi.grip.ui.codegeneration.tools;
 
 import java.io.File;
+import java.net.URISyntaxException;
 import java.nio.file.Paths;
 import javax.inject.Inject;
 import com.google.common.eventbus.EventBus;
-
+import static org.junit.Assert.fail;
 import edu.wpi.grip.core.Pipeline;
 import edu.wpi.grip.core.Step;
 import edu.wpi.grip.core.events.ConnectionAddedEvent;
@@ -14,6 +15,8 @@ import edu.wpi.grip.core.Connection;
 import edu.wpi.grip.core.OperationMetaData;
 import edu.wpi.grip.core.util.ExceptionWitness;
 import edu.wpi.grip.core.util.MockExceptionWitness;
+import edu.wpi.grip.ui.codegeneration.Exporter;
+import edu.wpi.grip.ui.codegeneration.Language;
 public class PipelineGenerator {
 	@Inject
 	private Pipeline pipeline;
@@ -23,10 +26,18 @@ public class PipelineGenerator {
 	private EventBus eventBus;
 	@Inject
 	private Connection.Factory<Object> factory;
-	public PipelineGenerator(){
-		
+	static File codeDir = null;
+	static{
+		try{
+		codeDir =  new File(PipelineGenerator.class.getProtectionDomain().getCodeSource().getLocation().toURI());
+		}
+        catch(URISyntaxException e){
+        	e.printStackTrace();
+        	fail("Could not load code directory");
+        }
 	}
-	final File codeDir = Paths.get("ui", "src","test","java","edu","wpi","grip","ui","codegeneration").toFile();
+	public PipelineGenerator(){
+	}
 	
 	public Step addStep(OperationMetaData data){
 		Step step = new Step.Factory(MockExceptionWitness.MOCK_FACTORY).create(data);

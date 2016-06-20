@@ -3,10 +3,12 @@ package edu.wpi.grip.ui.codegeneration;
 import static org.junit.Assert.*;
 
 import java.io.File;
+import java.net.URISyntaxException;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
 import com.google.common.eventbus.EventBus;
 import com.google.inject.Guice;
@@ -23,8 +25,10 @@ import edu.wpi.grip.core.operations.composite.BlurOperation;
 import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.core.sources.ImageFileSource;
+import edu.wpi.grip.ui.codegeneration.tools.PipelineGenerator;
+import edu.wpi.grip.ui.codegeneration.tools.PipelineInterfacer;
 import edu.wpi.grip.util.GRIPCoreTestModule;
-
+@Category(GenerationTest.class)
 public class BlurGenerator {
     private GRIPCoreTestModule testModule;
     @Inject
@@ -42,7 +46,6 @@ public class BlurGenerator {
     public void setUp(){
         testModule = new GRIPCoreTestModule();
         testModule.setUp();
-        System.out.println("About to configure CoreTestModule");
         final Injector injector = Guice.createInjector(testModule);
         injector.injectMembers(this);
         gen = new PipelineGenerator();
@@ -59,6 +62,8 @@ public class BlurGenerator {
 			}
 		}
 		assertEquals("Connection was not added",1,pipeline.getConnections().size());
+		gen.export("Blur.java");
+		PipelineInterfacer pip = new PipelineInterfacer("Blur.java");
 	}
 	@After
 	public void tearDown(){

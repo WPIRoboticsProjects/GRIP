@@ -284,7 +284,16 @@ project(":ui") {
     configurations {
         ideProvider
     }
-
+	if(!(project.hasProperty('generation') || project.hasProperty('genonly'))){
+	    sourceSets {
+            test {
+                java {
+                    exclude "**/ui/codegeneration"
+                    exclude "**/ui/codegeneration/**"
+                }
+            }
+	    }
+	}
     dependencies {
         compile project(path: ':core', configuration: 'shadow')
         ideProvider project(path: ':core', configuration: 'compile')
@@ -314,7 +323,25 @@ project(":ui") {
         }
     }
 
-
+    if(project.hasProperty('generation') || project.hasProperty('genonly')){
+        def cvNativeLibraryLocation = System.getenv('OPEN_CV_LIB')
+        def cvJarLocation = System.getenv('OPEN_CV_JAR')
+        test {
+            classpath += files(cvJarLocation)
+            jvmArgs += ["-cp" , "$cvJarLocation"]
+            jvmArgs += "-Djava.library.path=$cvNativeLibraryLocation"
+            if(project.hasProperty('genonly')){
+                useJUnit {
+                    includeCategories 'edu.wpi.grip.ui.codegeneration.GenerationTest'
+                }
+            }
+        }
+        compileTestJava {
+            classpath += files(cvNativeLibraryLocation)
+            classpath += files(cvJarLocation)
+        }
+    }
+    
     javafx {
         profiles {
             linux {
