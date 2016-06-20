@@ -1,0 +1,4 @@
+    @staticmethod
+    def $tMeth.name($step.name())(src1, src2, scale):
+        'Divides one image by another with given scale'
+        return cv2.divide(src1, src2, scale)

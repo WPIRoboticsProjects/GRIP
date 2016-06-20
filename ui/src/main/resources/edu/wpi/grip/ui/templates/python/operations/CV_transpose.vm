@@ -1,0 +1,3 @@
+    @staticmethod
+    def $tMeth.name($step.name())(src){
+        return cv2.transpose(src)

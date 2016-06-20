@@ -1,0 +1,4 @@
+    @staticmethod
+    def $tMeth.name($step.name())(input, type, maskSize):
+        'Sets the values of pixels in a binary image to their distance to the nearest black pixel'
+        return cv2.distanceTransform(input, type, maskSize)

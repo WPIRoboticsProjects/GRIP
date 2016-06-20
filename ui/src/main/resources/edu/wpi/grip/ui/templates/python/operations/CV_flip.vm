@@ -1,0 +1,5 @@
+#needs("FlipCode")
+    @staticmethod
+    def $tMeth.name($step.name())(src, flipcode):
+        'Flips an image along X, Y or both axes'
+        return cv2.flip(src, flipcode.value)
