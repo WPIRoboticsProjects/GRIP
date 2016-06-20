@@ -14,7 +14,7 @@ public class PipelineInterfacer {
 				| IllegalArgumentException | InvocationTargetException
 				| NoSuchMethodException | SecurityException e) {
 			e.printStackTrace();
-			fail("Failure to instansiate class");
+			fail("Failure to instantiate class "+className);
 		}
 	}
 	public void setSource(int num, Object value){
