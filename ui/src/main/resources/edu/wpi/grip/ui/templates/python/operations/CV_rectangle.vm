@@ -1,0 +1,8 @@
+    @staticmethod
+    def $tMeth.name($step.name())(src, pt1, pt2, color, thickness, lineType, shift):
+        'Draws a rectangle on an Image'
+        if(color == None):
+            color = (1.0,1.0,1.0)
+        thickness_int = (int) (thickness+0.5)
+        shift_int = (int) (shift+0.5)
+        return cv2.rectangle(src, pt1, pt2, color, thickness=thickness_int, lineType=lineType, shift=shift_int)

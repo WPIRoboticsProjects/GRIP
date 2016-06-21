@@ -13,7 +13,7 @@ using namespace std;
 using namespace cv;
 
 #foreach($step in $pipeline.getUniqueSteps())
-#if($step.name() == "Find_Lines" || $step.name() == "Filter_Lines")
+#if($step.name().equals("Find_Lines") || $step.name().equals("Filter_Lines"))
 #parse("src/main/resources/edu/wpi/grip/ui/templates/cpp/operations/Lines.vm")
 
 #end

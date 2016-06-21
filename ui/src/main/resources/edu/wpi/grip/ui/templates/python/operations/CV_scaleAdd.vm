@@ -1,0 +1,4 @@
+    @staticmethod
+    def $tMeth.name($step.name())(src1, scale, src2):
+        'Adds two images where one is multiplied by a number'
+        return cv2.scaleAdd(src1, scale, src2)

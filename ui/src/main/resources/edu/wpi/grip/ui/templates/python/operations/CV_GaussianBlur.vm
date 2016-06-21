@@ -1,0 +1,6 @@
+    @staticmethod
+    def $tMeth.name($step.name())(src, kSize, sigmaX, sigmaY, borderType):
+        'Performs a Gaussian blur on the image'
+        if (kSize == None):
+            kSize = (1, 1)
+        return cv2.GaussianBlur(src, kSize, sigmaX=sigmaX, sigmaY=sigmaY, borderType=borderType)
