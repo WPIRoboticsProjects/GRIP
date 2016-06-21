@@ -1,8 +1,9 @@
 package edu.wpi.grip.ui.codegeneration.tools;
 import static org.junit.Assert.fail;
 
+import java.io.File;
 import java.lang.reflect.InvocationTargetException;
-
+import org.opencv.imgcodecs.Imgcodecs;
 public class PipelineInterfacer {
 	private Class pipeline;
 	private Object instance;
@@ -24,6 +25,9 @@ public class PipelineInterfacer {
 			e.printStackTrace();
 			fail("setsource"+num +" is not valid for class "+value.getClass().getSimpleName());
 		}
+	}
+	public void setMatSource(int num, File img){
+		setSource(num, Imgcodecs.imread(img.getAbsolutePath()));
 	}
 	public void process(){
 		try {
