@@ -13,13 +13,9 @@ import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
-import java.util.List;
 import java.util.Properties;
 
 import edu.wpi.grip.core.Pipeline;
-import edu.wpi.grip.core.Step;
-import edu.wpi.grip.core.sockets.InputSocket;
-import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.ui.codegeneration.data.TPipeline;
 
 /**
@@ -29,14 +25,15 @@ import edu.wpi.grip.ui.codegeneration.data.TPipeline;
 public class Exporter {
   private static String PIPELINE_TEMPLATE = "Pipeline.vm";
   private static String PIPELINE_HTEMPLATE = "Pipeline.h.vm";
-  private static String PIPELINE_HNAME= "/Pipeline.h";
+  private static String PIPELINE_HNAME = "/Pipeline.h";
 
   /**
    * Creates a TPipeline from the current pipeline and generates code to the target location
+   *
    * @param pipeline The current pipeline that will be exported
-   * @param lang The language that will be exported into
-   * @param dir The location that the generated code will be placed
-   * @param loadLib Should be true when not in testing. Only false if in testing.
+   * @param lang     The language that will be exported into
+   * @param dir      The location that the generated code will be placed
+   * @param loadLib  Should be true when not in testing. Only false if in testing.
    */
   public void export(Pipeline pipeline, Language lang, File dir, boolean loadLib) {
     TPipeline tPipeline = new TPipeline(pipeline);
@@ -57,8 +54,8 @@ public class Exporter {
     ve.init(props);
     try {
       generateCode(ve, templateDir, dir, context);
-      if(lang.equals(Language.CPP)){
-        generateH(ve,templateDir,dir,context);
+      if (lang.equals(Language.CPP)) {
+        generateH(ve, templateDir, dir, context);
       }
     } catch (ResourceNotFoundException e) {
       String error = e.getMessage();
@@ -70,11 +67,12 @@ public class Exporter {
 
   /**
    * Creates a file and generates code in it using templates.
-   * @param ve The velocity engine used with the desired properties.
+   *
+   * @param ve          The velocity engine used with the desired properties.
    * @param templateDir The directory of the velocity templates that will be used.
-   * @param file The location to put the file.
-   * @param context The velocity context including the java files that will be used by the
-   *                templates.
+   * @param file        The location to put the file.
+   * @param context     The velocity context including the java files that will be used by the
+   *                    templates.
    */
   private void generateCode(VelocityEngine ve, String templateDir, File file, VelocityContext
       context) {
@@ -91,11 +89,12 @@ public class Exporter {
 
   /**
    * Code to generate the .h file if the export type is c++
-   * @param ve The velocity engine used with the desired properties.
+   *
+   * @param ve          The velocity engine used with the desired properties.
    * @param templateDir The directory of the velocity templates that will be used.
-   * @param file The location to put the file.
-   * @param context The velocity context including the java files that will be used by the
-   *                templates.
+   * @param file        The location to put the file.
+   * @param context     The velocity context including the java files that will be used by the
+   *                    templates.
    */
   private void generateH(VelocityEngine ve, String templateDir, File file, VelocityContext
       context) {

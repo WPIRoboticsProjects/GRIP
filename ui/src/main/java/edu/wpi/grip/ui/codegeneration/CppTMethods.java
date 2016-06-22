@@ -19,7 +19,7 @@ public class CppTMethods extends TemplateMethods {
   public String callOp(TStep step) {
     String num = "S" + step.num();
     StringBuilder out = new StringBuilder();
-    if (step.name().equals("Switch")||step.name().equals("Valve")) {
+    if (step.name().equals("Switch") || step.name().equals("Valve")) {
       out.append("pipeline");
     }
     out.append(name(step.name()));

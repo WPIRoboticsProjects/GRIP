@@ -6,12 +6,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 import edu.wpi.grip.core.Connection;
-import edu.wpi.grip.core.Pipeline;
 import edu.wpi.grip.core.sockets.Socket;
 import edu.wpi.grip.core.sockets.SocketHint;
 import edu.wpi.grip.generated.opencv_core.enumeration.BorderTypesEnum;
 import edu.wpi.grip.generated.opencv_core.enumeration.CmpTypesEnum;
-import edu.wpi.grip.ui.codegeneration.data.TInput;
 import edu.wpi.grip.ui.codegeneration.data.TStep;
 
 public abstract class TemplateMethods {
@@ -26,7 +24,7 @@ public abstract class TemplateMethods {
     numSources = 0;
   }
 
-  public static TemplateMethods get(Language lang){
+  public static TemplateMethods get(Language lang) {
     switch (lang) {
       case JAVA:
         return new JavaTMethods();
@@ -39,6 +37,7 @@ public abstract class TemplateMethods {
             + " is not a supported language for code generation.");
     }
   }
+
   public static String parseSocketValue(Socket socket) {
     String value = socket.getValue().toString();
     if (socket.getSocketHint().getView().equals(SocketHint.View.NONE)) {

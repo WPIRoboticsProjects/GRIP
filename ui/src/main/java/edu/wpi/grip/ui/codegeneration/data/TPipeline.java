@@ -106,6 +106,7 @@ public class TPipeline {
 
   /**
    * used in Pipeline.vm to get all of the TSteps
+   *
    * @return the TSteps that are in the TPipeline
    */
   public List<TStep> getSteps() {
@@ -114,6 +115,7 @@ public class TPipeline {
 
   /**
    * Creates a list of the unique operations in a pipeline.
+   *
    * @return A list of the unique steps.
    */
   public List<TStep> getUniqueSteps() {
@@ -127,6 +129,7 @@ public class TPipeline {
 
   /**
    * returns the total number of sources
+   *
    * @return the number of sources
    */
   public int getNumSources() {
@@ -135,6 +138,7 @@ public class TPipeline {
 
   /**
    * Returns a list of all of the sources in a the pipeline.
+   *
    * @return the list of sources.
    */
   public List<TSocket> getSources() {

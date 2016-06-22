@@ -64,8 +64,8 @@ class $fileName{
 #end
 #end
 #end
-#foreach( $step in $pipeline.getSteps() )
-#foreach( $out in $step.getOutputs() )
+#foreach($step in $pipeline.getSteps())
+#foreach($out in $step.getOutputs())
 		#cType($out.type())* get${out.name()}();
 #end
 #end

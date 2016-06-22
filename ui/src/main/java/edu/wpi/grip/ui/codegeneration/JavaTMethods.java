@@ -6,8 +6,8 @@ import edu.wpi.grip.ui.codegeneration.data.TInput;
 import edu.wpi.grip.ui.codegeneration.data.TStep;
 
 
-public class JavaTMethods extends TemplateMethods  {
-  public JavaTMethods(){
+public class JavaTMethods extends TemplateMethods {
+  public JavaTMethods() {
     super();
   }
 
@@ -34,13 +34,13 @@ public class JavaTMethods extends TemplateMethods  {
     }
     if (!step.getOutputs().isEmpty()) {
       for (int i = 0; i < step.getOutputs().size(); i++) {
-        if(step.getOutput(i).mutable()){
-        	out.append("mutOf");
+        if (step.getOutput(i).mutable()) {
+          out.append("mutOf");
         }
-    	out.append(step.getOutputs().get(i).name());
+        out.append(step.getOutputs().get(i).name());
         out.append(", ");
       }
-      out.delete(out.length()-2, out.length());//removes the unneeded ", "
+      out.delete(out.length() - 2, out.length());//removes the unneeded ", "
     }
     out.append(")");
     return out.toString();

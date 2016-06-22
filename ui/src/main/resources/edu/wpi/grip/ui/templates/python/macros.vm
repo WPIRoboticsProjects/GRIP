@@ -34,7 +34,7 @@ numpy.ndarray#else
 $type#end
 #end
 
-#macro( setter $src )
+#macro(setter $src)
     def set_${src.value()}(self, value):
         'Sets $src.value() to given value checking for correct type'
 #if($src.type().equals("ContoursReport"))

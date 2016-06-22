@@ -1,6 +1,6 @@
 \#include "${fileName}.h"
 $fileName::$fileName() {
-#foreach( $source in $pipeline.getSources())
+#foreach($source in $pipeline.getSources())
 	this->$source.value() = new #cType($source.type())();
 #end
 #foreach($step in $pipeline.getSteps())
