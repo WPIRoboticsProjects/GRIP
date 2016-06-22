@@ -37,7 +37,7 @@ import edu.wpi.grip.util.Files;
 public class BlurGenerationTest extends AbstractGenerationTest{
     private Double blurRatio = new Double(10.0);
 
-	void generatePipeline() {
+	void generatePipeline(String blurType) {
 		Step step = gen.addStep(new OperationMetaData(BlurOperation.DESCRIPTION, () -> new BlurOperation(isf,osf)));
 		ImageFileSource img = loadImage(Files.gompeiJpegFile);
 		OutputSocket imgOut = pipeline.getSources().get(0).getOutputSockets().get(0);
@@ -49,12 +49,36 @@ public class BlurGenerationTest extends AbstractGenerationTest{
 			else if(sock.getSocketHint().isCompatibleWith(Outputs.createNumberSocketHint("Number", blurRatio))){
 				sock.setValue(blurRatio);
 			}
+			else if(sock.getSocketHint().getIdentifier().equals("Type")){
+				Object[] options = (Object[])sock.getSocketHint().getDomain().get();
+				for(Object option: options){
+					if(option.toString().equals(blurType)){
+						sock.setValue(option);
+					}
+				}
+			}
 		}
 	}
 	@Test
-	public void BoxBlurTest(){
-		test( () -> {generatePipeline(); return true;},
+	public void boxBlurTest(){
+		test( () -> {generatePipeline("Box Blur"); return true;},
 				(pip) -> testPipeline(pip),"BoxBlur");
+	}
+	@Test
+	public void gaussianBlurTest(){
+		test( ()-> {generatePipeline("Gaussian Blur"); return true;},
+				(pip) -> testPipeline(pip), "GaussianBlur"
+		);
+	}
+	@Test
+	public void medianFilterTest(){
+		test( () -> {generatePipeline("Median Filter"); return true;},
+				(pip) -> testPipeline(pip), "MedianFilter");
+	}
+	@Test
+	public void bilateralFilterTest(){
+		test( () -> {generatePipeline("Bilateral Filter"); return true;},
+				(pip) -> testPipeline(pip), "BilateralFilter");
 	}
 	void testPipeline(PipelineInterfacer pip) {
 		ManualPipelineRunner runner = new ManualPipelineRunner(eventBus, pipeline);
@@ -66,6 +90,7 @@ public class BlurGenerationTest extends AbstractGenerationTest{
 		pip.process();
 		Mat genMat = (Mat) pip.getOutput(0);
 		Mat gripMat = HelperTools.bytedecoMatToCVMat((org.bytedeco.javacpp.opencv_core.Mat)out.get());
+		HelperTools.displayMats(genMat, gripMat);
 		assertMatWithin(genMat, gripMat, 10.0);
 	}
 }
