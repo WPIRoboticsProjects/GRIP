@@ -9,7 +9,6 @@
 	 */
 	void $tMeth.name($step.name())(Mat *input, double *minArea, double circularity[2],
 	bool *darkBlobs, vector<KeyPoint> *blobList){
-		SimpleBlobDetector detector;
 		SimpleBlobDetector::Params params;
 		params.filterByColor = 1;
 		params.blobColor = (darkBlobs ? 0 : 255);
@@ -24,5 +23,6 @@
         params.minConvexity = 0.95;
         params.filterByInertia = true;
         params.minInertiaRatio = 0.01;
+        SimpleBlobDetector detector(params);
 		detector.detect(*input, *blobList);
 	}

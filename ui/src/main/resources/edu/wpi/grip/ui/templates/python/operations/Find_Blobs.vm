@@ -1,0 +1,19 @@
+    @staticmethod
+    def $tMeth.name($step.name())(input, minArea, circularity, darkBlobs):
+        'Detects groups of pixels in an image'
+        params = cv2.SimpleBlobDetector_Params()
+        params.filterByColor = 1
+        params.blobColor = (0 if darkBlobs else 255)
+        params.minThreshold = 10
+        params.maxThreshold = 220
+        params.filterByArea = True
+        params.minArea = min_area
+        params.filterByCircularity = True
+        params.minCircularity = circularity[0]
+        params.maxCircularity = circularity[1]
+        params.filterByConvexity = True
+        params.minConvexity = 0.95
+        params.filterByInertia = True
+        params.minInertiaRatio = 0.01
+        detector = cv2.SimpleBlobDetector_create(params)
+        return detector.detect(input)

@@ -1,0 +1,4 @@
+    @staticmethod
+    def $tMeth.name($step.name())(input, width, height, interpolation):
+        'Scales and image to an exact size'
+        return cv2.resize(input, (width, height), 0.0, 0.0, interpolation)

@@ -7,13 +7,14 @@ self.__$inp.name()$c#end
 #if($inp.type().equals("BlurType") || $inp.type().equals("FlipCode"))
 #input($inp $c) = ${inp.type()}.$inp.value().replaceAll(' ','_')#elseif($inp.type().equals("MaskSize"))
 #input($inp $c) = $inp.value().substring(0,1)#elseif($inp.value().contains("source"))
-#input($inp $c) = self.__$inp.value()#elseif ($inp.type().contains("Enum") || $input.type().contains("Type"))
-#input($inp $c) = cv2.$inp.value()#elseif($inp.value().equals("null"))
+#input($inp $c) = self.__$inp.value()#elseif ($inp.type().contains("Enum") ||
+$input.type().contains("Type") || $input.type().equals("Interpolation"))
+#input($inp $c) = cv2.#enum($inp.value())#elseif($inp.value().equals("null"))
 #input($inp $c) = None#elseif($inp.value().equals("false"))
 #input($inp $c) = False#elseif($inp.value().equals("true"))
 #input($inp $c) = True#elseif ($inp.type().equals("List"))
 #set($inputEndValue = $inp.value().length() - 1)
-#input($inp $c) = [$inp.value().substring(1,$inputEndValue)];#elseif ($inp.type().equals("String"))
+#input($inp $c) = [$inp.value().substring(1,$inputEndValue)]#elseif ($inp.type().equals("String"))
 #input($inp $c) = "$inp.value()"
 #else
 #input($inp $c) = $inp.value()#end
@@ -41,6 +42,14 @@ $type
         assert isinstance(value, list)
         for element in value:
             assert isinstance(element, numpy.ndarray)
+#elseif($src.type().equals("BlobsReport"))
+        assert isinstance(value, list)
+        for element in value:
+            assert isinstance(element, cv2.KeyPoint)
+#elseif($src.type().equals("LinesReport"))
+        assert isinstance(value, list)
+        for element in value:
+            assert isinstance(element, self.Line)
 #else
         assert isinstance(value, #type($src)) , "Source must be of type #type($src)"
 #end
@@ -50,3 +59,14 @@ $type
 
 #macro( output $out )
 self.$out.name()#end
+
+#macro (enum $val)#if($val.equals("CV_DIST_L1"))
+DIST_L1#elseif($val.equals("CV_DIST_L2"))
+DIST_L2#elseif($val.equals("CV_DIST_C"))
+DIST_C#elseif($val.equals("None"))
+INTER_NEAREST#elseif($val.equals("Linear"))
+INTER_LINEAR#elseif($val.equals("Cubic"))
+INTER_CUBIC#elseif($val.equals("Lanczos"))
+INTER_LANCZOS4#elseif($val.equals("Area"))
+INTER_AREA#else
+$val#end#end

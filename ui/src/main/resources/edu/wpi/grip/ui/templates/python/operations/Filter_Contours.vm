@@ -1,0 +1,26 @@
+    @staticmethod
+    def $tMeth.name($step.name())(inputContours, minArea,minPerimeter, minWidth, maxWidth,
+        minHeight, maxHeight, solidity, maxVertexCount, minVertexCount,minRatio, maxRatio):
+        output = []
+        for contour in inputContours:
+            bb = cv2.boundingRect(contour)
+            if (bb.width < minWidth or bb.width > maxWidth):
+                continue
+            if (bb.height < minHeight or bb.height > maxHeight):
+                continue
+            area = cv2.contourArea(contour)
+            if (area < minArea):
+                continue
+            if (cv2.arcLength(contour, True) < minPerimeter):
+                continue
+            hull = cv2.convexHull(contour)
+            solid = 100 * area / cv2.contourArea(hull)
+            if (solid < solidity[0] or solid > solidity[1]):
+                continue
+            if (contour.size() < minVertexCount or contour.size() > maxVertexCount):
+                continue
+            ratio = bb.width / bb.height
+            if (ratio < minRatio or ratio > maxRatio):
+                continue
+            output.append(contour)
+        return output

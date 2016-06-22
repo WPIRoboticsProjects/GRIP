@@ -1,0 +1,9 @@
+    @staticmethod
+    def $tMeth.name($step.name())(input, externalOnly):
+        'Sets the values of pixels in a binary image to their distance to the nearest black pixel'
+        if(externalOnly):
+            mode = cv2.RETR_EXTERNAL
+        else:
+            mode = cv2.RETR_LIST
+        method = cv2.CHAIN_APPROX_SIMPLE
+        return cv2.findContours(input, mode = mode, method = method)

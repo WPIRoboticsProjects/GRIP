@@ -1,0 +1,4 @@
+    @staticmethod
+    def $tMeth.name($step.name())(width, height):
+        Fills a size with given width and height
+        return (width, height)

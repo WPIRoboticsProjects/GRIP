@@ -20,9 +20,8 @@
 		// Store the lines in the LinesReport object
 		lineList = new ArrayList<>();
 		if (!lines.empty()) {
-			final float[] tmp = new float[4];
 			for (int i = 0; i < lines.rows(); i++) {
-				lineList.add(new Line(tmp[0], tmp[1], tmp[2], tmp[3]));
+				lineList.add(new Line(lines.get(i, 0)[0], lines.get(i, 0)[1], lines.get(i, 0)[2], lines.get(i, 0)[3]));
 			}
 		}
 	}
