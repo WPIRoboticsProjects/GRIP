@@ -13,6 +13,8 @@ import com.google.inject.Injector;
 import static org.junit.Assert.fail;
 import static org.junit.Assert.assertTrue;
 import java.io.IOException;
+import java.util.function.BooleanSupplier;
+import java.util.function.Consumer;
 
 import javax.inject.Inject;
 
@@ -40,10 +42,6 @@ public abstract class AbstractGenerationTest {
     @Inject
     ImageFileSource.Factory imgfac;
     PipelineGenerator gen;
-    final String fileName;
-    public AbstractGenerationTest(String name){
-    	fileName = name;
-    }
     @Before
     public void setUp(){
         testModule = new GRIPCoreTestModule();
@@ -53,20 +51,13 @@ public abstract class AbstractGenerationTest {
         gen = new PipelineGenerator();
         injector.injectMembers(gen);
     }
-    /**
-     * Sets up the grip pipeline and calls the exporter.
-     */
-    abstract void generatePipeline();
-    /**
-     * loads the generated pipeline and tests it works.
-     */
-    abstract void testPipeline(PipelineInterfacer pip);
-    @Test
-    public final void test(){
-    	generatePipeline();
+   
+    public final void test(BooleanSupplier setup, Consumer<PipelineInterfacer> test, String testName){
+    	assertTrue("Setup for "+ testName+" reported an issue.", setup.getAsBoolean());
+    	String fileName = testName+".java";
     	gen.export(fileName);
     	PipelineInterfacer pip = new PipelineInterfacer(fileName);
-    	testPipeline(pip);
+    	test.accept(pip);
     }
 	@After
 	public void tearDown(){

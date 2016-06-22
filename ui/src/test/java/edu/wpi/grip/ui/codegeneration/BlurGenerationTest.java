@@ -8,6 +8,7 @@ import java.util.Optional;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
 import com.google.common.eventbus.EventBus;
@@ -35,10 +36,7 @@ import edu.wpi.grip.util.Files;
 @Category(GenerationTest.class)
 public class BlurGenerationTest extends AbstractGenerationTest{
     private Double blurRatio = new Double(10.0);
-    public BlurGenerationTest(){
-    	super("Blur.java");
-    }
-	@Override
+
 	void generatePipeline() {
 		Step step = gen.addStep(new OperationMetaData(BlurOperation.DESCRIPTION, () -> new BlurOperation(isf,osf)));
 		ImageFileSource img = loadImage(Files.gompeiJpegFile);
@@ -53,7 +51,11 @@ public class BlurGenerationTest extends AbstractGenerationTest{
 			}
 		}
 	}
-	@Override
+	@Test
+	public void BoxBlurTest(){
+		test( () -> {generatePipeline(); return true;},
+				(pip) -> testPipeline(pip),"BoxBlur");
+	}
 	void testPipeline(PipelineInterfacer pip) {
 		ManualPipelineRunner runner = new ManualPipelineRunner(eventBus, pipeline);
 		runner.runPipeline();
@@ -64,7 +66,6 @@ public class BlurGenerationTest extends AbstractGenerationTest{
 		pip.process();
 		Mat genMat = (Mat) pip.getOutput(0);
 		Mat gripMat = HelperTools.bytedecoMatToCVMat((org.bytedeco.javacpp.opencv_core.Mat)out.get());
-		HelperTools.displayMats(genMat, gripMat);
 		assertMatWithin(genMat, gripMat, 10.0);
 	}
 }
