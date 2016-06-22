@@ -1,0 +1,8 @@
+    @staticmethod
+    def $tMeth.name($step.name())(input, lastImage):
+        'Thresholds off parts of the image that have moved or changed between the previous and next image'
+        if (lastImage.shape == input.shape):
+            output =  cv2.absdiff(input, lastImage)
+        else:
+            output = numpy.ndarray(shape=input.shape)
+        return input, output

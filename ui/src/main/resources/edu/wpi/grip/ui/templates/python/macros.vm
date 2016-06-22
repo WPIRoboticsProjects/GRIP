@@ -29,10 +29,9 @@ $input.type().contains("Type") || $input.type().equals("Interpolation"))
 
 #macro( type $socket )
 #set($type = $socket.type())
-#if($type.equals("Mat"))
+#if($type.equals("Mat") || $type.equals("Object"))
 numpy.ndarray#else
-$type
-#end
+$type#end
 #end
 
 #macro( setter $src )
@@ -57,7 +56,7 @@ $type
     
 #end
 
-#macro( output $out )
+#macro(output $out)
 self.$out.name()#end
 
 #macro (enum $val)#if($val.equals("CV_DIST_L1"))

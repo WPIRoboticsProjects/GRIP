@@ -5,6 +5,7 @@
         #newInput($inp $c)
 
 #end#end
-        (#foreach($out in $step.getOutputs())
+        (#if($step.name().equals("Threshold_Moving"))
+self.__lastImage$step.num(), #end#foreach($out in$step.getOutputs())
 #output($out)#if($velocityCount<$step.getOutputs().size()),#end #end
 ) = $tMeth.callOp($step)

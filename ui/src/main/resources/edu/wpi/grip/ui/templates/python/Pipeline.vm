@@ -10,6 +10,9 @@ class $fileName:
     
     def __init__(self):
         'initializes all values to presets or None if need to be set'
+#foreach($moving in $pipeline.getMovingThresholds())
+        self.__lastImage$moving.num() = numpy.ndarray([])
+#end
 #foreach($src in $pipeline.getSources())
         self.__$src.value() = None
 #end
@@ -29,7 +32,19 @@ class $fileName:
 #parse("src/main/resources/edu/wpi/grip/ui/templates/python/step.vm")
 
 #end
-    
+#foreach($step in $pipeline.getSteps())
+#set($boolNum = $velocityCount - 1)
+#if($step.name() == "Switch" || $step.name() == "Valve")
+#set($boolInp = $step.getInput(0))
+#set($boolName = "$boolInp.name()S")
+#if($boolInp.hasValue())
+    def set$step.name()${boolNum}(self, value):
+        'This method is a generated setter for the condition of $step.name() $boolNum'
+        assert isinstance(value, bool) , "Source must be of type bool"
+        self.__$boolName$boolNum = value
+#end
+#end
+#end
 #foreach($source in $pipeline.getSources())
 #setter($source)
 #end
