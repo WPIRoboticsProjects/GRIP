@@ -5,6 +5,9 @@ import org.opencv.core.Mat;
 import org.opencv.core.MatOfByte;
 import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.imgproc.Imgproc;
+
+import edu.wpi.grip.core.sockets.InputSocket;
+
 import org.opencv.core.CvType;
 
 import java.awt.BorderLayout;
@@ -70,6 +73,17 @@ public class HelperTools {
 		return out;
 	}
 
+	public static void setEnumSocket(InputSocket sock, String id){
+		Object[] options = (Object[])sock.getSocketHint().getDomain().get();
+		for(Object option: options){
+			if(option.toString().equals(id)){
+				sock.setValue(option);
+				return;
+			}
+		}
+	}
+
+	
 	public static void displayMats(Mat gen, Mat grip){
 		JFrame frame = new JFrame();
 		frame.setSize(1000, 1000);

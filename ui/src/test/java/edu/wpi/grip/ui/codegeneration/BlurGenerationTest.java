@@ -50,12 +50,7 @@ public class BlurGenerationTest extends AbstractGenerationTest{
 				sock.setValue(blurRatio);
 			}
 			else if(sock.getSocketHint().getIdentifier().equals("Type")){
-				Object[] options = (Object[])sock.getSocketHint().getDomain().get();
-				for(Object option: options){
-					if(option.toString().equals(blurType)){
-						sock.setValue(option);
-					}
-				}
+				HelperTools.setEnumSocket(sock, blurType);
 			}
 		}
 	}
