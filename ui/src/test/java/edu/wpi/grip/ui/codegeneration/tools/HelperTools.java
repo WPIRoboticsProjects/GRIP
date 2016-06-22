@@ -19,36 +19,37 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import org.bytedeco.javacpp.indexer.UByteIndexer;
 public class HelperTools {
 
 	/**
-	 * Checks if two mats are similar within a given threshold.
-	 * @param mat1 first mat
-	 * @param mat2 second mat
-	 * @param threshold the threshold of difference. 0 threshold is true for only
-	 * images that are the same. 10 threshold works pretty well.
-	 * @return true if they are similar enough
+	 * Calculates the average per pixel difference between two Mats.
+	 * If two Mats are perfectly equal this will be 0. 
+	 * Less than 10 is a good value for similar images.
+	 * @param mat1 one of the two Mats.
+	 * @param mat2 the other Mat.
+	 * @return the average difference. 
 	 */
-	public static boolean equalMatCheck(Mat mat1, Mat mat2, double threshold) {
-		if (mat1.cols() != mat2.cols() || mat1.rows() != mat2.rows()) {
-			return false;
-		}
-		Mat tempMat = new Mat();
-		Core.absdiff(mat1, mat2, tempMat);
-		int matDiff = 0;
-		for (int i = 0; i < tempMat.rows(); i++) {
-			for (int j = 0; j < tempMat.cols(); j++) {
-				double[] pixVal = tempMat.get(i, j);
+	public static double matAvgDiff(Mat mat1, Mat mat2){
+		assertTrue("Mat size is not equal", mat1.cols()==mat2.cols()&&mat1.rows()==mat2.rows());
+		assertTrue("Mats have different number of channels", mat1.channels()==mat2.channels());
+		Mat diff = new Mat(); 
+		Core.absdiff(mat1, mat2, diff);//Take absolute difference between two mats
+		double matDiff = 0;
+		for (int row = 0; row < diff.rows(); row++) {
+			for (int col = 0; col < diff.cols(); col++) {
+				double[] pixVal = diff.get(row, col);//per channel values of given pixel
 				double total = 0;
 				for (double val : pixVal) {
-					total += val * val;
+					total += val * val;//convert to a magnitude squared
 				}
-				matDiff += Math.sqrt(total);
+				matDiff += Math.sqrt(total);//convert to absolute magnitude
 			}
 		}
-		return matDiff <= (tempMat.rows() * tempMat.cols() * threshold);
+		return matDiff/(diff.rows() * diff.cols());//divide by number of pixels
 	}
+	
 	/**
 	 * Converts a bytedeco Mat to an OpenCV Mat.
 	 * @param input the bytedeco Mat to convert
@@ -56,7 +57,7 @@ public class HelperTools {
 	 */
 	public static Mat bytedecoMatToCVMat(org.bytedeco.javacpp.opencv_core.Mat input){
 		UByteIndexer idxer= input.createIndexer();
-		Mat out = new Mat(idxer.rows(),idxer.cols(),CvType.CV_8UC3);
+		Mat out = new Mat(idxer.rows(),idxer.cols(),CvType.CV_8UC(idxer.channels()));
 		for(int row = 0; row<idxer.rows(); row++){
 			for(int col = 0; col<idxer.cols(); col++){
 				byte data[] = new byte[3];
@@ -68,12 +69,12 @@ public class HelperTools {
 		}
 		return out;
 	}
-	
+
 	public static void displayMats(Mat gen, Mat grip){
 		JFrame frame = new JFrame();
 		frame.setSize(1000, 1000);
 		frame.add(createImg("Generated",gen), BorderLayout.WEST);
-		frame.add(createImg("Grip",grip), BorderLayout.EAST);
+		frame.add(createImg("GRIP",grip), BorderLayout.EAST);
 		frame.pack();
 		frame.setVisible(true);
 		frame.repaint();
@@ -82,6 +83,7 @@ public class HelperTools {
 		}catch(InterruptedException e){
 			e.printStackTrace();
 		}
+		frame.dispose();
 	}
 	
 	private static JLabel createImg(String label, Mat mat){
