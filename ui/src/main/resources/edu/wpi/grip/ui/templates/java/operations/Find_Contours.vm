@@ -8,6 +8,7 @@
 	 */
 	private void $tMeth.name($step.name())(Mat input,Boolean externalOnly, List<MatOfPoint> contours){
 		Mat hierarchy = new Mat();
+		contours.clear();
 		int mode;
 		if(externalOnly){
 			mode = Imgproc.RETR_EXTERNAL;

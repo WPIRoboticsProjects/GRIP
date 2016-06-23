@@ -23,6 +23,7 @@ This creates the java OpenCV Filter Contours function
 		maxHeight, double[] solidity, double maxVertexCount, double minVertexCount, double
 		minRatio, double maxRatio, List<MatOfPoint> output){
 		final MatOfInt hull = new MatOfInt();
+		output.clear();
 		//operation
 		for (int i = 0; i < inputContours.size(); i++) {
 			final MatOfPoint contour = inputContours.get(i);
