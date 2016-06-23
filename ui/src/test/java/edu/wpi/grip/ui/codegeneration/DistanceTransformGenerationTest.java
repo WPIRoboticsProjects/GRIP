@@ -27,9 +27,17 @@ import javax.inject.Inject;
 @Category(GenerationTest.class)
 public class DistanceTransformGenerationTest extends AbstractGenerationTest {
 	String distType, maskSize;
-	String params[][] = new String[9][2];
-	public DistanceTransformGenerationTest(){
-		params();
+	static String params[][] = new String[9][2];
+	static{
+	      String type[] = {"CV_DIST_L1","CV_DIST_L2","CV_DIST_C"};
+	      String size[] = {"0x0","3x3","5x5"};
+	      for(int typeIdx = 0; typeIdx < 3; typeIdx++){
+	    	  for(int sizeIdx = 0; sizeIdx < 3; sizeIdx++){
+	    		  int idx = 3*typeIdx+sizeIdx;
+	    		  params[idx][0] = type[typeIdx];
+	    		  params[idx][1] = size[sizeIdx];
+	    	  }
+	      }
 	}
 	public boolean init(){
 		ArrayList<Number> lVal = new ArrayList<Number>();
@@ -58,8 +66,6 @@ public class DistanceTransformGenerationTest extends AbstractGenerationTest {
 	public void distanceTransformTest(int num){
 		distType = params[num][0];
 		maskSize = params[num][1];
-		System.out.println("Running distance Transform with: " + distType + 
-				"and: "+maskSize);
 		test( () -> init(), (pip) -> validate(pip), 
 				("DistTrans"+distType+maskSize).replace(" ", "").replace("_", ""));
 	}
@@ -78,18 +84,7 @@ public class DistanceTransformGenerationTest extends AbstractGenerationTest {
 		assertMatWithin(genMat, gripMat, 10.0);
 	}
 	   
-	   public void params() {
-		  System.out.println("initializing params for distance Transform");
-	      String type[] = {"CV_DIST_L1","CV_DIST_L2","CV_DIST_C"};
-	      String size[] = {"0x0","3x3","5x5"};
-	      for(int typeIdx = 0; typeIdx < 3; typeIdx++){
-	    	  for(int sizeIdx = 0; sizeIdx < 3; sizeIdx++){
-	    		  int idx = 3*typeIdx+sizeIdx;
-	    		  params[idx][0] = type[typeIdx];
-	    		  params[idx][1] = size[sizeIdx];
-	    	  }
-	      }
-	   }
+
 	   @Test
 	   public void testL10(){
 		   distanceTransformTest(0);

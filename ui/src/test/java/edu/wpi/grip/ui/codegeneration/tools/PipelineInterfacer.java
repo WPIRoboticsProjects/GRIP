@@ -66,4 +66,5 @@ public class PipelineInterfacer {
 			fail("setValve"+num+"is not a valid method");
 		}
 	}
+
 }

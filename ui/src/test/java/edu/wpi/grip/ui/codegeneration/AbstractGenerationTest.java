@@ -1,6 +1,7 @@
 package edu.wpi.grip.ui.codegeneration;
 
 import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
@@ -24,6 +25,7 @@ import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.core.sources.ImageFileSource;
 import edu.wpi.grip.ui.codegeneration.tools.HelperTools;
+import edu.wpi.grip.ui.codegeneration.tools.PipelineCreator;
 import edu.wpi.grip.ui.codegeneration.tools.PipelineGenerator;
 import edu.wpi.grip.ui.codegeneration.tools.PipelineInterfacer;
 import edu.wpi.grip.util.GRIPCoreTestModule;
@@ -62,6 +64,13 @@ public abstract class AbstractGenerationTest {
 	@After
 	public void tearDown(){
 		testModule.tearDown();
+	}
+	/**
+	 * Cleans up generated test java and class files.
+	 */
+	@AfterClass
+	public static void tearDownClass(){
+		PipelineCreator.cleanClasses();
 	}
 	ImageFileSource loadImage(ImageWithData img){
 		ImageFileSource out = imgfac.create(img.file);

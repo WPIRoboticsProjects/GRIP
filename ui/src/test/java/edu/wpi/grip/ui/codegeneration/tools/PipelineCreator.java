@@ -46,12 +46,18 @@ public class PipelineCreator {
 		Class claz = load(fileName);
 		return claz;
 	}
-	public static void clean(String fileName){
-		PipelineGenerator.codeDir.toPath().resolve(fileName).toFile().deleteOnExit();
-		PipelineGenerator.codeDir.toPath().resolve(fileName.replace(".java", ".class")).toFile().deleteOnExit();
-	}
 	
 	private static String errorBase(String fileName){
 		return "for "+fileName;
+	}
+	public static void cleanClasses() {
+		try{
+		File files[] = PipelineGenerator.codeDir.toPath().toFile().listFiles((file, name) -> name.contains(".class") || name.contains(".java"));
+		for(File file : files){
+			file.delete();
+		}
+	} catch(SecurityException e){
+		e.printStackTrace();//Doesn't matter signifigantly if we cannot delete the files.
+	}
 	}
 }
