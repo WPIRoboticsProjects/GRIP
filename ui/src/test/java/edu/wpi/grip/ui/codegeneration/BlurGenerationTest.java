@@ -85,7 +85,6 @@ public class BlurGenerationTest extends AbstractGenerationTest{
 		pip.process();
 		Mat genMat = (Mat) pip.getOutput(0);
 		Mat gripMat = HelperTools.bytedecoMatToCVMat((org.bytedeco.javacpp.opencv_core.Mat)out.get());
-		HelperTools.displayMats(genMat, gripMat);
 		assertMatWithin(genMat, gripMat, 10.0);
 	}
 }
