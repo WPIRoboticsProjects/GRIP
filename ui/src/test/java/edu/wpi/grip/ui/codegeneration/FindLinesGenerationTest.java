@@ -7,41 +7,34 @@ import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
 import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
-import org.opencv.core.Rect;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import javax.inject.Inject;
-
 import edu.wpi.grip.core.ManualPipelineRunner;
 import edu.wpi.grip.core.OperationMetaData;
 import edu.wpi.grip.core.Step;
-import edu.wpi.grip.core.operations.composite.ContoursReport;
-import edu.wpi.grip.core.operations.composite.FindContoursOperation;
+import edu.wpi.grip.core.operations.composite.FindLinesOperation;
 import edu.wpi.grip.core.operations.composite.HSLThresholdOperation;
+import edu.wpi.grip.core.operations.composite.LinesReport;
 import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.core.sources.ImageFileSource;
 import edu.wpi.grip.ui.codegeneration.tools.HelperTools;
 import edu.wpi.grip.ui.codegeneration.tools.PipelineInterfacer;
 import edu.wpi.grip.util.Files;
+import grip_msgs.Lines;
 
-
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 @Category(GenerationTest.class)
-public class FindContoursGenerationTest extends AbstractGenerationTest {
-  @Inject
-  private Exporter exporter;
+public class FindLinesGenerationTest extends AbstractGenerationTest {
   private List<Number> hVal = new ArrayList<Number>();
   private List<Number> sVal = new ArrayList<Number>();
   private List<Number> lVal = new ArrayList<Number>();
 
-  public FindContoursGenerationTest() {
+  public FindLinesGenerationTest() {
     hVal.add(new Double(1.2));
     hVal.add(new Double(51.0));
     sVal.add(new Double(2.2));
@@ -50,7 +43,7 @@ public class FindContoursGenerationTest extends AbstractGenerationTest {
     lVal.add(new Double(101.0));
   }
 
-  void generatePipeline(boolean externalBool) {
+  void generatePipeline() {
     Step step0 = gen.addStep(new OperationMetaData(HSLThresholdOperation.DESCRIPTION, () -> new
         HSLThresholdOperation(isf, osf)));
     ImageFileSource img = loadImage(Files.imageFile);
@@ -63,40 +56,30 @@ public class FindContoursGenerationTest extends AbstractGenerationTest {
         sock.setValue(hVal);
       } else if (sock.getSocketHint().getIdentifier().equals("Saturation")) {
         sock.setValue(sVal);
-      } else if(sock.getSocketHint().getIdentifier().equals("Luminance")){
+      } else if (sock.getSocketHint().getIdentifier().equals("Luminance")) {
         sock.setValue(lVal);
       }
     }
 
-    Step step1 = gen.addStep(new OperationMetaData(FindContoursOperation.DESCRIPTION, () -> new
-        FindContoursOperation(isf, osf)));
+    Step step1 = gen.addStep(new OperationMetaData(FindLinesOperation.DESCRIPTION, () -> new
+        FindLinesOperation(isf, osf)));
     OutputSocket imgOut1 = pipeline.getSteps().get(0).getOutputSockets().get(0);
     for (InputSocket sock : step1.getInputSockets()) {
       if (sock.getSocketHint().isCompatibleWith(imgOut1.getSocketHint())) {
         gen.connect(imgOut1, sock);
-      } else if (sock.getSocketHint().getIdentifier().equals("External Only")) {
-        sock.setValue(externalBool);
       }
     }
   }
 
-  @Test
-  public void FindContoursWOExternalTest() {
+/*  @Test
+  public void FindLinesTest() {
     test(() -> {
-          generatePipeline(false);
+          generatePipeline();
           return true;
         },
-        (pip) -> testPipeline(pip), "FindContours");
+        (pip) -> testPipeline(pip), "FindLines");
   }
 
-  @Test
-  public void FindContoursExternalTest() {
-    test(() -> {
-          generatePipeline(true);
-          return true;
-        },
-        (pip) -> testPipeline(pip), "FindExternalContours");
-  }
 
 
   void testPipeline(PipelineInterfacer pip) {
@@ -104,18 +87,12 @@ public class FindContoursGenerationTest extends AbstractGenerationTest {
     runner.runPipeline();
     Optional out1 = pipeline.getSteps().get(1).getOutputSockets().get(0).getValue();
     assertTrue("Pipeline did not process", out1.isPresent());
-    ContoursReport conOut = (ContoursReport) out1.get();
-    org.bytedeco.javacpp.opencv_core.Mat matOut = new org.bytedeco.javacpp.opencv_core.Mat();
-    matOut.create(conOut.getRows(), conOut.getCols(), org.bytedeco.javacpp.opencv_core.CV_8UC3);
-    org.bytedeco.javacpp.opencv_core.bitwise_xor(matOut,matOut,matOut);
-    org.bytedeco.javacpp.opencv_imgproc.drawContours(matOut, conOut.getContours(), -1, org
-        .bytedeco.javacpp.opencv_core.Scalar.WHITE);
+    LinesReport conOut = (LinesReport) out1.get();
 
-    //exporter.export(pipeline, Language.JAVA,new File() , false);
+    System.out.println(conOut.getLines().size());
     pip.setMatSource(0, Files.imageFile.file);
     pip.process();
     Mat genMat = (Mat) pip.getOutput(0);
-    List<MatOfPoint> gen = (List<MatOfPoint>) pip.getOutput(1);
 
     Imgproc.cvtColor(genMat, genMat, Imgproc.COLOR_GRAY2BGR);
     Imgproc.drawContours(genMat,gen,-1,new Scalar(255, 255, 255));
@@ -126,5 +103,5 @@ public class FindContoursGenerationTest extends AbstractGenerationTest {
     assertTrue("Number of Contours is not the same. grip: "+conOut.getContours().size()+" gen: " +
         gen.size(), conOut.getContours().size() == gen.size());
 
-  }
+  }*/
 }

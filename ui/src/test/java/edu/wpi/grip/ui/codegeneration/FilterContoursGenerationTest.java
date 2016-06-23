@@ -151,7 +151,6 @@ public class FilterContoursGenerationTest extends AbstractGenerationTest {
     opencv_core.bitwise_xor(matOut,matOut,matOut);
     org.bytedeco.javacpp.opencv_imgproc.drawContours(matOut, conOut.getContours(), -1, opencv_core.Scalar.WHITE);
 
-    System.out.println(conOut.getContours().size());
     pip.setMatSource(0, Files.imageFile.file);
     pip.process();
     Mat genMat = new Mat(conOut.getRows(), conOut.getCols(), opencv_core.CV_8UC3, new Scalar(0,0,0));

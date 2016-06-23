@@ -1,47 +1,35 @@
 package edu.wpi.grip.ui.codegeneration;
 
-import org.bytedeco.javacpp.opencv_core;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import org.opencv.core.Mat;
-import org.opencv.core.MatOfPoint;
-import org.opencv.core.Scalar;
-import org.opencv.imgproc.Imgproc;
-import org.opencv.core.Rect;
+import org.opencv.core.MatOfKeyPoint;
 
-import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
-
-import javax.inject.Inject;
 
 import edu.wpi.grip.core.ManualPipelineRunner;
 import edu.wpi.grip.core.OperationMetaData;
 import edu.wpi.grip.core.Step;
-import edu.wpi.grip.core.operations.composite.ContoursReport;
-import edu.wpi.grip.core.operations.composite.FindContoursOperation;
+import edu.wpi.grip.core.operations.composite.BlobsReport;
+import edu.wpi.grip.core.operations.composite.FindBlobsOperation;
 import edu.wpi.grip.core.operations.composite.HSLThresholdOperation;
 import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.core.sources.ImageFileSource;
-import edu.wpi.grip.ui.codegeneration.tools.HelperTools;
 import edu.wpi.grip.ui.codegeneration.tools.PipelineInterfacer;
 import edu.wpi.grip.util.Files;
 
-
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 @Category(GenerationTest.class)
-public class FindContoursGenerationTest extends AbstractGenerationTest {
-  @Inject
-  private Exporter exporter;
+public class FindBlobsGenerationTest extends AbstractGenerationTest {
   private List<Number> hVal = new ArrayList<Number>();
   private List<Number> sVal = new ArrayList<Number>();
   private List<Number> lVal = new ArrayList<Number>();
 
-  public FindContoursGenerationTest() {
+  public FindBlobsGenerationTest() {
     hVal.add(new Double(1.2));
     hVal.add(new Double(51.0));
     sVal.add(new Double(2.2));
@@ -50,7 +38,7 @@ public class FindContoursGenerationTest extends AbstractGenerationTest {
     lVal.add(new Double(101.0));
   }
 
-  void generatePipeline(boolean externalBool) {
+  void generatePipeline(boolean darkBool, double minArea, List<Double> circularity) {
     Step step0 = gen.addStep(new OperationMetaData(HSLThresholdOperation.DESCRIPTION, () -> new
         HSLThresholdOperation(isf, osf)));
     ImageFileSource img = loadImage(Files.imageFile);
@@ -63,39 +51,52 @@ public class FindContoursGenerationTest extends AbstractGenerationTest {
         sock.setValue(hVal);
       } else if (sock.getSocketHint().getIdentifier().equals("Saturation")) {
         sock.setValue(sVal);
-      } else if(sock.getSocketHint().getIdentifier().equals("Luminance")){
+      } else if (sock.getSocketHint().getIdentifier().equals("Luminance")) {
         sock.setValue(lVal);
       }
     }
 
-    Step step1 = gen.addStep(new OperationMetaData(FindContoursOperation.DESCRIPTION, () -> new
-        FindContoursOperation(isf, osf)));
+    Step step1 = gen.addStep(new OperationMetaData(FindBlobsOperation.DESCRIPTION, () -> new
+        FindBlobsOperation(isf, osf)));
     OutputSocket imgOut1 = pipeline.getSteps().get(0).getOutputSockets().get(0);
     for (InputSocket sock : step1.getInputSockets()) {
       if (sock.getSocketHint().isCompatibleWith(imgOut1.getSocketHint())) {
         gen.connect(imgOut1, sock);
-      } else if (sock.getSocketHint().getIdentifier().equals("External Only")) {
-        sock.setValue(externalBool);
+      } else if (sock.getSocketHint().getIdentifier().equals("Dark Blobs")) {
+        sock.setValue(darkBool);
+      } else if (sock.getSocketHint().getIdentifier().equals("Min Area")) {
+        sock.setValue(minArea);
+      } else if (sock.getSocketHint().getIdentifier().equals("Circularity")) {
+        sock.setValue(circularity);
       }
     }
   }
 
   @Test
-  public void FindContoursWOExternalTest() {
+  public void FindBlobsTest() {
     test(() -> {
-          generatePipeline(false);
+          generatePipeline(false, 0, Arrays.asList(0.0, 1.0));
           return true;
         },
-        (pip) -> testPipeline(pip), "FindContours");
+        (pip) -> testPipeline(pip), "FindBlobs");
   }
 
   @Test
-  public void FindContoursExternalTest() {
+  public void FindBlackBlobsTest() {
     test(() -> {
-          generatePipeline(true);
+          generatePipeline(true, 0, Arrays.asList(0.0, 1.0));
           return true;
         },
-        (pip) -> testPipeline(pip), "FindExternalContours");
+        (pip) -> testPipeline(pip), "FindBlackBlobs");
+  }
+
+  @Test
+  public void FindSomeBlobsTest() {
+    test(() -> {
+          generatePipeline(false, 9, Arrays.asList(0.0, 0.9));
+          return true;
+        },
+        (pip) -> testPipeline(pip), "FindSomeBlobs");
   }
 
 
@@ -104,27 +105,23 @@ public class FindContoursGenerationTest extends AbstractGenerationTest {
     runner.runPipeline();
     Optional out1 = pipeline.getSteps().get(1).getOutputSockets().get(0).getValue();
     assertTrue("Pipeline did not process", out1.isPresent());
-    ContoursReport conOut = (ContoursReport) out1.get();
-    org.bytedeco.javacpp.opencv_core.Mat matOut = new org.bytedeco.javacpp.opencv_core.Mat();
-    matOut.create(conOut.getRows(), conOut.getCols(), org.bytedeco.javacpp.opencv_core.CV_8UC3);
-    org.bytedeco.javacpp.opencv_core.bitwise_xor(matOut,matOut,matOut);
-    org.bytedeco.javacpp.opencv_imgproc.drawContours(matOut, conOut.getContours(), -1, org
-        .bytedeco.javacpp.opencv_core.Scalar.WHITE);
+    BlobsReport blobOut = (BlobsReport) out1.get();
 
-    //exporter.export(pipeline, Language.JAVA,new File() , false);
+    System.out.println(blobOut.getBlobs().size());
     pip.setMatSource(0, Files.imageFile.file);
     pip.process();
-    Mat genMat = (Mat) pip.getOutput(0);
-    List<MatOfPoint> gen = (List<MatOfPoint>) pip.getOutput(1);
+    MatOfKeyPoint gen = (MatOfKeyPoint) pip.getOutput(1);
+    assertTrue("Number of Contours is not the same. grip: " + blobOut.getBlobs().size() + " gen: " +
+        gen.toList().size(), (blobOut.getBlobs().size() - gen.toList().size()) < 5);
+    for (int i = 0; i < gen.toList().size(); i++) {
+      assertTrue("gripX: " + blobOut.getX()[i] + " genx: " + gen.toList().get(i).pt.x
+          , Math.abs(gen.toList().get(i).pt.x - blobOut.getX()[i]) < 2);
+      assertTrue("gripy: " + blobOut.getY()[i] + " geny: " + gen.toList().get(i).pt.y
+          , Math.abs(gen.toList().get(i).pt.y - blobOut.getY()[i]) < 2);
+      assertTrue("gripSize: " + blobOut.getSize()[i] + " genSize: " + gen.toList().get(i).size
+          , Math.abs(gen.toList().get(i).size - blobOut.getSize()[i]) < 2);
+    }
 
-    Imgproc.cvtColor(genMat, genMat, Imgproc.COLOR_GRAY2BGR);
-    Imgproc.drawContours(genMat,gen,-1,new Scalar(255, 255, 255));
-
-    Mat gripMat = HelperTools.bytedecoMatToCVMat(matOut);
-    //HelperTools.displayMats(genMat,gripMat);
-    assertMatWithin(genMat, gripMat, 8.0);
-    assertTrue("Number of Contours is not the same. grip: "+conOut.getContours().size()+" gen: " +
-        gen.size(), conOut.getContours().size() == gen.size());
 
   }
 }
