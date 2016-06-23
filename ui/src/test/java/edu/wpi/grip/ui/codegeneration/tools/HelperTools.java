@@ -37,6 +37,7 @@ public class HelperTools {
 	public static double matAvgDiff(Mat mat1, Mat mat2){
 		assertTrue("Mat size is not equal", mat1.cols()==mat2.cols()&&mat1.rows()==mat2.rows());
 		assertTrue("Mats have different number of channels", mat1.channels()==mat2.channels());
+		assertTrue("Mats have different Types. Mat1 is type: "+mat1.type() + " Mat 2 is type: "+mat2.type(), mat1.type()==mat2.type());
 		Mat diff = new Mat(); 
 		Core.absdiff(mat1, mat2, diff);//Take absolute difference between two mats
 		double matDiff = 0;
@@ -61,6 +62,7 @@ public class HelperTools {
 	public static Mat bytedecoMatToCVMat(org.bytedeco.javacpp.opencv_core.Mat input){
 		UByteIndexer idxer= input.createIndexer();
 		Mat out = new Mat(idxer.rows(),idxer.cols(),CvType.CV_8UC(idxer.channels()));
+		//Mat out = new Mat(idxer.rows(),idxer.cols(),input.type());
 		for(int row = 0; row<idxer.rows(); row++){
 			for(int col = 0; col<idxer.cols(); col++){
 				byte data[] = new byte[3];
