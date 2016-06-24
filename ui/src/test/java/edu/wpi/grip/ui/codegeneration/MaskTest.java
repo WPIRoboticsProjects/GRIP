@@ -50,7 +50,6 @@ public class MaskTest extends AbstractGenerationTest {
 		assertTrue("Pipeline did not process", out.isPresent());
 		assertFalse("Pipeline output is empty", ((org.bytedeco.javacpp.opencv_core.Mat)out.get()).empty());
 		pip.setMatSource(0, Files.imageFile.file);
-		pip.setMatSource(1, Files.imageFile.file);
 		pip.process();
 		Mat genMat = (Mat) pip.getOutput(1);
 		Mat gripMat = HelperTools.bytedecoMatToCVMat((org.bytedeco.javacpp.opencv_core.Mat)out.get());

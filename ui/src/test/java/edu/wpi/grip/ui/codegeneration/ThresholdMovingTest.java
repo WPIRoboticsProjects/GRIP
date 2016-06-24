@@ -104,9 +104,7 @@ public class ThresholdMovingTest extends AbstractGenerationTest {
 		ManualPipelineRunner runner = new ManualPipelineRunner(eventBus,
 				pipeline);
 		runner.runPipeline();
-		for (int idx = 0; idx < 2 * threshs.length; idx++) {
-			pip.setMatSource(idx, Files.gompeiJpegFile.file);
-		}
+		pip.setMatSource(0, Files.gompeiJpegFile.file);
 		pip.process();
 		for (int idx = 0; idx < threshs.length; idx++) {
 			boolean value = threshs[idx].toggle();
