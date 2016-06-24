@@ -24,6 +24,7 @@ public class TPipeline {
   private int numSources;
   private int numOutputs;
   private Map<InputSocket, TOutput> connections;
+  private Map<String, Integer> uniqueSources;
 
 
   /**
@@ -32,6 +33,7 @@ public class TPipeline {
    * @param pipeline The current grip pipeline.
    */
   public TPipeline(Pipeline pipeline) {
+    this.uniqueSources = new HashMap<>();
     this.steps = new ArrayList<TStep>();
     this.numSources = 0;
     this.numOutputs = 0;
@@ -74,7 +76,11 @@ public class TPipeline {
           if (connections.containsKey(input)) {
             tInput = new TInput(type, name, connections.get(input));
           } else {
-            tInput = createInput(type, name, "Connection");
+            tInput = null;
+            for (Object con : input.getConnections()) {
+              tInput = createInput(type, name, "Connection" + ((Connection) con).getOutputSocket()
+                  .toString());
+            }
           }
         } else {
           tInput = createInput(type, name, TemplateMethods.parseSocketValue(input));
@@ -93,11 +99,15 @@ public class TPipeline {
    * @return The generated TInput.
    */
   protected TInput createInput(String type, String name, String value) {
-    if (value.contains("Optional.empty") || value.contains("Connection") || value.contains
-        ("ContoursReport")) {
-      int s = numSources;
-      numSources++;
-      value = "source" + s;
+    if (value.contains("Optional.empty") || value.contains("Connection")) {
+      if (uniqueSources.containsKey(value) && value.contains("Connection")) {
+        value = "source" + uniqueSources.get(value);
+      } else {
+        int s = numSources;
+        numSources++;
+        uniqueSources.put(value, s);
+        value = "source" + s;
+      }
     } else if (value.contains("null")) {
       value = "null";
     }
@@ -141,12 +151,22 @@ public class TPipeline {
    *
    * @return the list of sources.
    */
-  public List<TSocket> getSources() {
-    List<TSocket> sources = new ArrayList<TSocket>();
+  public List<TInput> getSources() {
+    List<TInput> sources = new ArrayList<TInput>();
+
     for (TStep step : steps) {
       for (TInput input : step.getInputs()) {
         if (input.value().contains("source")) {
-          sources.add(input);
+          boolean add = true;
+          for (TInput source : sources) {
+            if (source.value().equals(input.value())) {
+              add = false;
+            }
+          }
+          if (add) {
+            sources.add(input);
+          }
+
         }
       }
     }

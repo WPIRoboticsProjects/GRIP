@@ -16,12 +16,11 @@ public abstract class TemplateMethods {
 
   protected Map<Connection, String> connections;
   protected int numOutputs;
-  protected int numSources;
 
   protected TemplateMethods() {
     connections = new HashMap<Connection, String>();
     numOutputs = 0;
-    numSources = 0;
+
   }
 
   public static TemplateMethods get(Language lang) {

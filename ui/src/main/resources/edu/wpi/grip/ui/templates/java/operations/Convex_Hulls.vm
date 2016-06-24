@@ -4,9 +4,10 @@
 	 * @param inputContours The contours on which to perform the operation.
 	 * @param outputContours The contours where the output will be stored.
 	 */
-	private void $tMeth.name($step.name())(List<MatOfPoint> inputContours,List<MatOfPoint> outputContours){
+	private void $tMeth.name($step.name())(List<MatOfPoint> inputContours, ArrayList<MatOfPoint>
+	outputContours){
 		final MatOfInt hull = new MatOfInt();
-		outputContours = new ArrayList<MatOfPoint>(inputContours.size());
+		outputContours.clear();
 		for (int i = 0; i < inputContours.size(); i++) {
 			final MatOfPoint contour = inputContours.get(i);
 			final MatOfPoint mopHull = new MatOfPoint();
