@@ -23,7 +23,15 @@ public class PipelineInterfacer {
 			pipeline.getMethod("setsource"+num, value.getClass()).invoke(instance, value);
 		}catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
 			e.printStackTrace();
-			fail("setsource"+num +" is not valid for class "+value.getClass().getSimpleName());
+			fail("setsource"+num +" is not valid for class "+value.getClass().getSimpleName()+ " because there was a: ");
+		}
+	}
+	public void setSourceAsObject(int num, Object value){
+		try{
+			pipeline.getMethod("setsource"+num, Object.class).invoke(instance, value);
+		}catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+			e.printStackTrace();
+			fail("setsource"+num +" is not valid for class "+value.getClass().getSimpleName()+ " because there was a: ");
 		}
 	}
 	public void setMatSource(int num, File img){
