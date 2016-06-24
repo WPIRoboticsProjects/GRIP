@@ -5,20 +5,17 @@
 	 * @param input The image on which to perform the find lines.
 	 * @param lineList The output where the lines are stored.
 	 */
-	private void $tMeth.name($step.name())(Mat input, List<Line> lineList){
+	private void $tMeth.name($step.name())(Mat input, ArrayList<Line> lineList){
 		final LineSegmentDetector lsd = Imgproc.createLineSegmentDetector();
 		final Mat lines = new Mat();
+		lineList.clear();
 		if (input.channels() == 1) {
 			lsd.detect(input, lines);
 		} else {
-			// The line detector works on a single channel.  If the input is a color image, we can just give the line
-			// detector a grayscale version of it
 			final Mat tmp = new Mat();
 			Imgproc.cvtColor(input, tmp, Imgproc.COLOR_BGR2GRAY);
 			lsd.detect(tmp, lines);
 		}
-		// Store the lines in the LinesReport object
-		lineList = new ArrayList<>();
 		if (!lines.empty()) {
 			for (int i = 0; i < lines.rows(); i++) {
 				lineList.add(new Line(lines.get(i, 0)[0], lines.get(i, 0)[1], lines.get(i, 0)[2], lines.get(i, 0)[3]));
