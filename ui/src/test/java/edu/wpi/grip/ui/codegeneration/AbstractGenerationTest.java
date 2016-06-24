@@ -34,16 +34,16 @@ import edu.wpi.grip.util.ImageWithData;
 public abstract class AbstractGenerationTest {
     private GRIPCoreTestModule testModule;
     @Inject
-    EventBus eventBus;
+    protected EventBus eventBus;
     @Inject
-    Pipeline pipeline;
+    protected Pipeline pipeline;
     @Inject
-    InputSocket.Factory isf;
+    protected InputSocket.Factory isf;
     @Inject
-    OutputSocket.Factory osf;
+    protected OutputSocket.Factory osf;
     @Inject
-    ImageFileSource.Factory imgfac;
-    PipelineGenerator gen;
+    protected ImageFileSource.Factory imgfac;
+    protected PipelineGenerator gen;
     @Before
     public void setUp(){
         testModule = new GRIPCoreTestModule();
@@ -54,7 +54,7 @@ public abstract class AbstractGenerationTest {
         injector.injectMembers(gen);
     }
    
-    public final void test(BooleanSupplier setup, Consumer<PipelineInterfacer> test, String testName){
+    protected final void test(BooleanSupplier setup, Consumer<PipelineInterfacer> test, String testName){
     	assertTrue("Setup for "+ testName+" reported an issue.", setup.getAsBoolean());
     	String fileName = testName+".java";
     	gen.export(fileName);
@@ -72,7 +72,7 @@ public abstract class AbstractGenerationTest {
 	public static void tearDownClass(){
 		PipelineCreator.cleanClasses();
 	}
-	ImageFileSource loadImage(ImageWithData img){
+	protected ImageFileSource loadImage(ImageWithData img){
 		ImageFileSource out = imgfac.create(img.file);
 		try{
 		out.initialize();
@@ -83,7 +83,7 @@ public abstract class AbstractGenerationTest {
 		eventBus.post(new SourceAddedEvent(out));
 		return out;
 	}
-	void assertMatWithin(Mat gen, Mat grip, double tolerance){
+	protected void assertMatWithin(Mat gen, Mat grip, double tolerance){
 		double diff = Math.abs(HelperTools.matAvgDiff(gen, grip));
 		assertTrue("Difference between two Mats was: " + diff +
 				", which is greater than tolerance of: "+ tolerance,
