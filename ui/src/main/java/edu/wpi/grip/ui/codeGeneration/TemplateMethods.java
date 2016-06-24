@@ -37,17 +37,13 @@ public abstract class TemplateMethods {
     }
   }
 
-  public static String parseSocketValue(Socket socket) {
-    String value = socket.getValue().toString();
-    if (socket.getSocketHint().getView().equals(SocketHint.View.NONE)) {
-      return "null" + value;
-    } else if (value.contains("Optional[")) {
-      return value.substring(value.indexOf("[") + 1, value.lastIndexOf("]"));
-    } else {
-      return value;
-    }
+  public static String parseSocketValue(Socket socket){
+	  if(socket.getValue().isPresent()){
+		  return socket.getValue().get().toString();
+	  }
+	  return "null";
   }
-
+  
   public static String parseSocketName(Socket socket) {
     String name = socket.getSocketHint().getIdentifier();
     return CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.LOWER_CAMEL, name.replaceAll("\\s", ""));

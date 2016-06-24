@@ -22,10 +22,10 @@ public class SwitchTest extends AbstractGenerationTest {
 				SwitchOperation.DESCRIPTION, () -> new SwitchOperation(isf, osf)));
 		for(InputSocket sock : step.getInputSockets()){
 			String sockHint = sock.getSocketHint().getIdentifier();
-			if(sockHint.equals("if True")){
+			if(sockHint.equalsIgnoreCase("if True")){
 				sock.setValue(onTrue);
 			}
-			else if(sockHint.equals("if False")){
+			else if(sockHint.equalsIgnoreCase("if False")){
 				sock.setValue(onFalse);
 			}
 			else if(sockHint.equals("switch")){
@@ -52,26 +52,8 @@ public class SwitchTest extends AbstractGenerationTest {
 				(pip) -> validate(pip, onTrue, onFalse, initVal),
 				"SwitchNumFalse");
 	}
-	@Test
-	public void testMatTrueInit(){
-		Mat onTrue = Mat.eye(3, 3, CvType.CV_8U);
-		Mat onFalse = Mat.ones(3, 3, CvType.CV_8U);
-		Boolean initVal = new Boolean(true);
-		test(() -> setup(onTrue, onFalse, initVal),
-				(pip) -> validate(pip, onTrue, onFalse, initVal), "SwitchMatTrue");
-	}
-	@Test
-	public void testMatFalseInit(){
-		Mat onTrue = Mat.eye(3, 3, CvType.CV_8U);
-		Mat onFalse = Mat.ones(3, 3, CvType.CV_8U);
-		Boolean initVal = new Boolean(false);
-		test(() -> setup(onTrue, onFalse, initVal),
-				(pip) -> validate(pip, onTrue, onFalse, initVal), "SwitchMatFalse");
-	}
 	
 	void validate(PipelineInterfacer pip, Object onTrue, Object onFalse, Boolean initVal){
-		pip.setSourceAsObject(0, onTrue);
-		pip.setSourceAsObject(1, onFalse);
 		pip.process();
 		Object out = pip.getOutput(0);
 		if(initVal.booleanValue()){
