@@ -6,11 +6,14 @@ import com.google.common.util.concurrent.Service;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.Timeout;
 
 import java.util.LinkedList;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Executor;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
@@ -35,6 +38,9 @@ public class AutoRestartingServiceTest {
   private Thread executionThread;
   private Throwable thrownByExecutionThread;
   private Executor exceptionCatchingExecutor;
+
+  @Rule
+  public Timeout timeout = new Timeout(10, TimeUnit.SECONDS);
 
   @Before
   public void setUp() {
