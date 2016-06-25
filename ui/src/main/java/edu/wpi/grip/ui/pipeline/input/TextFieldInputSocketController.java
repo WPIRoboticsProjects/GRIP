@@ -14,44 +14,45 @@ import javafx.scene.control.TextField;
 import javax.inject.Inject;
 
 /**
- * An {@link InputSocketController} that lets the user set the value of a number with a {@link javafx.scene.control.TextField}
+ * An {@link InputSocketController} that lets the user set the value of a number with a {@link
+ * javafx.scene.control.TextField}
  */
 public class TextFieldInputSocketController extends InputSocketController<String> {
 
-    private TextField textField;
+  private TextField textField;
 
-    public interface Factory {
-        TextFieldInputSocketController create(InputSocket<String> socket);
+  @Inject
+  TextFieldInputSocketController(SocketHandleView.Factory socketHandleViewFactory,
+                                 @Assisted InputSocket<String> socket) {
+    super(socketHandleViewFactory, socket);
+  }
+
+  @FXML
+  @Override
+  public void initialize() {
+    super.initialize();
+
+    textField = new TextField(getSocket().getValue().get());
+    textField.setPromptText(getSocket().getSocketHint().getIdentifier());
+    textField.disableProperty().bind(this.getHandle().connectedProperty());
+    textField.focusedProperty().addListener(observable -> {
+      if (!textField.isFocused()) {
+        getSocket().setValue(textField.getText());
+      }
+    });
+
+    setContent(textField);
+  }
+
+  @Subscribe
+  public void updateTextFieldFromSocket(SocketChangedEvent event) {
+    if (event.isRegarding(getSocket())) {
+      final String text = getSocket().getValue().get();
+      Platform.runLater(() -> textField.setText(text));
     }
+  }
 
-    @Inject
-    TextFieldInputSocketController(SocketHandleView.Factory socketHandleViewFactory,
-                                   @Assisted InputSocket<String> socket) {
-        super(socketHandleViewFactory, socket);
-    }
-
-    @FXML
-    @Override
-    public void initialize() {
-        super.initialize();
-
-        textField = new TextField(getSocket().getValue().get());
-        textField.setPromptText(getSocket().getSocketHint().getIdentifier());
-        textField.disableProperty().bind(this.getHandle().connectedProperty());
-        textField.focusedProperty().addListener(observable -> {
-            if (!textField.isFocused()) {
-                getSocket().setValue(textField.getText());
-            }
-        });
-
-        setContent(textField);
-    }
-
-    @Subscribe
-    public void updateTextFieldFromSocket(SocketChangedEvent event) {
-        if (event.isRegarding(getSocket())) {
-            final String text = getSocket().getValue().get();
-            Platform.runLater(() -> textField.setText(text));
-        }
-    }
+  public interface Factory {
+    TextFieldInputSocketController create(InputSocket<String> socket);
+  }
 }

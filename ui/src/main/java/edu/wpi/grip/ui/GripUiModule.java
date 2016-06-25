@@ -36,65 +36,68 @@ import javafx.fxml.FXMLLoader;
  * A Guice {@link com.google.inject.Module} for GRIP's UI package.
  */
 public class GripUiModule extends AbstractModule {
-    @Override
-    protected void configure() {
-        bind(GripMode.class).toInstance(GripMode.GUI);
+  @Override
+  protected void configure() {
+    bind(GripMode.class).toInstance(GripMode.GUI);
 
-        bindListener(Matchers.any(), new TypeListener() {
-            @Override
-            public <I> void hear(final TypeLiteral<I> typeLiteral, TypeEncounter<I> typeEncounter) {
-                typeEncounter.register((InjectionListener<I>) i -> {
-                    if (!i.getClass().isAnnotationPresent(ParametrizedController.class)) {
-                        return;
-                    }
-                    try {
-                        FXMLLoader.load(i.getClass().getResource(
-                            i.getClass().getAnnotation(ParametrizedController.class).url()),
-                            null, null,
-                            c -> i
-                        );
-                    } catch (IOException e) {
-                        throw new IllegalStateException("Failed to load FXML", e);
-                    }
-                });
-            }
+    bindListener(Matchers.any(), new TypeListener() {
+      @Override
+      public <I> void hear(final TypeLiteral<I> typeLiteral, TypeEncounter<I> typeEncounter) {
+        typeEncounter.register((InjectionListener<I>) i -> {
+          if (!i.getClass().isAnnotationPresent(ParametrizedController.class)) {
+            return;
+          }
+          try {
+            FXMLLoader.load(i.getClass().getResource(
+                i.getClass().getAnnotation(ParametrizedController.class).url()),
+                null, null,
+                c -> i
+            );
+          } catch (IOException e) {
+            throw new IllegalStateException("Failed to load FXML", e);
+          }
         });
+      }
+    });
 
 
-        install(new FactoryModuleBuilder()
-            .implement(StepController.class, StepController.class)
-            .build(StepController.Factory.class));
+    install(new FactoryModuleBuilder()
+        .implement(StepController.class, StepController.class)
+        .build(StepController.Factory.class));
 
-        // Source Factories
-        install(new FactoryModuleBuilder().build(new TypeLiteral<SourceController.BaseSourceControllerFactory<Source>>() {
-        }));
-        install(new FactoryModuleBuilder().build(MultiImageFileSourceController.Factory.class));
-        install(new FactoryModuleBuilder().build(CameraSourceController.Factory.class));
-        // END Source Factories
+    // Source Factories
+    install(new FactoryModuleBuilder().build(new TypeLiteral<SourceController
+        .BaseSourceControllerFactory<Source>>() {
+    }));
+    install(new FactoryModuleBuilder().build(MultiImageFileSourceController.Factory.class));
+    install(new FactoryModuleBuilder().build(CameraSourceController.Factory.class));
+    // END Source Factories
 
-        // Components
-        install(new FactoryModuleBuilder().build(StartStoppableButton.Factory.class));
-        install(new FactoryModuleBuilder().build(ExceptionWitnessResponderButton.Factory.class));
-        // End Components
+    // Components
+    install(new FactoryModuleBuilder().build(StartStoppableButton.Factory.class));
+    install(new FactoryModuleBuilder().build(ExceptionWitnessResponderButton.Factory.class));
+    // End Components
 
-        // Controllers
-        install(new FactoryModuleBuilder().build(OperationController.Factory.class));
-        install(new FactoryModuleBuilder().build(SocketHandleView.Factory.class));
-        install(new FactoryModuleBuilder().build(OutputSocketController.Factory.class));
-        // End arbitrary controllers
+    // Controllers
+    install(new FactoryModuleBuilder().build(OperationController.Factory.class));
+    install(new FactoryModuleBuilder().build(SocketHandleView.Factory.class));
+    install(new FactoryModuleBuilder().build(OutputSocketController.Factory.class));
+    // End arbitrary controllers
 
-        // InputSocketController Factories
-        install(new FactoryModuleBuilder().build(new TypeLiteral<InputSocketController.BaseInputSocketControllerFactory<Object>>() {
-        }));
-        install(new FactoryModuleBuilder().build(CheckboxInputSocketController.Factory.class));
-        install(new FactoryModuleBuilder().build(ListSpinnerInputSocketController.Factory.class));
-        install(new FactoryModuleBuilder().build(RangeInputSocketController.Factory.class));
-        install(new FactoryModuleBuilder().build(new TypeLiteral<SelectInputSocketController.Factory<Object>>() {
-        }));
-        install(new FactoryModuleBuilder().build(NumberSpinnerInputSocketController.Factory.class));
-        install(new FactoryModuleBuilder().build(SliderInputSocketController.Factory.class));
-        install(new FactoryModuleBuilder().build(TextFieldInputSocketController.Factory.class));
-        // END Input Socket Controller Factories
+    // InputSocketController Factories
+    install(new FactoryModuleBuilder().build(new TypeLiteral<InputSocketController
+        .BaseInputSocketControllerFactory<Object>>() {
+    }));
+    install(new FactoryModuleBuilder().build(CheckboxInputSocketController.Factory.class));
+    install(new FactoryModuleBuilder().build(ListSpinnerInputSocketController.Factory.class));
+    install(new FactoryModuleBuilder().build(RangeInputSocketController.Factory.class));
+    install(new FactoryModuleBuilder().build(new TypeLiteral<SelectInputSocketController
+        .Factory<Object>>() {
+    }));
+    install(new FactoryModuleBuilder().build(NumberSpinnerInputSocketController.Factory.class));
+    install(new FactoryModuleBuilder().build(SliderInputSocketController.Factory.class));
+    install(new FactoryModuleBuilder().build(TextFieldInputSocketController.Factory.class));
+    // END Input Socket Controller Factories
 
-    }
+  }
 }

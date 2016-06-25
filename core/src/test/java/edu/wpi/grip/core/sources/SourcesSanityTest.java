@@ -11,13 +11,13 @@ import com.google.common.util.concurrent.Service;
 import java.util.Arrays;
 
 public class SourcesSanityTest extends AbstractPackageSanityTests {
-    public SourcesSanityTest() {
-        super();
-        publicApiOnly();
-        ignoreClasses(c -> c.getName().contains("Mock"));
-        ignoreClasses(c -> Arrays.asList(IPCameraFrameGrabber.class).contains(c));
-        setDefault(Service.Listener.class, new SingleActionListener(() -> {
-        }));
-        setDefault(ExceptionWitness.Factory.class, MockExceptionWitness.MOCK_FACTORY);
-    }
+  public SourcesSanityTest() {
+    super();
+    publicApiOnly();
+    ignoreClasses(c -> c.getName().contains("Mock"));
+    ignoreClasses(c -> Arrays.asList(IPCameraFrameGrabber.class).contains(c));
+    setDefault(Service.Listener.class, new SingleActionListener(() -> {
+    }));
+    setDefault(ExceptionWitness.Factory.class, MockExceptionWitness.MOCK_FACTORY);
+  }
 }

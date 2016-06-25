@@ -7,4 +7,7 @@
 <suppressions>
     <!-- Skip all checks for generated files -->
     <suppress files="^.*[\\/](generated)[\\/].*$" checks="[a-zA-Z0-9]*"/>
+    <suppress checks="JavadocMethod" files="^.*[\\/]test[\\/].*$"/>
+    <suppress checks="JavadocParagraph" files="^.*[\\/]test[\\/].*$"/>
+    <suppress checks="SummaryJavadoc" files="^.*[\\/]test[\\/].*$"/>
 </suppressions>

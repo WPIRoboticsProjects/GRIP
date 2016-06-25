@@ -6,5 +6,5 @@ package edu.wpi.grip.core.operations.network.ros;
  */
 @FunctionalInterface
 public interface ROSNetworkPublisherFactory {
-    <C extends JavaToMessageConverter> ROSMessagePublisher create(C converter);
+  <C extends JavaToMessageConverter> ROSMessagePublisher create(C converter);
 }

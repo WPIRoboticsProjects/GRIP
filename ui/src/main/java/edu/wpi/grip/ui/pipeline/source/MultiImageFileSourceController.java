@@ -13,25 +13,28 @@ import com.google.inject.assistedinject.Assisted;
 import javafx.fxml.FXML;
 
 /**
- * Provides controls for a {@link MultiImageFileSource}
+ * Provides controls for a {@link MultiImageFileSource}.
  */
 public final class MultiImageFileSourceController extends SourceController<MultiImageFileSource> {
 
-    public interface Factory {
-        MultiImageFileSourceController create(MultiImageFileSource multiImageFileSource);
-    }
+  @Inject
+  MultiImageFileSourceController(
+      final EventBus eventBus,
+      final OutputSocketController.Factory outputSocketControllerFactory,
+      final ExceptionWitnessResponderButton.Factory exceptionWitnessResponderButtonFactory,
+      @Assisted final MultiImageFileSource multiImageFileSource) {
+    super(eventBus, outputSocketControllerFactory, exceptionWitnessResponderButtonFactory,
+        multiImageFileSource);
+  }
 
-    @Inject
-    MultiImageFileSourceController(final EventBus eventBus,
-                                   final OutputSocketController.Factory outputSocketControllerFactory,
-                                   final ExceptionWitnessResponderButton.Factory exceptionWitnessResponderButtonFactory,
-                                   @Assisted final MultiImageFileSource multiImageFileSource) {
-        super(eventBus, outputSocketControllerFactory, exceptionWitnessResponderButtonFactory, multiImageFileSource);
-    }
+  @FXML
+  @Override
+  protected void initialize() throws Exception {
+    super.initialize();
+    addControls(new PreviousNextButtons(getSource()));
+  }
 
-    @FXML
-    public void initialize() throws Exception {
-        super.initialize();
-        addControls(new PreviousNextButtons(getSource()));
-    }
+  public interface Factory {
+    MultiImageFileSourceController create(MultiImageFileSource multiImageFileSource);
+  }
 }

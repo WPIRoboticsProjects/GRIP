@@ -6,14 +6,13 @@ package edu.wpi.grip.core.util.service;
 @FunctionalInterface
 public interface ServiceRestartPolicy {
 
-    /**
-     * Policy might want to keep track of when the latest restarts have
-     * happened.
-     */
-    default void notifyRestart() {
+  /**
+   * Policy might want to keep track of when the latest restarts have happened.
+   */
+  default void notifyRestart() {
         /* no-op */
-    }
+  }
 
-    boolean shouldRestart();
+  boolean shouldRestart();
 
 }

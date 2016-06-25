@@ -7,13 +7,14 @@ import edu.wpi.grip.core.OperationMetaData;
 import com.google.inject.Singleton;
 
 /**
- * Service for dragging an {@link Operation} from the {@link edu.wpi.grip.ui.pipeline.PipelineController}
+ * Service for dragging an {@link Operation} from the
+ * {@link edu.wpi.grip.ui.pipeline.PipelineController}
  * to the {@link edu.wpi.grip.ui.pipeline.PipelineController}.
  */
 @Singleton
 public class OperationDragService extends DragService<OperationMetaData> {
 
-    public OperationDragService() {
-        super("operation");
-    }
+  public OperationDragService() {
+    super("operation");
+  }
 }

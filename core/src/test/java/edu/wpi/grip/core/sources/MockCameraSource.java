@@ -9,29 +9,31 @@ import java.io.IOException;
 
 public class MockCameraSource extends CameraSource {
 
-    private boolean started = false;
+  private boolean started = false;
 
-    public MockCameraSource(EventBus eventBus, String address) throws IOException {
-        super(eventBus, new MockOutputSocketFactory(eventBus), new MockFrameGrabberFactory(), MockExceptionWitness.MOCK_FACTORY, address);
-    }
+  public MockCameraSource(EventBus eventBus, String address) throws IOException {
+    super(eventBus, new MockOutputSocketFactory(eventBus), new MockFrameGrabberFactory(),
+        MockExceptionWitness.MOCK_FACTORY, address);
+  }
 
-    public MockCameraSource(EventBus eventBus, int deviceNumber) throws IOException {
-        super(eventBus, new MockOutputSocketFactory(eventBus), new MockFrameGrabberFactory(), MockExceptionWitness.MOCK_FACTORY, deviceNumber);
-    }
+  public MockCameraSource(EventBus eventBus, int deviceNumber) throws IOException {
+    super(eventBus, new MockOutputSocketFactory(eventBus), new MockFrameGrabberFactory(),
+        MockExceptionWitness.MOCK_FACTORY, deviceNumber);
+  }
 
-    @Override
-    public MockCameraSource startAsync() {
-        started = true;
-        return this;
-    }
+  @Override
+  public MockCameraSource startAsync() {
+    started = true;
+    return this;
+  }
 
-    @Override
-    public MockCameraSource stopAsync() {
-        started = false;
-        return this;
-    }
+  @Override
+  public MockCameraSource stopAsync() {
+    started = false;
+    return this;
+  }
 
-    public boolean isRunning() {
-        return started;
-    }
+  public boolean isRunning() {
+    return started;
+  }
 }

@@ -12,47 +12,49 @@ import javax.annotation.concurrent.Immutable;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
- * A service listener that will log the service as it transitions between
- * various different states.
+ * A service listener that will log the service as it transitions between various different states.
  */
 @Immutable
 public final class LoggingListener extends Service.Listener {
-    public final Logger logger;
-    public final Class<?> sourceClass;
+  public final Logger logger;
+  public final Class<?> sourceClass;
 
+  /**
+   * @param logger      The logger to use for logging the service.
+   * @param sourceClass The source class that created the service.
+   */
+  public LoggingListener(Logger logger, Class<?> sourceClass) {
+    super();
+    this.logger = checkNotNull(logger, "Logger cannot be null");
+    this.sourceClass = checkNotNull(sourceClass, "Source class cannot be null");
+  }
 
-    public LoggingListener(Logger logger, Class<?> sourceClass) {
-        super();
-        this.logger = checkNotNull(logger, "Logger cannot be null");
-        this.sourceClass = checkNotNull(sourceClass, "Source class cannot be null");
-    }
+  private String createMessage(String message) {
+    return "[" + sourceClass.getSimpleName() + "] " + message;
+  }
 
-    private String createMessage(String message) {
-        return "[" + sourceClass.getSimpleName() + "] " + message;
-    }
+  @Override
+  public void starting() {
+    logger.info(createMessage("Starting"));
+  }
 
-    @Override
-    public void starting() {
-        logger.info(createMessage("Starting"));
-    }
+  @Override
+  public void running() {
+    logger.fine(createMessage("Running"));
+  }
 
-    @Override
-    public void running() {
-        logger.fine(createMessage("Running"));
-    }
+  @Override
+  public void stopping(@Nullable Service.State from) {
+    logger.fine(createMessage("Stopping from: " + from));
+  }
 
-    @Override
-    public void stopping(@Nullable Service.State from) {
-        logger.fine(createMessage("Stopping from: " + from));
-    }
+  @Override
+  public void terminated(@Nullable Service.State from) {
+    logger.info(createMessage("Terminated from: " + from));
+  }
 
-    @Override
-    public void terminated(@Nullable Service.State from) {
-        logger.info(createMessage("Terminated from: " + from));
-    }
-
-    @Override
-    public void failed(@Nullable Service.State from, @Nullable Throwable throwable) {
-        logger.log(Level.SEVERE, createMessage("Failed from: " + from), throwable);
-    }
+  @Override
+  public void failed(@Nullable Service.State from, @Nullable Throwable throwable) {
+    logger.log(Level.SEVERE, createMessage("Failed from: " + from), throwable);
+  }
 }

@@ -29,179 +29,181 @@ import javax.annotation.Nullable;
 import javax.inject.Inject;
 
 /**
- * Runs the pipeline in a separate thread.
- * The runner listens for {@link RunPipelineEvent RunPipelineEvents} and
- * releases the pipeline thread to update the sources and run the steps.
+ * Runs the pipeline in a separate thread. The runner listens for {@link RunPipelineEvent
+ * RunPipelineEvents} and releases the pipeline thread to update the sources and run the steps.
  */
 @Singleton
 public class PipelineRunner implements RestartableService {
-    private final Logger logger = Logger.getLogger(getClass().getName());
-    /**
-     * This is used to flag that the pipeline needs to run because of an update
-     */
-    private final SinglePermitSemaphore pipelineFlag = new SinglePermitSemaphore();
-    private final Supplier<ImmutableList<Source>> sourceSupplier;
-    private final Supplier<ImmutableList<Step>> stepSupplier;
-    private final AutoRestartingService pipelineService;
+  private final Logger logger = Logger.getLogger(getClass().getName());
+  /**
+   * This is used to flag that the pipeline needs to run because of an update.
+   */
+  private final SinglePermitSemaphore pipelineFlag = new SinglePermitSemaphore();
+  private final Supplier<ImmutableList<Source>> sourceSupplier;
+  private final Supplier<ImmutableList<Step>> stepSupplier;
+  private final AutoRestartingService pipelineService;
 
 
-    @Inject
-    PipelineRunner(EventBus eventBus, Provider<Pipeline> pipelineProvider) {
-        this(eventBus, () -> pipelineProvider.get().getSources(), () -> pipelineProvider.get().getSteps());
-    }
+  @Inject
+  PipelineRunner(EventBus eventBus, Provider<Pipeline> pipelineProvider) {
+    this(eventBus, () -> pipelineProvider.get().getSources(), () -> pipelineProvider.get()
+        .getSteps());
+  }
 
-    PipelineRunner(EventBus eventBus, Supplier<ImmutableList<Source>> sourceSupplier, Supplier<ImmutableList<Step>> stepSupplier) {
-        this.sourceSupplier = sourceSupplier;
-        this.stepSupplier = stepSupplier;
-        this.pipelineService = new AutoRestartingService<>(
-            () -> new AbstractScheduledService() {
+  PipelineRunner(EventBus eventBus, Supplier<ImmutableList<Source>> sourceSupplier,
+                 Supplier<ImmutableList<Step>> stepSupplier) {
+    this.sourceSupplier = sourceSupplier;
+    this.stepSupplier = stepSupplier;
+    this.pipelineService = new AutoRestartingService<>(
+        () -> new AbstractScheduledService() {
 
-                /**
-                 *
-                 * @throws InterruptedException This should never happen.
-                 */
-                @Override
-                protected void runOneIteration() throws InterruptedException {
-                    if (!super.isRunning()) {
-                        return;
-                    }
-
-                    pipelineFlag.acquire();
-
-                    if (!super.isRunning()) {
-                        return;
-                    }
-                    runPipeline(super::isRunning);
-                    // This should not block access to the steps array
-                    if (super.isRunning()) {
-                        eventBus.post(new RenderEvent());
-                    }
-                }
-
-                @Override
-                protected Scheduler scheduler() {
-                    return Scheduler.newFixedRateSchedule(0, 1, TimeUnit.MILLISECONDS);
-                }
-
-                @Override
-                protected String serviceName() {
-                    return "Pipeline Runner Service";
-                }
+          /**
+           *
+           * @throws InterruptedException This should never happen.
+           */
+          @Override
+          protected void runOneIteration() throws InterruptedException {
+            if (!super.isRunning()) {
+              return;
             }
-        );
-        this.pipelineService.addListener(new LoggingListener(logger, PipelineRunner.class), MoreExecutors.directExecutor());
-    }
 
-    /**
-     * Starts the pipeline to run at the default rate.
-     */
-    @Override
-    public PipelineRunner startAsync() {
-        pipelineService.startAsync();
-        return this;
-    }
+            pipelineFlag.acquire();
 
-    @Override
-    public boolean isRunning() {
-        return pipelineService.isRunning();
-    }
-
-    @Override
-    public State state() {
-        return pipelineService.state();
-    }
-
-    @Override
-    public PipelineRunner stopAsync() {
-        pipelineService.stopAsync();
-        // Ensure that we unblock the pipeline so it can actually stop
-        pipelineFlag.release();
-        return this;
-    }
-
-    @Override
-    public void stopAndAwait() {
-        stopAsync().pipelineService.stopAndAwait();
-
-    }
-
-    @Override
-    public void stopAndAwait(long timeout, TimeUnit unit) throws TimeoutException {
-        stopAsync().pipelineService.stopAndAwait(timeout, unit);
-    }
-
-    @Override
-    public void awaitRunning() {
-        pipelineService.awaitRunning();
-    }
-
-    @Override
-    public void awaitRunning(long timeout, TimeUnit unit) throws TimeoutException {
-        pipelineService.awaitRunning(timeout, unit);
-    }
-
-    @Override
-    public void awaitTerminated() {
-        pipelineService.awaitTerminated();
-    }
-
-    @Override
-    public void awaitTerminated(long timeout, TimeUnit unit) throws TimeoutException {
-        pipelineService.awaitTerminated(timeout, unit);
-    }
-
-    @Override
-    public Throwable failureCause() {
-        return pipelineService.failureCause();
-    }
-
-    @Override
-    public void addListener(Listener listener, Executor executor) {
-        pipelineService.addListener(listener, executor);
-    }
-
-    /**
-     * This runs the pipeline immediately in the current thread.
-     */
-    @VisibleForTesting
-    void runPipeline() {
-        runPipeline(() -> true);
-    }
-
-    private void runPipeline(Supplier<Boolean> isRunning) {
-        // Take a snapshot of both of the pipeline at the present time before running it.
-        final ImmutableList<Source> sources = sourceSupplier.get();
-        final ImmutableList<Step> steps = stepSupplier.get();
-        // Now that we have a snapshot we can run the pipeline with our copy.
-
-        for (Source source : sources) {
-            // if we have been stopped then we need to exit as soon as possible.
-            // then don't continue to run the pipeline.
-            if (!isRunning.get()) {
-                break;
+            if (!super.isRunning()) {
+              return;
             }
-            source.updateOutputSockets();
-        }
-
-        for (Step step : steps) {
-            if (!isRunning.get()) {
-                break;
+            runPipeline(super::isRunning);
+            // This should not block access to the steps array
+            if (super.isRunning()) {
+              eventBus.post(new RenderEvent());
             }
-            step.runPerformIfPossible();
+          }
+
+          @Override
+          protected Scheduler scheduler() {
+            return Scheduler.newFixedRateSchedule(0, 1, TimeUnit.MILLISECONDS);
+          }
+
+          @Override
+          protected String serviceName() {
+            return "Pipeline Runner Service";
+          }
         }
+    );
+    this.pipelineService.addListener(new LoggingListener(logger, PipelineRunner.class),
+        MoreExecutors.directExecutor());
+  }
+
+  /**
+   * Starts the pipeline to run at the default rate.
+   */
+  @Override
+  public PipelineRunner startAsync() {
+    pipelineService.startAsync();
+    return this;
+  }
+
+  @Override
+  public boolean isRunning() {
+    return pipelineService.isRunning();
+  }
+
+  @Override
+  public State state() {
+    return pipelineService.state();
+  }
+
+  @Override
+  public PipelineRunner stopAsync() {
+    pipelineService.stopAsync();
+    // Ensure that we unblock the pipeline so it can actually stop
+    pipelineFlag.release();
+    return this;
+  }
+
+  @Override
+  public void stopAndAwait() {
+    stopAsync().pipelineService.stopAndAwait();
+
+  }
+
+  @Override
+  public void stopAndAwait(long timeout, TimeUnit unit) throws TimeoutException {
+    stopAsync().pipelineService.stopAndAwait(timeout, unit);
+  }
+
+  @Override
+  public void awaitRunning() {
+    pipelineService.awaitRunning();
+  }
+
+  @Override
+  public void awaitRunning(long timeout, TimeUnit unit) throws TimeoutException {
+    pipelineService.awaitRunning(timeout, unit);
+  }
+
+  @Override
+  public void awaitTerminated() {
+    pipelineService.awaitTerminated();
+  }
+
+  @Override
+  public void awaitTerminated(long timeout, TimeUnit unit) throws TimeoutException {
+    pipelineService.awaitTerminated(timeout, unit);
+  }
+
+  @Override
+  public Throwable failureCause() {
+    return pipelineService.failureCause();
+  }
+
+  @Override
+  public void addListener(Listener listener, Executor executor) {
+    pipelineService.addListener(listener, executor);
+  }
+
+  /**
+   * This runs the pipeline immediately in the current thread.
+   */
+  @VisibleForTesting
+  void runPipeline() {
+    runPipeline(() -> true);
+  }
+
+  private void runPipeline(Supplier<Boolean> isRunning) {
+    // Take a snapshot of both of the pipeline at the present time before running it.
+    final ImmutableList<Source> sources = sourceSupplier.get();
+    final ImmutableList<Step> steps = stepSupplier.get();
+    // Now that we have a snapshot we can run the pipeline with our copy.
+
+    for (Source source : sources) {
+      // if we have been stopped then we need to exit as soon as possible.
+      // then don't continue to run the pipeline.
+      if (!isRunning.get()) {
+        break;
+      }
+      source.updateOutputSockets();
     }
 
-    @Subscribe
-    @AllowConcurrentEvents
-    public void onRunPipeline(RunPipelineEvent event) {
-        if (event.pipelineShouldRun()) {
-            pipelineFlag.release();
-        }
+    for (Step step : steps) {
+      if (!isRunning.get()) {
+        break;
+      }
+      step.runPerformIfPossible();
     }
+  }
 
-    @Subscribe
-    public void onStopPipeline(@Nullable StopPipelineEvent event) {
-        stopAsync();
+  @Subscribe
+  @AllowConcurrentEvents
+  public void onRunPipeline(RunPipelineEvent event) {
+    if (event.pipelineShouldRun()) {
+      pipelineFlag.release();
     }
+  }
+
+  @Subscribe
+  public void onStopPipeline(@Nullable StopPipelineEvent event) {
+    stopAsync();
+  }
 
 }

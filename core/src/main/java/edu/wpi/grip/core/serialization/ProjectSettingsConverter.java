@@ -11,23 +11,26 @@ import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import javax.inject.Inject;
 
 /**
- * XStream converter for {@link ProjectSettings}.
- * Settings are serialized using XStream's built-in reflection serialization. The only catch is that a
- * {@link ProjectSettingsChangedEvent} must be posted after new settings are loaded.
+ * XStream converter for {@link ProjectSettings}. Settings are serialized using XStream's built-in
+ * reflection serialization. The only catch is that a {@link ProjectSettingsChangedEvent} must be
+ * posted after new settings are loaded.
  */
 public class ProjectSettingsConverter extends ReflectionConverter {
 
-    @Inject private EventBus eventBus;
+  @Inject
+  private EventBus eventBus;
 
-    @Inject
-    public ProjectSettingsConverter(Project project) {
-        super(project.xstream.getMapper(), project.xstream.getReflectionProvider(), ProjectSettings.class);
-    }
+  @Inject
+  public ProjectSettingsConverter(Project project) {
+    super(project.xstream.getMapper(), project.xstream.getReflectionProvider(), ProjectSettings
+        .class);
+  }
 
-    @Override
-    public Object unmarshal(final HierarchicalStreamReader reader, final UnmarshallingContext context) {
-        ProjectSettings settings = (ProjectSettings) super.unmarshal(reader, context);
-        eventBus.post(new ProjectSettingsChangedEvent(settings));
-        return null;
-    }
+  @Override
+  public Object unmarshal(final HierarchicalStreamReader reader, final UnmarshallingContext
+      context) {
+    ProjectSettings settings = (ProjectSettings) super.unmarshal(reader, context);
+    eventBus.post(new ProjectSettingsChangedEvent(settings));
+    return null;
+  }
 }
