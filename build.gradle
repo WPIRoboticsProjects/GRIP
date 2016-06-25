@@ -288,7 +288,13 @@ project(":ui") {
     dependencies {
         compile project(path: ':core', configuration: 'shadow')
         ideProvider project(path: ':core', configuration: 'compile')
+        compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.4'
+        compile group: 'org.bytedeco', name: 'javacv', version: '1.1'
+        compile group: 'org.bytedeco.javacpp-presets', name: 'opencv', version: '3.0.0-1.1'
+        compile group: 'org.bytedeco.javacpp-presets', name: 'opencv', version: '3.0.0-1.1', classifier: os
         compile group: 'org.controlsfx', name: 'controlsfx', version: '8.40.10'
+        compile group: 'com.google.inject', name: 'guice', version: '4.0', classifier: 'no_aop'
+        compile group: 'com.google.inject.extensions', name: 'guice-assistedinject', version: '4.0'
         compile group: 'com.hierynomus', name: 'sshj', version: '0.15.0'
         testCompile files(project(':core').sourceSets.test.output.classesDir)
         testCompile files(project(':core').sourceSets.test.output.resourcesDir)
