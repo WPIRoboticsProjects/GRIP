@@ -36,6 +36,7 @@ public class SaveImageOperation implements Operation {
                     .build();
 
     private final SocketHint<Mat> inputHint = SocketHints.Inputs.createMatSocketHint("Input", false);
+    private final SocketHint<FILETYPES> fileTypeHint = SocketHints.createEnumSocketHint("File type", FILETYPES.jpeg);
     private final SocketHint<Number> qualityHint = SocketHints.Inputs.createNumberSliderSocketHint("Quality", 90, 0, 100);
     private final SocketHint<Number> periodHint = SocketHints.Inputs.createNumberSpinnerSocketHint("Period", 0.1);
     private final SocketHint<Boolean> activeHint = SocketHints.Inputs.createCheckboxSocketHint("Active", false);
@@ -43,6 +44,7 @@ public class SaveImageOperation implements Operation {
     private final SocketHint<Mat> outputHint = SocketHints.Outputs.createMatSocketHint("Output");
 
     private final InputSocket<Mat> inputSocket;
+    private final InputSocket<FILETYPES> fileTypesSocket;
     private final InputSocket<Number> qualitySocket;
     private final InputSocket<Number> periodSocket;
     private final InputSocket<Boolean> activeSocket;
@@ -54,10 +56,15 @@ public class SaveImageOperation implements Operation {
     private final Stopwatch stopwatch = Stopwatch.createStarted();
     private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd_HH-mm-ss-SSS");
 
+    private enum FILETYPES {
+        jpeg, png
+    }
+
     public SaveImageOperation(InputSocket.Factory inputSocketFactory, OutputSocket.Factory outputSocketFactory, FileManager fileManager) {
         this.fileManager = fileManager;
 
         inputSocket = inputSocketFactory.create(inputHint);
+        fileTypesSocket = inputSocketFactory.create(fileTypeHint);
         qualitySocket = inputSocketFactory.create(qualityHint);
         periodSocket = inputSocketFactory.create(periodHint);
         activeSocket = inputSocketFactory.create(activeHint);
@@ -69,6 +76,7 @@ public class SaveImageOperation implements Operation {
     public List<InputSocket> getInputSockets() {
         return ImmutableList.of(
                 inputSocket,
+                fileTypesSocket,
                 qualitySocket,
                 periodSocket,
                 activeSocket
@@ -95,7 +103,7 @@ public class SaveImageOperation implements Operation {
         stopwatch.reset();
         stopwatch.start();
 
-        imencode(".jpeg", inputSocket.getValue().get(), imagePointer, new IntPointer(CV_IMWRITE_JPEG_QUALITY,
+        imencode("." + fileTypesSocket.getValue().get(), inputSocket.getValue().get(), imagePointer, new IntPointer(CV_IMWRITE_JPEG_QUALITY,
                 qualitySocket.getValue().get().intValue()));
         byte[] buffer = new byte[128 * 1024];
         int bufferSize = imagePointer.limit();
@@ -104,6 +112,6 @@ public class SaveImageOperation implements Operation {
         }
         imagePointer.get(buffer, 0, bufferSize);
 
-        fileManager.saveImage(buffer, LocalDateTime.now().format(formatter) + ".jpeg");
+        fileManager.saveImage(buffer, LocalDateTime.now().format(formatter) + "." + fileTypesSocket.getValue().get());
     }
 }
