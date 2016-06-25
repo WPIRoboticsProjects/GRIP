@@ -10,5 +10,6 @@ outputs = [
     grip.SocketHints.Outputs.createNumberSocketHint("difference", 0.0),
 ]
 
+
 def perform(a, b):
     return a + b, a - b

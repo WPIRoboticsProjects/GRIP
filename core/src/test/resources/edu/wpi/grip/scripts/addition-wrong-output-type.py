@@ -9,5 +9,6 @@ outputs = [
     grip.SocketHints.Outputs.createNumberSocketHint("sum", 0.0),
 ]
 
+
 def perform(a, b):
     return "I am not an Integer"

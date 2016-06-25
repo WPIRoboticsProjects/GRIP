@@ -9,13 +9,13 @@ import java.net.MalformedURLException;
  */
 public class MockFrameGrabberFactory implements CameraSource.FrameGrabberFactory {
 
-    @Override
-    public FrameGrabber create(int deviceNumber) {
-        return new SimpleMockFrameGrabber();
-    }
+  @Override
+  public FrameGrabber create(int deviceNumber) {
+    return new SimpleMockFrameGrabber();
+  }
 
-    @Override
-    public FrameGrabber create(String addressProperty) throws MalformedURLException {
-        return new SimpleMockFrameGrabber();
-    }
+  @Override
+  public FrameGrabber create(String addressProperty) throws MalformedURLException {
+    return new SimpleMockFrameGrabber();
+  }
 }

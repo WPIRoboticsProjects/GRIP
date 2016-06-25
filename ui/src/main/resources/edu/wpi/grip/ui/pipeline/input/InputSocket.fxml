@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.StackPane?>
 <GridPane styleClass="socket"
           fx:controller="edu.wpi.grip.ui.pipeline.input.InputSocketController"
           fx:id="root"
@@ -11,10 +12,10 @@
         <Label fx:id="identifier" contentDisplay="RIGHT" styleClass="socket-identifier" GridPane.rowIndex="0"
                GridPane.columnIndex="1">
             <graphic>
-                <Label fx:id="type" opacity=".5"/>
+                <Label fx:id="type" opacity=".5" />
             </graphic>
         </Label>
         <StackPane fx:id="contentPane" styleClass="socket-control" GridPane.rowIndex="1"
-                   GridPane.columnIndex="1"/>
+                   GridPane.columnIndex="1" />
     </children>
 </GridPane>
