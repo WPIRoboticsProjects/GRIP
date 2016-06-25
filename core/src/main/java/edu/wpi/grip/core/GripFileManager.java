@@ -18,8 +18,8 @@ public class GripFileManager implements FileManager {
 
     private static final Logger logger = Logger.getLogger(GripFileManager.class.getName());
 
-    public static final File GRIP_DIRECTORY = new File(System.getProperty("user.home") + File.separator + "GRIP");
-    public static final File IMAGE_DIRECTORY = new File(GRIP_DIRECTORY, "images");
+    private static final File GRIP_DIRECTORY = new File(System.getProperty("user.home") + File.separator + "GRIP");
+    private static final File IMAGE_DIRECTORY = new File(GRIP_DIRECTORY, "images");
 
     @Override
     public void saveImage(byte[] image, String fileName) {
