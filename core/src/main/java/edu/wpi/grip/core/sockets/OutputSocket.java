@@ -10,23 +10,23 @@ import edu.wpi.grip.core.Operation;
  */
 public interface OutputSocket<T> extends Socket<T> {
 
-    interface Factory {
-        <T> OutputSocket<T> create(SocketHint<T> hint);
-    }
+  /**
+   * @return Whether or not this socket is shown in a preview in the GUI.
+   * @see #setPreviewed(boolean) d(boolean)
+   */
+  boolean isPreviewed();
 
-    /**
-     * @param previewed If <code>true</code>, this socket will be shown in a preview in the GUI.
-     */
-    void setPreviewed(boolean previewed);
+  /**
+   * @param previewed If <code>true</code>, this socket will be shown in a preview in the GUI.
+   */
+  void setPreviewed(boolean previewed);
 
-    /**
-     * @return Whether or not this socket is shown in a preview in the GUI
-     * @see #setPreviewed(boolean) d(boolean)
-     */
-    boolean isPreviewed();
+  /**
+   * Resets the value of this socket to its initial value.
+   */
+  void resetValueToInitial();
 
-    /**
-     * Resets the value of this socket to its initial value.
-     */
-    void resetValueToInitial();
+  interface Factory {
+    <T> OutputSocket<T> create(SocketHint<T> hint);
+  }
 }

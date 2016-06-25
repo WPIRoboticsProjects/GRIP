@@ -6,14 +6,14 @@ package edu.wpi.grip.core;
  */
 public interface PreviousNext {
 
-    /**
-     * Perform the next action on this object.
-     */
-    void next();
+  /**
+   * Perform the next action on this object.
+   */
+  void next();
 
-    /**
-     * Perform the previous action on this object.
-     */
-    void previous();
+  /**
+   * Perform the previous action on this object.
+   */
+  void previous();
 
 }
