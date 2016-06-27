@@ -33,7 +33,8 @@ public class CVSobelTest extends AbstractGenerationTest {
     step.getInputSockets().get(2).setValue(dy);
     step.getInputSockets().get(3).setValue(ksize);
     step.getInputSockets().get(4).setValue(scale);
-    step.getInputSockets().get(4).setValue(delta);
+    step.getInputSockets().get(5).setValue(delta);
+    HelperTools.setEnumSocket(step.getInputSockets().get(6), type);
     return true;
   }
 
