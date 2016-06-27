@@ -1,18 +1,5 @@
 package edu.wpi.grip.ui.codegeneration;
 
-import org.bytedeco.javacpp.opencv_core;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
-import org.opencv.core.Mat;
-import org.opencv.core.MatOfPoint;
-import org.opencv.core.Scalar;
-import org.opencv.imgproc.Imgproc;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
-
 import edu.wpi.grip.core.ManualPipelineRunner;
 import edu.wpi.grip.core.OperationMetaData;
 import edu.wpi.grip.core.Step;
@@ -26,6 +13,19 @@ import edu.wpi.grip.core.sources.ImageFileSource;
 import edu.wpi.grip.ui.codegeneration.tools.HelperTools;
 import edu.wpi.grip.ui.codegeneration.tools.PipelineInterfacer;
 import edu.wpi.grip.util.Files;
+
+import org.bytedeco.javacpp.opencv_core;
+import org.junit.Test;
+import org.junit.experimental.categories.Category;
+import org.opencv.core.Mat;
+import org.opencv.core.MatOfPoint;
+import org.opencv.core.Scalar;
+import org.opencv.imgproc.Imgproc;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
 
 import static org.junit.Assert.assertTrue;
 
@@ -87,56 +87,56 @@ public class FilterContoursGenerationTest extends AbstractGenerationTest {
   }
 
   @Test
-  public void FilterContoursAreaTest() {
+  public void filterContoursAreaTest() {
     test(() -> {
-          generatePipeline("Min Area", new Double(50));
-          return true;
-        },
+      generatePipeline("Min Area", new Double(50));
+      return true;
+    },
         (pip) -> testPipeline(pip), "FilterContoursArea");
   }
 
   @Test
-  public void FilterContoursMinWidthTest() {
+  public void filterContoursMinWidthTest() {
     test(() -> {
-          generatePipeline("Min Width", new Double(50));
-          return true;
-        },
+      generatePipeline("Min Width", new Double(50));
+      return true;
+    },
         (pip) -> testPipeline(pip), "FilterContoursMinWidth");
   }
 
   @Test
-  public void FilterContoursMaxHeightTest() {
+  public void filterContoursMaxHeightTest() {
     test(() -> {
-          generatePipeline("Max Height", new Double(50));
-          return true;
-        },
+      generatePipeline("Max Height", new Double(50));
+      return true;
+    },
         (pip) -> testPipeline(pip), "FilterContoursMaxHeight");
   }
 
   @Test
-  public void FilterContoursSolidityTest() {
+  public void filterContoursSolidityTest() {
     test(() -> {
-          generatePipeline("Solidity", Arrays.asList(1.0, 50.0));
-          return true;
-        },
+      generatePipeline("Solidity", Arrays.asList(1.0, 50.0));
+      return true;
+    },
         (pip) -> testPipeline(pip), "FilterContoursSolidity");
   }
 
   @Test
-  public void FilterContoursMinVerticesTest() {
+  public void filterContoursMinVerticesTest() {
     test(() -> {
-          generatePipeline("Min Vertices", new Double(10));
-          return true;
-        },
+      generatePipeline("Min Vertices", new Double(10));
+      return true;
+    },
         (pip) -> testPipeline(pip), "FilterContoursMinVertices");
   }
 
   @Test
-  public void FilterContoursMaxRatioTest() {
+  public void filterContoursMaxRatioTest() {
     test(() -> {
-          generatePipeline("Max Ratio", new Double(0.5));
-          return true;
-        },
+      generatePipeline("Max Ratio", new Double(0.5));
+      return true;
+    },
         (pip) -> testPipeline(pip), "FilterContoursMaxRatio");
   }
 
@@ -149,19 +149,18 @@ public class FilterContoursGenerationTest extends AbstractGenerationTest {
     opencv_core.Mat matOut = new opencv_core.Mat();
     matOut.create(conOut.getRows(), conOut.getCols(), opencv_core.CV_8UC3);
     opencv_core.bitwise_xor(matOut, matOut, matOut);
-    org.bytedeco.javacpp.opencv_imgproc.drawContours(matOut, conOut.getContours(), -1, opencv_core.Scalar.WHITE);
-
+    org.bytedeco.javacpp.opencv_imgproc.drawContours(
+        matOut, conOut.getContours(), -1, opencv_core.Scalar.WHITE);
     pip.setMatSource(0, Files.imageFile.file);
     pip.process();
-    Mat genMat = new Mat(conOut.getRows(), conOut.getCols(), opencv_core.CV_8UC3, new Scalar(0, 0, 0));
+    Mat genMat = new Mat(conOut.getRows(), conOut.getCols(), 
+        opencv_core.CV_8UC3, new Scalar(0, 0, 0));
     List<MatOfPoint> gen = (List<MatOfPoint>) pip.getOutput(2);
     Imgproc.drawContours(genMat, gen, -1, new Scalar(255, 255, 255));
-
     Mat gripMat = HelperTools.bytedecoMatToCVMat(matOut);
-    //HelperTools.displayMats(genMat,gripMat);
     assertMatWithin(genMat, gripMat, 8.0);
-    assertTrue("Number of Contours is not the same. grip: " + conOut.getContours().size() + " gen: " +
-        gen.size(), Math.abs(conOut.getContours().size() - gen.size()) < 5);
-
+    assertTrue("Number of Contours is not the same. grip: " 
+        + conOut.getContours().size() + " gen: " + gen.size(), 
+        Math.abs(conOut.getContours().size() - gen.size()) < 5);
   }
 }

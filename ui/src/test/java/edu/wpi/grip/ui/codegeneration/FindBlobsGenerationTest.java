@@ -1,14 +1,5 @@
 package edu.wpi.grip.ui.codegeneration;
 
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
-import org.opencv.core.MatOfKeyPoint;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
-
 import edu.wpi.grip.core.ManualPipelineRunner;
 import edu.wpi.grip.core.OperationMetaData;
 import edu.wpi.grip.core.Step;
@@ -20,6 +11,15 @@ import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.core.sources.ImageFileSource;
 import edu.wpi.grip.ui.codegeneration.tools.PipelineInterfacer;
 import edu.wpi.grip.util.Files;
+
+import org.junit.Test;
+import org.junit.experimental.categories.Category;
+import org.opencv.core.MatOfKeyPoint;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
 
 import static org.junit.Assert.assertTrue;
 
@@ -73,29 +73,29 @@ public class FindBlobsGenerationTest extends AbstractGenerationTest {
   }
 
   @Test
-  public void FindBlobsTest() {
+  public void findBlobsTest() {
     test(() -> {
-          generatePipeline(false, 0, Arrays.asList(0.0, 1.0));
-          return true;
-        },
+      generatePipeline(false, 0, Arrays.asList(0.0, 1.0));
+      return true;
+    },
         (pip) -> testPipeline(pip), "FindBlobs");
   }
 
   @Test
-  public void FindBlackBlobsTest() {
+  public void findBlackBlobsTest() {
     test(() -> {
-          generatePipeline(true, 0, Arrays.asList(0.0, 1.0));
-          return true;
-        },
+      generatePipeline(true, 0, Arrays.asList(0.0, 1.0));
+      return true;
+    },
         (pip) -> testPipeline(pip), "FindBlackBlobs");
   }
 
   @Test
-  public void FindSomeBlobsTest() {
+  public void findSomeBlobsTest() {
     test(() -> {
-          generatePipeline(false, 9, Arrays.asList(0.0, 0.9));
-          return true;
-        },
+      generatePipeline(false, 9, Arrays.asList(0.0, 0.9));
+      return true;
+    },
         (pip) -> testPipeline(pip), "FindSomeBlobs");
   }
 
@@ -106,22 +106,19 @@ public class FindBlobsGenerationTest extends AbstractGenerationTest {
     Optional out1 = pipeline.getSteps().get(1).getOutputSockets().get(0).getValue();
     assertTrue("Pipeline did not process", out1.isPresent());
     BlobsReport blobOut = (BlobsReport) out1.get();
-
     System.out.println(blobOut.getBlobs().size());
     pip.setMatSource(0, Files.imageFile.file);
     pip.process();
     MatOfKeyPoint gen = (MatOfKeyPoint) pip.getOutput(1);
-    assertTrue("Number of Blobs is not the same. grip: " + blobOut.getBlobs().size() + " gen: " +
-        gen.toList().size(), (blobOut.getBlobs().size() - gen.toList().size()) < 5);
+    assertTrue("Number of Blobs is not the same. grip: " + blobOut.getBlobs().size() + " gen: " 
+        + gen.toList().size(), (blobOut.getBlobs().size() - gen.toList().size()) < 5);
     for (int i = 0; i < gen.toList().size(); i++) {
-      assertTrue("gripX: " + blobOut.getX()[i] + " genx: " + gen.toList().get(i).pt.x
-          , Math.abs(gen.toList().get(i).pt.x - blobOut.getX()[i]) < 2);
-      assertTrue("gripy: " + blobOut.getY()[i] + " geny: " + gen.toList().get(i).pt.y
-          , Math.abs(gen.toList().get(i).pt.y - blobOut.getY()[i]) < 2);
-      assertTrue("gripSize: " + blobOut.getSize()[i] + " genSize: " + gen.toList().get(i).size
-          , Math.abs(gen.toList().get(i).size - blobOut.getSize()[i]) < 2);
+      assertTrue("gripX: " + blobOut.getX()[i] + " genx: " + gen.toList().get(i).pt.x,
+          Math.abs(gen.toList().get(i).pt.x - blobOut.getX()[i]) < 2);
+      assertTrue("gripy: " + blobOut.getY()[i] + " geny: " + gen.toList().get(i).pt.y,
+          Math.abs(gen.toList().get(i).pt.y - blobOut.getY()[i]) < 2);
+      assertTrue("gripSize: " + blobOut.getSize()[i] + " genSize: " + gen.toList().get(i).size,
+          Math.abs(gen.toList().get(i).size - blobOut.getSize()[i]) < 2);
     }
-
-
   }
 }
