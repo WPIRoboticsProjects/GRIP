@@ -10,15 +10,17 @@ import static org.junit.Assert.fail;
 
 public class OperationsUtil {
   @Inject
-  private static CVOperations cvOperations;
+  private CVOperations cvOperations;
 
-  public static ImmutableList<OperationMetaData> operations() {
+  public ImmutableList<OperationMetaData> operations() {
     return cvOperations.operations();
   }
 
-  public static OperationMetaData getMetaData(String opName) {
+  public OperationMetaData getMetaData(String opName) {
+    opName = opName.toLowerCase().replaceAll("[^a-zA-Z]", "");
     for (OperationMetaData data : operations()) {
-      if (data.getDescription().name().equalsIgnoreCase(opName)) {
+      String dataName = data.getDescription().name().toLowerCase().replaceAll("[^a-zA-Z]", "");
+      if(dataName.equals(opName)){
         return data;
       }
     }

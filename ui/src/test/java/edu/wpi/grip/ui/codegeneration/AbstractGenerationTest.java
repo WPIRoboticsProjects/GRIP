@@ -2,6 +2,7 @@ package edu.wpi.grip.ui.codegeneration;
 
 import edu.wpi.grip.core.Pipeline;
 import edu.wpi.grip.core.events.SourceAddedEvent;
+import edu.wpi.grip.core.operations.OperationsUtil;
 import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.core.sources.ImageFileSource;
@@ -44,11 +45,13 @@ public abstract class AbstractGenerationTest {
   protected OutputSocket.Factory osf;
   @Inject
   protected ImageFileSource.Factory imgfac;
+  @Inject
+  protected OperationsUtil opUtil;
   protected PipelineGenerator gen;
 
   @Before
   public void setUp() {
-    testModule = new GRIPCoreTestModule();
+    testModule = new GripCoreTestModule();
     testModule.setUp();
     final Injector injector = Guice.createInjector(testModule);
     injector.injectMembers(this);
