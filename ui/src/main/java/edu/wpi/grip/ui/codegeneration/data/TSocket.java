@@ -26,6 +26,10 @@ public class TSocket {
     return name;
   }
 
+  /**
+   * This checks if a step is mutable and returns the type.
+   * @return The type of the socket.
+   */
   public String baseType() {
     if (!mutable()) {
       return type;
@@ -39,7 +43,8 @@ public class TSocket {
   }
 
   public boolean mutable() {
-    return (type.equals("Integer") || type.equals("Double") || type.equals("Boolean") || type.equals("Number"));
+    return (type.equals("Integer") || type.equals("Double") || type.equals("Boolean")
+        || type.equals("Number"));
   }
 
   public boolean number() {

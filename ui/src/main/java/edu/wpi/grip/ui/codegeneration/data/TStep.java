@@ -10,6 +10,11 @@ public class TStep {
   private String name;
   private int stepNum;
 
+  /**
+   * This is a constructor for a Template step.
+   * @param name The name of the step.
+   * @param stepNum The number of the step in the pipeline.
+   */
   public TStep(String name, int stepNum) {
     this.name = name.replaceAll(" ", "_");
     inputs = new ArrayList<TInput>();

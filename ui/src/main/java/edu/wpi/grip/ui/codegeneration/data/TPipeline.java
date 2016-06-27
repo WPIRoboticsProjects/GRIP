@@ -1,17 +1,16 @@
 package edu.wpi.grip.ui.codegeneration.data;
 
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import edu.wpi.grip.core.Connection;
 import edu.wpi.grip.core.Pipeline;
 import edu.wpi.grip.core.Step;
 import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.ui.codegeneration.TemplateMethods;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -138,7 +137,7 @@ public class TPipeline {
   }
 
   /**
-   * returns the total number of sources
+   * returns the total number of sources.
    *
    * @return the number of sources
    */

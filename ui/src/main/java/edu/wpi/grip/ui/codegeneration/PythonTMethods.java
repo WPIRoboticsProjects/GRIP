@@ -1,10 +1,9 @@
 package edu.wpi.grip.ui.codegeneration;
 
-import com.google.common.base.CaseFormat;
-
 import edu.wpi.grip.ui.codegeneration.data.TInput;
 import edu.wpi.grip.ui.codegeneration.data.TStep;
 
+import com.google.common.base.CaseFormat;
 
 public class PythonTMethods extends TemplateMethods {
   public PythonTMethods() {
@@ -13,7 +12,8 @@ public class PythonTMethods extends TemplateMethods {
 
   @Override
   public String name(String name) {
-    return "__".concat(CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.LOWER_UNDERSCORE, name.replaceAll("\\s", "")));
+    return "__".concat(CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.LOWER_UNDERSCORE, name
+        .replaceAll("\\s", "")));
   }
 
   @Override
@@ -21,8 +21,8 @@ public class PythonTMethods extends TemplateMethods {
     StringBuilder method = new StringBuilder();
     method.append("self.").append(name(step.name())).append("(");
     for (TInput inp : step.getInputs()) {
-      method.append("self.__").append(inp.name()).
-          append("s").append(step.num()).append(", ");
+      method.append("self.__").append(inp.name())
+          .append("s").append(step.num()).append(", ");
     }
     if (step.name().equals("Threshold_Moving")) {
       method.append("self.__lastImage");

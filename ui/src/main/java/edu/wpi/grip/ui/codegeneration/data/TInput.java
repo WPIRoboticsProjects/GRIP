@@ -20,6 +20,10 @@ public class TInput extends TSocket {
     this.connectedOutput = output;
   }
 
+  /**
+   * Gets the value of the output.
+   * @return returns the value of the output in the form of a string.
+   */
   public String value() {
     if (value != null) {
       return value;
