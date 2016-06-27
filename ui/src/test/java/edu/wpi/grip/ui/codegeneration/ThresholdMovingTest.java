@@ -1,10 +1,5 @@
 package edu.wpi.grip.ui.codegeneration;
 
-import org.junit.Test;
-import org.opencv.core.Mat;
-
-import java.util.Optional;
-
 import edu.wpi.grip.core.ManualPipelineRunner;
 import edu.wpi.grip.core.OperationMetaData;
 import edu.wpi.grip.core.Step;
@@ -18,10 +13,16 @@ import edu.wpi.grip.ui.codegeneration.tools.HelperTools;
 import edu.wpi.grip.ui.codegeneration.tools.PipelineInterfacer;
 import edu.wpi.grip.util.Files;
 
+import org.junit.Test;
+import org.opencv.core.Mat;
+
+import java.util.Optional;
+
+
 import static org.junit.Assert.assertTrue;
 
 public class ThresholdMovingTest extends AbstractGenerationTest {
-  ThresholdSwitch threshs[] = null;
+  ThresholdSwitch[] threshs = null;
 
   /**
    * Sets up the pipeline with given number of moving thresholds.
@@ -32,7 +33,7 @@ public class ThresholdMovingTest extends AbstractGenerationTest {
   public ThresholdSwitch[] setupThreshold(int num) {
     int stepnum = 0;
     ImageFileSource img = loadImage(Files.gompeiJpegFile);
-    ThresholdSwitch threshs[] = new ThresholdSwitch[num];
+    ThresholdSwitch[] threshs = new ThresholdSwitch[num];
     OutputSocket imgOut = pipeline.getSources().get(0).getOutputSockets()
         .get(0);
     for (int idx = 0; idx < num; idx++) {
@@ -76,33 +77,30 @@ public class ThresholdMovingTest extends AbstractGenerationTest {
   public void oneThreshMoving() {
     int num = 1;
     test(() -> {
-          threshs = setupThreshold(num);
-          return threshs.length == num;
-        }, (pip) -> validate(pip, threshs),
-        "ThreshMovingOne");
+      threshs = setupThreshold(num);
+      return threshs.length == num;
+    }, (pip) -> validate(pip, threshs), "ThreshMovingOne");
   }
 
   @Test
   public void twoThreshMoving() {
     int num = 2;
     test(() -> {
-          threshs = setupThreshold(num);
-          return threshs.length == num;
-        }, (pip) -> validate(pip, threshs),
-        "ThreshMovingTwo");
+      threshs = setupThreshold(num);
+      return threshs.length == num;
+    }, (pip) -> validate(pip, threshs), "ThreshMovingTwo");
   }
 
   @Test
   public void threeThreshMoving() {
     int num = 3;
     test(() -> {
-          threshs = setupThreshold(num);
-          return threshs.length == num;
-        }, (pip) -> validate(pip, threshs),
-        "ThreshMovingThree");
+      threshs = setupThreshold(num);
+      return threshs.length == num;
+    }, (pip) -> validate(pip, threshs), "ThreshMovingThree");
   }
 
-  void validate(PipelineInterfacer pip, ThresholdSwitch threshs[]) {
+  void validate(PipelineInterfacer pip, ThresholdSwitch[] threshs) {
     ManualPipelineRunner runner = new ManualPipelineRunner(eventBus,
         pipeline);
     runner.runPipeline();
@@ -120,32 +118,34 @@ public class ThresholdMovingTest extends AbstractGenerationTest {
       assertMatWithin(genMat, gripMat, 5.0);
     }
   }
-}
 
-class ThresholdSwitch {
-  Step swi, thresh;
 
-  public ThresholdSwitch(Step swi, Step thresh) {
-    this.swi = swi;
-    this.thresh = thresh;
-  }
+  class ThresholdSwitch {
+    Step swi;
+    Step thresh;
 
-  public boolean toggle() {
-    boolean result = false;
-    for (InputSocket sock : swi.getInputSockets()) {
-      if (sock.getSocketHint().getIdentifier().equals("switch")) {
-        Boolean val = (Boolean) sock.getValue().get();
-        sock.setValue(new Boolean(!val.booleanValue()));
-        result = !val.booleanValue();
-      }
+    public ThresholdSwitch(Step swi, Step thresh) {
+      this.swi = swi;
+      this.thresh = thresh;
     }
-    return result;
-  }
 
-  public Mat getOutput() {
-    Optional out = thresh.getOutputSockets().get(0).getValue();
-    assertTrue("Pipeline did not process", out.isPresent());
-    return HelperTools.bytedecoMatToCVMat(
-        (org.bytedeco.javacpp.opencv_core.Mat) out.get());
+    public boolean toggle() {
+      boolean result = false;
+      for (InputSocket sock : swi.getInputSockets()) {
+        if (sock.getSocketHint().getIdentifier().equals("switch")) {
+          Boolean val = (Boolean) sock.getValue().get();
+          sock.setValue(new Boolean(!val.booleanValue()));
+          result = !val.booleanValue();
+        }
+      }
+      return result;
+    }
+
+    public Mat getOutput() {
+      Optional out = thresh.getOutputSockets().get(0).getValue();
+      assertTrue("Pipeline did not process", out.isPresent());
+      return HelperTools.bytedecoMatToCVMat(
+          (org.bytedeco.javacpp.opencv_core.Mat) out.get());
+    }
   }
 }

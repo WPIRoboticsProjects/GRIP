@@ -1,7 +1,5 @@
 package edu.wpi.grip.ui.codegeneration;
 
-import java.util.ArrayList;
-
 import edu.wpi.grip.core.OperationMetaData;
 import edu.wpi.grip.core.Step;
 import edu.wpi.grip.core.operations.composite.HSVThresholdOperation;
@@ -9,6 +7,8 @@ import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.core.sources.ImageFileSource;
 import edu.wpi.grip.util.Files;
+
+import java.util.ArrayList;
 
 public class HSVThresholdSetup {
   static void setup(AbstractGenerationTest caller) {

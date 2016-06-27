@@ -1,16 +1,16 @@
 package edu.wpi.grip.ui.codegeneration;
 
-import org.junit.Test;
-
-import java.io.File;
-
-import javax.inject.Inject;
-
 import edu.wpi.grip.core.OperationMetaData;
 import edu.wpi.grip.core.Step;
 import edu.wpi.grip.core.operations.composite.ValveOperation;
 import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.ui.codegeneration.tools.PipelineInterfacer;
+
+import org.junit.Test;
+
+import java.io.File;
+
+import javax.inject.Inject;
 
 import static org.junit.Assert.assertEquals;
 

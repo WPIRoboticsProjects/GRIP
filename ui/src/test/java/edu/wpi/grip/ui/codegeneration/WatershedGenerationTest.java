@@ -1,14 +1,5 @@
 package edu.wpi.grip.ui.codegeneration;
 
-import org.junit.Ignore;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
-import org.opencv.core.Mat;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-
 import edu.wpi.grip.core.ManualPipelineRunner;
 import edu.wpi.grip.core.OperationMetaData;
 import edu.wpi.grip.core.Step;
@@ -21,6 +12,15 @@ import edu.wpi.grip.core.sources.ImageFileSource;
 import edu.wpi.grip.ui.codegeneration.tools.HelperTools;
 import edu.wpi.grip.ui.codegeneration.tools.PipelineInterfacer;
 import edu.wpi.grip.util.Files;
+
+import org.junit.Ignore;
+import org.junit.Test;
+import org.junit.experimental.categories.Category;
+import org.opencv.core.Mat;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 import static org.junit.Assert.assertTrue;
 
@@ -83,12 +83,11 @@ public class WatershedGenerationTest extends AbstractGenerationTest {
 
   @Ignore("Grip Watershed is broken so it doesn't make sense to fix the generated watershed.")
   @Test
-  public void WatershedTest() {
+  public void watershedTest() {
     test(() -> {
-          generatePipeline();
-          return true;
-        },
-        (pip) -> testPipeline(pip), "Watershed");
+      generatePipeline();
+      return true;
+    }, (pip) -> testPipeline(pip), "Watershed");
   }
 
   void testPipeline(PipelineInterfacer pip) {

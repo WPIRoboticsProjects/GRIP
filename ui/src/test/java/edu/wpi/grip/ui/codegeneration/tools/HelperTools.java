@@ -1,5 +1,7 @@
 package edu.wpi.grip.ui.codegeneration.tools;
 
+import edu.wpi.grip.core.sockets.InputSocket;
+
 import org.bytedeco.javacpp.indexer.UByteIndexer;
 import org.opencv.core.Core;
 import org.opencv.core.CvType;
@@ -7,15 +9,15 @@ import org.opencv.core.Mat;
 import org.opencv.core.MatOfByte;
 import org.opencv.imgcodecs.Imgcodecs;
 
-import java.awt.*;
+import java.awt.BorderLayout;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
-import javax.swing.*;
-
-import edu.wpi.grip.core.sockets.InputSocket;
+import javax.swing.ImageIcon;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
 
 import static org.junit.Assert.assertTrue;
 

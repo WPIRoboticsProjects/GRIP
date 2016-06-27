@@ -1,15 +1,15 @@
 package edu.wpi.grip.ui.codegeneration;
 
+import edu.wpi.grip.core.ManualPipelineRunner;
+import edu.wpi.grip.ui.codegeneration.tools.HelperTools;
+import edu.wpi.grip.util.Files;
+
 import org.junit.Test;
 import org.opencv.core.Mat;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-
-import edu.wpi.grip.core.ManualPipelineRunner;
-import edu.wpi.grip.ui.codegeneration.tools.HelperTools;
-import edu.wpi.grip.util.Files;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -35,18 +35,20 @@ public class HSLThresholdGenerationTest extends AbstractGenerationTest {
   public void testHSL() {
     test(() -> {
       GripIconHSLSetup.setup(this);
-      return true;//never can fail
+      return true; //never can fail
     }, (pip) -> {
-      new ManualPipelineRunner(eventBus, pipeline).runPipeline();
-      Optional out = pipeline.getSteps().get(0).getOutputSockets().get(0).getValue();
-      assertTrue("Output is not present", out.isPresent());
-      assertFalse("Output Mat is empty", ((org.bytedeco.javacpp.opencv_core.Mat) out.get()).empty());
-      pip.setMatSource(0, Files.imageFile.file);
-      pip.process();
-      Mat genMat = (Mat) pip.getOutput(0);
-      Mat gripMat = HelperTools.bytedecoMatToCVMat((org.bytedeco.javacpp.opencv_core.Mat) out.get());
-      assertMatWithin(genMat, gripMat, 10.0);
-    }, "HSLTest");
+        new ManualPipelineRunner(eventBus, pipeline).runPipeline();
+        Optional out = pipeline.getSteps().get(0).getOutputSockets().get(0).getValue();
+        assertTrue("Output is not present", out.isPresent());
+        assertFalse("Output Mat is empty", ((org.bytedeco.javacpp.opencv_core.Mat) out.get())
+             .empty());
+        pip.setMatSource(0, Files.imageFile.file);
+        pip.process();
+        Mat genMat = (Mat) pip.getOutput(0);
+        Mat gripMat = HelperTools.bytedecoMatToCVMat((org.bytedeco.javacpp.opencv_core.Mat) out
+             .get());
+        assertMatWithin(genMat, gripMat, 10.0);
+      }, "HSLTest");
   }
 
 }

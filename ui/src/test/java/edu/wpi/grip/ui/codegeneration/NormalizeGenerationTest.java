@@ -1,11 +1,5 @@
 package edu.wpi.grip.ui.codegeneration;
 
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
-import org.opencv.core.Mat;
-
-import java.util.Optional;
-
 import edu.wpi.grip.core.ManualPipelineRunner;
 import edu.wpi.grip.core.OperationMetaData;
 import edu.wpi.grip.core.Step;
@@ -16,6 +10,12 @@ import edu.wpi.grip.core.sources.ImageFileSource;
 import edu.wpi.grip.ui.codegeneration.tools.HelperTools;
 import edu.wpi.grip.ui.codegeneration.tools.PipelineInterfacer;
 import edu.wpi.grip.util.Files;
+
+import org.junit.Test;
+import org.junit.experimental.categories.Category;
+import org.opencv.core.Mat;
+
+import java.util.Optional;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -45,37 +45,33 @@ public class NormalizeGenerationTest extends AbstractGenerationTest {
   @Test
   public void normInfTest() {
     test(() -> {
-          generatePipeline("NORM_INF", 100, 200);
-          return true;
-        },
-        (pip) -> testPipeline(pip), "NORM_INF");
+      generatePipeline("NORM_INF", 100, 200);
+      return true;
+    }, (pip) -> testPipeline(pip), "NORM_INF");
   }
 
   @Test
   public void normL1Test() {
     test(() -> {
-          generatePipeline("NORM_L1", 5000000, 5000000);
-          return true;
-        },
-        (pip) -> testPipeline(pip), "NORM_L1");
+      generatePipeline("NORM_L1", 5000000, 5000000);
+      return true;
+    }, (pip) -> testPipeline(pip), "NORM_L1");
   }
 
   @Test
   public void normL2Test() {
     test(() -> {
-          generatePipeline("NORM_L2", 500000, 500000);
-          return true;
-        },
-        (pip) -> testPipeline(pip), "NORM_L2");
+      generatePipeline("NORM_L2", 500000, 500000);
+      return true;
+    }, (pip) -> testPipeline(pip), "NORM_L2");
   }
 
   @Test
   public void normMinMaxTest() {
     test(() -> {
-          generatePipeline("NORM_MINMAX", 100, 200);
-          return true;
-        },
-        (pip) -> testPipeline(pip), "NORM_MINMAX");
+      generatePipeline("NORM_MINMAX", 100, 200);
+      return true;
+    }, (pip) -> testPipeline(pip), "NORM_MINMAX");
   }
 
   void testPipeline(PipelineInterfacer pip) {
@@ -83,7 +79,8 @@ public class NormalizeGenerationTest extends AbstractGenerationTest {
     runner.runPipeline();
     Optional out = pipeline.getSteps().get(0).getOutputSockets().get(0).getValue();
     assertTrue("Pipeline did not process", out.isPresent());
-    assertFalse("Pipeline output is empty", ((org.bytedeco.javacpp.opencv_core.Mat) out.get()).empty());
+    assertFalse("Pipeline output is empty", ((org.bytedeco.javacpp.opencv_core.Mat) out.get())
+         .empty());
     pip.setMatSource(0, Files.gompeiJpegFile.file);
     pip.process();
     Mat genMat = (Mat) pip.getOutput(0);

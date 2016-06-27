@@ -1,18 +1,5 @@
 package edu.wpi.grip.ui.codegeneration;
 
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
-import org.opencv.core.Mat;
-import org.opencv.core.MatOfPoint;
-import org.opencv.core.Scalar;
-import org.opencv.imgproc.Imgproc;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-
-import javax.inject.Inject;
-
 import edu.wpi.grip.core.ManualPipelineRunner;
 import edu.wpi.grip.core.OperationMetaData;
 import edu.wpi.grip.core.Step;
@@ -25,6 +12,19 @@ import edu.wpi.grip.core.sources.ImageFileSource;
 import edu.wpi.grip.ui.codegeneration.tools.HelperTools;
 import edu.wpi.grip.ui.codegeneration.tools.PipelineInterfacer;
 import edu.wpi.grip.util.Files;
+
+import org.junit.Test;
+import org.junit.experimental.categories.Category;
+import org.opencv.core.Mat;
+import org.opencv.core.MatOfPoint;
+import org.opencv.core.Scalar;
+import org.opencv.imgproc.Imgproc;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
+import javax.inject.Inject;
 
 import static org.junit.Assert.assertTrue;
 
@@ -76,21 +76,19 @@ public class FindContoursGenerationTest extends AbstractGenerationTest {
   }
 
   @Test
-  public void FindContoursWOExternalTest() {
+  public void findContoursWOExternalTest() {
     test(() -> {
-          generatePipeline(false);
-          return true;
-        },
-        (pip) -> testPipeline(pip), "FindContours");
+      generatePipeline(false);
+      return true;
+    }, (pip) -> testPipeline(pip), "FindContours");
   }
 
   @Test
-  public void FindContoursExternalTest() {
+  public void findContoursExternalTest() {
     test(() -> {
-          generatePipeline(true);
-          return true;
-        },
-        (pip) -> testPipeline(pip), "FindExternalContours");
+      generatePipeline(true);
+      return true;
+    }, (pip) -> testPipeline(pip), "FindExternalContours");
   }
 
 
@@ -118,8 +116,8 @@ public class FindContoursGenerationTest extends AbstractGenerationTest {
     Mat gripMat = HelperTools.bytedecoMatToCVMat(matOut);
     //HelperTools.displayMats(genMat,gripMat);
     assertMatWithin(genMat, gripMat, 8.0);
-    assertTrue("Number of Contours is not the same. grip: " + conOut.getContours().size() + " gen: " +
-        gen.size(), conOut.getContours().size() == gen.size());
+    assertTrue("Number of Contours is not the same. grip: " + conOut.getContours().size()
+        + " gen: " + gen.size(), conOut.getContours().size() == gen.size());
 
   }
 }
