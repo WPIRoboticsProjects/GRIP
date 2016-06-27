@@ -29,7 +29,6 @@ import javax.servlet.http.HttpServletResponse;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static javax.servlet.http.HttpServletResponse.SC_METHOD_NOT_ALLOWED;
 import static javax.servlet.http.HttpServletResponse.SC_OK;
-import static javax.servlet.http.HttpServletResponse.SC_SERVICE_UNAVAILABLE;
 
 /**
  * Jetty handler for sending HTTP publishing data to a client.
@@ -53,6 +52,11 @@ public final class DataHandler extends PedanticHandler {
    */
   private final AtomicBoolean staleData;
 
+  /**
+   * Lock used to park the handler thread while the pipeline is running.
+   */
+  private final Object runningLock = new Object();
+
   @Inject
   DataHandler(ContextStore store) {
     super(store, GripServer.DATA_PATH, true);
@@ -75,11 +79,14 @@ public final class DataHandler extends PedanticHandler {
       baseRequest.setHandled(true);
       return;
     }
-    if (staleData.get()) {
-      // Pipeline is running, don't hand out stale data
-      response.setStatus(SC_SERVICE_UNAVAILABLE);
-      baseRequest.setHandled(true);
-      return;
+    while (staleData.get()) {
+      synchronized (runningLock) {
+        try {
+          runningLock.wait();
+        } catch (InterruptedException e) {
+          throw new ServletException("Could not lock the HTTP data handler thread", e);
+        }
+      }
     }
     final Map<String, String[]> uriParameters = request.getParameterMap();
     Map<String, ?> requestedData = dataSuppliers.entrySet()
@@ -123,5 +130,8 @@ public final class DataHandler extends PedanticHandler {
   @Subscribe
   public void onPipelineStop(@Nullable RunStoppedEvent e) {
     staleData.set(false);
+    synchronized (runningLock) {
+      runningLock.notify();
+    }
   }
 }

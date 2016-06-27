@@ -22,11 +22,16 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.Timeout;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.concurrent.TimeUnit;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
@@ -46,6 +51,9 @@ public class HttpPublisherTest {
   private HttpPublishOperation<Number, NumberPublishable> operation;
 
   private HttpClient client;
+
+  @Rule
+  public final Timeout timeout = new Timeout(10000, TimeUnit.MILLISECONDS);
 
   @Before
   public void setUp() {
@@ -95,11 +103,16 @@ public class HttpPublisherTest {
   @Test
   public void testWhenPipelineRunning() throws IOException {
     perform();
+    // Stop the pipeline after (about) 500ms
+    new Timer().schedule(new TimerTask() {
+      @Override
+      public void run() {
+        eventBus.post(new RunStoppedEvent());
+      }
+    }, 500);
+    // Start the pipeline. Will get stopped in a bit by the timer task
     eventBus.post(new RunStartedEvent());
-    assertEquals("Server should have returned a 503 status",
-        503,
-        doGet(dataPath).getStatusLine().getStatusCode());
-    eventBus.post(new RunStoppedEvent());
+    doGet(dataPath); // should block
     assertEquals("Data handler should have run", json, doGetText(dataPath));
   }
 
