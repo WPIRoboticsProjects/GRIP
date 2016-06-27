@@ -12,26 +12,27 @@ import edu.wpi.grip.util.Files;
 import org.junit.Test;
 import org.opencv.core.Mat;
 
+import java.util.Optional;
+
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-import java.util.Optional;
+public class CVBitwiseNotTest extends AbstractGenerationTest {
 
-public class CV_bitwiseNotTest extends AbstractGenerationTest {
-
-  boolean setup(){
+  boolean setup() {
     Step step = gen.addStep(opUtil.getMetaData("CV bitwiseNot"));
     ImageFileSource img = loadImage(Files.gompeiJpegFile);
     OutputSocket imgOut = pipeline.getSources().get(0).getOutputSockets().get(0);
     gen.connect(imgOut, step.getInputSockets().get(0));
     return true;
   }
+
   @Test
-  public void notTest(){
-    test(() -> setup(), (pip) -> validate(pip),"BitwiseNotTest");
+  public void notTest() {
+    test(() -> setup(), (pip) -> validate(pip), "BitwiseNotTest");
   }
-  
-  void validate(PipelineInterfacer pip){
+
+  void validate(PipelineInterfacer pip) {
     ManualPipelineRunner runner = new ManualPipelineRunner(eventBus, pipeline);
     runner.runPipeline();
     pip.setMatSource(0, Files.gompeiJpegFile.file);

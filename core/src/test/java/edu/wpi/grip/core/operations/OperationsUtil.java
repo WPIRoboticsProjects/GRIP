@@ -20,7 +20,7 @@ public class OperationsUtil {
     opName = opName.toLowerCase().replaceAll("[^a-zA-Z]", "");
     for (OperationMetaData data : operations()) {
       String dataName = data.getDescription().name().toLowerCase().replaceAll("[^a-zA-Z]", "");
-      if(dataName.equals(opName)){
+      if (dataName.equals(opName)) {
         return data;
       }
     }

@@ -1,16 +1,16 @@
 package edu.wpi.grip.ui.codegeneration;
 
-import org.junit.Test;
-import org.opencv.core.Size;
-
-import java.util.Optional;
-
 import edu.wpi.grip.core.ManualPipelineRunner;
 import edu.wpi.grip.core.OperationMetaData;
 import edu.wpi.grip.core.Step;
 import edu.wpi.grip.core.operations.opencv.NewSizeOperation;
 import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.ui.codegeneration.tools.PipelineInterfacer;
+
+import org.junit.Test;
+import org.opencv.core.Size;
+
+import java.util.Optional;
 
 import static org.junit.Assert.assertTrue;
 
@@ -31,7 +31,7 @@ public class NewSizeGenerationTest extends AbstractGenerationTest {
   @Test
   public void newSizeTest() {
     test(() -> {
-      generatePipeline(3,5);
+      generatePipeline(3, 5);
       return true;
     }, (pip) -> testPipeline(pip), "newSize");
   }
@@ -44,10 +44,10 @@ public class NewSizeGenerationTest extends AbstractGenerationTest {
         .get();
     pip.process();
     Size genSize = (Size) pip.getOutput(0);
-    assertTrue("The grip width: " + gripSize.width() +"does not equals the generated width: " +
-        genSize.width, gripSize.width() == genSize.width);
-    assertTrue("The grip height: " + gripSize.height() +"does not equals the generated height: " +
-        genSize.height, gripSize.height() == genSize.height);
+    assertTrue("The grip width: " + gripSize.width() + "does not equals the generated width: "
+        + genSize.width, gripSize.width() == genSize.width);
+    assertTrue("The grip height: " + gripSize.height() + "does not equals the generated height: "
+        + genSize.height, gripSize.height() == genSize.height);
   }
 
 }
