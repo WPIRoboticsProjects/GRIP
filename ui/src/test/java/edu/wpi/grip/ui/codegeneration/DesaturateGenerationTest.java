@@ -1,10 +1,5 @@
 package edu.wpi.grip.ui.codegeneration;
 
-import org.junit.Test;
-import org.opencv.core.Mat;
-
-import java.util.Optional;
-
 import edu.wpi.grip.core.ManualPipelineRunner;
 import edu.wpi.grip.core.OperationMetaData;
 import edu.wpi.grip.core.Step;
@@ -16,14 +11,19 @@ import edu.wpi.grip.ui.codegeneration.tools.HelperTools;
 import edu.wpi.grip.ui.codegeneration.tools.PipelineInterfacer;
 import edu.wpi.grip.util.Files;
 
+import org.junit.Test;
+import org.opencv.core.Mat;
+
+import java.util.Optional;
+
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 public class DesaturateGenerationTest extends AbstractGenerationTest {
 
-
   void generatePipeline() {
-    Step desat = gen.addStep(new OperationMetaData(DesaturateOperation.DESCRIPTION, () -> new DesaturateOperation(isf, osf)));
+    Step desat = gen.addStep(new OperationMetaData(DesaturateOperation.DESCRIPTION, () -> new
+        DesaturateOperation(isf, osf)));
     ImageFileSource img = loadImage(Files.gompeiJpegFile);
     OutputSocket imgOut = pipeline.getSources().get(0).getOutputSockets().get(0);
     for (InputSocket sock : desat.getInputSockets()) {
@@ -34,13 +34,11 @@ public class DesaturateGenerationTest extends AbstractGenerationTest {
   }
 
   @Test
-  public void DesaturationTest() {
+  public void desaturationTest() {
     test(() -> {
-          generatePipeline();
-          return true;
-        }, (pip) ->
-            testPipeline(pip)
-        , "Desat");
+      generatePipeline();
+      return true;
+    }, (pip) -> testPipeline(pip), "Desat");
   }
 
   void testPipeline(PipelineInterfacer pip) {

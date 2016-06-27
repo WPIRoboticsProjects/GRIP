@@ -1,13 +1,5 @@
 package edu.wpi.grip.ui.codegeneration;
 
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
-import org.opencv.core.CvType;
-import org.opencv.core.Mat;
-
-import java.util.ArrayList;
-import java.util.Optional;
-
 import edu.wpi.grip.core.ManualPipelineRunner;
 import edu.wpi.grip.core.OperationMetaData;
 import edu.wpi.grip.core.Step;
@@ -18,17 +10,26 @@ import edu.wpi.grip.ui.codegeneration.tools.HelperTools;
 import edu.wpi.grip.ui.codegeneration.tools.PipelineInterfacer;
 import edu.wpi.grip.util.Files;
 
+import org.junit.Test;
+import org.junit.experimental.categories.Category;
+import org.opencv.core.CvType;
+import org.opencv.core.Mat;
+
+import java.util.ArrayList;
+import java.util.Optional;
+
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 @Category(GenerationTest.class)
 public class DistanceTransformGenerationTest extends AbstractGenerationTest {
-  String distType, maskSize;
-  static String params[][] = new String[9][2];
+  String distType;
+  String maskSize;
+  static String[][] params = new String[9][2];
 
   static {
-    String type[] = {"CV_DIST_L1", "CV_DIST_L2", "CV_DIST_C"};
-    String size[] = {"0x0", "3x3", "5x5"};
+    String[] type = {"CV_DIST_L1", "CV_DIST_L2", "CV_DIST_C"};
+    String[] size = {"0x0", "3x3", "5x5"};
     for (int typeIdx = 0; typeIdx < 3; typeIdx++) {
       for (int sizeIdx = 0; sizeIdx < 3; sizeIdx++) {
         int idx = 3 * typeIdx + sizeIdx;
@@ -71,13 +72,15 @@ public class DistanceTransformGenerationTest extends AbstractGenerationTest {
     new ManualPipelineRunner(eventBus, pipeline).runPipeline();
     Optional out = pipeline.getSteps().get(1).getOutputSockets().get(0).getValue();
     assertTrue("Pipeline did not process", out.isPresent());
-    assertFalse("Pipeline output is empty", ((org.bytedeco.javacpp.opencv_core.Mat) out.get()).empty());
+    assertFalse("Pipeline output is empty", ((org.bytedeco.javacpp.opencv_core.Mat) out.get())
+        .empty());
     pip.setMatSource(0, Files.imageFile.file);
     pip.process();
     Mat genMat = (Mat) pip.getOutput(1);
     Mat gripMat = new Mat();
     (HelperTools.bytedecoMatToCVMat((org.bytedeco.javacpp.opencv_core.Mat) out.get()))
-        .convertTo(gripMat, CvType.CV_32F);//distance transform outputs a 1 channel 32F Mat but grip outputs a 1 channel 8U Mat
+        .convertTo(gripMat, CvType.CV_32F); //distance transform outputs a 1 channel 32F Mat but
+    // grip outputs a 1 channel 8U Mat
     assertMatWithin(genMat, gripMat, 10.0);
   }
 

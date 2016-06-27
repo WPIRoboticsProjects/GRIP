@@ -1,11 +1,5 @@
 package edu.wpi.grip.ui.codegeneration;
 
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
-import org.opencv.core.Mat;
-
-import java.util.Optional;
-
 import edu.wpi.grip.core.ManualPipelineRunner;
 import edu.wpi.grip.core.OperationMetaData;
 import edu.wpi.grip.core.Step;
@@ -18,6 +12,12 @@ import edu.wpi.grip.ui.codegeneration.tools.HelperTools;
 import edu.wpi.grip.ui.codegeneration.tools.PipelineInterfacer;
 import edu.wpi.grip.util.Files;
 
+import org.junit.Test;
+import org.junit.experimental.categories.Category;
+import org.opencv.core.Mat;
+
+import java.util.Optional;
+
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
@@ -26,14 +26,16 @@ public class BlurGenerationTest extends AbstractGenerationTest {
   private Double blurRatio = new Double(10.0);
 
   void generatePipeline(String blurType) {
-    Step step = gen.addStep(new OperationMetaData(BlurOperation.DESCRIPTION, () -> new BlurOperation(isf, osf)));
+    Step step = gen.addStep(new OperationMetaData(BlurOperation.DESCRIPTION, () -> new
+        BlurOperation(isf, osf)));
     ImageFileSource img = loadImage(Files.gompeiJpegFile);
     OutputSocket imgOut = pipeline.getSources().get(0).getOutputSockets().get(0);
 
     for (InputSocket sock : step.getInputSockets()) {
       if (sock.getSocketHint().isCompatibleWith(imgOut.getSocketHint())) {
         gen.connect(imgOut, sock);
-      } else if (sock.getSocketHint().isCompatibleWith(Outputs.createNumberSocketHint("Number", blurRatio))) {
+      } else if (sock.getSocketHint().isCompatibleWith(Outputs.createNumberSocketHint("Number",
+          blurRatio))) {
         sock.setValue(blurRatio);
       } else if (sock.getSocketHint().getIdentifier().equals("Type")) {
         HelperTools.setEnumSocket(sock, blurType);
@@ -44,38 +46,34 @@ public class BlurGenerationTest extends AbstractGenerationTest {
   @Test
   public void boxBlurTest() {
     test(() -> {
-          generatePipeline("Box Blur");
-          return true;
-        },
-        (pip) -> testPipeline(pip), "BoxBlur");
+      generatePipeline("Box Blur");
+      return true;
+    }, (pip) -> testPipeline(pip), "BoxBlur");
   }
 
   @Test
   public void gaussianBlurTest() {
     test(() -> {
-          generatePipeline("Gaussian Blur");
-          return true;
-        },
-        (pip) -> testPipeline(pip), "GaussianBlur"
+      generatePipeline("Gaussian Blur");
+      return true;
+    }, (pip) -> testPipeline(pip), "GaussianBlur"
     );
   }
 
   @Test
   public void medianFilterTest() {
     test(() -> {
-          generatePipeline("Median Filter");
-          return true;
-        },
-        (pip) -> testPipeline(pip), "MedianFilter");
+      generatePipeline("Median Filter");
+      return true;
+    }, (pip) -> testPipeline(pip), "MedianFilter");
   }
 
   @Test
   public void bilateralFilterTest() {
     test(() -> {
-          generatePipeline("Bilateral Filter");
-          return true;
-        },
-        (pip) -> testPipeline(pip), "BilateralFilter");
+      generatePipeline("Bilateral Filter");
+      return true;
+    }, (pip) -> testPipeline(pip), "BilateralFilter");
   }
 
   void testPipeline(PipelineInterfacer pip) {
@@ -83,7 +81,8 @@ public class BlurGenerationTest extends AbstractGenerationTest {
     runner.runPipeline();
     Optional out = pipeline.getSteps().get(0).getOutputSockets().get(0).getValue();
     assertTrue("Pipeline did not process", out.isPresent());
-    assertFalse("Pipeline output is empty", ((org.bytedeco.javacpp.opencv_core.Mat) out.get()).empty());
+    assertFalse("Pipeline output is empty", ((org.bytedeco.javacpp.opencv_core.Mat) out.get())
+        .empty());
     pip.setMatSource(0, Files.gompeiJpegFile.file);
     pip.process();
     Mat genMat = (Mat) pip.getOutput(0);
