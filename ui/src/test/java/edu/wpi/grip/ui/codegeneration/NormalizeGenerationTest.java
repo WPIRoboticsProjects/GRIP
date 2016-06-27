@@ -12,7 +12,6 @@ import edu.wpi.grip.core.Step;
 import edu.wpi.grip.core.operations.composite.NormalizeOperation;
 import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.sockets.OutputSocket;
-import edu.wpi.grip.core.sockets.SocketHints.Outputs;
 import edu.wpi.grip.core.sources.ImageFileSource;
 import edu.wpi.grip.ui.codegeneration.tools.HelperTools;
 import edu.wpi.grip.ui.codegeneration.tools.PipelineInterfacer;
@@ -24,7 +23,7 @@ import static org.junit.Assert.assertTrue;
 @Category(GenerationTest.class)
 public class NormalizeGenerationTest extends AbstractGenerationTest {
 
-  void generatePipeline(String type,double minVal,double maxVal) {
+  void generatePipeline(String type, double minVal, double maxVal) {
     Step step = gen.addStep(new OperationMetaData(NormalizeOperation.DESCRIPTION, () -> new
         NormalizeOperation(isf, osf)));
     ImageFileSource img = loadImage(Files.gompeiJpegFile);
@@ -37,16 +36,16 @@ public class NormalizeGenerationTest extends AbstractGenerationTest {
         sock.setValue(minVal);
       } else if (sock.getSocketHint().getIdentifier().equals("Beta")) {
         sock.setValue(maxVal);
-      } else if(sock.getSocketHint().getIdentifier().equals("Type")){
-          HelperTools.setEnumSocket(sock, type);
-        }
+      } else if (sock.getSocketHint().getIdentifier().equals("Type")) {
+        HelperTools.setEnumSocket(sock, type);
+      }
     }
   }
 
   @Test
   public void normInfTest() {
     test(() -> {
-          generatePipeline("NORM_INF",100,200);
+          generatePipeline("NORM_INF", 100, 200);
           return true;
         },
         (pip) -> testPipeline(pip), "NORM_INF");
@@ -55,7 +54,7 @@ public class NormalizeGenerationTest extends AbstractGenerationTest {
   @Test
   public void normL1Test() {
     test(() -> {
-          generatePipeline("NORM_L1",5000000,5000000);
+          generatePipeline("NORM_L1", 5000000, 5000000);
           return true;
         },
         (pip) -> testPipeline(pip), "NORM_L1");
@@ -64,7 +63,7 @@ public class NormalizeGenerationTest extends AbstractGenerationTest {
   @Test
   public void normL2Test() {
     test(() -> {
-          generatePipeline("NORM_L2",500000,500000);
+          generatePipeline("NORM_L2", 500000, 500000);
           return true;
         },
         (pip) -> testPipeline(pip), "NORM_L2");
@@ -73,7 +72,7 @@ public class NormalizeGenerationTest extends AbstractGenerationTest {
   @Test
   public void normMinMaxTest() {
     test(() -> {
-          generatePipeline("NORM_MINMAX",100,200);
+          generatePipeline("NORM_MINMAX", 100, 200);
           return true;
         },
         (pip) -> testPipeline(pip), "NORM_MINMAX");

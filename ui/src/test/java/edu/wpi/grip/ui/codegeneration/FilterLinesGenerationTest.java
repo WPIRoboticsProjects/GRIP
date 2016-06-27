@@ -94,7 +94,6 @@ public class FilterLinesGenerationTest extends AbstractGenerationTest {
   }
 
 
-
   void testPipeline(PipelineInterfacer pip) {
     ManualPipelineRunner runner = new ManualPipelineRunner(eventBus, pipeline);
     runner.runPipeline();
@@ -109,7 +108,7 @@ public class FilterLinesGenerationTest extends AbstractGenerationTest {
     List<Object> genLin = (List<Object>) pip.getOutput(2);
     assertTrue("Number of lines is not the same. grip: " + linOut.getLines().size() + " gen: " +
         genLin.size(), (linOut.getLines().size() - genLin.size()) < 5);
-    for(int i=0; i<genLin.size(); i++){
+    for (int i = 0; i < genLin.size(); i++) {
       assertTrue("gripLength: " + linOut.getLength()[i] + " genLength: " + getLength(genLin.get(i))
           , Math.abs(getLength(genLin.get(i)) - linOut.getLength()[i]) < 2);
       assertTrue("gripangle: " + linOut.getAngle()[i] + " genangle: " + getAngle(genLin.get(i))
@@ -118,22 +117,22 @@ public class FilterLinesGenerationTest extends AbstractGenerationTest {
 
   }
 
-  private double getLength(Object line){
-    try{
+  private double getLength(Object line) {
+    try {
       return (double) line.getClass().getMethod("length").invoke(line);
-    }catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+    } catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
       e.printStackTrace();
-      fail("length is not valid for class "+ line.getClass().getSimpleName());
+      fail("length is not valid for class " + line.getClass().getSimpleName());
       return 0.0;
     }
   }
 
-  private double getAngle(Object line){
-    try{
+  private double getAngle(Object line) {
+    try {
       return (double) line.getClass().getMethod("angle").invoke(line);
-    }catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+    } catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
       e.printStackTrace();
-      fail("length is not valid for class "+ line.getClass().getSimpleName());
+      fail("length is not valid for class " + line.getClass().getSimpleName());
       return 0.0;
     }
   }

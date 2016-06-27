@@ -1,13 +1,9 @@
 package edu.wpi.grip.ui.codegeneration;
 
-import org.bytedeco.javacpp.opencv_core;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.opencv.core.Mat;
-import org.opencv.core.MatOfPoint;
-import org.opencv.core.Scalar;
-import org.opencv.imgproc.Imgproc;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,7 +12,6 @@ import java.util.Optional;
 import edu.wpi.grip.core.ManualPipelineRunner;
 import edu.wpi.grip.core.OperationMetaData;
 import edu.wpi.grip.core.Step;
-import edu.wpi.grip.core.operations.composite.ContoursReport;
 import edu.wpi.grip.core.operations.composite.FindContoursOperation;
 import edu.wpi.grip.core.operations.composite.HSLThresholdOperation;
 import edu.wpi.grip.core.operations.composite.WatershedOperation;
@@ -58,7 +53,7 @@ public class WatershedGenerationTest extends AbstractGenerationTest {
         sock.setValue(hVal);
       } else if (sock.getSocketHint().getIdentifier().equals("Saturation")) {
         sock.setValue(sVal);
-      } else if(sock.getSocketHint().getIdentifier().equals("Luminance")){
+      } else if (sock.getSocketHint().getIdentifier().equals("Luminance")) {
         sock.setValue(lVal);
       }
     }
@@ -101,7 +96,7 @@ public class WatershedGenerationTest extends AbstractGenerationTest {
     runner.runPipeline();
     Optional out = pipeline.getSteps().get(2).getOutputSockets().get(0).getValue();
     assertTrue("Pipeline did not process", out.isPresent());
-    org.bytedeco.javacpp.opencv_core.Mat matOut =(org.bytedeco.javacpp.opencv_core.Mat) out.get();
+    org.bytedeco.javacpp.opencv_core.Mat matOut = (org.bytedeco.javacpp.opencv_core.Mat) out.get();
     System.out.println(matOut.size());
     Mat gripMat = HelperTools.bytedecoMatToCVMat(matOut);
 
@@ -109,7 +104,7 @@ public class WatershedGenerationTest extends AbstractGenerationTest {
     pip.process();
     Mat genMat = (Mat) pip.getOutput(2);
 
-    HelperTools.displayMats(genMat,gripMat);
+    HelperTools.displayMats(genMat, gripMat);
     assertMatWithin(genMat, gripMat, 8.0);
 
   }

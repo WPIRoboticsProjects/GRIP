@@ -58,7 +58,7 @@ public class FilterContoursGenerationTest extends AbstractGenerationTest {
         sock.setValue(hVal);
       } else if (sock.getSocketHint().getIdentifier().equals("Saturation")) {
         sock.setValue(sVal);
-      } else if(sock.getSocketHint().getIdentifier().equals("Luminance")){
+      } else if (sock.getSocketHint().getIdentifier().equals("Luminance")) {
         sock.setValue(lVal);
       }
     }
@@ -116,7 +116,7 @@ public class FilterContoursGenerationTest extends AbstractGenerationTest {
   @Test
   public void FilterContoursSolidityTest() {
     test(() -> {
-          generatePipeline("Solidity", Arrays.asList(1.0,50.0));
+          generatePipeline("Solidity", Arrays.asList(1.0, 50.0));
           return true;
         },
         (pip) -> testPipeline(pip), "FilterContoursSolidity");
@@ -148,20 +148,20 @@ public class FilterContoursGenerationTest extends AbstractGenerationTest {
     ContoursReport conOut = (ContoursReport) out.get();
     opencv_core.Mat matOut = new opencv_core.Mat();
     matOut.create(conOut.getRows(), conOut.getCols(), opencv_core.CV_8UC3);
-    opencv_core.bitwise_xor(matOut,matOut,matOut);
+    opencv_core.bitwise_xor(matOut, matOut, matOut);
     org.bytedeco.javacpp.opencv_imgproc.drawContours(matOut, conOut.getContours(), -1, opencv_core.Scalar.WHITE);
 
     pip.setMatSource(0, Files.imageFile.file);
     pip.process();
-    Mat genMat = new Mat(conOut.getRows(), conOut.getCols(), opencv_core.CV_8UC3, new Scalar(0,0,0));
+    Mat genMat = new Mat(conOut.getRows(), conOut.getCols(), opencv_core.CV_8UC3, new Scalar(0, 0, 0));
     List<MatOfPoint> gen = (List<MatOfPoint>) pip.getOutput(2);
-    Imgproc.drawContours(genMat,gen,-1,new Scalar(255, 255, 255));
+    Imgproc.drawContours(genMat, gen, -1, new Scalar(255, 255, 255));
 
     Mat gripMat = HelperTools.bytedecoMatToCVMat(matOut);
     //HelperTools.displayMats(genMat,gripMat);
     assertMatWithin(genMat, gripMat, 8.0);
-    assertTrue("Number of Contours is not the same. grip: "+conOut.getContours().size()+" gen: " +
-        gen.size(), Math.abs(conOut.getContours().size() - gen.size())<5);
+    assertTrue("Number of Contours is not the same. grip: " + conOut.getContours().size() + " gen: " +
+        gen.size(), Math.abs(conOut.getContours().size() - gen.size()) < 5);
 
   }
 }

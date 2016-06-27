@@ -1,15 +1,12 @@
 package edu.wpi.grip.ui.codegeneration;
 
-import org.bytedeco.javacpp.opencv_core;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
 import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
-import org.opencv.core.Rect;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -29,8 +26,6 @@ import edu.wpi.grip.ui.codegeneration.tools.HelperTools;
 import edu.wpi.grip.ui.codegeneration.tools.PipelineInterfacer;
 import edu.wpi.grip.util.Files;
 
-
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 @Category(GenerationTest.class)
@@ -63,7 +58,7 @@ public class FindContoursGenerationTest extends AbstractGenerationTest {
         sock.setValue(hVal);
       } else if (sock.getSocketHint().getIdentifier().equals("Saturation")) {
         sock.setValue(sVal);
-      } else if(sock.getSocketHint().getIdentifier().equals("Luminance")){
+      } else if (sock.getSocketHint().getIdentifier().equals("Luminance")) {
         sock.setValue(lVal);
       }
     }
@@ -107,7 +102,7 @@ public class FindContoursGenerationTest extends AbstractGenerationTest {
     ContoursReport conOut = (ContoursReport) out1.get();
     org.bytedeco.javacpp.opencv_core.Mat matOut = new org.bytedeco.javacpp.opencv_core.Mat();
     matOut.create(conOut.getRows(), conOut.getCols(), org.bytedeco.javacpp.opencv_core.CV_8UC3);
-    org.bytedeco.javacpp.opencv_core.bitwise_xor(matOut,matOut,matOut);
+    org.bytedeco.javacpp.opencv_core.bitwise_xor(matOut, matOut, matOut);
     org.bytedeco.javacpp.opencv_imgproc.drawContours(matOut, conOut.getContours(), -1, org
         .bytedeco.javacpp.opencv_core.Scalar.WHITE);
 
@@ -118,12 +113,12 @@ public class FindContoursGenerationTest extends AbstractGenerationTest {
     List<MatOfPoint> gen = (List<MatOfPoint>) pip.getOutput(1);
 
     Imgproc.cvtColor(genMat, genMat, Imgproc.COLOR_GRAY2BGR);
-    Imgproc.drawContours(genMat,gen,-1,new Scalar(255, 255, 255));
+    Imgproc.drawContours(genMat, gen, -1, new Scalar(255, 255, 255));
 
     Mat gripMat = HelperTools.bytedecoMatToCVMat(matOut);
     //HelperTools.displayMats(genMat,gripMat);
     assertMatWithin(genMat, gripMat, 8.0);
-    assertTrue("Number of Contours is not the same. grip: "+conOut.getContours().size()+" gen: " +
+    assertTrue("Number of Contours is not the same. grip: " + conOut.getContours().size() + " gen: " +
         gen.size(), conOut.getContours().size() == gen.size());
 
   }
