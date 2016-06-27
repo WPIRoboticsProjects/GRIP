@@ -13,7 +13,6 @@ import edu.wpi.grip.ui.codegeneration.tools.PipelineInterfacer;
 import edu.wpi.grip.util.Files;
 
 import org.junit.Test;
-
 import org.opencv.core.Mat;
 
 import java.util.Optional;
@@ -21,7 +20,7 @@ import java.util.Optional;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-public class CVAbsDiff extends AbstractGenerationTest {
+public class CVAddWeighted extends AbstractGenerationTest {
 
   boolean setup() {
     Step blur = gen.addStep(new OperationMetaData(BlurOperation.DESCRIPTION, () -> new
@@ -38,15 +37,18 @@ public class CVAbsDiff extends AbstractGenerationTest {
         HelperTools.setEnumSocket(sock, "Box Blur");
       }
     }
-    Step abs = gen.addStep(opUtil.getMetaData("CV absdiff"));
-    gen.connect(imgOut, abs.getInputSockets().get(0));
-    gen.connect(blur.getOutputSockets().get(0), abs.getInputSockets().get(1));
+    Step add = gen.addStep(opUtil.getMetaData("CV addWeighted"));
+    gen.connect(imgOut, add.getInputSockets().get(0));
+    add.getInputSockets().get(1).setValue(new Double(0.5));
+    gen.connect(blur.getOutputSockets().get(0), add.getInputSockets().get(2));
+    add.getInputSockets().get(3).setValue(new Double(0.5));
+    add.getInputSockets().get(4).setValue(new Double(0.5));
     return true;
   }
   
   @Test
-  public void absDiffTest() {
-    test(() -> setup(), (pip) -> validate(pip), "AbsDiffTest");
+  public void cvAddWeightedTest() {
+    test(() -> setup(), (pip) -> validate(pip), "CvAddWeightedTest");
   }
   
   void validate(PipelineInterfacer pip) {

@@ -7,13 +7,13 @@ import edu.wpi.grip.core.operations.composite.BlurOperation;
 import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.core.sources.ImageFileSource;
+import edu.wpi.grip.generated.opencv_core.enumeration.CmpTypesEnum;
 import edu.wpi.grip.ui.codegeneration.AbstractGenerationTest;
 import edu.wpi.grip.ui.codegeneration.tools.HelperTools;
 import edu.wpi.grip.ui.codegeneration.tools.PipelineInterfacer;
 import edu.wpi.grip.util.Files;
 
 import org.junit.Test;
-
 import org.opencv.core.Mat;
 
 import java.util.Optional;
@@ -21,9 +21,9 @@ import java.util.Optional;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-public class CVAbsDiff extends AbstractGenerationTest {
+public class CVCompare extends AbstractGenerationTest {
 
-  boolean setup() {
+  boolean setup(CmpTypesEnum val) {
     Step blur = gen.addStep(new OperationMetaData(BlurOperation.DESCRIPTION, () -> new
         BlurOperation(isf, osf)));
     ImageFileSource img = loadImage(Files.gompeiJpegFile);
@@ -38,15 +38,41 @@ public class CVAbsDiff extends AbstractGenerationTest {
         HelperTools.setEnumSocket(sock, "Box Blur");
       }
     }
-    Step abs = gen.addStep(opUtil.getMetaData("CV absdiff"));
-    gen.connect(imgOut, abs.getInputSockets().get(0));
-    gen.connect(blur.getOutputSockets().get(0), abs.getInputSockets().get(1));
+    Step cmp = gen.addStep(opUtil.getMetaData("CV Compare"));
+    gen.connect(imgOut, cmp.getInputSockets().get(0));
+    gen.connect(blur.getOutputSockets().get(0), cmp.getInputSockets().get(1));
+    cmp.getInputSockets().get(2).setValue(val);
     return true;
   }
   
   @Test
-  public void absDiffTest() {
-    test(() -> setup(), (pip) -> validate(pip), "AbsDiffTest");
+  public void cvCompareEqTest() {
+    test(() -> setup(CmpTypesEnum.CMP_EQ), (pip) -> validate(pip), "CvCmpEq");
+  }
+  
+  @Test
+  public void cvCompareGtTest() {
+    test(() -> setup(CmpTypesEnum.CMP_GT), (pip) -> validate(pip), "CvCmpGt");
+  }
+  
+  @Test
+  public void cvCompareGeTest() {
+    test(() -> setup(CmpTypesEnum.CMP_GE), (pip) -> validate(pip), "CvCmpGe");
+  }
+  
+  @Test
+  public void cvCompareLtTest() {
+    test(() -> setup(CmpTypesEnum.CMP_LT), (pip) -> validate(pip), "CvCmpLt");
+  }
+  
+  @Test
+  public void cvCompareLeTest() {
+    test(() -> setup(CmpTypesEnum.CMP_LE), (pip) -> validate(pip), "CvCmpLe");
+  }
+  
+  @Test
+  public void cvCompareNeTest() {
+    test(() -> setup(CmpTypesEnum.CMP_NE), (pip) -> validate(pip), "CvCmpNe");
   }
   
   void validate(PipelineInterfacer pip) {

@@ -13,7 +13,6 @@ import edu.wpi.grip.ui.codegeneration.tools.PipelineInterfacer;
 import edu.wpi.grip.util.Files;
 
 import org.junit.Test;
-
 import org.opencv.core.Mat;
 
 import java.util.Optional;
@@ -21,7 +20,7 @@ import java.util.Optional;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-public class CVAbsDiff extends AbstractGenerationTest {
+public class CVBitwiseAnd extends AbstractGenerationTest {
 
   boolean setup() {
     Step blur = gen.addStep(new OperationMetaData(BlurOperation.DESCRIPTION, () -> new
@@ -38,15 +37,15 @@ public class CVAbsDiff extends AbstractGenerationTest {
         HelperTools.setEnumSocket(sock, "Box Blur");
       }
     }
-    Step abs = gen.addStep(opUtil.getMetaData("CV absdiff"));
-    gen.connect(imgOut, abs.getInputSockets().get(0));
-    gen.connect(blur.getOutputSockets().get(0), abs.getInputSockets().get(1));
+    Step add = gen.addStep(opUtil.getMetaData("CV bitwiseAnd"));
+    gen.connect(imgOut, add.getInputSockets().get(0));
+    gen.connect(blur.getOutputSockets().get(0), add.getInputSockets().get(1));
     return true;
   }
   
   @Test
-  public void absDiffTest() {
-    test(() -> setup(), (pip) -> validate(pip), "AbsDiffTest");
+  public void cvBitwiseAndTest() {
+    test(() -> setup(), (pip) -> validate(pip), "CvBitwiseAnd");
   }
   
   void validate(PipelineInterfacer pip) {
