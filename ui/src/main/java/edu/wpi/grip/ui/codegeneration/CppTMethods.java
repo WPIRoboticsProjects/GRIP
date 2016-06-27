@@ -1,9 +1,9 @@
 package edu.wpi.grip.ui.codegeneration;
 
-import com.google.common.base.CaseFormat;
-
 import edu.wpi.grip.ui.codegeneration.data.TInput;
 import edu.wpi.grip.ui.codegeneration.data.TStep;
+
+import com.google.common.base.CaseFormat;
 
 public class CppTMethods extends TemplateMethods {
   public CppTMethods() {

@@ -1,10 +1,9 @@
 package edu.wpi.grip.ui.codegeneration;
 
-import com.google.common.base.CaseFormat;
-
 import edu.wpi.grip.ui.codegeneration.data.TInput;
 import edu.wpi.grip.ui.codegeneration.data.TStep;
 
+import com.google.common.base.CaseFormat;
 
 public class JavaTMethods extends TemplateMethods {
   public JavaTMethods() {
@@ -40,7 +39,8 @@ public class JavaTMethods extends TemplateMethods {
         out.append(step.getOutputs().get(i).name());
         out.append(", ");
       }
-      out.delete(out.length() - 2, out.length());//removes the unneeded ", "
+      //removes the unneeded ", "
+      out.delete(out.length() - 2, out.length());
     }
     out.append(")");
     return out.toString();

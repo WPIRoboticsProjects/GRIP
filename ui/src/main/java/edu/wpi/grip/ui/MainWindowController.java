@@ -1,17 +1,5 @@
 package edu.wpi.grip.ui;
 
-import com.google.common.base.CaseFormat;
-import com.google.common.eventbus.EventBus;
-import com.google.common.util.concurrent.Service;
-
-import org.controlsfx.control.StatusBar;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.Optional;
-
-import javax.inject.Inject;
-
 import edu.wpi.grip.core.Palette;
 import edu.wpi.grip.core.Pipeline;
 import edu.wpi.grip.core.PipelineRunner;
@@ -25,6 +13,17 @@ import edu.wpi.grip.ui.codegeneration.Exporter;
 import edu.wpi.grip.ui.codegeneration.Language;
 import edu.wpi.grip.ui.components.StartStoppableButton;
 import edu.wpi.grip.ui.util.DPIUtility;
+
+import com.google.common.base.CaseFormat;
+import com.google.common.eventbus.EventBus;
+import com.google.common.util.concurrent.Service;
+
+import org.controlsfx.control.StatusBar;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.Optional;
+
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -41,6 +40,8 @@ import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+
+import javax.inject.Inject;
 
 /**
  * The Controller for the application window.
@@ -245,7 +246,12 @@ public class MainWindowController {
       SafeShutdown.exit(0);
     }
   }
-
+  
+  /**
+   * Controls the export button in the main menu. Opens a filechooser with language selection.
+   * The user can select the language to export to, save location and file name.
+   * @param actionEvent Unused event passed by the controller.
+   */
   public void generate(ActionEvent actionEvent) {
     final FileChooser fileChooser = new FileChooser();
     fileChooser.setTitle("Export to");

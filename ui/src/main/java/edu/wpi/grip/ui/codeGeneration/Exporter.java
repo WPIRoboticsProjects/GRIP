@@ -1,5 +1,7 @@
 package edu.wpi.grip.ui.codegeneration;
 
+import edu.wpi.grip.core.Pipeline;
+import edu.wpi.grip.ui.codegeneration.data.TPipeline;
 
 import com.google.inject.Singleton;
 
@@ -14,9 +16,6 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.util.Properties;
-
-import edu.wpi.grip.core.Pipeline;
-import edu.wpi.grip.ui.codegeneration.data.TPipeline;
 
 /**
  * Primary class for creating files and setting up code generation.
@@ -60,7 +59,8 @@ public class Exporter {
     } catch (ResourceNotFoundException e) {
       String error = e.getMessage();
       String missingOperation = error.substring(error.lastIndexOf("/") + 1, error.lastIndexOf("."));
-      throw new UnsupportedOperationException("The operation " + missingOperation + " is not supported for export to " + lang.toString());
+      throw new UnsupportedOperationException("The operation " + missingOperation 
+        + " is not supported for export to " + lang.toString());
     }
   }
 
@@ -79,11 +79,10 @@ public class Exporter {
     Template tm = ve.getTemplate(templateDir + PIPELINE_TEMPLATE);
     StringWriter sw = new StringWriter();
     tm.merge(context, sw);
-
     try (PrintWriter writer = new PrintWriter(file.getAbsolutePath(), "UTF-8")) {
       writer.println(sw);
     } catch (UnsupportedEncodingException | FileNotFoundException e) {
-
+      e.printStackTrace();
     }
   }
 
@@ -101,12 +100,11 @@ public class Exporter {
     Template tm = ve.getTemplate(templateDir + PIPELINE_HTEMPLATE);
     StringWriter sw = new StringWriter();
     tm.merge(context, sw);
-
-    try (PrintWriter writer = new PrintWriter(file.getParentFile().getAbsolutePath() +
-        PIPELINE_HNAME, "UTF-8")) {
+    try (PrintWriter writer = new PrintWriter(file.getParentFile().getAbsolutePath() 
+        + PIPELINE_HNAME, "UTF-8")) {
       writer.println(sw);
     } catch (UnsupportedEncodingException | FileNotFoundException e) {
-
+      e.printStackTrace();
     }
   }
 }
