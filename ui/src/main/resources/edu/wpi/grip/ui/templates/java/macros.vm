@@ -19,6 +19,8 @@ MutableOf<$obj>#end
 		$input.type() $input.name()$c = ${input.type()}.get("${input.value()}");
 #elseif ($input.type().equals("String"))
 		$input.type() $input.name()$c = "$input.value()";
+#elseif ($input.type().equals("Scalar"))
+		$input.type() $input.name()$c = new $input.type()$input.value();
 #elseif ($input.type().equals("List"))
 #set($inputEndValue = $input.value().length() - 1)
 		double[] $input.name()$c = {$input.value().substring(1,$inputEndValue)};
