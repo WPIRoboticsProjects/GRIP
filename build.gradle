@@ -30,7 +30,7 @@ def getGitCommit = { ->
 idea.project {
     ipr.withXml { provider ->
         def node = provider.asNode()
-        def compilerConfig = node.component.find { it.'@name' == 'CompilerConfiguration'}
+        def compilerConfig = node.component.find { it.'@name' == 'CompilerConfiguration' }
         compilerConfig.annotationProcessing[0].'@enabled' = 'true'
 //        def ccfg = node.component.find { it.@name == 'CompilerConfiguration' }
 //        ccfg.remove(ccfg.annotationProcessing)
@@ -89,11 +89,22 @@ allprojects {
     apply plugin: 'application'
     apply plugin: 'jacoco'
     apply plugin: 'net.ltgt.errorprone'
+    apply plugin: 'checkstyle'
 
     configurations.errorprone {
         resolutionStrategy.force 'com.google.errorprone:error_prone_core:2.0.9'
     }
 
+    checkstyle {
+        configFile = new File(rootDir, "checkstyle.xml")
+        toolVersion = '6.19'
+    }
+
+    tasks.withType(Checkstyle) {
+        // Remove checkstyle dependencies on compilation
+        // (This neuters :core:checkstyleGenerated, but since that's not needed anyway, who cares)
+        it.dependsOn = []
+    }
 
     repositories {
         mavenCentral()
@@ -125,8 +136,6 @@ allprojects {
         }
     }
 
-    check.dependsOn jacocoTestReport
-
     tasks.withType(Javadoc) {
         source compileJava.source
         options.addStringOption('Xdoclint:all,-html', '-quiet')
@@ -141,7 +150,7 @@ allprojects {
     test {
         testLogging {
             if (project.hasProperty('logTests')) {
-                events  "started", "passed", "skipped", "failed"
+                events "started", "passed", "skipped", "failed"
             } else {
                 events "failed"
             }
@@ -399,7 +408,6 @@ task jacocoRootReport(type: JacocoReport, group: 'Coverage reports') {
         executionData = files(executionData.findAll { it.exists() })
     }
 }
-check.dependsOn jacocoRootReport
 
 task wrapper(type: Wrapper) {
     gradleVersion = '2.13'

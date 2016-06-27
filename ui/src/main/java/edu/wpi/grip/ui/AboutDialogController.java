@@ -8,24 +8,25 @@ import javax.inject.Inject;
 
 public class AboutDialogController {
 
-    @Inject
-    private Main main;
+  @Inject
+  private Main main;
 
-    @FXML
-    private Label versionNumberLabel;
+  @FXML
+  private Label versionNumberLabel;
 
-    @FXML
-    void mousePressedDocumentationButton(MouseEvent event) {
-        main.getHostServices().showDocument("http://wpilib.screenstepslive.com/s/4485/m/50711");
-    }
+  @FXML
+  void mousePressedDocumentationButton(MouseEvent event) {
+    main.getHostServices().showDocument("http://wpilib.screenstepslive.com/s/4485/m/50711");
+  }
 
-    @FXML
-    void mousePressedGithubButton(MouseEvent event) {
-        main.getHostServices().showDocument("https://github.com/WPIRoboticsProjects/GRIP");
-    }
+  @FXML
+  void mousePressedGithubButton(MouseEvent event) {
+    main.getHostServices().showDocument("https://github.com/WPIRoboticsProjects/GRIP");
+  }
 
-    @FXML
-    void initialize() {
-        versionNumberLabel.setText("Version " + edu.wpi.grip.core.Main.class.getPackage().getImplementationVersion());
-    }
+  @FXML
+  void initialize() {
+    versionNumberLabel.setText("Version " + edu.wpi.grip.core.Main.class.getPackage()
+        .getImplementationVersion());
+  }
 }

@@ -9,27 +9,27 @@ import java.util.Set;
 
 public class MethodDefaultValue extends DefaultValue {
 
-    public MethodDefaultValue(String packageName, String name) {
-        super(packageName, name);
-    }
+  public MethodDefaultValue(String packageName, String name) {
+    super(packageName, name);
+  }
 
-    @Override
-    protected Set<String> getDefaultValues() {
-        return null;
-    }
+  @Override
+  protected Set<String> getDefaultValues() {
+    return null;
+  }
 
-    @Override
-    public Expression getDefaultValue(String defaultValue) {
-        return new NullLiteralExpr();
-    }
+  @Override
+  public Expression getDefaultValue(String defaultValue) {
+    return new NullLiteralExpr();
+  }
 
-    @Override
-    public String getViewType() {
-        return "NONE";
-    }
+  @Override
+  public String getViewType() {
+    return "NONE";
+  }
 
-    @Override
-    public Optional<Type> getType() {
-        return Optional.empty();
-    }
+  @Override
+  public Optional<Type> getType() {
+    return Optional.empty();
+  }
 }

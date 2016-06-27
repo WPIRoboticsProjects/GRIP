@@ -6,7 +6,10 @@
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.VBox?>
 <VBox styleClass="source"
       fx:controller="edu.wpi.grip.ui.pipeline.source.SourceController"
       fx:id="root" xmlns:fx="http://javafx.com/fxml/1">
@@ -18,29 +21,29 @@
                     <Button onMouseClicked="#delete" styleClass="delete">
                         <graphic>
                             <ImageView>
-                                <Image url="/edu/wpi/grip/ui/icons/delete.png"/>
+                                <Image url="/edu/wpi/grip/ui/icons/delete.png" />
                                 <fitWidth>
-                                    <DPIUtility fx:constant="SMALL_ICON_SIZE"/>
+                                    <DPIUtility fx:constant="SMALL_ICON_SIZE" />
                                 </fitWidth>
                                 <fitHeight>
-                                    <DPIUtility fx:constant="SMALL_ICON_SIZE"/>
+                                    <DPIUtility fx:constant="SMALL_ICON_SIZE" />
                                 </fitHeight>
                             </ImageView>
                         </graphic>
                     </Button>
                     <Separator orientation="VERTICAL" visible="false">
                         <prefWidth>
-                            <DPIUtility fx:constant="MINI_ICON_SIZE"/>
+                            <DPIUtility fx:constant="MINI_ICON_SIZE" />
                         </prefWidth>
                     </Separator>
-                    <Label fx:id="name" styleClass="source-name"/>
-                    <Pane HBox.hgrow="ALWAYS"/>
+                    <Label fx:id="name" styleClass="source-name" />
+                    <Pane HBox.hgrow="ALWAYS" />
                 </HBox>
             </top>
             <center>
                 <VBox>
-                    <Separator orientation="HORIZONTAL"/>
-                    <VBox fx:id="sockets" styleClass="sockets" BorderPane.alignment="CENTER"/>
+                    <Separator orientation="HORIZONTAL" />
+                    <VBox fx:id="sockets" styleClass="sockets" BorderPane.alignment="CENTER" />
                 </VBox>
             </center>
         </BorderPane>

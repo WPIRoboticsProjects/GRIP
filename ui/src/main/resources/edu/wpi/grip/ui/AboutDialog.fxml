@@ -10,83 +10,83 @@
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
-
 <VBox fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="330.0" prefWidth="600.0" styleClass="about-window" stylesheets="@GRIP.css" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="edu.wpi.grip.ui.AboutDialogController">
-   <children>
-      <Pane VBox.vgrow="ALWAYS" />
-      <HBox>
-         <children>
-            <Pane HBox.hgrow="ALWAYS" />
-            <ImageView fitHeight="156.0" fitWidth="156.0" pickOnBounds="true" preserveRatio="true">
-               <image>
-                  <Image url="@icons/grip.png" />
-               </image>
-            </ImageView>
-            <Pane HBox.hgrow="ALWAYS" />
-            <VBox HBox.hgrow="ALWAYS">
-               <children>
-                  <Label style="-fx-font-size: 64; -fx-font-weight: BOLD;" text="GRIP" />
-                  <Label fx:id="versionNumberLabel" text="Version 0.0.0" />
-                  <Pane VBox.vgrow="ALWAYS" />
-                  <HBox>
-                     <children>
-                        <StackPane onMousePressed="#mousePressedGithubButton" styleClass="about-button">
-                           <children>
-                              <Label text="➔ Github">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font></Label>
-                           </children>
-                           <opaqueInsets>
-                              <Insets />
-                           </opaqueInsets>
-                           <HBox.margin>
-                              <Insets left="-3.0" />
-                           </HBox.margin>
-                           <padding>
-                              <Insets bottom="3.0" left="3.0" right="3.0" top="3.0" />
-                           </padding>
-                        </StackPane>
-                     </children>
-                  </HBox>
-                  <Pane VBox.vgrow="ALWAYS" />
-                  <HBox>
-                     <children>
-                        <StackPane onMousePressed="#mousePressedDocumentationButton" styleClass="about-button">
-                           <children>
-                              <Label text="➔ ScreenSteps Documentation" />
-                           </children>
-                           <HBox.margin>
-                              <Insets left="-3.0" />
-                           </HBox.margin>
-                           <padding>
-                              <Insets bottom="3.0" left="3.0" right="3.0" top="3.0" />
-                           </padding>
-                        </StackPane>
-                     </children>
-                  </HBox>
-               </children>
-            </VBox>
-            <Pane HBox.hgrow="ALWAYS" />
-         </children>
-      </HBox>
-      <Pane VBox.vgrow="ALWAYS">
-         <VBox.margin>
-            <Insets />
-         </VBox.margin>
-      </Pane>
-      <HBox>
-         <children>
-            <Pane HBox.hgrow="ALWAYS" />
-            <Label style="-fx-font-size: 12;" text="GRIP is licensed under a 3 Clause BSD License" textFill="#818181" />
-            <Pane HBox.hgrow="ALWAYS" />
-         </children>
-         <padding>
-            <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-         </padding>
-      </HBox>
-   </children>
-   <stylesheets>
-       <URL value="@GRIP.css" />
-   </stylesheets>
+    <children>
+        <Pane VBox.vgrow="ALWAYS" />
+        <HBox>
+            <children>
+                <Pane HBox.hgrow="ALWAYS" />
+                <ImageView fitHeight="156.0" fitWidth="156.0" pickOnBounds="true" preserveRatio="true">
+                    <image>
+                        <Image url="@icons/grip.png" />
+                    </image>
+                </ImageView>
+                <Pane HBox.hgrow="ALWAYS" />
+                <VBox HBox.hgrow="ALWAYS">
+                    <children>
+                        <Label style="-fx-font-size: 64; -fx-font-weight: BOLD;" text="GRIP" />
+                        <Label fx:id="versionNumberLabel" text="Version 0.0.0" />
+                        <Pane VBox.vgrow="ALWAYS" />
+                        <HBox>
+                            <children>
+                                <StackPane onMousePressed="#mousePressedGithubButton" styleClass="about-button">
+                                    <children>
+                                        <Label text="➔ Github">
+                                            <font>
+                                                <Font size="14.0" />
+                                            </font>
+                                        </Label>
+                                    </children>
+                                    <opaqueInsets>
+                                        <Insets />
+                                    </opaqueInsets>
+                                    <HBox.margin>
+                                        <Insets left="-3.0" />
+                                    </HBox.margin>
+                                    <padding>
+                                        <Insets bottom="3.0" left="3.0" right="3.0" top="3.0" />
+                                    </padding>
+                                </StackPane>
+                            </children>
+                        </HBox>
+                        <Pane VBox.vgrow="ALWAYS" />
+                        <HBox>
+                            <children>
+                                <StackPane onMousePressed="#mousePressedDocumentationButton" styleClass="about-button">
+                                    <children>
+                                        <Label text="➔ ScreenSteps Documentation" />
+                                    </children>
+                                    <HBox.margin>
+                                        <Insets left="-3.0" />
+                                    </HBox.margin>
+                                    <padding>
+                                        <Insets bottom="3.0" left="3.0" right="3.0" top="3.0" />
+                                    </padding>
+                                </StackPane>
+                            </children>
+                        </HBox>
+                    </children>
+                </VBox>
+                <Pane HBox.hgrow="ALWAYS" />
+            </children>
+        </HBox>
+        <Pane VBox.vgrow="ALWAYS">
+            <VBox.margin>
+                <Insets />
+            </VBox.margin>
+        </Pane>
+        <HBox>
+            <children>
+                <Pane HBox.hgrow="ALWAYS" />
+                <Label style="-fx-font-size: 12;" text="GRIP is licensed under a 3 Clause BSD License" textFill="#818181" />
+                <Pane HBox.hgrow="ALWAYS" />
+            </children>
+            <padding>
+                <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+            </padding>
+        </HBox>
+    </children>
+    <stylesheets>
+        <URL value="@GRIP.css" />
+    </stylesheets>
 </VBox>

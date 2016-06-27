@@ -5,7 +5,7 @@ import com.google.common.eventbus.EventBus;
 
 public class MockInputSocketFactory extends InputSocketImpl.FactoryImpl {
 
-    public MockInputSocketFactory(EventBus eventBus) {
-        super(eventBus);
-    }
+  public MockInputSocketFactory(EventBus eventBus) {
+    super(eventBus);
+  }
 }

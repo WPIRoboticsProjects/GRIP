@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import edu.wpi.grip.ui.util.DPIUtility?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ToggleButton?>
 <?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.*?>
-<?import edu.wpi.grip.ui.util.DPIUtility ?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
 <HBox styleClass="socket"
       fx:controller="edu.wpi.grip.ui.OperationController"
       fx:id="root"
@@ -16,24 +17,24 @@
         <ToggleButton fx:id="preview" styleClass="small-icon-button">
             <graphic>
                 <ImageView>
-                    <Image url="@../icons/preview.png"/>
+                    <Image url="@../icons/preview.png" />
                     <fitWidth>
-                        <DPIUtility fx:constant="SMALL_ICON_SIZE"/>
+                        <DPIUtility fx:constant="SMALL_ICON_SIZE" />
                     </fitWidth>
                     <fitHeight>
-                        <DPIUtility fx:constant="SMALL_ICON_SIZE"/>
+                        <DPIUtility fx:constant="SMALL_ICON_SIZE" />
                     </fitHeight>
                 </ImageView>
             </graphic>
             <tooltip>
-                <Tooltip text="Preview Socket"/>
+                <Tooltip text="Preview Socket" />
             </tooltip>
         </ToggleButton>
         <Label fx:id="identifier" contentDisplay="RIGHT" styleClass="socket-identifier">
             <graphic>
-                <Label fx:id="type" opacity=".5"/>
+                <Label fx:id="type" opacity=".5" />
             </graphic>
         </Label>
-        <StackPane fx:id="handlePane"/>
+        <StackPane fx:id="handlePane" />
     </children>
 </HBox>
