@@ -34,7 +34,7 @@ public class DesaturateGenerationTest extends AbstractGenerationTest {
   }
 
   @Test
-  public void desaturationTest() {
+  public void DesaturationTest() {
     test(() -> {
       generatePipeline();
       return true;
