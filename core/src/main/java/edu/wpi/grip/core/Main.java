@@ -70,9 +70,6 @@ public class Main {
       project.open(new File(projectPath));
     }
 
-    // Open a project from a .grip file specified on the command line
-    project.open(new File(projectPath));
-
     pipelineRunner.startAsync();
 
     // This is done in order to indicate to the user using the deployment UI that this is running

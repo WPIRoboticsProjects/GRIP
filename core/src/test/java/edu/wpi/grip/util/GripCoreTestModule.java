@@ -4,13 +4,10 @@ package edu.wpi.grip.util;
 import edu.wpi.grip.core.GripCoreModule;
 import edu.wpi.grip.core.http.GripServer;
 import edu.wpi.grip.core.http.GripServerTest;
-import edu.wpi.grip.core.operations.network.MapNetworkPublisherFactory;
-import edu.wpi.grip.core.operations.network.http.HttpPublishManager;
 import edu.wpi.grip.core.sources.CameraSource;
 import edu.wpi.grip.core.sources.MockFrameGrabberFactory;
 
 import com.google.common.eventbus.SubscriberExceptionContext;
-import com.google.inject.name.Names;
 
 import java.util.ArrayList;
 import java.util.List;

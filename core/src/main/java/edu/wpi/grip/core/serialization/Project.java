@@ -92,9 +92,10 @@ public class Project {
   }
 
   /**
-   * Loads the project defined by the given XML string. This is intended to be used to be able to programmatically
-   * run a pipeline from a remote source. Therefore, this does <strong>not</strong> save the contents to disk;
-   * if it is called in GUI mode, the user will have to manually save the file.
+   * Loads the project defined by the given XML string. This is intended to be used to be able to
+   * programmatically run a pipeline from a remote source. Therefore, this does <strong>not</strong>
+   * save the contents to disk; if it is called in GUI mode, the user will have to manually save the
+   * file.
    *
    * @param projectXml the XML string defining the project to open
    */

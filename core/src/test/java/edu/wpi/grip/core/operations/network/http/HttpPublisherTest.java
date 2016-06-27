@@ -26,133 +26,144 @@ import org.junit.Test;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
 public class HttpPublisherTest {
 
-    private static final String dataPath = "/GRIP/data";
-    private static final String noDataPath = "/GRIP/data?no_data_here";
-    private static final String empty = "{}";
-    private static final String name = "foo";
-    private static final String json = "{\n  \"foo\": 1.0\n}";
-    private static final String unexpectedResponseMsg = "Unexpected response to data request";
+  private static final String dataPath = "/GRIP/data";
+  private static final String noDataPath = "/GRIP/data?no_data_here";
+  private static final String empty = "{}";
+  private static final String name = "foo";
+  private static final String json = "{\n  \"foo\": 1.0\n}";
+  private static final String unexpectedResponseMsg = "Unexpected response to data request";
 
-    private EventBus eventBus;
-    private GripServer server;
-    private DataHandler dataHandler;
-    private HttpPublishOperation<Number, NumberPublishable, Double> operation;
+  private EventBus eventBus;
+  private GripServer server;
+  private DataHandler dataHandler;
+  private HttpPublishOperation<Number, NumberPublishable> operation;
 
-    private HttpClient client;
+  private HttpClient client;
 
-    @Before
-    public void setUp() {
-        eventBus = new EventBus();
-        ContextStore contextStore = new ContextStore();
-        InputSocket.Factory isf = new MockInputSocketFactory(eventBus);
-        server = GripServerTest.makeServer(contextStore, new GripServerTest.TestServerFactory(), ProjectSettings::new);
-        dataHandler = new DataHandler(contextStore);
-        eventBus.register(dataHandler);
+  @Before
+  public void setUp() {
+    eventBus = new EventBus();
+    ContextStore contextStore = new ContextStore();
+    InputSocket.Factory isf = new MockInputSocketFactory(eventBus);
+    server = GripServerTest.makeServer(
+        contextStore, new GripServerTest.TestServerFactory(), ProjectSettings::new);
+    dataHandler = new DataHandler(contextStore);
+    eventBus.register(dataHandler);
 
-        operation = new HttpPublishOperation<Number, NumberPublishable, Double>(new HttpPublishManager(server, dataHandler), NumberPublishable::new) {};
+    operation = new HttpPublishOperation<>(
+        isf,
+        Number.class,
+        NumberPublishable.class,
+        NumberPublishable::new,
+        new HttpPublishManager(server, dataHandler)
+    );
 
-        client = HttpClients.createDefault();
+    client = HttpClients.createDefault();
 
-        server.addHandler(dataHandler);
-        server.start();
-    }
+    server.addHandler(dataHandler);
+    server.start();
+  }
 
-    @SuppressWarnings("unchecked")
-    private void perform() {
-        InputSocket[] inputs = operation.createInputSockets(eventBus);
-        inputs[0].setValue(1.0);
-        inputs[1].setValue(name);
-        operation.perform(
-                inputs,
-                operation.createOutputSockets(eventBus),
-                operation.createData());
-    }
+  @SuppressWarnings("unchecked")
+  private void perform() {
+    List<InputSocket> inputs = operation.getInputSockets();
+    inputs.get(0).setValue(1.0);
+    inputs.get(1).setValue(name);
+    operation.perform();
+  }
 
-    @Test
-    public void testNoData() throws IOException {
-        assertEquals("Data was not empty", empty, doGetText(dataPath));
-        assertEquals("Shouldn't be data on this path", empty, doGetText(noDataPath));
-    }
+  @Test
+  public void testNoData() throws IOException {
+    assertEquals("Data was not empty", empty, doGetText(dataPath));
+    assertEquals("Shouldn't be data on this path", empty, doGetText(noDataPath));
+  }
 
-    @Test
-    public void testWithData() throws IOException {
-        perform();
-        assertEquals(unexpectedResponseMsg, json, doGetText(dataPath));
-        assertEquals("Shouldn't be data on this path", empty, doGetText(noDataPath));
-    }
+  @Test
+  public void testWithData() throws IOException {
+    perform();
+    assertEquals(unexpectedResponseMsg, json, doGetText(dataPath));
+    assertEquals("Shouldn't be data on this path", empty, doGetText(noDataPath));
+  }
 
-    @Test
-    public void testWhenPipelineRunning() throws IOException {
-        perform();
-        eventBus.post(new RunStartedEvent());
-        assertEquals("Server should have returned a 503 status", 503, doGet(dataPath).getStatusLine().getStatusCode());
-        eventBus.post(new RunStoppedEvent());
-        assertEquals("Data handler should have run", json, doGetText(dataPath));
-    }
+  @Test
+  public void testWhenPipelineRunning() throws IOException {
+    perform();
+    eventBus.post(new RunStartedEvent());
+    assertEquals("Server should have returned a 503 status",
+        503,
+        doGet(dataPath).getStatusLine().getStatusCode());
+    eventBus.post(new RunStoppedEvent());
+    assertEquals("Data handler should have run", json, doGetText(dataPath));
+  }
 
-    @Test
-    public void testNotPost() throws IOException {
-        dataHandler.addDataSupplier("fail", () -> {
-            fail("This should not have been called");
-            return null;
-        });
-        HttpResponse response = doPost(dataPath);
-        assertEquals("Server should have returned a 405 status", 405, response.getStatusLine().getStatusCode());
-    }
+  @Test
+  public void testNotPost() throws IOException {
+    dataHandler.addDataSupplier("fail", () -> {
+      fail("This should not have been called");
+      return null;
+    });
+    HttpResponse response = doPost(dataPath);
+    assertEquals("Server should have returned a 405 status",
+        405,
+        response.getStatusLine().getStatusCode());
+  }
 
-    @Test
-    public void testDataSuppliers() throws IOException {
-        perform();
-        dataHandler.addDataSupplier("some_data", () -> "some_value");
-        assertEquals(unexpectedResponseMsg, "{\n  \"foo\": 1.0,\n  \"some_data\": \"some_value\"\n}", doGetText(dataPath));
-        assertEquals(unexpectedResponseMsg, json, doGetText("/GRIP/data?foo"));
-        dataHandler.removeDataSupplier("some_data");
-        assertEquals(unexpectedResponseMsg, json, doGetText("/GRIP/data?foo"));
-        assertEquals(unexpectedResponseMsg, json, doGetText(dataPath));
-    }
+  @Test
+  public void testDataSuppliers() throws IOException {
+    perform();
+    dataHandler.addDataSupplier("some_data", () -> "some_value");
+    assertEquals(unexpectedResponseMsg,
+        "{\n  \"foo\": 1.0,\n  \"some_data\": \"some_value\"\n}",
+        doGetText(dataPath));
+    assertEquals(unexpectedResponseMsg, json, doGetText("/GRIP/data?foo"));
+    dataHandler.removeDataSupplier("some_data");
+    assertEquals(unexpectedResponseMsg, json, doGetText("/GRIP/data?foo"));
+    assertEquals(unexpectedResponseMsg, json, doGetText(dataPath));
+  }
 
-    @Test(expected = NullPointerException.class)
-    public void testNullSupplierName() {
-        dataHandler.addDataSupplier(null, () -> "null_supplier_name");
-    }
+  @Test(expected = NullPointerException.class)
+  public void testNullSupplierName() {
+    dataHandler.addDataSupplier(null, () -> "null_supplier_name");
+  }
 
-    @Test(expected = NullPointerException.class)
-    public void testNullSupplier() {
-        dataHandler.addDataSupplier("null_supplier", null);
-    }
+  @Test(expected = NullPointerException.class)
+  public void testNullSupplier() {
+    dataHandler.addDataSupplier("null_supplier", null);
+  }
 
-    @After
-    public void tearDown() {
-        server.removeHandler(dataHandler);
-        server.stop();
-    }
+  @After
+  public void tearDown() {
+    server.removeHandler(dataHandler);
+    server.stop();
+  }
 
-    private String doGetText(String path) throws IOException {
-        HttpEntity entity = doGet(path).getEntity();
-        String s = EntityUtils.toString(entity);
-        EntityUtils.consume(entity);
-        return s;
-    }
+  private String doGetText(String path) throws IOException {
+    HttpEntity entity = doGet(path).getEntity();
+    String s = EntityUtils.toString(entity);
+    EntityUtils.consume(entity);
+    return s;
+  }
 
-    private HttpResponse doGet(String path) throws IOException {
-        String uri = "http://localhost:" + server.getPort() + path;
-        HttpGet get = new HttpGet(uri);
-        return client.execute(get);
-    }
+  private HttpResponse doGet(String path) throws IOException {
+    String uri = "http://localhost:" + server.getPort() + path;
+    HttpGet get = new HttpGet(uri);
+    return client.execute(get);
+  }
 
-    private HttpResponse doPost(String path) throws IOException {
-        String uri = "http://localhost:" + server.getPort() + path;
-        HttpPost post = new HttpPost(uri);
-        BasicHttpEntity entity = new BasicHttpEntity();
-        entity.setContent(new ByteArrayInputStream(new byte[0]));
-        post.setEntity(entity);
-        return client.execute(post);
-    }
+  private HttpResponse doPost(String path) throws IOException {
+    String uri = "http://localhost:" + server.getPort() + path;
+    HttpPost post = new HttpPost(uri);
+    BasicHttpEntity entity = new BasicHttpEntity();
+    entity.setContent(new ByteArrayInputStream(new byte[0]));
+    post.setEntity(entity);
+    return client.execute(post);
+  }
 
 }

@@ -8,12 +8,12 @@ package edu.wpi.grip.core.exception;
  */
 public abstract class GripException extends RuntimeException {
 
-    public GripException(String message) {
-        super(message);
-    }
+  public GripException(String message) {
+    super(message);
+  }
 
-    public GripException(String message, Throwable cause) {
-        super(message, cause);
-    }
+  public GripException(String message, Throwable cause) {
+    super(message, cause);
+  }
 
 }

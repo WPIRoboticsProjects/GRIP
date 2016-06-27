@@ -27,7 +27,8 @@ public class SourcesSanityTest extends AbstractPackageSanityTests {
     GripServer.JettyServerFactory serverFactory = new GripServerTest.TestServerFactory();
     ProjectSettings projectSettings = new ProjectSettings();
     projectSettings.setServerPort(8080);
-    GripServer server = GripServerTest.makeServer(new ContextStore(), serverFactory, () -> projectSettings);
+    GripServer server =
+        GripServerTest.makeServer(new ContextStore(), serverFactory, () -> projectSettings);
     setDefault(GripServer.class, server);
   }
 }
