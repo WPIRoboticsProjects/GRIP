@@ -1,7 +1,7 @@
 package edu.wpi.grip.core;
 
 /**
- * Defines what methods a FileManager implementation must implement.
+ * A FileManager saves images to disk.
  */
 public interface FileManager {
 

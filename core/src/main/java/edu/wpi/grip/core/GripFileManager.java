@@ -25,18 +25,19 @@ public class GripFileManager implements FileManager {
 
   @Override
   public void saveImage(byte[] image, String fileName) {
-    checkNotNull(image);
-    checkNotNull(fileName);
+    checkNotNull(image, "An image was not provided to the FileManager");
+    checkNotNull(fileName, "A filename was not provided to the FileManager");
 
     File file = new File(IMAGE_DIRECTORY, fileName);
-    Runnable runnable = () -> {
+    Thread thread = new Thread(() -> {
       try {
         IMAGE_DIRECTORY.mkdirs(); // If the user deletes the directory
         Files.write(image, file);
       } catch (IOException ex) {
         logger.log(Level.WARNING, ex.getMessage(), ex);
       }
-    };
-    new Thread(runnable).start();
+    });
+    thread.setDaemon(true);
+    thread.start();
   }
 }

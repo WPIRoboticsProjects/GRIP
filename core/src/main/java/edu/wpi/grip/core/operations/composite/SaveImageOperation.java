@@ -70,7 +70,8 @@ public class SaveImageOperation implements Operation {
 
   @SuppressWarnings("JavadocMethod")
   public SaveImageOperation(InputSocket.Factory inputSocketFactory,
-                            OutputSocket.Factory outputSocketFactory, FileManager fileManager) {
+                            OutputSocket.Factory outputSocketFactory,
+                            FileManager fileManager) {
     this.fileManager = fileManager;
 
     inputSocket = inputSocketFactory.create(inputHint);
