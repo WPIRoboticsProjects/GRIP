@@ -9,7 +9,9 @@ MutableOf<$obj>#end
 		$input.baseType() $input.name()$c = ${input.value()}.get().$input.baseType()Value();
 #end##end Has a set value
 #else##Not Mutable
-#if ($input.type() == "FlipCode")
+#if ($input.value().contains("null"))
+		#socketType($input.type()) $input.name()$c = $input.value();
+#elseif ($input.type() == "FlipCode")
 		$input.type() $input.name()$c = FlipCode.$input.value();
 #elseif ($input.type().contains("CoreEnum"))
 		int $input.name()$c = Core.$input.value();

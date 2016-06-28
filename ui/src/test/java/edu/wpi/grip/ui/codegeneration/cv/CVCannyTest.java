@@ -2,7 +2,6 @@ package edu.wpi.grip.ui.codegeneration.cv;
 
 import edu.wpi.grip.core.ManualPipelineRunner;
 import edu.wpi.grip.core.Step;
-import edu.wpi.grip.core.operations.opencv.enumeration.FlipCode;
 import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.core.sources.ImageFileSource;
 import edu.wpi.grip.ui.codegeneration.AbstractGenerationTest;
@@ -18,33 +17,31 @@ import java.util.Optional;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-public class CVFlip extends AbstractGenerationTest {
+public class CVCannyTest extends AbstractGenerationTest {
+  private final double thresh1 = 50;
+  private final double thresh2 = 60;
+  private final double apertureSize = 3;
+  private final boolean grad = true;
 
-  boolean setup(FlipCode flip) {
-    Step step = gen.addStep(opUtil.getMetaData("CV flip"));
+
+  boolean setup() {
+    Step step = gen.addStep(opUtil.getMetaData("CV canny"));
     ImageFileSource img = loadImage(Files.gompeiJpegFile);
     OutputSocket imgOut = pipeline.getSources().get(0).getOutputSockets().get(0);
     gen.connect(imgOut, step.getInputSockets().get(0));
-    step.getInputSockets().get(1).setValue(flip);
+    step.getInputSockets().get(1).setValue(thresh1);
+    step.getInputSockets().get(2).setValue(thresh2);
+    step.getInputSockets().get(3).setValue(apertureSize);
+    step.getInputSockets().get(4).setValue(grad);
+
     return true;
   }
 
   @Test
-  public void yaxisTest() {
-    test(() -> setup(FlipCode.Y_AXIS), (pip) -> validate(pip), "FlipYAxisTest");
+  public void cannyTest() {
+    test(() -> setup(), (pip) -> validate(pip), "cvcannyTest");
   }
 
-  @Test
-  public void xaxisTest() {
-    test(() -> setup(FlipCode.X_AXIS), (pip) -> validate(pip), "FlipXAxisTest");
-  }
-
-  @Test
-  public void bothAxesTest() {
-    test(() -> setup(FlipCode.BOTH_AXES), (pip) -> validate(pip), "FlipBothAxesTest");
-  }
-
-  
   void validate(PipelineInterfacer pip) {
     ManualPipelineRunner runner = new ManualPipelineRunner(eventBus, pipeline);
     runner.runPipeline();

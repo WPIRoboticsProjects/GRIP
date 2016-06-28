@@ -49,7 +49,8 @@ public abstract class TemplateMethods {
    * @return the value of the socket or "null" if there is no value
    */
   public static String parseSocketValue(Socket socket) {
-    if (socket.getValue().isPresent() && !socket.getValue().get().toString().contains("bytedeco")) {
+    if (socket.getValue().isPresent() && !socket.getValue().get().toString()
+        .contains("bytedeco") &&  !socket.getValue().get().toString().contains("Infinity")) {
       return socket.getValue().get().toString();
     }
     return "null";

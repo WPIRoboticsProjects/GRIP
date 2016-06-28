@@ -2,7 +2,6 @@ package edu.wpi.grip.ui.codegeneration.cv;
 
 import edu.wpi.grip.core.ManualPipelineRunner;
 import edu.wpi.grip.core.Step;
-import edu.wpi.grip.core.operations.opencv.enumeration.FlipCode;
 import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.core.sources.ImageFileSource;
 import edu.wpi.grip.ui.codegeneration.AbstractGenerationTest;
@@ -18,33 +17,29 @@ import java.util.Optional;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-public class CVFlip extends AbstractGenerationTest {
+public class CVcvtColorTest extends AbstractGenerationTest {
 
-  boolean setup(FlipCode flip) {
-    Step step = gen.addStep(opUtil.getMetaData("CV flip"));
+
+  boolean setup(String code) {
+    Step step = gen.addStep(opUtil.getMetaData("CV cvtColor"));
     ImageFileSource img = loadImage(Files.gompeiJpegFile);
     OutputSocket imgOut = pipeline.getSources().get(0).getOutputSockets().get(0);
     gen.connect(imgOut, step.getInputSockets().get(0));
-    step.getInputSockets().get(1).setValue(flip);
+    HelperTools.setEnumSocket(step.getInputSockets().get(1), code);
     return true;
   }
 
   @Test
-  public void yaxisTest() {
-    test(() -> setup(FlipCode.Y_AXIS), (pip) -> validate(pip), "FlipYAxisTest");
+  public void cvtColor0Test() {
+    test(() -> setup("COLOR_BGR2HSV"), (pip) -> validate(pip), "cvtColor0Test");
   }
 
   @Test
-  public void xaxisTest() {
-    test(() -> setup(FlipCode.X_AXIS), (pip) -> validate(pip), "FlipXAxisTest");
+  public void cvtColor1Test() {
+    test(() -> setup("COLOR_BGR2RGB"), (pip) -> validate(pip), "cvtColor1Test");
   }
 
-  @Test
-  public void bothAxesTest() {
-    test(() -> setup(FlipCode.BOTH_AXES), (pip) -> validate(pip), "FlipBothAxesTest");
-  }
 
-  
   void validate(PipelineInterfacer pip) {
     ManualPipelineRunner runner = new ManualPipelineRunner(eventBus, pipeline);
     runner.runPipeline();
@@ -56,6 +51,6 @@ public class CVFlip extends AbstractGenerationTest {
         .empty());
     Mat genMat = (Mat) pip.getOutput(0);
     Mat gripMat = HelperTools.bytedecoMatToCVMat((org.bytedeco.javacpp.opencv_core.Mat) out.get());
-    assertMatWithin(genMat, gripMat, 1.0);
+    assertMatWithin(genMat, gripMat, 10);
   }
 }
