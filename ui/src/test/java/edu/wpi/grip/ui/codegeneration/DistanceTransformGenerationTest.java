@@ -6,6 +6,7 @@ import edu.wpi.grip.core.Step;
 import edu.wpi.grip.core.operations.composite.DistanceTransformOperation;
 import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.sockets.OutputSocket;
+import edu.wpi.grip.ui.codegeneration.tools.GenType;
 import edu.wpi.grip.ui.codegeneration.tools.HelperTools;
 import edu.wpi.grip.ui.codegeneration.tools.PipelineInterfacer;
 import edu.wpi.grip.util.Files;
@@ -76,7 +77,7 @@ public class DistanceTransformGenerationTest extends AbstractGenerationTest {
         .empty());
     pip.setMatSource(0, Files.imageFile.file);
     pip.process();
-    Mat genMat = (Mat) pip.getOutput(1);
+    Mat genMat = (Mat) pip.getOutput(1, GenType.IMAGE);
     Mat gripMat = new Mat();
     (HelperTools.bytedecoMatToCVMat((org.bytedeco.javacpp.opencv_core.Mat) out.get()))
         .convertTo(gripMat, CvType.CV_32F); //distance transform outputs a 1 channel 32F Mat but

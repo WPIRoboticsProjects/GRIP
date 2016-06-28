@@ -5,6 +5,7 @@ import edu.wpi.grip.core.OperationMetaData;
 import edu.wpi.grip.core.Step;
 import edu.wpi.grip.core.operations.opencv.NewPointOperation;
 import edu.wpi.grip.core.sockets.InputSocket;
+import edu.wpi.grip.ui.codegeneration.tools.GenType;
 import edu.wpi.grip.ui.codegeneration.tools.PipelineInterfacer;
 
 import org.junit.Test;
@@ -43,7 +44,7 @@ public class NewPointGenerationTest extends AbstractGenerationTest {
     org.bytedeco.javacpp.opencv_core.Point gripSize = (org.bytedeco.javacpp.opencv_core.Point) out
         .get();
     pip.process();
-    Point genSize = (Point) pip.getOutput(0);
+    Point genSize = (Point) pip.getOutput(0, GenType.POINT);
     assertTrue("The grip x: " + gripSize.x() + "does not equals the generated x: "
         + genSize.x, gripSize.x() == genSize.x);
     assertTrue("The grip y: " + gripSize.y() + "does not equals the generated y: "

@@ -9,6 +9,7 @@ import edu.wpi.grip.core.operations.composite.HSLThresholdOperation;
 import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.core.sources.ImageFileSource;
+import edu.wpi.grip.ui.codegeneration.tools.GenType;
 import edu.wpi.grip.ui.codegeneration.tools.HelperTools;
 import edu.wpi.grip.ui.codegeneration.tools.PipelineInterfacer;
 import edu.wpi.grip.util.Files;
@@ -107,8 +108,8 @@ public class FindContoursGenerationTest extends AbstractGenerationTest {
     //exporter.export(pipeline, Language.JAVA,new File() , false);
     pip.setMatSource(0, Files.imageFile.file);
     pip.process();
-    Mat genMat = (Mat) pip.getOutput(0);
-    List<MatOfPoint> gen = (List<MatOfPoint>) pip.getOutput(1);
+    Mat genMat = (Mat) pip.getOutput(0, GenType.IMAGE);
+    List<MatOfPoint> gen = (List<MatOfPoint>) pip.getOutput(1, GenType.CONTOURS);
 
     Imgproc.cvtColor(genMat, genMat, Imgproc.COLOR_GRAY2BGR);
     Imgproc.drawContours(genMat, gen, -1, new Scalar(255, 255, 255));

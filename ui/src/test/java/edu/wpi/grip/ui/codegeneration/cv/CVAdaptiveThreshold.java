@@ -10,6 +10,7 @@ import edu.wpi.grip.core.sources.ImageFileSource;
 import edu.wpi.grip.generated.opencv_imgproc.enumeration.AdaptiveThresholdTypesEnum;
 import edu.wpi.grip.generated.opencv_imgproc.enumeration.ThresholdTypesEnum;
 import edu.wpi.grip.ui.codegeneration.AbstractGenerationTest;
+import edu.wpi.grip.ui.codegeneration.tools.GenType;
 import edu.wpi.grip.ui.codegeneration.tools.HelperTools;
 import edu.wpi.grip.ui.codegeneration.tools.PipelineInterfacer;
 import edu.wpi.grip.util.Files;
@@ -80,7 +81,7 @@ public class CVAdaptiveThreshold extends AbstractGenerationTest {
     assertTrue("Pipeline did not process", out.isPresent());
     assertFalse("Pipeline output is empty", ((org.bytedeco.javacpp.opencv_core.Mat) out.get())
         .empty());
-    Mat genMat = (Mat) pip.getOutput(1);
+    Mat genMat = (Mat) pip.getOutput(1, GenType.IMAGE);
     Mat gripMat = HelperTools.bytedecoMatToCVMat((org.bytedeco.javacpp.opencv_core.Mat) out.get());
     assertMatWithin(genMat, gripMat, 1.0);
   }

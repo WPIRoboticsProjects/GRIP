@@ -9,6 +9,7 @@ import edu.wpi.grip.core.operations.composite.HSLThresholdOperation;
 import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.core.sources.ImageFileSource;
+import edu.wpi.grip.ui.codegeneration.tools.GenType;
 import edu.wpi.grip.ui.codegeneration.tools.PipelineInterfacer;
 import edu.wpi.grip.util.Files;
 
@@ -109,7 +110,7 @@ public class FindBlobsGenerationTest extends AbstractGenerationTest {
     System.out.println(blobOut.getBlobs().size());
     pip.setMatSource(0, Files.imageFile.file);
     pip.process();
-    MatOfKeyPoint gen = (MatOfKeyPoint) pip.getOutput(1);
+    MatOfKeyPoint gen = (MatOfKeyPoint) pip.getOutput(1, GenType.BLOBS);
     assertTrue("Number of Blobs is not the same. grip: " + blobOut.getBlobs().size() + " gen: " 
         + gen.toList().size(), (blobOut.getBlobs().size() - gen.toList().size()) < 5);
     for (int i = 0; i < gen.toList().size(); i++) {

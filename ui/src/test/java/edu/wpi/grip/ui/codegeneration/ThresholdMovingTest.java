@@ -9,6 +9,7 @@ import edu.wpi.grip.core.operations.composite.ThresholdMoving;
 import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.core.sources.ImageFileSource;
+import edu.wpi.grip.ui.codegeneration.tools.GenType;
 import edu.wpi.grip.ui.codegeneration.tools.HelperTools;
 import edu.wpi.grip.ui.codegeneration.tools.PipelineInterfacer;
 import edu.wpi.grip.util.Files;
@@ -113,7 +114,7 @@ public class ThresholdMovingTest extends AbstractGenerationTest {
     runner.runPipeline();
     pip.process();
     for (int idx = 0; idx < threshs.length; idx++) {
-      Mat genMat = (Mat) pip.getOutput(3 * idx + 2);
+      Mat genMat = (Mat) pip.getOutput(3 * idx + 2, GenType.IMAGE);
       Mat gripMat = threshs[idx].getOutput();
       assertMatWithin(genMat, gripMat, 5.0);
     }

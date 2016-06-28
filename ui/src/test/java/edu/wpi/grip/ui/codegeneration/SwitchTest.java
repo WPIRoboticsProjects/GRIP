@@ -4,6 +4,7 @@ import edu.wpi.grip.core.OperationMetaData;
 import edu.wpi.grip.core.Step;
 import edu.wpi.grip.core.operations.composite.SwitchOperation;
 import edu.wpi.grip.core.sockets.InputSocket;
+import edu.wpi.grip.ui.codegeneration.tools.GenType;
 import edu.wpi.grip.ui.codegeneration.tools.PipelineInterfacer;
 
 import org.junit.Test;
@@ -55,18 +56,18 @@ public class SwitchTest extends AbstractGenerationTest {
 
   void validate(PipelineInterfacer pip, Object onTrue, Object onFalse, Boolean initVal) {
     pip.process();
-    Object out = pip.getOutput(0);
+    Object out = pip.getOutput(0, GenType.NUMBER);
     if (initVal.booleanValue()) {
       assertEquals(errorMessage(true) + " initially", onTrue, out);
       pip.setSwitch(0, false);
       pip.process();
-      out = pip.getOutput(0);
+      out = pip.getOutput(0, GenType.NUMBER);
       assertEquals(errorMessage(false), onFalse, out);
     } else {
       assertEquals(errorMessage(false) + " initially", onFalse, out);
       pip.setSwitch(0, true);
       pip.process();
-      out = pip.getOutput(0);
+      out = pip.getOutput(0, GenType.NUMBER);
       assertEquals(errorMessage(true), onTrue, out);
     }
   }

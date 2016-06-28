@@ -9,6 +9,7 @@ import edu.wpi.grip.core.operations.composite.LinesReport;
 import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.core.sources.ImageFileSource;
+import edu.wpi.grip.ui.codegeneration.tools.GenType;
 import edu.wpi.grip.ui.codegeneration.tools.PipelineInterfacer;
 import edu.wpi.grip.util.Files;
 
@@ -86,7 +87,7 @@ public class FindLinesGenerationTest extends AbstractGenerationTest {
     pip.setMatSource(0, Files.imageFile.file);
     pip.process();
 
-    List<Object> genLin = (List<Object>) pip.getOutput(1);
+    List<Object> genLin = (List<Object>) pip.getOutput(1, GenType.LINES);
     assertTrue("Number of lines is not the same. grip: " + linOut.getLines().size() + " gen: "
         + genLin.size(), (linOut.getLines().size() - genLin.size()) < 5);
     for (int i = 0; i < genLin.size(); i++) {

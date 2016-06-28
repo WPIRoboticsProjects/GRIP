@@ -9,6 +9,7 @@ import edu.wpi.grip.core.operations.composite.WatershedOperation;
 import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.core.sources.ImageFileSource;
+import edu.wpi.grip.ui.codegeneration.tools.GenType;
 import edu.wpi.grip.ui.codegeneration.tools.HelperTools;
 import edu.wpi.grip.ui.codegeneration.tools.PipelineInterfacer;
 import edu.wpi.grip.util.Files;
@@ -101,7 +102,7 @@ public class WatershedGenerationTest extends AbstractGenerationTest {
 
     pip.setMatSource(0, Files.imageFile.file);
     pip.process();
-    Mat genMat = (Mat) pip.getOutput(2);
+    Mat genMat = (Mat) pip.getOutput(2, GenType.IMAGE);
 
     HelperTools.displayMats(genMat, gripMat);
     assertMatWithin(genMat, gripMat, 8.0);

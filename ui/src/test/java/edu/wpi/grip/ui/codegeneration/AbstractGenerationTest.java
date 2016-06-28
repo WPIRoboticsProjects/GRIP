@@ -9,7 +9,7 @@ import edu.wpi.grip.core.sources.ImageFileSource;
 import edu.wpi.grip.ui.codegeneration.tools.HelperTools;
 import edu.wpi.grip.ui.codegeneration.tools.PipelineCreator;
 import edu.wpi.grip.ui.codegeneration.tools.PipelineGenerator;
-import edu.wpi.grip.ui.codegeneration.tools.PipelineInterfacer;
+import edu.wpi.grip.ui.codegeneration.tools.JavaPipelineInterfacer;
 import edu.wpi.grip.util.GripCoreTestModule;
 import edu.wpi.grip.util.ImageWithData;
 
@@ -59,12 +59,12 @@ public abstract class AbstractGenerationTest {
     injector.injectMembers(gen);
   }
 
-  protected final void test(BooleanSupplier setup, Consumer<PipelineInterfacer> test, String
+  protected final void test(BooleanSupplier setup, Consumer<JavaPipelineInterfacer> test, String
       testName) {
     assertTrue("Setup for " + testName + " reported an issue.", setup.getAsBoolean());
     String fileName = testName + ".java";
     gen.export(fileName);
-    PipelineInterfacer pip = new PipelineInterfacer(fileName);
+    JavaPipelineInterfacer pip = new JavaPipelineInterfacer(fileName);
     test.accept(pip);
   }
 

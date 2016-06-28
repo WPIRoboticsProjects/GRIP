@@ -4,6 +4,7 @@ import edu.wpi.grip.core.OperationMetaData;
 import edu.wpi.grip.core.Step;
 import edu.wpi.grip.core.operations.composite.ValveOperation;
 import edu.wpi.grip.core.sockets.InputSocket;
+import edu.wpi.grip.ui.codegeneration.tools.GenType;
 import edu.wpi.grip.ui.codegeneration.tools.PipelineInterfacer;
 
 import org.junit.Test;
@@ -41,9 +42,9 @@ public class ValveTest extends AbstractGenerationTest {
   private void validate(PipelineInterfacer pip, Object val) {
     pip.setValve(0, true);
     pip.process();
-    assertEquals("Valve did not trigger true properly", val, pip.getOutput(0));
+    assertEquals("Valve did not trigger true properly", val, pip.getOutput(0, GenType.NUMBER));
     pip.setValve(0, false);
     pip.process();
-    assertEquals("Valve did not trigger false properly", null, pip.getOutput(0));
+    assertEquals("Valve did not trigger false properly", null, pip.getOutput(0, GenType.NUMBER));
   }
 }

@@ -1,6 +1,7 @@
 package edu.wpi.grip.ui.codegeneration;
 
 import edu.wpi.grip.core.ManualPipelineRunner;
+import edu.wpi.grip.ui.codegeneration.tools.GenType;
 import edu.wpi.grip.ui.codegeneration.tools.HelperTools;
 import edu.wpi.grip.util.Files;
 
@@ -44,7 +45,7 @@ public class HSLThresholdGenerationTest extends AbstractGenerationTest {
              .empty());
         pip.setMatSource(0, Files.imageFile.file);
         pip.process();
-        Mat genMat = (Mat) pip.getOutput(0);
+        Mat genMat = (Mat) pip.getOutput(0, GenType.IMAGE);
         Mat gripMat = HelperTools.bytedecoMatToCVMat((org.bytedeco.javacpp.opencv_core.Mat) out
              .get());
         assertMatWithin(genMat, gripMat, 10.0);

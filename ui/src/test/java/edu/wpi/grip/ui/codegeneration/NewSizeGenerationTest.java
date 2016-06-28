@@ -5,6 +5,7 @@ import edu.wpi.grip.core.OperationMetaData;
 import edu.wpi.grip.core.Step;
 import edu.wpi.grip.core.operations.opencv.NewSizeOperation;
 import edu.wpi.grip.core.sockets.InputSocket;
+import edu.wpi.grip.ui.codegeneration.tools.GenType;
 import edu.wpi.grip.ui.codegeneration.tools.PipelineInterfacer;
 
 import org.junit.Test;
@@ -43,7 +44,7 @@ public class NewSizeGenerationTest extends AbstractGenerationTest {
     org.bytedeco.javacpp.opencv_core.Size gripSize = (org.bytedeco.javacpp.opencv_core.Size) out
         .get();
     pip.process();
-    Size genSize = (Size) pip.getOutput(0);
+    Size genSize = (Size) pip.getOutput(0, GenType.SIZE);
     assertTrue("The grip width: " + gripSize.width() + "does not equals the generated width: "
         + genSize.width, gripSize.width() == genSize.width);
     assertTrue("The grip height: " + gripSize.height() + "does not equals the generated height: "

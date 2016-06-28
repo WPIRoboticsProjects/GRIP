@@ -10,6 +10,7 @@ import edu.wpi.grip.core.operations.composite.HSLThresholdOperation;
 import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.core.sources.ImageFileSource;
+import edu.wpi.grip.ui.codegeneration.tools.GenType;
 import edu.wpi.grip.ui.codegeneration.tools.HelperTools;
 import edu.wpi.grip.ui.codegeneration.tools.PipelineInterfacer;
 import edu.wpi.grip.util.Files;
@@ -107,7 +108,7 @@ public class ConvexHullsGenerationTest extends AbstractGenerationTest {
     pip.process();
     Mat genMat = new Mat(conOut.getRows(), conOut.getCols(), opencv_core.CV_8UC3, new Scalar(0,
         0, 0));
-    List<MatOfPoint> gen = (List<MatOfPoint>) pip.getOutput(2);
+    List<MatOfPoint> gen = (List<MatOfPoint>) pip.getOutput(2, GenType.CONTOURS);
     Imgproc.drawContours(genMat, gen, -1, new Scalar(255, 255, 255));
 
     Mat gripMat = HelperTools.bytedecoMatToCVMat(matOut);
