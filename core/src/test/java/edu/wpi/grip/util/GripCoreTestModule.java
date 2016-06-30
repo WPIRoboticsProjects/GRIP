@@ -2,6 +2,8 @@ package edu.wpi.grip.util;
 
 
 import edu.wpi.grip.core.GripCoreModule;
+import edu.wpi.grip.core.http.GripServer;
+import edu.wpi.grip.core.http.GripServerTest;
 import edu.wpi.grip.core.sources.CameraSource;
 import edu.wpi.grip.core.sources.MockFrameGrabberFactory;
 
@@ -74,6 +76,9 @@ public class GripCoreTestModule extends GripCoreModule {
         + "the injector";
     bind(CameraSource.FrameGrabberFactory.class).to(MockFrameGrabberFactory.class);
     super.configure();
+    // HTTP server injection bindings
+    bind(GripServer.JettyServerFactory.class).to(GripServerTest.TestServerFactory.class);
+    bind(GripServer.class).asEagerSingleton();
   }
 
   @Override

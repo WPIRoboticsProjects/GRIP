@@ -29,6 +29,7 @@ import edu.wpi.grip.core.operations.network.BooleanPublishable;
 import edu.wpi.grip.core.operations.network.MapNetworkPublisherFactory;
 import edu.wpi.grip.core.operations.network.NumberPublishable;
 import edu.wpi.grip.core.operations.network.Vector2D;
+import edu.wpi.grip.core.operations.network.http.HttpPublishOperation;
 import edu.wpi.grip.core.operations.network.networktables.NTPublishAnnotatedOperation;
 import edu.wpi.grip.core.operations.network.ros.JavaToMessageConverter;
 import edu.wpi.grip.core.operations.network.ros.ROSNetworkPublisherFactory;
@@ -62,11 +63,13 @@ public class Operations {
   @Inject
   Operations(EventBus eventBus,
              @Named("ntManager") MapNetworkPublisherFactory ntPublisherFactory,
+             @Named("httpManager") MapNetworkPublisherFactory httpPublishFactory,
              @Named("rosManager") ROSNetworkPublisherFactory rosPublishFactory,
              InputSocket.Factory isf,
              OutputSocket.Factory osf) {
     this.eventBus = checkNotNull(eventBus, "EventBus cannot be null");
     checkNotNull(ntPublisherFactory, "ntPublisherFactory cannot be null");
+    checkNotNull(httpPublishFactory, "httpPublisherFactory cannot be null");
     checkNotNull(rosPublishFactory, "rosPublishFactory cannot be null");
     this.operations = ImmutableList.of(
         // Composite operations
@@ -156,7 +159,27 @@ public class Operations {
                 JavaToMessageConverter.BLOBS)),
         new OperationMetaData(ROSPublishOperation.descriptionFor(LinesReport.class),
             () -> new ROSPublishOperation<>(isf, LinesReport.class, rosPublishFactory,
-                JavaToMessageConverter.LINES))
+                JavaToMessageConverter.LINES)),
+
+        // HTTP publishing operations
+        new OperationMetaData(HttpPublishOperation.descriptionFor(ContoursReport.class),
+            () -> new HttpPublishOperation<>(isf, ContoursReport.class, httpPublishFactory)),
+        new OperationMetaData(HttpPublishOperation.descriptionFor(LinesReport.class),
+            () -> new HttpPublishOperation<>(isf, LinesReport.class, httpPublishFactory)),
+        new OperationMetaData(HttpPublishOperation.descriptionFor(BlobsReport.class),
+            () -> new HttpPublishOperation<>(isf, BlobsReport.class, httpPublishFactory)),
+        new OperationMetaData(HttpPublishOperation.descriptionFor(Size.class),
+            () -> new HttpPublishOperation<>(isf, Size.class, Vector2D.class, Vector2D::new,
+                httpPublishFactory)),
+        new OperationMetaData(HttpPublishOperation.descriptionFor(Point.class),
+            () -> new HttpPublishOperation<>(isf, Point.class, Vector2D.class, Vector2D::new,
+                httpPublishFactory)),
+        new OperationMetaData(HttpPublishOperation.descriptionFor(Number.class),
+            () -> new HttpPublishOperation<>(isf, Number.class, NumberPublishable.class,
+                NumberPublishable::new, httpPublishFactory)),
+        new OperationMetaData(HttpPublishOperation.descriptionFor(Boolean.class),
+            () -> new HttpPublishOperation<>(isf, Boolean.class, BooleanPublishable.class,
+                BooleanPublishable::new, httpPublishFactory))
     );
   }
 

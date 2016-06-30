@@ -77,7 +77,7 @@ public class PipelineRunnerTest {
 
     @Test
     public void testRunEmptyPipelineSucceeds() {
-      PipelineRunner runner = new PipelineRunner(null, () -> ImmutableList.of(), () ->
+      PipelineRunner runner = new PipelineRunner(new EventBus(), () -> ImmutableList.of(), () ->
           ImmutableList.of());
       runner.addListener(failureListener, MoreExecutors.directExecutor());
       runner.startAsync().awaitRunning();
@@ -107,7 +107,7 @@ public class PipelineRunnerTest {
 
     @Test
     public void testStopPipelineEventStopsPipeline() throws TimeoutException {
-      PipelineRunner runner = new PipelineRunner(null, () -> ImmutableList.of(), () ->
+      PipelineRunner runner = new PipelineRunner(new EventBus(), () -> ImmutableList.of(), () ->
           ImmutableList.of());
       runner.addListener(failureListener, MoreExecutors.directExecutor());
       runner.startAsync().awaitRunning(3, TimeUnit.SECONDS);
