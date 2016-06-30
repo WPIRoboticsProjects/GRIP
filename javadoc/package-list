@@ -1,8 +1,11 @@
 edu.wpi.grip.core
 edu.wpi.grip.core.events
+edu.wpi.grip.core.exception
+edu.wpi.grip.core.http
 edu.wpi.grip.core.operations
 edu.wpi.grip.core.operations.composite
 edu.wpi.grip.core.operations.network
+edu.wpi.grip.core.operations.network.http
 edu.wpi.grip.core.operations.network.networktables
 edu.wpi.grip.core.operations.network.ros
 edu.wpi.grip.core.operations.opencv
