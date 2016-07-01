@@ -42,7 +42,7 @@ public class AddSourceViewTest {
       this.eventBus = new EventBus("Test Event Bus");
       this.mockCameraSourceFactory = new MockCameraSourceFactory(eventBus);
 
-      addSourceView = new AddSourceView(eventBus, null, null, mockCameraSourceFactory);
+      addSourceView = new AddSourceView(eventBus, null, null, mockCameraSourceFactory, null);
 
       final Scene scene = new Scene(addSourceView, 800, 600);
       stage.setScene(scene);
@@ -131,7 +131,7 @@ public class AddSourceViewTest {
       this.eventBus = new EventBus("Test Event Bus");
       this.mockCameraSourceFactory = new MockCameraSourceFactory(eventBus);
 
-      addSourceView = new AddSourceView(eventBus, null, null, mockCameraSourceFactory);
+      addSourceView = new AddSourceView(eventBus, null, null, mockCameraSourceFactory, null);
 
       final Scene scene = new Scene(addSourceView, 800, 600);
       stage.setScene(scene);

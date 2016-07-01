@@ -2,6 +2,8 @@ package edu.wpi.grip.core;
 
 import edu.wpi.grip.core.events.ExceptionClearedEvent;
 import edu.wpi.grip.core.events.ExceptionEvent;
+import edu.wpi.grip.core.http.GripServer;
+import edu.wpi.grip.core.http.HttpPipelineSwitcher;
 import edu.wpi.grip.core.operations.CVOperations;
 import edu.wpi.grip.core.operations.Operations;
 import edu.wpi.grip.core.operations.network.GripNetworkModule;
@@ -12,6 +14,7 @@ import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
+import com.google.inject.util.Modules;
 
 import java.io.File;
 import java.io.IOException;
@@ -37,30 +40,35 @@ public class Main {
   private CVOperations cvOperations;
   @Inject
   private Logger logger;
+  @Inject
+  private GripServer gripServer;
+  @Inject
+  private HttpPipelineSwitcher pipelineSwitcher;
 
   @SuppressWarnings({"PMD.SystemPrintln", "JavadocMethod"})
   public static void main(String[] args) throws IOException, InterruptedException {
-    final Injector injector = Guice.createInjector(new GripCoreModule(), new GripNetworkModule(),
-        new GripSourcesHardwareModule());
+    final Injector injector = Guice.createInjector(Modules.override(
+        new GripCoreModule(), new GripSourcesHardwareModule()).with(new GripNetworkModule()));
     injector.getInstance(Main.class).start(args);
   }
 
   @SuppressWarnings({"PMD.SystemPrintln", "JavadocMethod"})
   public void start(String[] args) throws IOException, InterruptedException {
-    if (args.length != 1) {
-      System.err.println("Usage: GRIP.jar project.grip");
-      return;
-    } else {
+    String projectPath = null;
+    if (args.length == 1) {
       logger.log(Level.INFO, "Loading file " + args[0]);
+      projectPath = args[0];
     }
 
     operations.addOperations();
     cvOperations.addOperations();
-
-    final String projectPath = args[0];
+    gripServer.addHandler(pipelineSwitcher);
+    gripServer.start();
 
     // Open a project from a .grip file specified on the command line
-    project.open(new File(projectPath));
+    if (projectPath != null) {
+      project.open(new File(projectPath));
+    }
 
     pipelineRunner.startAsync();
 
