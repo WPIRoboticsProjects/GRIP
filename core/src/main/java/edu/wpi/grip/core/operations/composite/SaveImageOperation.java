@@ -40,7 +40,7 @@ public class SaveImageOperation implements Operation {
   private final SocketHint<Mat> inputHint
       = SocketHints.Inputs.createMatSocketHint("Input", false);
   private final SocketHint<FileTypes> fileTypeHint
-      = SocketHints.createEnumSocketHint("File type", FileTypes.jpeg);
+      = SocketHints.createEnumSocketHint("File type", FileTypes.JPEG);
   private final SocketHint<Number> qualityHint
       = SocketHints.Inputs.createNumberSliderSocketHint("Quality", 90, 0, 100);
   private final SocketHint<Number> periodHint
@@ -65,7 +65,12 @@ public class SaveImageOperation implements Operation {
       = DateTimeFormatter.ofPattern("yyyy-MM-dd_HH-mm-ss-SSS");
 
   private enum FileTypes {
-    jpeg, png
+    JPEG, PNG;
+
+    @Override
+    public String toString() {
+      return super.toString().toLowerCase();
+    }
   }
 
   @SuppressWarnings("JavadocMethod")
