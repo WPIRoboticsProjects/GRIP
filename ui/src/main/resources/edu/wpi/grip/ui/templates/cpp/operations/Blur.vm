@@ -1,6 +1,6 @@
-		enum BlurType {
-			BOX, GAUSSIAN, MEDIAN, BILATERAL
-		};
+	enum BlurType {
+		BOX, GAUSSIAN, MEDIAN, BILATERAL
+	};
 	/**
 	 * Softens an image using one of several filters.
 	 *

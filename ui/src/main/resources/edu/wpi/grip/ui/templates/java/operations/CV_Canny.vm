@@ -8,6 +8,6 @@
 	 * @param edges output of the canny.
 	 */
 	private void $tMeth.name($step.name())(Mat image, double thres1, double thres2, double apertureSize,
-	boolean gradient, Mat edges){
+		boolean gradient, Mat edges){
 		Imgproc.Canny(image, edges, thres1, thres2, (int) apertureSize, gradient);
 	}

@@ -9,7 +9,8 @@
 	 * @param shift Number of decimal places in the points.
 	 * @param dst output image.
 	 */
-	void $tMeth.name($step.name())(Mat *src, Point *pt1, Point *pt2, Scalar *color, double *thickness, int *lineType, double *shift, Mat *dst){
+	void $tMeth.name($step.name())(Mat *src, Point *pt1, Point *pt2, Scalar *color,
+		double *thickness, int *lineType, double *shift, Mat *dst){
 		src->copyTo(*dst);
 		if(!color){
 			Scalar color(1.0,1.0,1.0);

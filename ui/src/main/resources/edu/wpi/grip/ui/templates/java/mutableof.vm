@@ -1,5 +1,5 @@
 /**
- * Enables modification of unmutable classes from within functions.
+ * Enables modification of immutable classes from within functions.
  * 
  * Syntax is MutableOf<T> varName = new MutableOf<T>(initValue).
  * Where varName is the name of the variable and initValue is of type T and contains initial value.

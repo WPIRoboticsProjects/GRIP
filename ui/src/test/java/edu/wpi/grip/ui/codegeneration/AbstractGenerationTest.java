@@ -25,7 +25,9 @@ import org.junit.Before;
 import org.junit.experimental.categories.Category;
 import org.opencv.core.Mat;
 
+import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
 
@@ -83,6 +85,14 @@ public abstract class AbstractGenerationTest {
   @AfterClass
   public static void tearDownClass() {
     PipelineCreator.cleanClasses();
+    File img = new File("img.png");
+    File testing = new File("testing.py");
+    try {
+      Files.deleteIfExists(img.toPath());
+      Files.deleteIfExists(testing.toPath());
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
   }
 
   protected ImageFileSource loadImage(ImageWithData img) {

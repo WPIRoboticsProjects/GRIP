@@ -10,6 +10,6 @@
 	 * @param dst Image that is output of Sobel.
 	 */
 	void $tMeth.name($step.name())(Mat *src, double *dx, double *dy, double *kSize, double *scale,
-	double *delta, int *borderType, Mat *dst){
+		double *delta, int *borderType, Mat *dst){
 		Sobel(*src, *dst, 0, (int) *dx, (int) *dy, (int) *kSize, *scale, *delta, *borderType);
 	}

@@ -73,16 +73,16 @@ public class PythonPipelineInterfacer implements PipelineInterfacer {
   @Override
   public void setSource(int num, Object value) {
     str.append("val = ");
-    Class name = value.getClass();
-    if (name.equals(Size.class)) {
+    Class type = value.getClass();
+    if (type.equals(Size.class)) {
       Size val = (Size) value;
       String size = "(" + val.width + "," + val.height + ")";
       str.append(size);
-    } else if (name.equals(Point.class)) {
+    } else if (type.equals(Point.class)) {
       Point val = (Point) value;
       String point = "(" + val.x + "," + val.y + ")";
       str.append(point);
-    } else if (name.equals(Boolean.class)) {
+    } else if (type.equals(Boolean.class)) {
       if ((Boolean) value) {
         str.append("True");
       } else {
@@ -163,8 +163,7 @@ public class PythonPipelineInterfacer implements PipelineInterfacer {
           objectOut = null;
           break;
       }
-      File img = new File("img.png");
-      Files.deleteIfExists(img.toPath());
+
     } catch (IOException e) {
       e.printStackTrace();
     }

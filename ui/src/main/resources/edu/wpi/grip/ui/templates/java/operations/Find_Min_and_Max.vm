@@ -7,8 +7,8 @@
 	 * @param minLoc the location of the minimum value.
 	 * @param maxLoc the location of the maximum value.
 	 */
-	private void $tMeth.name($step.name())(Mat src, Mat mask, #MutOf("Number") minVal, #MutOf("Number")
-	maxVal, Point minLoc, Point maxLoc){
+	private void $tMeth.name($step.name())(Mat src, Mat mask, #MutOf("Number") minVal,
+		#MutOf("Number") maxVal, Point minLoc, Point maxLoc){
 		MinMaxLocResult data = Core.minMaxLoc(src);
 		minVal.set(Double.valueOf(data.minVal));
 		maxVal.set(Double.valueOf(data.maxVal));

@@ -8,6 +8,6 @@
 	 * @param dst the output Mat
 	 */
 	void $tMeth.name($step.name())(Mat *src1, double *alpha, Mat *src2, double *beta, double *gamma,
-	Mat *dst){
+		Mat *dst){
 		addWeighted(*src1, *alpha, *src2, *beta, *gamma, *dst);
 	}

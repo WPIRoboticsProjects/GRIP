@@ -19,7 +19,7 @@
                 continue
             if (len(contour) < minVertexCount or len(contour) > maxVertexCount):
                 continue
-            ratio = (float)(w) / (float)(h)
+            ratio = (float)(w) / h
             if (ratio < minRatio or ratio > maxRatio):
                 continue
             output.append(contour)

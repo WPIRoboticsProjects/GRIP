@@ -39,9 +39,9 @@ public class PipelineCreator {
 
   private static Class load(String fileName) {
     try {
-      if (fileName.contains(".py")) {
+      if (fileName.endsWith(".py")) {
         return Class.forName(fileName.replace(".py", ""));
-      } else {
+      } else if (fileName.endsWith(".java")) {
         return Class.forName(fileName.replace(".java", ""));
       }
     } catch (ClassNotFoundException e) {

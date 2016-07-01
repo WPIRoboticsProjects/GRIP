@@ -38,7 +38,7 @@ public abstract class TemplateMethods {
       case CPP:
         return new CppTMethods();
       default:
-        throw new IllegalArgumentException(lang.toString()
+        throw new IllegalArgumentException(lang
             + " is not a supported language for code generation.");
     }
   }
