@@ -3,8 +3,9 @@ package edu.wpi.grip.core.http;
 import org.eclipse.jetty.util.log.Logger;
 
 /**
- * Logger implementation that ignores all logging calls.
+ * Jetty logger implementation that ignores all logging calls.
  */
+@SuppressWarnings("PMD.UncommentedEmptyMethodBody")
 public class NoLogger implements Logger {
 
   @Override
