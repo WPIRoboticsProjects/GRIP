@@ -38,15 +38,9 @@ public class GripServerTest {
 
   public static class TestServerFactory implements GripServer.JettyServerFactory {
 
-    private int port;
-
-    public int getPort() {
-      return port;
-    }
-
     @Override
     public Server create(int port) {
-      this.port = 0;
+      org.eclipse.jetty.util.log.Log.setLog(new NoLogger());
       return new Server(0); // 0 -> some random open port, we don't care which
     }
 
