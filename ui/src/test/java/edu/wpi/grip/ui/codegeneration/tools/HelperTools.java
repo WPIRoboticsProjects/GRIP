@@ -32,7 +32,9 @@ public class HelperTools {
    * @return the average difference.
    */
   public static double matAvgDiff(Mat mat1, Mat mat2) {
-    assertTrue("Mat size is not equal", mat1.cols() == mat2.cols() && mat1.rows() == mat2.rows());
+    assertTrue("Mat size is not equal. gencols: " + mat1.cols() + " gripcols: " + mat2.cols()
+        + " genrows: " + mat1.rows() + " griprows: " + mat2.rows(), mat1
+        .cols() == mat2.cols() && mat1.rows() == mat2.rows());
     assertTrue("Mats have different number of channels", mat1.channels() == mat2.channels());
     assertTrue("Mats have different Types. Mat1 is type: " + mat1.type() + " Mat 2 is type: "
         + mat2.type(), mat1.type() == mat2.type());

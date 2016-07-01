@@ -18,7 +18,6 @@ import java.net.URISyntaxException;
 
 import javax.inject.Inject;
 
-
 import static org.junit.Assert.fail;
 
 public class PipelineGenerator {
@@ -56,7 +55,10 @@ public class PipelineGenerator {
   }
 
   public void export(String fileName) {
-    exporter.export(pipeline, Language.JAVA, codeDir.toPath().resolve(fileName).toFile(), false);
+    exporter.export(pipeline, Language.JAVA, codeDir.toPath().resolve(fileName + ".java").toFile(),
+        false);
+    exporter.export(pipeline, Language.PYTHON, codeDir.toPath().resolve(fileName + ".py").toFile(),
+        false);
   }
 
 }

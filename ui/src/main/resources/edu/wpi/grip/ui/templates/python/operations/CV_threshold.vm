@@ -1,4 +1,4 @@
     @staticmethod
     def $tMeth.name($step.name())(src, thresh, maxVal, type):
         'Apply a fixed-level threshold to each array element in an image'
-        return cv2.threshold(src, thresh, maxVal, type)
+        return cv2.threshold(src, thresh, maxVal, type)[1]

@@ -1,4 +1,4 @@
     @staticmethod
     def $tMeth.name($step.name())(src1, src2):
         'Calculates the absolute difference between two Mats'
-        cv2.absdiff(src1,src2)
+        return cv2.absdiff(src1,src2)

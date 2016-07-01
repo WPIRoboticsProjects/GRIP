@@ -1,5 +1,5 @@
     @staticmethod
-    def pipelineValve(boolsw, onTrue):
+    def __valve(boolsw, onTrue):
         'return a value if a value is true or None if it is false'
         if(boolsw):
             return onTrue

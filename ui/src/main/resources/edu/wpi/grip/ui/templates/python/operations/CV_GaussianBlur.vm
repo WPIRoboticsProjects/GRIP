@@ -3,4 +3,5 @@
         'Performs a Gaussian blur on the image'
         if (kSize == None):
             kSize = (1, 1)
-        return cv2.GaussianBlur(src, kSize, sigmaX=sigmaX, sigmaY=sigmaY, borderType=borderType)
+        kSize_int = ((int)(kSize[0]),(int)(kSize[1]))
+        return cv2.GaussianBlur(src, kSize_int, sigmaX=sigmaX, sigmaY=sigmaY, borderType=(int)(borderType))

@@ -44,7 +44,7 @@ This creates the java OpenCV Filter Contours function
 			final double solid = 100 * area / Imgproc.contourArea(mopHull);
 			if (solid < solidity[0] || solid > solidity[1]) continue;
 			if (contour.rows() < minVertexCount || contour.rows() > maxVertexCount)	continue;
-			final double ratio = bb.width / bb.height;
+			final double ratio = (double)bb.width / (double)bb.height;
 			if (ratio < minRatio || ratio > maxRatio)	continue;
 			output.add(contour);
 		}

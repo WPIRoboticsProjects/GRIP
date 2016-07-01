@@ -1,4 +1,4 @@
     @staticmethod
-	def $tMeth.name($step.name())(src1, src2):
+    def $tMeth.name($step.name())(src1, src2):
         'Performs a per element max'
-		return cv2.max(src1, src2)
+        return cv2.max(src1, src2)

@@ -1,4 +1,4 @@
     @staticmethod
-	def $tMeth.name($step.name())(src1, src2):
-		'Calculates the sum of two Mats'
-		return cv2.add(src1,src2)
+    def $tMeth.name($step.name())(src1, src2):
+        'Calculates the sum of two Mats'
+        return cv2.add(src1,src2)

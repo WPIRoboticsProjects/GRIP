@@ -1,4 +1,4 @@
     @staticmethod
-	def $tMeth.name($step.name())(src1, src2):
+    def $tMeth.name($step.name())(src1, src2):
         'Performs a per element min'
-		return cv2.min(src1, src2)
+        return cv2.min(src1, src2)

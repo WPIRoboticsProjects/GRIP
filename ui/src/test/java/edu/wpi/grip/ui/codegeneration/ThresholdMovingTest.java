@@ -114,8 +114,15 @@ public class ThresholdMovingTest extends AbstractGenerationTest {
     runner.runPipeline();
     pip.process();
     for (int idx = 0; idx < threshs.length; idx++) {
+      boolean value = threshs[idx].toggle();
+      pip.setSwitch(3 * idx + 1, value);
+    }
+    runner.runPipeline();
+    pip.process();
+    for (int idx = 0; idx < threshs.length; idx++) {
       Mat genMat = (Mat) pip.getOutput(3 * idx + 2, GenType.IMAGE);
       Mat gripMat = threshs[idx].getOutput();
+      //HelperTools.displayMats(genMat, gripMat);
       assertMatWithin(genMat, gripMat, 5.0);
     }
   }

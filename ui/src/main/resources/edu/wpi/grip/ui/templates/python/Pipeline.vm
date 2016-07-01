@@ -36,7 +36,7 @@ class $fileName:
 #set($boolNum = $velocityCount - 1)
 #if($step.name() == "Switch" || $step.name() == "Valve")
 #set($boolInp = $step.getInput(0))
-#set($boolName = "$boolInp.name()S")
+#set($boolName = "$boolInp.name()s")
 #if($boolInp.hasValue())
     def set$step.name()${boolNum}(self, value):
         'This method is a generated setter for the condition of $step.name() $boolNum'
