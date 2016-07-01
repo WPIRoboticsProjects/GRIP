@@ -2,6 +2,7 @@ package edu.wpi.grip.ui.pipeline.source;
 
 import edu.wpi.grip.core.Source;
 import edu.wpi.grip.core.sources.CameraSource;
+import edu.wpi.grip.core.sources.HttpSource;
 import edu.wpi.grip.core.sources.MultiImageFileSource;
 
 import com.google.inject.Inject;
@@ -16,6 +17,8 @@ public class SourceControllerFactory {
   private CameraSourceController.Factory cameraControllerFactory;
   @Inject
   private MultiImageFileSourceController.Factory multiImageFileSourceControllerFactory;
+  @Inject
+  private HttpSourceController.Factory httpSourceControllerFactory;
   @Inject
   private SourceController.BaseSourceControllerFactory<Source> baseSourceControllerFactory;
 
@@ -36,6 +39,9 @@ public class SourceControllerFactory {
     } else if (source instanceof MultiImageFileSource) {
       sourceController = (SourceController<S>) multiImageFileSourceControllerFactory.create(
           (MultiImageFileSource) source);
+    } else if (source instanceof HttpSource) {
+      sourceController = (SourceController<S>) httpSourceControllerFactory.create(
+          (HttpSource) source);
     } else {
       sourceController = (SourceController<S>) baseSourceControllerFactory.create(source);
     }

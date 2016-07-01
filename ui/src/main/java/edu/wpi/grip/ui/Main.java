@@ -4,6 +4,8 @@ import edu.wpi.grip.core.GripCoreModule;
 import edu.wpi.grip.core.GripFileModule;
 import edu.wpi.grip.core.PipelineRunner;
 import edu.wpi.grip.core.events.UnexpectedThrowableEvent;
+import edu.wpi.grip.core.http.GripServer;
+import edu.wpi.grip.core.http.HttpPipelineSwitcher;
 import edu.wpi.grip.core.operations.CVOperations;
 import edu.wpi.grip.core.operations.Operations;
 import edu.wpi.grip.core.operations.network.GripNetworkModule;
@@ -54,6 +56,8 @@ public class Main extends Application {
   @Inject private Operations operations;
   @Inject private CVOperations cvOperations;
   @Inject private Logger logger;
+  @Inject private GripServer server;
+  @Inject private HttpPipelineSwitcher pipelineSwitcher;
   private Parent root;
 
   public static void main(String[] args) {
@@ -68,15 +72,16 @@ public class Main extends Application {
     if (parameters.contains("--headless")) {
       // If --headless was specified on the command line, run in headless mode (only use the core
       // module)
-      injector = Guice.createInjector(new GripCoreModule(), new GripFileModule(),
-              new GripNetworkModule(), new GripSourcesHardwareModule());
+      injector = Guice.createInjector(Modules.override(new GripCoreModule(), new GripFileModule(),
+          new GripSourcesHardwareModule()).with(new GripNetworkModule()));
       injector.injectMembers(this);
 
       parameters.remove("--headless");
     } else {
       // Otherwise, run with both the core and UI modules, and show the JavaFX stage
       injector = Guice.createInjector(Modules.override(new GripCoreModule(), new GripFileModule(),
-              new GripNetworkModule(), new GripSourcesHardwareModule()).with(new GripUiModule()));
+          new GripSourcesHardwareModule()).with(new GripNetworkModule(), new GripUiModule()));
+
       injector.injectMembers(this);
 
       System.setProperty("prism.lcdtext", "false");
@@ -99,6 +104,8 @@ public class Main extends Application {
 
     operations.addOperations();
     cvOperations.addOperations();
+    server.addHandler(pipelineSwitcher);
+    server.start();
 
     // If there was a file specified on the command line, open it immediately
     if (!parameters.isEmpty()) {

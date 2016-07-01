@@ -3,6 +3,8 @@ package edu.wpi.grip.core;
 
 import edu.wpi.grip.core.events.RenderEvent;
 import edu.wpi.grip.core.events.RunPipelineEvent;
+import edu.wpi.grip.core.events.RunStartedEvent;
+import edu.wpi.grip.core.events.RunStoppedEvent;
 import edu.wpi.grip.core.events.StopPipelineEvent;
 import edu.wpi.grip.core.util.SinglePermitSemaphore;
 import edu.wpi.grip.core.util.service.AutoRestartingService;
@@ -27,6 +29,8 @@ import java.util.logging.Logger;
 
 import javax.annotation.Nullable;
 import javax.inject.Inject;
+
+import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * Runs the pipeline in a separate thread. The runner listens for {@link RunPipelineEvent
@@ -68,6 +72,7 @@ public class PipelineRunner implements RestartableService {
             }
 
             pipelineFlag.acquire();
+            eventBus.post(new RunStartedEvent());
 
             if (!super.isRunning()) {
               return;
@@ -77,6 +82,7 @@ public class PipelineRunner implements RestartableService {
             if (super.isRunning()) {
               eventBus.post(new RenderEvent());
             }
+            eventBus.post(new RunStoppedEvent());
           }
 
           @Override
@@ -196,6 +202,7 @@ public class PipelineRunner implements RestartableService {
   @Subscribe
   @AllowConcurrentEvents
   public void onRunPipeline(RunPipelineEvent event) {
+    checkNotNull(event);
     if (event.pipelineShouldRun()) {
       pipelineFlag.release();
     }

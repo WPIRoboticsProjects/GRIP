@@ -20,19 +20,23 @@ import java.util.Optional;
 public class OperationsFactory {
 
   public static Operations create(EventBus eventBus) {
-
-    return create(eventBus, MockMapNetworkPublisher::new, MockROSMessagePublisher::new,
-        new MockFileManager(), new MockInputSocketFactory(eventBus),
+    return create(eventBus,
+        MockMapNetworkPublisher::new,
+        MockMapNetworkPublisher::new,
+        MockROSMessagePublisher::new,
+        new MockFileManager(),
+        new MockInputSocketFactory(eventBus),
         new MockOutputSocketFactory(eventBus));
   }
 
   public static Operations create(EventBus eventBus,
                                   MapNetworkPublisherFactory mapFactory,
+                                  MapNetworkPublisherFactory httpFactory,
                                   ROSNetworkPublisherFactory rosFactory,
                                   FileManager fileManager,
                                   InputSocket.Factory isf,
                                   OutputSocket.Factory osf) {
-    return new Operations(eventBus, mapFactory, rosFactory, fileManager, isf, osf);
+    return new Operations(eventBus, mapFactory, httpFactory, rosFactory, fileManager, isf, osf);
   }
 
   public static CVOperations createCV(EventBus eventBus) {
