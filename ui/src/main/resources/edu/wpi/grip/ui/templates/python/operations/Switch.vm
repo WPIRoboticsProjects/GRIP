@@ -1,5 +1,5 @@
     @staticmethod
-    def pipelineSwitch(boolsw, onTrue, onFalse):
+    def __switch(boolsw, onTrue, onFalse):
         'Selects an output from two inputs based on a boolean'
         if(boolsw):
             return onTrue

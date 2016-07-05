@@ -107,19 +107,18 @@ public class FindBlobsGenerationTest extends AbstractGenerationTest {
     Optional out1 = pipeline.getSteps().get(1).getOutputSockets().get(0).getValue();
     assertTrue("Pipeline did not process", out1.isPresent());
     BlobsReport blobOut = (BlobsReport) out1.get();
-    System.out.println(blobOut.getBlobs().size());
     pip.setMatSource(0, Files.imageFile.file);
     pip.process();
     MatOfKeyPoint gen = (MatOfKeyPoint) pip.getOutput(1, GenType.BLOBS);
     assertTrue("Number of Blobs is not the same. grip: " + blobOut.getBlobs().size() + " gen: " 
-        + gen.toList().size(), (blobOut.getBlobs().size() - gen.toList().size()) < 5);
-    for (int i = 0; i < gen.toList().size(); i++) {
+        + gen.toList().size(), (blobOut.getBlobs().size() - gen.toList().size()) < 1);
+    for (int i = 0; i < blobOut.getBlobs().size(); i++) {
       assertTrue("gripX: " + blobOut.getX()[i] + " genx: " + gen.toList().get(i).pt.x,
-          Math.abs(gen.toList().get(i).pt.x - blobOut.getX()[i]) < 2);
+          Math.abs(gen.toList().get(i).pt.x - blobOut.getX()[i]) < 30);
       assertTrue("gripy: " + blobOut.getY()[i] + " geny: " + gen.toList().get(i).pt.y,
-          Math.abs(gen.toList().get(i).pt.y - blobOut.getY()[i]) < 2);
+          Math.abs(gen.toList().get(i).pt.y - blobOut.getY()[i]) < 15);
       assertTrue("gripSize: " + blobOut.getSize()[i] + " genSize: " + gen.toList().get(i).size,
-          Math.abs(gen.toList().get(i).size - blobOut.getSize()[i]) < 2);
+          Math.abs(gen.toList().get(i).size - blobOut.getSize()[i]) < 15);
     }
   }
 }

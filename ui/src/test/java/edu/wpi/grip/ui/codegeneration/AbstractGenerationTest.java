@@ -7,9 +7,11 @@ import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.core.sources.ImageFileSource;
 import edu.wpi.grip.ui.codegeneration.tools.HelperTools;
+import edu.wpi.grip.ui.codegeneration.tools.JavaPipelineInterfacer;
 import edu.wpi.grip.ui.codegeneration.tools.PipelineCreator;
 import edu.wpi.grip.ui.codegeneration.tools.PipelineGenerator;
-import edu.wpi.grip.ui.codegeneration.tools.JavaPipelineInterfacer;
+import edu.wpi.grip.ui.codegeneration.tools.PipelineInterfacer;
+import edu.wpi.grip.ui.codegeneration.tools.PythonPipelineInterfacer;
 import edu.wpi.grip.util.GripCoreTestModule;
 import edu.wpi.grip.util.ImageWithData;
 
@@ -23,7 +25,9 @@ import org.junit.Before;
 import org.junit.experimental.categories.Category;
 import org.opencv.core.Mat;
 
+import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
 
@@ -59,13 +63,15 @@ public abstract class AbstractGenerationTest {
     injector.injectMembers(gen);
   }
 
-  protected final void test(BooleanSupplier setup, Consumer<JavaPipelineInterfacer> test, String
+  protected final void test(BooleanSupplier setup, Consumer<PipelineInterfacer> test, String
       testName) {
     assertTrue("Setup for " + testName + " reported an issue.", setup.getAsBoolean());
-    String fileName = testName + ".java";
+    String fileName = testName;
     gen.export(fileName);
-    JavaPipelineInterfacer pip = new JavaPipelineInterfacer(fileName);
-    test.accept(pip);
+    JavaPipelineInterfacer jpip = new JavaPipelineInterfacer(fileName + ".java");
+    test.accept(jpip);
+    PythonPipelineInterfacer ppip = new PythonPipelineInterfacer(fileName);
+    test.accept(ppip);
   }
 
   @After
@@ -79,6 +85,14 @@ public abstract class AbstractGenerationTest {
   @AfterClass
   public static void tearDownClass() {
     PipelineCreator.cleanClasses();
+    File img = new File("img.png");
+    File testing = new File("testing.py");
+    try {
+      Files.deleteIfExists(img.toPath());
+      Files.deleteIfExists(testing.toPath());
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
   }
 
   protected ImageFileSource loadImage(ImageWithData img) {

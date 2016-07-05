@@ -7,7 +7,6 @@
 	 * @param b The maximum value.
 	 * @param output The image in which to store the output.
 	 */
-	void $tMeth.name($step.name())(Mat *input, int *type, double *a, double *b, Mat
-	*output){
+	void $tMeth.name($step.name())(Mat *input, int *type, double *a, double *b, Mat *output){
 	   normalize(*input, *output, *a, *b, *type);
 	}

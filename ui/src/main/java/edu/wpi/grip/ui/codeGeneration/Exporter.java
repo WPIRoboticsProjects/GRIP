@@ -60,7 +60,7 @@ public class Exporter {
       String error = e.getMessage();
       String missingOperation = error.substring(error.lastIndexOf("/") + 1, error.lastIndexOf("."));
       throw new UnsupportedOperationException("The operation " + missingOperation 
-        + " is not supported for export to " + lang.toString());
+        + " is not supported for export to " + lang);
     }
   }
 
@@ -74,8 +74,8 @@ public class Exporter {
    * @param context     The velocity context including the java files that will be used by the
    *                    templates.
    */
-  private void generateCode(VelocityEngine ve, String templateDir, File file, VelocityContext
-      context) {
+  private void generateCode(VelocityEngine ve, String templateDir, File file,
+                            VelocityContext context) {
     Template tm = ve.getTemplate(templateDir + PIPELINE_TEMPLATE);
     StringWriter sw = new StringWriter();
     tm.merge(context, sw);

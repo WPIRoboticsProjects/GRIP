@@ -82,6 +82,8 @@ public class DistanceTransformGenerationTest extends AbstractGenerationTest {
     (HelperTools.bytedecoMatToCVMat((org.bytedeco.javacpp.opencv_core.Mat) out.get()))
         .convertTo(gripMat, CvType.CV_32F); //distance transform outputs a 1 channel 32F Mat but
     // grip outputs a 1 channel 8U Mat
+    //HelperTools.displayMats(genMat, gripMat);
+    gripMat.convertTo(genMat, gripMat.type());
     assertMatWithin(genMat, gripMat, 10.0);
   }
 

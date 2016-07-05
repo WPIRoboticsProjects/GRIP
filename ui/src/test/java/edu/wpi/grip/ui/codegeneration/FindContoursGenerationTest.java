@@ -14,6 +14,7 @@ import edu.wpi.grip.ui.codegeneration.tools.HelperTools;
 import edu.wpi.grip.ui.codegeneration.tools.PipelineInterfacer;
 import edu.wpi.grip.util.Files;
 
+import org.bytedeco.javacpp.opencv_core;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.opencv.core.Mat;
@@ -108,10 +109,10 @@ public class FindContoursGenerationTest extends AbstractGenerationTest {
     //exporter.export(pipeline, Language.JAVA,new File() , false);
     pip.setMatSource(0, Files.imageFile.file);
     pip.process();
-    Mat genMat = (Mat) pip.getOutput(0, GenType.IMAGE);
+    Mat genMat = new Mat(conOut.getRows(), conOut.getCols(),
+        opencv_core.CV_8UC3, new Scalar(0, 0, 0));
     List<MatOfPoint> gen = (List<MatOfPoint>) pip.getOutput(1, GenType.CONTOURS);
 
-    Imgproc.cvtColor(genMat, genMat, Imgproc.COLOR_GRAY2BGR);
     Imgproc.drawContours(genMat, gen, -1, new Scalar(255, 255, 255));
 
     Mat gripMat = HelperTools.bytedecoMatToCVMat(matOut);

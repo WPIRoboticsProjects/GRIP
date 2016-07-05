@@ -39,7 +39,8 @@ public class JavaPipelineInterfacer implements PipelineInterfacer {
   }
 
   /* (non-Javadoc)
-   * @see edu.wpi.grip.ui.codegeneration.tools.PipelineInterfacer#setSourceAsObject(int, java.lang.Object)
+   * @see edu.wpi.grip.ui.codegeneration.tools.PipelineInterfacer#setSourceAsObject(int, java
+   * .lang.Object)
    */
   @Override
   public void setSourceAsObject(int num, Object value) {
