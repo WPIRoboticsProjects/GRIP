@@ -332,10 +332,18 @@ project(":ui") {
         }
     }
 
-    task testSharedLib(type:Exec) {
+    task testSharedLib() {
         description 'Compiles the shared library used by c++ generation testing.'
-        workingDir 'bin/edu/wpi/grip/ui/codegeneration/tools/'
-        commandLine 'cmake' , '../../../../../../../src/test/resources/edu/wpi/grip/ui/codegeneration/tools/'
+        doLast {
+        exec {
+        workingDir 'build/classes/test'
+        commandLine 'cmake' , '../../../src/test/resources/edu/wpi/grip/ui/codegeneration/tools/'
+        }
+        exec {
+        workingDir 'build/classes/test'
+        commandLine 'make'
+        }
+        }
     }
 
     if(project.hasProperty('generation') || project.hasProperty('genonly')){
@@ -345,7 +353,7 @@ project(":ui") {
             dependsOn 'testSharedLib'
             classpath += files(cvJarLocation)
             jvmArgs += ["-cp" , "$cvJarLocation"]
-            jvmArgs += "-Djava.library.path=$cvNativeLibraryLocation"
+            jvmArgs += "-Djava.library.path=$cvNativeLibraryLocation:build/classes/test"
             if(project.hasProperty('genonly')){
                 useJUnit {
                     includeCategories 'edu.wpi.grip.ui.codegeneration.GenerationTest'

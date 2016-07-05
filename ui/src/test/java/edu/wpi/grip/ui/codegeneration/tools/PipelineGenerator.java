@@ -59,6 +59,8 @@ public class PipelineGenerator {
         false);
     exporter.export(pipeline, Language.PYTHON, codeDir.toPath().resolve(fileName + ".py").toFile(),
         false);
+    exporter.export(pipeline, Language.CPP, codeDir.toPath().resolve(fileName + ".cpp").toFile(),
+        false);
   }
 
 }

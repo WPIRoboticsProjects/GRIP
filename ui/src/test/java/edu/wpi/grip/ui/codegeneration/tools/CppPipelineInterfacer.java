@@ -1,9 +1,14 @@
 package edu.wpi.grip.ui.codegeneration.tools;
 
 import java.io.File;
+import java.io.IOException;
 import java.lang.UnsupportedOperationException;
+import java.net.URISyntaxException;
 
 import org.opencv.core.Mat;
+
+import static org.junit.Assert.fail;
+import static org.junit.Assert.assertEquals;
 
 public class CppPipelineInterfacer implements PipelineInterfacer {
   
@@ -12,6 +17,19 @@ public class CppPipelineInterfacer implements PipelineInterfacer {
   }
   
   public CppPipelineInterfacer(String libName){
+    try {
+      File cpLoc = new File(CppPipelineInterfacer.class.getResource("tools/realpipe/CMakeLists.txt").toURI()).getParentFile();
+      String libBase = PipelineGenerator.codeDir.getAbsolutePath() + File.pathSeparator + libName;
+      Process copy = new ProcessBuilder("cp", libBase + ".cpp", libBase + ".h" , ".").directory(cpLoc).start();
+      assertEquals("Failed to copy files" + libName, 0, copy.exitValue());
+      Process cmake = new ProcessBuilder("cmake", "-D"+libName).directory(cpLoc).start();
+      assertEquals("Failed to cmake" + libName, 0, copy.exitValue());
+      Process make = new ProcessBuilder("make").directory(cpLoc).start();
+      assertEquals("Failed to compile " + libName, 0, make.exitValue());
+    } catch (IOException | URISyntaxException e) {
+      e.printStackTrace();
+      fail("Could not compile " + libName + " due to :" + e.getMessage());
+    }
     init(libName);
   }
   
