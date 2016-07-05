@@ -10,11 +10,10 @@ import edu.wpi.grip.core.util.Icon;
 
 import com.google.common.collect.ImmutableList;
 
-import java.nio.ByteBuffer;
-import java.util.HashMap;
+import org.bytedeco.javacpp.opencv_core;
+
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.function.Function;
 
 import static org.bytedeco.javacpp.opencv_core.CV_32SC1;
 import static org.bytedeco.javacpp.opencv_core.CV_8UC1;
@@ -25,7 +24,6 @@ import static org.bytedeco.javacpp.opencv_core.MatVector;
 import static org.bytedeco.javacpp.opencv_core.Point;
 import static org.bytedeco.javacpp.opencv_core.Point2f;
 import static org.bytedeco.javacpp.opencv_core.Scalar;
-import static org.bytedeco.javacpp.opencv_core.bitwise_xor;
 import static org.bytedeco.javacpp.opencv_imgproc.CV_CHAIN_APPROX_TC89_KCOS;
 import static org.bytedeco.javacpp.opencv_imgproc.CV_FILLED;
 import static org.bytedeco.javacpp.opencv_imgproc.CV_RETR_EXTERNAL;
@@ -124,52 +122,19 @@ public class WatershedOperation implements Operation {
       watershed(input, markers);
       markers.convertTo(output, CV_8UC1);
 
-      // Create a new mat for each feature
-      final ByteBuffer buffer = output.createBuffer();
-      final Map<Byte, Mat> segments = new HashMap<>(); // Map segment number to its image
-      final Map<Byte, ByteBuffer> buffers = new HashMap<>(); // avoid creating tons of buffers
-      final int rows = output.rows();
-      final int cols = output.cols();
-      // Don't replace these functions with lambdas
-      final Function<Byte, Mat> newMat = k -> {
-        Mat segment = new Mat(rows, cols, CV_8UC1);
-        bitwise_xor(segment, segment, segment);
-        return segment;
-      };
-      final Function<Byte, ByteBuffer> newBuf = k -> segments.get(k).createBuffer();
-      for (int i = 0; i < rows * cols; i++) {
-        byte val = buffer.get(i);
-        if (val == 0 || val == -1) {
-          // Background (0) or border (-1)
-          continue;
-        }
-        segments.computeIfAbsent(val, newMat);
-        buffers.computeIfAbsent(val, newBuf).put(i, Byte.MAX_VALUE);
+      List<Mat> contourList = new ArrayList<>();
+      for (int i = 1; i < contours.size(); i++) {
+        Mat dst = new Mat();
+        output.copyTo(dst, opencv_core.equals(markers, i).asMat());
+        MatVector contour = new MatVector(); // vector with a single element
+        findContours(dst, contour, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_TC89_KCOS);
+        assert contour.size() == 1;
+        contourList.add(contour.get(0).clone());
+        contour.get(0).deallocate();
+        contour.deallocate();
       }
-
-      // Should have one segmented image per contour
-      if (segments.size() != contours.size()) {
-        throw new IllegalStateException(
-            segments.size() + " != " + contours.size() + ". Are the contours nested?");
-      }
-
-      // Find the contours of the segmented features
-      MatVector segmentContours = new MatVector(segments.size());
-      segments.forEach((which, image) -> {
-        int index = which & 0xFF; // convert signed byte to unsigned
-        if (index < 1 || index > segmentContours.size()) {
-          throw new IndexOutOfBoundsException(
-              index + " < 1 or " + index + " > " + segmentContours.size());
-        }
-        // This vector is guaranteed to contain exactly one contour
-        MatVector theseContours = new MatVector();
-        findContours(image, theseContours, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_TC89_KCOS);
-        Mat contour = theseContours.get(0);
-        segmentContours.put(index - 1, contour);
-        image.release();
-      });
-
-      outputSocket.setValue(new ContoursReport(segmentContours, rows, cols));
+      MatVector foundContours = new MatVector(contourList.toArray(new Mat[contourList.size()]));
+      outputSocket.setValue(new ContoursReport(foundContours, output.rows(), output.cols()));
     } finally {
       // make sure that the working mat is freed to avoid a memory leak
       markers.release();
