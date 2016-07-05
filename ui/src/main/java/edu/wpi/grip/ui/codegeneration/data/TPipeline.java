@@ -98,7 +98,7 @@ public class TPipeline {
    * @return The generated TInput.
    */
   protected TInput createInput(String type, String name, String value) {
-    if (value.contains("Optional.empty") || value.contains("Connection")) {
+    if (value.contains("source") || value.contains("Connection")) {
       if (uniqueSources.containsKey(value) && value.contains("Connection")) {
         value = "source" + uniqueSources.get(value);
       } else {

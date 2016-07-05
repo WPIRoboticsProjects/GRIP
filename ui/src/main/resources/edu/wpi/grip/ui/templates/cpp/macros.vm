@@ -1,6 +1,6 @@
 #macro(cType $type)#if($type.equals("Double") || $type.equals("Number"))
 double#elseif($type.equals("Object"))
-Mat#elseif ($type.equals("ContoursReport"))
+void#elseif ($type.equals("ContoursReport"))
 vector<vector<Point> >#elseif ($type.equals("BlobsReport"))
 vector<KeyPoint>#elseif ($type.equals("LinesReport"))
 vector<Line>#elseif($type == "Integer" )

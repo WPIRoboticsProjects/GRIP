@@ -332,10 +332,17 @@ project(":ui") {
         }
     }
 
+    task testSharedLib(type:Exec) {
+        description 'Compiles the shared library used by c++ generation testing.'
+        workingDir 'bin/edu/wpi/grip/ui/codegeneration/tools/'
+        commandLine 'cmake' , '../../../../../../../src/test/resources/edu/wpi/grip/ui/codegeneration/tools/'
+    }
+
     if(project.hasProperty('generation') || project.hasProperty('genonly')){
         def cvNativeLibraryLocation = System.getenv('OPEN_CV_LIB')
         def cvJarLocation = System.getenv('OPEN_CV_JAR')
         test {
+            dependsOn 'testSharedLib'
             classpath += files(cvJarLocation)
             jvmArgs += ["-cp" , "$cvJarLocation"]
             jvmArgs += "-Djava.library.path=$cvNativeLibraryLocation"

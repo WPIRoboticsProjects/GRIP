@@ -9,7 +9,7 @@ $fileName::$fileName() {
 #set($boolInp = $step.getInput(0))
 #set($boolName = "$boolInp.name()S")
 #if($boolInp.hasValue())
-		this->$boolName$boolNum = true;
+	this->$boolName$boolNum = true;
 #end
 #end
 #end
@@ -19,7 +19,32 @@ $fileName::$fileName() {
 #end
 #end
 #foreach($moving in $pipeline.getMovingThresholds())
-		this->lastImageS$moving.num() = new Mat();
+	this->lastImageS$moving.num() = new Mat();
+#end
+#if(!$loadLib)
+#foreach($source in $pipeline.getSources())
+#set($num = $velocityCount - 1)
+#if($source.type().equalsIgnoreCase("Mat"))
+	matSources.insert(make_pair($num, (AbsPipeline::MatSource)&$fileName::set$source.value()));
+#end
+#end
+#set($outCnt = 0)
+#foreach($step in $pipeline.getSteps())
+#foreach($out in $step.getOutputs())
+	outputs.insert(make_pair($outCnt, (AbsPipeline::Output)&$fileName::get${out.name()}));
+#set($outCnt = $outCnt + 1)
+#end
+#end
+#foreach($step in $pipeline.getSteps())
+#set($boolNum = $velocityCount - 1)
+#if($step.name() == "Switch" || $step.name() == "Valve")
+#set($boolInp = $step.getInput(0))
+#set($boolName = "$boolInp.name()S")
+#if($boolInp.hasValue())
+	conditions.insert(make_pair($boolNum, (AbsPipeline::Condition)&$fileName::set$step.name()$boolNum));
+#end
+#end
+#end
 #end
 }
 
@@ -38,7 +63,11 @@ void $fileName::Process(){
  * @param source the $source.type() to set
  */
 void $fileName::set${source.value()}(#cType(${source.type()}) *${source.value()}){
+#if($source.type().equals("Mat"))
+	$source.value()->copyTo(*this->${source.value()});
+#else
 	this->$source.value() = ${source.value()};
+#end
 }
 #end
 #foreach($step in $pipeline.getSteps())
@@ -67,4 +96,9 @@ void Pipeline::set$step.name()${boolNum}(bool value){
 	return this->${output.name()};
 }
 #end
+#end
+#if(!$loadLib)
+extern "C" AbsPipeline * makePipeline(){
+    return new ${fileName}();
+}
 #end

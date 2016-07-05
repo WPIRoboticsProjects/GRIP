@@ -1,5 +1,8 @@
 #set($lines = false)
 #pragma once
+#if(!$loadLib)
+\#include "AbsPipeline.h"
+#end
 \#include <opencv2/objdetect/objdetect.hpp>
 \#include <opencv2/highgui/highgui.hpp>
 \#include <opencv2/imgproc/imgproc.hpp>
@@ -8,9 +11,9 @@
 \#include <iostream>
 \#include <stdio.h>
 \#include <stdlib.h>
+\#include <map>
 using namespace cv;
 using namespace std;
-using namespace cv;
 
 #foreach($step in $pipeline.getUniqueSteps())
 #if($step.name().equals("Find_Lines") || $step.name().equals("Filter_Lines"))
@@ -18,7 +21,7 @@ using namespace cv;
 
 #end
 #end
-class $fileName{
+class $fileName #if(!$loadLib): public AbsPipeline #end{
 	private:
 #foreach( $source in $pipeline.getSources())
 		#cType($source.type()) *$source.value();
@@ -51,6 +54,7 @@ class $fileName{
 	public:
 		$fileName();
 		void Process();
+	
 #foreach($source in $pipeline.getSources())
 		void #setter($source);
 #end
@@ -71,3 +75,6 @@ class $fileName{
 #end
 };
 
+#if(!$loadLib)
+extern "C" AbsPipeline * makePipeline();
+#end

@@ -26,6 +26,7 @@ public abstract class TemplateMethods {
 
   /**
    * gets a TemplateMethod of the desired language.
+   * 
    * @param lang the desired language that will be exported
    * @return The template method of the correct language.
    */
@@ -38,26 +39,37 @@ public abstract class TemplateMethods {
       case CPP:
         return new CppTMethods();
       default:
-        throw new IllegalArgumentException(lang.toString()
-            + " is not a supported language for code generation.");
+        throw new IllegalArgumentException(
+            lang.toString() + " is not a supported language for code generation.");
     }
   }
 
   /**
    * takes a socket and returns the value.
+   * 
    * @param socket the socket to be parsed
-   * @return the value of the socket or "null" if there is no value
+   * @return the value of the socket or "null"+socket.getValue().toString() if there is no value
    */
   public static String parseSocketValue(Socket socket) {
-    if (socket.getValue().isPresent() && !socket.getValue().get().toString()
-        .contains("bytedeco") &&  !socket.getValue().get().toString().contains("Infinity")) {
-      return socket.getValue().get().toString();
+    if (socket.getValue().isPresent()) {
+      if(socket.getValue().get().toString().contains("Contours") || socket.getValue().get()
+        .toString().contains("Blob") || socket.getValue().get().toString().contains("Lines")){
+        return "source";
+      }
+      if (!(socket.getValue().get().toString().contains("bytedeco")
+          || socket.getValue().get().toString().contains("Infinity"))) {
+        return socket.getValue().get().toString();
+      }
+    }
+    else {
+      return "source";
     }
     return "null";
   }
 
   /**
    * Takes a socket and returns the Name.
+   * 
    * @param socket the socket to be parsed
    * @return the name in Lower camel case.
    */
@@ -75,8 +87,8 @@ public abstract class TemplateMethods {
   public static String parseSocketType(Socket socket) {
     String type = socket.getSocketHint().getType().getSimpleName();
     if (socket.getSocketHint().getView().equals(SocketHint.View.SELECT)) {
-      if (BorderTypesEnum.class.equals(socket.getSocketHint().getType()) || CmpTypesEnum.class
-          .equals(socket.getSocketHint().getType())) {
+      if (BorderTypesEnum.class.equals(socket.getSocketHint().getType())
+          || CmpTypesEnum.class.equals(socket.getSocketHint().getType())) {
         type += "CoreEnum";
       }
     }

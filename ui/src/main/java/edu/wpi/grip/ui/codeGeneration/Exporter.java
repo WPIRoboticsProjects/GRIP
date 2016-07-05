@@ -101,7 +101,7 @@ public class Exporter {
     StringWriter sw = new StringWriter();
     tm.merge(context, sw);
     try (PrintWriter writer = new PrintWriter(file.getParentFile().getAbsolutePath() 
-        + PIPELINE_HNAME, "UTF-8")) {
+      + File.separator  + file.getName().replace(".cpp", ".h"), "UTF-8")) {
       writer.println(sw);
     } catch (UnsupportedEncodingException | FileNotFoundException e) {
       e.printStackTrace();
