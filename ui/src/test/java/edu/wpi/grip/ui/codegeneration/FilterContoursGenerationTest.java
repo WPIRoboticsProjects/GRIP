@@ -94,7 +94,7 @@ public class FilterContoursGenerationTest extends AbstractGenerationTest {
       generatePipeline("Min Area", new Double(50));
       return true;
     },
-        (pip) -> testPipeline(pip), "FilterContoursArea");
+        (pip) -> testPipeline(pip), "FilterContoursAreaTest");
   }
 
   @Test
@@ -103,7 +103,7 @@ public class FilterContoursGenerationTest extends AbstractGenerationTest {
       generatePipeline("Min Width", new Double(50));
       return true;
     },
-        (pip) -> testPipeline(pip), "FilterContoursMinWidth");
+        (pip) -> testPipeline(pip), "FilterContoursMinWidthTest");
   }
 
   @Test
@@ -112,7 +112,7 @@ public class FilterContoursGenerationTest extends AbstractGenerationTest {
       generatePipeline("Max Height", new Double(50));
       return true;
     },
-        (pip) -> testPipeline(pip), "FilterContoursMaxHeight");
+        (pip) -> testPipeline(pip), "FilterContoursMaxHeightTest");
   }
 
   @Test
@@ -121,7 +121,7 @@ public class FilterContoursGenerationTest extends AbstractGenerationTest {
       generatePipeline("Solidity", Arrays.asList(1.0, 50.0));
       return true;
     },
-        (pip) -> testPipeline(pip), "FilterContoursSolidity");
+        (pip) -> testPipeline(pip), "FilterContoursSolidityTest");
   }
 
   @Test
@@ -130,7 +130,7 @@ public class FilterContoursGenerationTest extends AbstractGenerationTest {
       generatePipeline("Min Vertices", new Double(10));
       return true;
     },
-        (pip) -> testPipeline(pip), "FilterContoursMinVertices");
+        (pip) -> testPipeline(pip), "FilterContoursMinVerticesTest");
   }
 
   @Ignore("Grip ratio rounds before it should. Generated code is more correct")
@@ -140,7 +140,7 @@ public class FilterContoursGenerationTest extends AbstractGenerationTest {
       generatePipeline("Min Ratio", new Double(0.1));
       return true;
     },
-        (pip) -> testPipeline(pip), "FilterContoursMaxRatio");
+        (pip) -> testPipeline(pip), "FilterContoursMaxRatioTest");
   }
 
   void testPipeline(PipelineInterfacer pip) {

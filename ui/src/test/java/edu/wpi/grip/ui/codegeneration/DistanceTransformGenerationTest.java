@@ -66,7 +66,7 @@ public class DistanceTransformGenerationTest extends AbstractGenerationTest {
     distType = params[num][0];
     maskSize = params[num][1];
     test(() -> init(), (pip) -> validate(pip),
-        ("DistTrans" + distType + maskSize).replace(" ", "").replace("_", ""));
+        ("DistTrans" + distType + maskSize + "Test").replace(" ", "").replace("_", ""));
   }
 
   void validate(PipelineInterfacer pip) {

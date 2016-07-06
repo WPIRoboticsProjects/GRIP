@@ -46,7 +46,7 @@ public class CVBitwiseAnd extends AbstractGenerationTest {
   
   @Test
   public void cvBitwiseAndTest() {
-    test(() -> setup(), (pip) -> validate(pip), "CvBitwiseAnd");
+    test(() -> setup(), (pip) -> validate(pip), "CvBitwiseAndTest");
   }
   
   void validate(PipelineInterfacer pip) {

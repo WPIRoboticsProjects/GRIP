@@ -88,7 +88,7 @@ public class WatershedGenerationTest extends AbstractGenerationTest {
     test(() -> {
       generatePipeline();
       return true;
-    }, (pip) -> testPipeline(pip), "Watershed");
+    }, (pip) -> testPipeline(pip), "WatershedTest");
   }
 
   void testPipeline(PipelineInterfacer pip) {

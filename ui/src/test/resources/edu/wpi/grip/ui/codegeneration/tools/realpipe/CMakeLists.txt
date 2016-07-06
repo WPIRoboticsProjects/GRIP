@@ -2,8 +2,8 @@ cmake_minimum_required(VERSION 3.5.2)
 set(LINK_OPTIONS -O2)
 set(CMAKE_LDFLAGS "${CMAKE_LDFLAGS} -L. -L/usr/local/lib ")
 set(NAME "Pipeline" CACHE STRING "The file to compile")
-include_directories(${CMAKE_SOURCE_DIR}/../pipe/)
-LINK_DIRECTORIES(${CMAKE_SOURCE_DIR}/../pipe)
+include_directories(${CMAKE_SOURCE_DIR}/pipelib/pipe/)
+LINK_DIRECTORIES(${CMAKE_SOURCE_DIR}/pipelib/pipe)
 set ( CXX_SRCS
     ${CMAKE_SOURCE_DIR}/${NAME}
     )

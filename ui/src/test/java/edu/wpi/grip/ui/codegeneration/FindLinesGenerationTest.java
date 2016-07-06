@@ -72,7 +72,7 @@ public class FindLinesGenerationTest extends AbstractGenerationTest {
     test(() -> {
       generatePipeline();
       return true;
-    }, (pip) -> testPipeline(pip), "FindLines");
+    }, (pip) -> testPipeline(pip), "FindLinesTest");
   }
 
 

@@ -20,6 +20,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertFalse;
 
 public class HelperTools {
 
@@ -32,6 +33,8 @@ public class HelperTools {
    * @return the average difference.
    */
   public static double matAvgDiff(Mat mat1, Mat mat2) {
+    assertFalse("genMat is empty", mat1.empty());
+    assertFalse("gripMat is empty", mat2.empty());
     assertTrue("Mat size is not equal. gencols: " + mat1.cols() + " gripcols: " + mat2.cols()
         + " genrows: " + mat1.rows() + " griprows: " + mat2.rows(), mat1
         .cols() == mat2.cols() && mat1.rows() == mat2.rows());

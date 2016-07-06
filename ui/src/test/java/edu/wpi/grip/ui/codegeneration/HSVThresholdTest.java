@@ -25,7 +25,7 @@ public class HSVThresholdTest extends AbstractGenerationTest {
     test(() -> {
       setup();
       return true;
-    }, (pip) -> validate(pip), "HSVThreshold");
+    }, (pip) -> validate(pip), "HSVThresholdTest");
   }
 
   void validate(PipelineInterfacer pip) {

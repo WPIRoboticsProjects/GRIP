@@ -48,7 +48,7 @@ public class ResizeTest extends AbstractGenerationTest {
     test(() -> {
       setup("None");
       return true;
-    }, (pip) -> testPipeline(pip), "ResizeNearest");
+    }, (pip) -> testPipeline(pip), "ResizeNearestTest");
   }
 
   @Test
@@ -56,7 +56,7 @@ public class ResizeTest extends AbstractGenerationTest {
     test(() -> {
       setup("Linear");
       return true;
-    }, (pip) -> testPipeline(pip), "ResizeLinear");
+    }, (pip) -> testPipeline(pip), "ResizeLinearTest");
   }
 
   @Test
@@ -64,7 +64,7 @@ public class ResizeTest extends AbstractGenerationTest {
     test(() -> {
       setup("Cubic");
       return true;
-    }, (pip) -> testPipeline(pip), "ResizeCubic");
+    }, (pip) -> testPipeline(pip), "ResizeCubicTest");
   }
 
   @Test
@@ -72,7 +72,7 @@ public class ResizeTest extends AbstractGenerationTest {
     test(() -> {
       setup("Lanczos");
       return true;
-    }, (pip) -> testPipeline(pip), "ResizeLanczos");
+    }, (pip) -> testPipeline(pip), "ResizeLanczosTest");
   }
 
   @Test
@@ -80,7 +80,7 @@ public class ResizeTest extends AbstractGenerationTest {
     test(() -> {
       setup("Area");
       return true;
-    }, (pip) -> testPipeline(pip), "ResizeArea");
+    }, (pip) -> testPipeline(pip), "ResizeAreaTest");
   }
 
   void testPipeline(PipelineInterfacer pip) {

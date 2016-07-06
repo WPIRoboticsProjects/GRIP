@@ -41,7 +41,7 @@ public class SwitchTest extends AbstractGenerationTest {
     Boolean initVal = new Boolean(true);
     test(() -> setup(onTrue, onFalse, initVal),
         (pip) -> validate(pip, onTrue, onFalse, initVal),
-        "SwitchNumTrue");
+        "SwitchNumTrueTest");
   }
 
   @Test
@@ -51,7 +51,7 @@ public class SwitchTest extends AbstractGenerationTest {
     Boolean initVal = new Boolean(false);
     test(() -> setup(onTrue, onFalse, initVal),
         (pip) -> validate(pip, onTrue, onFalse, initVal),
-        "SwitchNumFalse");
+        "SwitchNumFalseTest");
   }
 
   void validate(PipelineInterfacer pip, Object onTrue, Object onFalse, Boolean initVal) {

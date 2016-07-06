@@ -34,7 +34,7 @@ public class NewSizeGenerationTest extends AbstractGenerationTest {
     test(() -> {
       generatePipeline(3, 5);
       return true;
-    }, (pip) -> testPipeline(pip), "newSize");
+    }, (pip) -> testPipeline(pip), "newSizeTest");
   }
 
   void testPipeline(PipelineInterfacer pip) {

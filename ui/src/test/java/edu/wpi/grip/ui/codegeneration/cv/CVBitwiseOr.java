@@ -46,7 +46,7 @@ public class CVBitwiseOr extends AbstractGenerationTest {
   
   @Test
   public void cvBitwiseOrTest() {
-    test(() -> setup(), (pip) -> validate(pip), "CvBitwiseOr");
+    test(() -> setup(), (pip) -> validate(pip), "CvBitwiseOrTest");
   }
   
   void validate(PipelineInterfacer pip) {

@@ -48,32 +48,32 @@ public class CVCompare extends AbstractGenerationTest {
   
   @Test
   public void cvCompareEqTest() {
-    test(() -> setup(CmpTypesEnum.CMP_EQ), (pip) -> validate(pip), "CvCmpEq");
+    test(() -> setup(CmpTypesEnum.CMP_EQ), (pip) -> validate(pip), "CvCmpEqTest");
   }
   
   @Test
   public void cvCompareGtTest() {
-    test(() -> setup(CmpTypesEnum.CMP_GT), (pip) -> validate(pip), "CvCmpGt");
+    test(() -> setup(CmpTypesEnum.CMP_GT), (pip) -> validate(pip), "CvCmpGtTest");
   }
   
   @Test
   public void cvCompareGeTest() {
-    test(() -> setup(CmpTypesEnum.CMP_GE), (pip) -> validate(pip), "CvCmpGe");
+    test(() -> setup(CmpTypesEnum.CMP_GE), (pip) -> validate(pip), "CvCmpGeTest");
   }
   
   @Test
   public void cvCompareLtTest() {
-    test(() -> setup(CmpTypesEnum.CMP_LT), (pip) -> validate(pip), "CvCmpLt");
+    test(() -> setup(CmpTypesEnum.CMP_LT), (pip) -> validate(pip), "CvCmpLtTest");
   }
   
   @Test
   public void cvCompareLeTest() {
-    test(() -> setup(CmpTypesEnum.CMP_LE), (pip) -> validate(pip), "CvCmpLe");
+    test(() -> setup(CmpTypesEnum.CMP_LE), (pip) -> validate(pip), "CvCmpLeTest");
   }
   
   @Test
   public void cvCompareNeTest() {
-    test(() -> setup(CmpTypesEnum.CMP_NE), (pip) -> validate(pip), "CvCmpNe");
+    test(() -> setup(CmpTypesEnum.CMP_NE), (pip) -> validate(pip), "CvCmpNeTest");
   }
   
   void validate(PipelineInterfacer pip) {

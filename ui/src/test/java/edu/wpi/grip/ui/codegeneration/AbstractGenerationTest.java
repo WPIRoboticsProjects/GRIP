@@ -6,6 +6,7 @@ import edu.wpi.grip.core.operations.OperationsUtil;
 import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.core.sources.ImageFileSource;
+import edu.wpi.grip.ui.codegeneration.tools.CppPipelineInterfacer;
 import edu.wpi.grip.ui.codegeneration.tools.HelperTools;
 import edu.wpi.grip.ui.codegeneration.tools.JavaPipelineInterfacer;
 import edu.wpi.grip.ui.codegeneration.tools.PipelineCreator;
@@ -72,6 +73,8 @@ public abstract class AbstractGenerationTest {
     test.accept(jpip);
     PythonPipelineInterfacer ppip = new PythonPipelineInterfacer(fileName);
     test.accept(ppip);
+    CppPipelineInterfacer cpip = new CppPipelineInterfacer(fileName);
+    test.accept(cpip);
   }
 
   @After

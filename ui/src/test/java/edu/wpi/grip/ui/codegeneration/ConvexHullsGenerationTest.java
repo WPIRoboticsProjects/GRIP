@@ -89,7 +89,7 @@ public class ConvexHullsGenerationTest extends AbstractGenerationTest {
     test(() -> {
       generatePipeline();
       return true;
-    }, (pip) -> testPipeline(pip), "ConvexHulls");
+    }, (pip) -> testPipeline(pip), "ConvexHullsTest");
   }
 
   void testPipeline(PipelineInterfacer pip) {

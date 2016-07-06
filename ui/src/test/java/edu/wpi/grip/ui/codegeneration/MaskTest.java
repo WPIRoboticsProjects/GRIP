@@ -42,7 +42,7 @@ public class MaskTest extends AbstractGenerationTest {
     test(() -> {
       setup();
       return true;
-    }, (pip) -> validate(pip), "MaskGripIcon");
+    }, (pip) -> validate(pip), "MaskGripIconTest");
   }
 
   void validate(PipelineInterfacer pip) {

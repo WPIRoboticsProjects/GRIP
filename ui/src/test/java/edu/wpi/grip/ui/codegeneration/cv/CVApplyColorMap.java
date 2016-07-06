@@ -33,67 +33,67 @@ public class CVApplyColorMap extends AbstractGenerationTest {
 
   @Test
   public void testAutumn() {
-    testHelp(ColormapTypesEnum.COLORMAP_AUTUMN, "Autumn");
+    testHelp(ColormapTypesEnum.COLORMAP_AUTUMN, "AutumnTest");
   }
   
   @Test
   public void testBone() {
-    testHelp(ColormapTypesEnum.COLORMAP_BONE, "Bone");
+    testHelp(ColormapTypesEnum.COLORMAP_BONE, "BoneTest");
   }
   
   @Test
   public void testJet() {
-    testHelp(ColormapTypesEnum.COLORMAP_JET, "Jet");
+    testHelp(ColormapTypesEnum.COLORMAP_JET, "JetTest");
   }
   
   @Test
   public void testWinter() {
-    testHelp(ColormapTypesEnum.COLORMAP_WINTER, "Winter");
+    testHelp(ColormapTypesEnum.COLORMAP_WINTER, "WinterTest");
   }
   
   @Test
   public void testRainbow() {
-    testHelp(ColormapTypesEnum.COLORMAP_RAINBOW, "Rainbow");
+    testHelp(ColormapTypesEnum.COLORMAP_RAINBOW, "RainbowTest");
   }
   
   @Test
   public void testOcean() {
-    testHelp(ColormapTypesEnum.COLORMAP_OCEAN, "Ocean");
+    testHelp(ColormapTypesEnum.COLORMAP_OCEAN, "OceanTest");
   }
   
   @Test
   public void testSummer() {
-    testHelp(ColormapTypesEnum.COLORMAP_SUMMER, "Summer");
+    testHelp(ColormapTypesEnum.COLORMAP_SUMMER, "SummerTest");
   }
   
   @Test
   public void testSpring() {
-    testHelp(ColormapTypesEnum.COLORMAP_SPRING, "Spring");
+    testHelp(ColormapTypesEnum.COLORMAP_SPRING, "SpringTest");
   }
   
   @Test
   public void testCool() {
-    testHelp(ColormapTypesEnum.COLORMAP_COOL, "Cool");
+    testHelp(ColormapTypesEnum.COLORMAP_COOL, "CoolTest");
   }
   
   @Test
   public void testHSV() {
-    testHelp(ColormapTypesEnum.COLORMAP_HSV, "HSV");
+    testHelp(ColormapTypesEnum.COLORMAP_HSV, "HSVTest");
   }
   
   @Test
   public void testPink() {
-    testHelp(ColormapTypesEnum.COLORMAP_PINK, "Pink");
+    testHelp(ColormapTypesEnum.COLORMAP_PINK, "PinkTest");
   }
   
   @Test
   public void testHot() {
-    testHelp(ColormapTypesEnum.COLORMAP_HOT, "Hot");
+    testHelp(ColormapTypesEnum.COLORMAP_HOT, "HotTest");
   }
   
   @Test
   public void testParula() {
-    testHelp(ColormapTypesEnum.COLORMAP_PARULA, "Parula");
+    testHelp(ColormapTypesEnum.COLORMAP_PARULA, "ParulaTest");
   }
   
   void testHelp(ColormapTypesEnum map, String testName) {

@@ -91,7 +91,7 @@ public class FilterLinesGenerationTest extends AbstractGenerationTest {
       generatePipeline();
       return true;
     },
-        (pip) -> testPipeline(pip), "FilterLines");
+        (pip) -> testPipeline(pip), "FilterLinesTest");
   }
 
 

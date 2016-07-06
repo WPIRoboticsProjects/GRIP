@@ -8,3 +8,5 @@ map<int, AbsPipeline::Output> AbsPipeline::getOutputs(){
 map<int, AbsPipeline::Condition> AbsPipeline::getConditions(){
     return this->conditions;
 }
+AbsPipeline::~AbsPipeline(){}
+

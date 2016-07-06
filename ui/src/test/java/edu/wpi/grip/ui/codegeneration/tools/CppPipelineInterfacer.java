@@ -2,35 +2,39 @@ package edu.wpi.grip.ui.codegeneration.tools;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.lang.UnsupportedOperationException;
 import java.net.URISyntaxException;
+import java.net.URL;
 
 import org.opencv.core.Mat;
+import org.opencv.imgcodecs.Imgcodecs;
 
 import static org.junit.Assert.fail;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 
 public class CppPipelineInterfacer implements PipelineInterfacer {
-  
+  private static File codeDir;
   static{
     System.loadLibrary("genJNI");
+    codeDir = PipelineGenerator.codeDir.getAbsoluteFile();
   }
   
   public CppPipelineInterfacer(String libName){
     try {
-      File cpLoc = new File(CppPipelineInterfacer.class.getResource("tools/realpipe/CMakeLists.txt").toURI()).getParentFile();
-      String libBase = PipelineGenerator.codeDir.getAbsolutePath() + File.pathSeparator + libName;
-      Process copy = new ProcessBuilder("cp", libBase + ".cpp", libBase + ".h" , ".").directory(cpLoc).start();
-      assertEquals("Failed to copy files" + libName, 0, copy.exitValue());
-      Process cmake = new ProcessBuilder("cmake", "-D"+libName).directory(cpLoc).start();
-      assertEquals("Failed to cmake" + libName, 0, copy.exitValue());
-      Process make = new ProcessBuilder("make").directory(cpLoc).start();
-      assertEquals("Failed to compile " + libName, 0, make.exitValue());
-    } catch (IOException | URISyntaxException e) {
+      String libBase = codeDir.getAbsolutePath() + File.separator + libName;
+      Process cmake = new ProcessBuilder("cmake","CMakeLists.txt" ,"-DNAME="+libName).directory(codeDir).start();
+      String error = runProcess(cmake);
+      assertEquals("Failed to cmake " + libName + error, 0, cmake.exitValue());
+      Process make = new ProcessBuilder("make").directory(codeDir).start();
+      error = runProcess(make);
+      assertEquals("Failed to compile " + libName + error, 0, make.exitValue());
+    } catch (IOException e) {
       e.printStackTrace();
       fail("Could not compile " + libName + " due to :" + e.getMessage());
     }
-    init(libName);
+    init(codeDir.getAbsolutePath()+"/lib" + libName + ".dylib");
   }
   
   @Override
@@ -63,7 +67,7 @@ public class CppPipelineInterfacer implements PipelineInterfacer {
       case CONTOURS:
         break;
       case IMAGE:
-        return getMatFile(num);
+        return getMat(num);
       case LINES:
         break;
       case LIST:
@@ -78,7 +82,7 @@ public class CppPipelineInterfacer implements PipelineInterfacer {
         break;
       
     }
-    return null;
+    throw new UnsupportedOperationException("C++ does not yet support getOutput with type: " + type);
   }
 
   @Override
@@ -90,6 +94,32 @@ public class CppPipelineInterfacer implements PipelineInterfacer {
   public void setValve(int num, boolean value) {
     setCondition(num, value);
   }
+
+  private String runProcess(Process proc) throws IOException{
+    waitOn(proc);
+    InputStream err = proc.getErrorStream();
+    StringBuilder builder = new StringBuilder();
+    builder.append(" with error ");
+    while(err.available()>0){
+      builder.append((char)err.read());
+    }
+    return builder.toString();
+  }
+  
+  private void waitOn(Process proc){
+    try {
+      proc.waitFor();
+    } catch (InterruptedException e) {
+      e.printStackTrace();
+    }
+  }
+  
+  private Mat getMat(int num){
+    String matPath = codeDir.toPath().resolve(getMatFile(num)).toFile().getAbsolutePath();
+    System.out.println(matPath);
+    return Imgcodecs.imread(matPath, -1);
+  }
+  
   private native String getMatFile(int num);
   private native double getDouble(int num);
   private native boolean getBoolean(int num);

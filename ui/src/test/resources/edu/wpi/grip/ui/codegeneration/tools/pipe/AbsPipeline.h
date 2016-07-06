@@ -22,7 +22,7 @@ public:
     map<int, Output> getOutputs();
     map<int, Condition> getConditions();
     void* libHandle;
-    virtual ~AbsPipeline() = 0;
+    virtual ~AbsPipeline();
 protected:
     map<int, MatSource> matSources;
     map<int, Output> outputs;

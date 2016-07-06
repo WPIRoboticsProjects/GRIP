@@ -49,7 +49,7 @@ public class BlurGenerationTest extends AbstractGenerationTest {
     test(() -> {
       generatePipeline("Box Blur");
       return true;
-    }, (pip) -> testPipeline(pip), "BoxBlur");
+    }, (pip) -> testPipeline(pip), "BoxBlurTest");
   }
 
   @Test
@@ -57,7 +57,7 @@ public class BlurGenerationTest extends AbstractGenerationTest {
     test(() -> {
       generatePipeline("Gaussian Blur");
       return true;
-    }, (pip) -> testPipeline(pip), "GaussianBlur"
+    }, (pip) -> testPipeline(pip), "GaussianBlurTest"
     );
   }
 
@@ -66,7 +66,7 @@ public class BlurGenerationTest extends AbstractGenerationTest {
     test(() -> {
       generatePipeline("Median Filter");
       return true;
-    }, (pip) -> testPipeline(pip), "MedianFilter");
+    }, (pip) -> testPipeline(pip), "MedianFilterTest");
   }
 
   @Test
@@ -74,7 +74,7 @@ public class BlurGenerationTest extends AbstractGenerationTest {
     test(() -> {
       generatePipeline("Bilateral Filter");
       return true;
-    }, (pip) -> testPipeline(pip), "BilateralFilter");
+    }, (pip) -> testPipeline(pip), "BilateralFilterTest");
   }
 
   void testPipeline(PipelineInterfacer pip) {

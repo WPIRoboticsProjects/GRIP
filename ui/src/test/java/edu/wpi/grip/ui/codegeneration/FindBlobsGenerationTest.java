@@ -79,7 +79,7 @@ public class FindBlobsGenerationTest extends AbstractGenerationTest {
       generatePipeline(false, 0, Arrays.asList(0.0, 1.0));
       return true;
     },
-        (pip) -> testPipeline(pip), "FindBlobs");
+        (pip) -> testPipeline(pip), "FindBlobsTest");
   }
 
   @Test
@@ -88,7 +88,7 @@ public class FindBlobsGenerationTest extends AbstractGenerationTest {
       generatePipeline(true, 0, Arrays.asList(0.0, 1.0));
       return true;
     },
-        (pip) -> testPipeline(pip), "FindBlackBlobs");
+        (pip) -> testPipeline(pip), "FindBlackBlobsTest");
   }
 
   @Test
@@ -97,7 +97,7 @@ public class FindBlobsGenerationTest extends AbstractGenerationTest {
       generatePipeline(false, 9, Arrays.asList(0.0, 0.9));
       return true;
     },
-        (pip) -> testPipeline(pip), "FindSomeBlobs");
+        (pip) -> testPipeline(pip), "FindSomeBlobsTest");
   }
 
 

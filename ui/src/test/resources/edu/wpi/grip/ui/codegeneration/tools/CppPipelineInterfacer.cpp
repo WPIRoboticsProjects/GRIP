@@ -28,7 +28,7 @@ JNIEXPORT jstring JNICALL Java_edu_wpi_grip_ui_codegeneration_tools_CppPipelineI
   (JNIEnv *env, jobject obj, jint outNum){
       AbsPipeline *inst = getHandle<AbsPipeline>(env, obj);
       Mat * output = (Mat *) (inst->*(inst->getOutputs()[(int) outNum]))();
-      std::string fileName = "mat" + std::to_string((int)outNum)+".png";
+      std::string fileName = "build/classes/test/mat" + std::to_string((int)outNum)+".png";
       imwrite(fileName, *output);
       return env->NewStringUTF(fileName.c_str());
   }

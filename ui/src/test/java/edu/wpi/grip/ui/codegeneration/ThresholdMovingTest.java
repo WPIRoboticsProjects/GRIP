@@ -80,7 +80,7 @@ public class ThresholdMovingTest extends AbstractGenerationTest {
     test(() -> {
       threshs = setupThreshold(num);
       return threshs.length == num;
-    }, (pip) -> validate(pip, threshs), "ThreshMovingOne");
+    }, (pip) -> validate(pip, threshs), "ThreshMovingOneTest");
   }
 
   @Test
@@ -89,7 +89,7 @@ public class ThresholdMovingTest extends AbstractGenerationTest {
     test(() -> {
       threshs = setupThreshold(num);
       return threshs.length == num;
-    }, (pip) -> validate(pip, threshs), "ThreshMovingTwo");
+    }, (pip) -> validate(pip, threshs), "ThreshMovingTwoTest");
   }
 
   @Test
@@ -98,7 +98,7 @@ public class ThresholdMovingTest extends AbstractGenerationTest {
     test(() -> {
       threshs = setupThreshold(num);
       return threshs.length == num;
-    }, (pip) -> validate(pip, threshs), "ThreshMovingThree");
+    }, (pip) -> validate(pip, threshs), "ThreshMovingThreeTest");
   }
 
   void validate(PipelineInterfacer pip, ThresholdSwitch[] threshs) {

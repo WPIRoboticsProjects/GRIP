@@ -39,7 +39,7 @@ public class DesaturateGenerationTest extends AbstractGenerationTest {
     test(() -> {
       generatePipeline();
       return true;
-    }, (pip) -> testPipeline(pip), "Desat");
+    }, (pip) -> testPipeline(pip), "DesatTest");
   }
 
   void testPipeline(PipelineInterfacer pip) {

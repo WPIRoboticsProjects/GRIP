@@ -34,7 +34,7 @@ public class NewPointGenerationTest extends AbstractGenerationTest {
     test(() -> {
       generatePipeline(3, 5);
       return true;
-    }, (pip) -> testPipeline(pip), "newPoint");
+    }, (pip) -> testPipeline(pip), "newPointTest");
   }
 
   void testPipeline(PipelineInterfacer pip) {

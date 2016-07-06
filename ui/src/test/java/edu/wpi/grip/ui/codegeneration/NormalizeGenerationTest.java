@@ -48,7 +48,7 @@ public class NormalizeGenerationTest extends AbstractGenerationTest {
     test(() -> {
       generatePipeline("NORM_INF", 100, 200);
       return true;
-    }, (pip) -> testPipeline(pip), "NORM_INF");
+    }, (pip) -> testPipeline(pip), "NORM_INFTest");
   }
 
   @Test
@@ -56,7 +56,7 @@ public class NormalizeGenerationTest extends AbstractGenerationTest {
     test(() -> {
       generatePipeline("NORM_L1", 5000000, 5000000);
       return true;
-    }, (pip) -> testPipeline(pip), "NORM_L1");
+    }, (pip) -> testPipeline(pip), "NORM_L1Test");
   }
 
   @Test
@@ -64,7 +64,7 @@ public class NormalizeGenerationTest extends AbstractGenerationTest {
     test(() -> {
       generatePipeline("NORM_L2", 500000, 500000);
       return true;
-    }, (pip) -> testPipeline(pip), "NORM_L2");
+    }, (pip) -> testPipeline(pip), "NORM_L2Test");
   }
 
   @Test
@@ -72,7 +72,7 @@ public class NormalizeGenerationTest extends AbstractGenerationTest {
     test(() -> {
       generatePipeline("NORM_MINMAX", 100, 200);
       return true;
-    }, (pip) -> testPipeline(pip), "NORM_MINMAX");
+    }, (pip) -> testPipeline(pip), "NORM_MINMAXTest");
   }
 
   void testPipeline(PipelineInterfacer pip) {

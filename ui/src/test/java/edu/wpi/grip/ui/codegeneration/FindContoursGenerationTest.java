@@ -82,7 +82,7 @@ public class FindContoursGenerationTest extends AbstractGenerationTest {
     test(() -> {
       generatePipeline(false);
       return true;
-    }, (pip) -> testPipeline(pip), "FindContours");
+    }, (pip) -> testPipeline(pip), "FindContoursTest");
   }
 
   @Test
@@ -90,7 +90,7 @@ public class FindContoursGenerationTest extends AbstractGenerationTest {
     test(() -> {
       generatePipeline(true);
       return true;
-    }, (pip) -> testPipeline(pip), "FindExternalContours");
+    }, (pip) -> testPipeline(pip), "FindExternalContoursTest");
   }
 
 

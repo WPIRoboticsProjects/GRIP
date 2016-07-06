@@ -46,7 +46,7 @@ public class CVBitwiseXor extends AbstractGenerationTest {
   
   @Test
   public void cvBitwiseXorTest() {
-    test(() -> setup(), (pip) -> validate(pip), "CvBitwiseXor");
+    test(() -> setup(), (pip) -> validate(pip), "CvBitwiseXorTest");
   }
   
   void validate(PipelineInterfacer pip) {
