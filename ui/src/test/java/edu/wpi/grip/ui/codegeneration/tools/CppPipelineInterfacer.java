@@ -115,7 +115,8 @@ public class CppPipelineInterfacer implements PipelineInterfacer {
   }
   
   private Mat getMat(int num){
-    String matPath = codeDir.toPath().resolve(getMatFile(num)).toFile().getAbsolutePath();
+    String fileName = new File(getMatFile(num)).getName();
+    String matPath = codeDir.toPath().resolve(fileName).toFile().getAbsolutePath();
     System.out.println(matPath);
     return Imgcodecs.imread(matPath, -1);
   }

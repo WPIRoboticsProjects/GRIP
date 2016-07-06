@@ -7,7 +7,7 @@
 	 * @param output The image in which to store the output.
 	 */
 	void $tMeth.name($step.name())(Mat *input,bool *externalOnly, vector<vector<Point> > *contours){
-		Mat hierarchy;
+		vector<Vec4i> hierarchy;
 		int mode;
 		if(*externalOnly){
 			mode = RETR_EXTERNAL;

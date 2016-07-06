@@ -24,6 +24,7 @@ import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.experimental.categories.Category;
+import org.opencv.core.Core;
 import org.opencv.core.Mat;
 
 import java.io.File;
@@ -54,6 +55,10 @@ public abstract class AbstractGenerationTest {
   protected OperationsUtil opUtil;
   protected PipelineGenerator gen;
 
+  static{
+    System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
+  }
+  
   @Before
   public void setUp() {
     testModule = new GripCoreTestModule();
@@ -90,7 +95,16 @@ public abstract class AbstractGenerationTest {
     PipelineCreator.cleanClasses();
     File img = new File("img.png");
     File testing = new File("testing.py");
+    File dir  = PipelineGenerator.codeDir.getAbsoluteFile();
     try {
+      File[] toDelete = dir.listFiles((File file) -> {
+        String name = file.getName();
+      return name.contains(".cpp") || name.contains(".py") || name.contains(".h")
+          || name.contains(".dylib") || name.contains(".so") || name.contains(".dll");
+      });
+      for(File file : toDelete){
+        Files.deleteIfExists(file.toPath());
+      }
       Files.deleteIfExists(img.toPath());
       Files.deleteIfExists(testing.toPath());
     } catch (IOException e) {

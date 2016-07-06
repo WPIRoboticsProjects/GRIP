@@ -29,7 +29,7 @@ public class PipelineGenerator {
   private EventBus eventBus;
   @Inject
   private Connection.Factory<Object> factory;
-  static File codeDir = null;
+  public static File codeDir = null;
 
   static {
     try {

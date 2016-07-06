@@ -80,7 +80,7 @@ void $fileName::set${source.value()}(#cType(${source.type()}) *${source.value()}
  * This method is a generated setter for the condition of $step.name() $boolNum
  * @param the condition to set
  */
-void Pipeline::set$step.name()${boolNum}(bool value){
+void $fileName::set$step.name()${boolNum}(bool value){
 	$boolName$boolNum = value;
 }
 #end
