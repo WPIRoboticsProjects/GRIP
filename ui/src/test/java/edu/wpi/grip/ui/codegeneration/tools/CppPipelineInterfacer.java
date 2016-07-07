@@ -6,8 +6,13 @@ import java.io.InputStream;
 import java.lang.UnsupportedOperationException;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.ArrayList;
 
 import org.opencv.core.Mat;
+import org.opencv.core.MatOfKeyPoint;
+import org.opencv.core.MatOfPoint;
+import org.opencv.core.Point;
+import org.opencv.core.Size;
 import org.opencv.imgcodecs.Imgcodecs;
 
 import static org.junit.Assert.fail;
@@ -61,11 +66,21 @@ public class CppPipelineInterfacer implements PipelineInterfacer {
   public Object getOutput(int num, GenType type) {
     switch(type){
       case BLOBS:
-        break;
+        MatOfKeyPoint blobs = new MatOfKeyPoint();
+        getBlobs(num, blobs.nativeObj);
+        return blobs;
       case BOOLEAN:
         return new Boolean(getBoolean(num));
       case CONTOURS:
-        break;
+        int numContours = getNumContours(num);
+        ArrayList<MatOfPoint> contours = new ArrayList<MatOfPoint>(numContours);
+        long addresses[] = new long[numContours];
+        for(int idx = 0; idx < numContours; idx++){
+          contours.add(idx, new MatOfPoint());
+          addresses[idx] = contours.get(idx).nativeObj;
+        }
+        getContours(num, addresses);
+        return contours;
       case IMAGE:
         return getMat(num);
       case LINES:
@@ -75,9 +90,11 @@ public class CppPipelineInterfacer implements PipelineInterfacer {
       case NUMBER:
         return new Double(getDouble(num));
       case POINT:
-        break;
+        double[] pnt = getSizeOrPoint(num, false);
+        return new Point(pnt[0], pnt[1]);
       case SIZE:
-        break;
+        double[] sz = getSizeOrPoint(num, true);
+        return new Size(sz[0], sz[1]);
       default:
         break;
       
@@ -128,5 +145,15 @@ public class CppPipelineInterfacer implements PipelineInterfacer {
   private native void setMatSource(int num, String path);
   private native void init(String libName);
   private native void dispose();
+  private native double[] getSizeOrPoint(int num, boolean size);
+  private native void getBlobs(int num, long retAddr);
+  private native int getNumContours(int num);
+  /**
+   * Gets the contours from specified output.
+   * @param num the output number.
+   * @param addrs an array of nativeAddresses of MatOfPoint objects.
+   * Note the size of addrs should be the number returned from getNumContours.
+   */
+  private native void getContours(int num, long[] addrs);
   private long nativeHandle;
 }

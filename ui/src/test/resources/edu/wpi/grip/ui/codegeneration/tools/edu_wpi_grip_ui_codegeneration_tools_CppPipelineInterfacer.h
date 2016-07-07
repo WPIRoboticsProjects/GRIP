@@ -71,6 +71,38 @@ JNIEXPORT void JNICALL Java_edu_wpi_grip_ui_codegeneration_tools_CppPipelineInte
 JNIEXPORT void JNICALL Java_edu_wpi_grip_ui_codegeneration_tools_CppPipelineInterfacer_dispose
   (JNIEnv *, jobject);
 
+/*
+ * Class:     edu_wpi_grip_ui_codegeneration_tools_CppPipelineInterfacer
+ * Method:    getSizeOrPoint
+ * Signature: (IZ)[D
+ */
+JNIEXPORT jdoubleArray JNICALL Java_edu_wpi_grip_ui_codegeneration_tools_CppPipelineInterfacer_getSizeOrPoint
+  (JNIEnv *, jobject, jint, jboolean);
+
+/*
+ * Class:     edu_wpi_grip_ui_codegeneration_tools_CppPipelineInterfacer
+ * Method:    getBlobs
+ * Signature: (IJ)V
+ */
+JNIEXPORT void JNICALL Java_edu_wpi_grip_ui_codegeneration_tools_CppPipelineInterfacer_getBlobs
+  (JNIEnv *, jobject, jint, jlong);
+
+/*
+ * Class:     edu_wpi_grip_ui_codegeneration_tools_CppPipelineInterfacer
+ * Method:    getNumContours
+ * Signature: (I)I
+ */
+JNIEXPORT jint JNICALL Java_edu_wpi_grip_ui_codegeneration_tools_CppPipelineInterfacer_getNumContours
+  (JNIEnv *, jobject, jint);
+
+/*
+ * Class:     edu_wpi_grip_ui_codegeneration_tools_CppPipelineInterfacer
+ * Method:    getContours
+ * Signature: (I[J)V
+ */
+JNIEXPORT void JNICALL Java_edu_wpi_grip_ui_codegeneration_tools_CppPipelineInterfacer_getContours
+  (JNIEnv *, jobject, jint, jlongArray);
+
 #ifdef __cplusplus
 }
 #endif

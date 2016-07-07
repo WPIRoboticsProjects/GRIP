@@ -6,6 +6,7 @@
 #include <opencv2/imgproc/imgproc.hpp>
 #include <String>
 #include <dlfcn.h>
+#include <vector>
 typedef AbsPipeline* maker();
 JNIEXPORT void JNICALL Java_edu_wpi_grip_ui_codegeneration_tools_CppPipelineInterfacer_init
   (JNIEnv *env , jobject obj, jstring libName){
@@ -69,3 +70,62 @@ JNIEXPORT jstring JNICALL Java_edu_wpi_grip_ui_codegeneration_tools_CppPipelineI
       AbsPipeline *inst = getHandle<AbsPipeline>(env, obj);
       delete inst;
   }
+
+  #define numEles 2
+  JNIEXPORT jdoubleArray JNICALL Java_edu_wpi_grip_ui_codegeneration_tools_CppPipelineInterfacer_getSizeOrPoint
+  (JNIEnv *env, jobject obj, jint num, jboolean isSize){
+    double vals[numEles];
+    AbsPipeline *inst = getHandle<AbsPipeline>(env, obj);
+    if(isSize){
+      Size * sz = (Size *)(inst->*(inst->getOutputs()[(int)num]))();
+      vals[0] = sz->width;
+      vals[1] = sz->height;
+    }
+    else{
+      Point * pnt = (Point *)(inst->*(inst->getOutputs()[(int)num]))();
+      vals[0] = pnt->x;
+      vals[1] = pnt->y;
+    }
+    jdoubleArray retval = env->NewDoubleArray(numEles);
+    env->SetDoubleArrayRegion(retval, 0, numEles, vals);
+    return retval;
+  }
+
+  void KeyPointVectorToMat(vector<KeyPoint>& v_kp, Mat& mat)
+{
+    int count = (int)v_kp.size();
+    mat.create(count, 1, CV_32FC(7));
+    for(int i=0; i<count; i++)
+    {
+        KeyPoint kp = v_kp[i];
+        mat.at< Vec<float, 7> >(i, 0) = Vec<float, 7>(kp.pt.x, kp.pt.y, kp.size, kp.angle, kp.response, (float)kp.octave, (float)kp.class_id);
+    }
+}
+
+  JNIEXPORT void JNICALL Java_edu_wpi_grip_ui_codegeneration_tools_CppPipelineInterfacer_getBlobs
+  (JNIEnv *env, jobject obj, jint num, jlong outAdr){
+    AbsPipeline *inst = getHandle<AbsPipeline>(env, obj);
+    vector<KeyPoint> * output = (vector<KeyPoint> *) (inst->*(inst->getOutputs()[(int) num]))();
+    Mat* out = (Mat*) outAdr;
+    KeyPointVectorToMat(*output, *out);    
+  }
+
+JNIEXPORT jint JNICALL Java_edu_wpi_grip_ui_codegeneration_tools_CppPipelineInterfacer_getNumContours
+  (JNIEnv *env, jobject obj, jint num){
+  AbsPipeline *inst = getHandle<AbsPipeline>(env, obj);
+  vector<vector<Point> > * output = (vector<vector<Point> > *) (inst->*(inst->getOutputs()[(int) num]))();
+  return (jint) output->size();
+}
+
+JNIEXPORT void JNICALL Java_edu_wpi_grip_ui_codegeneration_tools_CppPipelineInterfacer_getContours
+  (JNIEnv *env, jobject obj, jint num, jlongArray addresses){
+  AbsPipeline *inst = getHandle<AbsPipeline>(env, obj);
+  vector<vector<Point> > * output = (vector<vector<Point> > *) (inst->*(inst->getOutputs()[(int) num]))();
+  jsize len = env->GetArrayLength(addresses);
+  jlong *addrs = env->GetLongArrayElements(addresses, 0);
+  for(int idx = 0; idx < len; idx++){
+    Mat temp = Mat((*output)[idx], true);
+    temp.copyTo(*(Mat *) addrs[idx]);
+  }
+  env->ReleaseLongArrayElements(addresses, addrs, 0);
+}
