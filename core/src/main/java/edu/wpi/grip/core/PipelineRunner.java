@@ -5,6 +5,8 @@ import edu.wpi.grip.core.events.RenderEvent;
 import edu.wpi.grip.core.events.RunPipelineEvent;
 import edu.wpi.grip.core.events.RunStartedEvent;
 import edu.wpi.grip.core.events.RunStoppedEvent;
+import edu.wpi.grip.core.events.StepFinishedEvent;
+import edu.wpi.grip.core.events.StepStartedEvent;
 import edu.wpi.grip.core.events.StopPipelineEvent;
 import edu.wpi.grip.core.util.SinglePermitSemaphore;
 import edu.wpi.grip.core.util.service.AutoRestartingService;
@@ -47,6 +49,7 @@ public class PipelineRunner implements RestartableService {
   private final Supplier<ImmutableList<Step>> stepSupplier;
   private final AutoRestartingService pipelineService;
 
+  private final EventBus eventBus;
 
   @Inject
   PipelineRunner(EventBus eventBus, Provider<Pipeline> pipelineProvider) {
@@ -56,6 +59,7 @@ public class PipelineRunner implements RestartableService {
 
   PipelineRunner(EventBus eventBus, Supplier<ImmutableList<Source>> sourceSupplier,
                  Supplier<ImmutableList<Step>> stepSupplier) {
+    this.eventBus = checkNotNull(eventBus, "eventBus");
     this.sourceSupplier = sourceSupplier;
     this.stepSupplier = stepSupplier;
     this.pipelineService = new AutoRestartingService<>(
@@ -79,10 +83,10 @@ public class PipelineRunner implements RestartableService {
             }
             runPipeline(super::isRunning);
             // This should not block access to the steps array
+            eventBus.post(new RunStoppedEvent());
             if (super.isRunning()) {
               eventBus.post(new RenderEvent());
             }
-            eventBus.post(new RunStoppedEvent());
           }
 
           @Override
@@ -195,7 +199,9 @@ public class PipelineRunner implements RestartableService {
       if (!isRunning.get()) {
         break;
       }
+      eventBus.post(new StepStartedEvent(step));
       step.runPerformIfPossible();
+      eventBus.post(new StepFinishedEvent(step));
     }
   }
 

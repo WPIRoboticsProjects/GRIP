@@ -4,6 +4,8 @@ import edu.wpi.grip.core.Palette;
 import edu.wpi.grip.core.Pipeline;
 import edu.wpi.grip.core.PipelineRunner;
 import edu.wpi.grip.core.events.ProjectSettingsChangedEvent;
+import edu.wpi.grip.core.events.RunStartedEvent;
+import edu.wpi.grip.core.events.RunStoppedEvent;
 import edu.wpi.grip.core.serialization.Project;
 import edu.wpi.grip.core.settings.ProjectSettings;
 import edu.wpi.grip.core.settings.SettingsProvider;
@@ -13,7 +15,9 @@ import edu.wpi.grip.ui.components.StartStoppableButton;
 import edu.wpi.grip.ui.util.DPIUtility;
 
 import com.google.common.base.CaseFormat;
+import com.google.common.base.Stopwatch;
 import com.google.common.eventbus.EventBus;
+import com.google.common.eventbus.Subscribe;
 import com.google.common.util.concurrent.Service;
 
 import org.controlsfx.control.StatusBar;
@@ -21,6 +25,7 @@ import org.controlsfx.control.StatusBar;
 import java.io.File;
 import java.io.IOException;
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -28,11 +33,13 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Dialog;
+import javafx.scene.control.Label;
 import javafx.scene.control.SplitPane;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
+import javafx.scene.text.TextAlignment;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Stage;
@@ -59,6 +66,7 @@ public class MainWindowController {
   private Pane aboutPane;
   @FXML
   private StatusBar statusBar;
+  private Label elapsedTimeLabel; // TODO improve the layout of this label
   @Inject
   private EventBus eventBus;
   @Inject
@@ -76,10 +84,16 @@ public class MainWindowController {
 
   private Stage aboutDialogStage;
 
+  private final Stopwatch stopwatch = Stopwatch.createUnstarted();
+
   @FXML
   protected void initialize() {
+    elapsedTimeLabel = new Label();
+    updateElapsedTimeLabel(0);
+    elapsedTimeLabel.setTextAlignment(TextAlignment.CENTER);
     pipelineView.prefHeightProperty().bind(bottomPane.heightProperty());
     statusBar.getLeftItems().add(startStoppableButtonFactory.create(pipelineRunner));
+    statusBar.getLeftItems().add(elapsedTimeLabel);
     pipelineRunner.addListener(new SingleActionListener(() -> {
       final Service.State state = pipelineRunner.state();
       final String stateMessage =
@@ -89,7 +103,6 @@ public class MainWindowController {
               .toString());
       statusBar.setText(" Pipeline " + stateMessage);
     }), Platform::runLater);
-
   }
 
   /**
@@ -260,5 +273,25 @@ public class MainWindowController {
     dialog.getDialogPane().setContent(deployPane);
     dialog.setResizable(true);
     dialog.showAndWait();
+  }
+
+  @Subscribe
+  private void runStarted(RunStartedEvent event) {
+    stopwatch.reset().start();
+  }
+
+  @Subscribe
+  private void runStopped(RunStoppedEvent event) {
+    // Compute elapsed time first because another run
+    // may start before updateElapsedTimeLabel gets called
+    final long elapsed = stopwatch.elapsed(TimeUnit.MICROSECONDS);
+    Platform.runLater(() -> updateElapsedTimeLabel(elapsed));
+  }
+
+  private void updateElapsedTimeLabel(long elapsed) {
+    elapsedTimeLabel.setText(
+        String.format("Ran in %.1f ms (%.1f fps)",
+            elapsed / 1e3,
+            elapsed != 0 ? (1e6 / elapsed) : Double.NaN));
   }
 }

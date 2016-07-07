@@ -2,6 +2,8 @@ package edu.wpi.grip.ui.pipeline;
 
 import edu.wpi.grip.core.Pipeline;
 import edu.wpi.grip.core.Step;
+import edu.wpi.grip.core.events.StepFinishedEvent;
+import edu.wpi.grip.core.events.StepStartedEvent;
 import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.ui.Controller;
@@ -13,13 +15,18 @@ import edu.wpi.grip.ui.pipeline.input.InputSocketControllerFactory;
 import edu.wpi.grip.ui.util.ControllerMap;
 import edu.wpi.grip.ui.util.StyleClassNameUtility;
 
+import com.google.common.base.Stopwatch;
+import com.google.common.eventbus.Subscribe;
 import com.google.inject.assistedinject.Assisted;
 
 import java.io.InputStream;
 import java.util.Collection;
+import java.util.concurrent.TimeUnit;
 
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
+import javafx.scene.control.Label;
 import javafx.scene.control.Labeled;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -46,6 +53,8 @@ public class StepController implements Controller {
   @FXML
   private Labeled title;
   @FXML
+  private Label elapsedTime;
+  @FXML
   private ImageView icon;
   @FXML
   private HBox buttons;
@@ -55,6 +64,8 @@ public class StepController implements Controller {
   private VBox outputs;
   private ControllerMap<InputSocketController, Node> inputSocketMapManager;
   private ControllerMap<OutputSocketController, Node> outputSocketMapManager;
+
+  private final Stopwatch stopwatch = Stopwatch.createUnstarted();
 
   @Inject
   StepController(Pipeline pipeline,
@@ -140,6 +151,24 @@ public class StepController implements Controller {
   @FXML
   private void moveStepRight() {
     pipeline.moveStep(step, +1);
+  }
+
+  @Subscribe
+  private void started(StepStartedEvent event) {
+    if (!event.isRegarding(this.step)) {
+      return;
+    }
+    stopwatch.reset().start();
+  }
+
+  @Subscribe
+  private void finished(StepFinishedEvent event) {
+    if (!event.isRegarding(this.step)) {
+      return;
+    }
+    // Use micros and divide by 1e3 to get decimal points (e.g. 0.3ms instead of 0ms)
+    final long elapsed = stopwatch.elapsed(TimeUnit.MICROSECONDS);
+    Platform.runLater(() -> elapsedTime.setText(String.format("Ran in %.1f ms", elapsed / 1e3)));
   }
 
   /**
