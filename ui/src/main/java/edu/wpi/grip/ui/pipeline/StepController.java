@@ -154,6 +154,7 @@ public class StepController implements Controller {
   }
 
   @Subscribe
+  @SuppressWarnings("PMD.UnusedPrivateMethod")
   private void started(StepStartedEvent event) {
     if (!event.isRegarding(this.step)) {
       return;
@@ -162,6 +163,7 @@ public class StepController implements Controller {
   }
 
   @Subscribe
+  @SuppressWarnings("PMD.UnusedPrivateMethod")
   private void finished(StepFinishedEvent event) {
     if (!event.isRegarding(this.step)) {
       return;

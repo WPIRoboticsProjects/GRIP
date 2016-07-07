@@ -276,11 +276,13 @@ public class MainWindowController {
   }
 
   @Subscribe
+  @SuppressWarnings({"PMD.UnusedPrivateMethod", "PMD.UnusedFormalParameter"})
   private void runStarted(RunStartedEvent event) {
     stopwatch.reset().start();
   }
 
   @Subscribe
+  @SuppressWarnings({"PMD.UnusedPrivateMethod", "PMD.UnusedFormalParameter"})
   private void runStopped(RunStoppedEvent event) {
     // Compute elapsed time first because another run
     // may start before updateElapsedTimeLabel gets called
