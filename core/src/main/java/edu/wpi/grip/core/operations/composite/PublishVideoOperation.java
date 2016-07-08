@@ -138,7 +138,7 @@ public class PublishVideoOperation implements Operation {
         false));
     this.qualitySocket = inputSocketFactory.create(SocketHints.Inputs
         .createNumberSliderSocketHint("Quality", 80, 0, 100));
-    numSteps = numSteps + 1;
+    numSteps++;
 
     serverThread = new Thread(runServer, "Camera Server");
     serverThread.setDaemon(true);
