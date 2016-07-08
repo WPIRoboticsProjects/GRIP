@@ -90,6 +90,7 @@ allprojects {
     apply plugin: 'jacoco'
     apply plugin: 'net.ltgt.errorprone'
     apply plugin: 'checkstyle'
+    apply plugin: 'findbugs'
 
     configurations.errorprone {
         resolutionStrategy.force 'com.google.errorprone:error_prone_core:2.0.9'
@@ -104,6 +105,17 @@ allprojects {
         // Remove checkstyle dependencies on compilation
         // (This neuters :core:checkstyleGenerated, but since that's not needed anyway, who cares)
         it.dependsOn = []
+    }
+
+    tasks.withType(FindBugs) {
+        it.dependsOn = []
+    }
+
+    findbugs {
+        // toolVersion = "2.0.1"
+        sourceSets = [sourceSets.main]
+        excludeFilter = new File(rootDir, "findBugsSuppressions.xml")
+        effort = "max"
     }
 
     repositories {
