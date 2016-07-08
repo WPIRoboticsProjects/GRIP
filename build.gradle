@@ -98,6 +98,9 @@ allprojects {
     checkstyle {
         configFile = new File(rootDir, "checkstyle.xml")
         toolVersion = '6.19'
+        if (project.hasProperty("ignoreCheckstyle")) {
+            ignoreFailures = true
+        }
     }
 
     tasks.withType(Checkstyle) {

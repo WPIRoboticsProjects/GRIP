@@ -236,7 +236,7 @@
         </module>
         <module name="CommentsIndentation"/>
         <module name="Regexp">
-            <property name="format" value="\(non\-Javadoc\)"/>
+            <property name="format" value="\(non\-Javadoc\)|System\..*\.print"/>
             <property name="illegalPattern" value="true"/>
         </module>
     </module>
