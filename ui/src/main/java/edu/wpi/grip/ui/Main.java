@@ -1,6 +1,7 @@
 package edu.wpi.grip.ui;
 
 import edu.wpi.grip.core.GripCoreModule;
+import edu.wpi.grip.core.GripFileModule;
 import edu.wpi.grip.core.PipelineRunner;
 import edu.wpi.grip.core.events.UnexpectedThrowableEvent;
 import edu.wpi.grip.core.http.GripServer;
@@ -71,15 +72,16 @@ public class Main extends Application {
     if (parameters.contains("--headless")) {
       // If --headless was specified on the command line, run in headless mode (only use the core
       // module)
-      injector = Guice.createInjector(Modules.override(new GripCoreModule(),
+      injector = Guice.createInjector(Modules.override(new GripCoreModule(), new GripFileModule(),
           new GripSourcesHardwareModule()).with(new GripNetworkModule()));
       injector.injectMembers(this);
 
       parameters.remove("--headless");
     } else {
       // Otherwise, run with both the core and UI modules, and show the JavaFX stage
-      injector = Guice.createInjector(Modules.override(new GripCoreModule(),
+      injector = Guice.createInjector(Modules.override(new GripCoreModule(), new GripFileModule(),
           new GripSourcesHardwareModule()).with(new GripNetworkModule(), new GripUiModule()));
+
       injector.injectMembers(this);
 
       System.setProperty("prism.lcdtext", "false");
