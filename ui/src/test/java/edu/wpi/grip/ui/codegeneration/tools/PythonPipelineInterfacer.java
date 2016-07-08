@@ -235,11 +235,11 @@ public class PythonPipelineInterfacer implements PipelineInterfacer {
 
     BufferedReader in = runProcess(temp.toString());
 
-    List<TestLine> lines = new ArrayList<>();
+    List<PyLine> lines = new ArrayList<>();
     String nextIn;
     assertTrue("empty Lines", (nextIn = in.readLine()) != null);
     while (!(nextIn == null)) {
-      lines.add(new TestLine(Integer.valueOf(nextIn),
+      lines.add(new PyLine(Integer.valueOf(nextIn),
           Integer.valueOf(in.readLine()), Integer.valueOf(in.readLine()), Integer.valueOf(in
           .readLine())));
       nextIn = in.readLine();
@@ -358,32 +358,6 @@ public class PythonPipelineInterfacer implements PipelineInterfacer {
       str.append("(True)\n");
     } else {
       str.append("(False)\n");
-    }
-  }
-
-  public static class TestLine {
-    public final double x1;
-    public final double y1;
-    public final double x2;
-    public final double y2;
-
-    public TestLine(double x1, double y1, double x2, double y2) {
-      this.x1 = x1;
-      this.y1 = y1;
-      this.x2 = x2;
-      this.y2 = y2;
-    }
-
-    public double lengthSquared() {
-      return Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2);
-    }
-
-    public double length() {
-      return Math.sqrt(lengthSquared());
-    }
-
-    public double angle() {
-      return Math.toDegrees(Math.atan2(y2 - y1, x2 - x1));
     }
   }
 

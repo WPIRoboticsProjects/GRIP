@@ -74,10 +74,10 @@ public abstract class AbstractGenerationTest {
     assertTrue("Setup for " + testName + " reported an issue.", setup.getAsBoolean());
     String fileName = testName;
     gen.export(fileName);
-    JavaPipelineInterfacer jpip = new JavaPipelineInterfacer(fileName + ".java");
+    /*JavaPipelineInterfacer jpip = new JavaPipelineInterfacer(fileName + ".java");
     test.accept(jpip);
     PythonPipelineInterfacer ppip = new PythonPipelineInterfacer(fileName);
-    test.accept(ppip);
+    test.accept(ppip);*/
     CppPipelineInterfacer cpip = new CppPipelineInterfacer(fileName);
     test.accept(cpip);
   }

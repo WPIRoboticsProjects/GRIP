@@ -7,6 +7,7 @@ import java.lang.UnsupportedOperationException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.List;
 
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfKeyPoint;
@@ -84,7 +85,13 @@ public class CppPipelineInterfacer implements PipelineInterfacer {
       case IMAGE:
         return getMat(num);
       case LINES:
-        break;
+        double[][] linePts = getLines(num);
+        List<CppLine> lines = new ArrayList<CppLine>(linePts.length);
+        for(int idx = 0; idx<linePts.length; idx++){
+          double pts[] = linePts[idx];
+          lines.add(idx, new CppLine(pts[0], pts[1], pts[2], pts[3], pts[4], pts[5]));
+        }
+        return lines;
       case LIST:
         break;
       case NUMBER:
@@ -155,5 +162,6 @@ public class CppPipelineInterfacer implements PipelineInterfacer {
    * Note the size of addrs should be the number returned from getNumContours.
    */
   private native void getContours(int num, long[] addrs);
+  private native double[][] getLines(int num);
   private long nativeHandle;
 }
