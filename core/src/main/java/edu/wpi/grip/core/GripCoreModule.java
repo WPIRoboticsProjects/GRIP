@@ -1,6 +1,7 @@
 package edu.wpi.grip.core;
 
 import edu.wpi.grip.core.events.UnexpectedThrowableEvent;
+import edu.wpi.grip.core.metrics.Timer;
 import edu.wpi.grip.core.serialization.Project;
 import edu.wpi.grip.core.settings.SettingsProvider;
 import edu.wpi.grip.core.sockets.InputSocket;
@@ -143,6 +144,7 @@ public class GripCoreModule extends AbstractModule {
         .build(HttpSource.Factory.class));
 
     install(new FactoryModuleBuilder().build(ExceptionWitness.Factory.class));
+    install(new FactoryModuleBuilder().build(Timer.Factory.class));
   }
 
   protected void onSubscriberException(Throwable exception, @Nullable SubscriberExceptionContext

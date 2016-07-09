@@ -1,5 +1,6 @@
 package edu.wpi.grip.core;
 
+import edu.wpi.grip.core.metrics.Timer;
 import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.core.sockets.Socket;
@@ -27,6 +28,7 @@ public class Step {
   private static final String MISSING_SOCKET_MESSAGE_END = " must have a value to run this step.";
 
   private final ExceptionWitness witness;
+  private final Timer timer;
 
   private final Operation operation;
   private final OperationDescription description;
@@ -41,17 +43,20 @@ public class Step {
    * @param inputSockets            The input sockets from the operation.
    * @param outputSockets           The output sockets provided by the operation.
    * @param exceptionWitnessFactory A factory used to create an {@link ExceptionWitness}.
+   * @param timerFactory            A factory used to create a {@link Timer}.
    */
   Step(Operation operation,
        OperationDescription description,
        List<InputSocket> inputSockets,
        List<OutputSocket> outputSockets,
-       ExceptionWitness.Factory exceptionWitnessFactory) {
+       ExceptionWitness.Factory exceptionWitnessFactory,
+       Timer.Factory timerFactory) {
     this.operation = operation;
     this.description = description;
     this.inputSockets = inputSockets;
     this.outputSockets = outputSockets;
     this.witness = exceptionWitnessFactory.create(this);
+    this.timer = timerFactory.create(this);
   }
 
   /**
@@ -112,8 +117,8 @@ public class Step {
 
     try {
       // We need to ensure that if perform disabled is switching states that we don't run the
-      // perform method
-      // while that is happening.
+      // perform method while that is happening.
+      timer.started();
       synchronized (removedLock) {
         if (!removed) {
           this.operation.perform();
@@ -122,12 +127,15 @@ public class Step {
     } catch (RuntimeException e) {
       // We do not want to catch all exceptions, only runtime exceptions.
       // This is especially important when it comes to InterruptedExceptions
-      final String operationFailedMessage = String.format("The %s operation did not perform "
-          + "correctly.", getOperationDescription().name());
+      final String operationFailedMessage =
+          String.format("The %s operation did not perform correctly.",
+              getOperationDescription().name());
       logger.log(Level.WARNING, operationFailedMessage, e);
       witness.flagException(e, operationFailedMessage);
       resetOutputSockets();
       return;
+    } finally {
+      timer.stopped();
     }
     witness.clearException();
   }
@@ -158,10 +166,13 @@ public class Step {
   @Singleton
   public static class Factory {
     private final ExceptionWitness.Factory exceptionWitnessFactory;
+    private final Timer.Factory runningWitnessFactory;
 
     @Inject
-    public Factory(ExceptionWitness.Factory exceptionWitnessFactory) {
+    public Factory(ExceptionWitness.Factory exceptionWitnessFactory,
+                   Timer.Factory runningWitnessFactory) {
       this.exceptionWitnessFactory = exceptionWitnessFactory;
+      this.runningWitnessFactory = runningWitnessFactory;
     }
 
     /**
@@ -180,7 +191,8 @@ public class Step {
           operationData.getDescription(),
           inputSockets,
           outputSockets,
-          exceptionWitnessFactory
+          exceptionWitnessFactory,
+          runningWitnessFactory
       );
 
       for (Socket<?> socket : inputSockets) {

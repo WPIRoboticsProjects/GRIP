@@ -135,6 +135,21 @@
                         </ImageView>
                     </graphic>
                 </MenuItem>
+                <MenuItem text="Analyze" onAction="#showAnalysis">
+                    <graphic>
+                        <ImageView styleClass="menu-graphic">
+                            <fitWidth>
+                                <DPIUtility fx:constant="SMALL_ICON_SIZE" />
+                            </fitWidth>
+                            <fitHeight>
+                                <DPIUtility fx:constant="SMALL_ICON_SIZE" />
+                            </fitHeight>
+                            <image>
+                                <Image url="@icons/settings.png" />
+                            </image>
+                        </ImageView>
+                    </graphic>
+                </MenuItem>
             </Menu>
             <Menu text="Help">
                 <MenuItem text="About" onAction="#showProjectAboutDialog">

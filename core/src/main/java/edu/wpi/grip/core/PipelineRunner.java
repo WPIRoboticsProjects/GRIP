@@ -5,9 +5,8 @@ import edu.wpi.grip.core.events.RenderEvent;
 import edu.wpi.grip.core.events.RunPipelineEvent;
 import edu.wpi.grip.core.events.RunStartedEvent;
 import edu.wpi.grip.core.events.RunStoppedEvent;
-import edu.wpi.grip.core.events.StepFinishedEvent;
-import edu.wpi.grip.core.events.StepStartedEvent;
 import edu.wpi.grip.core.events.StopPipelineEvent;
+import edu.wpi.grip.core.metrics.Timer;
 import edu.wpi.grip.core.util.SinglePermitSemaphore;
 import edu.wpi.grip.core.util.service.AutoRestartingService;
 import edu.wpi.grip.core.util.service.LoggingListener;
@@ -52,16 +51,23 @@ public class PipelineRunner implements RestartableService {
   private final EventBus eventBus;
 
   @Inject
-  PipelineRunner(EventBus eventBus, Provider<Pipeline> pipelineProvider) {
-    this(eventBus, () -> pipelineProvider.get().getSources(), () -> pipelineProvider.get()
-        .getSteps());
+  PipelineRunner(EventBus eventBus,
+                 Provider<Pipeline> pipelineProvider,
+                 Timer.Factory timerFactory) {
+    this(eventBus,
+        () -> pipelineProvider.get().getSources(),
+        () -> pipelineProvider.get().getSteps(),
+        timerFactory);
   }
 
-  PipelineRunner(EventBus eventBus, Supplier<ImmutableList<Source>> sourceSupplier,
-                 Supplier<ImmutableList<Step>> stepSupplier) {
+  PipelineRunner(EventBus eventBus,
+                 Supplier<ImmutableList<Source>> sourceSupplier,
+                 Supplier<ImmutableList<Step>> stepSupplier,
+                 Timer.Factory timerFactory) {
     this.eventBus = checkNotNull(eventBus, "eventBus");
     this.sourceSupplier = sourceSupplier;
     this.stepSupplier = stepSupplier;
+    Timer timer = timerFactory.create(this);
     this.pipelineService = new AutoRestartingService<>(
         () -> new AbstractScheduledService() {
 
@@ -81,7 +87,12 @@ public class PipelineRunner implements RestartableService {
             if (!super.isRunning()) {
               return;
             }
-            runPipeline(super::isRunning);
+            try {
+              timer.started();
+              runPipeline(super::isRunning);
+            } finally {
+              timer.stopped();
+            }
             // This should not block access to the steps array
             eventBus.post(new RunStoppedEvent());
             if (super.isRunning()) {
@@ -199,9 +210,7 @@ public class PipelineRunner implements RestartableService {
       if (!isRunning.get()) {
         break;
       }
-      eventBus.post(new StepStartedEvent(step));
       step.runPerformIfPossible();
-      eventBus.post(new StepFinishedEvent(step));
     }
   }
 

@@ -1,5 +1,7 @@
 package edu.wpi.grip.core;
 
+import edu.wpi.grip.core.metrics.MockTimer;
+
 import com.google.common.eventbus.EventBus;
 
 /*
@@ -8,7 +10,7 @@ import com.google.common.eventbus.EventBus;
 public final class ManualPipelineRunner extends PipelineRunner {
 
   public ManualPipelineRunner(EventBus eventBus, Pipeline pipeline) {
-    super(eventBus, () -> pipeline);
+    super(eventBus, () -> pipeline, MockTimer.simpleFactory(eventBus));
     // This is fine because it is in a test
     eventBus.register(this);
   }
