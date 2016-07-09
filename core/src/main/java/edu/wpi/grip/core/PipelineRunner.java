@@ -1,6 +1,7 @@
 package edu.wpi.grip.core;
 
 
+import edu.wpi.grip.core.events.BenchmarkEvent;
 import edu.wpi.grip.core.events.RenderEvent;
 import edu.wpi.grip.core.events.RunPipelineEvent;
 import edu.wpi.grip.core.events.RunStartedEvent;
@@ -25,6 +26,7 @@ import com.google.inject.Singleton;
 import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Supplier;
 import java.util.logging.Logger;
 
@@ -48,7 +50,7 @@ public class PipelineRunner implements RestartableService {
   private final Supplier<ImmutableList<Step>> stepSupplier;
   private final AutoRestartingService pipelineService;
 
-  private final EventBus eventBus;
+  private final AtomicBoolean benchmarking = new AtomicBoolean(false);
 
   @Inject
   PipelineRunner(EventBus eventBus,
@@ -64,7 +66,6 @@ public class PipelineRunner implements RestartableService {
                  Supplier<ImmutableList<Source>> sourceSupplier,
                  Supplier<ImmutableList<Step>> stepSupplier,
                  Timer.Factory timerFactory) {
-    this.eventBus = checkNotNull(eventBus, "eventBus");
     this.sourceSupplier = sourceSupplier;
     this.stepSupplier = stepSupplier;
     Timer timer = timerFactory.create(this);
@@ -210,7 +211,7 @@ public class PipelineRunner implements RestartableService {
       if (!isRunning.get()) {
         break;
       }
-      step.runPerformIfPossible();
+      step.runPerform(benchmarking.get());
     }
   }
 
@@ -226,6 +227,11 @@ public class PipelineRunner implements RestartableService {
   @Subscribe
   public void onStopPipeline(@Nullable StopPipelineEvent event) {
     stopAsync();
+  }
+
+  @Subscribe
+  public void onBenchmarkEvent(BenchmarkEvent event) {
+    benchmarking.set(event.isStart());
   }
 
 }

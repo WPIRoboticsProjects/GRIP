@@ -3,8 +3,10 @@ package edu.wpi.grip.ui;
 import edu.wpi.grip.core.Palette;
 import edu.wpi.grip.core.Pipeline;
 import edu.wpi.grip.core.PipelineRunner;
+import edu.wpi.grip.core.events.BenchmarkEvent;
 import edu.wpi.grip.core.events.ProjectSettingsChangedEvent;
 import edu.wpi.grip.core.events.TimerEvent;
+import edu.wpi.grip.core.metrics.BenchmarkRunner;
 import edu.wpi.grip.core.serialization.Project;
 import edu.wpi.grip.core.settings.ProjectSettings;
 import edu.wpi.grip.core.settings.SettingsProvider;
@@ -41,6 +43,7 @@ import javafx.scene.layout.Region;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
@@ -80,6 +83,8 @@ public class MainWindowController {
   private Palette palette;
   @Inject
   private Project project;
+  @Inject
+  private BenchmarkRunner benchmarkRunner;
 
   private Stage aboutDialogStage;
 
@@ -296,12 +301,19 @@ public class MainWindowController {
           = new FXMLLoader(getClass().getResource("/edu/wpi/grip/ui/analysis/AnalysisWindow.fxml"));
       analysisStage.setScene(new Scene(loader.load()));
       AnalysisWindowController controller = loader.getController();
+      controller.setBenchmarker(benchmarkRunner);
       eventBus.register(controller);
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
+    analysisStage.initModality(Modality.WINDOW_MODAL);
+    analysisStage.initOwner(root.getScene().getWindow());
     analysisStage.setTitle("Pipeline Analysis");
     analysisStage.getIcons().add(new Image("/edu/wpi/grip/ui/icons/grip.png"));
+    analysisStage.setOnCloseRequest(event -> {
+      eventBus.post(BenchmarkEvent.finished());
+    });
     analysisStage.showAndWait();
+    System.out.println("User finished analysis");
   }
 }

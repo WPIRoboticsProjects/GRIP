@@ -52,7 +52,7 @@ public class Timer {
    * @throws IllegalStateException if this a call to this method is not preceded by a call to
    *                               {@link #stopped()}.
    */
-  public void started() {
+  public synchronized void started() {
     if (started) {
       throw new IllegalStateException("Already started");
     }
@@ -66,7 +66,7 @@ public class Timer {
    * @throws IllegalStateException if this a call to this method is not preceded by a call to
    *                               {@link #started()}.
    */
-  public void stopped() {
+  public synchronized void stopped() {
     if (!started) {
       throw new IllegalStateException("Already stopped");
     }

@@ -93,9 +93,24 @@ public class Step {
   /**
    * The {@link Operation#perform} method should only be called if all {@link
    * InputSocket#getValue()} are not empty. If one input is invalid then the perform method will not
-   * run and all output sockets will be assigned to their default values.
+   * run and all output sockets will be assigned to their default values. If no input sockets have
+   * changed values, the perform method will not run.
    */
   protected final void runPerformIfPossible() {
+    runPerform(false);
+  }
+
+
+  /**
+   * The {@link Operation#perform} method should only be called if all {@link
+   * InputSocket#getValue()} are not empty. If one input is invalid then the perform method will not
+   * run and all output sockets will be assigned to their default values.
+   *
+   * @param inBenchmark if this step is being benchmarked. The operation's perform method will be
+   *                    called if every input is valid regardless of 'dirtiness' if it's being
+   *                    benchmarked.
+   */
+  protected final void runPerform(boolean inBenchmark) {
     boolean anyDirty = false; // Keeps track of if there are sockets that are dirty
 
     for (InputSocket<?> inputSocket : inputSockets) {
@@ -109,9 +124,9 @@ public class Step {
       }
       // If one value is true then this will stay true
       anyDirty |= inputSocket.dirtied();
-
     }
-    if (!anyDirty) { // If there aren't any dirty inputs Don't clear the exceptions just return
+    if (!inBenchmark && !anyDirty) {
+      // If there aren't any dirty inputs don't clear the exceptions, just return
       return;
     }
 
@@ -166,13 +181,13 @@ public class Step {
   @Singleton
   public static class Factory {
     private final ExceptionWitness.Factory exceptionWitnessFactory;
-    private final Timer.Factory runningWitnessFactory;
+    private final Timer.Factory timerFactory;
 
     @Inject
     public Factory(ExceptionWitness.Factory exceptionWitnessFactory,
-                   Timer.Factory runningWitnessFactory) {
+                   Timer.Factory timerFactory) {
       this.exceptionWitnessFactory = exceptionWitnessFactory;
-      this.runningWitnessFactory = runningWitnessFactory;
+      this.timerFactory = timerFactory;
     }
 
     /**
@@ -192,7 +207,7 @@ public class Step {
           inputSockets,
           outputSockets,
           exceptionWitnessFactory,
-          runningWitnessFactory
+          timerFactory
       );
 
       for (Socket<?> socket : inputSockets) {
