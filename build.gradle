@@ -211,7 +211,7 @@ project(":core") {
         // http://stackoverflow.com/a/15235190/3708426
         // https://github.com/google/guice/wiki/OptionalAOP
         compile group: 'com.google.inject', name: 'guice', version: '4.1.0', classifier: 'no_aop'
-        compile group: 'com.google.inject.extensions', name: 'guice-assistedinject', version: '4.0'
+        compile group: 'com.google.inject.extensions', name: 'guice-assistedinject', version: '4.1.0'
 
         // Network publishing dependencies
         compile group: 'org.ros.rosjava_core', name: 'rosjava', version: '[0.2,0.3)'
