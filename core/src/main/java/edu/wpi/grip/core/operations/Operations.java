@@ -1,5 +1,6 @@
 package edu.wpi.grip.core.operations;
 
+import edu.wpi.grip.core.FileManager;
 import edu.wpi.grip.core.OperationMetaData;
 import edu.wpi.grip.core.events.OperationAddedEvent;
 import edu.wpi.grip.core.operations.composite.BlobsReport;
@@ -21,6 +22,7 @@ import edu.wpi.grip.core.operations.composite.NormalizeOperation;
 import edu.wpi.grip.core.operations.composite.PublishVideoOperation;
 import edu.wpi.grip.core.operations.composite.RGBThresholdOperation;
 import edu.wpi.grip.core.operations.composite.ResizeOperation;
+import edu.wpi.grip.core.operations.composite.SaveImageOperation;
 import edu.wpi.grip.core.operations.composite.SwitchOperation;
 import edu.wpi.grip.core.operations.composite.ThresholdMoving;
 import edu.wpi.grip.core.operations.composite.ValveOperation;
@@ -29,6 +31,7 @@ import edu.wpi.grip.core.operations.network.BooleanPublishable;
 import edu.wpi.grip.core.operations.network.MapNetworkPublisherFactory;
 import edu.wpi.grip.core.operations.network.NumberPublishable;
 import edu.wpi.grip.core.operations.network.Vector2D;
+import edu.wpi.grip.core.operations.network.http.HttpPublishOperation;
 import edu.wpi.grip.core.operations.network.networktables.NTPublishAnnotatedOperation;
 import edu.wpi.grip.core.operations.network.ros.JavaToMessageConverter;
 import edu.wpi.grip.core.operations.network.ros.ROSNetworkPublisherFactory;
@@ -62,12 +65,16 @@ public class Operations {
   @Inject
   Operations(EventBus eventBus,
              @Named("ntManager") MapNetworkPublisherFactory ntPublisherFactory,
+             @Named("httpManager") MapNetworkPublisherFactory httpPublishFactory,
              @Named("rosManager") ROSNetworkPublisherFactory rosPublishFactory,
+             FileManager fileManager,
              InputSocket.Factory isf,
              OutputSocket.Factory osf) {
     this.eventBus = checkNotNull(eventBus, "EventBus cannot be null");
     checkNotNull(ntPublisherFactory, "ntPublisherFactory cannot be null");
+    checkNotNull(httpPublishFactory, "httpPublisherFactory cannot be null");
     checkNotNull(rosPublishFactory, "rosPublishFactory cannot be null");
+    checkNotNull(fileManager, "fileManager cannot be null");
     this.operations = ImmutableList.of(
         // Composite operations
         new OperationMetaData(BlurOperation.DESCRIPTION,
@@ -102,6 +109,8 @@ public class Operations {
             () -> new ResizeOperation(isf, osf)),
         new OperationMetaData(RGBThresholdOperation.DESCRIPTION,
             () -> new RGBThresholdOperation(isf, osf)),
+        new OperationMetaData(SaveImageOperation.DESCRIPTION,
+            () -> new SaveImageOperation(isf, osf, fileManager)),
         new OperationMetaData(SwitchOperation.DESCRIPTION,
             () -> new SwitchOperation(isf, osf)),
         new OperationMetaData(ValveOperation.DESCRIPTION,
@@ -156,7 +165,27 @@ public class Operations {
                 JavaToMessageConverter.BLOBS)),
         new OperationMetaData(ROSPublishOperation.descriptionFor(LinesReport.class),
             () -> new ROSPublishOperation<>(isf, LinesReport.class, rosPublishFactory,
-                JavaToMessageConverter.LINES))
+                JavaToMessageConverter.LINES)),
+
+        // HTTP publishing operations
+        new OperationMetaData(HttpPublishOperation.descriptionFor(ContoursReport.class),
+            () -> new HttpPublishOperation<>(isf, ContoursReport.class, httpPublishFactory)),
+        new OperationMetaData(HttpPublishOperation.descriptionFor(LinesReport.class),
+            () -> new HttpPublishOperation<>(isf, LinesReport.class, httpPublishFactory)),
+        new OperationMetaData(HttpPublishOperation.descriptionFor(BlobsReport.class),
+            () -> new HttpPublishOperation<>(isf, BlobsReport.class, httpPublishFactory)),
+        new OperationMetaData(HttpPublishOperation.descriptionFor(Size.class),
+            () -> new HttpPublishOperation<>(isf, Size.class, Vector2D.class, Vector2D::new,
+                httpPublishFactory)),
+        new OperationMetaData(HttpPublishOperation.descriptionFor(Point.class),
+            () -> new HttpPublishOperation<>(isf, Point.class, Vector2D.class, Vector2D::new,
+                httpPublishFactory)),
+        new OperationMetaData(HttpPublishOperation.descriptionFor(Number.class),
+            () -> new HttpPublishOperation<>(isf, Number.class, NumberPublishable.class,
+                NumberPublishable::new, httpPublishFactory)),
+        new OperationMetaData(HttpPublishOperation.descriptionFor(Boolean.class),
+            () -> new HttpPublishOperation<>(isf, Boolean.class, BooleanPublishable.class,
+                BooleanPublishable::new, httpPublishFactory))
     );
   }
 

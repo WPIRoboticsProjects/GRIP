@@ -2,7 +2,9 @@ package edu.wpi.grip.ui.pipeline;
 
 import edu.wpi.grip.core.events.SourceAddedEvent;
 import edu.wpi.grip.core.events.UnexpectedThrowableEvent;
+import edu.wpi.grip.core.http.GripServer;
 import edu.wpi.grip.core.sources.CameraSource;
+import edu.wpi.grip.core.sources.HttpSource;
 import edu.wpi.grip.core.sources.ImageFileSource;
 import edu.wpi.grip.core.sources.MultiImageFileSource;
 import edu.wpi.grip.ui.util.DPIUtility;
@@ -67,7 +69,8 @@ public class AddSourceView extends HBox {
   AddSourceView(EventBus eventBus,
                 MultiImageFileSource.Factory multiImageSourceFactory,
                 ImageFileSource.Factory imageSourceFactory,
-                CameraSource.Factory cameraSourceFactory) {
+                CameraSource.Factory cameraSourceFactory,
+                HttpSource.Factory httpSourceFactory) {
     this.eventBus = eventBus;
     this.multiImageSourceFactory = multiImageSourceFactory;
     this.imageSourceFactory = imageSourceFactory;
@@ -199,6 +202,33 @@ public class AddSourceView extends HBox {
               },
               e -> dialog.errorText.setText(e.getMessage()));
         });
+
+    addButton("Add\nHTTP source", getClass().getResource("/edu/wpi/grip/ui/icons/publish.png"),
+        mouseEvent -> {
+          final Parent root = this.getScene().getRoot();
+          // Show a dialog to pick the server path images will be uploaded on
+          final String imageRoot = GripServer.IMAGE_UPLOAD_PATH + "/";
+          final TextField serverPath = new TextField(imageRoot);
+          final SourceDialog dialog = new SourceDialog(root, serverPath);
+          serverPath.setPromptText("Ex: /GRIP/upload/image/foo");
+          serverPath.textProperty().addListener(o -> {
+            boolean valid = true;
+            String text = serverPath.getText();
+            valid = text.startsWith(imageRoot) && text.length() > imageRoot.length();
+            dialog.getDialogPane().lookupButton(ButtonType.OK).setDisable(!valid);
+          });
+
+          dialog.setTitle("Choose path");
+          dialog.setHeaderText("Enter the image upload path");
+          dialog.showAndWait()
+              .filter(ButtonType.OK::equals)
+              .ifPresent(bt -> {
+                final HttpSource httpSource = httpSourceFactory.create(serverPath.getText());
+                httpSource.initialize();
+                eventBus.post(new SourceAddedEvent(httpSource));
+              });
+        });
+
   }
 
   /**

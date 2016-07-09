@@ -8,6 +8,7 @@ import edu.wpi.grip.core.sockets.InputSocketImpl;
 import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.core.sockets.OutputSocketImpl;
 import edu.wpi.grip.core.sources.CameraSource;
+import edu.wpi.grip.core.sources.HttpSource;
 import edu.wpi.grip.core.sources.ImageFileSource;
 import edu.wpi.grip.core.sources.MultiImageFileSource;
 import edu.wpi.grip.core.util.ExceptionWitness;
@@ -55,7 +56,9 @@ public class GripCoreModule extends AbstractModule {
         globalLogger.removeHandler(handler);
       }
 
-      final Handler fileHandler = new FileHandler("%h/GRIP.log"); //Log to the file "GRIPlogger.log"
+      GripFileManager.GRIP_DIRECTORY.mkdirs();
+      final Handler fileHandler
+          = new FileHandler(GripFileManager.GRIP_DIRECTORY.getPath() + "/GRIP.log");
 
       //Set level to handler and logger
       fileHandler.setLevel(Level.FINE);
@@ -137,6 +140,9 @@ public class GripCoreModule extends AbstractModule {
     install(new FactoryModuleBuilder()
         .implement(MultiImageFileSource.class, MultiImageFileSource.class)
         .build(MultiImageFileSource.Factory.class));
+    install(new FactoryModuleBuilder()
+        .implement(HttpSource.class, HttpSource.class)
+        .build(HttpSource.Factory.class));
 
     install(new FactoryModuleBuilder().build(ExceptionWitness.Factory.class));
   }
