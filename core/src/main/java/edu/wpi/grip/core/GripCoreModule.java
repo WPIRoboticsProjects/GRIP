@@ -166,7 +166,7 @@ public class GripCoreModule extends AbstractModule {
    * We intentionally catch the throwable because we can't be sure what will happen.
    * We drop the last throwable because we clearly have a problem beyond our control.
    */
-  @SuppressWarnings( {"PMD.AvoidCatchingThrowable", "PMD.EmptyCatchBlock"})
+  @SuppressWarnings({"PMD.AvoidCatchingThrowable", "PMD.EmptyCatchBlock"})
   protected void onThreadException(Thread thread, Throwable exception) {
     // Don't do anything outside of a try catch block when dealing with thread death
     try {

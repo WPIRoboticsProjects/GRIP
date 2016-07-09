@@ -278,7 +278,7 @@ public class MainWindowController {
   }
 
   @Subscribe
-  @SuppressWarnings( {"PMD.UnusedPrivateMethod", "PMD.UnusedFormalParameter"})
+  @SuppressWarnings({"PMD.UnusedPrivateMethod", "PMD.UnusedFormalParameter"})
   private void runStopped(TimerEvent<?> event) {
     if (!(event.getSource() instanceof PipelineRunner)) {
       return;
