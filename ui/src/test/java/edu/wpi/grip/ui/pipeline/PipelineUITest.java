@@ -7,6 +7,7 @@ import edu.wpi.grip.core.OperationMetaData;
 import edu.wpi.grip.core.Pipeline;
 import edu.wpi.grip.core.Step;
 import edu.wpi.grip.core.SubtractionOperation;
+import edu.wpi.grip.core.metrics.MockTimer;
 import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.core.util.MockExceptionWitness;
@@ -157,7 +158,8 @@ public class PipelineUITest extends ApplicationTest {
   }
 
   private Step addOperation(int count, OperationMetaData operationMetaData) {
-    final Step step = new Step.Factory(origin -> new MockExceptionWitness(eventBus, origin))
+    final Step step = new Step.Factory(origin -> new MockExceptionWitness(eventBus, origin),
+        MockTimer.MOCK_FACTORY)
         .create(operationMetaData);
     pipeline.addStep(step);
 
