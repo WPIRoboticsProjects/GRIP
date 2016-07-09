@@ -107,16 +107,27 @@ allprojects {
         it.dependsOn = []
     }
 
-    tasks.withType(FindBugs) {
-        it.dependsOn = []
-    }
-
     findbugs {
-        // toolVersion = "2.0.1"
         sourceSets = [sourceSets.main]
         excludeFilter = new File(rootDir, "findBugsSuppressions.xml")
         effort = "max"
     }
+
+    task checkFindBugsReport << {
+        try {
+            def xmlReport = findbugsMain.reports.getXml()
+            def slurped = new XmlSlurper().parse(xmlReport.destination)
+            def bugsFound = slurped.BugInstance.size()
+            if (bugsFound > 0) {
+                new XmlNodePrinter().printList(slurped.BugInstance.list())
+                throw new GradleException("$bugsFound FindBugs rule violations were found. See the report at: $xmlReport.destination")
+            }
+        } catch (Exception e) {
+
+        }
+    }
+
+    findbugsMain.finalizedBy checkFindBugsReport
 
     repositories {
         mavenCentral()
