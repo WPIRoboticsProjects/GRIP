@@ -27,7 +27,7 @@ public final class UnexpectedThrowableEvent {
   public UnexpectedThrowableEvent(Throwable throwable, String message, boolean fatal) {
     this.throwable = checkNotNull(throwable, "Throwable can not be null");
     this.message = checkNotNull(message, "Message can not be null");
-    this.fatal = (throwable instanceof Error) || fatal;
+    this.fatal = throwable instanceof Error || fatal;
   }
 
   public UnexpectedThrowableEvent(Throwable throwable, String message) {
