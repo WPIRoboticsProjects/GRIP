@@ -63,7 +63,7 @@ public class Analysis {
     ema.reset();
     n = 0;
     average = 0;
-    statistics = Statistics.of();
+    statistics = Statistics.nil;
   }
 
   /**

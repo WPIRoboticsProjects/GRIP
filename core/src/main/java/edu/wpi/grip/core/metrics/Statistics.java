@@ -20,6 +20,11 @@ public final class Statistics {
   private final double s;
 
   /**
+   * "null" statistics with every value set to zero.
+   */
+  public static final Statistics nil = new Statistics(0, 0, 0, 0);
+
+  /**
    * Calculates the statistics of the given samples.
    *
    * @param samples the samples to analyze

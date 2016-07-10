@@ -23,11 +23,15 @@ import static com.google.common.base.Preconditions.checkArgument;
 @Singleton
 public class BenchmarkRunner {
 
-  @Inject
   private EventBus eventBus;
 
   private AtomicBoolean isBenchmarking = new AtomicBoolean(false);
   private AtomicInteger runsRemaining = new AtomicInteger(0);
+
+  @Inject
+  BenchmarkRunner(EventBus eventBus) {
+    this.eventBus = eventBus;
+  }
 
   /**
    * Benchmarks the pipeline.
