@@ -385,7 +385,6 @@ public class PipelineRunnerTest {
       this.failure = failure;
     }
 
-    @SuppressWarnings("PMD.SystemPrintln")
     public synchronized void throwIfProblemPresent() throws Throwable {
       if (failedFrom != null || failure != null) {
         logger.log(Level.SEVERE, "Failed from state " + failedFrom);
