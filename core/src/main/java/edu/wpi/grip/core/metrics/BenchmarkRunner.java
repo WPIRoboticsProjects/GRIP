@@ -1,6 +1,5 @@
 package edu.wpi.grip.core.metrics;
 
-import edu.wpi.grip.core.Pipeline;
 import edu.wpi.grip.core.events.BenchmarkEvent;
 import edu.wpi.grip.core.events.BenchmarkRunEvent;
 import edu.wpi.grip.core.events.RunStartedEvent;
@@ -26,8 +25,6 @@ public class BenchmarkRunner {
 
   @Inject
   private EventBus eventBus;
-  @Inject
-  private Pipeline pipeline;
 
   private AtomicBoolean isBenchmarking = new AtomicBoolean(false);
   private AtomicInteger runsRemaining = new AtomicInteger(0);
@@ -46,6 +43,7 @@ public class BenchmarkRunner {
   }
 
   @Subscribe
+  @SuppressWarnings({"PMD.UnusedPrivateMethod", "PMD.UnusedFormalParameter"})
   private void onRunStart(@Nullable RunStartedEvent event) {
     if (!isBenchmarking.get()) {
       return;
@@ -54,6 +52,7 @@ public class BenchmarkRunner {
   }
 
   @Subscribe
+  @SuppressWarnings({"PMD.UnusedPrivateMethod", "PMD.UnusedFormalParameter"})
   private void onRunStop(@Nullable RunStoppedEvent event) {
     if (!isBenchmarking.get()) {
       return;
@@ -66,7 +65,12 @@ public class BenchmarkRunner {
     }
   }
 
+  /**
+   * Resets the runner if a "finished" benchmark event is posted while a benchmark is being run.
+   * This is used to kill the runner if the analysis window is closed or the application is exited.
+   */
   @Subscribe
+  @SuppressWarnings({"PMD.UnusedPrivateMethod", "PMD.UnusedFormalParameter"})
   private void onBenchmarkEvent(BenchmarkEvent event) {
     if (isBenchmarking.get() && !event.isStart()) {
       isBenchmarking.set(false);

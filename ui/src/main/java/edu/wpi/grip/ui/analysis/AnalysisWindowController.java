@@ -81,7 +81,7 @@ public class AnalysisWindowController {
     table.setItems(tableItems);
 
     benchmarkRunsField.textProperty().addListener((observable, oldValue, newValue) -> {
-      if ((oldValue.isEmpty() && newValue.equals("0")) || !newValue.matches("[\\d]*")) {
+      if ((oldValue.isEmpty() && "0".equals(newValue)) || !newValue.matches("[\\d]*")) {
         benchmarkRunsField.setText(oldValue);
         return;
       }
@@ -90,6 +90,7 @@ public class AnalysisWindowController {
   }
 
   @Subscribe
+  @SuppressWarnings({"PMD.UnusedPrivateMethod", "PMD.UnusedFormalParameter"})
   private void onRun(TimerEvent<?> event) {
     if (event.getSource() instanceof Step) {
       Step source = (Step) event.getSource();
@@ -99,6 +100,7 @@ public class AnalysisWindowController {
   }
 
   @Subscribe
+  @SuppressWarnings({"PMD.UnusedPrivateMethod", "PMD.UnusedFormalParameter"})
   private void onStepRemoved(StepRemovedEvent event) {
     stepData.stream()
         .filter(p -> p.getLeft() == event.getStep()) // Want reference equality
@@ -108,6 +110,7 @@ public class AnalysisWindowController {
   }
 
   @Subscribe
+  @SuppressWarnings({"PMD.UnusedPrivateMethod", "PMD.UnusedFormalParameter"})
   private void onPipelineFinish(@Nullable RunStoppedEvent event) {
     // Update the table after the pipeline finishes
     tableItems.clear();
@@ -119,6 +122,7 @@ public class AnalysisWindowController {
   }
 
   @Subscribe
+  @SuppressWarnings({"PMD.UnusedPrivateMethod", "PMD.UnusedFormalParameter"})
   private void onBenchmark(BenchmarkEvent event) {
     benchmarkButton.setDisable(event.isStart());
     benchmarkRunsField.setDisable(event.isStart());
@@ -129,6 +133,7 @@ public class AnalysisWindowController {
   }
 
   @FXML
+  @SuppressWarnings("PMD.UnusedPrivateMethod")
   private void runBenchmark() {
     if (benchmarkRunsField.getText().length() > 0) {
       benchmarker.run(Integer.parseInt(benchmarkRunsField.getText()));
@@ -143,16 +148,14 @@ public class AnalysisWindowController {
     private final ProgressBar progressBar = new ProgressBar();
 
     TimeView(double time, double relativeAmount, double hotness) {
+      super();
       text.setText(String.format("%.1fms", time / 1e3));
       progressBar.setProgress(relativeAmount);
       progressBar.setPrefWidth(BAR_LENGTH);
       progressBar.setPadding(new Insets(0, 10, 0, 5));
       if (hotness > 0) {
         final double max = 3; // highest value before being clamped
-        if (hotness > max) {
-          hotness = max; // clamp
-        }
-        double h = ((max - hotness) * 270 / max) - 45;
+        double h = ((max - Math.min(hotness, max)) * 270 / max) - 45;
         final String formatStyle = "-fx-accent: hsb(%.2f, 100%%, 100%%);";
         progressBar.setStyle(String.format(formatStyle, h));
       }

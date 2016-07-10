@@ -294,6 +294,7 @@ public class MainWindowController {
   }
 
   @FXML
+  @SuppressWarnings({"PMD.UnusedPrivateMethod"})
   private void showAnalysis() {
     Stage analysisStage = new Stage();
     try {
@@ -304,7 +305,7 @@ public class MainWindowController {
       controller.setBenchmarker(benchmarkRunner);
       eventBus.register(controller);
     } catch (IOException e) {
-      throw new RuntimeException(e);
+      throw new AssertionError("Analysis window FXML is not present or readable", e);
     }
     analysisStage.initModality(Modality.WINDOW_MODAL);
     analysisStage.initOwner(root.getScene().getWindow());
@@ -314,6 +315,5 @@ public class MainWindowController {
       eventBus.post(BenchmarkEvent.finished());
     });
     analysisStage.showAndWait();
-    System.out.println("User finished analysis");
   }
 }
