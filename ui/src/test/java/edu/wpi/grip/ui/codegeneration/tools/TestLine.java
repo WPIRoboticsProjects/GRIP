@@ -28,15 +28,15 @@ public abstract class TestLine {
   public static void assertEqual(TestLine grip, TestLine gen){
     assertEquals("x1 coordinate not close\n" + errorMessage(grip, gen), 
         grip.getPoint1().x, gen.getPoint1().x, pointTol);
-    assertEquals("y1 coordinate not close " + errorMessage(grip, gen),
+    assertEquals("y1 coordinate not close\n" + errorMessage(grip, gen),
         grip.getPoint1().y, gen.getPoint1().y, pointTol);
-    assertEquals("x2 coordinate not close " + errorMessage(grip, gen), 
+    assertEquals("x2 coordinate not close\n" + errorMessage(grip, gen), 
         grip.getPoint2().x, gen.getPoint2().x, pointTol);
-    assertEquals("y2 coordinate not close " + errorMessage(grip, gen),
+    assertEquals("y2 coordinate not close\n" + errorMessage(grip, gen),
         grip.getPoint2().y, gen.getPoint2().y, pointTol);
-    assertEquals("Length not close " + errorMessage(grip, gen),
+    assertEquals("Length not close\n" + errorMessage(grip, gen),
         grip.getLength(), gen.getLength(), lengthTol);
-    assertEquals("Angle not close " + errorMessage(grip, gen),
+    assertEquals("Angle not close\n" + errorMessage(grip, gen),
         0, angleDif(grip.getAngle(), gen.getAngle()), angleTol);
   }
   
