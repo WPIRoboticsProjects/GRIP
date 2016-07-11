@@ -18,7 +18,8 @@ import javax.annotation.Nullable;
 import static com.google.common.base.Preconditions.checkArgument;
 
 /**
- * Benchmark runner.
+ * Benchmark runner. This runs the pipeline multiple times to collect data about how long each
+ * step takes to run.
  */
 @Singleton
 public class BenchmarkRunner {
@@ -80,6 +81,24 @@ public class BenchmarkRunner {
       isBenchmarking.set(false);
       runsRemaining.set(0);
     }
+  }
+
+  /**
+   * Checks if this benchmark runner is currently running a benchmark.
+   *
+   * @return true if a benchmark is running, false otherwise
+   */
+  public boolean isRunning() {
+    return isBenchmarking.get();
+  }
+
+  /**
+   * Checks how many runs are left in the benchmark. Returns zero if no benchmark is running.
+   *
+   * @return the number of runs left in the benchmark
+   */
+  public int getRunsRemaining() {
+    return runsRemaining.get();
   }
 
 }
