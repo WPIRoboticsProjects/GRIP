@@ -76,10 +76,10 @@ public class TPipeline {
             tInput = new TInput(type, name, connections.get(input));
           } else {
             tInput = null;
-            for (Object con : input.getConnections()) {
+            for (Object con : input.getConnections()) { //Connections is a set. Should only have one element
               tInput = createInput(type, name, "Connection" + ((Connection) con).getOutputSocket()
                   .toString());
-              break;
+              break;  //If somehow there are multiple elements only care about first one.
             }
           }
         } else {
