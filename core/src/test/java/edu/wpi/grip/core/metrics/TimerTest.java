@@ -54,7 +54,7 @@ public class TimerTest {
     timer.started();
     Thread.sleep(1000);
     timer.stopped();
-    assertEquals("Elapsed time was out of tolerance", 1_000_000, timer.getElapsedTime(), 10_000);
+    assertEquals("Elapsed time was out of tolerance", 1_000_000, timer.getElapsedTime(), 50_000);
   }
 
   @Test
@@ -73,7 +73,7 @@ public class TimerTest {
     assertNotNull("No TimerEvent received", timerEvent.get());
     TimerEvent event = timerEvent.get();
     assertEquals("Event had an unexpected source", this, event.getSource());
-    assertEquals("Elapsed time was out of tolerance", 1_000_000, event.getElapsedTime(), 10_000);
+    assertEquals("Elapsed time was out of tolerance", 1_000_000, event.getElapsedTime(), 50_000);
     Analysis analysis = event.getData();
     Statistics statistics = analysis.getStatistics();
     assertEquals("Analysis did not have 1 element", 1, analysis.getN());
