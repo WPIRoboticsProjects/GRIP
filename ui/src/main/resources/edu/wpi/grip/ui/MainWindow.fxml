@@ -14,7 +14,10 @@
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.input.KeyCodeCombination?>
 <?import javafx.scene.layout.VBox?>
-<?import org.controlsfx.control.StatusBar?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Separator?>
 <VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"
       minWidth="-Infinity" styleClass="main-window"
       fx:controller="edu.wpi.grip.ui.MainWindowController"
@@ -135,7 +138,7 @@
                         </ImageView>
                     </graphic>
                 </MenuItem>
-                <MenuItem text="Analyze" onAction="#showAnalysis">
+                <MenuItem fx:id="analyzeMenuItem" text="Analyze" onAction="#showAnalysis">
                     <graphic>
                         <ImageView styleClass="menu-graphic">
                             <fitWidth>
@@ -180,7 +183,17 @@
                 </ScrollPane>
             </items>
         </SplitPane>
-        <StatusBar fx:id="statusBar" />
+        <HBox fx:id="statusBar" alignment="CENTER_LEFT" spacing="2">
+            <padding>
+                <Insets top="2" right="2" bottom="2" left="2" />
+            </padding>
+            <children>
+                <!-- Start/Stop button goes here (created programmatically and inserted) -->
+                <Label fx:id="statusLabel" text="Pipeline stopped" />
+                <Separator orientation="VERTICAL" />
+                <Label fx:id="elapsedTimeLabel" text="Did not run" />
+            </children>
+        </HBox>
     </children>
     <fx:define>
         <fx:include source="Deploy.fxml" fx:id="deployPane" />

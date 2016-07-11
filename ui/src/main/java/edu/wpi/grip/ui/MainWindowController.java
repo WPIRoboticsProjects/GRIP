@@ -16,12 +16,9 @@ import edu.wpi.grip.ui.analysis.AnalysisWindowController;
 import edu.wpi.grip.ui.components.StartStoppableButton;
 import edu.wpi.grip.ui.util.DPIUtility;
 
-import com.google.common.base.CaseFormat;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import com.google.common.util.concurrent.Service;
-
-import org.controlsfx.control.StatusBar;
 
 import java.io.File;
 import java.io.IOException;
@@ -35,12 +32,13 @@ import javafx.scene.Scene;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.SplitPane;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
-import javafx.scene.text.TextAlignment;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Modality;
@@ -53,7 +51,6 @@ import javax.inject.Inject;
  * The Controller for the application window.
  */
 public class MainWindowController {
-
   @FXML
   private Parent root;
   @FXML
@@ -67,8 +64,13 @@ public class MainWindowController {
   @FXML
   private Pane aboutPane;
   @FXML
-  private StatusBar statusBar;
-  private Label elapsedTimeLabel; // TODO improve the layout of this label
+  private MenuItem analyzeMenuItem;
+  @FXML
+  private HBox statusBar;
+  @FXML
+  private Label statusLabel;
+  @FXML
+  private Label elapsedTimeLabel;
   @Inject
   private EventBus eventBus;
   @Inject
@@ -90,20 +92,16 @@ public class MainWindowController {
 
   @FXML
   protected void initialize() {
-    elapsedTimeLabel = new Label();
-    updateElapsedTimeLabel(0);
-    elapsedTimeLabel.setTextAlignment(TextAlignment.CENTER);
     pipelineView.prefHeightProperty().bind(bottomPane.heightProperty());
-    statusBar.getLeftItems().add(startStoppableButtonFactory.create(pipelineRunner));
-    statusBar.getLeftItems().add(elapsedTimeLabel);
+    statusBar.getChildren().add(0, startStoppableButtonFactory.create(pipelineRunner));
     pipelineRunner.addListener(new SingleActionListener(() -> {
       final Service.State state = pipelineRunner.state();
       final String stateMessage =
           state.equals(Service.State.TERMINATED)
-              ? "Stopped"
-              : CaseFormat.UPPER_UNDERSCORE.converterTo(CaseFormat.UPPER_CAMEL).convert(state
-              .toString());
-      statusBar.setText(" Pipeline " + stateMessage);
+              ? "disabled "
+              : "enabled  ";
+      statusLabel.setText("Pipeline " + stateMessage);
+      analyzeMenuItem.setDisable(state.equals(Service.State.TERMINATED));
     }), Platform::runLater);
   }
 
