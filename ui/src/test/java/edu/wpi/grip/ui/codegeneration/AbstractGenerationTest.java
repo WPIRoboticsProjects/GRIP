@@ -8,9 +8,11 @@ import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.core.sources.ImageFileSource;
 import edu.wpi.grip.ui.codegeneration.tools.CppPipelineInterfacer;
 import edu.wpi.grip.ui.codegeneration.tools.HelperTools;
+import edu.wpi.grip.ui.codegeneration.tools.JavaPipelineInterfacer;
 import edu.wpi.grip.ui.codegeneration.tools.PipelineCreator;
 import edu.wpi.grip.ui.codegeneration.tools.PipelineGenerator;
 import edu.wpi.grip.ui.codegeneration.tools.PipelineInterfacer;
+import edu.wpi.grip.ui.codegeneration.tools.PythonPipelineInterfacer;
 import edu.wpi.grip.util.GripCoreTestModule;
 import edu.wpi.grip.util.ImageWithData;
 
@@ -72,10 +74,10 @@ public abstract class AbstractGenerationTest {
     assertTrue("Setup for " + testName + " reported an issue.", setup.getAsBoolean());
     String fileName = testName;
     gen.export(fileName);
-    /*JavaPipelineInterfacer jpip = new JavaPipelineInterfacer(fileName + ".java");
+    JavaPipelineInterfacer jpip = new JavaPipelineInterfacer(fileName + ".java");
     test.accept(jpip);
     PythonPipelineInterfacer ppip = new PythonPipelineInterfacer(fileName);
-    test.accept(ppip);*/
+    test.accept(ppip);
     CppPipelineInterfacer cpip = new CppPipelineInterfacer(fileName);
     test.accept(cpip);
   }

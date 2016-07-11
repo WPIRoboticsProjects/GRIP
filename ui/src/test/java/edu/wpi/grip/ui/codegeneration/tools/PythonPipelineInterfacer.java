@@ -47,8 +47,6 @@ public class PythonPipelineInterfacer implements PipelineInterfacer {
     str.append("import sys\n");
     str.append("import cv2\n");
     str.append("sys.path.insert(0, \'");
-    //File temp = new File("__init__.py");
-    // System.out.println(codeDir.toPath().toString());
     str.append(codeDir.getAbsolutePath().toString());
     str.append("\')\n");
     str.append("import ");
@@ -291,7 +289,6 @@ public class PythonPipelineInterfacer implements PipelineInterfacer {
     BufferedReader in = runProcess(temp.toString());
     int val1 = new Integer(in.readLine()).intValue();
     int val2 = new Integer(in.readLine()).intValue();
-    System.out.println("value is : " + val1);
     return new Size(val1, val2);
   }
 
@@ -312,7 +309,6 @@ public class PythonPipelineInterfacer implements PipelineInterfacer {
 
   private BufferedReader runProcess(String temp) throws IOException {
     out.write(str.toString() + temp);
-    System.out.print("code: " + str.toString() + temp);
     out.close();
     ProcessBuilder pb = new ProcessBuilder("python3", "testing.py");
     Process p = pb.start();
@@ -320,6 +316,7 @@ public class PythonPipelineInterfacer implements PipelineInterfacer {
     BufferedReader stdError = new BufferedReader(new InputStreamReader(p.getErrorStream()));
 
     String s = null;
+
     System.out.println("errors:");
     while ((s = stdError.readLine()) != null) {
       System.out.println(s);

@@ -102,7 +102,6 @@ public class FilterLinesGenerationTest extends AbstractGenerationTest {
     assertTrue("Pipeline did not process", out2.isPresent());
     LinesReport linOut = (LinesReport) out2.get();
 
-    System.out.println(linOut.getLines().size());
     pip.setMatSource(0, Files.imageFile.file);
     pip.process();
 
