@@ -40,14 +40,28 @@ public class JavaLine extends TestLine {
 
   @Override
   public Point getPoint1() {
-    // TODO Auto-generated method stub
-    return null;
+    try {
+      return new Point(line.getClass().getField("x1").getDouble(line),
+          line.getClass().getField("y1").getDouble(line));
+    } catch (NoSuchFieldException | SecurityException
+        | IllegalAccessException | IllegalArgumentException e) {
+      e.printStackTrace();
+      fail("angle is not valid for class " + line.getClass().getSimpleName());
+      return null;
+    }
   }
 
   @Override
   public Point getPoint2() {
-    // TODO Auto-generated method stub
-    return null;
+    try {
+      return new Point(line.getClass().getField("x2").getDouble(line),
+          line.getClass().getField("y2").getDouble(line));
+    } catch (NoSuchFieldException | SecurityException
+        | IllegalAccessException | IllegalArgumentException e) {
+      e.printStackTrace();
+      fail("angle is not valid for class " + line.getClass().getSimpleName());
+      return null;
+    }
   }
 
 }

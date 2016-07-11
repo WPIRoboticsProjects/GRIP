@@ -1,4 +1,3 @@
-#parse("src/main/resources/edu/wpi/grip/ui/templates/java/operations/interpolation.vm")
 	/**
 	 * Scales and image to an exact size.
 	 *
@@ -9,6 +8,6 @@
 	 * @param output The image in which to store the output.
 	 */
 	private void $tMeth.name($step.name())(Mat input, double width, double height,
-	Interpolation interpolation, Mat output){
-		Imgproc.resize(input, output, new Size(width, height), 0.0, 0.0, interpolation.value);
+	int interpolation, Mat output){
+		Imgproc.resize(input, output, new Size(width, height), 0.0, 0.0, interpolation);
 	}

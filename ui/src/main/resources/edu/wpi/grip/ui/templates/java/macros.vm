@@ -17,8 +17,12 @@ MutableOf<$obj>#end
 		int $input.name()$c = Core.$input.value();
 #elseif ($input.type().contains("Enum"))
 		int $input.name()$c = Imgproc.$input.value();
-#elseif ($input.type().equals("MaskSize") || $input.type().contains("Type") || $input.type().equals("Interpolation"))
+#elseif ($input.type().equals("MaskSize"))
+        int $input.name()$c = $input.value().substring(0,1);
+#elseif ($input.type().equals("BlurType"))
 		$input.type() $input.name()$c = ${input.type()}.get("${input.value()}");
+#elseif ($input.type().contains("Type") || $input.type().equals("Interpolation"))
+		int $input.name()$c = #enum($input.value());
 #elseif ($input.type().equals("String"))
 		$input.type() $input.name()$c = "$input.value()";
 #elseif ($input.type().equals("Scalar"))
@@ -37,3 +41,15 @@ ArrayList<MatOfPoint>#elseif ($type.equals("BlobsReport"))
 MatOfKeyPoint#elseif ($type.equals("LinesReport"))
 ArrayList<Line>#else
 $type#end#end
+
+#macro (enum $val)#if($val.equals("CV_DIST_L1"))
+Imgproc.DIST_L1#elseif($val.equals("CV_DIST_L2"))
+Imgproc.DIST_L2#elseif($val.equals("CV_DIST_C"))
+Imgproc.DIST_C#elseif($val.equals("None"))
+Imgproc.INTER_NEAREST#elseif($val.equals("Linear"))
+Imgproc.INTER_LINEAR#elseif($val.equals("Cubic"))
+Imgproc.INTER_CUBIC#elseif($val.equals("Lanczos"))
+Imgproc.INTER_LANCZOS4#elseif($val.equals("Area"))
+Imgproc.INTER_AREA#elseif($val.contains("NORM"))
+Core.$val#else
+$val#end#end
