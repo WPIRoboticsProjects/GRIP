@@ -30,7 +30,7 @@ public class SwitchTest extends AbstractGenerationTest {
     return setup(srcTrue, srcFalse, initVal);
   }
 
-  boolean setup(Source onTrue, Source onFalse, Boolean initVal){
+  boolean setup(Source onTrue, Source onFalse, Boolean initVal) {
     Step step = gen.addStep(new OperationMetaData(
         SwitchOperation.DESCRIPTION, () -> new SwitchOperation(isf, osf)));
     for (InputSocket sock : step.getInputSockets()) {

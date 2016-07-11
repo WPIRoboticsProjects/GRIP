@@ -5,15 +5,10 @@ import org.opencv.core.MatOfKeyPoint;
 import org.opencv.core.MatOfPoint;
 import org.opencv.core.Point;
 import org.opencv.core.Size;
-import org.opencv.imgcodecs.Imgcodecs;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.lang.UnsupportedOperationException;
-import java.net.URISyntaxException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -54,9 +49,6 @@ public class CppPipelineInterfacer implements PipelineInterfacer {
   public void setNumSource(int num, Number val) {
     setNumSource(num, val.doubleValue());
   }
-  
-  @Override
-  public native void process();
 
   @Override
   public Object getOutput(int num, GenType type) {
@@ -82,8 +74,8 @@ public class CppPipelineInterfacer implements PipelineInterfacer {
       case LINES:
         double[][] linePts = getLines(num);
         List<CppLine> lines = new ArrayList<CppLine>(linePts.length);
-        for(int idx = 0; idx<linePts.length; idx++){
-          double pts[] = linePts[idx];
+        for (int idx = 0; idx < linePts.length; idx++) {
+          double[] pts = linePts[idx];
           lines.add(idx, new CppLine(pts[0], pts[1], pts[2], pts[3], pts[4], pts[5]));
         }
         return lines;
@@ -133,12 +125,15 @@ public class CppPipelineInterfacer implements PipelineInterfacer {
       e.printStackTrace();
     }
   }
-  
-  private Mat getMat(int num){
+
+  private Mat getMat(int num) {
     Mat out = new Mat();
     getMatNative(num, out.nativeObj);
     return out;
   }
+  
+  @Override
+  public native void process();
   
   private native void setMatSource(int num, String path);
   

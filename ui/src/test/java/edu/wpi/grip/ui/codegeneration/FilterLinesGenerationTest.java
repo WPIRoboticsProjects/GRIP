@@ -11,21 +11,20 @@ import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.core.sources.ImageFileSource;
 import edu.wpi.grip.ui.codegeneration.tools.GenType;
-import edu.wpi.grip.ui.codegeneration.tools.TestLine;
+import edu.wpi.grip.ui.codegeneration.tools.GripLine;
 import edu.wpi.grip.ui.codegeneration.tools.PipelineInterfacer;
+import edu.wpi.grip.ui.codegeneration.tools.TestLine;
 import edu.wpi.grip.util.Files;
 
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 @Category(GenerationTest.class)
 public class FilterLinesGenerationTest extends AbstractGenerationTest {
@@ -107,17 +106,14 @@ public class FilterLinesGenerationTest extends AbstractGenerationTest {
     pip.setMatSource(0, Files.imageFile.file);
     pip.process();
 
+    List<TestLine> gripLin = GripLine.convertReport(linOut);
     List<TestLine> genLin = (List<TestLine>) pip.getOutput(2, GenType.LINES);
-    assertTrue("Number of lines is not the same. grip: " + linOut.getLines().size() 
-        + " gen: " + genLin.size(), 
+    assertTrue("Number of lines is not the same. grip: " + linOut.getLines().size()
+            + " gen: " + genLin.size(),
         (linOut.getLines().size() - genLin.size()) < 5);
     for (int i = 0; i < genLin.size(); i++) {
-      assertTrue("gripLength: " + linOut.getLength()[i] + " genLength: " 
-          + genLin.get(i).getLength(), Math.abs(genLin.get(i).getLength()
-          - linOut.getLength()[i]) < 2);
-      assertTrue("gripangle: " + linOut.getAngle()[i] + " genangle: " 
-          + genLin.get(i).getAngle(), Math.abs(genLin.get(i).getAngle()
-            - linOut.getAngle()[i]) < 2);
+      assertTrue("griplin does not contain: " + genLin.get(i),
+          TestLine.containsLin(genLin.get(i), gripLin));
     }
 
   }

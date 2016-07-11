@@ -1,18 +1,19 @@
 package edu.wpi.grip.ui.codegeneration.tools;
 
-import static org.junit.Assert.fail;
+import org.opencv.core.Point;
 
 import java.lang.reflect.InvocationTargetException;
 
-import org.opencv.core.Point;
+import static org.junit.Assert.fail;
 
 public class JavaLine extends TestLine {
 
   private Object line;
-  
-  public JavaLine(Object line){
+
+  public JavaLine(Object line) {
     this.line = line;
   }
+
   @Override
   public double getLength() {
     try {
@@ -36,11 +37,13 @@ public class JavaLine extends TestLine {
       return 0.0;
     }
   }
+
   @Override
   public Point getPoint1() {
     // TODO Auto-generated method stub
     return null;
   }
+
   @Override
   public Point getPoint2() {
     // TODO Auto-generated method stub

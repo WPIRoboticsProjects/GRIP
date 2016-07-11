@@ -8,11 +8,9 @@ import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.core.sources.ImageFileSource;
 import edu.wpi.grip.ui.codegeneration.tools.CppPipelineInterfacer;
 import edu.wpi.grip.ui.codegeneration.tools.HelperTools;
-import edu.wpi.grip.ui.codegeneration.tools.JavaPipelineInterfacer;
 import edu.wpi.grip.ui.codegeneration.tools.PipelineCreator;
 import edu.wpi.grip.ui.codegeneration.tools.PipelineGenerator;
 import edu.wpi.grip.ui.codegeneration.tools.PipelineInterfacer;
-import edu.wpi.grip.ui.codegeneration.tools.PythonPipelineInterfacer;
 import edu.wpi.grip.util.GripCoreTestModule;
 import edu.wpi.grip.util.ImageWithData;
 

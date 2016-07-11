@@ -42,7 +42,7 @@ public class JavaPipelineInterfacer implements PipelineInterfacer {
   }
 
   @Override
-  public void setNumSource(int num, Number value){
+  public void setNumSource(int num, Number value) {
     setSource(num, value);
   }
   
@@ -62,7 +62,7 @@ public class JavaPipelineInterfacer implements PipelineInterfacer {
   public Object getOutput(int num, GenType type) {
     Object out = null;
     try {
-      out =  pipeline.getMethod("getoutput" + num).invoke(instance);
+      out = pipeline.getMethod("getoutput" + num).invoke(instance);
     } catch (IllegalAccessException | IllegalArgumentException
         | InvocationTargetException | NoSuchMethodException
         | SecurityException e) {
@@ -70,11 +70,11 @@ public class JavaPipelineInterfacer implements PipelineInterfacer {
       fail("getoutput" + num + " method does not exist");
       return null;
     }
-    switch(type){
+    switch (type) {
       case LINES:
         List<Object> inputLines = (List<Object>) out;
         ArrayList<JavaLine> lines = new ArrayList<JavaLine>(inputLines.size());
-        for(int idx = 0; idx< inputLines.size(); idx++){
+        for (int idx = 0; idx < inputLines.size(); idx++) {
           lines.add(idx, new JavaLine(inputLines.get(idx)));
         }
         return lines;

@@ -65,7 +65,7 @@ public class PythonPipelineInterfacer implements PipelineInterfacer {
   }
 
   @Override
-  public void setNumSource(int num, Number value){
+  public void setNumSource(int num, Number value) {
     str.append("source = ").append(value.doubleValue());
     str.append("\n").append("pipe.set_source");
     str.append(num).append("(source)\n");
