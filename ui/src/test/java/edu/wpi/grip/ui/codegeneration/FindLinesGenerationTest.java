@@ -9,8 +9,6 @@ import edu.wpi.grip.core.operations.composite.LinesReport;
 import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.core.sources.ImageFileSource;
-import edu.wpi.grip.ui.codegeneration.AbstractGenerationTest;
-import edu.wpi.grip.ui.codegeneration.GenerationTest;
 import edu.wpi.grip.ui.codegeneration.tools.GenType;
 import edu.wpi.grip.ui.codegeneration.tools.GripLine;
 import edu.wpi.grip.ui.codegeneration.tools.PipelineInterfacer;
@@ -95,8 +93,8 @@ public class FindLinesGenerationTest extends AbstractGenerationTest {
     assertTrue("Number of lines is not the same. grip: " + gripLin.size() + " gen: "
         + genLin.size(), (linOut.getLines().size() - genLin.size()) < 5);
     for (int idx = 0; idx < genLin.size(); idx++) {
-        assertTrue("griplin does not contain: " + genLin.get(idx),
-            TestLine.containsLin(genLin.get(idx), gripLin));
+      assertTrue("griplin does not contain: " + genLin.get(idx),
+          TestLine.containsLin(genLin.get(idx), gripLin));
     }
 
   }

@@ -4,20 +4,26 @@ import org.opencv.core.Point;
 
 public class CppLine extends TestLine {
 
-  private double x1, y1, x2, y2, length, angle;
+  private double x1;
+  private double y1;
+  private double x2;
+  private double y2;
+  private double length;
+  private double angle;
+
   /**
-   * Creates a line from the parameters gotten from array.
-   * Note this takes length and angle as parameters to ensure 
-   * that generated code calculates length and angle properly.
-   * @param x1 X location of point 1.
-   * @param y1 Y location of point 1.
-   * @param x2 X location of point 2.
-   * @param y2 Y location of point 2.
+   * Creates a line from the parameters gotten from array. Note this takes length and angle as
+   * parameters to ensure that generated code calculates length and angle properly.
+   *
+   * @param x1     X location of point 1.
+   * @param y1     Y location of point 1.
+   * @param x2     X location of point 2.
+   * @param y2     Y location of point 2.
    * @param length length of the line.
-   * @param angle angle of the line.
+   * @param angle  angle of the line.
    */
-  public CppLine(double x1, double y1, double x2, 
-      double y2, double length, double angle){
+  public CppLine(double x1, double y1, double x2,
+                 double y2, double length, double angle) {
     this.x1 = x1;
     this.y1 = y1;
     this.x2 = x2;
@@ -25,7 +31,7 @@ public class CppLine extends TestLine {
     this.length = length;
     this.angle = angle;
   }
-  
+
   @Override
   public double getLength() {
     return length;
