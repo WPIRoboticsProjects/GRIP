@@ -1,14 +1,5 @@
 package edu.wpi.grip.ui.codegeneration.tools;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.lang.UnsupportedOperationException;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
-
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfKeyPoint;
 import org.opencv.core.MatOfPoint;
@@ -16,21 +7,32 @@ import org.opencv.core.Point;
 import org.opencv.core.Size;
 import org.opencv.imgcodecs.Imgcodecs;
 
-import static org.junit.Assert.fail;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.lang.UnsupportedOperationException;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
+
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.fail;
 
 public class CppPipelineInterfacer implements PipelineInterfacer {
   private static File codeDir;
-  static{
+
+  static {
     System.loadLibrary("genJNI");
     codeDir = PipelineGenerator.codeDir.getAbsoluteFile();
   }
-  
-  public CppPipelineInterfacer(String libName){
+
+  public CppPipelineInterfacer(String libName) {
     try {
       String libBase = codeDir.getAbsolutePath() + File.separator + libName;
-      Process cmake = new ProcessBuilder("cmake","CMakeLists.txt" ,"-DNAME="+libName).directory(codeDir).start();
+      Process cmake = new ProcessBuilder("cmake", "CMakeLists.txt", "-DNAME="
+          + libName).directory(codeDir).start();
       String error = runProcess(cmake);
       assertEquals("Failed to cmake " + libName + error, 0, cmake.exitValue());
       Process make = new ProcessBuilder("make").directory(codeDir).start();
@@ -40,9 +42,9 @@ public class CppPipelineInterfacer implements PipelineInterfacer {
       e.printStackTrace();
       fail("Could not compile " + libName + " due to :" + e.getMessage());
     }
-    init(codeDir.getAbsolutePath()+"/lib" + libName + ".dylib");
+    init(codeDir.getAbsolutePath() + "/lib" + libName + ".dylib");
   }
-  
+
   @Override
   public void setSource(int num, Object value) {
     throw new UnsupportedOperationException(
@@ -60,12 +62,14 @@ public class CppPipelineInterfacer implements PipelineInterfacer {
     setMatSource(num, img.getAbsolutePath());
   }
 
+  private native void setMatSource(int num, String path);
+
   @Override
   public native void process();
 
   @Override
   public Object getOutput(int num, GenType type) {
-    switch(type){
+    switch (type) {
       case BLOBS:
         MatOfKeyPoint blobs = new MatOfKeyPoint();
         getBlobs(num, blobs.nativeObj);
@@ -75,8 +79,8 @@ public class CppPipelineInterfacer implements PipelineInterfacer {
       case CONTOURS:
         int numContours = getNumContours(num);
         ArrayList<MatOfPoint> contours = new ArrayList<MatOfPoint>(numContours);
-        long addresses[] = new long[numContours];
-        for(int idx = 0; idx < numContours; idx++){
+        long[] addresses = new long[numContours];
+        for (int idx = 0; idx < numContours; idx++) {
           contours.add(idx, new MatOfPoint());
           addresses[idx] = contours.get(idx).nativeObj;
         }
@@ -104,9 +108,10 @@ public class CppPipelineInterfacer implements PipelineInterfacer {
         return new Size(sz[0], sz[1]);
       default:
         break;
-      
+
     }
-    throw new UnsupportedOperationException("C++ does not yet support getOutput with type: " + type);
+    throw new UnsupportedOperationException("C++ does not yet support getOutput with type: "
+        + type);
   }
 
   @Override
@@ -119,18 +124,18 @@ public class CppPipelineInterfacer implements PipelineInterfacer {
     setCondition(num, value);
   }
 
-  private String runProcess(Process proc) throws IOException{
+  private String runProcess(Process proc) throws IOException {
     waitOn(proc);
     InputStream err = proc.getErrorStream();
     StringBuilder builder = new StringBuilder();
-    builder.append(" with error ");
-    while(err.available()>0){
-      builder.append((char)err.read());
+    builder.append(" with error\n");
+    while (err.available() > 0) {
+      builder.append((char) err.read());
     }
     return builder.toString();
   }
-  
-  private void waitOn(Process proc){
+
+  private void waitOn(Process proc) {
     try {
       proc.waitFor();
     } catch (InterruptedException e) {
@@ -145,22 +150,33 @@ public class CppPipelineInterfacer implements PipelineInterfacer {
   }
   
   private native void getMatNative(int num, long addr);
+
   private native double getDouble(int num);
+
   private native boolean getBoolean(int num);
+
   private native void setCondition(int num, boolean value);
-  private native void setMatSource(int num, String path);
+
   private native void init(String libName);
+
   private native void dispose();
+
   private native double[] getSizeOrPoint(int num, boolean size);
+
   private native void getBlobs(int num, long retAddr);
+
   private native int getNumContours(int num);
+
   /**
    * Gets the contours from specified output.
-   * @param num the output number.
-   * @param addrs an array of nativeAddresses of MatOfPoint objects.
-   * Note the size of addrs should be the number returned from getNumContours.
+   *
+   * @param num   the output number.
+   * @param addrs an array of nativeAddresses of MatOfPoint objects. Note the size of addrs should
+   *              be the number returned from getNumContours.
    */
   private native void getContours(int num, long[] addrs);
+
   private native double[][] getLines(int num);
+
   private long nativeHandle;
 }

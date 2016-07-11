@@ -2,7 +2,6 @@ package edu.wpi.grip.ui.codegeneration.tools;
 
 import java.io.File;
 
-
 public interface PipelineInterfacer {
 
   void setSource(int num, Object value);

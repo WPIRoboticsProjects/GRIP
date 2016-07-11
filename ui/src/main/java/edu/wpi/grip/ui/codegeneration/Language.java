@@ -1,7 +1,5 @@
 package edu.wpi.grip.ui.codegeneration;
 
-import org.python.icu.impl.IllegalIcuArgumentException;
-
 /**
  * An enum representing code generation languages.
  * Each language has a name as well as a directory for templates.
