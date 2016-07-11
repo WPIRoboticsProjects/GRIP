@@ -55,10 +55,10 @@ public abstract class AbstractGenerationTest {
   protected OperationsUtil opUtil;
   protected PipelineGenerator gen;
 
-  static{
+  static {
     System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
   }
-  
+
   @Before
   public void setUp() {
     testModule = new GripCoreTestModule();
@@ -95,14 +95,14 @@ public abstract class AbstractGenerationTest {
     PipelineCreator.cleanClasses();
     File img = new File("img.png");
     File testing = new File("testing.py");
-    File dir  = PipelineGenerator.codeDir.getAbsoluteFile();
+    File dir = PipelineGenerator.codeDir.getAbsoluteFile();
     try {
       File[] toDelete = dir.listFiles((File file) -> {
         String name = file.getName();
-      return name.contains(".cpp") || name.contains(".py") || name.contains(".h")
-          || name.contains(".dylib") || name.contains(".so") || name.contains(".dll");
+        return name.contains(".cpp") || name.contains(".py") || name.contains(".h")
+            || name.contains(".dylib") || name.contains(".so") || name.contains(".dll");
       });
-      for(File file : toDelete){
+      for (File file : toDelete) {
         Files.deleteIfExists(file.toPath());
       }
       Files.deleteIfExists(img.toPath());
@@ -127,7 +127,7 @@ public abstract class AbstractGenerationTest {
   protected void assertMatWithin(Mat gen, Mat grip, double tolerance) {
     double diff = Math.abs(HelperTools.matAvgDiff(gen, grip));
     assertTrue("Difference between two Mats was: " + diff
-        + ", which is greater than tolerance of: " + tolerance,
+            + ", which is greater than tolerance of: " + tolerance,
         diff <= tolerance);
   }
 }
