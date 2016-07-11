@@ -19,8 +19,8 @@ import static org.junit.Assert.assertEquals;
 
 public class SwitchTest extends AbstractGenerationTest {
   
-  private int onTrueSourceNum = 1;
-  private int onFalseSourceNum = 2;
+  private int onTrueSourceNum = 0;
+  private int onFalseSourceNum = 1;
   @Inject
   ExceptionWitness.Factory ewf;
   

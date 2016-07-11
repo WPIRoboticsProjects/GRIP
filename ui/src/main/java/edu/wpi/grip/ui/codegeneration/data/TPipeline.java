@@ -79,6 +79,7 @@ public class TPipeline {
             for (Object con : input.getConnections()) {
               tInput = createInput(type, name, "Connection" + ((Connection) con).getOutputSocket()
                   .toString());
+              break;
             }
           }
         } else {
