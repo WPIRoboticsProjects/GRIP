@@ -10,3 +10,6 @@ map<int, AbsPipeline::Condition> AbsPipeline::getConditions(){
 }
 AbsPipeline::~AbsPipeline(){}
 
+map<int, AbsPipeline::NumSource> AbsPipeline::getNumSources(){
+	return this->numSources;
+}

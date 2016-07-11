@@ -46,24 +46,15 @@ public class CppPipelineInterfacer implements PipelineInterfacer {
   }
 
   @Override
-  public void setSource(int num, Object value) {
-    throw new UnsupportedOperationException(
-        "This shouldn't be called, setSource is not supported yet!");
-  }
-
-  @Override
-  public void setSourceAsObject(int num, Object value) {
-    throw new UnsupportedOperationException(
-        "This shouldn't be called, setSourceAsObject is not supported yet!");
-  }
-
-  @Override
   public void setMatSource(int num, File img) {
     setMatSource(num, img.getAbsolutePath());
   }
 
-  private native void setMatSource(int num, String path);
-
+  @Override
+  public void setNumSource(int num, Number val) {
+    setNumSource(num, val.doubleValue());
+  }
+  
   @Override
   public native void process();
 
@@ -149,6 +140,10 @@ public class CppPipelineInterfacer implements PipelineInterfacer {
     return out;
   }
   
+  private native void setMatSource(int num, String path);
+  
+  private native void setNumSource(int num, double value);
+  
   private native void getMatNative(int num, long addr);
 
   private native double getDouble(int num);
@@ -179,4 +174,5 @@ public class CppPipelineInterfacer implements PipelineInterfacer {
   private native double[][] getLines(int num);
 
   private long nativeHandle;
+
 }

@@ -131,16 +131,6 @@ JNIEXPORT void JNICALL Java_edu_wpi_grip_ui_codegeneration_tools_CppPipelineInte
   }
   env->ReleaseLongArrayElements(addresses, addrs, 0);
 }
-/*extern "C" vector<Vec6d> getLines(int num, AbsPipeline* obj){
-	vector<Line> lines = (obj->*(obj->getOutputs()[num]))();
-	vector<Vec6d> out;
-	for(int idx = 0; idx<lines.size(); idx++){
-		Line l = lines[idx];
-		out.push_back(Vec6d(l.x1, l.y1, l.x2, l.y2, l.length(), l.angle()));
-	}
-	return out;
-}*/
-
 
 typedef vector<Vec6d> LineFun(int, AbsPipeline*);
 JNIEXPORT jobjectArray JNICALL Java_edu_wpi_grip_ui_codegeneration_tools_CppPipelineInterfacer_getLines
@@ -164,3 +154,11 @@ JNIEXPORT jobjectArray JNICALL Java_edu_wpi_grip_ui_codegeneration_tools_CppPipe
   }
   return linesArray;
 }
+
+JNIEXPORT void JNICALL Java_edu_wpi_grip_ui_codegeneration_tools_CppPipelineInterfacer_setNumSource
+  (JNIEnv *env, jobject obj, jint num, jdouble value){
+   AbsPipeline *inst = getHandle<AbsPipeline>(env, obj);
+   double* input = (double *) malloc(sizeof(double));
+   *input = (double) value;
+   (inst->*(inst->getNumSources()[(int) num]))(input);
+  }

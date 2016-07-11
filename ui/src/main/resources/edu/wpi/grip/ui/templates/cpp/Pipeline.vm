@@ -26,6 +26,8 @@ $fileName::$fileName() {
 #set($num = $velocityCount - 1)
 #if($source.type().equalsIgnoreCase("Mat"))
 	matSources.insert(make_pair($num, (AbsPipeline::MatSource)&$fileName::set$source.value()));
+#elseif($source.type().equalsIgnoreCase("Number") || $source.type().equalsIgnoreCase("double"))
+	numSources.insert(make_pair($num, (AbsPipeline::NumSource)&$fileName::set$source.value()));
 #end
 #end
 #set($outCnt = 0)
