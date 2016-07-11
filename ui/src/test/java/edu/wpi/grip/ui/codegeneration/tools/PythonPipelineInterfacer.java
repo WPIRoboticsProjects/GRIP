@@ -64,47 +64,13 @@ public class PythonPipelineInterfacer implements PipelineInterfacer {
     }
   }
 
-  /* (non-Javadoc)
-   * @see edu.wpi.grip.ui.codegeneration.tools.PipelineInterfacer#setSource(int, java.lang.Object)
-   */
   @Override
-  public void setSource(int num, Object value) {
-    str.append("val = ");
-    Class type = value.getClass();
-    if (type.equals(Size.class)) {
-      Size val = (Size) value;
-      String size = "(" + val.width + "," + val.height + ")";
-      str.append(size);
-    } else if (type.equals(Point.class)) {
-      Point val = (Point) value;
-      String point = "(" + val.x + "," + val.y + ")";
-      str.append(point);
-    } else if (type.equals(Boolean.class)) {
-      if ((Boolean) value) {
-        str.append("True");
-      } else {
-        str.append("False");
-      }
-    } else {
-      str.append(value.toString());
-    }
-    str.append("\npipe.set_source");
-    str.append(num);
-    str.append("(val)\n");
+  public void setNumSource(int num, Number value) {
+    str.append("source = ").append(value.doubleValue());
+    str.append("\n").append("pipe.set_source");
+    str.append(num).append("(source)\n");
   }
-
-  /* (non-Javadoc)
-   * @see edu.wpi.grip.ui.codegeneration.tools.PipelineInterfacer#setSourceAsObject(int,  java
-   * .lang.Object)
-   */
-  @Override
-  public void setSourceAsObject(int num, Object value) {
-    setSource(num, value);
-  }
-
-  /* (non-Javadoc)
-   * @see edu.wpi.grip.ui.codegeneration.tools.PipelineInterfacer#setMatSource(int, java.io.File)
-   */
+  
   @Override
   public void setMatSource(int num, File img) {
     str.append("source = cv2.imread(\"");
@@ -115,17 +81,11 @@ public class PythonPipelineInterfacer implements PipelineInterfacer {
     str.append("(source)\n");
   }
 
-  /* (non-Javadoc)
-   * @see edu.wpi.grip.ui.codegeneration.tools.PipelineInterfacer#process()
-   */
   @Override
   public void process() {
     str.append("pipe.process()\n");
   }
 
-  /* (non-Javadoc)
-   * @see edu.wpi.grip.ui.codegeneration.tools.PipelineInterfacer#getOutput(int)
-   */
   @Override
   public Object getOutput(int num, GenType type) {
     Object objectOut = null;

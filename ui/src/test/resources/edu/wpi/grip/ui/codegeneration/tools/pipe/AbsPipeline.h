@@ -17,14 +17,17 @@ public:
     typedef void (AbsPipeline::*MatSource)(Mat*);
     typedef void* (AbsPipeline::*Output)();
     typedef void (AbsPipeline::*Condition)(bool);
+    typedef void (AbsPipeline::*NumSource)(double*);
     virtual void Process() = 0;
     map<int, MatSource> getMatSources();
     map<int, Output> getOutputs();
     map<int, Condition> getConditions();
+    map<int, NumSource> getNumSources();
     void* libHandle;
     virtual ~AbsPipeline();
 protected:
     map<int, MatSource> matSources;
     map<int, Output> outputs;
     map<int, Condition> conditions;
+    map<int, NumSource> numSources;
 };

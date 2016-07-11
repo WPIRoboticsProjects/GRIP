@@ -8,9 +8,9 @@
 	template<typename T>
 	void pipelineValve(bool *sw, T *input, T *output){
 		if(*sw){
-			output = input;
+			*output = *input;
 		}
 		else{
-			output = NULL;
+			*output = NULL;
 		}
 	}

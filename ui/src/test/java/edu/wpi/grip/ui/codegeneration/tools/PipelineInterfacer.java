@@ -4,12 +4,10 @@ import java.io.File;
 
 public interface PipelineInterfacer {
 
-  void setSource(int num, Object value);
-
-  void setSourceAsObject(int num, Object value);
-
   void setMatSource(int num, File img);
 
+  void setNumSource(int num, Number val);
+  
   void process();
 
   Object getOutput(int num, GenType type);

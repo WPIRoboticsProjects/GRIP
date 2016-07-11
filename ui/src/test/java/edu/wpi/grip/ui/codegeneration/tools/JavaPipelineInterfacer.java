@@ -25,10 +25,6 @@ public class JavaPipelineInterfacer implements PipelineInterfacer {
     }
   }
 
-  /* (non-Javadoc)
-   * @see edu.wpi.grip.ui.codegeneration.tools.PipelineInterfacer#setSource(int, java.lang.Object)
-   */
-  @Override
   public void setSource(int num, Object value) {
     try {
       pipeline.getMethod("setsource" + num, value.getClass()).invoke(instance, value);
@@ -40,33 +36,16 @@ public class JavaPipelineInterfacer implements PipelineInterfacer {
     }
   }
 
-  /* (non-Javadoc)
-   * @see edu.wpi.grip.ui.codegeneration.tools.PipelineInterfacer#setSourceAsObject(int, java
-   * .lang.Object)
-   */
-  @Override
-  public void setSourceAsObject(int num, Object value) {
-    try {
-      pipeline.getMethod("setsource" + num, Object.class).invoke(instance, value);
-    } catch (NoSuchMethodException | SecurityException | IllegalAccessException
-        | IllegalArgumentException | InvocationTargetException e) {
-      e.printStackTrace();
-      fail("setsource" + num + " is not valid for class " + value.getClass().getSimpleName() + ""
-          + " because there was a: ");
-    }
-  }
-
-  /* (non-Javadoc)
-   * @see edu.wpi.grip.ui.codegeneration.tools.PipelineInterfacer#setMatSource(int, java.io.File)
-   */
   @Override
   public void setMatSource(int num, File img) {
     setSource(num, Imgcodecs.imread(img.getAbsolutePath()));
   }
 
-  /* (non-Javadoc)
-   * @see edu.wpi.grip.ui.codegeneration.tools.PipelineInterfacer#process()
-   */
+  @Override
+  public void setNumSource(int num, Number value) {
+    setSource(num, value);
+  }
+  
   @Override
   public void process() {
     try {
@@ -79,9 +58,6 @@ public class JavaPipelineInterfacer implements PipelineInterfacer {
     }
   }
 
-  /* (non-Javadoc)
-   * @see edu.wpi.grip.ui.codegeneration.tools.PipelineInterfacer#getOutput(int)
-   */
   @Override
   public Object getOutput(int num, GenType type) {
     Object out = null;
@@ -107,9 +83,6 @@ public class JavaPipelineInterfacer implements PipelineInterfacer {
     }
   }
 
-  /* (non-Javadoc)
-   * @see edu.wpi.grip.ui.codegeneration.tools.PipelineInterfacer#setSwitch(int, boolean)
-   */
   @Override
   public void setSwitch(int num, boolean value) {
     try {
@@ -121,9 +94,6 @@ public class JavaPipelineInterfacer implements PipelineInterfacer {
     }
   }
 
-  /* (non-Javadoc)
-   * @see edu.wpi.grip.ui.codegeneration.tools.PipelineInterfacer#setValve(int, boolean)
-   */
   @Override
   public void setValve(int num, boolean value) {
     try {

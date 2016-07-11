@@ -17,6 +17,22 @@ JNIEXPORT void JNICALL Java_edu_wpi_grip_ui_codegeneration_tools_CppPipelineInte
 
 /*
  * Class:     edu_wpi_grip_ui_codegeneration_tools_CppPipelineInterfacer
+ * Method:    setMatSource
+ * Signature: (ILjava/lang/String;)V
+ */
+JNIEXPORT void JNICALL Java_edu_wpi_grip_ui_codegeneration_tools_CppPipelineInterfacer_setMatSource
+  (JNIEnv *, jobject, jint, jstring);
+
+/*
+ * Class:     edu_wpi_grip_ui_codegeneration_tools_CppPipelineInterfacer
+ * Method:    setNumSource
+ * Signature: (ID)V
+ */
+JNIEXPORT void JNICALL Java_edu_wpi_grip_ui_codegeneration_tools_CppPipelineInterfacer_setNumSource
+  (JNIEnv *, jobject, jint, jdouble);
+
+/*
+ * Class:     edu_wpi_grip_ui_codegeneration_tools_CppPipelineInterfacer
  * Method:    getMatNative
  * Signature: (IJ)V
  */
@@ -46,14 +62,6 @@ JNIEXPORT jboolean JNICALL Java_edu_wpi_grip_ui_codegeneration_tools_CppPipeline
  */
 JNIEXPORT void JNICALL Java_edu_wpi_grip_ui_codegeneration_tools_CppPipelineInterfacer_setCondition
   (JNIEnv *, jobject, jint, jboolean);
-
-/*
- * Class:     edu_wpi_grip_ui_codegeneration_tools_CppPipelineInterfacer
- * Method:    setMatSource
- * Signature: (ILjava/lang/String;)V
- */
-JNIEXPORT void JNICALL Java_edu_wpi_grip_ui_codegeneration_tools_CppPipelineInterfacer_setMatSource
-  (JNIEnv *, jobject, jint, jstring);
 
 /*
  * Class:     edu_wpi_grip_ui_codegeneration_tools_CppPipelineInterfacer
