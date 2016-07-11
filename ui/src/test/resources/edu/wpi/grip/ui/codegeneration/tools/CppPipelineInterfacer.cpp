@@ -68,12 +68,15 @@ JNIEXPORT jstring JNICALL Java_edu_wpi_grip_ui_codegeneration_tools_CppPipelineI
   JNIEXPORT void JNICALL Java_edu_wpi_grip_ui_codegeneration_tools_CppPipelineInterfacer_dispose
   (JNIEnv *env , jobject obj){
       AbsPipeline *inst = getHandle<AbsPipeline>(env, obj);
+      void * libHandle = inst->libHandle;
       delete inst;
+      dlclose(libHandle);
   }
 
-  #define numEles 2
+  
   JNIEXPORT jdoubleArray JNICALL Java_edu_wpi_grip_ui_codegeneration_tools_CppPipelineInterfacer_getSizeOrPoint
   (JNIEnv *env, jobject obj, jint num, jboolean isSize){
+  	int numEles = 2;
     double vals[numEles];
     AbsPipeline *inst = getHandle<AbsPipeline>(env, obj);
     if(isSize){
@@ -128,4 +131,37 @@ JNIEXPORT void JNICALL Java_edu_wpi_grip_ui_codegeneration_tools_CppPipelineInte
     temp.copyTo(*(Mat *) addrs[idx]);
   }
   env->ReleaseLongArrayElements(addresses, addrs, 0);
+}
+/*extern "C" vector<Vec6d> getLines(int num, AbsPipeline* obj){
+	vector<Line> lines = (obj->*(obj->getOutputs()[num]))();
+	vector<Vec6d> out;
+	for(int idx = 0; idx<lines.size(); idx++){
+		Line l = lines[idx];
+		out.push_back(Vec6d(l.x1, l.y1, l.x2, l.y2, l.length(), l.angle()));
+	}
+	return out;
+}*/
+
+
+typedef vector<Vec6d> LineFun(int, AbsPipeline*);
+JNIEXPORT jobjectArray JNICALL Java_edu_wpi_grip_ui_codegeneration_tools_CppPipelineInterfacer_getLines
+  (JNIEnv *env, jobject obj, jint num){
+  AbsPipeline *inst = getHandle<AbsPipeline>(env, obj);
+  LineFun* getLines =(LineFun *) dlsym(inst->libHandle, "getLines");
+  vector<Vec6d> lines = getLines((int)num, inst);
+  jclass dblArray = env->FindClass("[D");
+  jint numLines = lines.size();
+  jint numEles = 6;
+  jobjectArray linesArray = env->NewObjectArray(numLines, dblArray, NULL);
+  for(jint idx = 0; idx< numLines; idx++){
+  	jdoubleArray data = env->NewDoubleArray(numEles);
+  	Vec6d line = lines[idx];
+  	jdouble dblData[numEles];
+  	for(int ele = 0; ele<numEles; ele++){
+  		dblData[ele] = line[ele];
+  	}
+  	env->SetDoubleArrayRegion(data, 0, numEles, dblData);
+  	env->SetObjectArrayElement(linesArray, idx, data);
+  }
+  return linesArray;
 }

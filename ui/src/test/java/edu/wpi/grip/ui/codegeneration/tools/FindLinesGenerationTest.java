@@ -1,4 +1,4 @@
-package edu.wpi.grip.ui.codegeneration;
+package edu.wpi.grip.ui.codegeneration.tools;
 
 import edu.wpi.grip.core.ManualPipelineRunner;
 import edu.wpi.grip.core.OperationMetaData;
@@ -9,8 +9,8 @@ import edu.wpi.grip.core.operations.composite.LinesReport;
 import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.core.sources.ImageFileSource;
-import edu.wpi.grip.ui.codegeneration.tools.GenType;
-import edu.wpi.grip.ui.codegeneration.tools.PipelineInterfacer;
+import edu.wpi.grip.ui.codegeneration.AbstractGenerationTest;
+import edu.wpi.grip.ui.codegeneration.GenerationTest;
 import edu.wpi.grip.util.Files;
 
 import org.junit.Test;
@@ -86,16 +86,12 @@ public class FindLinesGenerationTest extends AbstractGenerationTest {
     System.out.println(linOut.getLines().size());
     pip.setMatSource(0, Files.imageFile.file);
     pip.process();
-
-    List<Object> genLin = (List<Object>) pip.getOutput(1, GenType.LINES);
-    assertTrue("Number of lines is not the same. grip: " + linOut.getLines().size() + " gen: "
+    List<TestLine> gripLin = GripLine.convertReport(linOut);
+    List<TestLine> genLin = (List<TestLine>) pip.getOutput(1, GenType.LINES);
+    assertTrue("Number of lines is not the same. grip: " + gripLin.size() + " gen: "
         + genLin.size(), (linOut.getLines().size() - genLin.size()) < 5);
-    for (int i = 0; i < genLin.size(); i++) {
-      /*assertTrue("gripLength: " + linOut.getLength()[i] + " genLength: " + getLength(genLin.get
-          (i)),
-          Math.abs(getLength(genLin.get(i)) - linOut.getLength()[i]) < 50);
-      assertTrue("gripangle: " + linOut.getAngle()[i] + " genangle: " + getAngle(genLin.get(i)),
-          Math.abs(getAngle(genLin.get(i)) - linOut.getAngle()[i]) < 10);*/
+    for (int idx = 0; idx < genLin.size(); idx++) {
+      TestLine.assertEqual(gripLin.get(idx), genLin.get(idx));
     }
 
   }

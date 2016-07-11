@@ -103,6 +103,14 @@ JNIEXPORT jint JNICALL Java_edu_wpi_grip_ui_codegeneration_tools_CppPipelineInte
 JNIEXPORT void JNICALL Java_edu_wpi_grip_ui_codegeneration_tools_CppPipelineInterfacer_getContours
   (JNIEnv *, jobject, jint, jlongArray);
 
+/*
+ * Class:     edu_wpi_grip_ui_codegeneration_tools_CppPipelineInterfacer
+ * Method:    getLines
+ * Signature: (I)[[D
+ */
+JNIEXPORT jobjectArray JNICALL Java_edu_wpi_grip_ui_codegeneration_tools_CppPipelineInterfacer_getLines
+  (JNIEnv *, jobject, jint);
+
 #ifdef __cplusplus
 }
 #endif

@@ -4,6 +4,8 @@ import org.opencv.imgcodecs.Imgcodecs;
 
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.junit.Assert.fail;
 
@@ -82,14 +84,26 @@ public class JavaPipelineInterfacer implements PipelineInterfacer {
    */
   @Override
   public Object getOutput(int num, GenType type) {
+    Object out = null;
     try {
-      return pipeline.getMethod("getoutput" + num).invoke(instance);
+      out =  pipeline.getMethod("getoutput" + num).invoke(instance);
     } catch (IllegalAccessException | IllegalArgumentException
         | InvocationTargetException | NoSuchMethodException
         | SecurityException e) {
       e.printStackTrace();
       fail("getoutput" + num + " method does not exist");
       return null;
+    }
+    switch(type){
+      case LINES:
+        List<Object> inputLines = (List<Object>) out;
+        ArrayList<JavaLine> lines = new ArrayList<JavaLine>(inputLines.size());
+        for(int idx = 0; idx< inputLines.size(); idx++){
+          lines.add(idx, new JavaLine(inputLines.get(idx)));
+        }
+        return lines;
+      default:
+        return out;
     }
   }
 

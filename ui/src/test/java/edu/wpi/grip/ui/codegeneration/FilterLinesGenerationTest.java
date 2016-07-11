@@ -11,6 +11,7 @@ import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.core.sources.ImageFileSource;
 import edu.wpi.grip.ui.codegeneration.tools.GenType;
+import edu.wpi.grip.ui.codegeneration.tools.TestLine;
 import edu.wpi.grip.ui.codegeneration.tools.PipelineInterfacer;
 import edu.wpi.grip.util.Files;
 
@@ -106,42 +107,19 @@ public class FilterLinesGenerationTest extends AbstractGenerationTest {
     pip.setMatSource(0, Files.imageFile.file);
     pip.process();
 
-    List<Object> genLin = (List<Object>) pip.getOutput(2, GenType.LINES);
+    List<TestLine> genLin = (List<TestLine>) pip.getOutput(2, GenType.LINES);
     assertTrue("Number of lines is not the same. grip: " + linOut.getLines().size() 
         + " gen: " + genLin.size(), 
         (linOut.getLines().size() - genLin.size()) < 5);
     for (int i = 0; i < genLin.size(); i++) {
       assertTrue("gripLength: " + linOut.getLength()[i] + " genLength: " 
-          + getLength(genLin.get(i)), Math.abs(getLength(genLin.get(i))
+          + genLin.get(i).getLength(), Math.abs(genLin.get(i).getLength()
           - linOut.getLength()[i]) < 2);
       assertTrue("gripangle: " + linOut.getAngle()[i] + " genangle: " 
-          + getAngle(genLin.get(i)), Math.abs(getAngle(genLin.get(i))
+          + genLin.get(i).getAngle(), Math.abs(genLin.get(i).getAngle()
             - linOut.getAngle()[i]) < 2);
     }
 
   }
-
-  private double getLength(Object line) {
-    try {
-      return (double) line.getClass().getMethod("length").invoke(line);
-    } catch (NoSuchMethodException | SecurityException
-        | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-      e.printStackTrace();
-      fail("length is not valid for class " + line.getClass().getSimpleName());
-      return 0.0;
-    }
-  }
-
-  private double getAngle(Object line) {
-    try {
-      return (double) line.getClass().getMethod("angle").invoke(line);
-    } catch (NoSuchMethodException | SecurityException
-        | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-      e.printStackTrace();
-      fail("length is not valid for class " + line.getClass().getSimpleName());
-      return 0.0;
-    }
-  }
-
 
 }
