@@ -139,13 +139,12 @@ public class CppPipelineInterfacer implements PipelineInterfacer {
   }
   
   private Mat getMat(int num){
-    String fileName = new File(getMatFile(num)).getName();
-    String matPath = codeDir.toPath().resolve(fileName).toFile().getAbsolutePath();
-    System.out.println(matPath);
-    return Imgcodecs.imread(matPath, -1);
+    Mat out = new Mat();
+    getMatNative(num, out.nativeObj);
+    return out;
   }
   
-  private native String getMatFile(int num);
+  private native void getMatNative(int num, long addr);
   private native double getDouble(int num);
   private native boolean getBoolean(int num);
   private native void setCondition(int num, boolean value);

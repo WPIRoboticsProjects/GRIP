@@ -17,11 +17,11 @@ JNIEXPORT void JNICALL Java_edu_wpi_grip_ui_codegeneration_tools_CppPipelineInte
 
 /*
  * Class:     edu_wpi_grip_ui_codegeneration_tools_CppPipelineInterfacer
- * Method:    getMatFile
- * Signature: (I)Ljava/lang/String;
+ * Method:    getMatNative
+ * Signature: (IJ)V
  */
-JNIEXPORT jstring JNICALL Java_edu_wpi_grip_ui_codegeneration_tools_CppPipelineInterfacer_getMatFile
-  (JNIEnv *, jobject, jint);
+JNIEXPORT void JNICALL Java_edu_wpi_grip_ui_codegeneration_tools_CppPipelineInterfacer_getMatNative
+  (JNIEnv *, jobject, jint, jlong);
 
 /*
  * Class:     edu_wpi_grip_ui_codegeneration_tools_CppPipelineInterfacer

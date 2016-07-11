@@ -25,13 +25,12 @@ JNIEXPORT void JNICALL Java_edu_wpi_grip_ui_codegeneration_tools_CppPipelineInte
       inst->Process();
   }
 
-JNIEXPORT jstring JNICALL Java_edu_wpi_grip_ui_codegeneration_tools_CppPipelineInterfacer_getMatFile
-  (JNIEnv *env, jobject obj, jint outNum){
+JNIEXPORT void JNICALL Java_edu_wpi_grip_ui_codegeneration_tools_CppPipelineInterfacer_getMatNative
+  (JNIEnv *env, jobject obj, jint outNum, jlong handle){
       AbsPipeline *inst = getHandle<AbsPipeline>(env, obj);
-      Mat * output = (Mat *) (inst->*(inst->getOutputs()[(int) outNum]))();
-      std::string fileName = "build/classes/test/mat" + std::to_string((int)outNum)+".png";
-      imwrite(fileName, *output);
-      return env->NewStringUTF(fileName.c_str());
+      Mat * out = (Mat *) (inst->*(inst->getOutputs()[(int) outNum]))();
+      Mat * dest = reinterpret_cast<Mat *>(handle); 
+      out->copyTo(*dest);
   }
   
   JNIEXPORT void JNICALL Java_edu_wpi_grip_ui_codegeneration_tools_CppPipelineInterfacer_setMatSource
