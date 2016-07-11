@@ -2,6 +2,8 @@ package edu.wpi.grip.ui.codegeneration.tools;
 
 import org.opencv.core.Point;
 
+import java.util.List;
+
 import static org.junit.Assert.assertEquals;
 
 public abstract class TestLine {
@@ -24,20 +26,17 @@ public abstract class TestLine {
   protected final String pointToStr(Point p){
     return "(" + p.x + "," + p.y + ")";
   }
-  
-  public static void assertEqual(TestLine grip, TestLine gen){
-    assertEquals("x1 coordinate not close\n" + errorMessage(grip, gen), 
-        grip.getPoint1().x, gen.getPoint1().x, pointTol);
-    assertEquals("y1 coordinate not close\n" + errorMessage(grip, gen),
-        grip.getPoint1().y, gen.getPoint1().y, pointTol);
-    assertEquals("x2 coordinate not close\n" + errorMessage(grip, gen), 
-        grip.getPoint2().x, gen.getPoint2().x, pointTol);
-    assertEquals("y2 coordinate not close\n" + errorMessage(grip, gen),
-        grip.getPoint2().y, gen.getPoint2().y, pointTol);
-    assertEquals("Length not close\n" + errorMessage(grip, gen),
-        grip.getLength(), gen.getLength(), lengthTol);
-    assertEquals("Angle not close\n" + errorMessage(grip, gen),
-        0, angleDif(grip.getAngle(), gen.getAngle()), angleTol);
+
+  public static boolean containsLin(TestLine line, List<TestLine> lines){
+    for(int i = 0; i < lines.size(); i++){
+      if((lines.get(i).getPoint1().x - line.getPoint1().x) <= 2
+          && (lines.get(i).getPoint1().y - line.getPoint1().y) <=2
+          && (lines.get(i).getPoint2().x - line.getPoint2().x) <=2
+          && (lines.get(i).getPoint2().y - line.getPoint2().y) <=2) {
+        return true;
+      }
+    }
+    return false;
   }
   
   private static String errorMessage(TestLine grip, TestLine gen){

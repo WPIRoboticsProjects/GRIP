@@ -11,11 +11,14 @@ import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.core.sources.ImageFileSource;
 import edu.wpi.grip.ui.codegeneration.tools.GenType;
 import edu.wpi.grip.ui.codegeneration.tools.PipelineInterfacer;
+import edu.wpi.grip.ui.codegeneration.tools.TestLine;
 import edu.wpi.grip.util.Files;
 
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
+import org.opencv.core.KeyPoint;
 import org.opencv.core.MatOfKeyPoint;
+import org.opencv.core.Point;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -113,12 +116,19 @@ public class FindBlobsGenerationTest extends AbstractGenerationTest {
     assertTrue("Number of Blobs is not the same. grip: " + blobOut.getBlobs().size() + " gen: " 
         + gen.toList().size(), (blobOut.getBlobs().size() - gen.toList().size()) < 1);
     for (int i = 0; i < blobOut.getBlobs().size(); i++) {
-      assertTrue("gripX: " + blobOut.getX()[i] + " genx: " + gen.toList().get(i).pt.x,
-          Math.abs(gen.toList().get(i).pt.x - blobOut.getX()[i]) < 30);
-      assertTrue("gripy: " + blobOut.getY()[i] + " geny: " + gen.toList().get(i).pt.y,
-          Math.abs(gen.toList().get(i).pt.y - blobOut.getY()[i]) < 15);
-      assertTrue("gripSize: " + blobOut.getSize()[i] + " genSize: " + gen.toList().get(i).size,
-          Math.abs(gen.toList().get(i).size - blobOut.getSize()[i]) < 15);
+      assertTrue("does not contain blob: " + gen.toList().get(i),
+          containsblob(blobOut.getBlobs(), gen.toList().get(i)));
     }
+  }
+
+  public boolean containsblob(List<BlobsReport.Blob> blobs, KeyPoint blob){
+    for(int i = 0; i < blobs.size(); i++){
+      if((blobs.get(i).x - blob.pt.x) <= 15
+          && (blobs.get(i).y - blob.pt.y) <= 15
+          && (blobs.get(i).size - blob.size) <= 5) {
+        return true;
+      }
+    }
+    return false;
   }
 }

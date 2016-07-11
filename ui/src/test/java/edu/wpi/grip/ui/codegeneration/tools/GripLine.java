@@ -39,7 +39,7 @@ public class GripLine extends TestLine {
     return new Point(x2,y2);
   }
 
-  static List<TestLine> convertReport(LinesReport rep){
+  public static List<TestLine> convertReport(LinesReport rep){
     List<Line> repLine = rep.getLines();
     ArrayList<TestLine> lines = new ArrayList<TestLine>(repLine.size());
     for(int idx = 0; idx< repLine.size(); idx++){

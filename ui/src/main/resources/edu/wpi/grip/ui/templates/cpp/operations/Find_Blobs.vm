@@ -23,6 +23,6 @@
 		params.minConvexity = 0.95;
 		params.filterByInertia = true;
 		params.minInertiaRatio = 0.01;
-		SimpleBlobDetector detector(params);
-		detector.detect(*input, *blobList);
+		Ptr<SimpleBlobDetector> detector = SimpleBlobDetector::create(params);
+		detector->detect(*input, *blobList);
 	}
