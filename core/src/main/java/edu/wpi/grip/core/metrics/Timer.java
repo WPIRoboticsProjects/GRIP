@@ -36,14 +36,14 @@ public class Timer {
   private boolean started = false;
 
   private final Object target;
-  private final Analysis data;
+  private Analysis analysis;
   private long elapsedTime = 0;
 
   @Inject
   Timer(EventBus eventBus, @Assisted Object target) {
     this.eventBus = eventBus;
     this.target = checkNotNull(target, "target");
-    this.data = new Analysis();
+    this.analysis = new Analysis();
   }
 
   /**
@@ -72,8 +72,8 @@ public class Timer {
     }
     stopwatch.stop();
     this.elapsedTime = stopwatch.elapsed(TimeUnit.MICROSECONDS);
-    data.add(elapsedTime);
-    eventBus.post(new TimerEvent(target, elapsedTime, data));
+    analysis = analysis.add(elapsedTime);
+    eventBus.post(new TimerEvent(target, elapsedTime, analysis));
     started = false;
   }
 

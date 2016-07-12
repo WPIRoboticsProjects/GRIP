@@ -15,7 +15,7 @@ class MovingAverage {
 
   private final int windowSize;
   private int numSamples;
-  private final Deque<Double> samples; // FIFO sample queue
+  private Deque<Double> samples; // FIFO sample queue
 
   /**
    * Creates a new moving average filter with the given window size. It will only average the most
@@ -51,6 +51,18 @@ class MovingAverage {
         .mapToDouble(Double::doubleValue)
         .average()
         .orElse(0);
+  }
+
+  /**
+   * Creates an identical copy of this averager.
+   */
+  MovingAverage copy() {
+    MovingAverage copy = new MovingAverage(this.windowSize);
+    copy.numSamples = this.numSamples;
+    Deque<Double> samplesCopy = new LinkedList<>();
+    samplesCopy.addAll(this.samples);
+    copy.samples = samplesCopy;
+    return copy;
   }
 
   /**

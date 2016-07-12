@@ -301,17 +301,18 @@ public class MainWindowController {
       analysisStage.setScene(new Scene(loader.load()));
       AnalysisWindowController controller = loader.getController();
       controller.setBenchmarker(benchmarkRunner);
+      analysisStage.initModality(Modality.WINDOW_MODAL);
+      analysisStage.initOwner(root.getScene().getWindow());
+      analysisStage.setTitle("Pipeline Analysis");
+      analysisStage.getIcons().add(new Image("/edu/wpi/grip/ui/icons/grip.png"));
+      analysisStage.setOnCloseRequest(event -> {
+        eventBus.post(BenchmarkEvent.finished());
+      });
       eventBus.register(controller);
+      analysisStage.showAndWait();
+      eventBus.unregister(controller);
     } catch (IOException e) {
       throw new AssertionError("Analysis window FXML is not present or readable", e);
     }
-    analysisStage.initModality(Modality.WINDOW_MODAL);
-    analysisStage.initOwner(root.getScene().getWindow());
-    analysisStage.setTitle("Pipeline Analysis");
-    analysisStage.getIcons().add(new Image("/edu/wpi/grip/ui/icons/grip.png"));
-    analysisStage.setOnCloseRequest(event -> {
-      eventBus.post(BenchmarkEvent.finished());
-    });
-    analysisStage.showAndWait();
   }
 }

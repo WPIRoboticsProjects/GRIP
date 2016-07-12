@@ -8,14 +8,13 @@ import edu.wpi.grip.core.metrics.Analysis;
 import edu.wpi.grip.core.metrics.BenchmarkRunner;
 import edu.wpi.grip.core.metrics.Statistics;
 
-import com.google.common.collect.ImmutableList;
 import com.google.common.eventbus.Subscribe;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import javafx.beans.Observable;
 import javafx.beans.property.Property;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -31,6 +30,7 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
+import javafx.util.Callback;
 
 import javax.annotation.Nullable;
 
@@ -56,9 +56,12 @@ public class AnalysisWindowController {
   private TextField benchmarkRunsField;
   private BenchmarkRunner benchmarker;
 
-  private ObservableList<StepAnalysisEntry> tableItems = FXCollections.observableArrayList();
+  private final Callback<StepAnalysisEntry, Observable[]> extractor =
+      entry -> new Observable[] {entry.stepProperty(), entry.analysisProperty()};
+  private ObservableList<StepAnalysisEntry> tableItems
+      = FXCollections.observableArrayList(extractor);
 
-  private final Analysis analysis = new Analysis();
+  private Analysis analysis = new Analysis();
   private Statistics lastStats;
   private Map<Step, TimeView> timeViewMap = new HashMap<>();
 
@@ -114,20 +117,17 @@ public class AnalysisWindowController {
         entry.setAnalysis(event.getData());
         tableItems.add(entry);
       }
-      analysis.add(event.getData().getAverage());
+      analysis = analysis.add(event.getData().getAverage());
     }
   }
 
   @Subscribe
   @SuppressWarnings({"PMD.UnusedPrivateMethod", "PMD.UnusedFormalParameter"})
   private void onPipelineFinish(@Nullable RunStoppedEvent event) {
-    // Update the table after the pipeline finishes
+    // Update the stats after the pipeline finishes
     lastStats = analysis.getStatistics();
-    List<StepAnalysisEntry> tmp = ImmutableList.copyOf(tableItems);
-    tableItems.clear();
-    tableItems.addAll(tmp);
     // Reset for the next run
-    analysis.reset();
+    analysis = new Analysis();
   }
 
   @Subscribe
@@ -150,6 +150,7 @@ public class AnalysisWindowController {
   }
 
   private static class StepAnalysisEntry {
+
     private final Property<Step> stepProperty = new SimpleObjectProperty<>();
     private final Property<Analysis> analysisProperty = new SimpleObjectProperty<>();
 

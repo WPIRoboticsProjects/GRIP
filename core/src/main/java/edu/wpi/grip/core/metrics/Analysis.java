@@ -5,6 +5,9 @@ import com.google.common.base.MoreObjects;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.annotation.CheckReturnValue;
+import javax.annotation.concurrent.Immutable;
+
 /**
  * Analysis data of a timed action. Contains
  * <ul>
@@ -14,32 +17,56 @@ import java.util.List;
  * <li>Statistical analysis of the data.</li>
  * </ul>
  */
+@Immutable
 public final class Analysis {
 
   private static final int windowSize = 10;
 
-  private final MovingAverage movingAverager = new MovingAverage(windowSize);
-
-  private final List<Double> samples = new ArrayList<>();
-
-  // The average time taken (exponential moving average)
-  private double average = 0;
-
-  // The number of samples taken
-  private int n = 0;
-
+  private MovingAverage movingAverager;
+  private final List<Double> samples;
+  private double average;
+  private int n;
   private Statistics statistics;
+
+  /**
+   * Creates a new analysis with no data. Use {@link #add(double) add} to get new analysis data
+   * based off this one.
+   *
+   * <p>Sample use:
+   * <pre><code>
+   *   Analysis myAnalysis = new Analysis();
+   *   ...
+   *   while (hasMoreData()) {
+   *     myAnalysis = myAnalysis.add(getNextDataPoint());
+   *   }
+   * </code></pre>
+   * </p>
+   */
+  public Analysis() {
+    this.movingAverager = new MovingAverage(windowSize);
+    this.samples = new ArrayList<>();
+    this.average = 0;
+    this.statistics = Statistics.NIL;
+  }
 
   /**
    * Updates this data with the given run time.
    *
    * @param nextValue a new data point to record
    */
-  public void add(double nextValue) {
-    samples.add(nextValue);
-    average = movingAverager.average(nextValue);
-    n++;
-    statistics = Statistics.of(samples.stream().mapToDouble(Double::doubleValue).toArray());
+  @CheckReturnValue
+  public Analysis add(double nextValue) {
+    Analysis result = new Analysis();
+    result.samples.addAll(this.samples);
+    result.samples.add(nextValue);
+    result.n = this.n + 1;
+    result.movingAverager = this.movingAverager.copy();
+    result.average = result.movingAverager.average(nextValue);
+    result.statistics = Statistics.of(result.samples
+        .stream()
+        .mapToDouble(d -> d)
+        .toArray());
+    return result;
   }
 
   @Override
@@ -49,17 +76,6 @@ public final class Analysis {
         .add("average", average)
         .add("statistics", statistics)
         .toString();
-  }
-
-  /**
-   * Resets the data.
-   */
-  public void reset() {
-    samples.clear();
-    movingAverager.reset();
-    n = 0;
-    average = 0;
-    statistics = Statistics.NIL;
   }
 
   /**
