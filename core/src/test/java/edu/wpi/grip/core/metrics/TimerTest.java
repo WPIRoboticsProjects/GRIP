@@ -72,7 +72,7 @@ public class TimerTest {
     timer.stopped();
     assertNotNull("No TimerEvent received", timerEvent.get());
     TimerEvent event = timerEvent.get();
-    assertEquals("Event had an unexpected source", this, event.getSource());
+    assertEquals("Event had an unexpected target", this, event.getTarget());
     assertEquals("Elapsed time was out of tolerance", 1_000_000, event.getElapsedTime(), 50_000);
     Analysis analysis = event.getData();
     Statistics statistics = analysis.getStatistics();

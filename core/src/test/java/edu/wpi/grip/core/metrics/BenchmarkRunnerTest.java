@@ -31,6 +31,7 @@ public class BenchmarkRunnerTest {
   }
 
   @Test
+  @SuppressWarnings("PMD.JUnitTestsShouldIncludeAssert") // checkDefaultState() has asserts
   public void testWhenNotBenchmarking() {
     checkDefaultState();
     eventBus.post(new RunStartedEvent());

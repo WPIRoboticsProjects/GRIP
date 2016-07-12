@@ -15,32 +15,32 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * </ul>
  * </p>
  */
-public class TimerEvent<T> {
+public class TimerEvent {
 
-  private final T source;
+  private final Object target;
   private final long elapsedTime;
   private final Analysis data;
 
   /**
    * Creates a new timer event.
    *
-   * @param source      the object that was timed
+   * @param target      the object that was timed
    * @param elapsedTime the time elapsed in microseconds
    * @param data        the analysis data of the event
    */
-  public TimerEvent(T source, long elapsedTime, Analysis data) {
-    checkNotNull(source, "source");
+  public TimerEvent(Object target, long elapsedTime, Analysis data) {
+    checkNotNull(target, "target");
     checkNotNull(data, "data");
-    this.source = source;
+    this.target = target;
     this.elapsedTime = elapsedTime;
     this.data = data;
   }
 
   /**
-   * Gets the source object that had an action being timed.
+   * Gets the target object that had an action being timed.
    */
-  public T getSource() {
-    return source;
+  public Object getTarget() {
+    return target;
   }
 
   /**

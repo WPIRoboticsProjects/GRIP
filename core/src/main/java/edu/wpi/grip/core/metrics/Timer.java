@@ -12,7 +12,7 @@ import java.util.concurrent.TimeUnit;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
- * Witness to methods or functions that get run.
+ * Timer for code that gets run.
  *
  * <p>Usage:
  * <pre><code>
@@ -35,19 +35,19 @@ public class Timer {
   private final Stopwatch stopwatch = Stopwatch.createUnstarted();
   private boolean started = false;
 
-  private final Object source;
+  private final Object target;
   private final Analysis data;
   private long elapsedTime = 0;
 
   @Inject
-  Timer(EventBus eventBus, @Assisted Object source) {
+  Timer(EventBus eventBus, @Assisted Object target) {
     this.eventBus = eventBus;
-    this.source = checkNotNull(source, "source");
+    this.target = checkNotNull(target, "target");
     this.data = new Analysis();
   }
 
   /**
-   * Flags the witness as started. Call {@link #stopped()} to stop timing.
+   * Flags the timer as started. Call {@link #stopped()} to stop timing.
    *
    * @throws IllegalStateException if this a call to this method is not preceded by a call to
    *                               {@link #stopped()}.
@@ -61,7 +61,7 @@ public class Timer {
   }
 
   /**
-   * Flags the witness as stopped.
+   * Flags the timer as stopped.
    *
    * @throws IllegalStateException if this a call to this method is not preceded by a call to
    *                               {@link #started()}.
@@ -73,7 +73,7 @@ public class Timer {
     stopwatch.stop();
     this.elapsedTime = stopwatch.elapsed(TimeUnit.MICROSECONDS);
     data.add(elapsedTime);
-    eventBus.post(new TimerEvent<>(source, elapsedTime, data));
+    eventBus.post(new TimerEvent(target, elapsedTime, data));
     started = false;
   }
 
@@ -86,7 +86,7 @@ public class Timer {
   }
 
   public interface Factory {
-    Timer create(Object source);
+    Timer create(Object target);
   }
 
 }

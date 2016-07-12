@@ -2,6 +2,8 @@ package edu.wpi.grip.core.metrics;
 
 import com.google.common.base.MoreObjects;
 
+import javax.annotation.concurrent.Immutable;
+
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
@@ -12,6 +14,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * <li>Standard deviation ({@code s})</li>
  * </ul>
  */
+@Immutable
 public final class Statistics {
 
   private final int n;
@@ -22,7 +25,7 @@ public final class Statistics {
   /**
    * "null" statistics with every value set to zero.
    */
-  public static final Statistics nil = new Statistics(0, 0, 0, 0);
+  public static final Statistics NIL = new Statistics(0, 0, 0, 0);
 
   /**
    * Calculates the statistics of the given samples.
@@ -89,4 +92,21 @@ public final class Statistics {
   public double getStandardDeviation() {
     return s;
   }
+
+  /**
+   * Calculates the 'hotness' of the given value based on these statistics. Using a {@code value}
+   * that is not in the data set used to create these statistics will most likely have a useless
+   * result.
+   *
+   * @param value the value to calculate the hotness of
+   * @return the hotness of the given value.
+   */
+  public double hotness(double value) {
+    if (value <= mean) {
+      // Avoid negative hotness
+      return 0;
+    }
+    return (value - mean) / s;
+  }
+
 }

@@ -150,8 +150,8 @@ public class StepController implements Controller {
 
   @Subscribe
   @SuppressWarnings("PMD.UnusedPrivateMethod")
-  private void finished(TimerEvent<Step> event) {
-    if (event.getSource() != this.step) {
+  private void finished(TimerEvent event) {
+    if (event.getTarget() != this.step) {
       return;
     }
     Platform.runLater(() ->

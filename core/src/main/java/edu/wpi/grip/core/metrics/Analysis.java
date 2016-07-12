@@ -14,15 +14,11 @@ import java.util.List;
  * <li>Statistical analysis of the data.</li>
  * </ul>
  */
-public class Analysis {
+public final class Analysis {
 
-  // <0: error
-  // 0 = no change from original state
-  // 1 = returns most recent input
-  // >1: error
-  private static final double alpha = 0.35;
+  private static final int windowSize = 10;
 
-  private final ExponentialMovingAverage ema = new ExponentialMovingAverage(alpha);
+  private final MovingAverage movingAverager = new MovingAverage(windowSize);
 
   private final List<Double> samples = new ArrayList<>();
 
@@ -41,7 +37,7 @@ public class Analysis {
    */
   public void add(double nextValue) {
     samples.add(nextValue);
-    average = ema.average(nextValue);
+    average = movingAverager.average(nextValue);
     n++;
     statistics = Statistics.of(samples.stream().mapToDouble(Double::doubleValue).toArray());
   }
@@ -60,10 +56,10 @@ public class Analysis {
    */
   public void reset() {
     samples.clear();
-    ema.reset();
+    movingAverager.reset();
     n = 0;
     average = 0;
-    statistics = Statistics.nil;
+    statistics = Statistics.NIL;
   }
 
   /**

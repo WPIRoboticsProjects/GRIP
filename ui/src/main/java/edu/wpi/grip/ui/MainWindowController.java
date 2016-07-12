@@ -277,8 +277,8 @@ public class MainWindowController {
 
   @Subscribe
   @SuppressWarnings({"PMD.UnusedPrivateMethod", "PMD.UnusedFormalParameter"})
-  private void runStopped(TimerEvent<?> event) {
-    if (!(event.getSource() instanceof PipelineRunner)) {
+  private void runStopped(TimerEvent event) {
+    if (!(event.getTarget() instanceof PipelineRunner)) {
       return;
     }
     Platform.runLater(() -> updateElapsedTimeLabel(event.getElapsedTime()));

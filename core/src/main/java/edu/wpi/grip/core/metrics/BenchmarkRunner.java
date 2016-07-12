@@ -1,9 +1,9 @@
 package edu.wpi.grip.core.metrics;
 
 import edu.wpi.grip.core.events.BenchmarkEvent;
-import edu.wpi.grip.core.events.BenchmarkRunEvent;
 import edu.wpi.grip.core.events.RunStartedEvent;
 import edu.wpi.grip.core.events.RunStoppedEvent;
+import edu.wpi.grip.core.events.StartSingleBenchmarkRunEvent;
 
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
@@ -44,7 +44,7 @@ public class BenchmarkRunner {
     this.isBenchmarking.set(true);
     this.runsRemaining.set(numRuns);
     eventBus.post(BenchmarkEvent.started());
-    eventBus.post(new BenchmarkRunEvent());
+    eventBus.post(new StartSingleBenchmarkRunEvent());
   }
 
   @Subscribe
@@ -66,7 +66,7 @@ public class BenchmarkRunner {
       isBenchmarking.set(false);
       eventBus.post(BenchmarkEvent.finished());
     } else {
-      eventBus.post(new BenchmarkRunEvent());
+      eventBus.post(new StartSingleBenchmarkRunEvent());
     }
   }
 
