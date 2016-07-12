@@ -10,8 +10,6 @@ import org.junit.Test;
 import org.junit.rules.Timeout;
 import org.testfx.framework.junit.ApplicationTest;
 
-import java.util.logging.Logger;
-
 import javafx.application.Platform;
 import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
@@ -38,12 +36,11 @@ public class GripPlatformTest extends ApplicationTest {
   @Before
   public void setUp() {
     this.eventBus = new EventBus();
-    this.platform = new GripPlatform(eventBus, Logger.getLogger(GripPlatform.class.getName()));
+    this.platform = new GripPlatform(eventBus);
     eventBus.register(this.platform);
 
     // This one should not be registered on the event bus!
-    this.unRegisteredPlatform = new GripPlatform(eventBus, Logger.getLogger(GripPlatform.class
-        .getName()));
+    this.unRegisteredPlatform = new GripPlatform(eventBus);
   }
 
   @Test

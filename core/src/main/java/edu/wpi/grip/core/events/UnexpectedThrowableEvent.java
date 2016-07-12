@@ -13,7 +13,8 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * exception is deemed fatal.
  */
 public final class UnexpectedThrowableEvent {
-  private final Logger logger = Logger.getLogger(getClass().getName());
+  private static final Logger logger = Logger.getLogger(UnexpectedThrowableEvent.class.getName());
+
   private final Throwable throwable;
   private final boolean fatal;
   private final String message;

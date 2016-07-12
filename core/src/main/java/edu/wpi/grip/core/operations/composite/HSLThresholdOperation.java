@@ -85,15 +85,15 @@ public class HSLThresholdOperation extends ThresholdOperation {
   @SuppressWarnings("unchecked")
   public void perform() {
     final Mat input = inputSocket.getValue().get();
-    final List<Number> channel1 = hueSocket.getValue().get();
-    final List<Number> channel2 = saturationSocket.getValue().get();
-    final List<Number> channel3 = luminanceSocket.getValue().get();
 
     if (input.channels() != 3) {
       throw new IllegalArgumentException("HSL Threshold needs a 3-channel input");
     }
 
     final Mat output = outputSocket.getValue().get();
+    final List<Number> channel1 = hueSocket.getValue().get();
+    final List<Number> channel2 = saturationSocket.getValue().get();
+    final List<Number> channel3 = luminanceSocket.getValue().get();
 
     // Intentionally 1, 3, 2. This maps to the HLS open cv expects
     final Scalar lowScalar = new Scalar(

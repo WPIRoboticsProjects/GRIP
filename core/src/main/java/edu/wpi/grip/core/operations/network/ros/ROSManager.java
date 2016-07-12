@@ -102,7 +102,7 @@ public class ROSManager implements Manager, ROSNetworkPublisherFactory {
     }
 
     @Override
-    protected final void publishNameChanged(Optional<java.lang.String> oldName, java.lang.String
+    protected void publishNameChanged(Optional<java.lang.String> oldName, java.lang.String
         newName) {
       name = Optional.of(newName);
       // If there is already an executor, shut it down, we'll need to recreate it

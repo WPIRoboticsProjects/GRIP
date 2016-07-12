@@ -82,16 +82,15 @@ public class RGBThresholdOperation extends ThresholdOperation {
   @Override
   public void perform() {
     final Mat input = inputSocket.getValue().get();
-    final List<Number> channel1 = redSocket.getValue().get();
-    final List<Number> channel2 = greenSocket.getValue().get();
-    final List<Number> channel3 = blueSocket.getValue().get();
 
     if (input.channels() != 3) {
       throw new IllegalArgumentException("RGB Threshold needs a 3-channel input");
     }
 
     final Mat output = outputSocket.getValue().get();
-
+    final List<Number> channel1 = redSocket.getValue().get();
+    final List<Number> channel2 = greenSocket.getValue().get();
+    final List<Number> channel3 = blueSocket.getValue().get();
 
     final Scalar lowScalar = new Scalar(
         channel3.get(0).doubleValue(),

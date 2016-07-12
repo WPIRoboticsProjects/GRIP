@@ -21,6 +21,8 @@ import org.controlsfx.control.StatusBar;
 import java.io.File;
 import java.io.IOException;
 import java.util.Optional;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -44,6 +46,8 @@ import javax.inject.Inject;
  * The Controller for the application window.
  */
 public class MainWindowController {
+
+  private static final Logger logger = Logger.getLogger(MainWindowController.class.getName());
 
   @FXML
   private Parent root;
@@ -111,24 +115,20 @@ public class MainWindowController {
       dialog.setHeaderText("Save the current project first?");
       dialog.getDialogPane().getButtonTypes().setAll(save, dontSave, cancel);
 
-      if (dialog.showAndWait().isPresent()) {
-        if (dialog.getResult().equals(cancel)) {
-          return false;
-        }
-
+      if (!dialog.showAndWait().isPresent()) {
+        return false;
+      } else if (dialog.getResult().equals(cancel)) {
+        return false;
+      } else if (dialog.getResult().equals(save)) {
         // If the user chose "Save", automatically show a save dialog and block until the user
-        // has had a
-        // chance to save the project.
-        if (dialog.getResult().equals(save)) {
-          try {
-            saveProject();
-          } catch (IOException e) {
-            e.printStackTrace();
-          }
+        // has had a chance to save the project.
+        try {
+          saveProject();
+        } catch (IOException e) {
+          logger.log(Level.SEVERE, e.getMessage(), e.getCause());
         }
       }
     }
-
     return true;
   }
 

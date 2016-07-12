@@ -76,12 +76,12 @@ public class FindContoursOperation implements Operation {
   @Override
   public void perform() {
     final Mat input = inputSocket.getValue().get();
-    final Mat tmp = new Mat();
-    final boolean externalOnly = externalSocket.getValue().get();
-
     if (input.empty()) {
       return;
     }
+
+    final Mat tmp = new Mat();
+    final boolean externalOnly = externalSocket.getValue().get();
 
     // findContours modifies its input, so we pass it a temporary copy of the input image
     input.copyTo(tmp);

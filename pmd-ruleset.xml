@@ -11,6 +11,7 @@
         <exclude name="AccessorClassGeneration" />
         <exclude name="AvoidSynchronizedAtMethodLevel" />
         <exclude name="CloseResource" />
+        <exclude name="ConfusingTernary" />
         <exclude name="UncommentedEmptyConstructor" />
         <exclude name="UseUtilityClass" />
         <exclude name="UseVarargs" />
@@ -28,8 +29,11 @@
         <exclude name="AvoidInstantiatingObjectsInLoops" />
         <exclude name="LocalVariableCouldBeFinal" />
         <exclude name="MethodArgumentCouldBeFinal" />
+        <exclude name="RedundantFieldInitializer" />
     </rule>
-    <rule ref="rulesets/java/strings.xml" />
+    <rule ref="rulesets/java/strings.xml">
+        <exclude name="AvoidDuplicateLiterals" />
+    </rule>
     <rule ref="rulesets/java/unnecessary.xml">
         <exclude name="UselessParentheses" />
     </rule>

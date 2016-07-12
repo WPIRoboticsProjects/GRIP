@@ -6,7 +6,6 @@ import edu.wpi.grip.ui.util.DPIUtility;
 import org.controlsfx.control.SegmentedButton;
 
 import java.util.function.Consumer;
-
 import javafx.scene.Node;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.Tooltip;
@@ -17,7 +16,9 @@ import javafx.scene.image.ImageView;
  * A button that can be used to control anything that is {@link PreviousNext}.
  */
 public final class PreviousNextButtons extends SegmentedButton {
+  @SuppressWarnings("PMD.AvoidProtectedFieldInFinalClass")
   protected static final String NEXT_BUTTON_STYLE_CLASS = "next-button";
+  @SuppressWarnings("PMD.AvoidProtectedFieldInFinalClass")
   protected static final String PREVIOUS_BUTTON_STYLE_CLASS = "previous-button";
 
   private static final Image nextImage =
@@ -33,6 +34,7 @@ public final class PreviousNextButtons extends SegmentedButton {
   /**
    * @param switchable The object to be switched.
    */
+  @SuppressWarnings("PMD.MissingStaticMethodInNonInstantiatableClass")
   public PreviousNextButtons(PreviousNext switchable) {
     super();
 
