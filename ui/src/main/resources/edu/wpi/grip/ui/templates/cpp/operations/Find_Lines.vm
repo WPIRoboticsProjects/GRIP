@@ -7,6 +7,7 @@
 	void $tMeth.name($step.name())(Mat *input, vector<Line> *lineList){
 		Ptr<LineSegmentDetector> lsd = createLineSegmentDetector(LSD_REFINE_STD);
 		vector<Vec4i> lines;
+		lineList->clear();
 		if (input->channels() == 1) {
 			lsd->detect(*input, lines);
 		} else {

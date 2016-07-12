@@ -9,6 +9,7 @@
 	 */
 	void $tMeth.name($step.name())(Mat *input, double *minArea, double circularity[2],
 		bool *darkBlobs, vector<KeyPoint> *blobList){
+		blobList->clear();
 		SimpleBlobDetector::Params params;
 		params.filterByColor = 1;
 		params.blobColor = (darkBlobs ? 0 : 255);

@@ -30,14 +30,14 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.Assert.assertTrue;
-@Ignore("Its broken in cpp and causes testing system to crash entirely.")
+
 @Category(GenerationTest.class)
 public class FilterContoursGenerationTest extends AbstractGenerationTest {
   private final boolean externalBool = false;
   private List<Number> hVal = new ArrayList<Number>();
   private List<Number> sVal = new ArrayList<Number>();
   private List<Number> lVal = new ArrayList<Number>();
-
+  
   public FilterContoursGenerationTest() {
     hVal.add(new Double(1.2));
     hVal.add(new Double(51.0));

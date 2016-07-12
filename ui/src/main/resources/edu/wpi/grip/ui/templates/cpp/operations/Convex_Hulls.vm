@@ -6,6 +6,7 @@
 	 */
 	void $tMeth.name($step.name())(vector<vector<Point> > *inputContours,vector<vector<Point> > *outputContours){
 		vector<vector<Point> >hull( inputContours->size() );
+		outputContours->clear();
 		for( int i = 0; i < inputContours->size(); i++ ){
 			convexHull(Mat((*inputContours)[i]), hull[i], false );
 		}
