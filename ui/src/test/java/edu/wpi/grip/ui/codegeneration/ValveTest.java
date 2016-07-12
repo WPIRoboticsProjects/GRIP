@@ -11,19 +11,16 @@ import edu.wpi.grip.ui.codegeneration.tools.PipelineInterfacer;
 
 import org.junit.Test;
 
-import java.io.File;
-
 import javax.inject.Inject;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 
 public class ValveTest extends AbstractGenerationTest {
-  @Inject
-  private Exporter exporter;
   private Step valve;
   @Inject
   ExceptionWitness.Factory ewf;
+  
   boolean setup(Number value) {
     valve = gen.addStep(new OperationMetaData(ValveOperation.DESCRIPTION,
         () -> new ValveOperation(isf, osf)));
@@ -34,7 +31,6 @@ public class ValveTest extends AbstractGenerationTest {
         gen.connect(src.getOutputSockets().get(0), sock);
       }
     }
-    exporter.export(pipeline, Language.PYTHON, new File("../../Valve.py"), false);
     return true;
   }
 
@@ -48,9 +44,11 @@ public class ValveTest extends AbstractGenerationTest {
     pip.setNumSource(0, val);
     pip.setValve(0, true);
     pip.process();
-    assertEquals("Valve did not trigger true properly", val, pip.getOutput(0, GenType.NUMBER));
+    assertEquals("Valve did not trigger true properly",
+        val, pip.getOutput(0, GenType.NUMBER));
     pip.setValve(0, false);
     pip.process();
-    assertFalse("Valve did not trigger false properly", val.equals(pip.getOutput(0, GenType.NUMBER)));
+    assertFalse("Valve did not trigger false properly",
+        val.equals(pip.getOutput(0, GenType.NUMBER)));
   }
 }
