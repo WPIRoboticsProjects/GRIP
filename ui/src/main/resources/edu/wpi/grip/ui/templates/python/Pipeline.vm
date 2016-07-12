@@ -17,9 +17,8 @@ class $fileName:
         self.__$src.value() = None
 #end
 #foreach($step in $pipeline.getSteps())
-#set($c = "s" + $step.num())
 #foreach($input in $step.getInputs())
-        #newInput($input $c)
+        #newInput($input)
 
 #end
 #foreach($output in $step.getOutputs())
@@ -33,15 +32,14 @@ class $fileName:
 
 #end
 #foreach($step in $pipeline.getSteps())
-#set($boolNum = $velocityCount - 1)
 #if($step.name() == "Switch" || $step.name() == "Valve")
 #set($boolInp = $step.getInput(0))
-#set($boolName = "$boolInp.name()s")
+#set($boolName = "$tMeth.pyName($boolInp.name())")
 #if($boolInp.hasValue())
-    def set$step.name()${boolNum}(self, value):
-        'This method is a generated setter for the condition of $step.name() $boolNum'
+    def set$tMeth.pyName($boolName)(self, value):
+        'This method is a generated setter for the condition of $step.name()'
         assert isinstance(value, bool) , "Source must be of type bool"
-        self.__$boolName$boolNum = value
+        self.__$tMeth.pyName($boolName) = value
 #end
 #end
 #end
