@@ -62,7 +62,7 @@ public class AnalysisWindowController {
       = FXCollections.observableArrayList(extractor);
 
   private Analysis analysis = new Analysis();
-  private Statistics lastStats;
+  private Statistics lastStats = Statistics.NIL;
   private Map<Step, TimeView> timeViewMap = new HashMap<>();
 
   /**

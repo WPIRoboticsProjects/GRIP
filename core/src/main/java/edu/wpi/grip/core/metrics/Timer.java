@@ -73,8 +73,20 @@ public class Timer {
     stopwatch.stop();
     this.elapsedTime = stopwatch.elapsed(TimeUnit.MICROSECONDS);
     analysis = analysis.add(elapsedTime);
-    eventBus.post(new TimerEvent(target, elapsedTime, analysis));
+    eventBus.post(new TimerEvent(this, target, elapsedTime, analysis));
     started = false;
+  }
+
+  /**
+   * Resets this timer.
+   */
+  public synchronized void reset() {
+    if (started) {
+      stopwatch.stop();
+      started = false;
+    }
+    elapsedTime = 0;
+    analysis = new Analysis();
   }
 
   /**

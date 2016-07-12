@@ -4,14 +4,18 @@ import edu.wpi.grip.core.events.BenchmarkEvent;
 import edu.wpi.grip.core.events.RunStartedEvent;
 import edu.wpi.grip.core.events.RunStoppedEvent;
 import edu.wpi.grip.core.events.StartSingleBenchmarkRunEvent;
+import edu.wpi.grip.core.events.TimerEvent;
 
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
+import java.util.HashSet;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 
 import javax.annotation.Nullable;
 
@@ -26,8 +30,20 @@ public class BenchmarkRunner {
 
   private EventBus eventBus;
 
-  private AtomicBoolean isBenchmarking = new AtomicBoolean(false);
-  private AtomicInteger runsRemaining = new AtomicInteger(0);
+  /**
+   * State flag.
+   */
+  private final AtomicBoolean isBenchmarking = new AtomicBoolean(false);
+
+  /**
+   * The number of runs left in the benchmark.
+   */
+  private final AtomicInteger runsRemaining = new AtomicInteger(0);
+
+  /**
+   * Keep track of timers so we can reset them after the benchmark finishes running.
+   */
+  private final AtomicReference<Set<Timer>> timers = new AtomicReference<>(new HashSet<>());
 
   @Inject
   BenchmarkRunner(EventBus eventBus) {
@@ -48,6 +64,12 @@ public class BenchmarkRunner {
   }
 
   @Subscribe
+  @SuppressWarnings("PMD.UnusedPrivateMethod")
+  private void onTimerEvent(TimerEvent event) {
+    this.timers.get().add(event.getTimer());
+  }
+
+  @Subscribe
   @SuppressWarnings({"PMD.UnusedPrivateMethod", "PMD.UnusedFormalParameter"})
   private void onRunStart(@Nullable RunStartedEvent event) {
     if (!isBenchmarking.get()) {
@@ -63,7 +85,7 @@ public class BenchmarkRunner {
       return;
     }
     if (runsRemaining.get() == 0) {
-      isBenchmarking.set(false);
+      cleanUp();
       eventBus.post(BenchmarkEvent.finished());
     } else {
       eventBus.post(new StartSingleBenchmarkRunEvent());
@@ -78,9 +100,14 @@ public class BenchmarkRunner {
   @SuppressWarnings({"PMD.UnusedPrivateMethod", "PMD.UnusedFormalParameter"})
   private void onBenchmarkEvent(BenchmarkEvent event) {
     if (isBenchmarking.get() && !event.isStart()) {
-      isBenchmarking.set(false);
-      runsRemaining.set(0);
+      cleanUp();
     }
+  }
+
+  private void cleanUp() {
+    isBenchmarking.set(false);
+    runsRemaining.set(0);
+    timers.get().forEach(Timer::reset);
   }
 
   /**
