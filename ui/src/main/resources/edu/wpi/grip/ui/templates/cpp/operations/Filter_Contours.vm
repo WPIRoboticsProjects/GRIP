@@ -23,6 +23,7 @@ This creates the C++ OpenCV Filter Contours function
 		*maxHeight, double solidity[2], double *maxVertexCount, double *minVertexCount, double
 		*minRatio, double *maxRatio, vector<vector<Point> > *output){
 		vector<Point> hull;
+		output->clear();
 		for (vector<Point> contour: *inputContours) {
 			Rect bb = boundingRect(contour);
 			if (bb.width < *minWidth || bb.width > *maxWidth) continue;

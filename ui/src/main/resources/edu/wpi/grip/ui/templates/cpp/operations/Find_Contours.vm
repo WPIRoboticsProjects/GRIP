@@ -8,6 +8,7 @@
 	 */
 	void $tMeth.name($step.name())(Mat *input,bool *externalOnly, vector<vector<Point> > *contours){
 		vector<Vec4i> hierarchy;
+		contours->clear();
 		int mode;
 		if(*externalOnly){
 			mode = RETR_EXTERNAL;
