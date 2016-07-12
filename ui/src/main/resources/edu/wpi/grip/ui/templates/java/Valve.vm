@@ -2,26 +2,26 @@
 		//input
 #set($boolInp = $step.getInput(0))
 #if(!$boolInp.hasValue() )
-		$boolInp.name()$c = ${boolInp.value()}.$boolInp.baseType()Value();
+		$tMeth.name($boolInp.name()) = ${boolInp.value()}.$boolInp.baseType()Value();
 #end
 #set($input = $step.getInput(1))
 #if($input.mutable())##Is Mutable
 #if($input.number())##Is Number
-		Number $input.name()$c = ${input.value()};
+		Number $tMeth.name($input.name()) = ${input.value()};
 #else##Not number
-		$input.baseType() $input.name()$c = ${input.value()}.$input.baseType()Value();
+		$input.baseType() $tMeth.name($input.name()) = ${input.value()}.$input.baseType()Value();
 #end##end Is Number
 #else##Not Mutable
 #if($input.type() == "FlipCode")
-		$input.type() $input.name()$c = FlipCode.$input.value();
+		$input.type() $tMeth.name($input.name()) = FlipCode.$input.value();
 #else
-		$input.type() $input.name()$c = $input.value();
+		$input.type() $tMeth.name($input.name()) = $input.value();
 #end
 #end##end Is Mutable
 #set($out = $step.getOutput(0))
-#set($outMutName = "mutOf" + $out.name())
+#set($outMutName = "mutOf" + $tMeth.name($out.name()))
 		//output
 		#MutOf($out.baseType()) $outMutName = new #MutOf($out.baseType())();
-		pipelineValve($boolInp.name()$c, $input.name()$c, $outMutName);
+		pipelineValve($tMeth.name($boolInp.name()), $tMeth.name($input.name()), $outMutName);
 		//output assignment
-		$out.name() = ${outMutName}.get();
+		$tMeth.name($out.name()) = ${outMutName}.get();

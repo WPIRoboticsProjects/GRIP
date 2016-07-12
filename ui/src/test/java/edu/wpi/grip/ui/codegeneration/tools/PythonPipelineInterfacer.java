@@ -87,7 +87,8 @@ public class PythonPipelineInterfacer implements PipelineInterfacer {
   }
 
   @Override
-  public Object getOutput(int num, GenType type) {
+  public Object getOutput(String name, GenType type) {
+    int num = 0;
     Object objectOut = null;
     try {
       switch (type) {
@@ -297,7 +298,8 @@ public class PythonPipelineInterfacer implements PipelineInterfacer {
    * @see edu.wpi.grip.ui.codegeneration.tools.PipelineInterfacer#setSwitch(int, boolean)
    */
   @Override
-  public void setSwitch(int num, boolean value) {
+  public void setSwitch(String name, boolean value) {
+    int num = 0;
     str.append("pipe.setSwitch");
     str.append(num);
     if (value) {
@@ -311,7 +313,8 @@ public class PythonPipelineInterfacer implements PipelineInterfacer {
    * @see edu.wpi.grip.ui.codegeneration.tools.PipelineInterfacer#setValve(int, boolean)
    */
   @Override
-  public void setValve(int num, boolean value) {
+  public void setValve(String name, boolean value) {
+    int num = 0;
     str.append("pipe.setValve");
     str.append(num);
     if (value) {

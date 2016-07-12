@@ -21,7 +21,6 @@ public class TPipeline {
 
   protected List<TStep> steps;
   private int numSources;
-  private int numOutputs;
   private Map<InputSocket, TOutput> connections;
   private Map<String, Integer> uniqueSources;
 
@@ -35,7 +34,6 @@ public class TPipeline {
     this.uniqueSources = new HashMap<>();
     this.steps = new ArrayList<TStep>();
     this.numSources = 0;
-    this.numOutputs = 0;
     connections = new HashMap<InputSocket, TOutput>();
     set(pipeline);
   }
@@ -46,12 +44,13 @@ public class TPipeline {
    * @param pipeline The grip pipeline used to create the TPipeline.
    */
   public void set(Pipeline pipeline) {
-    int count = 0;
     for (Step step : pipeline.getSteps()) {
-      TStep tStep = new TStep(step.getOperationDescription().name(), count);
+      TStep tStep = makeStep(step.getOperationDescription().name().replaceAll(" ", "_"));
       steps.add(tStep);
+      int numOutputs = 0;
       for (OutputSocket output : step.getOutputSockets()) {
-        TOutput tOutput = new TOutput(TemplateMethods.parseSocketType(output), numOutputs);
+        TOutput tOutput = new TOutput(TemplateMethods.parseSocketType(output), tStep.name()
+            + tStep.num() + "Output" + numOutputs);
         numOutputs++;
         tStep.addOutput(tOutput);
         if (!output.getConnections().isEmpty()) {
@@ -60,9 +59,9 @@ public class TPipeline {
           }
         }
       }
-      count++;
     }
     for (int i = 0; i < pipeline.getSteps().size(); i++) {
+      TStep tStep = this.steps.get(i);
       for (InputSocket input : pipeline.getSteps().get(i).getInputSockets()) {
         TInput tInput;
         String type = TemplateMethods.parseSocketType(input);
@@ -70,7 +69,7 @@ public class TPipeline {
           type = steps.get(i).name() + "Type";
         }
         type = type.replace("Number", "Double");
-        String name = TemplateMethods.parseSocketName(input);
+        String name = tStep.name() + tStep.num() + TemplateMethods.parseSocketName(input);
         if (!input.getConnections().isEmpty()) {
           if (connections.containsKey(input)) {
             tInput = new TInput(type, name, connections.get(input));
@@ -85,7 +84,7 @@ public class TPipeline {
         } else {
           tInput = createInput(type, name, TemplateMethods.parseSocketValue(input));
         }
-        this.steps.get(i).addInput(tInput);
+        tStep.addInput(tInput);
       }
     }
   }
@@ -186,6 +185,16 @@ public class TPipeline {
       }
     }
     return moving;
+  }
+
+  private TStep makeStep(String opName){
+    int count = 0;
+    for(TStep step: steps){
+      if(step.name().equals(opName)){
+        count++;
+      }
+    }
+    return new TStep(opName,count);
   }
 
 

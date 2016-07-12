@@ -158,7 +158,8 @@ public class FilterContoursGenerationTest extends AbstractGenerationTest {
     pip.process();
     Mat genMat = new Mat(conOut.getRows(), conOut.getCols(), 
         opencv_core.CV_8UC3, new Scalar(0, 0, 0));
-    List<MatOfPoint> gen = (List<MatOfPoint>) pip.getOutput(2, GenType.CONTOURS);
+    List<MatOfPoint> gen = (List<MatOfPoint>) pip.getOutput("Filter_Contours0Output0",
+        GenType.CONTOURS);
     Imgproc.drawContours(genMat, gen, -1, new Scalar(255, 255, 255));
     Mat gripMat = HelperTools.bytedecoMatToCVMat(matOut);
     //HelperTools.displayMats(genMat, gripMat);

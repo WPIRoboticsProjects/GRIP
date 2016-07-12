@@ -52,7 +52,7 @@ public class CVCannyTest extends AbstractGenerationTest {
     assertTrue("Pipeline did not process", out.isPresent());
     assertFalse("Pipeline output is empty", ((org.bytedeco.javacpp.opencv_core.Mat) out.get())
         .empty());
-    Mat genMat = (Mat) pip.getOutput(0, GenType.IMAGE);
+    Mat genMat = (Mat) pip.getOutput("CV_Canny0Output0", GenType.IMAGE);
     Mat gripMat = HelperTools.bytedecoMatToCVMat((org.bytedeco.javacpp.opencv_core.Mat) out.get());
     assertMatWithin(genMat, gripMat, 1.0);
   }

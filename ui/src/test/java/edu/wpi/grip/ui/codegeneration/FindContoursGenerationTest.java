@@ -111,7 +111,8 @@ public class FindContoursGenerationTest extends AbstractGenerationTest {
     pip.process();
     Mat genMat = new Mat(conOut.getRows(), conOut.getCols(),
         opencv_core.CV_8UC3, new Scalar(0, 0, 0));
-    List<MatOfPoint> gen = (List<MatOfPoint>) pip.getOutput(1, GenType.CONTOURS);
+    List<MatOfPoint> gen = (List<MatOfPoint>) pip.getOutput("Find_Contours0Output0",
+        GenType.CONTOURS);
 
     Imgproc.drawContours(genMat, gen, -1, new Scalar(255, 255, 255));
 

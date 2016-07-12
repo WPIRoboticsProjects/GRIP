@@ -51,7 +51,8 @@ public class CppPipelineInterfacer implements PipelineInterfacer {
   }
 
   @Override
-  public Object getOutput(int num, GenType type) {
+  public Object getOutput(String name, GenType type) {
+    int num = 0;
     switch (type) {
       case BLOBS:
         MatOfKeyPoint blobs = new MatOfKeyPoint();
@@ -98,12 +99,14 @@ public class CppPipelineInterfacer implements PipelineInterfacer {
   }
 
   @Override
-  public void setSwitch(int num, boolean value) {
+  public void setSwitch(String name, boolean value) {
+    int num = 0;
     setCondition(num, value);
   }
 
   @Override
-  public void setValve(int num, boolean value) {
+  public void setValve(String name, boolean value) {
+    int num = 0;
     setCondition(num, value);
   }
 

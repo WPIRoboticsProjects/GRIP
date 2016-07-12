@@ -4,34 +4,36 @@ MutableOf<$obj>#end
 #macro (newInput $input)
 #if($input.mutable())##Is Mutable
 #if($input.hasValue())##Has a set value
-		$input.baseType() $input.name()$c = $input.value();
+		$input.baseType() ${tMeth.name($input.name())} = $input.value();
 #else##Has Connected Socket
-		$input.baseType() $input.name()$c = ${input.value()}.get().$input.baseType()Value();
+		$input.baseType() ${tMeth.name($input.name())} = ${input.value()}.get().$input.baseType()Value();
 #end##end Has a set value
 #else##Not Mutable
 #if ($input.value().contains("null"))
-		#socketType($input.type()) $input.name()$c = $input.value();
+		#socketType($input.type()) ${tMeth.name($input.name())} = $input.value();
+#elseif($input.value().contains("Output"))
+		#socketType($input.type()) ${tMeth.name($input.name())} = ${tMeth.name($input.value())};
 #elseif ($input.type() == "FlipCode")
-		$input.type() $input.name()$c = FlipCode.$input.value();
+		$input.type() ${tMeth.name($input.name())} = FlipCode.$input.value();
 #elseif ($input.type().contains("CoreEnum"))
-		int $input.name()$c = Core.$input.value();
+		int ${tMeth.name($input.name())} = Core.$input.value();
 #elseif ($input.type().contains("Enum"))
-		int $input.name()$c = Imgproc.$input.value();
+		int ${tMeth.name($input.name())} = Imgproc.$input.value();
 #elseif ($input.type().equals("MaskSize"))
-        int $input.name()$c = $input.value().substring(0,1);
+        int ${tMeth.name($input.name())} = $input.value().substring(0,1);
 #elseif ($input.type().equals("BlurType"))
-		$input.type() $input.name()$c = ${input.type()}.get("${input.value()}");
+		$input.type() ${tMeth.name($input.name())} = ${input.type()}.get("${input.value()}");
 #elseif ($input.type().contains("Type") || $input.type().equals("Interpolation"))
-		int $input.name()$c = #enum($input.value());
+		int ${tMeth.name($input.name())} = #enum($input.value());
 #elseif ($input.type().equals("String"))
-		$input.type() $input.name()$c = "$input.value()";
+		$input.type() ${tMeth.name($input.name())} = "$input.value()";
 #elseif ($input.type().equals("Scalar"))
-		$input.type() $input.name()$c = new $input.type()$input.value();
+		$input.type() ${tMeth.name($input.name())} = new $input.type()$input.value();
 #elseif ($input.type().equals("List"))
 #set($inputEndValue = $input.value().length() - 1)
-		double[] $input.name()$c = {$input.value().substring(1,$inputEndValue)};
+		double[] ${tMeth.name($input.name())} = {$input.value().substring(1,$inputEndValue)};
 #else
-		#socketType($input.type()) $input.name()$c = $input.value();
+		#socketType($input.type()) ${tMeth.name($input.name())} = $input.value();
 #end
 #end#end
 

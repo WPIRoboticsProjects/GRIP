@@ -10,10 +10,10 @@ public interface PipelineInterfacer {
   
   void process();
 
-  Object getOutput(int num, GenType type);
+  Object getOutput(String name, GenType type);
 
-  void setSwitch(int num, boolean value);
+  void setSwitch(String name, boolean value);
 
-  void setValve(int num, boolean value);
+  void setValve(String name, boolean value);
 
 }

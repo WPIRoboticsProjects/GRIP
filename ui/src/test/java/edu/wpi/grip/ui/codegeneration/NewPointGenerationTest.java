@@ -44,7 +44,7 @@ public class NewPointGenerationTest extends AbstractGenerationTest {
     org.bytedeco.javacpp.opencv_core.Point gripSize = (org.bytedeco.javacpp.opencv_core.Point) out
         .get();
     pip.process();
-    Point genSize = (Point) pip.getOutput(0, GenType.POINT);
+    Point genSize = (Point) pip.getOutput("New_Point0Output0", GenType.POINT);
     assertTrue("The grip x: " + gripSize.x() + "does not equals the generated x: "
         + genSize.x, gripSize.x() == genSize.x);
     assertTrue("The grip y: " + gripSize.y() + "does not equals the generated y: "

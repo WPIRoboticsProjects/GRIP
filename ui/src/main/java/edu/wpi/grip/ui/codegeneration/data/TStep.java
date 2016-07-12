@@ -16,7 +16,7 @@ public class TStep {
    * @param stepNum The number of the step in the pipeline.
    */
   public TStep(String name, int stepNum) {
-    this.name = name.replaceAll(" ", "_");
+    this.name = name;
     inputs = new ArrayList<TInput>();
     outputs = new ArrayList<TOutput>();
     this.stepNum = stepNum;

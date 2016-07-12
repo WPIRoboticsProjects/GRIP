@@ -32,7 +32,7 @@ public class $fileName{
 	//outputs
 #foreach($step in $pipeline.getSteps())
 #foreach($out in $step.getOutputs())
-	private #socketType(${out.type()}) $out.name()#if(!$out.mutable()) = new #socketType(${out.type()})()#end;
+	private #socketType(${out.type()}) ${tMeth.name($out.name())}#if(!$out.mutable()) = new #socketType(${out.type()})()#end;
 #end
 #end
 
@@ -45,14 +45,13 @@ public class $fileName{
 	//moving thresholds
 #end
 #foreach($moving in $pipeline.getMovingThresholds())
-    private Mat lastImageS$moving.num() = new Mat();
+    private Mat lastImage$moving.num() = new Mat();
 #end
 #foreach($step in $pipeline.getSteps())
-#set($boolNum = $velocityCount - 1)
 #if($step.name() == "Switch" || $step.name() == "Valve")
 #set($boolInp = $step.getInput(0))
-#set($boolName = "$boolInp.name()S")
-	private boolean $boolName${boolNum}#if($boolInp.hasValue()) = $boolInp.value()#end;
+#set($boolName = "$tMeth.name($boolInp.name())")
+	private boolean $boolName#if($boolInp.hasValue()) = $boolInp.value()#end;
 #end
 #end
 #if($loadLib)
@@ -90,17 +89,16 @@ public class $fileName{
 
 #end
 #foreach($step in $pipeline.getSteps())
-#set($boolNum = $velocityCount - 1)
 #if($step.name() == "Switch" || $step.name() == "Valve")
 #set($boolInp = $step.getInput(0))
-#set($boolName = "$boolInp.name()S")
+#set($boolName = "$tMeth.name($boolInp.name())")
 #if($boolInp.hasValue())
 	/**
-	 * This method is a generated setter for the condition of $step.name() $boolNum
+	 * This method is a generated setter for the condition of $step.name()
 	 * @param the condition to set
 	 */
-	 public void set$step.name()${boolNum}(boolean value){
-	 	$boolName$boolNum = value;
+	 public void set$boolName(boolean value){
+	 	$boolName = value;
 	 }
 #end
 #end
@@ -111,8 +109,8 @@ public class $fileName{
 	 * This method is a generated getter for the output of a $step.name().
 	 * @return #socketType(${output.baseType()}) output from $step.name().
 	 */
-	public #socketType(${output.baseType()}) get${output.name()}(){
-		return $output.name();
+	public #socketType(${output.baseType()}) ${tMeth.name($output.name())}(){
+		return ${tMeth.name($output.name())};
 	}
 #end
 #end

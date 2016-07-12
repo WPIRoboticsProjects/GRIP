@@ -110,7 +110,7 @@ public class FindBlobsGenerationTest extends AbstractGenerationTest {
     BlobsReport blobOut = (BlobsReport) out1.get();
     pip.setMatSource(0, Files.imageFile.file);
     pip.process();
-    MatOfKeyPoint gen = (MatOfKeyPoint) pip.getOutput(1, GenType.BLOBS);
+    MatOfKeyPoint gen = (MatOfKeyPoint) pip.getOutput("Find_Blobs0Output0", GenType.BLOBS);
     assertTrue("Number of Blobs is not the same. grip: " + blobOut.getBlobs().size() + " gen: "
         + gen.toList().size(), (blobOut.getBlobs().size() - gen.toList().size()) < 1);
     for (int i = 0; i < blobOut.getBlobs().size(); i++) {

@@ -77,18 +77,18 @@ public class SwitchTest extends AbstractGenerationTest {
     pip.setNumSource(onTrueSourceNum, onTrue);
     pip.setNumSource(onFalseSourceNum, onFalse);
     pip.process();
-    Object out = pip.getOutput(0, GenType.NUMBER);
+    Object out = pip.getOutput("Switch0Output0", GenType.NUMBER);
     if (initVal.booleanValue()) {
       assertEquals(errorMessage(true) + " initially", onTrue, out);
-      pip.setSwitch(0, false);
+      pip.setSwitch("switch0switch", false);
       pip.process();
-      out = pip.getOutput(0, GenType.NUMBER);
+      out = pip.getOutput("Switch0Output0", GenType.NUMBER);
       assertEquals(errorMessage(false), onFalse, out);
     } else {
       assertEquals(errorMessage(false) + " initially", onFalse, out);
-      pip.setSwitch(0, true);
+      pip.setSwitch("switch0switch", true);
       pip.process();
-      out = pip.getOutput(0, GenType.NUMBER);
+      out = pip.getOutput("Switch0Output0", GenType.NUMBER);
       assertEquals(errorMessage(true), onTrue, out);
     }
   }

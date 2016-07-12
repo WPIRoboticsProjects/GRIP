@@ -7,13 +7,17 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 
+import edu.wpi.grip.ui.codegeneration.JavaTMethods;
+
 import static org.junit.Assert.fail;
 
 public class JavaPipelineInterfacer implements PipelineInterfacer {
   private Class pipeline;
   private Object instance;
+  private JavaTMethods tMeth;
 
   public JavaPipelineInterfacer(String className) {
+    tMeth = new JavaTMethods();
     pipeline = PipelineCreator.makeClass(className);
     try {
       instance = pipeline.getConstructor().newInstance();
@@ -59,15 +63,15 @@ public class JavaPipelineInterfacer implements PipelineInterfacer {
   }
 
   @Override
-  public Object getOutput(int num, GenType type) {
+  public Object getOutput(String name, GenType type) {
     Object out = null;
     try {
-      out = pipeline.getMethod("getoutput" + num).invoke(instance);
+      out = pipeline.getMethod(tMeth.name(name)).invoke(instance);
     } catch (IllegalAccessException | IllegalArgumentException
         | InvocationTargetException | NoSuchMethodException
         | SecurityException e) {
       e.printStackTrace();
-      fail("getoutput" + num + " method does not exist");
+      fail(tMeth.name(name) + " method does not exist");
       return null;
     }
     switch (type) {
@@ -84,24 +88,24 @@ public class JavaPipelineInterfacer implements PipelineInterfacer {
   }
 
   @Override
-  public void setSwitch(int num, boolean value) {
+  public void setSwitch(String name, boolean value) {
     try {
-      pipeline.getMethod("setSwitch" + num, boolean.class).invoke(instance, value);
+      pipeline.getMethod("set" + tMeth.name(name), boolean.class).invoke(instance, value);
     } catch (NoSuchMethodException | SecurityException | IllegalAccessException
         | IllegalArgumentException | InvocationTargetException e) {
       e.printStackTrace();
-      fail("setSwitch" + num + "is not a valid method");
+      fail(name + "is not a valid method");
     }
   }
 
   @Override
-  public void setValve(int num, boolean value) {
+  public void setValve(String name, boolean value) {
     try {
-      pipeline.getMethod("setValve" + num, boolean.class).invoke(instance, value);
+      pipeline.getMethod("set" + tMeth.name(name), boolean.class).invoke(instance, value);
     } catch (NoSuchMethodException | SecurityException | IllegalAccessException
         | IllegalArgumentException | InvocationTargetException e) {
       e.printStackTrace();
-      fail("setValve" + num + "is not a valid method");
+      fail(name + "is not a valid method");
     }
   }
 

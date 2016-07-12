@@ -62,7 +62,7 @@ public class RGBThresholdTest extends AbstractGenerationTest {
         .empty());
     pip.setMatSource(0, Files.gompeiJpegFile.file);
     pip.process();
-    Mat genMat = (Mat) pip.getOutput(0, GenType.IMAGE);
+    Mat genMat = (Mat) pip.getOutput("RGB_Threshold0Output0", GenType.IMAGE);
     Mat gripMat = HelperTools.bytedecoMatToCVMat((org.bytedeco.javacpp.opencv_core.Mat) out.get());
     assertMatWithin(genMat, gripMat, 2.0);
   }

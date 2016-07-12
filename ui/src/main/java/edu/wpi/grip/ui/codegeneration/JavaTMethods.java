@@ -17,18 +17,16 @@ public class JavaTMethods extends TemplateMethods {
 
   @Override
   public String callOp(TStep step) {
-    String num = "S" + step.num();
     StringBuilder out = new StringBuilder();
     out.append(name(step.name()));
     out.append("(");
     for (TInput input : step.getInputs()) {
-      out.append(input.name());
-      out.append(num);
+      out.append(name(input.name()));
       out.append(", ");
     }
     if (step.name().equals("Threshold_Moving")) {
       out.append("this.lastImage");
-      out.append(num);
+      out.append(step.num());
       out.append(", ");
     }
     if (!step.getOutputs().isEmpty()) {
@@ -36,7 +34,7 @@ public class JavaTMethods extends TemplateMethods {
         if (step.getOutput(i).mutable()) {
           out.append("mutOf");
         }
-        out.append(step.getOutputs().get(i).name());
+        out.append(name(step.getOutputs().get(i).name()));
         out.append(", ");
       }
       //removes the unneeded ", "

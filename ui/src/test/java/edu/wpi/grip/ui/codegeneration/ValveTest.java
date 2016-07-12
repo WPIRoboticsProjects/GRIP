@@ -46,11 +46,13 @@ public class ValveTest extends AbstractGenerationTest {
 
   private void validate(PipelineInterfacer pip, Number val) {
     pip.setNumSource(0, val);
-    pip.setValve(0, true);
+    pip.setValve("valve0valve", true);
     pip.process();
-    assertEquals("Valve did not trigger true properly", val, pip.getOutput(0, GenType.NUMBER));
-    pip.setValve(0, false);
+    assertEquals("Valve did not trigger true properly", val, pip.getOutput("Valve0Output0",
+        GenType.NUMBER));
+    pip.setValve("valve0valve", false);
     pip.process();
-    assertFalse("Valve did not trigger false properly", val.equals(pip.getOutput(0, GenType.NUMBER)));
+    assertFalse("Valve did not trigger false properly", val.equals(pip.getOutput("Valve0Output0",
+        GenType.NUMBER)));
   }
 }

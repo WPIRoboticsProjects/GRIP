@@ -2,17 +2,16 @@ package edu.wpi.grip.ui.codegeneration.data;
 
 
 public class TOutput extends TSocket {
-  private int number;
+
 
   /**
    * Constructor that creates a new template output socket.
    * @param type the type of the output.
-   * @param number the step number of the output.
+   * @param name the name of the output.
    */
-  public TOutput(String type, int number) {
+  public TOutput(String type, String name) {
     super(type);
-    this.number = number;
-    super.name = "output" + number;
+    super.name = name;
   }
 
 }

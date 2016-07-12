@@ -53,7 +53,7 @@ public class MaskTest extends AbstractGenerationTest {
         .empty());
     pip.setMatSource(0, Files.imageFile.file);
     pip.process();
-    Mat genMat = (Mat) pip.getOutput(1, GenType.IMAGE);
+    Mat genMat = (Mat) pip.getOutput("Mask0Output0", GenType.IMAGE);
     Mat gripMat = HelperTools.bytedecoMatToCVMat((org.bytedeco.javacpp.opencv_core.Mat) out.get());
     assertMatWithin(genMat, gripMat, 0.5);
   }

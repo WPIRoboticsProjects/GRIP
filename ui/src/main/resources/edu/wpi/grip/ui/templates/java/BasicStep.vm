@@ -5,12 +5,12 @@
 		//output
 #foreach($output in $step.getOutputs())
 #if($output.mutable())
-		#MutOf($output.type()) mutOf$output.name() = new #MutOf($output.type())();
+		#MutOf($output.type()) mutOf${tMeth.name($output.name())} = new #MutOf($output.type())();
 #end
 #end
 		$tMeth.callOp($step);
 #foreach($output in $step.getOutputs())
 #if($output.mutable())
-		$output.name() = mutOf${output.name()}.get();
+		${tMeth.name($output.name())} = mutOf${tMeth.name($output.name())}.get();
 #end
 #end

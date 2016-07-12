@@ -45,7 +45,7 @@ public class HSLThresholdGenerationTest extends AbstractGenerationTest {
              .empty());
         pip.setMatSource(0, Files.imageFile.file);
         pip.process();
-        Mat genMat = (Mat) pip.getOutput(0, GenType.IMAGE);
+        Mat genMat = (Mat) pip.getOutput("HSL_Threshold0Output0", GenType.IMAGE);
         Mat gripMat = HelperTools.bytedecoMatToCVMat((org.bytedeco.javacpp.opencv_core.Mat) out
              .get());
         assertMatWithin(genMat, gripMat, 10.0);

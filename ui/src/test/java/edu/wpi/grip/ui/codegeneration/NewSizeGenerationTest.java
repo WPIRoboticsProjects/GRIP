@@ -44,7 +44,7 @@ public class NewSizeGenerationTest extends AbstractGenerationTest {
     org.bytedeco.javacpp.opencv_core.Size gripSize = (org.bytedeco.javacpp.opencv_core.Size) out
         .get();
     pip.process();
-    Size genSize = (Size) pip.getOutput(0, GenType.SIZE);
+    Size genSize = (Size) pip.getOutput("New_Size0Output0", GenType.SIZE);
     assertTrue("The grip width: " + gripSize.width() + "does not equals the generated width: "
         + genSize.width, gripSize.width() == genSize.width);
     assertTrue("The grip height: " + gripSize.height() + "does not equals the generated height: "

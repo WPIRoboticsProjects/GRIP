@@ -106,7 +106,7 @@ public class FilterLinesGenerationTest extends AbstractGenerationTest {
     pip.process();
 
     List<TestLine> gripLin = GripLine.convertReport(linOut);
-    List<TestLine> genLin = (List<TestLine>) pip.getOutput(2, GenType.LINES);
+    List<TestLine> genLin = (List<TestLine>) pip.getOutput("Filter_Lines0Output0", GenType.LINES);
     assertTrue("Number of lines is not the same. grip: " + linOut.getLines().size()
             + " gen: " + genLin.size(),
         (linOut.getLines().size() - genLin.size()) < 5);

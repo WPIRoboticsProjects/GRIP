@@ -2,16 +2,17 @@
 		//input
 #set($boolInp = $step.getInput(0))
 #if(!$boolInp.hasValue())
-		$boolInp.name()$c = ${boolInp.value()}.$boolInp.baseType()Value();
+		$tMeth.name($boolInp.name()) = ${boolInp.value()}.$boolInp.baseType()Value();
 #end
 #set($inputTrue = $step.getInput(1))
 #newInput($inputTrue)
 #set($inputFalse = $step.getInput(2))
 #newInput($inputFalse)
 #set($out = $step.getOutput(0))
-#set($outMutName = "mutOf" + $out.name())
+#set($outMutName = "mutOf" + $tMeth.name($out.name()))
 		//output
 		#MutOf($out.baseType()) $outMutName = new #MutOf($out.baseType())();
-		pipelineSwitch($boolInp.name()$c, $inputTrue.name()$c, $inputFalse.name()$c, $outMutName);
+		pipelineSwitch($tMeth.name($boolInp.name()), $tMeth.name($inputTrue.name()),
+		$tMeth.name($inputFalse.name()), $outMutName);
 		//output assignment
-		$out.name() = ${outMutName}.get();
+		$tMeth.name($out.name()) = ${outMutName}.get();
