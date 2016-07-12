@@ -272,7 +272,11 @@ public class PythonPipelineInterfacer implements PipelineInterfacer {
     out.close();
     ProcessBuilder pb = new ProcessBuilder("python3", "testing.py");
     Process p = pb.start();
-
+    try {
+      p.waitFor();
+    } catch (InterruptedException e1) {
+      e1.printStackTrace();
+    }
     BufferedReader stdError = new BufferedReader(new InputStreamReader(p.getErrorStream()));
 
     String s = null;

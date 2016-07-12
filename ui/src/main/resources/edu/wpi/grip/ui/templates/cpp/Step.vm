@@ -1,5 +1,20 @@
 	//input
+#if($step.name().toLowerCase().contains("switch") || $step.name().toLowerCase().contains("valve"))
+#set($boolInp = $step.getInputs().get(0))
+#if($step.name().toLowerCase().contains("switch"))
+	bool switch$c = this->switch$c;
+#set($onTrue = $step.getInputs().get(1))
+#set($onFalse = $step.getInputs().get(2))
+#newInput($onTrue);
+#newInput($onFalse);
+#else
+	bool valve$c = this->valve$c;
+#set($onTrue = $step.getInputs().get(1))
+#newInput($onTrue);
+#end
+#else
 #foreach($input in $step.getInputs())
 #newInput($input)
+#end
 #end
 	$tMeth.callOp($step);

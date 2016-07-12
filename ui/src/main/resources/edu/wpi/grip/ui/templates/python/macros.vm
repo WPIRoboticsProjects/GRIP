@@ -30,7 +30,8 @@ $input.type().contains("Type") || $input.type().equals("Interpolation"))
 #macro( type $socket )
 #set($type = $socket.type())
 #if($type.equals("Mat") || $type.equals("Object"))
-numpy.ndarray#else
+numpy.ndarray#elseif($type.equalsIgnoreCase("Double") || $type.equalsIgnoreCase("Number"))
+float#else
 $type#end
 #end
 

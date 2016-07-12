@@ -17,13 +17,16 @@ import javax.inject.Inject;
 
 import static org.junit.Assert.assertEquals;
 
+import java.io.File;
+
 public class SwitchTest extends AbstractGenerationTest {
   
   private int onTrueSourceNum = 0;
   private int onFalseSourceNum = 1;
   @Inject
   ExceptionWitness.Factory ewf;
-  
+  @Inject
+  Exporter export;
   boolean setupNum(Number onTrue, Number onFalse, Boolean initVal) {
     MockNumberSource srcTrue = new MockNumberSource(ewf, onTrue.doubleValue(), osf);
     MockNumberSource srcFalse = new MockNumberSource(ewf, onFalse.doubleValue(), osf);
@@ -43,6 +46,8 @@ public class SwitchTest extends AbstractGenerationTest {
         sock.setValue(initVal);
       }
     }
+    if(!initVal)
+    export.export(pipeline,Language.CPP, new File("../../pipeline.cpp"), false);
     return true;
   }
   

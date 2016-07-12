@@ -9,7 +9,7 @@ $fileName::$fileName() {
 #set($boolInp = $step.getInput(0))
 #set($boolName = "$boolInp.name()S")
 #if($boolInp.hasValue())
-	this->$boolName$boolNum = true;
+	this->$boolName$boolNum = $boolInp.value();
 #end
 #end
 #end
