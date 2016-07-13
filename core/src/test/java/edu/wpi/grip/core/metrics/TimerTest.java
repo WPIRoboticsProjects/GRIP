@@ -84,4 +84,20 @@ public class TimerTest {
     assertEquals("Statistics sum was wrong", event.getElapsedTime(), statistics.getSum(), 0);
   }
 
+  @Test
+  public void testReset() throws InterruptedException {
+    Timer timer = new Timer(eventBus, this);
+    timer.started();
+    Thread.sleep(1000);
+    timer.reset();
+    assertEquals(0, timer.getElapsedTime(), 0);
+
+    timer.started();
+    Thread.sleep(1000);
+    timer.stopped();
+    assertEquals(1_000_000, timer.getElapsedTime(), 50_000);
+    timer.reset();
+    assertEquals(0, timer.getElapsedTime(), 0);
+  }
+
 }
