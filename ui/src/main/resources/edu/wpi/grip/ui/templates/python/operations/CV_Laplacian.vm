@@ -1,6 +1,6 @@
     @staticmethod
-    def $tMeth.name($step.name())(src, size, scale, delta, borderType):
+    def $tMeth.name($step.name())(src, size, scale, delta, border_type):
         'Performs a Laplacian on the Image'
         size_int = (int)(size+0.5)
         return cv2.Laplacian(src, 0, ksize=size_int, scale=scale, delta=delta,
-        borderType=borderType)
+                            borderType=border_type)

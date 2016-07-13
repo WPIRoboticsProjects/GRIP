@@ -1,4 +1,4 @@
     @staticmethod
-    def $tMeth.name($step.name())(src1,src2):
+    def $tMeth.name($step.name())(src1, src2):
         'Computes the per channel and of two Images'
-        return cv2.bitwise_and(src1,src2)
+        return cv2.bitwise_and(src1, src2)

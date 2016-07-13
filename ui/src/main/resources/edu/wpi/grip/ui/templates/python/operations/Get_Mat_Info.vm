@@ -3,6 +3,7 @@
         'Gets information about given Mat'
         cols, rows, channels = src.shape
         empty = (src.size==0)
-        lowestValue, highestValue = cv2.minMaxLoc(src if (channels == 1) else cv2.cvtColor(src, cv2.COLOR_BGR2GRAY))
-        matSize = (rows, cols)
-        return matSize, empty, channels, cols, rows, highestValue
+        lowest_value, highest_value = cv2.minMaxLoc(src if (channels == 1)
+                            else cv2.cvtColor(src, cv2.COLOR_BGR2GRAY))
+        mat_size = (rows, cols)
+        return mat_size, empty, channels, cols, rows, highest_value

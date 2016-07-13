@@ -297,9 +297,6 @@ public class PythonPipelineInterfacer implements PipelineInterfacer {
     return new BufferedReader(new InputStreamReader(p.getInputStream()));
   }
 
-  /* (non-Javadoc)
-   * @see edu.wpi.grip.ui.codegeneration.tools.PipelineInterfacer#setSwitch(int, boolean)
-   */
   @Override
   public void setSwitch(String name, boolean value) {
     str.append("pipe.set");
@@ -311,9 +308,6 @@ public class PythonPipelineInterfacer implements PipelineInterfacer {
     }
   }
 
-  /* (non-Javadoc)
-   * @see edu.wpi.grip.ui.codegeneration.tools.PipelineInterfacer#setValve(int, boolean)
-   */
   @Override
   public void setValve(String name, boolean value) {
     str.append("pipe.set");

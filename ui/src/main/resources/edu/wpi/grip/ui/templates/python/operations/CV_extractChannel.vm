@@ -1,5 +1,4 @@
     @staticmethod
     def $tMeth.name($step.name())(src, channel):
         'Extracts given channel from an image'
-        channel_int = (int) (channel + 0.5)
-        return cv2.extractChannel(src, channel_int)
+        return cv2.extractChannel(src, (int) (channel + 0.5))

@@ -1,6 +1,5 @@
     @staticmethod
     def $tMeth.name($step.name())(src, kernel, anchor, iterations, border_type, border_value):
         'Expands area of lower value in an image'
-        iterations_int = (int) (iterations +0.5)
-        return cv2.erode(src, kernel, anchor, iterations = iterations_int, borderType = border_type,
-                borderValue = border_value)
+        return cv2.erode(src, kernel, anchor, iterations = (int) (iterations +0.5),
+                            borderType = border_type, borderValue = border_value)

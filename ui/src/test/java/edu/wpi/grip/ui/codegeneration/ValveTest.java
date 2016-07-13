@@ -20,7 +20,7 @@ public class ValveTest extends AbstractGenerationTest {
   private Step valve;
   @Inject
   ExceptionWitness.Factory ewf;
-  
+
   boolean setup(Number value) {
     valve = gen.addStep(new OperationMetaData(ValveOperation.DESCRIPTION,
         () -> new ValveOperation(isf, osf)));
