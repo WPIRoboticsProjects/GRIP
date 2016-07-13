@@ -8,8 +8,8 @@
 	 * @param dst output image.
 	 */
 	private void $tMeth.name($step.name())(Mat src, Size dSize, double fx, double fy, int interpolation,
-		Mat dst){
-		if(dSize==null){
+		Mat dst) {
+		if (dSize==null) {
 			dSize = new Size(0,0);
 		}
 		Imgproc.resize(src, dst, dSize, fx, fy, interpolation);

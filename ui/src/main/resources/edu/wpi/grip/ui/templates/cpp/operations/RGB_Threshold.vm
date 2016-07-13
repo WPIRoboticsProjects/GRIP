@@ -7,7 +7,7 @@
 	 * @param blue The min and max blue.
 	 * @param output The image in which to store the output.
 	 */
-	void $tMeth.name($step.name())(Mat *input, double red[], double green[], double blue[], Mat *out){
+	void $tMeth.name($step.name())(Mat *input, double red[], double green[], double blue[], Mat *out) {
 		cvtColor(*input, *out, COLOR_BGR2RGB);
 		inRange(*out, Scalar(red[0], green[0], blue[0]), Scalar(red[1], green[1], blue[1]), *out);
 	}

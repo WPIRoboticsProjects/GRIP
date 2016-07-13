@@ -16,6 +16,6 @@
 	 * @param flipcode FlipCode of which direction to flip.
 	 * @param dst flipped version of the Image.
 	 */
-	void $tMeth.name($step.name())(Mat *src, FlipCode *flipcode, Mat *dst){
-		flip(*src,*dst,*flipcode);
+	void $tMeth.name($step.name())(Mat *src, FlipCode *flipcode, Mat *dst) {
+		flip(*src, *dst, *flipcode);
 	}

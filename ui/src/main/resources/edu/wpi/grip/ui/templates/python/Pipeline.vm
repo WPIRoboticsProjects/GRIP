@@ -24,11 +24,13 @@ class $fileName:
 #foreach($output in $step.getOutputs())
         #output($output) = None
 #end
+
 #end
     
     def process(self):
 #foreach($step in $pipeline.getSteps())
 #parse("src/main/resources/edu/wpi/grip/ui/templates/python/step.vm")
+
 
 #end
 #foreach($step in $pipeline.getSteps())
@@ -41,16 +43,20 @@ class $fileName:
         assert isinstance(value, bool) , "Source must be of type bool"
         self.__$tMeth.pyName($boolName) = value
 #end
+
 #end
 #end
 #foreach($source in $pipeline.getSources())
 #setter($source)
+
 #end
+
 #foreach($step in $pipeline.getUniqueSteps())
 #set($toParse = "src/main/resources/edu/wpi/grip/ui/templates/python/operations/" + $step.name())
 #set($toParse = $toParse + ".vm")
 #parse($toParse)
-    
+
+
 #end
 
 #set($addedEnums = [])
@@ -59,4 +65,5 @@ class $fileName:
 #parse("src/main/resources/edu/wpi/grip/ui/templates/python/enums/${enum}.vm")
 #addToList($addedEnums $enum)
 #end
+
 #end

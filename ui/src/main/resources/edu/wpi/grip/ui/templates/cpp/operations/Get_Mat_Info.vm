@@ -9,7 +9,7 @@
 	 * @param highestValue highest value contained in the Mat.
 	 */
 	void $tMeth.name($step.name())(Mat *src, Size *size, bool *empty, double *channels,
-		double *cols, double *rows, double *highestValue){
+		double *cols, double *rows, double *highestValue) {
 		*empty = src->empty();
 		*channels = src->channels();
 		*cols = src->cols;

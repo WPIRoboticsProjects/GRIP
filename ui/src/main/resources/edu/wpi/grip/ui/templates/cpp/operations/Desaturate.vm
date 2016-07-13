@@ -4,7 +4,7 @@
 	 * @param input The image on which to perform the desaturate.
 	 * @param output The image in which to store the output.
 	 */
-	void $tMeth.name($step.name())(Mat *input, Mat *output){
+	void $tMeth.name($step.name())(Mat *input, Mat *output) {
 		switch (input->channels()) {
 			case 1:
 				// If the input is already one channel, it's already desaturated

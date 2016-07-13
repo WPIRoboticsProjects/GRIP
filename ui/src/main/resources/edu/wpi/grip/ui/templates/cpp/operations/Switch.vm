@@ -7,11 +7,11 @@
 	 * @param output The output which is equal to either onTrue or onFalse.
 	 */
 	template<typename T>
-	void pipelineSwitch(bool *sw, T *onTrue, T *onFalse, T *output){
-		if(*sw){
+	void pipelineSwitch(bool *sw, T *onTrue, T *onFalse, T *output) {
+		if (*sw) {
 			*output = *onTrue;
 		}
-		else{
+		else {
 			*output = *onFalse;
 		}
 	}

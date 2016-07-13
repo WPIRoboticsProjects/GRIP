@@ -5,6 +5,6 @@
 	 * @param cmpop Type of comparison to use.
 	 * @param dst output Mat from the comparison.
 	 */
-	private void $tMeth.name($step.name())(Mat src1, Mat src2, int cmpop, Mat dst){
+	private void $tMeth.name($step.name())(Mat src1, Mat src2, int cmpop, Mat dst) {
 		Core.compare(src1,src2, dst, cmpop);
 	}

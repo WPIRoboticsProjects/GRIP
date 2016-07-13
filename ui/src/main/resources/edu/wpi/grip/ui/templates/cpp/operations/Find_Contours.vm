@@ -6,14 +6,14 @@
 	 * @param maskSize the size of the mask.
 	 * @param output The image in which to store the output.
 	 */
-	void $tMeth.name($step.name())(Mat *input,bool *externalOnly, vector<vector<Point> > *contours){
+	void $tMeth.name($step.name())(Mat *input, bool *externalOnly, vector<vector<Point>> *contours) {
 		vector<Vec4i> hierarchy;
 		contours->clear();
 		int mode;
-		if(*externalOnly){
+		if(*externalOnly) {
 			mode = RETR_EXTERNAL;
 		}
-		else{
+		else {
 			mode = RETR_LIST;
 		}
 		int method = CHAIN_APPROX_SIMPLE;

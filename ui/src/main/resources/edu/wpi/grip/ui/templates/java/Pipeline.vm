@@ -100,6 +100,7 @@ public class $fileName{
 	 public void set$boolName(boolean value){
 	 	$boolName = value;
 	 }
+
 #end
 #end
 #end
@@ -112,6 +113,7 @@ public class $fileName{
 	public #socketType(${output.baseType()}) ${tMeth.name($output.name())}(){
 		return ${tMeth.name($output.name())};
 	}
+
 #end
 #end
 
@@ -119,6 +121,7 @@ public class $fileName{
 #set($toParse = "src/main/resources/edu/wpi/grip/ui/templates/java/operations/" + $step.name())
 #set($toParse = $toParse + ".vm")
 #parse($toParse)
+
 
 #end
 }

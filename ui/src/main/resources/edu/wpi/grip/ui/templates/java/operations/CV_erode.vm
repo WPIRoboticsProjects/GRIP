@@ -9,15 +9,15 @@
 	 * @param dst Output Image.
 	 */
 	private void $tMeth.name($step.name())(Mat src, Mat kernel, Point anchor, double iterations,
-		int borderType, Scalar borderValue, Mat dst){
-		if(kernel == null){
+		int borderType, Scalar borderValue, Mat dst) {
+		if (kernel == null) {
 			kernel = new Mat();
 		}
-		if(anchor == null){
+		if (anchor == null) {
 			anchor = new Point(-1,-1);
 		}
-		if(borderValue == null){
+		if (borderValue == null) {
 			borderValue = new Scalar(-1);
 		}
-		Imgproc.erode(src, dst, kernel, anchor, (int) iterations, borderType, borderValue);
+		Imgproc.erode(src, dst, kernel, anchor, (int)iterations, borderType, borderValue);
 	}

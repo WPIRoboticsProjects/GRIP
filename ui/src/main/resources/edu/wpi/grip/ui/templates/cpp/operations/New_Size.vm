@@ -4,7 +4,7 @@
 	 * @param height the height of the size
 	 * @param size the size to fill
 	 */
-	void $tMeth.name($step.name())(double *width, double *height, Size *size){
+	void $tMeth.name($step.name())(double *width, double *height, Size *size) {
 		size->height = *height;
 		size->width = *width;
 	}

@@ -6,5 +6,5 @@
 	 * @param dst output Mat from the comparison.
 	 */
 	void $tMeth.name($step.name())(Mat *src1, Mat *src2, int *cmpop, Mat *dst){
-		compare(*src1,*src2, *dst, *cmpop);
+		compare(*src1, *src2, *dst, *cmpop);
 	}

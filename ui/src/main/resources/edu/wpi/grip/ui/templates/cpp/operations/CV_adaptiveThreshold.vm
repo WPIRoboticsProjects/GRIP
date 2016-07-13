@@ -9,6 +9,6 @@
 	 * @param dst Output of threshold.
 	 */
 	void $tMeth.name($step.name())(Mat *src, double *maxValue, int *adaptiveMethod,
-		int *thresholdType, double *blockSize, double *c, Mat *dst){
-		adaptiveThreshold(*src, *dst, *maxValue, *adaptiveMethod, *thresholdType, (int) *blockSize, *c);
+		int *thresholdType, double *blockSize, double *c, Mat *dst) {
+		adaptiveThreshold(*src, *dst, *maxValue, *adaptiveMethod, *thresholdType, (int)*blockSize, *c);
 	}

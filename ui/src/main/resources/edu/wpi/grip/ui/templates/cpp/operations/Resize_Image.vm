@@ -8,6 +8,6 @@
 	 * @param output The image in which to store the output.
 	 */
 	void $tMeth.name($step.name())(Mat *input, double *width, double *height,
-	int *interpolation, Mat *output){
+		int *interpolation, Mat *output) {
 		resize(*input, *output, Size(*width, *height), 0.0, 0.0, *interpolation);
 	}

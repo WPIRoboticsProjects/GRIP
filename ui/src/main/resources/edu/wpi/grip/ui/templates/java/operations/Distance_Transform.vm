@@ -6,8 +6,8 @@
 	 * @param maskSize the size of the mask.
 	 * @param output The image in which to store the output.
 	 */
-	private void $tMeth.name($step.name())(Mat input,int type, int maskSize, Mat
-	output){
+	private void $tMeth.name($step.name())(Mat input,int type, int maskSize,
+		Mat output) {
 		Imgproc.distanceTransform(input, output, type, maskSize);
 		output.convertTo(output, -1);
 	}

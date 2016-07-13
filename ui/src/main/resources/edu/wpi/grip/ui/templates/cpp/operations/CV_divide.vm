@@ -5,6 +5,6 @@
 	 * @param scale Scale for division.
 	 * @param dst Result image.
 	 */
-	void $tMeth.name($step.name())(Mat *src1, Mat *src2, double *scale, Mat *dst){
+	void $tMeth.name($step.name())(Mat *src1, Mat *src2, double *scale, Mat *dst) {
 		divide(*src1, *src2, *dst, *scale);
 	}

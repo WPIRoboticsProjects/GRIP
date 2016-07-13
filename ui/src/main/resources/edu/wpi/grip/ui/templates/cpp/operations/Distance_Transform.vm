@@ -6,13 +6,13 @@
 	 * @param maskSize the size of the mask.
 	 * @param output The image in which to store the output.
 	 */
-	void $tMeth.name($step.name())(Mat *input,int *type, String *maskSize, Mat *output){
+	void $tMeth.name($step.name())(Mat *input,int *type, String *maskSize, Mat *output) {
 		int mask;
-		if(maskSize->compare("0x0") == 0){
+		if (maskSize->compare("0x0") == 0) {
 			mask = 0;
-		} else if(maskSize->compare("3x3") == 0){
+		} else if (maskSize->compare("3x3") == 0) {
 			mask = 3;
-		}else{
+		} else {
 			mask = 5;
 		}
 		distanceTransform(*input, *output, *type, mask);

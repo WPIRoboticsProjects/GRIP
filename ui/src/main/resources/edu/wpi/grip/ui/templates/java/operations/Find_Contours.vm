@@ -7,14 +7,14 @@
 	 * @param output The image in which to store the output.
 	 */
 	private void $tMeth.name($step.name())(Mat input,Boolean externalOnly,
-		List<MatOfPoint> contours){
+		List<MatOfPoint> contours) {
 		Mat hierarchy = new Mat();
 		contours.clear();
 		int mode;
-		if(externalOnly){
+		if (externalOnly) {
 			mode = Imgproc.RETR_EXTERNAL;
 		}
-		else{
+		else {
 			mode = Imgproc.RETR_LIST;
 		}
 		int method = Imgproc.CHAIN_APPROX_SIMPLE;
