@@ -198,13 +198,16 @@ public class PipelineRunner implements RestartableService {
     final ImmutableList<Step> steps = stepSupplier.get();
     // Now that we have a snapshot we can run the pipeline with our copy.
 
-    for (Source source : sources) {
-      // if we have been stopped then we need to exit as soon as possible.
-      // then don't continue to run the pipeline.
-      if (!isRunning.get()) {
-        break;
+    if (!benchmarking.get()) {
+      // Don't update sources if this run is being benchmarked
+      for (Source source : sources) {
+        // if we have been stopped then we need to exit as soon as possible.
+        // then don't continue to run the pipeline.
+        if (!isRunning.get()) {
+          break;
+        }
+        source.updateOutputSockets();
       }
-      source.updateOutputSockets();
     }
 
     for (Step step : steps) {

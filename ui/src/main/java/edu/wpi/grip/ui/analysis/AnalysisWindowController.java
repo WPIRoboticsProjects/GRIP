@@ -103,7 +103,7 @@ public class AnalysisWindowController {
   }
 
   @Subscribe
-  @SuppressWarnings({"PMD.UnusedPrivateMethod", "PMD.UnusedFormalParameter"})
+  @SuppressWarnings("PMD.UnusedPrivateMethod")
   private void onRun(TimerEvent event) {
     if (event.getTarget() instanceof Step) {
       Step source = (Step) event.getTarget();
@@ -122,7 +122,7 @@ public class AnalysisWindowController {
   }
 
   @Subscribe
-  @SuppressWarnings({"PMD.UnusedPrivateMethod", "PMD.UnusedFormalParameter"})
+  @SuppressWarnings( {"PMD.UnusedPrivateMethod", "PMD.UnusedFormalParameter"})
   private void onPipelineFinish(@Nullable RunStoppedEvent event) {
     // Update the stats after the pipeline finishes
     lastStats = analysis.getStatistics();
@@ -131,7 +131,7 @@ public class AnalysisWindowController {
   }
 
   @Subscribe
-  @SuppressWarnings({"PMD.UnusedPrivateMethod", "PMD.UnusedFormalParameter"})
+  @SuppressWarnings("PMD.UnusedPrivateMethod")
   private void onBenchmark(BenchmarkEvent event) {
     benchmarkButton.setDisable(event.isStart());
     benchmarkRunsField.setDisable(event.isStart());
