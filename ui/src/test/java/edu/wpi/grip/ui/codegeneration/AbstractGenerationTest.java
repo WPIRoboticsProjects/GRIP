@@ -76,11 +76,26 @@ public abstract class AbstractGenerationTest {
     gen.export(fileName);
 
     JavaPipelineInterfacer jpip = new JavaPipelineInterfacer(fileName + ".java");
-    test.accept(jpip);
     PythonPipelineInterfacer ppip = new PythonPipelineInterfacer(fileName);
-    test.accept(ppip);
     CppPipelineInterfacer cpip = new CppPipelineInterfacer(fileName);
-    test.accept(cpip);
+    Language current = Language.JAVA;
+    try {
+      test.accept(jpip);
+      current = Language.PYTHON;
+      test.accept(ppip);
+      current = Language.CPP;
+      test.accept(cpip);
+    } catch (AssertionError e) {
+      //Makes it easier to tell which language is throwing an error.
+      StringBuilder msg = new StringBuilder();
+      msg.append("In ").append(current).append(": ");
+      if (e.getMessage() != null) {
+        msg.append(e.getMessage());
+      }
+      AssertionError error = new AssertionError(msg.toString(), e.getCause());
+      error.setStackTrace(e.getStackTrace());
+      throw error;
+    }
   }
 
   @After
