@@ -12,8 +12,12 @@ public class PythonTMethods extends TemplateMethods {
 
   @Override
   public String name(String name) {
-    return "__".concat(CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.LOWER_UNDERSCORE, name
-        .replaceAll("\\s", "")));
+    return "__".concat(pyName(name));
+  }
+
+  public String pyName(String name) {
+    return CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.LOWER_UNDERSCORE, name
+        .replaceAll("\\s", ""));
   }
 
   @Override
@@ -21,8 +25,7 @@ public class PythonTMethods extends TemplateMethods {
     StringBuilder method = new StringBuilder();
     method.append("self.").append(name(step.name())).append("(");
     for (TInput inp : step.getInputs()) {
-      method.append("self.__").append(inp.name())
-          .append("s").append(step.num()).append(", ");
+      method.append("self.__").append(pyName(inp.name())).append(", ");
     }
     if (step.name().equals("Threshold_Moving")) {
       method.append("self.__lastImage");

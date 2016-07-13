@@ -1,4 +1,4 @@
     @staticmethod
-    def $tMeth.name($step.name())(src, colorMap):
+    def $tMeth.name($step.name())(src, color_map):
         'Applies a color Map to given Image'
-        return cv2.applyColorMap(src, colorMap)
+        return cv2.applyColorMap(src, color_map)

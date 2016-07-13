@@ -8,6 +8,6 @@
 	 * @param maxLoc the location of the maximum value.
 	 */
 	void $tMeth.name($step.name())(Mat *src, Mat *mask, double *minVal,
-		double*maxVal, Point *minLoc, Point *maxLoc){
+		double*maxVal, Point *minLoc, Point *maxLoc) {
 		minMaxLoc(*src, minVal, maxVal, minLoc, maxLoc, *mask);
 	}

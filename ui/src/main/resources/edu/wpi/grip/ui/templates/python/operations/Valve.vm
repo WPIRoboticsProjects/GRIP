@@ -1,7 +1,7 @@
     @staticmethod
-    def __valve(boolsw, onTrue):
+    def __valve(boolsw, on_true):
         'return a value if a value is true or None if it is false'
         if(boolsw):
-            return onTrue
+            return on_true
         else:
             return None

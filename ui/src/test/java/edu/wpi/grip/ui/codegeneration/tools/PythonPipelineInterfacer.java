@@ -1,5 +1,7 @@
 package edu.wpi.grip.ui.codegeneration.tools;
 
+import edu.wpi.grip.ui.codegeneration.PythonTMethods;
+
 import org.opencv.core.KeyPoint;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfKeyPoint;
@@ -25,6 +27,7 @@ public class PythonPipelineInterfacer implements PipelineInterfacer {
   StringBuilder str;
   BufferedWriter out;
   static File codeDir = null;
+  private PythonTMethods tMeth;
 
   static {
     try {
@@ -37,7 +40,7 @@ public class PythonPipelineInterfacer implements PipelineInterfacer {
   }
 
   public PythonPipelineInterfacer(String className) {
-
+    tMeth = new PythonTMethods();
     try {
       Runtime.getRuntime().exec("cd " + codeDir.getAbsolutePath().toString());
     } catch (IOException e) {
@@ -88,34 +91,34 @@ public class PythonPipelineInterfacer implements PipelineInterfacer {
 
   @Override
   public Object getOutput(String name, GenType type) {
-    int num = 0;
+    String pName = tMeth.pyName(name);
     Object objectOut = null;
     try {
       switch (type) {
         case BLOBS:
-          objectOut = getOutputBlobs(num);
+          objectOut = getOutputBlobs(pName);
           break;
         case NUMBER:
-          objectOut = getOutputNum(num);
+          objectOut = getOutputNum(pName);
           break;
         case BOOLEAN:
           break;
         case POINT:
-          objectOut = getOutputPoint(num);
+          objectOut = getOutputPoint(pName);
           break;
         case SIZE:
-          objectOut = getOutputSize(num);
+          objectOut = getOutputSize(pName);
           break;
         case LINES:
-          objectOut = getOutputLines(num);
+          objectOut = getOutputLines(pName);
           break;
         case CONTOURS:
-          objectOut = getOutputContours(num);
+          objectOut = getOutputContours(pName);
           break;
         case LIST:
           break;
         case IMAGE:
-          objectOut = getOutputImage(num);
+          objectOut = getOutputImage(pName);
           break;
         default:
           objectOut = null;
@@ -129,10 +132,10 @@ public class PythonPipelineInterfacer implements PipelineInterfacer {
     return objectOut;
   }
 
-  private Object getOutputImage(int num) throws IOException {
+  private Object getOutputImage(String name) throws IOException {
     StringBuilder temp = new StringBuilder();
-    temp.append("mat = pipe.output");
-    temp.append(num);
+    temp.append("mat = pipe.");
+    temp.append(name);
     temp.append("\n");
     temp.append("cv2.imwrite(\"img.png\", mat)\n");
     runProcess(temp.toString());
@@ -142,13 +145,13 @@ public class PythonPipelineInterfacer implements PipelineInterfacer {
     return out;
   }
 
-  private Object getOutputPoint(int num) throws IOException {
+  private Object getOutputPoint(String name) throws IOException {
     StringBuilder temp = new StringBuilder();
-    temp.append("print (int(pipe.output");
-    temp.append(num);
+    temp.append("print (int(pipe.");
+    temp.append(name);
     temp.append("[0]))\n");
-    temp.append("print (int(pipe.output");
-    temp.append(num);
+    temp.append("print (int(pipe.");
+    temp.append(name);
     temp.append("[1]))\n");
     BufferedReader in = runProcess(temp.toString());
 
@@ -157,10 +160,10 @@ public class PythonPipelineInterfacer implements PipelineInterfacer {
     return new Point(val1, val2);
   }
 
-  private Object getOutputBlobs(int num) throws IOException {
+  private Object getOutputBlobs(String name) throws IOException {
     StringBuilder temp = new StringBuilder();
-    temp.append("for blob in pipe.output");
-    temp.append(num);
+    temp.append("for blob in pipe.");
+    temp.append(name);
     temp.append(":\n");
     temp.append("        print((int)(blob.pt[0]))\n"
         + "        print((int)(blob.pt[1]))\n"
@@ -181,10 +184,10 @@ public class PythonPipelineInterfacer implements PipelineInterfacer {
     return blobs;
   }
 
-  private Object getOutputLines(int num) throws IOException {
+  private Object getOutputLines(String name) throws IOException {
     StringBuilder temp = new StringBuilder();
-    temp.append("for line in pipe.output");
-    temp.append(num);
+    temp.append("for line in pipe.");
+    temp.append(name);
     temp.append(":\n");
     temp.append("        print ((int)(line.x1))\n"
         + "        print ((int)(line.y1))\n"
@@ -205,10 +208,10 @@ public class PythonPipelineInterfacer implements PipelineInterfacer {
     return lines;
   }
 
-  private Object getOutputContours(int num) throws IOException {
+  private Object getOutputContours(String name) throws IOException {
     StringBuilder temp = new StringBuilder();
-    temp.append("for contour in pipe.output");
-    temp.append(num);
+    temp.append("for contour in pipe.");
+    temp.append(name);
     temp.append(":\n");
     temp.append("        print (\'c\')\n"
         + "        for point in contour:\n"
@@ -239,13 +242,13 @@ public class PythonPipelineInterfacer implements PipelineInterfacer {
     return contours;
   }
 
-  private Object getOutputSize(int num) throws IOException {
+  private Object getOutputSize(String name) throws IOException {
     StringBuilder temp = new StringBuilder();
-    temp.append("print (int(pipe.output");
-    temp.append(num);
+    temp.append("print (int(pipe.");
+    temp.append(name);
     temp.append("[0]))\n");
-    temp.append("print (int(pipe.output");
-    temp.append(num);
+    temp.append("print (int(pipe.");
+    temp.append(name);
     temp.append("[1]))\n");
     BufferedReader in = runProcess(temp.toString());
     int val1 = new Integer(in.readLine()).intValue();
@@ -253,10 +256,10 @@ public class PythonPipelineInterfacer implements PipelineInterfacer {
     return new Size(val1, val2);
   }
 
-  private Object getOutputNum(int num) throws IOException {
+  private Object getOutputNum(String name) throws IOException {
     StringBuilder temp = new StringBuilder();
-    temp.append("print (pipe.output");
-    temp.append(num);
+    temp.append("print (pipe.");
+    temp.append(name);
     temp.append(")\n");
     BufferedReader in = runProcess(temp.toString());
     String input = in.readLine();
@@ -294,14 +297,10 @@ public class PythonPipelineInterfacer implements PipelineInterfacer {
     return new BufferedReader(new InputStreamReader(p.getInputStream()));
   }
 
-  /* (non-Javadoc)
-   * @see edu.wpi.grip.ui.codegeneration.tools.PipelineInterfacer#setSwitch(int, boolean)
-   */
   @Override
   public void setSwitch(String name, boolean value) {
-    int num = 0;
-    str.append("pipe.setSwitch");
-    str.append(num);
+    str.append("pipe.set");
+    str.append(tMeth.pyName(name));
     if (value) {
       str.append("(True)\n");
     } else {
@@ -309,14 +308,10 @@ public class PythonPipelineInterfacer implements PipelineInterfacer {
     }
   }
 
-  /* (non-Javadoc)
-   * @see edu.wpi.grip.ui.codegeneration.tools.PipelineInterfacer#setValve(int, boolean)
-   */
   @Override
   public void setValve(String name, boolean value) {
-    int num = 0;
-    str.append("pipe.setValve");
-    str.append(num);
+    str.append("pipe.set");
+    str.append(tMeth.pyName(name));
     if (value) {
       str.append("(True)\n");
     } else {

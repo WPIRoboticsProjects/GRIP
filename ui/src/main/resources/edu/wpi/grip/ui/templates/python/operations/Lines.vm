@@ -8,7 +8,7 @@
             self.x2 = x2
             self.y2 = y2
 
-        def lengthSquared(self):
+        def length_squared(self):
             return pow(self.x2 - self.x1, 2) + pow(self.y2 - self.y1, 2)
 
         def length(self):

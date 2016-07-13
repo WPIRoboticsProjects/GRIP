@@ -8,7 +8,7 @@
 	 * @param blobList The output where the MatOfKeyPoint is stored.
 	 */
 	void $tMeth.name($step.name())(Mat *input, double *minArea, double circularity[2],
-		bool *darkBlobs, vector<KeyPoint> *blobList){
+		bool *darkBlobs, vector<KeyPoint> *blobList) {
 		blobList->clear();
 		SimpleBlobDetector::Params params;
 		params.filterByColor = 1;
@@ -20,10 +20,8 @@
 		params.filterByCircularity = true;
 		params.minCircularity = circularity[0];
 		params.maxCircularity = circularity[1];
-		params.filterByConvexity = true;
-		params.minConvexity = 0.95;
-		params.filterByInertia = true;
-		params.minInertiaRatio = 0.01;
+		params.filterByConvexity = False;
+		params.filterByInertia = False;
 		Ptr<SimpleBlobDetector> detector = SimpleBlobDetector::create(params);
 		detector->detect(*input, *blobList);
 	}

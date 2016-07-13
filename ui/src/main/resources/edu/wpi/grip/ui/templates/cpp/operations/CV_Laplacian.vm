@@ -8,6 +8,6 @@
 	 * @param dst Ouput of Laplacian. 
 	 */
 	void $tMeth.name($step.name())(Mat *src, double *size, double *scale, double *delta,
-		int*borderType, Mat *dst){
-		Laplacian(*src, *dst, 0, (int) *size, *scale, *delta, *borderType);
+		int *borderType, Mat *dst) {
+		Laplacian(*src, *dst, 0, (int)*size, *scale, *delta, *borderType);
 	}

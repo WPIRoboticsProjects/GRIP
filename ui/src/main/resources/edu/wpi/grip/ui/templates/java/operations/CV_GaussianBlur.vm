@@ -8,8 +8,8 @@
 	 * @param dst the output image.
 	 */
 	private void $tMeth.name($step.name())(Mat src, Size kSize, double sigmaX, double sigmaY, int
-		borderType, Mat dst){
-		if(kSize == null){
+		borderType, Mat dst) {
+		if (kSize == null) {
 			kSize = new Size(1,1);
 		}
 		Imgproc.GaussianBlur(src, dst, kSize, sigmaX, sigmaY, borderType);

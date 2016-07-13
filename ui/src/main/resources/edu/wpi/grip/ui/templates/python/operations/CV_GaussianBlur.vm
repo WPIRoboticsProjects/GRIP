@@ -1,7 +1,8 @@
     @staticmethod
-    def $tMeth.name($step.name())(src, kSize, sigmaX, sigmaY, borderType):
+    def $tMeth.name($step.name())(src, k_size, sigma_x, sigma_y, border_type):
         'Performs a Gaussian blur on the image'
-        if (kSize == None):
-            kSize = (1, 1)
-        kSize_int = ((int)(kSize[0]),(int)(kSize[1]))
-        return cv2.GaussianBlur(src, kSize_int, sigmaX=sigmaX, sigmaY=sigmaY, borderType=(int)(borderType))
+        if (k_size == None):
+            k_size = (1, 1)
+        k_size_int = ((int)(k_size[0]),(int)(k_size[1]))
+        return cv2.GaussianBlur(src, k_size_int, sigmaX=sigma_x, sigmaY=sigma_y,
+                            borderType=(int)(border_type))

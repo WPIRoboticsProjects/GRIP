@@ -10,6 +10,6 @@
 	 * @param dst Image that is output of Sobel.
 	 */
 	private void $tMeth.name($step.name())(Mat src, double dx, double dy, double kSize, double scale,
-		double delta, int borderType, Mat dst){
-		Imgproc.Sobel(src, dst, 0, (int) dx, (int) dy, (int) kSize, scale, delta, borderType);
+		double delta, int borderType, Mat dst) {
+		Imgproc.Sobel(src, dst, 0, (int)dx, (int)dy, (int)kSize, scale, delta, borderType);
 	}

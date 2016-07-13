@@ -1,4 +1,4 @@
     @staticmethod
-    def $tMeth.name($step.name())(src, kSize):
+    def $tMeth.name($step.name())(src, k_size):
         'Performs a median blur on the image'
-        return cv2.medianBlur(src, (int)(kSize))
+        return cv2.medianBlur(src, (int)(k_size))

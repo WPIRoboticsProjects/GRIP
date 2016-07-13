@@ -1,4 +1,5 @@
     @staticmethod
-    def $tMeth.name($step.name())(src, dx, dy, kSize, scale, delta, borderType):
+    def $tMeth.name($step.name())(src, dx, dy, k_size, scale, delta, border_type):
         'Find edges by calculating the requested derivative order for the given image'
-        return cv2.Sobel(src, 0, (int)(dx + 0.5), (int)(dy + 0.5), (int)(kSize + 0.5), scale = scale, delta = delta, borderType = borderType)
+        return cv2.Sobel(src, 0, (int)(dx + 0.5), (int)(dy + 0.5), (int)(k_size + 0.5),
+                            scale = scale, delta = delta, borderType = border_type)

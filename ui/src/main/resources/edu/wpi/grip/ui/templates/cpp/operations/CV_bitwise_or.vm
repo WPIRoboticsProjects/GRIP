@@ -4,6 +4,6 @@
 	 * @param src2 The second image to use.
 	 * @param dst the result image when the or is performed.
 	 */
-	void $tMeth.name($step.name())(Mat *src1, Mat *src2, Mat *dst){
-		bitwise_or(*src1,*src2,*dst);
+	void $tMeth.name($step.name())(Mat *src1, Mat *src2, Mat *dst) {
+		bitwise_or(*src1, *src2, *dst);
 	}

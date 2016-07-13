@@ -1,11 +1,10 @@
     @staticmethod
-    def $tMeth.name($step.name())(src, pt1, pt2, color, thickness, lineType, shift):
+    def $tMeth.name($step.name())(src, pt1, pt2, color, thickness, line_type, shift):
         'Draws a rectangle on an Image'
         if(color == None):
             color = (1.0,1.0,1.0)
-        thickness_int = (int) (thickness+0.5)
         shift_int = (int) (shift+0.5)
         pt1_int = ((int)(pt1[0]),(int)(pt1[1]))
         pt2_int = ((int)(pt2[0]),(int)(pt2[1]))
-        return cv2.rectangle(src, pt1_int, pt2_int, color, thickness=thickness_int,
-            lineType=lineType, shift=shift_int)
+        return cv2.rectangle(src, pt1_int, pt2_int, color, thickness=(int)(thickness+0.5),
+                            lineType=line_type, shift=shift_int)

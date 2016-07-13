@@ -1,7 +1,7 @@
     @staticmethod
-    def $tMeth.name($step.name())(input, type, maskSize):
+    def $tMeth.name($step.name())(input, type, mask_size):
         'Sets the values of pixels in a binary image to their distance to the nearest black pixel'
         h, w = input.shape[:2]
         dst = numpy.zeros((h, w), numpy.float32)
-        cv2.distanceTransform(input, type, maskSize, dst = dst)
+        cv2.distanceTransform(input, type, mask_size, dst = dst)
         return numpy.uint8(dst)

@@ -4,11 +4,12 @@
 	 * @param inputContours The contours on which to perform the operation.
 	 * @param outputContours The contours where the output will be stored.
 	 */
-	void $tMeth.name($step.name())(vector<vector<Point> > *inputContours,vector<vector<Point> > *outputContours){
-		vector<vector<Point> >hull( inputContours->size() );
+	void $tMeth.name($step.name())(vector<vector<Point>> *inputContours,
+		vector<vector<Point>> *outputContours) {
+		vector<vector<Point>> hull (inputContours->size());
 		outputContours->clear();
-		for( int i = 0; i < inputContours->size(); i++ ){
-			convexHull(Mat((*inputContours)[i]), hull[i], false );
+		for (int i = 0; i < inputContours->size(); i++ ) {
+			convexHull(Mat((*inputContours)[i]), hull[i], false);
 		}
 		*outputContours = hull;
 	}

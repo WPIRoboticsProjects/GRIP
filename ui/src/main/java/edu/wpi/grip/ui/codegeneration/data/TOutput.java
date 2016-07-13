@@ -10,8 +10,7 @@ public class TOutput extends TSocket {
    * @param name the name of the output.
    */
   public TOutput(String type, String name) {
-    super(type);
-    super.name = name;
+    super(type, name);
   }
 
 }

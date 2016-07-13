@@ -1,7 +1,7 @@
     @staticmethod
-    def __switch(boolsw, onTrue, onFalse):
+    def __switch(boolsw, on_true, on_false):
         'Selects an output from two inputs based on a boolean'
         if(boolsw):
-            return onTrue
+            return on_true
         else:
-            return onFalse
+            return on_false

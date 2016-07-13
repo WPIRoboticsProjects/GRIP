@@ -9,15 +9,15 @@
 	 * @param dst Output Image.
 	 */
 	void $tMeth.name($step.name())(Mat *src, Mat *kernel, Point *anchor,
-		double *iterations, int *borderType, Scalar *borderValue, Mat *dst){
-		if(!kernel){
+		double *iterations, int *borderType, Scalar *borderValue, Mat *dst) {
+		if (!kernel) {
 			Mat kernel;
 		}
-		if(!anchor){
+		if (!anchor) {
 			Point anchor(-1,-1);
 		}
-		if(!borderValue){
+		if (!borderValue) {
 			Scalar borderValue(-1);
 		}
-		erode(*src, *dst, *kernel, *anchor, (int) *iterations, *borderType, *borderValue);
+		erode(*src, *dst, *kernel, *anchor, (int)*iterations, *borderType, *borderValue);
 	}

@@ -1,4 +1,4 @@
     @staticmethod
-    def $tMeth.name($step.name())(src1,src2):
+    def $tMeth.name($step.name())(src1, src2):
         'Computes the per channel exclusive or of two Images'
-        return cv2.bitwise_xor(src1,src2)
+        return cv2.bitwise_xor(src1, src2)

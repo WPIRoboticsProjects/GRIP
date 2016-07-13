@@ -5,11 +5,11 @@
 	 * @param input The output if sw is true.
 	 * @param output The output which is equal to the input or null.
 	 */
-	private static <T> void pipelineValve(boolean sw, T input, #MutOf("T") output){
-		if(sw){
+	private static <T> void pipelineValve(boolean sw, T input, #MutOf("T") output) {
+		if (sw) {
 			output.set(input);
 		}
-		else{
+		else {
 			output.set(null);
 		}
 	}

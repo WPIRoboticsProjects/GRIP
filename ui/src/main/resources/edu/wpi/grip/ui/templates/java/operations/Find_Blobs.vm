@@ -8,7 +8,7 @@
 	 * @param blobList The output where the MatOfKeyPoint is stored.
 	 */
 	private void $tMeth.name($step.name())(Mat input, double minArea, double[] circularity,
-		Boolean darkBlobs, MatOfKeyPoint blobList){
+		Boolean darkBlobs, MatOfKeyPoint blobList) {
 		FeatureDetector blobDet = FeatureDetector.create(FeatureDetector.SIMPLEBLOB);
 		try {
 			File tempFile = File.createTempFile("config", ".xml");
@@ -40,12 +40,8 @@
 			config.append("<maxCircularity>");
 			config.append(circularity[1]);
 			config.append("</maxCircularity>\n");
-			config.append("<filterByInertia>1</filterByInertia>\n");
-			config.append("<minInertiaRatio>1.0000000149011612e-01</minInertiaRatio>\n");
-			config.append("<maxInertiaRatio>3.4028234663852886e+38</maxInertiaRatio>\n");
-			config.append("<filterByConvexity>1</filterByConvexity>\n");
-			config.append("<minConvexity>9.4999998807907104e-01</minConvexity>\n");
-			config.append("<maxConvexity>3.4028234663852886e+38</maxConvexity>\n");
+			config.append("<filterByInertia>0</filterByInertia>\n");
+			config.append("<filterByConvexity>0</filterByConvexity>\n");
 			config.append("</opencv_storage>\n");
 			FileWriter writer;
 			writer = new FileWriter(tempFile, false);

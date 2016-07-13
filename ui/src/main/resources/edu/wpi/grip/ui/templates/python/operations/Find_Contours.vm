@@ -1,7 +1,7 @@
     @staticmethod
-    def $tMeth.name($step.name())(input, externalOnly):
+    def $tMeth.name($step.name())(input, external_only):
         'Sets the values of pixels in a binary image to their distance to the nearest black pixel'
-        if(externalOnly):
+        if(external_only):
             mode = cv2.RETR_EXTERNAL
         else:
             mode = cv2.RETR_LIST

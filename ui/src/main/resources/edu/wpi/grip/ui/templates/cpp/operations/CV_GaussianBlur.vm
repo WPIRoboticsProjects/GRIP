@@ -8,8 +8,8 @@
 	 * @param dst the output image.
 	 */
 	void $tMeth.name($step.name())(Mat *src, Size *kSize, double *sigmaX, double *sigmaY,
-		int*borderType, Mat *dst){
-		if(!kSize){
+		int *borderType, Mat *dst) {
+		if (!kSize) {
 			Size kSize(1,1);
 		}
 		GaussianBlur(*src, *dst, *kSize, *sigmaX, *sigmaY, *borderType);

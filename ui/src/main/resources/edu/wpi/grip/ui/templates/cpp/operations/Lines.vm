@@ -23,7 +23,7 @@ class Line {
 extern "C" vector<Vec6d> getLines(string name, AbsPipeline* obj){
 	vector<Line> *lines = (vector<Line> *) (obj->*(obj->getOutputs()[name]))();
 	vector<Vec6d> out;
-	for(int idx = 0; idx<lines->size(); idx++){
+	for (int idx = 0; idx<lines->size(); idx++) {
 		Line l = (*lines)[idx];
 		out.push_back(Vec6d(l.x1, l.y1, l.x2, l.y2, l.length(), l.angle()));
 	}

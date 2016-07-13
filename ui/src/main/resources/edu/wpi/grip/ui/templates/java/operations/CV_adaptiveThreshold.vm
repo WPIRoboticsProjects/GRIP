@@ -9,6 +9,7 @@
 	 * @param dst Output of threshold.
 	 */
 	private void $tMeth.name($step.name())(Mat src, double maxValue, int adaptiveMethod,
-		int thresholdType, double blockSize, double c, Mat dst){
-		Imgproc.adaptiveThreshold(src, dst, maxValue, adaptiveMethod, thresholdType, (int) blockSize, c);
+		int thresholdType, double blockSize, double c, Mat dst) {
+		Imgproc.adaptiveThreshold(src, dst, maxValue, adaptiveMethod, thresholdType,
+			(int) blockSize, c);
 	}

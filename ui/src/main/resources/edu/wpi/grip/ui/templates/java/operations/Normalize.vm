@@ -7,6 +7,6 @@
 	 * @param b The maximum value.
 	 * @param output The image in which to store the output.
 	 */
-	private void $tMeth.name($step.name())(Mat input, int type, double a, double b, Mat output){
+	private void $tMeth.name($step.name())(Mat input, int type, double a, double b, Mat output) {
 		Core.normalize(input, output, a, b, type);
 	}

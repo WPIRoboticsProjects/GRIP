@@ -1,10 +1,10 @@
 #parse("src/main/resources/edu/wpi/grip/ui/templates/python/operations/Lines.vm")
     @staticmethod
-    def $tMeth.name($step.name())(inputs, minLength, angle):
+    def $tMeth.name($step.name())(inputs, min_length, angle):
         'Filters out lines that do not meet certain criteria'
         outputs = []
         for line in inputs:
-            if (line.lengthSquared() > pow(minLength, 2)):
+            if (line.length_squared() > pow(min_length, 2)):
                 if ((line.angle() >= angle[0] and line.angle() <= angle[1]) or
                         (line.angle() + 180.0 >= angle[0] and line.angle() + 180.0 <= angle[1])):
                     outputs.append(line)

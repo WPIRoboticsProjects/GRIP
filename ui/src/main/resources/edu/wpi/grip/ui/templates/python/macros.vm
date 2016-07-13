@@ -1,33 +1,33 @@
-#macro( input $inp $c)
-self.__$inp.name()$c#end
+#macro( input $inp)
+self.__$tMeth.pyName($inp.name())#end
 
 
-#macro( newInput $inp $c)
+#macro(newInput $inp)
 #if($inp.hasValue())
 #if($inp.type().equals("BlurType") || $inp.type().equals("FlipCode"))
-#input($inp $c) = ${inp.type()}.$inp.value().replaceAll(' ','_')#elseif($inp.type().equals("MaskSize"))
-#input($inp $c) = $inp.value().substring(0,1)#elseif($inp.value().contains("source"))
-#input($inp $c) = self.__$inp.value()#elseif ($inp.type().contains("Enum") ||
+#input($inp) = ${inp.type()}.$inp.value().replaceAll(' ','_')#elseif($inp.type().equals("MaskSize"))
+#input($inp) = $inp.value().substring(0,1)#elseif($inp.value().contains("source"))
+#input($inp) = self.__$inp.value()#elseif ($inp.type().contains("Enum") ||
 $input.type().contains("Type") || $input.type().equals("Interpolation"))
-#input($inp $c) = cv2.#enum($inp.value())#elseif($inp.value().equals("null"))
-#input($inp $c) = None#elseif($inp.value().equals("false"))
-#input($inp $c) = False#elseif($inp.value().equals("true"))
-#input($inp $c) = True#elseif ($inp.type().equals("List"))
+#input($inp) = cv2.#enum($inp.value())#elseif($inp.value().equals("null"))
+#input($inp) = None#elseif($inp.value().equals("false"))
+#input($inp) = False#elseif($inp.value().equals("true"))
+#input($inp) = True#elseif ($inp.type().equals("List"))
 #set($inputEndValue = $inp.value().length() - 1)
-#input($inp $c) = [$inp.value().substring(1,$inputEndValue)]#elseif ($inp.type().equals("String"))
-#input($inp $c) = "$inp.value()"
+#input($inp) = [$inp.value().substring(1,$inputEndValue)]#elseif ($inp.type().equals("String"))
+#input($inp) = "$inp.value()"
 #else
-#input($inp $c) = $inp.value()#end
+#input($inp) = $inp.value()#end
 #else##connected socket
-#input($inp $c) = self.$inp.value()#end#end
+#input($inp) = self.$tMeth.pyName($inp.value())#end#end
 
-#macro( needs $enum )
+#macro(needs $enum)
 #set($BooleanThatDoesNotMatter = $enums.add($enum))#end
 
-#macro( addToList $list $ele)
+#macro(addToList $list $ele)
 #set($BooleanThatDoesNotMatter = $list.add($ele))#end
 
-#macro( type $socket )
+#macro(type $socket)
 #set($type = $socket.type())
 #if($type.equals("Mat") || $type.equals("Object"))
 numpy.ndarray#elseif($type.equalsIgnoreCase("Double") || $type.equalsIgnoreCase("Number"))
@@ -58,7 +58,7 @@ $type#end
 #end
 
 #macro(output $out)
-self.$out.name()#end
+self.$tMeth.pyName($out.name())#end
 
 #macro (enum $val)#if($val.equals("CV_DIST_L1"))
 DIST_L1#elseif($val.equals("CV_DIST_L2"))

@@ -21,7 +21,7 @@ This creates the java OpenCV Filter Contours function
 	private void $tMeth.name($step.name())(List<MatOfPoint> inputContours, double minArea,
 		double minPerimeter, double minWidth, double maxWidth, double minHeight, double
 		maxHeight, double[] solidity, double maxVertexCount, double minVertexCount, double
-		minRatio, double maxRatio, List<MatOfPoint> output){
+		minRatio, double maxRatio, List<MatOfPoint> output) {
 		final MatOfInt hull = new MatOfInt();
 		output.clear();
 		//operation
@@ -37,7 +37,7 @@ This creates the java OpenCV Filter Contours function
 			MatOfPoint mopHull = new MatOfPoint();
 			mopHull.create((int) hull.size().height, 1, CvType.CV_32SC2);
 			for (int j = 0; j < hull.size().height; j++) {
-				int index = (int) hull.get(j, 0)[0];
+				int index = (int)hull.get(j, 0)[0];
 				double[] point = new double[] { contour.get(index, 0)[0], contour.get(index, 0)[1]};
 				mopHull.put(j, 0, point);
 			}
@@ -45,7 +45,7 @@ This creates the java OpenCV Filter Contours function
 			if (solid < solidity[0] || solid > solidity[1]) continue;
 			if (contour.rows() < minVertexCount || contour.rows() > maxVertexCount)	continue;
 			final double ratio = bb.width / (double)bb.height;
-			if (ratio < minRatio || ratio > maxRatio)	continue;
+			if (ratio < minRatio || ratio > maxRatio) continue;
 			output.add(contour);
 		}
 	}
