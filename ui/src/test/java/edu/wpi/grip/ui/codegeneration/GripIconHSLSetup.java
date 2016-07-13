@@ -8,7 +8,6 @@ import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.core.sources.ImageFileSource;
 import edu.wpi.grip.util.Files;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -18,9 +17,9 @@ public class GripIconHSLSetup {
   public static List<Number> defaultLVal;
 
   static {
-    defaultHVal = Arrays.asList(0.0d,49.0d);
-    defaultSVal = Arrays.asList(0.0d,41.0d);
-    defaultLVal = Arrays.asList(0.0d,67.0d);
+    defaultHVal = Arrays.asList(0.0d, 49.0d);
+    defaultSVal = Arrays.asList(0.0d, 41.0d);
+    defaultLVal = Arrays.asList(0.0d, 67.0d);
   }
 
   public static void setup(AbstractGenerationTest caller) {
@@ -28,7 +27,7 @@ public class GripIconHSLSetup {
   }
 
   public static void setup(AbstractGenerationTest caller, List<Number> hVal, List<Number> sVal,
-                            List<Number> lVal) {
+                           List<Number> lVal) {
     Step hsl = caller.gen.addStep(new OperationMetaData(HSLThresholdOperation.DESCRIPTION,
         () -> new HSLThresholdOperation(caller.isf, caller.osf)));
     ImageFileSource img = caller.loadImage(Files.imageFile);
