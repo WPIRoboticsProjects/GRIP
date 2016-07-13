@@ -9,14 +9,6 @@ extern "C" {
 #endif
 /*
  * Class:     edu_wpi_grip_ui_codegeneration_tools_CppPipelineInterfacer
- * Method:    process
- * Signature: ()V
- */
-JNIEXPORT void JNICALL Java_edu_wpi_grip_ui_codegeneration_tools_CppPipelineInterfacer_process
-  (JNIEnv *, jobject);
-
-/*
- * Class:     edu_wpi_grip_ui_codegeneration_tools_CppPipelineInterfacer
  * Method:    setMatSource
  * Signature: (ILjava/lang/String;)V
  */
@@ -33,35 +25,43 @@ JNIEXPORT void JNICALL Java_edu_wpi_grip_ui_codegeneration_tools_CppPipelineInte
 
 /*
  * Class:     edu_wpi_grip_ui_codegeneration_tools_CppPipelineInterfacer
+ * Method:    process
+ * Signature: ()V
+ */
+JNIEXPORT void JNICALL Java_edu_wpi_grip_ui_codegeneration_tools_CppPipelineInterfacer_process
+  (JNIEnv *, jobject);
+
+/*
+ * Class:     edu_wpi_grip_ui_codegeneration_tools_CppPipelineInterfacer
  * Method:    getMatNative
- * Signature: (IJ)V
+ * Signature: (Ljava/lang/String;J)V
  */
 JNIEXPORT void JNICALL Java_edu_wpi_grip_ui_codegeneration_tools_CppPipelineInterfacer_getMatNative
-  (JNIEnv *, jobject, jint, jlong);
+  (JNIEnv *, jobject, jstring, jlong);
 
 /*
  * Class:     edu_wpi_grip_ui_codegeneration_tools_CppPipelineInterfacer
  * Method:    getDouble
- * Signature: (I)D
+ * Signature: (Ljava/lang/String;)D
  */
 JNIEXPORT jdouble JNICALL Java_edu_wpi_grip_ui_codegeneration_tools_CppPipelineInterfacer_getDouble
-  (JNIEnv *, jobject, jint);
+  (JNIEnv *, jobject, jstring);
 
 /*
  * Class:     edu_wpi_grip_ui_codegeneration_tools_CppPipelineInterfacer
  * Method:    getBoolean
- * Signature: (I)Z
+ * Signature: (Ljava/lang/String;)Z
  */
 JNIEXPORT jboolean JNICALL Java_edu_wpi_grip_ui_codegeneration_tools_CppPipelineInterfacer_getBoolean
-  (JNIEnv *, jobject, jint);
+  (JNIEnv *, jobject, jstring);
 
 /*
  * Class:     edu_wpi_grip_ui_codegeneration_tools_CppPipelineInterfacer
  * Method:    setCondition
- * Signature: (IZ)V
+ * Signature: (Ljava/lang/String;Z)V
  */
 JNIEXPORT void JNICALL Java_edu_wpi_grip_ui_codegeneration_tools_CppPipelineInterfacer_setCondition
-  (JNIEnv *, jobject, jint, jboolean);
+  (JNIEnv *, jobject, jstring, jboolean);
 
 /*
  * Class:     edu_wpi_grip_ui_codegeneration_tools_CppPipelineInterfacer
@@ -82,42 +82,42 @@ JNIEXPORT void JNICALL Java_edu_wpi_grip_ui_codegeneration_tools_CppPipelineInte
 /*
  * Class:     edu_wpi_grip_ui_codegeneration_tools_CppPipelineInterfacer
  * Method:    getSizeOrPoint
- * Signature: (IZ)[D
+ * Signature: (Ljava/lang/String;Z)[D
  */
 JNIEXPORT jdoubleArray JNICALL Java_edu_wpi_grip_ui_codegeneration_tools_CppPipelineInterfacer_getSizeOrPoint
-  (JNIEnv *, jobject, jint, jboolean);
+  (JNIEnv *, jobject, jstring, jboolean);
 
 /*
  * Class:     edu_wpi_grip_ui_codegeneration_tools_CppPipelineInterfacer
  * Method:    getBlobs
- * Signature: (IJ)V
+ * Signature: (Ljava/lang/String;J)V
  */
 JNIEXPORT void JNICALL Java_edu_wpi_grip_ui_codegeneration_tools_CppPipelineInterfacer_getBlobs
-  (JNIEnv *, jobject, jint, jlong);
+  (JNIEnv *, jobject, jstring, jlong);
 
 /*
  * Class:     edu_wpi_grip_ui_codegeneration_tools_CppPipelineInterfacer
  * Method:    getNumContours
- * Signature: (I)I
+ * Signature: (Ljava/lang/String;)I
  */
 JNIEXPORT jint JNICALL Java_edu_wpi_grip_ui_codegeneration_tools_CppPipelineInterfacer_getNumContours
-  (JNIEnv *, jobject, jint);
+  (JNIEnv *, jobject, jstring);
 
 /*
  * Class:     edu_wpi_grip_ui_codegeneration_tools_CppPipelineInterfacer
  * Method:    getContours
- * Signature: (I[J)V
+ * Signature: (Ljava/lang/String;[J)V
  */
 JNIEXPORT void JNICALL Java_edu_wpi_grip_ui_codegeneration_tools_CppPipelineInterfacer_getContours
-  (JNIEnv *, jobject, jint, jlongArray);
+  (JNIEnv *, jobject, jstring, jlongArray);
 
 /*
  * Class:     edu_wpi_grip_ui_codegeneration_tools_CppPipelineInterfacer
  * Method:    getLines
- * Signature: (I)[[D
+ * Signature: (Ljava/lang/String;)[[D
  */
 JNIEXPORT jobjectArray JNICALL Java_edu_wpi_grip_ui_codegeneration_tools_CppPipelineInterfacer_getLines
-  (JNIEnv *, jobject, jint);
+  (JNIEnv *, jobject, jstring);
 
 #ifdef __cplusplus
 }

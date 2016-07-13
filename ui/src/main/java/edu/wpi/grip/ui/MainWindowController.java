@@ -264,7 +264,7 @@ public class MainWindowController {
       return;
     }
     Language lang = Language.get(fileChooser.getSelectedExtensionFilter().getDescription());
-    exporter.export(pipeline, lang, file, true);
+    exporter.export(pipeline, lang, file, false);
   }
 
   @FXML

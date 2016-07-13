@@ -2,10 +2,10 @@
 map<int, AbsPipeline::MatSource> AbsPipeline::getMatSources(){
     return this->matSources;
 }
-map<int, AbsPipeline::Output> AbsPipeline::getOutputs(){
+map<String, AbsPipeline::Output> AbsPipeline::getOutputs(){
     return this->outputs;
 }
-map<int, AbsPipeline::Condition> AbsPipeline::getConditions(){
+map<String, AbsPipeline::Condition> AbsPipeline::getConditions(){
     return this->conditions;
 }
 AbsPipeline::~AbsPipeline(){}

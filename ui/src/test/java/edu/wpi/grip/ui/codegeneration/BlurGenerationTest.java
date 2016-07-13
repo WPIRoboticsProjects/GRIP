@@ -86,7 +86,7 @@ public class BlurGenerationTest extends AbstractGenerationTest {
         .empty());
     pip.setMatSource(0, Files.gompeiJpegFile.file);
     pip.process();
-    Mat genMat = (Mat) pip.getOutput("blur0Output0", GenType.IMAGE);
+    Mat genMat = (Mat) pip.getOutput("Blur0Output0", GenType.IMAGE);
     Mat gripMat = HelperTools.bytedecoMatToCVMat((org.bytedeco.javacpp.opencv_core.Mat) out.get());
     assertMatWithin(genMat, gripMat, 10.0);
   }

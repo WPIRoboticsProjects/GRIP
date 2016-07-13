@@ -32,7 +32,7 @@ $tMeth.name($step.name())(#foreach($inp in $step.getInputs()) #cType($inp.type()
 	double $input.name()${c}[] = {$input.value().substring(1,$inputEndValue)};
 #elseif ($input.value().equals("null"))
 	#cType($input.type()) $input.name()$c;
-#elseif ($input.value().contains("source") || $input.value().contains("output"))
+#elseif ($input.value().toLowerCase().contains("source") || $input.value().toLowerCase().contains("output"))
 	#cType($input.type()) $input.name()$c= *$input.value();
 #else
 	#cType($input.type()) $input.name()$c = $input.value();

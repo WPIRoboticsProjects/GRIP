@@ -43,28 +43,28 @@ public class CppPipelineInterfacer implements PipelineInterfacer {
 
   @Override
   public Object getOutput(String name, GenType type) {
-    int num = 0;
+    name = name.toLowerCase().replaceAll("_", "");
     switch (type) {
       case BLOBS:
         MatOfKeyPoint blobs = new MatOfKeyPoint();
-        getBlobs(num, blobs.nativeObj);
+        getBlobs(name, blobs.nativeObj);
         return blobs;
       case BOOLEAN:
-        return new Boolean(getBoolean(num));
+        return new Boolean(getBoolean(name));
       case CONTOURS:
-        int numContours = getNumContours(num);
+        int numContours = getNumContours(name);
         ArrayList<MatOfPoint> contours = new ArrayList<MatOfPoint>(numContours);
         long[] addresses = new long[numContours];
         for (int idx = 0; idx < numContours; idx++) {
           contours.add(idx, new MatOfPoint());
           addresses[idx] = contours.get(idx).nativeObj;
         }
-        getContours(num, addresses);
+        getContours(name, addresses);
         return contours;
       case IMAGE:
-        return getMat(num);
+        return getMat(name);
       case LINES:
-        double[][] linePts = getLines(num);
+        double[][] linePts = getLines(name);
         List<CppLine> lines = new ArrayList<CppLine>(linePts.length);
         for (int idx = 0; idx < linePts.length; idx++) {
           double[] pts = linePts[idx];
@@ -74,12 +74,12 @@ public class CppPipelineInterfacer implements PipelineInterfacer {
       case LIST:
         break;
       case NUMBER:
-        return new Double(getDouble(num));
+        return new Double(getDouble(name));
       case POINT:
-        double[] pnt = getSizeOrPoint(num, false);
+        double[] pnt = getSizeOrPoint(name, false);
         return new Point(pnt[0], pnt[1]);
       case SIZE:
-        double[] sz = getSizeOrPoint(num, true);
+        double[] sz = getSizeOrPoint(name, true);
         return new Size(sz[0], sz[1]);
       default:
         break;
@@ -91,14 +91,12 @@ public class CppPipelineInterfacer implements PipelineInterfacer {
 
   @Override
   public void setSwitch(String name, boolean value) {
-    int num = 0;
-    setCondition(num, value);
+    setCondition(name.toLowerCase().replaceAll("_", ""), value);
   }
 
   @Override
   public void setValve(String name, boolean value) {
-    int num = 0;
-    setCondition(num, value);
+    setCondition(name.toLowerCase().replaceAll("_", ""), value);
   }
 
   private String runProcess(Process proc) throws IOException {
@@ -120,9 +118,9 @@ public class CppPipelineInterfacer implements PipelineInterfacer {
     }
   }
 
-  private Mat getMat(int num) {
+  private Mat getMat(String name) {
     Mat out = new Mat();
-    getMatNative(num, out.nativeObj);
+    getMatNative(name, out.nativeObj);
     return out;
   }
   
@@ -143,23 +141,23 @@ public class CppPipelineInterfacer implements PipelineInterfacer {
   @Override
   public native void process();
   
-  private native void getMatNative(int num, long addr);
+  private native void getMatNative(String name, long addr);
 
-  private native double getDouble(int num);
+  private native double getDouble(String name);
 
-  private native boolean getBoolean(int num);
+  private native boolean getBoolean(String name);
 
-  private native void setCondition(int num, boolean value);
+  private native void setCondition(String name, boolean value);
 
   private native void init(String libName);
 
   private native void dispose();
 
-  private native double[] getSizeOrPoint(int num, boolean size);
+  private native double[] getSizeOrPoint(String name, boolean size);
 
-  private native void getBlobs(int num, long retAddr);
+  private native void getBlobs(String name, long retAddr);
 
-  private native int getNumContours(int num);
+  private native int getNumContours(String name);
 
   /**
    * Gets the contours from specified output.
@@ -168,9 +166,9 @@ public class CppPipelineInterfacer implements PipelineInterfacer {
    * @param addrs an array of nativeAddresses of MatOfPoint objects. Note the size of addrs should
    *              be the number returned from getNumContours.
    */
-  private native void getContours(int num, long[] addrs);
+  private native void getContours(String name, long[] addrs);
 
-  private native double[][] getLines(int num);
+  private native double[][] getLines(String name);
 
   private long nativeHandle;
 

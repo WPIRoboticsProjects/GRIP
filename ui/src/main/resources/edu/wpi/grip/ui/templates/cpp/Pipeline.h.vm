@@ -2,6 +2,7 @@
 #pragma once
 #if(!$loadLib)
 \#include "AbsPipeline.h"
+\#include <String>
 #end
 \#include <opencv2/objdetect/objdetect.hpp>
 \#include <opencv2/highgui/highgui.hpp>

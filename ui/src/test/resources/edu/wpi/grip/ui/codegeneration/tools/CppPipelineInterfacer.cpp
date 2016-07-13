@@ -8,6 +8,15 @@
 #include <dlfcn.h>
 #include <vector>
 typedef AbsPipeline* maker();
+
+string jstringToString(JNIEnv *env, jstring jstr){
+  const char* cstr = env->GetStringUTFChars(jstr, 0);
+  string str = string(cstr);
+  env->ReleaseStringUTFChars(jstr, cstr);
+  return str;
+
+}
+
 JNIEXPORT void JNICALL Java_edu_wpi_grip_ui_codegeneration_tools_CppPipelineInterfacer_init
   (JNIEnv *env , jobject obj, jstring libName){
       const char *lib= env->GetStringUTFChars(libName,0);
@@ -26,9 +35,10 @@ JNIEXPORT void JNICALL Java_edu_wpi_grip_ui_codegeneration_tools_CppPipelineInte
   }
 
 JNIEXPORT void JNICALL Java_edu_wpi_grip_ui_codegeneration_tools_CppPipelineInterfacer_getMatNative
-  (JNIEnv *env, jobject obj, jint outNum, jlong handle){
+  (JNIEnv *env, jobject obj, jstring outName, jlong handle){
       AbsPipeline *inst = getHandle<AbsPipeline>(env, obj);
-      Mat * out = (Mat *) (inst->*(inst->getOutputs()[(int) outNum]))();
+      string name = jstringToString(env, outName);
+      Mat * out = (Mat *) (inst->*(inst->getOutputs()[name]))();
       Mat * dest = reinterpret_cast<Mat *>(handle); 
       out->copyTo(*dest);
   }
@@ -36,31 +46,32 @@ JNIEXPORT void JNICALL Java_edu_wpi_grip_ui_codegeneration_tools_CppPipelineInte
   JNIEXPORT void JNICALL Java_edu_wpi_grip_ui_codegeneration_tools_CppPipelineInterfacer_setMatSource
   (JNIEnv *env, jobject obj, jint sourceNum, jstring fileName){
     AbsPipeline *inst = getHandle<AbsPipeline>(env, obj);
-    const char *imgName= env->GetStringUTFChars(fileName,0);
-    std::string name = string(imgName);
-    Mat img = imread(imgName, 1);
-    env->ReleaseStringUTFChars(fileName, imgName);
+    string name = jstringToString(env, fileName);
+    Mat img = imread(name, 1);
     (inst->*(inst->getMatSources()[(int) sourceNum]))(&img);
   }
   
   JNIEXPORT void JNICALL Java_edu_wpi_grip_ui_codegeneration_tools_CppPipelineInterfacer_setCondition
-  (JNIEnv *env, jobject obj, jint boolNum, jboolean value){
+  (JNIEnv *env, jobject obj, jstring funName, jboolean value){
       AbsPipeline *inst = getHandle<AbsPipeline>(env, obj);
       bool val = (bool) value;
-      (inst->*(inst->getConditions()[(int) boolNum]))(val);
+      string name = jstringToString(env, funName);
+      (inst->*(inst->getConditions()[name]))(val);
   }
   
   JNIEXPORT jboolean JNICALL Java_edu_wpi_grip_ui_codegeneration_tools_CppPipelineInterfacer_getBoolean
-  (JNIEnv *env, jobject obj, jint num){
+  (JNIEnv *env, jobject obj, jstring funName){
     AbsPipeline *inst = getHandle<AbsPipeline>(env, obj);
-    bool * output = (bool *) (inst->*(inst->getOutputs()[(int) num]))();
+    string name = jstringToString(env, funName);
+    bool * output = (bool *) (inst->*(inst->getOutputs()[name]))();
     return (jboolean) *output;
   }
   
   JNIEXPORT jdouble JNICALL Java_edu_wpi_grip_ui_codegeneration_tools_CppPipelineInterfacer_getDouble
-  (JNIEnv *env, jobject obj, jint num){
-      AbsPipeline *inst = getHandle<AbsPipeline>(env, obj);
-    double * output = (double *) (inst->*(inst->getOutputs()[(int) num]))();
+  (JNIEnv *env, jobject obj, jstring funName){
+    AbsPipeline *inst = getHandle<AbsPipeline>(env, obj);
+    string name = jstringToString(env, funName);
+    double * output = (double *) (inst->*(inst->getOutputs()[name]))();
     return (jdouble) *output;
   }
   
@@ -74,17 +85,18 @@ JNIEXPORT void JNICALL Java_edu_wpi_grip_ui_codegeneration_tools_CppPipelineInte
 
   
   JNIEXPORT jdoubleArray JNICALL Java_edu_wpi_grip_ui_codegeneration_tools_CppPipelineInterfacer_getSizeOrPoint
-  (JNIEnv *env, jobject obj, jint num, jboolean isSize){
+  (JNIEnv *env, jobject obj, jstring funName, jboolean isSize){
   	int numEles = 2;
     double vals[numEles];
     AbsPipeline *inst = getHandle<AbsPipeline>(env, obj);
+    string name = jstringToString(env, funName);
     if(isSize){
-      Size * sz = (Size *)(inst->*(inst->getOutputs()[(int)num]))();
+      Size * sz = (Size *)(inst->*(inst->getOutputs()[name]))();
       vals[0] = sz->width;
       vals[1] = sz->height;
     }
     else{
-      Point * pnt = (Point *)(inst->*(inst->getOutputs()[(int)num]))();
+      Point * pnt = (Point *)(inst->*(inst->getOutputs()[name]))();
       vals[0] = pnt->x;
       vals[1] = pnt->y;
     }
@@ -105,24 +117,27 @@ JNIEXPORT void JNICALL Java_edu_wpi_grip_ui_codegeneration_tools_CppPipelineInte
 }
 
   JNIEXPORT void JNICALL Java_edu_wpi_grip_ui_codegeneration_tools_CppPipelineInterfacer_getBlobs
-  (JNIEnv *env, jobject obj, jint num, jlong outAdr){
+  (JNIEnv *env, jobject obj, jstring funName, jlong outAdr){
     AbsPipeline *inst = getHandle<AbsPipeline>(env, obj);
-    vector<KeyPoint> * output = (vector<KeyPoint> *) (inst->*(inst->getOutputs()[(int) num]))();
+    string name = jstringToString(env, funName);
+    vector<KeyPoint> * output = (vector<KeyPoint> *) (inst->*(inst->getOutputs()[name]))();
     Mat* out = (Mat*) outAdr;
     KeyPointVectorToMat(*output, *out);    
   }
 
 JNIEXPORT jint JNICALL Java_edu_wpi_grip_ui_codegeneration_tools_CppPipelineInterfacer_getNumContours
-  (JNIEnv *env, jobject obj, jint num){
+  (JNIEnv *env, jobject obj, jstring funName){
   AbsPipeline *inst = getHandle<AbsPipeline>(env, obj);
-  vector<vector<Point> > * output = (vector<vector<Point> > *) (inst->*(inst->getOutputs()[(int) num]))();
+  string name = jstringToString(env, funName);
+  vector<vector<Point> > * output = (vector<vector<Point> > *) (inst->*(inst->getOutputs()[name]))();
   return (jint) output->size();
 }
 
 JNIEXPORT void JNICALL Java_edu_wpi_grip_ui_codegeneration_tools_CppPipelineInterfacer_getContours
-  (JNIEnv *env, jobject obj, jint num, jlongArray addresses){
+  (JNIEnv *env, jobject obj, jstring funName, jlongArray addresses){
   AbsPipeline *inst = getHandle<AbsPipeline>(env, obj);
-  vector<vector<Point> > * output = (vector<vector<Point> > *) (inst->*(inst->getOutputs()[(int) num]))();
+  string name = jstringToString(env, funName);
+  vector<vector<Point> > * output = (vector<vector<Point> > *) (inst->*(inst->getOutputs()[name]))();
   jsize len = env->GetArrayLength(addresses);
   jlong *addrs = env->GetLongArrayElements(addresses, 0);
   for(int idx = 0; idx < len; idx++){
@@ -132,12 +147,13 @@ JNIEXPORT void JNICALL Java_edu_wpi_grip_ui_codegeneration_tools_CppPipelineInte
   env->ReleaseLongArrayElements(addresses, addrs, 0);
 }
 
-typedef vector<Vec6d> LineFun(int, AbsPipeline*);
+typedef vector<Vec6d> LineFun(string, AbsPipeline*);
 JNIEXPORT jobjectArray JNICALL Java_edu_wpi_grip_ui_codegeneration_tools_CppPipelineInterfacer_getLines
-  (JNIEnv *env, jobject obj, jint num){
+  (JNIEnv *env, jobject obj, jstring funName){
   AbsPipeline *inst = getHandle<AbsPipeline>(env, obj);
   LineFun* getLines =(LineFun *) dlsym(inst->libHandle, "getLines");
-  vector<Vec6d> lines = getLines((int)num, inst);
+  string name = jstringToString(env, funName);
+  vector<Vec6d> lines = getLines(name, inst);
   jclass dblArray = env->FindClass("[D");
   jint numLines = lines.size();
   jint numEles = 6;

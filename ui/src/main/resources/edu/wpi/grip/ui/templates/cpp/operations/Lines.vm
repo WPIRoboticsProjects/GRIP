@@ -20,8 +20,8 @@ class Line {
 	}
 };
 #if(!$loadLib)
-extern "C" vector<Vec6d> getLines(int num, AbsPipeline* obj){
-	vector<Line> *lines = (vector<Line> *) (obj->*(obj->getOutputs()[num]))();
+extern "C" vector<Vec6d> getLines(string name, AbsPipeline* obj){
+	vector<Line> *lines = (vector<Line> *) (obj->*(obj->getOutputs()[name]))();
 	vector<Vec6d> out;
 	for(int idx = 0; idx<lines->size(); idx++){
 		Line l = (*lines)[idx];

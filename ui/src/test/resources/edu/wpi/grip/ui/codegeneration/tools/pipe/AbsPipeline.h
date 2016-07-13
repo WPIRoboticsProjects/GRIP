@@ -20,14 +20,14 @@ public:
     typedef void (AbsPipeline::*NumSource)(double*);
     virtual void Process() = 0;
     map<int, MatSource> getMatSources();
-    map<int, Output> getOutputs();
-    map<int, Condition> getConditions();
+    map<String, Output> getOutputs();
+    map<String, Condition> getConditions();
     map<int, NumSource> getNumSources();
     void* libHandle;
     virtual ~AbsPipeline();
 protected:
     map<int, MatSource> matSources;
-    map<int, Output> outputs;
-    map<int, Condition> conditions;
+    map<String, Output> outputs;
+    map<String, Condition> conditions;
     map<int, NumSource> numSources;
 };

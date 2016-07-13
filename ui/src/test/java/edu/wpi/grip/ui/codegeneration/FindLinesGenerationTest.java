@@ -90,6 +90,7 @@ public class FindLinesGenerationTest extends AbstractGenerationTest {
     pip.process();
     List<TestLine> gripLin = GripLine.convertReport(linOut);
     List<TestLine> genLin = (List<TestLine>) pip.getOutput("Find_Lines0Output0", GenType.LINES);
+    System.out.println("Lines are obtained");
     assertTrue("Number of lines is not the same. grip: " + gripLin.size() + " gen: "
         + genLin.size(), (linOut.getLines().size() - genLin.size()) < 5);
     for (int idx = 0; idx < genLin.size(); idx++) {
