@@ -90,14 +90,14 @@ public class TimerTest {
     timer.started();
     Thread.sleep(1000);
     timer.reset();
-    assertEquals(0, timer.getElapsedTime(), 0);
+    assertEquals("Elapsed time was not reset", 0, timer.getElapsedTime(), 0);
 
     timer.started();
     Thread.sleep(1000);
     timer.stopped();
-    assertEquals(1_000_000, timer.getElapsedTime(), 50_000);
+    assertEquals("Elapsed time was out of tolerance", 1_000_000, timer.getElapsedTime(), 50_000);
     timer.reset();
-    assertEquals(0, timer.getElapsedTime(), 0);
+    assertEquals("Elapsed time was not reset", 0, timer.getElapsedTime(), 0);
   }
 
 }
