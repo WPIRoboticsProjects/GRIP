@@ -1,13 +1,13 @@
 package edu.wpi.grip.ui.codegeneration.tools;
 
+import edu.wpi.grip.ui.codegeneration.JavaTMethods;
+
 import org.opencv.imgcodecs.Imgcodecs;
 
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
-
-import edu.wpi.grip.ui.codegeneration.JavaTMethods;
 
 import static org.junit.Assert.fail;
 

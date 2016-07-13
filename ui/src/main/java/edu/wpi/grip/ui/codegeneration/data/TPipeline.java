@@ -75,7 +75,7 @@ public class TPipeline {
             tInput = new TInput(type, name, connections.get(input));
           } else {
             tInput = null;
-            for (Object con : input.getConnections()) { 
+            for (Object con : input.getConnections()) {
               //Connections is a set. Should only have one element
               tInput = createInput(type, name, "Connection" + ((Connection) con).getOutputSocket()
                   .toString());
@@ -188,14 +188,14 @@ public class TPipeline {
     return moving;
   }
 
-  private TStep makeStep(String opName){
+  private TStep makeStep(String opName) {
     int count = 0;
-    for(TStep step: steps){
-      if(step.name().equals(opName)){
+    for (TStep step : steps) {
+      if (step.name().equals(opName)) {
         count++;
       }
     }
-    return new TStep(opName,count);
+    return new TStep(opName, count);
   }
 
 

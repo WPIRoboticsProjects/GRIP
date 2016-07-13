@@ -15,7 +15,7 @@ public class PythonTMethods extends TemplateMethods {
     return "__".concat(pyName(name));
   }
 
-  public String pyName(String name){
+  public String pyName(String name) {
     return CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.LOWER_UNDERSCORE, name
         .replaceAll("\\s", ""));
   }

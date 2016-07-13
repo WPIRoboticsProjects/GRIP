@@ -1,5 +1,7 @@
 package edu.wpi.grip.ui.codegeneration.tools;
 
+import edu.wpi.grip.ui.codegeneration.PythonTMethods;
+
 import org.opencv.core.KeyPoint;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfKeyPoint;
@@ -17,8 +19,6 @@ import java.io.InputStreamReader;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
-
-import edu.wpi.grip.ui.codegeneration.PythonTMethods;
 
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
