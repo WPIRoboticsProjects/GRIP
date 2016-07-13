@@ -122,7 +122,7 @@ public class AnalysisWindowController {
   }
 
   @Subscribe
-  @SuppressWarnings( {"PMD.UnusedPrivateMethod", "PMD.UnusedFormalParameter"})
+  @SuppressWarnings({"PMD.UnusedPrivateMethod", "PMD.UnusedFormalParameter"})
   private void onPipelineFinish(@Nullable RunStoppedEvent event) {
     // Update the stats after the pipeline finishes
     lastStats = analysis.getStatistics();
