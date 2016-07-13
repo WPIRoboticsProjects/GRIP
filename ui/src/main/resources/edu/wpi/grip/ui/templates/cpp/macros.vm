@@ -16,26 +16,26 @@ $tMeth.name($step.name())(#foreach($inp in $step.getInputs()) #cType($inp.type()
 
 #macro (newInput $input)
 #if ($input.type().contains("CoreEnum"))
-	int $input.name()$c = $input.value();
+	int $input.name() = $input.value();
 #elseif ($input.type().contains("Enum"))
-	int $input.name()$c = $input.value();
+	int $input.name() = $input.value();
 #elseif ($input.type().equals("MaskSize") )
-    String $input.name()$c = "$input.value()";
+    String $input.name() = "$input.value()";
 #elseif ($input.type().equals("FlipCode") || $input.type().equals("BlurType") )
-	$input.type() $input.name()$c = $input.type()::#cvVal($input.value());
+	$input.type() $input.name() = $input.type()::#cvVal($input.value());
 #elseif ($input.type().contains("Type") || $input.type().equals("Interpolation"))
-	int $input.name()$c = #cvVal($input.value());
+	int $input.name() = #cvVal($input.value());
 #elseif ($input.type().equals("String"))
-	$input.type() $input.name()$c = "$input.value()";
+	$input.type() $input.name() = "$input.value()";
 #elseif ($input.type().equals("List"))
 #set($inputEndValue = $input.value().length() - 1)
-	double $input.name()${c}[] = {$input.value().substring(1,$inputEndValue)};
+	double ${input.name()}[] = {$input.value().substring(1,$inputEndValue)};
 #elseif ($input.value().equals("null"))
-	#cType($input.type()) $input.name()$c;
+	#cType($input.type()) $input.name();
 #elseif ($input.value().toLowerCase().contains("source") || $input.value().toLowerCase().contains("output"))
-	#cType($input.type()) $input.name()$c= *$input.value();
+	#cType($input.type()) $input.name()= *$input.value();
 #else
-	#cType($input.type()) $input.name()$c = $input.value();
+	#cType($input.type()) $input.name() = $input.value();
 #end#end
 
 #macro (cvVal $value)#if($value.equals("INF"))

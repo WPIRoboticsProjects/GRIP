@@ -29,12 +29,11 @@ class $fileName #if(!$loadLib): public AbsPipeline #end{
 		#cType($source.type()) *$source.value();
 #end
 #foreach($step in $pipeline.getSteps())
-#set($boolNum = $velocityCount - 1)
 #if($step.name() == "Switch" || $step.name() == "Valve")
 #set($boolInp = $step.getInput(0))
-#set($boolName = "$boolInp.name()S")
+#set($boolName = "$boolInp.name()")
 #if($boolInp.hasValue())
-		bool $boolName$boolNum;
+		bool $boolName;
 #end
 #end
 #end
@@ -44,7 +43,7 @@ class $fileName #if(!$loadLib): public AbsPipeline #end{
 #end
 #end
 #foreach($moving in $pipeline.getMovingThresholds())
-		Mat *lastImageS$moving.num();
+		Mat *lastImage$moving.num();
 #end
 #foreach($step in $pipeline.getUniqueSteps())
 #set($toParse = "src/main/resources/edu/wpi/grip/ui/templates/cpp/operations/" + $step.name())
@@ -61,12 +60,11 @@ class $fileName #if(!$loadLib): public AbsPipeline #end{
 		void #setter($source);
 #end
 #foreach($step in $pipeline.getSteps())
-#set($boolNum = $velocityCount - 1)
 #if($step.name() == "Switch" || $step.name() == "Valve")
 #set($boolInp = $step.getInput(0))
-#set($boolName = "$boolInp.name()S")
+#set($boolName = "$boolInp.name()")
 #if($boolInp.hasValue())
-	 void set$step.name()${boolNum}(bool value);
+	 void set$step.name()${step.num()}(bool value);
 #end
 #end
 #end

@@ -17,7 +17,6 @@ public class CppTMethods extends TemplateMethods {
 
   @Override
   public String callOp(TStep step) {
-    String num = "S" + step.num();
     StringBuilder out = new StringBuilder();
     if (step.name().equals("Switch") || step.name().equals("Valve")) {
       out.append("pipeline");
@@ -29,12 +28,11 @@ public class CppTMethods extends TemplateMethods {
         out.append("&");
       }
       out.append(input.name());
-      out.append(num);
       out.append(", ");
     }
     if (step.name().equals("Threshold_Moving")) {
       out.append("this->lastImage");
-      out.append(num);
+      out.append(step.num());
       out.append(", ");
     }
     if (!step.getOutputs().isEmpty()) {

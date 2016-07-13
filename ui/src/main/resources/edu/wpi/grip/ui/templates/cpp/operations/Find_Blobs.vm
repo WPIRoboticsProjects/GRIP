@@ -20,8 +20,8 @@
 		params.filterByCircularity = true;
 		params.minCircularity = circularity[0];
 		params.maxCircularity = circularity[1];
-		params.filterByConvexity = False;
-		params.filterByInertia = False;
+		params.filterByConvexity = false;
+		params.filterByInertia = false;
 		Ptr<SimpleBlobDetector> detector = SimpleBlobDetector::create(params);
 		detector->detect(*input, *blobList);
 	}

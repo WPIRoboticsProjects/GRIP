@@ -18,10 +18,10 @@ This creates the C++ OpenCV Filter Contours function
 	 * @param maxRatio maximum ratio of width to height
 	 * @return returns a list of filtered contours
 	 */
-	void $tMeth.name($step.name())(vector<vector<Point>> *inputContours, double *minArea,
+	void $tMeth.name($step.name())(vector<vector<Point> > *inputContours, double *minArea,
 		double *minPerimeter, double *minWidth, double *maxWidth, double *minHeight, double
 		*maxHeight, double solidity[2], double *maxVertexCount, double *minVertexCount, double
-		*minRatio, double *maxRatio, vector<vector<Point>> *output) {
+		*minRatio, double *maxRatio, vector<vector<Point> > *output) {
 		vector<Point> hull;
 		output->clear();
 		for (vector<Point> contour: *inputContours) {
