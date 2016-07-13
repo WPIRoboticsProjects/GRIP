@@ -65,12 +65,4 @@ class MovingAverage {
     return copy;
   }
 
-  /**
-   * Resets the filter.
-   */
-  public void reset() {
-    samples.clear();
-    numSamples = 0;
-  }
-
 }
