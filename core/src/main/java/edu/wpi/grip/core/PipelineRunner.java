@@ -88,12 +88,7 @@ public class PipelineRunner implements RestartableService {
             if (!super.isRunning()) {
               return;
             }
-            try {
-              timer.started();
-              runPipeline(super::isRunning);
-            } finally {
-              timer.stopped();
-            }
+            timer.time(() -> runPipeline(super::isRunning));
             // This should not block access to the steps array
             eventBus.post(new RunStoppedEvent());
             if (super.isRunning()) {

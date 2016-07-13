@@ -8,8 +8,11 @@ import com.google.common.eventbus.Subscribe;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.concurrent.atomic.AtomicBoolean;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 /**
@@ -17,6 +20,7 @@ import static org.junit.Assert.fail;
  */
 public class TimerTest {
 
+  private static final String WRONG_TIME_MSG = "Elapsed time was wrong";
   private EventBus eventBus;
 
   @Before
@@ -49,17 +53,16 @@ public class TimerTest {
   }
 
   @Test
-  public void testTiming() throws InterruptedException {
-    Timer timer = new Timer(eventBus, this);
+  public void testTiming() {
+    Timer timer = new MockTimer(eventBus, this);
     timer.started();
-    Thread.sleep(1000);
     timer.stopped();
-    assertEquals("Elapsed time was out of tolerance", 1_000_000, timer.getElapsedTime(), 50_000);
+    assertEquals(WRONG_TIME_MSG, 1_000_000, timer.getElapsedTime());
   }
 
   @Test
-  public void testAnalysisData() throws InterruptedException {
-    Timer timer = new Timer(eventBus, this);
+  public void testAnalysisData() {
+    Timer timer = new MockTimer(eventBus, this);
     ThreadLocal<TimerEvent> timerEvent = new ThreadLocal<>();
     eventBus.register(new Object() {
       @Subscribe
@@ -68,12 +71,11 @@ public class TimerTest {
       }
     });
     timer.started();
-    Thread.sleep(1000);
     timer.stopped();
     assertNotNull("No TimerEvent received", timerEvent.get());
     TimerEvent event = timerEvent.get();
     assertEquals("Event had an unexpected target", this, event.getTarget());
-    assertEquals("Elapsed time was out of tolerance", 1_000_000, event.getElapsedTime(), 50_000);
+    assertEquals(WRONG_TIME_MSG, 1_000_000, event.getElapsedTime());
     Analysis analysis = event.getData();
     Statistics statistics = analysis.getStatistics();
     assertEquals("Analysis did not have 1 element", 1, analysis.getN());
@@ -85,19 +87,34 @@ public class TimerTest {
   }
 
   @Test
-  public void testReset() throws InterruptedException {
-    Timer timer = new Timer(eventBus, this);
+  public void testReset() {
+    Timer timer = new MockTimer(eventBus, this);
     timer.started();
-    Thread.sleep(1000);
     timer.reset();
     assertEquals("Elapsed time was not reset", 0, timer.getElapsedTime(), 0);
 
     timer.started();
-    Thread.sleep(1000);
     timer.stopped();
-    assertEquals("Elapsed time was out of tolerance", 1_000_000, timer.getElapsedTime(), 50_000);
+    assertEquals(WRONG_TIME_MSG, 1_000_000, timer.getElapsedTime());
     timer.reset();
     assertEquals("Elapsed time was not reset", 0, timer.getElapsedTime(), 0);
+  }
+
+  @Test
+  public void testTime() {
+    Timer timer = new MockTimer(eventBus, this);
+    AtomicBoolean ran = new AtomicBoolean(false);
+    timer.time(() -> ran.set(true));
+    assertEquals(WRONG_TIME_MSG, 1_000_000, timer.getElapsedTime());
+    assertTrue("Did not run", ran.get());
+  }
+
+  @Test(expected = IllegalStateException.class)
+  public void testTimeThrowsException() {
+    Timer timer = new Timer(eventBus, this);
+    timer.started();
+    timer.time(() -> { });
+    fail("An exception should have been thrown");
   }
 
 }

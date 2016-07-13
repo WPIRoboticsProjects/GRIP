@@ -92,7 +92,7 @@ public class BenchmarkRunnerTest {
   }
 
   private void checkDefaultState() {
-    assertFalse("Runner should not running", benchmarkRunner.isRunning());
+    assertFalse("Runner should not be running", benchmarkRunner.isRunning());
     assertEquals("Runs remaining != 0", 0, benchmarkRunner.getRunsRemaining());
   }
 

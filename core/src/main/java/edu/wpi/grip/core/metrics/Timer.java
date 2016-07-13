@@ -2,6 +2,7 @@ package edu.wpi.grip.core.metrics;
 
 import edu.wpi.grip.core.events.TimerEvent;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Stopwatch;
 import com.google.common.eventbus.EventBus;
 import com.google.inject.Inject;
@@ -14,25 +15,17 @@ import static com.google.common.base.Preconditions.checkNotNull;
 /**
  * Timer for code that gets run.
  *
- * <p>Usage:
+ * <p>Sample usage:
  * <pre><code>
  *   Timer myTimer = ...
- *
- *   void method() {
- *     try {
- *       myTimer.started();
- *       // Do something
- *     } finally {
- *       myTimer.stopped();
- *     }
- *   }
+ *   myTimer.time(this::doSomething);
  * </code></pre>
  * </p>
  */
 public class Timer {
 
   private final EventBus eventBus;
-  private final Stopwatch stopwatch = Stopwatch.createUnstarted();
+  private final Stopwatch stopwatch;
   private boolean started = false;
 
   private final Object target;
@@ -42,15 +35,24 @@ public class Timer {
   @Inject
   Timer(EventBus eventBus, @Assisted Object target) {
     this.eventBus = eventBus;
+    this.stopwatch = Stopwatch.createUnstarted();
     this.target = checkNotNull(target, "target");
+    this.analysis = new Analysis();
+  }
+
+  @VisibleForTesting
+  Timer(EventBus eventBus, Object target, Stopwatch stopwatch) {
+    this.eventBus = eventBus;
+    this.target = target;
+    this.stopwatch = stopwatch;
     this.analysis = new Analysis();
   }
 
   /**
    * Flags the timer as started. Call {@link #stopped()} to stop timing.
    *
-   * @throws IllegalStateException if this a call to this method is not preceded by a call to
-   *                               {@link #stopped()}.
+   * @throws IllegalStateException if this a call to this method is preceded by another call to
+   *                               {@code started()}
    */
   public synchronized void started() {
     if (started) {
@@ -61,7 +63,8 @@ public class Timer {
   }
 
   /**
-   * Flags the timer as stopped.
+   * Flags the timer as stopped. This will post a {@link TimerEvent} containing the elapsed time
+   * and analysis to the event bus.
    *
    * @throws IllegalStateException if this a call to this method is not preceded by a call to
    *                               {@link #started()}.
@@ -90,10 +93,34 @@ public class Timer {
   }
 
   /**
+   * Times the given runnable target. This is safe, even if the target throws an exception.
+   *
+   * <p>Sample usage:
+   * <pre><code>
+   *   Timer myTimer = ...
+   *   myTimer.time(this::doSomething);
+   * </code></pre></p>
+   *
+   * @param target the code to time
+   * @throws IllegalStateException if this timer is already timing something
+   */
+  public void time(Runnable target) {
+    if (started) {
+      throw new IllegalStateException("This timer is already timing something");
+    }
+    try {
+      started();
+      target.run();
+    } finally {
+      stopped();
+    }
+  }
+
+  /**
    * Gets the time elapsed between a call to {@link #started()} and a call to {@link #stopped()},
    * in microseconds.
    */
-  public double getElapsedTime() {
+  public long getElapsedTime() {
     return elapsedTime;
   }
 

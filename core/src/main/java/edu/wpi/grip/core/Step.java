@@ -133,10 +133,9 @@ public class Step {
     try {
       // We need to ensure that if perform disabled is switching states that we don't run the
       // perform method while that is happening.
-      timer.started();
       synchronized (removedLock) {
         if (!removed) {
-          this.operation.perform();
+          timer.time(this.operation::perform);
         }
       }
     } catch (RuntimeException e) {
@@ -149,8 +148,6 @@ public class Step {
       witness.flagException(e, operationFailedMessage);
       resetOutputSockets();
       return;
-    } finally {
-      timer.stopped();
     }
     witness.clearException();
   }
