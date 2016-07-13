@@ -109,13 +109,13 @@ public class ThresholdMovingTest extends AbstractGenerationTest {
     pip.process();
     for (int idx = 0; idx < threshs.length; idx++) {
       boolean value = threshs[idx].toggle();
-      pip.setSwitch("switch" + idx + "switch", value);
+      pip.setSwitch("Switch" + idx, value);
     }
     runner.runPipeline();
     pip.process();
     for (int idx = 0; idx < threshs.length; idx++) {
       boolean value = threshs[idx].toggle();
-      pip.setSwitch("switch" + idx + "switch", value);
+      pip.setSwitch("Switch" + idx, value);
     }
     runner.runPipeline();
     pip.process();

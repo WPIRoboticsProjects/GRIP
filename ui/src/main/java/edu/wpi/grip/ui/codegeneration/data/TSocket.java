@@ -2,10 +2,10 @@ package edu.wpi.grip.ui.codegeneration.data;
 
 
 public class TSocket {
-  protected String type;
-  protected String name;
+  private String type;
+  private String name;
 
-  public TSocket(String type, String name) {
+  protected TSocket(String type, String name) {
     this(type);
     this.name = name;
   }

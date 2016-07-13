@@ -9,18 +9,15 @@ import edu.wpi.grip.core.sources.ImageFileSource;
 import edu.wpi.grip.util.Files;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class HSVThresholdSetup {
   static void setup(AbstractGenerationTest caller) {
-    ArrayList<Number> hVal = new ArrayList<Number>();
-    ArrayList<Number> sVal = new ArrayList<Number>();
-    ArrayList<Number> vVal = new ArrayList<Number>();
-    hVal.add(new Double(50.0));
-    hVal.add(new Double(180.0));
-    sVal.add(new Double(0.0));
-    sVal.add(new Double(255.0));
-    vVal.add(new Double(0.0));
-    vVal.add(new Double(255.0));
+    List<Number> hVal = Arrays.asList(50.0d,180.0d);
+    List<Number> sVal = Arrays.asList(0.0d,255.0d);
+    List<Number> vVal = Arrays.asList(0.0d,255.0d);
+
     Step hsv = caller.gen.addStep(new OperationMetaData(
         HSVThresholdOperation.DESCRIPTION,
         () -> new HSVThresholdOperation(caller.isf, caller.osf)

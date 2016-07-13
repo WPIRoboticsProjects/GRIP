@@ -121,9 +121,9 @@ public class FindBlobsGenerationTest extends AbstractGenerationTest {
 
   public boolean containsBlob(List<BlobsReport.Blob> blobs, KeyPoint blob) {
     for (int i = 0; i < blobs.size(); i++) {
-      if ((blobs.get(i).x - blob.pt.x) <= 15
-          && (blobs.get(i).y - blob.pt.y) <= 15
-          && (blobs.get(i).size - blob.size) <= 5) {
+      if ((blobs.get(i).x - blob.pt.x) <= 20
+          && (blobs.get(i).y - blob.pt.y) <= 20
+          && (blobs.get(i).size - blob.size) <= 10) {
         return true;
       }
     }

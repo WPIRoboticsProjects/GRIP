@@ -9,6 +9,7 @@ import edu.wpi.grip.core.sources.ImageFileSource;
 import edu.wpi.grip.util.Files;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class GripIconHSLSetup {
@@ -17,15 +18,9 @@ public class GripIconHSLSetup {
   public static List<Number> defaultLVal;
 
   static {
-    defaultHVal = new ArrayList<Number>();
-    defaultSVal = new ArrayList<Number>();
-    defaultLVal = new ArrayList<Number>();
-    defaultHVal.add(new Double(0.0));
-    defaultHVal.add(new Double(49.0));
-    defaultSVal.add(new Double(0.0));
-    defaultSVal.add(new Double(41.0));
-    defaultLVal.add(new Double(0.0));
-    defaultLVal.add(new Double(67.0));
+    defaultHVal = Arrays.asList(0.0d,49.0d);
+    defaultSVal = Arrays.asList(0.0d,41.0d);
+    defaultLVal = Arrays.asList(0.0d,67.0d);
   }
 
   public static void setup(AbstractGenerationTest caller) {

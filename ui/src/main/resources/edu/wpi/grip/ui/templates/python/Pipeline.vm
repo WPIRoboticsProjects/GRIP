@@ -38,7 +38,7 @@ class $fileName:
 #set($boolInp = $step.getInput(0))
 #set($boolName = "$tMeth.pyName($boolInp.name())")
 #if($boolInp.hasValue())
-    def set$tMeth.pyName($boolName)(self, value):
+    def set$tMeth.pyName($step.name())$step.num()(self, value):
         'This method is a generated setter for the condition of $step.name()'
         assert isinstance(value, bool) , "Source must be of type bool"
         self.__$tMeth.pyName($boolName) = value

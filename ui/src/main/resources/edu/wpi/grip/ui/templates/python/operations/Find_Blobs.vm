@@ -11,9 +11,7 @@
         params.filterByCircularity = True
         params.minCircularity = circularity[0]
         params.maxCircularity = circularity[1]
-        params.filterByConvexity = True
-        params.minConvexity = 0.95
-        params.filterByInertia = True
-        params.minInertiaRatio = 0.01
+        params.filterByConvexity = False
+        params.filterByInertia = False
         detector = cv2.SimpleBlobDetector_create(params)
         return detector.detect(input)
