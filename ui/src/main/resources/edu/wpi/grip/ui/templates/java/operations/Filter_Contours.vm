@@ -10,13 +10,12 @@ This creates the java OpenCV Filter Contours function
 	 * @param minWidth minimum width of a contour
 	 * @param maxWidth maximum width
 	 * @param minHeight minimum height
-	 * @param maxHeight  maximimum height
+	 * @param maxHeight maximimum height
 	 * @param Solidity the minimum and maximum solidity of a contour
 	 * @param minVertexCount minimum vertex Count of the contours
 	 * @param maxVertexCount maximum vertex Count
 	 * @param minRatio minimum ratio of width to height
 	 * @param maxRatio maximum ratio of width to height
-	 * @return returns a list of filtered contours
 	 */
 	private void $tMeth.name($step.name())(List<MatOfPoint> inputContours, double minArea,
 		double minPerimeter, double minWidth, double maxWidth, double minHeight, double

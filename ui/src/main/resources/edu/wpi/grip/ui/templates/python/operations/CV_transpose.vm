@@ -1,5 +1,5 @@
     @staticmethod
     def $tMeth.name($step.name())(src):
-    """Computes the transpose of a Mat.
-    """
+        """Computes the transpose of a Mat.
+        """
         return cv2.transpose(src)
