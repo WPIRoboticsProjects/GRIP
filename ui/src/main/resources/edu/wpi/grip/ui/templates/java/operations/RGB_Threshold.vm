@@ -1,6 +1,5 @@
 	/**
 	 * Segment an image based on color ranges.
-	 *
 	 * @param input The image on which to perform the RGB threshold.
 	 * @param red The min and max red.
 	 * @param green The min and max green.

@@ -36,7 +36,8 @@ public abstract class TemplateMethods {
    */
   public static String parseSocketValue(Socket socket) {
     if (socket.getValue().isPresent() && !socket.getValue().get().toString()
-        .contains("bytedeco") &&  !socket.getValue().get().toString().contains("Infinity")) {
+        .contains("bytedeco") &&  !socket.getValue().get().toString().contains("Infinity")
+        && !socket.getValue().get().toString().contains("ContoursReport")) {
       return socket.getValue().get().toString();
     }
     return "null";

@@ -1,6 +1,5 @@
 	/**
 	 * Thresholds off parts of the image that have moved or changed between the previous and next image.
-	 *
 	 * @param input The image on which to perform the Threshold Moving.
 	 * @param lastImage The mat where the previous image is stored.
 	 * @param output The image in which to store the output.

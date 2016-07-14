@@ -1,6 +1,5 @@
 	/**
 	 * Isolates overlapping objects from the background and each other.
-	 *
 	 * @param input The image used to create the watershed.
 	 * @param contours The contours used to create the watershed.
 	 * @param output The image where the output is stored.

@@ -2,7 +2,7 @@
 This creates the java OpenCV Filter Contours function
 *#
 	/**
-	 * Filters through contours.
+	 * Filters out contours that do not meet certain criteria.
 	 * @param inputContours is the input list of contours
 	 * @param output is the the output list of contours
 	 * @param minArea is the minimum area of a contour that will be kept

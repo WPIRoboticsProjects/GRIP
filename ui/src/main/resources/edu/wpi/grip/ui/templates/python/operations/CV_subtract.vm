@@ -1,4 +1,10 @@
     @staticmethod
     def $tMeth.name($step.name())(src1, src2):
-        'Calculates the difference of two Mats'
+        """Calculates the difference of two Mats
+        Args:
+            src1: a numpy.ndarray
+            src2 a numpy.ndarray
+        Returns:
+            a numpy.ndarray that is the difference
+        """
         return cv2.subtract(src1,src2)

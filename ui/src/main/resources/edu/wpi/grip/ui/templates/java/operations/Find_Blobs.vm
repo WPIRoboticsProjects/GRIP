@@ -1,6 +1,5 @@
 	/**
 	 * Detects groups of pixels in an image.
-	 *
 	 * @param input The image on which to perform the find blobs.
 	 * @param minArea The minimum size of a blob that will be found
 	 * @param circularity The minimum and maximum circularity of blobs that will be found

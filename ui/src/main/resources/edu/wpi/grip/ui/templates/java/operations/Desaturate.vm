@@ -1,6 +1,5 @@
 	/**
-	 * Converts a color image into shades of grey
-	 *
+	 * Converts a color image into shades of grey.
 	 * @param input The image on which to perform the desaturate.
 	 * @param output The image in which to store the output.
 	 */

@@ -1,5 +1,5 @@
 	/**
-	 * Finds the minimum and maximum values of the Mat as well as the associated Points.
+	 * Finds the minimum and maximum values of the Mat as well as the associated points.
 	 * @param src the Mat to find min and max for.
 	 * @param mask the Mat to use as a mask for the operation.
 	 * @param minVal the minimum value found in the Mat.

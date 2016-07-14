@@ -6,10 +6,15 @@ import math
 from enum import Enum
 
 class $fileName:
-    'Class that runs the Pipeline. Set all sources before calling process'
+    """This is a generated class from GRIP.
+    To use the pipeline first create a $fileName instance and set the sources,
+    next call the process method,
+    finally get and use the outputs.
+    """
     
     def __init__(self):
-        'initializes all values to presets or None if need to be set'
+        """initializes all values to presets or None if need to be set
+        """
 #foreach($moving in $pipeline.getMovingThresholds())
         self.__lastImage$moving.num() = numpy.ndarray([])
 #end
@@ -28,6 +33,10 @@ class $fileName:
 #end
     
     def process(self):
+        """Runs the pipeline.
+        Sets outputs to new values.
+        Requires all sources to be set.
+        """
 #foreach($step in $pipeline.getSteps())
 #parse("src/main/resources/edu/wpi/grip/ui/templates/python/step.vm")
 

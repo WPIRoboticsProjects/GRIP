@@ -1,5 +1,5 @@
 	/**
-	 * Draws a rectangle on an Image.
+	 * Draws a rectangle on an image.
 	 * @param src Image to draw rectangle on.
 	 * @param pt1 one corner of the rectangle.
 	 * @param pt2 opposite corner of the rectangle.

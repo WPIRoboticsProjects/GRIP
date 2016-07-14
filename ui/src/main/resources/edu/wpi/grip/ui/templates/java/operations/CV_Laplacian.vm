@@ -1,5 +1,5 @@
 	/**
-	 * Performs a Laplacian on the Image.
+	 * Performs a Laplacian on the image.
 	 * @param src Image to use Laplacian on.
 	 * @param size Odd number that is size of the kernel.
 	 * @param scale Scaling factor for Laplacian.
