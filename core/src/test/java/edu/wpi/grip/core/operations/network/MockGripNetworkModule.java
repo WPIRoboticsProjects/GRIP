@@ -7,13 +7,16 @@ import com.google.inject.AbstractModule;
 import com.google.inject.name.Names;
 
 /**
- * A mock of {@Link GRIPNetworkModule} for testing.
+ * A mock of {@link GripNetworkModule} for testing.
  */
 public final class MockGripNetworkModule extends AbstractModule {
   @Override
   protected void configure() {
     bind(MapNetworkPublisherFactory.class)
         .annotatedWith(Names.named("ntManager"))
+        .to(MockMapNetworkPublisher.class);
+    bind(MapNetworkPublisherFactory.class)
+        .annotatedWith(Names.named("httpManager"))
         .to(MockMapNetworkPublisher.class);
     bind(ROSNetworkPublisherFactory.class)
         .annotatedWith(Names.named("rosManager"))

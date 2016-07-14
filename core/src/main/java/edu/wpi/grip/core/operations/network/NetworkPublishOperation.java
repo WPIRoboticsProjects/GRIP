@@ -9,7 +9,6 @@ import edu.wpi.grip.core.sockets.SocketHints;
 import edu.wpi.grip.core.util.Icon;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.reflect.TypeToken;
 
 import java.util.List;
 
@@ -33,16 +32,15 @@ public abstract class NetworkPublishOperation<D> implements Operation {
   protected final Class<D> dataType;
   protected final InputSocket<D> dataSocket;
   protected final InputSocket<String> nameSocket;
-  private final SocketHint<D> dataHint =
-      new SocketHint.Builder<>((Class<D>) new TypeToken<D>(getClass()) {
-      }.getRawType())
-          .identifier("Data")
-          .build();
   private final SocketHint<String> nameHint = SocketHints.Inputs.createTextSocketHint("Name", "");
 
   protected NetworkPublishOperation(InputSocket.Factory isf, Class<D> dataType) {
     checkNotNull(isf);
     checkNotNull(dataType);
+    final SocketHint<D> dataHint =
+        new SocketHint.Builder<>(dataType)
+            .identifier("Data")
+            .build();
     this.dataType = dataType;
     this.dataSocket = isf.create(dataHint);
     this.nameSocket = isf.create(nameHint);
