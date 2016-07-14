@@ -84,13 +84,10 @@ public class FindLinesGenerationTest extends AbstractGenerationTest {
     Optional out1 = pipeline.getSteps().get(1).getOutputSockets().get(0).getValue();
     assertTrue("Pipeline did not process", out1.isPresent());
     LinesReport linOut = (LinesReport) out1.get();
-
-    System.out.println(linOut.getLines().size());
     pip.setMatSource(0, Files.imageFile.file);
     pip.process();
     List<TestLine> gripLin = GripLine.convertReport(linOut);
     List<TestLine> genLin = (List<TestLine>) pip.getOutput("Find_Lines0Output0", GenType.LINES);
-    System.out.println("Lines are obtained");
     assertTrue("Number of lines is not the same. grip: " + gripLin.size() + " gen: "
         + genLin.size(), (linOut.getLines().size() - genLin.size()) < 5);
     for (int idx = 0; idx < genLin.size(); idx++) {

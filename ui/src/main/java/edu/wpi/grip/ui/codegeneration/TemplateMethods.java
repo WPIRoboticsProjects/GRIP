@@ -1,6 +1,5 @@
 package edu.wpi.grip.ui.codegeneration;
 
-import edu.wpi.grip.core.Connection;
 import edu.wpi.grip.core.sockets.Socket;
 import edu.wpi.grip.core.sockets.SocketHint;
 import edu.wpi.grip.generated.opencv_core.enumeration.BorderTypesEnum;
@@ -9,20 +8,7 @@ import edu.wpi.grip.ui.codegeneration.data.TStep;
 
 import com.google.common.base.CaseFormat;
 
-import java.util.HashMap;
-import java.util.Map;
-
-
 public abstract class TemplateMethods {
-
-  protected Map<Connection, String> connections;
-  protected int numOutputs;
-
-  protected TemplateMethods() {
-    connections = new HashMap<Connection, String>();
-    numOutputs = 0;
-
-  }
 
   /**
    * gets a TemplateMethod of the desired language.
@@ -83,8 +69,19 @@ public abstract class TemplateMethods {
     return type;
   }
 
+  /**
+   * Converts a name into the format for the correct language.
+   * @param name the unformatted name
+   * @return the name after it has been formatted
+   */
   public abstract String name(String name);
 
+  /**
+   * Converts a step into a string the represents the call of the operation in the correct language.
+   * Used in the Templates
+   * @param step the step that will be called
+   * @return a string that is the call to the operation.
+   */
   public abstract String callOp(TStep step);
 
 }

@@ -67,8 +67,6 @@ public class SwitchTest extends AbstractGenerationTest {
   }
 
   void validateNum(PipelineInterfacer pip, Number onTrue, Number onFalse, Boolean initVal) {
-    System.out.println("On True is socket:" + onTrueSourceNum);
-    System.out.println("On False is socket:" + onFalseSourceNum);
     pip.setNumSource(onTrueSourceNum, onTrue);
     pip.setNumSource(onFalseSourceNum, onFalse);
     pip.process();

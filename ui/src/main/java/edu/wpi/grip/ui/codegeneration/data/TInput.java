@@ -5,19 +5,26 @@ public class TInput extends TSocket {
   private TOutput connectedOutput;
   private String value;
 
+  /**
+   * creates a new TInput with an output
+   * @param type the type of the TInput.
+   * @param name the GRIP name of the TInput.
+   * @param output the output the the TInput is connected to.
+   */
   public TInput(String type, String name, TOutput output) {
     super(type, name);
     this.connectedOutput = output;
   }
 
+  /**
+   * creates a new TInput with a preset value
+   * @param type the type of the TInput.
+   * @param name the GRIP name of the TInput.
+   * @param value the preset value of the TInput represented as a string.
+   */
   public TInput(String type, String name, String value) {
     super(type, name);
     this.value = value;
-  }
-
-  public void setConnectedOutput(TOutput output) {
-    this.value = null;
-    this.connectedOutput = output;
   }
 
   /**
@@ -46,6 +53,10 @@ public class TInput extends TSocket {
     return type;
   }
 
+  /**
+   * Checks to see if the input has a value
+   * @return true if there is a value. false if it is null.
+   */
   public boolean hasValue() {
     return value != null;
   }

@@ -97,7 +97,6 @@ public class WatershedGenerationTest extends AbstractGenerationTest {
     Optional out = pipeline.getSteps().get(2).getOutputSockets().get(0).getValue();
     assertTrue("Pipeline did not process", out.isPresent());
     org.bytedeco.javacpp.opencv_core.Mat matOut = (org.bytedeco.javacpp.opencv_core.Mat) out.get();
-    System.out.println(matOut.size());
     Mat gripMat = HelperTools.bytedecoMatToCVMat(matOut);
 
     pip.setMatSource(0, Files.imageFile.file);
