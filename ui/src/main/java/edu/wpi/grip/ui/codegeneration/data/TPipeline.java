@@ -32,9 +32,9 @@ public class TPipeline {
    */
   public TPipeline(Pipeline pipeline) {
     this.uniqueSources = new HashMap<>();
-    this.steps = new ArrayList<TStep>();
+    this.steps = new ArrayList<>();
     this.numSources = 0;
-    connections = new HashMap<InputSocket, TOutput>();
+    connections = new HashMap<>();
     set(pipeline);
   }
 
@@ -98,7 +98,7 @@ public class TPipeline {
    * @param value The value of the input
    * @return The generated TInput.
    */
-  protected TInput createInput(String type, String name, String value) {
+  private TInput createInput(String type, String name, String value) {
     if (value.contains("source") || value.contains("Connection")) {
       if (uniqueSources.containsKey(value) && value.contains("Connection")) {
         value = "source" + uniqueSources.get(value);
@@ -124,7 +124,7 @@ public class TPipeline {
   }
 
   /**
-   * Creates a list of the unique operations in a pipeline.
+   * Creates a list of the unique operations in a pipeline. Used in templates.
    *
    * @return A list of the unique steps.
    */
@@ -138,21 +138,12 @@ public class TPipeline {
   }
 
   /**
-   * returns the total number of sources.
-   *
-   * @return the number of sources
-   */
-  public int getNumSources() {
-    return numSources;
-  }
-
-  /**
    * Returns a list of all of the sources in a the pipeline.
    *
    * @return the list of sources.
    */
   public List<TInput> getSources() {
-    List<TInput> sources = new ArrayList<TInput>();
+    List<TInput> sources = new ArrayList<>();
 
     for (TStep step : steps) {
       for (TInput input : step.getInputs()) {
@@ -174,7 +165,7 @@ public class TPipeline {
   }
 
   /**
-   * creates a list of all of the Moving_Threshold operations.
+   * Creates a list of all of the Moving_Threshold operations. Used in Templates.
    *
    * @return the list of Moving_Threshold operations.
    */
@@ -188,6 +179,11 @@ public class TPipeline {
     return moving;
   }
 
+  /**
+   * creates a new step from a name
+   * @param opName the name of the step
+   * @return a new step with the the opName and correct number.
+   */
   private TStep makeStep(String opName) {
     int count = 0;
     for (TStep step : steps) {

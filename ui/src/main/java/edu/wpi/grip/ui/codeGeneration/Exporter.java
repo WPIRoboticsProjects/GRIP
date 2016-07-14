@@ -24,7 +24,6 @@ import java.util.Properties;
 public class Exporter {
   private static String PIPELINE_TEMPLATE = "Pipeline.vm";
   private static String PIPELINE_HTEMPLATE = "Pipeline.h.vm";
-  private static String PIPELINE_HNAME = "/Pipeline.h";
 
   /**
    * Creates a TPipeline from the current pipeline and generates code to the target location

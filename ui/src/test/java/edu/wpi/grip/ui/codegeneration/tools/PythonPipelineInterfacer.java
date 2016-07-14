@@ -285,10 +285,6 @@ public class PythonPipelineInterfacer implements PipelineInterfacer {
 
     String s = null;
 
-    System.out.println("errors:");
-    while ((s = stdError.readLine()) != null) {
-      System.out.println(s);
-    }
     try {
       out = new BufferedWriter(new FileWriter("testing.py"));
     } catch (IOException e) {
