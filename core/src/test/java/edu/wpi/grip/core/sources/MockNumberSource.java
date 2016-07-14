@@ -6,7 +6,7 @@ import edu.wpi.grip.core.sockets.SocketHint;
 import edu.wpi.grip.core.sockets.SocketHints;
 import edu.wpi.grip.core.util.ExceptionWitness.Factory;
 
-import autovalue.shaded.com.google.common.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableList;
 
 import java.io.IOException;
 import java.util.List;
