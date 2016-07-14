@@ -1,3 +1,7 @@
+	/**
+	* A representation of the different types of blurs that can be used.
+	*
+	*/
 	enum BlurType {
 		BOX, GAUSSIAN, MEDIAN, BILATERAL
 	};

@@ -1,24 +1,46 @@
 #if($lines == false)
 #set($lines = true)
+/**
+* Contains details of a line.
+*
+*/
 class Line {
 	public:
 	double x1, y1, x2, y2;
+	/**
+	* Creates a line with given (x, y) points 1 and 2.
+	*
+	* @param x1 x coordinate of one point of the line.
+	* @param y1 y coordinate of the same point of line as above.
+	* @param x2 x coordinate of other point of the line.
+	* @param y2 y coordinate of other point of line. 
+	*/
 	Line(double x1, double y1, double x2, double y2) {
 		this->x1 = x1;
 		this->y1 = y1;
 		this->x2 = x2;
 		this->y2 = y2;
 		}
-	double lengthSquared() {
-		return pow(x2 - x1, 2) + pow(y2 - y1, 2);
-	}
+
+	/**
+	* Calculates the length of the line.
+	*
+	* @return The point to point length of the line. 
+	*/
 	double length() {
-		return sqrt(lengthSquared());
+		return sqrt(pow(x2 - x1, 2) + pow(y2 - y1, 2));
 	}
+	
+	/**
+	* Calculates the angle between the two points. 
+	*
+	* @return the angle (in degrees between -180 and 180) between the two points.
+	*/
 	double angle() {
 		return (180*atan2(y2 - y1, x2 - x1)/M_PI);
 	}
 };
+
 #if(!$loadLib)
 extern "C" vector<Vec6d> getLines(string name, AbsPipeline* obj){
 	vector<Line> *lines = (vector<Line> *) (obj->*(obj->getOutputs()[name]))();
@@ -29,5 +51,6 @@ extern "C" vector<Vec6d> getLines(string name, AbsPipeline* obj){
 	}
 	return out;
 }
+
 #end
 #end

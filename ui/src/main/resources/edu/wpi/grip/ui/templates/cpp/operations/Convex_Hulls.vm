@@ -1,5 +1,5 @@
 	/**
-	 * Compute the convex hulls of contours
+	 * Compute the convex hulls of contours.
 	 *
 	 * @param inputContours The contours on which to perform the operation.
 	 * @param outputContours The contours where the output will be stored.

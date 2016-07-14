@@ -1,8 +1,8 @@
 	/**
-	 * Calculates the absolute difference between two Mats
-	 * @param src1 the first Mat
-	 * @param src2 the second Mat
-	 * @param out the Mat that is the absolute difference between the two Mats
+	 * Calculates the absolute difference between two Mats.
+	 * @param src1 the first Mat.
+	 * @param src2 the second Mat.
+	 * @param out the Mat that is the absolute difference between the two Mats.
 	 */
 	void $tMeth.name($step.name())(Mat *src1, Mat *src2, Mat *out) {
 		absdiff(*src1, *src2, *out);

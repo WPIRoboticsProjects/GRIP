@@ -2,9 +2,9 @@
 	 * Segment an image based on hue, saturation, and value ranges.
 	 *
 	 * @param input The image on which to perform the HSL threshold.
-	 * @param hue The min and max hue
-	 * @param sat The min and max saturation
-	 * @param val The min and max value
+	 * @param hue The min and max hue.
+	 * @param sat The min and max saturation.
+	 * @param val The min and max value.
 	 * @param output The image in which to store the output.
 	 */
 	void $tMeth.name($step.name())(Mat *input, double hue[], double sat[], double val[], Mat *out) {

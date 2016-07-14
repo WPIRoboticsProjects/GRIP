@@ -1,4 +1,7 @@
 \#include "${fileName}.h"
+/**
+* Initializes a ${fileName}.
+*/
 $fileName::$fileName() {
 #foreach($source in $pipeline.getSources())
 	this->$source.value() = new #cType($source.type())();
@@ -46,7 +49,12 @@ $fileName::$fileName() {
 #end
 #end
 }
-
+/**
+* Runs an iteration of the Pipeline and updates outputs.
+*
+* Sources need to be set before calling this method. 
+*
+*/
 void $fileName::Process(){
 #foreach($step in $pipeline.getSteps())
 	//Step$step.num(): $step.name():
