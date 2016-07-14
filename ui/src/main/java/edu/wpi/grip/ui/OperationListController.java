@@ -34,7 +34,7 @@ public class OperationListController {
   @FXML private Tab root;
   @FXML private VBox operations;
   @Inject private OperationController.Factory operationControllerFactory;
-  private String baseText = null;
+  @SuppressWarnings("PMD.SingularField") private String baseText = null;
   private ControllerMap<OperationController, Node> operationsMapManager;
 
   @FXML

@@ -90,6 +90,7 @@ allprojects {
     apply plugin: 'jacoco'
     apply plugin: 'net.ltgt.errorprone'
     apply plugin: 'checkstyle'
+    apply plugin: 'pmd'
 
     configurations.errorprone {
         resolutionStrategy.force 'com.google.errorprone:error_prone_core:2.0.9'
@@ -107,6 +108,14 @@ allprojects {
         // Remove checkstyle dependencies on compilation
         // (This neuters :core:checkstyleGenerated, but since that's not needed anyway, who cares)
         it.dependsOn = []
+    }
+
+    pmd {
+        consoleOutput = true
+        sourceSets = [sourceSets.main]
+        reportsDir = file("$project.buildDir/reports/pmd")
+        ruleSetFiles = files(new File(rootDir, "pmd-ruleset.xml"))
+        ruleSets = []
     }
 
     repositories {

@@ -39,41 +39,35 @@ public final class ImageFileSource extends Source {
   private final String path;
   private final SocketHint<Mat> imageOutputHint = SocketHints.Outputs.createMatSocketHint("Image");
   private final OutputSocket<Mat> outputSocket;
-  private final EventBus eventBus;
 
   /**
-   * @param eventBus                The event bus for the pipeline.
    * @param exceptionWitnessFactory Factory to create the exceptionWitness
    * @param file                    The location on the file system where the image exists.
    */
   @AssistedInject
   ImageFileSource(
-      final EventBus eventBus,
       final OutputSocket.Factory outputSocketFactory,
       final ExceptionWitness.Factory exceptionWitnessFactory,
       @Assisted final File file) {
-    this(eventBus, outputSocketFactory, exceptionWitnessFactory, URLDecoder.decode(Paths.get(file
+    this(outputSocketFactory, exceptionWitnessFactory, URLDecoder.decode(Paths.get(file
         .toURI()).toString()));
   }
 
   @AssistedInject
   ImageFileSource(
-      final EventBus eventBus,
       final OutputSocket.Factory outputSocketFactory,
       final ExceptionWitness.Factory exceptionWitnessFactory,
       @Assisted final Properties properties) {
-    this(eventBus, outputSocketFactory, exceptionWitnessFactory,
+    this(outputSocketFactory, exceptionWitnessFactory,
         properties.getProperty(PATH_PROPERTY));
   }
 
 
   private ImageFileSource(
-      final EventBus eventBus,
       final OutputSocket.Factory outputSocketFactory,
       final ExceptionWitness.Factory exceptionWitnessFactory,
       final String path) {
     super(exceptionWitnessFactory);
-    this.eventBus = checkNotNull(eventBus, "Event Bus was null.");
     this.path = checkNotNull(path, "Path can not be null");
     this.name = Files.getNameWithoutExtension(this.path);
     this.outputSocket = outputSocketFactory.create(imageOutputHint);

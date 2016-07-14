@@ -87,7 +87,7 @@ public class CameraSource extends Source implements RestartableService {
   private final AtomicBoolean isNewFrame = new AtomicBoolean(false);
   private final Mat currentFrameTransferMat = new Mat();
   private final AutoRestartingService cameraService;
-  private volatile double frameRate = 0;
+  private volatile double frameRate = 0.0;
 
   /**
    * Creates a camera source that can be used as an input to a pipeline.
@@ -373,10 +373,10 @@ public class CameraSource extends Source implements RestartableService {
     }
 
     @Override
+    @SuppressWarnings("PMD.AvoidReassigningParameters")
     public FrameGrabber create(String addressProperty) throws MalformedURLException {
       // If no path was specified in the URL (ie: it was something like http://10.1.90.11/), use
-      // the default path
-      // for Axis M1011 cameras.
+      // the default path for Axis M1011 cameras.
       if (new URL(addressProperty).getPath().length() <= 1) {
         addressProperty += DEFAULT_IP_CAMERA_PATH;
       }

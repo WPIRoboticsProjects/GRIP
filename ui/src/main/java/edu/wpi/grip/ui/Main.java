@@ -28,7 +28,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
@@ -37,12 +36,13 @@ import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
-
 import javax.inject.Inject;
 
 public class Main extends Application {
 
   private final Object dialogLock = new Object();
+  private static final Logger logger = Logger.getLogger(Main.class.getName());
+
   /**
    * JavaFX insists on creating the main application with its own reflection code, so we can't
    * create with the Guice and do automatic field injection. However, we can inject it after the
@@ -55,7 +55,6 @@ public class Main extends Application {
   @Inject private Project project;
   @Inject private Operations operations;
   @Inject private CVOperations cvOperations;
-  @Inject private Logger logger;
   @Inject private GripServer server;
   @Inject private HttpPipelineSwitcher pipelineSwitcher;
   private Parent root;

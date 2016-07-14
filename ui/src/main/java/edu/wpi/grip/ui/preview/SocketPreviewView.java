@@ -31,15 +31,15 @@ public abstract class SocketPreviewView<T> extends TitledPane {
    * @return The title for the socket preview view.
    */
   private String getTitle() {
-    String title = "";
+    StringBuilder title = new StringBuilder();
 
     if (this.socket.getStep().isPresent()) {
-      title += this.socket.getStep().get().getOperationDescription().name() + " -> ";
+      title.append(this.socket.getStep().get().getOperationDescription().name()).append(" -> ");
     }
 
-    title += this.socket.getSocketHint().getIdentifier();
+    title.append(this.socket.getSocketHint().getIdentifier());
 
-    return title;
+    return title.toString();
   }
 
   public OutputSocket<T> getSocket() {

@@ -21,7 +21,7 @@ import java.util.logging.Logger;
  * Base class for an input into the pipeline.
  */
 public abstract class Source {
-  private final Logger logger = Logger.getLogger(getClass().getName());
+  private static final Logger logger = Logger.getLogger(Source.class.getName());
   private final ExceptionWitness exceptionWitness;
 
   /**

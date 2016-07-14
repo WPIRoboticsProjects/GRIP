@@ -29,8 +29,11 @@ import javafx.util.Duration;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 public final class StartStoppableButton extends ToggleButton {
+  @SuppressWarnings("PMD.AvoidProtectedFieldInFinalClass")
   protected static final String BASE_STYLE_CLASS = "start-stoppable-button";
+  @SuppressWarnings("PMD.AvoidProtectedFieldInFinalClass")
   protected static final String STARTED_STYLE_CLASS = "started";
+  @SuppressWarnings("PMD.AvoidProtectedFieldInFinalClass")
   protected static final String STOPPED_STYLE_CLASS = "stopped";
 
   private static final Image startImage =

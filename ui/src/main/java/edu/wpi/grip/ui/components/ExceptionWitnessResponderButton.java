@@ -160,7 +160,7 @@ public final class ExceptionWitnessResponderButton extends Button {
       setTitle(title);
       stackTrace.setEditable(false);
 
-      getStyleClass().add(this.STYLE_CLASS);
+      getStyleClass().add(STYLE_CLASS);
       setHeaderAlwaysVisible(true);
       setDetachable(false);
 
