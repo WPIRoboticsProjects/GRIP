@@ -41,7 +41,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
  */
 @Singleton
 public class PipelineRunner implements RestartableService {
-  private final Logger logger = Logger.getLogger(getClass().getName());
+  private static final Logger logger = Logger.getLogger(PipelineRunner.class.getName());
   /**
    * This is used to flag that the pipeline needs to run because of an update.
    */

@@ -29,7 +29,7 @@ public class AutoRestartingService<S extends Service> implements RestartableServ
   private final Supplier<S> delegateFactory;
   private final ConcurrentMap<Listener, Executor> listeners;
   private final AtomicBoolean shouldContinueRestarting = new AtomicBoolean(false);
-  private Set<Listener> addedListeners = new HashSet<>();
+  private final Set<Listener> addedListeners = new HashSet<>();
   private S delegate;
 
   /**

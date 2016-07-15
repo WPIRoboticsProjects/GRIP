@@ -1,6 +1,7 @@
 package edu.wpi.grip.ui;
 
 import edu.wpi.grip.core.GripCoreModule;
+import edu.wpi.grip.core.GripFileModule;
 import edu.wpi.grip.core.PipelineRunner;
 import edu.wpi.grip.core.events.UnexpectedThrowableEvent;
 import edu.wpi.grip.core.http.GripServer;
@@ -27,7 +28,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
@@ -36,12 +36,13 @@ import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
-
 import javax.inject.Inject;
 
 public class Main extends Application {
 
   private final Object dialogLock = new Object();
+  private static final Logger logger = Logger.getLogger(Main.class.getName());
+
   /**
    * JavaFX insists on creating the main application with its own reflection code, so we can't
    * create with the Guice and do automatic field injection. However, we can inject it after the
@@ -54,7 +55,6 @@ public class Main extends Application {
   @Inject private Project project;
   @Inject private Operations operations;
   @Inject private CVOperations cvOperations;
-  @Inject private Logger logger;
   @Inject private GripServer server;
   @Inject private HttpPipelineSwitcher pipelineSwitcher;
   private Parent root;
@@ -71,15 +71,16 @@ public class Main extends Application {
     if (parameters.contains("--headless")) {
       // If --headless was specified on the command line, run in headless mode (only use the core
       // module)
-      injector = Guice.createInjector(Modules.override(new GripCoreModule(),
+      injector = Guice.createInjector(Modules.override(new GripCoreModule(), new GripFileModule(),
           new GripSourcesHardwareModule()).with(new GripNetworkModule()));
       injector.injectMembers(this);
 
       parameters.remove("--headless");
     } else {
       // Otherwise, run with both the core and UI modules, and show the JavaFX stage
-      injector = Guice.createInjector(Modules.override(new GripCoreModule(),
+      injector = Guice.createInjector(Modules.override(new GripCoreModule(), new GripFileModule(),
           new GripSourcesHardwareModule()).with(new GripNetworkModule(), new GripUiModule()));
+
       injector.injectMembers(this);
 
       System.setProperty("prism.lcdtext", "false");

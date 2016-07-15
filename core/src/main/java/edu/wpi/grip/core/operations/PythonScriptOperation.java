@@ -52,8 +52,8 @@ public class PythonScriptOperation implements Operation {
 
 
   private final PythonScriptFile scriptFile;
-  private List<InputSocket> inputSockets; // intentionally using raw types
-  private List<OutputSocket> outputSockets; // intentionally using raw types
+  private final List<InputSocket> inputSockets; // intentionally using raw types
+  private final List<OutputSocket> outputSockets; // intentionally using raw types
 
   @SuppressWarnings("JavadocMethod")
   public PythonScriptOperation(InputSocket.Factory isf, OutputSocket.Factory osf,

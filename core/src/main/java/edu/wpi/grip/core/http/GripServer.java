@@ -27,7 +27,7 @@ public class GripServer {
   /**
    * The port that this server is running on.
    */
-  private int port;
+  private final int port;
 
   /**
    * The internal Jetty server that actually handles all server operations.

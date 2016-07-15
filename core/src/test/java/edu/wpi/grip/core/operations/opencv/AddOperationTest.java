@@ -64,15 +64,10 @@ public class AddOperationTest {
     a.setValue(new Mat(2, sz, opencv_core.CV_8U, Scalar.all(1)));
     b.setValue(new Mat(2, sz, opencv_core.CV_8U, Scalar.all(2)));
 
-    //When
-    long startTime = System.currentTimeMillis();
     for (int i = 0; i < 1000; i++) {
       addition.perform();
     }
-    long endTime = System.currentTimeMillis();
-    System.out.println("Run time: " + (endTime - startTime));
 
-    //Then
     Mat expectedResult = new Mat(2, sz, opencv_core.CV_8U, Scalar.all(3));
     assertTrue(isMatEqual((Mat) c.getValue().get(), expectedResult));
   }

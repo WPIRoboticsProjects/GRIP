@@ -57,9 +57,6 @@ public class AddSourceView extends HBox {
   @VisibleForTesting
   static final String SOURCE_DIALOG_STYLE_CLASS = "source-dialog";
   private final EventBus eventBus;
-  private final MultiImageFileSource.Factory multiImageSourceFactory;
-  private final ImageFileSource.Factory imageSourceFactory;
-  private final CameraSource.Factory cameraSourceFactory;
 
   private final Button webcamButton;
   private final Button ipcamButton;
@@ -72,9 +69,6 @@ public class AddSourceView extends HBox {
                 CameraSource.Factory cameraSourceFactory,
                 HttpSource.Factory httpSourceFactory) {
     this.eventBus = eventBus;
-    this.multiImageSourceFactory = multiImageSourceFactory;
-    this.imageSourceFactory = imageSourceFactory;
-    this.cameraSourceFactory = cameraSourceFactory;
 
     this.setFillHeight(true);
 

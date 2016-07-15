@@ -15,9 +15,7 @@ import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import com.google.common.util.concurrent.MoreExecutors;
 import com.google.common.util.concurrent.Service;
-
 import net.jodah.concurrentunit.Waiter;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -28,6 +26,8 @@ import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import static com.google.common.truth.Truth.assertThat;
 import static junit.framework.Assert.assertNull;
@@ -37,6 +37,8 @@ import static org.junit.Assert.assertTrue;
 
 @RunWith(Enclosed.class)
 public class PipelineRunnerTest {
+
+  private static final Logger logger = Logger.getLogger(PipelineRunnerTest.class.getName());
 
   interface SimpleOperation extends Operation {
     OperationDescription DESCRIPTION = OperationDescription.builder()
@@ -397,10 +399,9 @@ public class PipelineRunnerTest {
       this.failure = failure;
     }
 
-    @SuppressWarnings("PMD.SystemPrintln")
     public synchronized void throwIfProblemPresent() throws Throwable {
       if (failedFrom != null || failure != null) {
-        System.err.println("Failed from state " + failedFrom);
+        logger.log(Level.SEVERE, "Failed from state " + failedFrom);
         throw failure;
       }
     }

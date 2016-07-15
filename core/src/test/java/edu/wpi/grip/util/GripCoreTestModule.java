@@ -1,11 +1,13 @@
 package edu.wpi.grip.util;
 
 
+import edu.wpi.grip.core.FileManager;
 import edu.wpi.grip.core.GripCoreModule;
 import edu.wpi.grip.core.http.GripServer;
 import edu.wpi.grip.core.http.GripServerTest;
 import edu.wpi.grip.core.sources.CameraSource;
 import edu.wpi.grip.core.sources.MockFrameGrabberFactory;
+import edu.wpi.grip.core.util.MockFileManager;
 
 import com.google.common.eventbus.SubscriberExceptionContext;
 
@@ -75,6 +77,7 @@ public class GripCoreTestModule extends GripCoreModule {
     assert setUp : "The GripCoreTestModule handler was not set up. Call 'setUp' before passing "
         + "the injector";
     bind(CameraSource.FrameGrabberFactory.class).to(MockFrameGrabberFactory.class);
+    bind(FileManager.class).to(MockFileManager.class);
     super.configure();
     // HTTP server injection bindings
     bind(GripServer.JettyServerFactory.class).to(GripServerTest.TestServerFactory.class);

@@ -29,6 +29,7 @@ public class StringInMemoryFile extends InMemorySourceFile {
     this.permissions = permissions;
   }
 
+  @SuppressWarnings("PMD.AvoidUsingOctalValues")
   public StringInMemoryFile(String name, String contents) {
     this(name, contents, 0644);
   }

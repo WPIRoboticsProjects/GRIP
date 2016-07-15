@@ -33,7 +33,7 @@ public final class SafeShutdown {
    *                   has been flagged true. This is nullable.
    * @see System#exit(int)
    */
-  public static final void exit(int statusCode, @Nullable PreSystemExitHook hook) {
+  public static void exit(int statusCode, @Nullable PreSystemExitHook hook) {
     flagStopping();
     try {
       if (hook != null) {
@@ -51,7 +51,7 @@ public final class SafeShutdown {
    * @param statusCode exit status.
    * @see #exit(int)
    */
-  public static final void exit(int statusCode) {
+  public static void exit(int statusCode) {
     exit(statusCode, null);
   }
 
@@ -64,7 +64,7 @@ public final class SafeShutdown {
    * @see <a href="https://github.com/WPIRoboticsProjects/GRIP/issues/297">GRIP Issue</a>
    * @see <a href="https://github.com/bytedeco/javacpp/issues/60">Bytedeco issue</a>
    */
-  public static final boolean isStopping() {
+  public static boolean isStopping() {
     return stopping;
   }
 
