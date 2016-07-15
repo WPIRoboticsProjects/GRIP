@@ -63,10 +63,11 @@ public abstract class TemplateMethods {
    * @return The type of the socket with any needed additional information.
    */
   public static String parseSocketType(Socket socket) {
-    StringBuffer type = new StringBuffer(socket.getSocketHint().getType().getSimpleName());
+    StringBuffer type = new StringBuffer();
+    type.append(socket.getSocketHint().getType().getSimpleName());
     if (socket.getSocketHint().getView().equals(SocketHint.View.SELECT)
-        || BorderTypesEnum.class.equals(socket.getSocketHint().getType())
-        || CmpTypesEnum.class.equals(socket.getSocketHint().getType())) {
+        && (BorderTypesEnum.class.equals(socket.getSocketHint().getType())
+        || CmpTypesEnum.class.equals(socket.getSocketHint().getType()))) {
       type.append("CoreEnum");
     }
 

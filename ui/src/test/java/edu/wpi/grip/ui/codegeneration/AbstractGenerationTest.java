@@ -75,15 +75,16 @@ public abstract class AbstractGenerationTest {
     String fileName = testName;
     gen.export(fileName);
 
-    JavaPipelineInterfacer jpip = new JavaPipelineInterfacer(fileName + ".java");
-    PythonPipelineInterfacer ppip = new PythonPipelineInterfacer(fileName);
-    CppPipelineInterfacer cpip = new CppPipelineInterfacer(fileName);
+
     Language current = Language.JAVA;
     try {
+      JavaPipelineInterfacer jpip = new JavaPipelineInterfacer(fileName + ".java");
       test.accept(jpip);
       current = Language.PYTHON;
+      PythonPipelineInterfacer ppip = new PythonPipelineInterfacer(fileName);
       test.accept(ppip);
       current = Language.CPP;
+      CppPipelineInterfacer cpip = new CppPipelineInterfacer(fileName);
       test.accept(cpip);
     } catch (AssertionError e) {
       //Makes it easier to tell which language is throwing an error.
