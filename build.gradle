@@ -9,6 +9,7 @@ buildscript {
     dependencies {
         classpath 'com.netflix.nebula:gradle-aggregate-javadocs-plugin:2.2.+'
         classpath 'net.ltgt.gradle:gradle-errorprone-plugin:0.0.8'
+        classpath 'de.aaschmid:gradle-cpd-plugin:1.0'
     }
 }
 plugins {
@@ -91,6 +92,7 @@ allprojects {
     apply plugin: 'net.ltgt.errorprone'
     apply plugin: 'checkstyle'
     apply plugin: 'pmd'
+    apply plugin: 'cpd'
 
     configurations.errorprone {
         resolutionStrategy.force 'com.google.errorprone:error_prone_core:2.0.9'
@@ -116,6 +118,20 @@ allprojects {
         reportsDir = file("$project.buildDir/reports/pmd")
         ruleSetFiles = files(new File(rootDir, "pmd-ruleset.xml"))
         ruleSets = []
+    }
+
+    cpdCheck {
+        reports {
+            text.enabled = true
+            xml.enabled = false
+        }
+        println "CPD" + reports.text.destination.text
+    }
+
+    subprojects {
+        plugins.withType(JavaBasePlugin) {
+            check.dependsOn(rootProject.cpdCheck)
+        }
     }
 
     repositories {
