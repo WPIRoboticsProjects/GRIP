@@ -10,7 +10,7 @@
       <TableView fx:id="table" prefHeight="400.0" prefWidth="600.0" AnchorPane.bottomAnchor="50.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
         <columns>
           <TableColumn fx:id="operationColumn" editable="false" minWidth="200.0" prefWidth="300.0" resizable="false" sortable="false" text="Operation" />
-          <TableColumn fx:id="timeColumn" editable="false" minWidth="200.0" prefWidth="300.0" sortable="false" text="Time (ms)" />
+          <TableColumn fx:id="timeColumn" editable="false" minWidth="200.0" prefWidth="300.0" sortable="false" text="Time" />
         </columns>
       </TableView>
       <HBox alignment="CENTER_LEFT" nodeOrientation="LEFT_TO_RIGHT" prefHeight="50.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
