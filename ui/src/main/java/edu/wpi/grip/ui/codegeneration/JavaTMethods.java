@@ -18,8 +18,7 @@ public class JavaTMethods extends TemplateMethods {
   @Override
   public String callOp(TStep step) {
     StringBuilder out = new StringBuilder();
-    out.append(name(step.name()));
-    out.append("(");
+    out.append(name(step.name())).append('(');
     for (TInput input : step.getInputs()) {
       out.append(name(input.name()));
       out.append(", ");
@@ -40,7 +39,7 @@ public class JavaTMethods extends TemplateMethods {
       //removes the unneeded ", "
       out.delete(out.length() - 2, out.length());
     }
-    out.append(")");
+    out.append(')');
     return out.toString();
   }
 

@@ -5,6 +5,8 @@ import edu.wpi.grip.ui.codegeneration.data.TStep;
 
 import com.google.common.base.CaseFormat;
 
+import java.util.Locale;
+
 public class CppTMethods extends TemplateMethods {
   public CppTMethods() {
     super();
@@ -12,7 +14,8 @@ public class CppTMethods extends TemplateMethods {
 
   @Override
   public String name(String name) {
-    return CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, name.toUpperCase());
+    Locale locName = new Locale(name);
+    return CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, locName.toString().toUpperCase());
   }
 
   @Override
@@ -21,11 +24,10 @@ public class CppTMethods extends TemplateMethods {
     if (step.name().equals("Switch") || step.name().equals("Valve")) {
       out.append("pipeline");
     }
-    out.append(name(step.name()));
-    out.append("(");
+    out.append(name(step.name())).append('(');
     for (TInput input : step.getInputs()) {
       if (!input.type().equals("List")) {
-        out.append("&");
+        out.append('&');
       }
       out.append(input.name());
       out.append(", ");
@@ -44,7 +46,7 @@ public class CppTMethods extends TemplateMethods {
       out.append("this->");
       out.append(step.getOutputs().get(step.getOutputs().size() - 1).name());
     }
-    out.append(")");
+    out.append(')');
     return out.toString();
   }
 

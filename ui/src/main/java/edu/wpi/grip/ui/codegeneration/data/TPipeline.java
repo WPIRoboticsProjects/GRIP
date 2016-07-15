@@ -21,8 +21,8 @@ public class TPipeline {
 
   protected List<TStep> steps;
   private int numSources;
-  private Map<InputSocket, TOutput> connections;
-  private Map<String, Integer> uniqueSources;
+  private final Map<InputSocket, TOutput> connections;
+  private final Map<String, Integer> uniqueSources;
 
 
   /**
@@ -65,7 +65,7 @@ public class TPipeline {
       for (InputSocket input : pipeline.getSteps().get(i).getInputSockets()) {
         TInput tInput;
         String type = TemplateMethods.parseSocketType(input);
-        if (type.equals("Type")) {
+        if ("Type".equals(type)) {
           type = steps.get(i).name() + "Type";
         }
         type = type.replace("Number", "Double");
@@ -79,7 +79,6 @@ public class TPipeline {
               //Connections is a set. Should only have one element
               tInput = createInput(type, name, "Connection" + ((Connection) con).getOutputSocket()
                   .toString());
-              break;  //If somehow there are multiple elements only care about first one.
             }
           }
         } else {
@@ -99,19 +98,20 @@ public class TPipeline {
    * @return The generated TInput.
    */
   private TInput createInput(String type, String name, String value) {
+    String outVal = value;
     if (value.contains("source") || value.contains("Connection")) {
       if (uniqueSources.containsKey(value) && value.contains("Connection")) {
-        value = "source" + uniqueSources.get(value);
+        outVal = "source" + uniqueSources.get(value);
       } else {
         int s = numSources;
         numSources++;
         uniqueSources.put(value, s);
-        value = "source" + s;
+        outVal = "source" + s;
       }
     } else if (value.contains("null")) {
-      value = "null";
+      outVal = "null";
     }
-    return new TInput(type, name, value);
+    return new TInput(type, name, outVal);
   }
 
   /**

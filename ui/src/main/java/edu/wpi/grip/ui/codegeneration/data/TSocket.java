@@ -5,7 +5,7 @@ package edu.wpi.grip.ui.codegeneration.data;
  */
 public class TSocket {
   private String type;
-  private String name;
+  private final String name;
 
   /**
    * The default constructor for a Socket. Assigns member variable to values.
@@ -67,8 +67,8 @@ public class TSocket {
    * @return true if mutable. false if not mutable.
    */
   public boolean mutable() {
-    return (type.equals("Integer") || type.equals("Double") || type.equals("Boolean")
-        || type.equals("Number"));
+    return ("Integer".equals(type) || "Double".equals(type) || "Boolean".equals(type)
+        || "Number".equals(type));
   }
 
   /**
@@ -76,6 +76,6 @@ public class TSocket {
    * @return true if it is a number.
    */
   public boolean number() {
-    return type.contains("Integer") || type.contains("Double") || type.contains("Number");
+    return "Integer".contains(type) || "Double".contains(type) || "Number".contains(type);
   }
 }

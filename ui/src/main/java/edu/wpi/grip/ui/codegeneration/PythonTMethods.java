@@ -22,8 +22,8 @@ public class PythonTMethods extends TemplateMethods {
 
   @Override
   public String callOp(TStep step) {
-    StringBuilder method = new StringBuilder();
-    method.append("self.").append(name(step.name())).append("(");
+    StringBuilder method = new StringBuilder(20);
+    method.append("self.").append(name(step.name())).append('(');
     for (TInput inp : step.getInputs()) {
       method.append("self.__").append(pyName(inp.name())).append(", ");
     }
@@ -33,7 +33,7 @@ public class PythonTMethods extends TemplateMethods {
       method.append(", ");
     }
     method.delete(method.length() - 2, method.length());
-    method.append(")");
+    method.append(')');
     return method.toString();
   }
 }

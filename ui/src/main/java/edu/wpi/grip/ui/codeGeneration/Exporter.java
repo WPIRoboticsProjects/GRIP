@@ -16,12 +16,15 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.util.Properties;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Primary class for creating files and setting up code generation.
  */
 @Singleton
 public class Exporter {
+  private static final Logger logger = Logger.getLogger(Exporter.class.getName());
   private static String PIPELINE_TEMPLATE = "Pipeline.vm";
   private static String PIPELINE_HTEMPLATE = "Pipeline.h.vm";
 
@@ -41,10 +44,9 @@ public class Exporter {
     context.put("tMeth", tempMeth);
     context.put("fileName", dir.getName().substring(0, dir.getName().lastIndexOf(".")));
     context.put("loadLib", loadLib);
-    StringBuilder templateDirBuilder = new StringBuilder();
-    templateDirBuilder.append("src/main/resources/edu/wpi/grip/ui/templates/");
-    templateDirBuilder.append(lang.filePath);
-    templateDirBuilder.append("/");
+    StringBuilder templateDirBuilder = new StringBuilder(50);
+    templateDirBuilder.append("src/main/resources/edu/wpi/grip/ui/templates/")
+        .append(lang.filePath).append('/');
     final String templateDir = templateDirBuilder.toString();
     VelocityEngine ve = new VelocityEngine();
     Properties props = new Properties();
@@ -57,9 +59,9 @@ public class Exporter {
       }
     } catch (ResourceNotFoundException e) {
       String error = e.getMessage();
-      String missingOperation = error.substring(error.lastIndexOf("/") + 1, error.lastIndexOf("."));
-      throw new UnsupportedOperationException("The operation " + missingOperation 
-        + " is not supported for export to " + lang);
+      String missingOperation = error.substring(error.lastIndexOf('/') + 1, error.lastIndexOf('.'));
+      logger.log(Level.SEVERE, "The operation " + missingOperation
+          + " is not supported for export to " + lang, e);
     }
   }
 
@@ -81,7 +83,7 @@ public class Exporter {
     try (PrintWriter writer = new PrintWriter(file.getAbsolutePath(), "UTF-8")) {
       writer.println(sw);
     } catch (UnsupportedEncodingException | FileNotFoundException e) {
-      e.printStackTrace();
+      logger.log(Level.SEVERE, "Unable to write to file", e);
     }
   }
 
@@ -103,7 +105,7 @@ public class Exporter {
       + File.separator  + file.getName().replace(".cpp", ".h"), "UTF-8")) {
       writer.println(sw);
     } catch (UnsupportedEncodingException | FileNotFoundException e) {
-      e.printStackTrace();
+      logger.log(Level.SEVERE, "Unable to write to file", e);
     }
   }
 }

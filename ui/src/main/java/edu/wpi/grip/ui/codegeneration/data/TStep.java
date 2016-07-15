@@ -5,10 +5,10 @@ import java.util.List;
 
 
 public class TStep {
-  private List<TInput> inputs;
-  private List<TOutput> outputs;
-  private String name;
-  private int stepNum;
+  private final List<TInput> inputs;
+  private final List<TOutput> outputs;
+  private final String name;
+  private final int stepNum;
 
   /**
    * This is a constructor for a Template step.
