@@ -87,14 +87,12 @@ public class OutputSocketController implements Controller {
 
   @Subscribe
   public void onSocketPreviewChangedEvent(SocketPreviewChangedEvent event) {
-    if (event.isRegarding(socket)) {
-      // Only try to update the button if the two aren't the same
-      // This really should only happen we deserialize the pipeline
-      if (socket.isPreviewed() != preview.isSelected()) {
-        preview.selectedProperty().removeListener(previewListener);
-        preview.setSelected(socket.isPreviewed());
-        preview.selectedProperty().addListener(previewListener);
-      }
+    // Only try to update the button if the two aren't the same
+    // This really should only happen we deserialize the pipeline
+    if (event.isRegarding(socket) && socket.isPreviewed() != preview.isSelected()) {
+      preview.selectedProperty().removeListener(previewListener);
+      preview.setSelected(socket.isPreviewed());
+      preview.selectedProperty().addListener(previewListener);
     }
   }
 

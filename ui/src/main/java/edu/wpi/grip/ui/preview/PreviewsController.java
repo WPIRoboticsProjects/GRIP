@@ -54,6 +54,7 @@ public class PreviewsController {
    * @param sources A snapshot of the sources. This should be exactly the same list for the entire
    *                sort.
    */
+  @SuppressWarnings("PMD.CompareObjectsWithEquals") // Check if 2 objects have the same reference
   private static int compareSockets(OutputSocket<?> a, OutputSocket<?> b, ImmutableList<Step>
       steps, ImmutableList<Source> sources) {
     if (a.getStep().isPresent() && b.getStep().isPresent()) {

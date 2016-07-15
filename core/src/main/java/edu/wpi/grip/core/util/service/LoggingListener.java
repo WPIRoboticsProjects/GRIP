@@ -15,6 +15,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * A service listener that will log the service as it transitions between various different states.
  */
 @Immutable
+@SuppressWarnings("PMD.LoggerIsNotStaticFinal")
 public final class LoggingListener extends Service.Listener {
   public final Logger logger;
   public final Class<?> sourceClass;

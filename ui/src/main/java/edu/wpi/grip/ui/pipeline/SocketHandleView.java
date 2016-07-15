@@ -38,7 +38,6 @@ public class SocketHandleView extends Button {
       PseudoClass.getPseudoClass("connecting");
   private static final PseudoClass CONNECTED_PSEUDO_CLASS = PseudoClass.getPseudoClass("connected");
 
-  private final EventBus eventBus;
   private final Socket socket;
   private final BooleanProperty connectingProperty = new SimpleBooleanProperty(this,
       "connecting", false);
@@ -51,7 +50,6 @@ public class SocketHandleView extends Button {
                    Connection.Factory<Object> connectionFactory,
                    SocketDragService socketDragService,
                    @Assisted Socket socket) {
-    this.eventBus = eventBus;
     this.socket = socket;
 
     this.setTooltip(new Tooltip("Drag to connect"));
@@ -74,7 +72,7 @@ public class SocketHandleView extends Button {
       connections.stream()
           .map(ConnectionRemovedEvent::new)
           .collect(Collectors.toList())
-          .forEach(this.eventBus::post);
+          .forEach(eventBus::post);
     });
 
     // When the user starts dragging a socket handle, starting forming a connection.  This

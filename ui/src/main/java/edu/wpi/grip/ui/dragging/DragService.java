@@ -20,13 +20,13 @@ import javafx.scene.input.TransferMode;
  *
  * @param <T> The value that the object property holds.
  */
-public abstract class DragService<T> {
+public class DragService<T> {
   private final ObjectProperty<T> dragProperty;
 
   /**
    * @param name The name for the {@link SimpleObjectProperty}.
    */
-  public DragService(String name) {
+  protected DragService(String name) {
     this.dragProperty = new SimpleObjectProperty<>(this, name);
   }
 

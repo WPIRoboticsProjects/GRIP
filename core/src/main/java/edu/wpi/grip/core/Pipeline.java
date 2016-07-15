@@ -61,7 +61,7 @@ public class Pipeline implements ConnectionValidator, SettingsProvider {
   @Inject
   @XStreamOmitField
   private EventBus eventBus;
-  private transient ReadWriteLock stepLock = new ReentrantReadWriteLock();
+  private final transient ReadWriteLock stepLock = new ReentrantReadWriteLock();
   private ProjectSettings settings = new ProjectSettings();
 
   /**
