@@ -28,7 +28,7 @@ import static com.google.common.base.Preconditions.checkArgument;
 @Singleton
 public class BenchmarkRunner {
 
-  private EventBus eventBus;
+  private final EventBus eventBus;
 
   /**
    * State flag.
