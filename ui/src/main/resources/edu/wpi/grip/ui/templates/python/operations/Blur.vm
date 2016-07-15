@@ -3,9 +3,9 @@
     def $tMeth.name($step.name())(src, type, radius):
         """Softens an image using one of several filters.
         Args:
-            src: the source mat (numpy.ndarray)
+            src: The source mat (numpy.ndarray).
             type: The blurType to perform represented as an int.
-            radius: The radius for the blur as a float
+            radius: The radius for the blur as a float.
         Returns:
             A numpy.ndarray that has been blurred.
         """

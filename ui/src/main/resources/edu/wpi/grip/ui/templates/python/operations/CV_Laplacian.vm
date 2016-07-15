@@ -1,6 +1,6 @@
     @staticmethod
     def $tMeth.name($step.name())(src, size, scale, delta, border_type):
-        """Performs a Laplacian on the Image
+        """Performs a Laplacian on the image.
         Args:
             src: A numpy.ndarray.
             size: Odd number that is size of the kernel.

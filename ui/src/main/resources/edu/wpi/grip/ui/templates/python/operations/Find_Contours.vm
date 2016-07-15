@@ -1,6 +1,6 @@
     @staticmethod
     def $tMeth.name($step.name())(input, external_only):
-        """Sets the values of pixels in a binary image to their distance to the nearest black pixel
+        """Sets the values of pixels in a binary image to their distance to the nearest black pixel.
         Args:
             input: A numpy.ndarray.
             external_only: A boolean. If true only external contours are found.

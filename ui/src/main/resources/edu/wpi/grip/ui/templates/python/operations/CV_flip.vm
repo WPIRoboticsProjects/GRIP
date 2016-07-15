@@ -1,10 +1,10 @@
 #needs("FlipCode")
     @staticmethod
     def $tMeth.name($step.name())(src, flipcode):
-        """Flips an image along X, Y or both axes
+        """Flips an image along X, Y or both axes.
         Args:
             src: A numpy.ndarray.
-            flipcode: a flipcode enum to specify the diretion of the flip.
+            flipcode: A flipcode enum to specify the diretion of the flip.
         Returns:
             The flipped numpy.ndarray.
         """

@@ -1,8 +1,8 @@
     @staticmethod
     def $tMeth.name($step.name())(src, k_size, sigma_x, sigma_y, border_type):
-        """Performs a Gaussian blur on the image
+        """Performs a Gaussian blur on the image.
         Args:
-            src: a numpy.ndarray
+            src: A numpy.ndarray.
             k_size: A list of two numbers that represent the kernel size.
             sigma_x: The deviation in X for the Gaussian blur.
             sigma_y: The deviation in X for the Gaussian blur.

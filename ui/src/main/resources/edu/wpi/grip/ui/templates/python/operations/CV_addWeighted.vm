@@ -1,13 +1,13 @@
     @staticmethod
     def $tMeth.name($step.name())(src1, alpha, src2, beta, gamma):
-        """Computes the weighted addition of two Mats
+        """Computes the weighted addition of two Mats.
         Args:
-            src1: a numpy.ndarray
-            alpha: the weight for the first Mat
-            src2: a numpy.ndarray
-            beta: the weight for the second Mat
-            gamma: Constant to add to each sum
+            src1: A numpy.ndarray.
+            alpha: The weight for the first Mat.
+            src2: A numpy.ndarray.
+            beta: The weight for the second Mat.
+            gamma: Constant to add to each sum.
         Returns:
-            A numpy.ndarray
+            A numpy.ndarray.
         """
         return cv2.addWeighted(src1, alpha, src2, beta, gamma)

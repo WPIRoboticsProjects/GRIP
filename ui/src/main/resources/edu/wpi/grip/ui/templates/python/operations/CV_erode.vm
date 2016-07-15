@@ -1,6 +1,6 @@
     @staticmethod
     def $tMeth.name($step.name())(src, kernel, anchor, iterations, border_type, border_value):
-        """Expands area of lower value in an image
+        """Expands area of lower value in an image.
         Args:
            src: A numpy.ndarray.
            kernel: The kernel for erosion. A numpy.ndarray.

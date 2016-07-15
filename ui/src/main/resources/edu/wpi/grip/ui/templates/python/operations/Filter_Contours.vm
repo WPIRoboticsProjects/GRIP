@@ -4,18 +4,18 @@
                         min_ratio, max_ratio):
         """Filters out contours that do not meet certain criteria.
         Args:
-            input_contours: Contours as a list of numpy.ndarray
-            min_area: The minimum area of a contour that will be kept
-            min_perimeter: The minimum perimeter of a contour that will be kept
-            min_width: minimum width of a contour
-            max_width: maxWidth maximum width
-            min_height: minimum height
-            max_height: maximimum height
-            solidity: The minimum and maximum solidity of a contour
-            min_vertex_count: minimum vertex Count of the contours
-            max_vertex_count: maximum vertex Count
-            min_ratio: minimum ratio of width to height
-            max_ratio: maximum ratio of width to height
+            input_contours: Contours as a list of numpy.ndarray.
+            min_area: The minimum area of a contour that will be kept.
+            min_perimeter: The minimum perimeter of a contour that will be kept.
+            min_width: Minimum width of a contour.
+            max_width: MaxWidth maximum width.
+            min_height: Minimum height.
+            max_height: Maximimum height.
+            solidity: The minimum and maximum solidity of a contour.
+            min_vertex_count: Minimum vertex Count of the contours.
+            max_vertex_count: Maximum vertex Count.
+            min_ratio: Minimum ratio of width to height.
+            max_ratio: Maximum ratio of width to height.
         Returns:
             Contours as a list of numpy.ndarray.
         """

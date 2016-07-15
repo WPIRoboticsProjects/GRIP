@@ -1,6 +1,10 @@
     @staticmethod
     def $tMeth.name($step.name())(src):
-        """Converts a color image into shades of grey
+        """Converts a color image into shades of gray.
+        Args:
+            src: A color numpy.ndarray.
+        Returns:
+            A gray scale numpy.ndarray.
         """
         (a, b, channels) = src.shape
         if(channels == 1):

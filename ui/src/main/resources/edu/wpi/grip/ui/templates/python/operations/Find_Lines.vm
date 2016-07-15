@@ -1,7 +1,7 @@
 #parse("src/main/resources/edu/wpi/grip/ui/templates/python/operations/Lines.vm")
     @staticmethod
     def $tMeth.name($step.name())(input):
-        """Finds all line segments in an image
+        """Finds all line segments in an image.
         Args:
             input: A numpy.ndarray.
         Returns:

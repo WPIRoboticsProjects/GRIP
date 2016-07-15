@@ -1,6 +1,6 @@
     @staticmethod
     def $tMeth.name($step.name())(src, code):
-        """Converts an image from one color space to another
+        """Converts an image from one color space to another.
         Args:
            src: A numpy.ndarray.
            code: The conversion code. (opencv eum)

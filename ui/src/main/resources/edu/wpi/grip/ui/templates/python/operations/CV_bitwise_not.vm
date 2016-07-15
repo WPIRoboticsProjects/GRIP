@@ -2,8 +2,8 @@
     def $tMeth.name($step.name())(src1):
         """Computes the per element inverse of an image.
         Args:
-            src1: a numpy.ndarray
+            src1: A numpy.ndarray.
         Returns:
-            The inverse of the numpy.ndarray
+            The inverse of the numpy.ndarray.
         """
         return cv2.bitwise_not(src1)

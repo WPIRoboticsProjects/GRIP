@@ -2,10 +2,10 @@
     def $tMeth.name($step.name())(src, d_size, fx, fy, interpolation):
         """Resizes an Image.
         Args:
-            src: a numpy.ndarray.
+            src: A numpy.ndarray.
             d_size: Size to set the image.
             fx: The scale factor for the x.
-            fy: the scale factor for the y.
+            fy: The scale factor for the y.
             interpolation: Opencv enum for the type of interpolation.
         Returns:
             A resized numpy.ndarray.

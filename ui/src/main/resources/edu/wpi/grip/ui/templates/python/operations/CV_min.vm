@@ -1,6 +1,6 @@
     @staticmethod
     def $tMeth.name($step.name())(src1, src2):
-        """Performs a per element min
+        """Performs a per element min.
         Args:
             src1: A numpy.ndarray.
             src2: A numpy.ndarray.

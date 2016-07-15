@@ -1,6 +1,6 @@
     @staticmethod
     def $tMeth.name($step.name())(src, dx, dy, k_size, scale, delta, border_type):
-        """Find edges by calculating the requested derivative order for the given image
+        """Find edges by calculating the requested derivative order for the given image.
         Args:
             src: A numpy.ndarray.
             k_size: Odd number that is size of the kernel.
