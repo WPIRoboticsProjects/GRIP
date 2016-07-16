@@ -6,6 +6,7 @@ import edu.wpi.grip.core.Connection;
 import edu.wpi.grip.core.ManualPipelineRunner;
 import edu.wpi.grip.core.OperationMetaData;
 import edu.wpi.grip.core.Pipeline;
+import edu.wpi.grip.core.PipelineRunner;
 import edu.wpi.grip.core.Step;
 import edu.wpi.grip.core.events.ConnectionAddedEvent;
 import edu.wpi.grip.core.events.OperationAddedEvent;
@@ -77,7 +78,7 @@ public class ProjectTest {
 
     pipeline = injector.getInstance(Pipeline.class);
 
-    pipelineRunner = new ManualPipelineRunner(eventBus, pipeline);
+    pipelineRunner = (ManualPipelineRunner) injector.getInstance(PipelineRunner.class);
 
 
     additionOperation = new OperationMetaData(AdditionOperation.DESCRIPTION, () -> new
