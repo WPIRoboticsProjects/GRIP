@@ -58,12 +58,12 @@ public class AnalysisWindowController {
 
   private final Callback<StepAnalysisEntry, Observable[]> extractor =
       entry -> new Observable[] {entry.stepProperty(), entry.analysisProperty()};
-  private ObservableList<StepAnalysisEntry> tableItems
+  private final ObservableList<StepAnalysisEntry> tableItems
       = FXCollections.observableArrayList(extractor);
 
   private Analysis analysis = new Analysis();
   private Statistics lastStats = Statistics.NIL;
-  private Map<Step, TimeView> timeViewMap = new HashMap<>();
+  private final Map<Step, TimeView> timeViewMap = new HashMap<>();
 
   /**
    * Initializes the controller. This should only be called by the FXML loader.
