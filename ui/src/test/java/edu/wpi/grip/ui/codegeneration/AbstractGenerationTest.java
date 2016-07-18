@@ -74,8 +74,6 @@ public abstract class AbstractGenerationTest {
     assertTrue("Setup for " + testName + " reported an issue.", setup.getAsBoolean());
     String fileName = testName;
     gen.export(fileName);
-
-
     Language current = Language.JAVA;
     try {
       JavaPipelineInterfacer jpip = new JavaPipelineInterfacer(fileName + ".java");
