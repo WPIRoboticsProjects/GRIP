@@ -4,6 +4,7 @@ import edu.wpi.grip.core.sockets.Socket;
 import edu.wpi.grip.core.sockets.SocketHint;
 import edu.wpi.grip.generated.opencv_core.enumeration.BorderTypesEnum;
 import edu.wpi.grip.generated.opencv_core.enumeration.CmpTypesEnum;
+import edu.wpi.grip.generated.opencv_core.enumeration.LineTypesEnum;
 import edu.wpi.grip.ui.codegeneration.data.TStep;
 
 import com.google.common.base.CaseFormat;
@@ -67,7 +68,8 @@ public abstract class TemplateMethods {
     type.append(socket.getSocketHint().getType().getSimpleName());
     if (socket.getSocketHint().getView().equals(SocketHint.View.SELECT)
         && (BorderTypesEnum.class.equals(socket.getSocketHint().getType())
-        || CmpTypesEnum.class.equals(socket.getSocketHint().getType()))) {
+        || CmpTypesEnum.class.equals(socket.getSocketHint().getType())
+        || LineTypesEnum.class.equals(socket.getSocketHint().getType()))) {
       type.append("CoreEnum");
     }
 
