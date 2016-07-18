@@ -1,5 +1,5 @@
 	/**
-	 * Computes the per channel or of two Images.
+	 * Computes the per channel or of two images.
 	 * @param src1 The first image to use.
 	 * @param src2 The second image to use.
 	 * @param dst the result image when the or is performed.

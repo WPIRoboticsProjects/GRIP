@@ -35,27 +35,26 @@
 
 	/**
 	 * Softens an image using one of several filters.
-	 *
 	 * @param input The image on which to perform the blur.
 	 * @param type The blurType to perform.
 	 * @param doubleRadius The radius for the blur.
 	 * @param output The image in which to store the output.
 	 */
-	private void $tMeth.name($step.name())(Mat input, BlurType type, double doubleRadius, Mat
-	output) {
-		int radius = (int) (doubleRadius+0.5);
+	private void $tMeth.name($step.name())(Mat input, BlurType type, double doubleRadius,
+		Mat output) {
+		int radius = (int)(doubleRadius + 0.5);
 		int kernelSize;
 		switch(type){
 			case BOX:
-				kernelSize = 2*radius+1;
+				kernelSize = 2 * radius + 1;
 				Imgproc.blur(input, output, new Size(kernelSize, kernelSize));
 				break;
 			case GAUSSIAN:
-				kernelSize = 6*radius +1;
+				kernelSize = 6 * radius + 1;
 				Imgproc.GaussianBlur(input,output, new Size(kernelSize, kernelSize), radius);
 				break;
 			case MEDIAN:
-				kernelSize = 2*radius +1;
+				kernelSize = 2 * radius + 1;
 				Imgproc.medianBlur(input, output, kernelSize);
 				break;
 			case BILATERAL:

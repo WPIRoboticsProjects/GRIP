@@ -1,6 +1,5 @@
 	/**
 	 * Selects an output from two inputs based on a boolean.
-	 *
 	 * @param sw The boolean that determines the output.
 	 * @param onTrue The output if sw is true.
 	 * @param onFalse The output if sw is false.

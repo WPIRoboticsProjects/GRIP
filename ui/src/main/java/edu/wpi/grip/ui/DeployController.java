@@ -58,6 +58,7 @@ public class DeployController {
   private static final URL LOCAL_GRIP_URL = Project.class.getProtectionDomain().getCodeSource()
       .getLocation();
   private static final String LOCAL_GRIP_PATH = URLDecoder.decode(LOCAL_GRIP_URL.getPath());
+  private static final Logger logger = Logger.getLogger(DeployController.class.getName());
 
   @FXML
   private TextField address;
@@ -92,8 +93,6 @@ public class DeployController {
   private Project project;
   @Inject
   private SettingsProvider settingsProvider;
-  @Inject
-  private Logger logger;
 
   private Optional<Thread> deployThread = Optional.empty();
 
@@ -170,6 +169,7 @@ public class DeployController {
    * thread, and it periodically updates the GUI to inform the user of the current status of the
    * deployment.
    */
+  @SuppressWarnings("PMD.AvoidUsingOctalValues")
   private void deploy() {
     setStatusAsync("Connecting to " + address.getText(), false);
 

@@ -35,6 +35,7 @@ import static org.bytedeco.javacpp.opencv_imgcodecs.imencode;
  */
 public class PublishVideoOperation implements Operation {
 
+  private static final Logger logger = Logger.getLogger(PublishVideoOperation.class.getName());
   public static final OperationDescription DESCRIPTION =
       OperationDescription.builder()
           .name("Publish Video")
@@ -44,13 +45,15 @@ public class PublishVideoOperation implements Operation {
           .build();
   private static final int PORT = 1180;
   private static final byte[] MAGIC_NUMBER = {0x01, 0x00, 0x00, 0x00};
-  private static int numSteps = 0;
-  private final Logger logger = Logger.getLogger(PublishVideoOperation.class.getName());
+
+  @SuppressWarnings("PMD.AssignmentToNonFinalStatic")
+  private static int numSteps;
   private final Object imageLock = new Object();
   private final BytePointer imagePointer = new BytePointer();
   private final Thread serverThread;
   private final InputSocket<Mat> inputSocket;
   private final InputSocket<Number> qualitySocket;
+  @SuppressWarnings("PMD.SingularField")
   private volatile boolean connected = false;
   /**
    * Listens for incoming connections on port 1180 and writes JPEG data whenever there's a new
@@ -160,21 +163,18 @@ public class PublishVideoOperation implements Operation {
 
   @Override
   public void perform() {
-    Mat input = inputSocket.getValue().get();
-    Number quality = qualitySocket.getValue().get();
-
     if (!connected) {
       return; // Don't waste any time converting images if there's no dashboard connected
     }
 
-    if (input.empty()) {
+    if (inputSocket.getValue().get().empty()) {
       throw new IllegalArgumentException("Input image must not be empty");
     }
 
     synchronized (imageLock) {
-      imencode(".jpeg", input, imagePointer, new IntPointer(CV_IMWRITE_JPEG_QUALITY, quality
-          .intValue()));
-      imageLock.notify();
+      imencode(".jpeg", inputSocket.getValue().get(), imagePointer,
+          new IntPointer(CV_IMWRITE_JPEG_QUALITY, qualitySocket.getValue().get().intValue()));
+      imageLock.notifyAll();
     }
   }
 

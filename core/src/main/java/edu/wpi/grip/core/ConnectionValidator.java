@@ -19,14 +19,13 @@ public interface ConnectionValidator {
    * @return The return value of {@link #canConnect(OutputSocket, InputSocket)}
    */
   default boolean canConnect(Socket socket1, Socket socket2) {
-    final OutputSocket<?> outputSocket;
-    final InputSocket<?> inputSocket;
-
     // One socket must be an input and one must be an output
     if (socket1.getDirection() == socket2.getDirection()) {
       return false;
     }
 
+    final OutputSocket<?> outputSocket;
+    final InputSocket<?> inputSocket;
     if (socket1.getDirection().equals(Socket.Direction.OUTPUT)) {
       outputSocket = (OutputSocket) socket1;
       inputSocket = (InputSocket) socket2;

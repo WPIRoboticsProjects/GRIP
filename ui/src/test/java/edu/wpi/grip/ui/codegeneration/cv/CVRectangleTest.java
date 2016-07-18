@@ -82,7 +82,6 @@ public class CVRectangleTest extends AbstractGenerationTest {
     test(() -> setup("LINE_AA"), (pip) -> validate(pip), "cvRectATest");
   }
 
-  @Ignore("This enum does not exist in opencv java")
   @Test
   public void rectFTest() {
     test(() -> setup("FILLED"), (pip) -> validate(pip), "cvRectFTest");

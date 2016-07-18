@@ -35,7 +35,7 @@ public class LogTextArea extends TextArea {
       full = true;
       fullLog.append("[ERROR] Too much output to display. Discarding the rest.");
     } else if (!full) {
-      fullLog.append(data + "\n");
+      fullLog.append(data).append('\n');
     } else {
       return;
     }

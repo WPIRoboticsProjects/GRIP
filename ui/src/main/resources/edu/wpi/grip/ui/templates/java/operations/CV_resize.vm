@@ -1,5 +1,5 @@
 	/**
-	 * Resizes an Image.
+	 * Resizes an image.
 	 * @param src The image to resize.
 	 * @param dSize size to set the image.
 	 * @param fx scale factor along X axis.

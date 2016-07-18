@@ -131,7 +131,7 @@ public final class DataHandler extends PedanticHandler {
   public void onPipelineStop(@Nullable RunStoppedEvent e) {
     staleData.set(false);
     synchronized (runningLock) {
-      runningLock.notify();
+      runningLock.notifyAll();
     }
   }
 }

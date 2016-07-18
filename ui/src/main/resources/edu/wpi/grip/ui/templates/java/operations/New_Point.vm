@@ -1,5 +1,5 @@
 	/**
-	 * Fills a point with given x and y values
+	 * Fills a point with given x and y values.
 	 * @param x the x value to put in the point
 	 * @param y the y value to put in the point
 	 * @param point the point to fill

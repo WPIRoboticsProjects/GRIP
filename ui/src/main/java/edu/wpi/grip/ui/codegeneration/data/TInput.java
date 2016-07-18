@@ -41,13 +41,13 @@ public class TInput extends TSocket {
 
   @Override
   String baseTypeHelper(String type) {
-    if (type.equals("Integer")) {
+    if ("Integer".equals(type)) {
       return "int";
     }
-    if (type.equals("Boolean")) {
+    if ("Boolean".equals(type)) {
       return "boolean";
     }
-    if (type.equals("Double")) {
+    if ("Double".equals(type)) {
       return "double";
     }
     return type;

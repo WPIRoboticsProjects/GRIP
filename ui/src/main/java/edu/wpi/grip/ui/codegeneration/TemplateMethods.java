@@ -4,6 +4,7 @@ import edu.wpi.grip.core.sockets.Socket;
 import edu.wpi.grip.core.sockets.SocketHint;
 import edu.wpi.grip.generated.opencv_core.enumeration.BorderTypesEnum;
 import edu.wpi.grip.generated.opencv_core.enumeration.CmpTypesEnum;
+import edu.wpi.grip.generated.opencv_core.enumeration.LineTypesEnum;
 import edu.wpi.grip.ui.codegeneration.data.TStep;
 
 import java.nio.DoubleBuffer;
@@ -18,6 +19,7 @@ public abstract class TemplateMethods {
 
   /**
    * gets a TemplateMethod of the desired language.
+   *
    * @param lang the desired language that will be exported
    * @return The template method of the correct language.
    */
@@ -37,12 +39,14 @@ public abstract class TemplateMethods {
 
   /**
    * takes a socket and returns the value.
+   *
    * @param socket the socket to be parsed
    * @return the value of the socket or "null" if there is no value
    */
   public static String parseSocketValue(Socket socket) {
     if (socket.getValue().isPresent() && !socket.getValue().get().toString()
-        .contains("bytedeco") &&  !socket.getValue().get().toString().contains("Infinity")) {
+        .contains("bytedeco") && !socket.getValue().get().toString().contains("Infinity")
+        && !socket.getValue().get().toString().contains("ContoursReport")) {
       return socket.getValue().get().toString();
     }
     else {
@@ -79,6 +83,7 @@ public abstract class TemplateMethods {
 
   /**
    * Takes a socket and returns the Name.
+   *
    * @param socket the socket to be parsed
    * @return the name in Lower camel case.
    */
@@ -94,18 +99,21 @@ public abstract class TemplateMethods {
    * @return The type of the socket with any needed additional information.
    */
   public static String parseSocketType(Socket socket) {
-    String type = socket.getSocketHint().getType().getSimpleName();
-    if (socket.getSocketHint().getView().equals(SocketHint.View.SELECT)) {
-      if (BorderTypesEnum.class.equals(socket.getSocketHint().getType()) || CmpTypesEnum.class
-          .equals(socket.getSocketHint().getType())) {
-        type += "CoreEnum";
-      }
+    StringBuffer type = new StringBuffer();
+    type.append(socket.getSocketHint().getType().getSimpleName());
+    if (socket.getSocketHint().getView().equals(SocketHint.View.SELECT)
+        && (BorderTypesEnum.class.equals(socket.getSocketHint().getType())
+        || CmpTypesEnum.class.equals(socket.getSocketHint().getType())
+        || LineTypesEnum.class.equals(socket.getSocketHint().getType()))) {
+      type.append("CoreEnum");
     }
-    return type;
+
+    return type.toString();
   }
 
   /**
    * Converts a name into the format for the correct language.
+   *
    * @param name the unformatted name
    * @return the name after it has been formatted
    */
@@ -114,6 +122,7 @@ public abstract class TemplateMethods {
   /**
    * Converts a step into a string the represents the call of the operation in the correct language.
    * Used in the Templates
+   *
    * @param step the step that will be called
    * @return a string that is the call to the operation.
    */

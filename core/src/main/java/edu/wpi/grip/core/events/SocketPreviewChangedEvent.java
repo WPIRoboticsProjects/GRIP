@@ -11,7 +11,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * The GUI listens for these events so it knows which sockets to show previews for.
  */
 public class SocketPreviewChangedEvent {
-  private OutputSocket socket;
+  private final OutputSocket socket;
 
   /**
    * @param socket The socket being previewed.

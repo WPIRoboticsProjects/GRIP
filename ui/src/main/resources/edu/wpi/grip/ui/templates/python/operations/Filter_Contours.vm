@@ -2,6 +2,23 @@
     def $tMeth.name($step.name())(input_contours, min_area, min_perimeter, min_width, max_width,
                         min_height, max_height, solidity, max_vertex_count, min_vertex_count,
                         min_ratio, max_ratio):
+        """Filters out contours that do not meet certain criteria.
+        Args:
+            input_contours: Contours as a list of numpy.ndarray.
+            min_area: The minimum area of a contour that will be kept.
+            min_perimeter: The minimum perimeter of a contour that will be kept.
+            min_width: Minimum width of a contour.
+            max_width: MaxWidth maximum width.
+            min_height: Minimum height.
+            max_height: Maximimum height.
+            solidity: The minimum and maximum solidity of a contour.
+            min_vertex_count: Minimum vertex Count of the contours.
+            max_vertex_count: Maximum vertex Count.
+            min_ratio: Minimum ratio of width to height.
+            max_ratio: Maximum ratio of width to height.
+        Returns:
+            Contours as a list of numpy.ndarray.
+        """
         output = []
         for contour in input_contours:
             x,y,w,h = cv2.boundingRect(contour)

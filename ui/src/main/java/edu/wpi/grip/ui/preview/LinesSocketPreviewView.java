@@ -8,10 +8,7 @@ import edu.wpi.grip.ui.util.ImageConverter;
 
 import com.google.common.eventbus.Subscribe;
 
-import org.bytedeco.javacpp.opencv_core;
-
 import java.util.List;
-
 import javafx.application.Platform;
 import javafx.geometry.Orientation;
 import javafx.scene.control.CheckBox;
@@ -42,7 +39,8 @@ public class LinesSocketPreviewView extends SocketPreviewView<LinesReport> {
   private final Label infoLabel = new Label();
   private final Mat tmp = new Mat();
   private final GripPlatform platform;
-  private boolean showInputImage = false;
+  @SuppressWarnings("PMD.ImmutableField")
+  private boolean showInputImage;
 
   /**
    * @param socket An output socket to preview.
@@ -97,8 +95,8 @@ public class LinesSocketPreviewView extends SocketPreviewView<LinesReport> {
 
         // For each line in the report, draw a line along with the starting and ending points
         for (LinesReport.Line line : lines) {
-          final opencv_core.Point startPoint = new Point((int) line.x1, (int) line.y1);
-          final opencv_core.Point endPoint = new Point((int) line.x2, (int) line.y2);
+          final Point startPoint = new Point((int) line.x1, (int) line.y1);
+          final Point endPoint = new Point((int) line.x2, (int) line.y2);
           line(input, startPoint, endPoint, Scalar.WHITE, 2, LINE_8, 0);
           circle(input, startPoint, 2, Scalar.WHITE, 2, LINE_8, 0);
           circle(input, endPoint, 2, Scalar.WHITE, 2, LINE_8, 0);
