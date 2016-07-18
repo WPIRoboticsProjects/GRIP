@@ -406,7 +406,7 @@ public class CVOperations {
     CVAdaptThresholdTypesEnum(int value) {
       this.value = value;
     }
-    }
+  }
 
   public enum CVBorderTypesEnum {
 
