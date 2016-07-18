@@ -10,6 +10,8 @@ import com.google.common.eventbus.Subscribe;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.concurrent.atomic.AtomicReference;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -53,7 +55,7 @@ public class BenchmarkRunnerTest {
   @Test
   public void testCancelBenchmark() {
     benchmarkRunner.run(1);
-    assertTrue("Runner is not running", benchmarkRunner.isRunning());
+    assertTrue("Runner is not running after cal to run()", benchmarkRunner.isRunning());
     assertEquals("Runs remaining != 1", 1, benchmarkRunner.getRunsRemaining());
     eventBus.post(BenchmarkEvent.finished());
     checkDefaultState();
@@ -61,8 +63,8 @@ public class BenchmarkRunnerTest {
 
   @Test
   public void testRuns() {
-    ThreadLocal<BenchmarkEvent> benchmarkEventStart = new ThreadLocal<>();
-    ThreadLocal<BenchmarkEvent> benchmarkEventFinish = new ThreadLocal<>();
+    AtomicReference<BenchmarkEvent> benchmarkEventStart = new AtomicReference<>();
+    AtomicReference<BenchmarkEvent> benchmarkEventFinish = new AtomicReference<>();
     eventBus.register(new Object() {
       @Subscribe
       public void onBenchmarkEvent(BenchmarkEvent event) {
@@ -76,18 +78,17 @@ public class BenchmarkRunnerTest {
     checkDefaultState();
     benchmarkRunner.run(2);
     assertNotNull("No 'started' benchmark event fired", benchmarkEventStart.get());
-    assertTrue("Runner is not running", benchmarkRunner.isRunning());
+    assertTrue("Runner is not running after call to run()", benchmarkRunner.isRunning());
     assertEquals("Runs remaining != 2", 2, benchmarkRunner.getRunsRemaining());
     eventBus.post(new RunStartedEvent());
-    assertTrue("Runner is not running", benchmarkRunner.isRunning());
+    assertTrue("Runner is not running after first start", benchmarkRunner.isRunning());
     assertEquals("Runs remaining != 1", 1, benchmarkRunner.getRunsRemaining());
     eventBus.post(new RunStoppedEvent());
     eventBus.post(new RunStartedEvent());
-    assertTrue("Runner is not running", benchmarkRunner.isRunning());
+    assertTrue("Runner is not running after second start", benchmarkRunner.isRunning());
     assertEquals("Runs remaining != 0", 0, benchmarkRunner.getRunsRemaining());
     eventBus.post(new RunStoppedEvent());
-    assertFalse("Runner is running", benchmarkRunner.isRunning());
-    assertEquals("Runs remaining != 0", 0, benchmarkRunner.getRunsRemaining());
+    checkDefaultState();
     assertNotNull("No 'finished' benchmark event fired", benchmarkEventFinish.get());
   }
 

@@ -30,7 +30,7 @@ public class MockTimer extends Timer {
    */
   public static final class MockTicker extends Ticker {
 
-    private final long tickSize = 1_000_000_000;
+    private static final long tickSize = 1_000_000_000;
     private long tick = 0;
 
     @Override
