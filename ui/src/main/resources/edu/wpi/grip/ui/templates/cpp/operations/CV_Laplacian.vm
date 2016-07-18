@@ -7,7 +7,6 @@
 	 * @param borderType pixel extrapolation method.
 	 * @param dst Ouput of Laplacian. 
 	 */
-	void $tMeth.name($step.name())(Mat *src, double *size, double *scale, double *delta,
-		int *borderType, Mat *dst) {
-		Laplacian(*src, *dst, 0, (int)*size, *scale, *delta, *borderType);
+	void $fileName::#func($step ["src", "size", "scale", "delta", "borderType", "dst"]) {
+		Laplacian(src, dst, 0, (int)size, scale, delta, borderType);
 	}

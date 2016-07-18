@@ -4,6 +4,6 @@
 	 * @param code conversion code.
 	 * @param dst converted Image.
 	 */
-	void $tMeth.name($step.name())(Mat *src, int *code, Mat *dst) {
-		cvtColor(*src, *dst, *code);
+	void $fileName::#func($step ["src", "code", "dst"]) {
+		cvtColor(src, dst, code);
 	}

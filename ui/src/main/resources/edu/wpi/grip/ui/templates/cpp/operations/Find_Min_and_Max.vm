@@ -7,7 +7,6 @@
 	 * @param minLoc the location of the minimum value.
 	 * @param maxLoc the location of the maximum value.
 	 */
-	void $tMeth.name($step.name())(Mat *src, Mat *mask, double *minVal,
-		double*maxVal, Point *minLoc, Point *maxLoc) {
-		minMaxLoc(*src, minVal, maxVal, minLoc, maxLoc, *mask);
+	void $fileName::#func($step ["src", "mask", "minVal", "maxVal", "minLoc", "maxLoc"]) {
+		minMaxLoc(src, &minVal, &maxVal, &minLoc, &maxLoc, mask);
 	}

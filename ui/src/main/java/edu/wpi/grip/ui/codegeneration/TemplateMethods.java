@@ -6,7 +6,13 @@ import edu.wpi.grip.generated.opencv_core.enumeration.BorderTypesEnum;
 import edu.wpi.grip.generated.opencv_core.enumeration.CmpTypesEnum;
 import edu.wpi.grip.ui.codegeneration.data.TStep;
 
+import java.nio.DoubleBuffer;
+import java.util.Optional;
+
 import com.google.common.base.CaseFormat;
+import org.bytedeco.javacpp.opencv_core.Point;
+import org.bytedeco.javacpp.opencv_core.Scalar;
+import org.bytedeco.javacpp.opencv_core.Size;
 
 public abstract class TemplateMethods {
 
@@ -38,6 +44,35 @@ public abstract class TemplateMethods {
     if (socket.getValue().isPresent() && !socket.getValue().get().toString()
         .contains("bytedeco") &&  !socket.getValue().get().toString().contains("Infinity")) {
       return socket.getValue().get().toString();
+    }
+    else {
+      Optional initValOptional = socket.getSocketHint().createInitialValue();
+      if(initValOptional.isPresent()) {
+        Object initVal = initValOptional.get();
+        String type = parseSocketType(socket);
+        StringBuilder valueBuilder = new StringBuilder();
+        if(type.equalsIgnoreCase("Point")) {
+          Point pointVal = (Point) initVal;
+          valueBuilder.append("(").append(pointVal.x()).append(", ").append(pointVal.y()).append(")");
+        }
+        else if(type.equalsIgnoreCase("Size")) {
+          Size sizeVal = (Size) initVal;
+          valueBuilder.append("(").append(sizeVal.width()).append(", ")
+          .append(sizeVal.height()).append(")");
+        }
+        else if(type.equals("Scalar")) {
+          Scalar scaleVal = (Scalar) initVal;
+          DoubleBuffer buff = scaleVal.asBuffer();
+          valueBuilder.append("(").append(buff.get());
+          while(buff.hasRemaining()) {
+            valueBuilder.append(", ").append(buff.get());
+          }
+          valueBuilder.append(")");
+        }
+        if(valueBuilder.length()>0) {
+          return valueBuilder.toString();
+        }
+      }
     }
     return "null";
   }

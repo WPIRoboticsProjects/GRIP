@@ -89,7 +89,7 @@ JNIEXPORT void JNICALL Java_edu_wpi_grip_ui_codegeneration_tools_CppPipelineInte
   AbsPipeline *inst = getHandle<AbsPipeline>(env, obj);
   string name = jstringToString(env, fileName);
   Mat img = imread(name, 1);
-  (inst->*(inst->getMatSources()[(int) sourceNum]))(&img);
+  (inst->*(inst->getMatSources()[(int) sourceNum]))(img);
 }
   
 /**
@@ -298,7 +298,5 @@ JNIEXPORT jobjectArray JNICALL Java_edu_wpi_grip_ui_codegeneration_tools_CppPipe
 JNIEXPORT void JNICALL Java_edu_wpi_grip_ui_codegeneration_tools_CppPipelineInterfacer_setNumSource
   (JNIEnv *env, jobject obj, jint num, jdouble value) {
    AbsPipeline *inst = getHandle<AbsPipeline>(env, obj);
-   double* input = (double *) malloc(sizeof(double));
-   *input = (double) value;
-   (inst->*(inst->getNumSources()[(int) num]))(input);
+   (inst->*(inst->getNumSources()[(int) num]))((double)value);
   }

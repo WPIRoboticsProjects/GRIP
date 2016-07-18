@@ -7,21 +7,22 @@
 	 * @param darkBlobs The boolean that determines if light or dark blobs are found.
 	 * @param blobList The output where the MatOfKeyPoint is stored.
 	 */
-	void $tMeth.name($step.name())(Mat *input, double *minArea, double circularity[2],
-		bool *darkBlobs, vector<KeyPoint> *blobList) {
-		blobList->clear();
+	//void $tMeth.name($step.name())(Mat *input, double *minArea, double circularity[2],
+		//bool *darkBlobs, vector<KeyPoint> *blobList) {
+	void $fileName::#func($step ["input", "minArea", "circularity", "darkBlobs", "blobList"]) {
+		blobList.clear();
 		SimpleBlobDetector::Params params;
 		params.filterByColor = 1;
 		params.blobColor = (darkBlobs ? 0 : 255);
 		params.minThreshold = 10;
 		params.maxThreshold = 220;
 		params.filterByArea = true;
-		params.minArea = *minArea;
+		params.minArea = minArea;
 		params.filterByCircularity = true;
 		params.minCircularity = circularity[0];
 		params.maxCircularity = circularity[1];
 		params.filterByConvexity = false;
 		params.filterByInertia = false;
 		Ptr<SimpleBlobDetector> detector = SimpleBlobDetector::create(params);
-		detector->detect(*input, *blobList);
+		detector->detect(input, blobList);
 	}

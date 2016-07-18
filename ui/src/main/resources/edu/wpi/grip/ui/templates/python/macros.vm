@@ -15,7 +15,8 @@ $input.type().contains("Type") || $input.type().equals("Interpolation"))
 #input($inp) = True#elseif ($inp.type().equals("List"))
 #set($inputEndValue = $inp.value().length() - 1)
 #input($inp) = [$inp.value().substring(1,$inputEndValue)]#elseif ($inp.type().equals("String"))
-#input($inp) = "$inp.value()"
+#input($inp) = "$inp.value()"#elseif($inp.type().equals("Size") || $inp.type().equals("Point") || $inp.type().equals("Scalar"))
+#input($inp) = $inp.value()
 #else
 #input($inp) = $inp.value()#end
 #else##connected socket

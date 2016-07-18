@@ -5,8 +5,8 @@
 		 * @param mask The binary image that is used to filter.
 		 * @param output The image in which to store the output.
 		 */
-		void $tMeth.name($step.name())(Mat *input, Mat *mask, Mat *output) {
-			mask->convertTo(*mask, CV_8UC1);
-			bitwise_xor(*output, *output, *output);
-			input->copyTo(*output, *mask);
+		void $fileName::#func($step ["input", "mask", "output"]) {
+			mask.convertTo(mask, CV_8UC1);
+			bitwise_xor(output, output, output);
+			input.copyTo(output, mask);
 		}

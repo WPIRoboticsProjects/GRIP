@@ -6,11 +6,11 @@
 	 * @param output The output which is equal to the input or null.
 	 */
 	template<typename T>
-	void pipelineValve(bool *sw, T *input, T *output) {
-		if (*sw) {
-			*output = *input;
+	void $fileName::#func($step ["sw", "input", "output"]) {
+		if (sw) {
+			output = input;
 		}
 		else {
-			*output = NULL;
+			output = NULL;
 		}
 	}

@@ -5,6 +5,6 @@
 	 * @param src2 second image.
 	 * @param dst output image
 	 */
-	void $tMeth.name($step.name())(Mat *src1, double *scale, Mat *src2, Mat *dst) {
-		scaleAdd(*src1, *scale, *src2, *dst);
+	void $fileName::#func($step ["src1", "scale", "src2", "dst"]) {
+		scaleAdd(src1, scale, src2, dst);
 	}

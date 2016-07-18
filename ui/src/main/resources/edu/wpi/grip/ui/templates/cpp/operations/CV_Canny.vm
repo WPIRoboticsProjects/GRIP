@@ -7,7 +7,6 @@
 	 * @param gradient if the L2 norm should be used.
 	 * @param edges output of the canny.
 	 */
-	void $tMeth.name($step.name())(Mat *image, double *thres1, double *thres2, double *apertureSize,
-	bool *gradient, Mat *edges) {
-		Canny(*image, *edges, *thres1, *thres2, (int)*apertureSize, *gradient);
+	void $fileName::#func($step ["image", "thres1", "thres2", "apertureSize", "gradient", "edges"]) {
+		Canny(image, edges, thres1, thres2, (int)apertureSize, gradient);
 	}

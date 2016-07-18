@@ -8,16 +8,6 @@
 	 * @param borderValue value to be used for a constant border.
 	 * @param dst Output Image.
 	 */
-	void $tMeth.name($step.name())(Mat *src, Mat *kernel, Point *anchor, double *iterations, int
-	*borderType, Scalar *borderValue, Mat *dst) {
-		if (!kernel) {
-			Mat kernel;
-		}
-		if (!anchor) {
-			Point anchor(-1,-1);
-		}
-		if (!borderValue) {
-			Scalar borderValue(-1);
-		}
-		dilate(*src, *dst, *kernel, *anchor, (int)*iterations, *borderType, *borderValue);
+	void $fileName::#func($step ["src", "kernel", "anchor", "iterations", "borderType", "borderValue", "dst"]) {
+		dilate(src, dst, kernel, anchor, (int)iterations, borderType, borderValue);
 	}
