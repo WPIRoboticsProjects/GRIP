@@ -1,10 +1,12 @@
-		//input
+		//Inputs
 #foreach($input in $step.getInputs())
 #newInput($input)
 #end
-		//output
+#set($outputCom = 1)
 #foreach($output in $step.getOutputs())
 #if($output.mutable())
+#if($outputCom == 1)
+		//Outputs #set($outputCom = 0)#end
 		#MutOf($output.type()) mutOf${tMeth.name($output.name())} = new #MutOf($output.type())();
 #end
 #end
