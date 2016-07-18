@@ -362,6 +362,8 @@ project(":ui") {
         // and as such, would be useless.
         // See: https://plumbr.eu/blog/java/on-a-quest-for-missing-stacktraces
         jvmArgs = ["-XX:-OmitStackTraceInFastThrow"]
+
+        systemProperties = ['javafx.preloader':'edu.wpi.grip.ui.GripPreloader' ]
     }
     mainClassName = javafx.mainClass
 

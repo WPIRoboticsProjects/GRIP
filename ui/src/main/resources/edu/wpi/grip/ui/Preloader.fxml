@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import edu.wpi.grip.ui.util.DPIUtility?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.ProgressBar?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <ImageView pickOnBounds="true" preserveRatio="true">
+         <fitWidth>
+            <DPIUtility fx:constant="EXTRA_LARGE_ICON_SIZE" />
+         </fitWidth>
+         <image>
+            <Image url="@grip-full-logo.png" />
+         </image>
+         <VBox.margin>
+            <Insets bottom="25.0" />
+         </VBox.margin>
+      </ImageView>
+      <ProgressBar fx:id="progressBar" maxWidth="1.7976931348623157E308" />
+   </children>
+   <padding>
+      <Insets bottom="25.0" left="25.0" right="25.0" top="25.0" />
+   </padding>
+</VBox>

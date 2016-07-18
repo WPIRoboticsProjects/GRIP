@@ -58,14 +58,14 @@ public class Main extends Application {
   @Inject private GripServer server;
   @Inject private HttpPipelineSwitcher pipelineSwitcher;
   private Parent root;
+  private boolean headless;
 
   public static void main(String[] args) {
     launch(args);
   }
 
   @Override
-  @SuppressWarnings("PMD.SignatureDeclareThrowsException")
-  public void start(Stage stage) throws Exception {
+  public void init() throws IOException {
     List<String> parameters = new ArrayList<>(getParameters().getRaw());
 
     if (parameters.contains("--headless")) {
@@ -76,6 +76,7 @@ public class Main extends Application {
       injector.injectMembers(this);
 
       parameters.remove("--headless");
+      headless = true;
     } else {
       // Otherwise, run with both the core and UI modules, and show the JavaFX stage
       injector = Guice.createInjector(Modules.override(new GripCoreModule(), new GripFileModule(),
@@ -88,17 +89,6 @@ public class Main extends Application {
       Font.loadFont(this.getClass().getResource("roboto/Roboto-Bold.ttf").openStream(), -1);
       Font.loadFont(this.getClass().getResource("roboto/Roboto-Italic.ttf").openStream(), -1);
       Font.loadFont(this.getClass().getResource("roboto/Roboto-BoldItalic.ttf").openStream(), -1);
-
-      root = FXMLLoader.load(Main.class.getResource("MainWindow.fxml"), null, null,
-          injector::getInstance);
-      root.setStyle("-fx-font-size: " + DPIUtility.FONT_SIZE + "px");
-
-      // If this isn't here this can cause a deadlock on windows. See issue #297
-      stage.setOnCloseRequest(event -> SafeShutdown.exit(0, Platform::exit));
-      stage.setTitle("GRIP Computer Vision Engine");
-      stage.getIcons().add(new Image("/edu/wpi/grip/ui/icons/grip.png"));
-      stage.setScene(new Scene(root));
-      stage.show();
     }
 
     operations.addOperations();
@@ -117,6 +107,22 @@ public class Main extends Application {
     }
 
     pipelineRunner.startAsync();
+  }
+
+  @Override
+  public void start(Stage stage) throws IOException {
+    if (!headless) {
+      root = FXMLLoader.load(Main.class.getResource("MainWindow.fxml"), null, null,
+          injector::getInstance);
+      root.setStyle("-fx-font-size: " + DPIUtility.FONT_SIZE + "px");
+
+      // If this isn't here this can cause a deadlock on windows. See issue #297
+      stage.setOnCloseRequest(event -> SafeShutdown.exit(0, Platform::exit));
+      stage.setTitle("GRIP Computer Vision Engine");
+      stage.getIcons().add(new Image("/edu/wpi/grip/ui/icons/grip.png"));
+      stage.setScene(new Scene(root));
+      stage.show();
+    }
   }
 
   public void stop() {
