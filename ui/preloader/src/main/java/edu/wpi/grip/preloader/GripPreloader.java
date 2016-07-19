@@ -22,6 +22,7 @@ public final class GripPreloader extends Preloader {
     progressBar = (ProgressBar) root.getChildrenUnmodifiable().filtered(
         p -> p instanceof ProgressBar).get(0);
 
+    System.setProperty("prism.lcdtext", "false");
     preloaderStage.setScene(scene);
     preloaderStage.initStyle(StageStyle.TRANSPARENT);
     preloaderStage.setAlwaysOnTop(true);

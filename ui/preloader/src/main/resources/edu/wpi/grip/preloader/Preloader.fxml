@@ -5,16 +5,20 @@
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.stage.Screen?>
 
 <VBox xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1">
    <children>
-      <ImageView fitWidth="480" pickOnBounds="true" preserveRatio="true">
+      <ImageView fitWidth="${screen.visualBounds.width / 4}" pickOnBounds="true" preserveRatio="true">
          <image>
-            <Image url="@grip-full-logo.png" />
+            <Image url="@grip.png" />
          </image>
          <VBox.margin>
             <Insets bottom="25.0" />
          </VBox.margin>
+         <fx:define>
+            <Screen fx:factory="getPrimary" fx:id="screen"/>
+         </fx:define>
       </ImageView>
       <ProgressBar maxWidth="1.7976931348623157E308" />
    </children>
