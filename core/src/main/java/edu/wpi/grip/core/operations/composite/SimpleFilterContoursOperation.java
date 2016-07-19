@@ -14,9 +14,7 @@ import java.util.List;
 
 import static org.bytedeco.javacpp.opencv_core.Mat;
 import static org.bytedeco.javacpp.opencv_core.MatVector;
-import static org.bytedeco.javacpp.opencv_core.Rect;
 import static org.bytedeco.javacpp.opencv_imgproc.arcLength;
-import static org.bytedeco.javacpp.opencv_imgproc.boundingRect;
 import static org.bytedeco.javacpp.opencv_imgproc.contourArea;
 
 /**
@@ -90,16 +88,12 @@ public class SimpleFilterContoursOperation implements Operation {
 
     final MatVector inputContours = inputSocket.getValue().get().getContours();
     final MatVector outputContours = new MatVector(inputContours.size());
-    final Mat hull = new Mat();
 
     // Add contours from the input vector to the output vector only if they pass all of the
-    // criteria (minimum
-    // area, minimum perimeter, width, and height, etc...)
+    // criteria (minimum area, minimum perimeter)
     int filteredContourCount = 0;
     for (int i = 0; i < inputContours.size(); i++) {
       final Mat contour = inputContours.get(i);
-
-      final Rect bb = boundingRect(contour);
 
       final double area = contourArea(contour);
       if (area < minArea) {
