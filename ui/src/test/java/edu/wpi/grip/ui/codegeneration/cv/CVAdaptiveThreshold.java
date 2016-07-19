@@ -3,6 +3,7 @@ package edu.wpi.grip.ui.codegeneration.cv;
 import edu.wpi.grip.core.ManualPipelineRunner;
 import edu.wpi.grip.core.OperationMetaData;
 import edu.wpi.grip.core.Step;
+import edu.wpi.grip.core.operations.CVOperations;
 import edu.wpi.grip.core.operations.composite.DesaturateOperation;
 import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.sockets.OutputSocket;
@@ -27,7 +28,8 @@ public class CVAdaptiveThreshold extends AbstractGenerationTest {
   private final double thresh = 50;
   private final double maxval = 200;
 
-  boolean setup(AdaptiveThresholdTypesEnum adaptMethod, ThresholdTypesEnum threshMethod) {
+  boolean setup(AdaptiveThresholdTypesEnum adaptMethod,
+                CVOperations.CVAdaptThresholdTypesEnum threshMethod) {
     Step desat = gen.addStep(new OperationMetaData(DesaturateOperation.DESCRIPTION, () -> new
         DesaturateOperation(isf, osf)));
     ImageFileSource img = loadImage(Files.gompeiJpegFile);
@@ -51,25 +53,29 @@ public class CVAdaptiveThreshold extends AbstractGenerationTest {
   @Test
   public void binaryMeanTest() {
     test(() -> setup(AdaptiveThresholdTypesEnum.ADAPTIVE_THRESH_MEAN_C, 
-        ThresholdTypesEnum.THRESH_BINARY), (pip) -> validate(pip), "cvBinaryMeanATTest");
+        CVOperations.CVAdaptThresholdTypesEnum.THRESH_BINARY),
+        (pip) -> validate(pip), "cvBinaryMeanATTest");
   }
 
   @Test
   public void binaryInvMeanTest() {
     test(() -> setup(AdaptiveThresholdTypesEnum.ADAPTIVE_THRESH_MEAN_C,
-        ThresholdTypesEnum.THRESH_BINARY_INV), (pip) -> validate(pip), "cvBinaryInvMeanATTest");
+        CVOperations.CVAdaptThresholdTypesEnum.THRESH_BINARY_INV),
+        (pip) -> validate(pip), "cvBinaryInvMeanATTest");
   }
 
   @Test
   public void binaryGaussianTest() {
     test(() -> setup(AdaptiveThresholdTypesEnum.ADAPTIVE_THRESH_GAUSSIAN_C,
-        ThresholdTypesEnum.THRESH_BINARY), (pip) -> validate(pip), "cvBinaryGaussianATTest");
+        CVOperations.CVAdaptThresholdTypesEnum.THRESH_BINARY),
+        (pip) -> validate(pip), "cvBinaryGaussianATTest");
   }
 
   @Test
   public void binaryInvGaussianTest() {
     test(() -> setup(AdaptiveThresholdTypesEnum.ADAPTIVE_THRESH_GAUSSIAN_C,
-        ThresholdTypesEnum.THRESH_BINARY_INV), (pip) -> validate(pip), "cvBinaryInvGaussianATTest");
+        CVOperations.CVAdaptThresholdTypesEnum.THRESH_BINARY_INV),
+        (pip) -> validate(pip), "cvBinaryInvGaussianATTest");
   }
 
   void validate(PipelineInterfacer pip) {

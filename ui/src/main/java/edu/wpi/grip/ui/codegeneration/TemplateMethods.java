@@ -1,5 +1,6 @@
 package edu.wpi.grip.ui.codegeneration;
 
+import edu.wpi.grip.core.operations.CVOperations;
 import edu.wpi.grip.core.sockets.Socket;
 import edu.wpi.grip.core.sockets.SocketHint;
 import edu.wpi.grip.generated.opencv_core.enumeration.BorderTypesEnum;
@@ -66,10 +67,10 @@ public abstract class TemplateMethods {
   public static String parseSocketType(Socket socket) {
     StringBuffer type = new StringBuffer();
     type.append(socket.getSocketHint().getType().getSimpleName());
-    if (socket.getSocketHint().getView().equals(SocketHint.View.SELECT)
-        && (BorderTypesEnum.class.equals(socket.getSocketHint().getType())
+    if (BorderTypesEnum.class.equals(socket.getSocketHint().getType())
         || CmpTypesEnum.class.equals(socket.getSocketHint().getType())
-        || LineTypesEnum.class.equals(socket.getSocketHint().getType()))) {
+        || CVOperations.CVBorderTypesEnum.class.equals(socket.getSocketHint().getType())
+        || LineTypesEnum.class.equals(socket.getSocketHint().getType())) {
       type.append("CoreEnum");
     }
 

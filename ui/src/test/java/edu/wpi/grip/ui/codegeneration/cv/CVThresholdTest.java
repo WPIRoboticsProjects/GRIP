@@ -71,12 +71,6 @@ public class CVThresholdTest extends AbstractGenerationTest {
     test(() -> setup("THRESH_TOZERO_Inv"), (pip) -> validate(pip), "cvThresholdZeroInvTest");
   }
 
-  @Ignore("This setting crashes grip")
-  @Test
-  public void thresholdMaskTest() {
-    test(() -> setup("THRESH_MASK"), (pip) -> validate(pip), "cvThresholdMaskTest");
-  }
-
   @Test
   public void thresholdOtsuTest() {
     test(() -> setup("THRESH_OTSU"), (pip) -> validate(pip), "cvThresholdOtsuTest");
