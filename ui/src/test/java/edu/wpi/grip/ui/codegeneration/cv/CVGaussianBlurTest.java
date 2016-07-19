@@ -71,12 +71,6 @@ public class CVGaussianBlurTest extends AbstractGenerationTest {
     test(() -> setup("BORDER_REFLECT"), (pip) -> validate(pip), "cvgaussianRefTest");
   }
 
-  @Ignore("Causes an error in the grip pipeline")
-  @Test
-  public void gaussianWrTest() {
-    test(() -> setup("BORDER_WRAP"), (pip) -> validate(pip), "cvgaussianWrTest");
-  }
-
   @Test
   public void gaussianRef1Test() {
     test(() -> setup("BORDER_REFLECT_101"), (pip) -> validate(pip), "cvgaussianRef1Test");
@@ -85,12 +79,6 @@ public class CVGaussianBlurTest extends AbstractGenerationTest {
   @Test
   public void gaussianRefN1Test() {
     test(() -> setup("BORDER_REFLECT101"), (pip) -> validate(pip), "cvgaussianRefN1Test");
-  }
-
-  @Ignore("Causes an error in the grip pipeline")
-  @Test
-  public void gaussianTrTest() {
-    test(() -> setup("BORDER_TRANSPARENT"), (pip) -> validate(pip), "cvgaussianTrTest");
   }
 
   @Test
