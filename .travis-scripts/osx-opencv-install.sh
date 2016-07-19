@@ -4,7 +4,7 @@ brew update
 brew outdated gcc || brew upgrade gcc || brew install gcc
 brew outdated cmake || brew upgrade cmake || brew install cmake
 brew outdated python3 || brew upgrade python3 || brew install python3
-brew uninstall numpy || brew install numpy --with-python3
+pip3 install numpy || pip3 install numpy --upgrade
 git clone https://github.com/opencv/opencv.git
 cd opencv
 mkdir build
