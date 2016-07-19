@@ -24,13 +24,14 @@ addons:
 
 before_install:
   - .travis-scripts/install.sh
-
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then .travis-scripts/osx-opencv-install.sh; fi
 # Only do an assemble when we aren't building a pull request
 install:
   - '[ "${TRAVIS_PULL_REQUEST}" = "false" ] && ./gradlew :ui:assemble --stacktrace || ./gradlew --stacktrace '
 
 script:
   - ./gradlew checkstyleMain checkstyleTest pmdMain jacocoTestReport jacocoRootReport test --stacktrace -Pheadless=true -PlogTests
+  - if [[ "TRAVIS_OS_NAME" == "osx]]; then ./gradlew :ui:test -Pgenonly; fi
 
 after_success:
   - if [[ "$TRAVIS_OS_NAME" != "osx" ]]; then codecov         ; fi

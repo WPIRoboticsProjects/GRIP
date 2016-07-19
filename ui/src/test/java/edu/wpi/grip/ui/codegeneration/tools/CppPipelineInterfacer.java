@@ -37,7 +37,8 @@ public class CppPipelineInterfacer implements PipelineInterfacer {
       e.printStackTrace();
       fail("Could not compile " + libName + " due to :" + e.getMessage());
     }
-    init(codeDir.getAbsolutePath() + "/lib" + libName + ".dylib");
+    String platformLibName = System.mapLibraryName(libName);
+    init(codeDir.getAbsolutePath() + File.separator + platformLibName);
   }
 
 
