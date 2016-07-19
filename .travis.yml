@@ -31,7 +31,7 @@ install:
 
 script:
   - ./gradlew checkstyleMain checkstyleTest pmdMain jacocoTestReport jacocoRootReport test --stacktrace -Pheadless=true -PlogTests
-  - if [[ "TRAVIS_OS_NAME" == "osx]]; then ./gradlew :ui:test -Pgenonly; fi
+  - if [[ "TRAVIS_OS_NAME" == "osx" ]]; then ./gradlew :ui:test -Pgenonly; fi
 
 after_success:
   - if [[ "$TRAVIS_OS_NAME" != "osx" ]]; then codecov         ; fi
