@@ -136,6 +136,9 @@
                     </graphic>
                 </MenuItem>
                 <MenuItem text="Generate Code" onAction="#generate">
+                    <accelerator>
+                        <KeyCodeCombination alt="UP" code="G" control="UP" meta="UP" shift="UP" shortcut="DOWN" />
+                    </accelerator>
                     <graphic>
                         <ImageView styleClass="menu-graphic">
                             <fitWidth>

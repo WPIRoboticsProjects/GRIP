@@ -1,4 +1,4 @@
-        #Step $step.num(): $step.name()
+        #Step $step.name()$step.num():
 #foreach($inp in $step.getInputs())
 #if(!$inp.hasValue()||$inp.value().contains("source"))
 #set($c = "s"+$step.num())

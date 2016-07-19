@@ -57,7 +57,7 @@ $fileName::$fileName() {
 */
 void $fileName::Process(){
 #foreach($step in $pipeline.getSteps())
-	//Step$step.num(): $step.name():
+	//Step $step.name()$step.num():
 #parse("src/main/resources/edu/wpi/grip/ui/templates/cpp/Step.vm")
 
 #end

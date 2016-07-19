@@ -28,20 +28,20 @@ import org.opencv.imgproc.*;
 */
 public class $fileName{
 
-	//outputs
+	//Outputs
 #foreach($step in $pipeline.getSteps())
 #foreach($out in $step.getOutputs())
 	private #socketType(${out.type()}) ${tMeth.name($out.name())}#if(!$out.mutable()) = new #socketType(${out.type()})()#end;
 #end
 #end
 
-	//sources
+	//Sources
 #foreach($source in $pipeline.getSources())
 	private #socketType(${source.type()}) $source.value();
 #end
 #if($pipeline.getMovingThresholds().size() gt 0)
 
-	//moving thresholds
+	//Moving Thresholds
 #end
 #foreach($moving in $pipeline.getMovingThresholds())
     private Mat lastImage$moving.num() = new Mat();
@@ -70,8 +70,7 @@ public class $fileName{
 	 */
 	public void process(){
 #foreach($step in $pipeline.getSteps())
-#set($c = "S" + $step.num())
-		//Step$step.num(): $step.name():
+		//Step  $step.name()$step.num():
 #parse("src/main/resources/edu/wpi/grip/ui/templates/java/CV Step.vm")
 
 #end

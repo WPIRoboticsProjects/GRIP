@@ -1,5 +1,5 @@
 #set($needsMut = true)
-		//input
+		//Input
 #set($boolInp = $step.getInput(0))
 #if(!$boolInp.hasValue() )
 		$tMeth.name($boolInp.name()) = ${boolInp.value()}.$boolInp.baseType()Value();
@@ -20,7 +20,7 @@
 #end##end Is Mutable
 #set($out = $step.getOutput(0))
 #set($outMutName = "mutOf" + $tMeth.name($out.name()))
-		//output
+		//Output
 		#MutOf($out.baseType()) $outMutName = new #MutOf($out.baseType())();
 		pipelineValve($tMeth.name($boolInp.name()), $tMeth.name($input.name()), $outMutName);
 		//output assignment
