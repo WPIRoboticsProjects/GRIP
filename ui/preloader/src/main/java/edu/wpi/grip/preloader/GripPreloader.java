@@ -1,4 +1,4 @@
-package edu.wpi.grip.ui;
+package edu.wpi.grip.preloader;
 
 import java.io.IOException;
 import javafx.application.Preloader;
@@ -13,7 +13,7 @@ public final class GripPreloader extends Preloader {
 
   @Override
   public void start(Stage preloaderStage) throws IOException {
-    Scene scene = new Scene(FXMLLoader.load(Main.class.getResource("Preloader.fxml")));
+    Scene scene = new Scene(FXMLLoader.load(GripPreloader.class.getResource("Preloader.fxml")));
 
     preloaderStage.setScene(scene);
     preloaderStage.initStyle(StageStyle.TRANSPARENT);
