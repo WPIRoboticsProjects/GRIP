@@ -2,7 +2,6 @@ package edu.wpi.grip.ui.codegeneration;
 
 import edu.wpi.grip.core.operations.CVOperations;
 import edu.wpi.grip.core.sockets.Socket;
-import edu.wpi.grip.core.sockets.SocketHint;
 import edu.wpi.grip.generated.opencv_core.enumeration.BorderTypesEnum;
 import edu.wpi.grip.generated.opencv_core.enumeration.CmpTypesEnum;
 import edu.wpi.grip.generated.opencv_core.enumeration.LineTypesEnum;
