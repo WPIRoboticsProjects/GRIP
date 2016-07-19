@@ -182,7 +182,8 @@ public class CVOperations {
                 SocketHints.Inputs.createNumberSpinnerSocketHint("maxValue", 0.0),
                 SocketHints.createEnumSocketHint("adaptiveMethod",
                     AdaptiveThresholdTypesEnum.ADAPTIVE_THRESH_MEAN_C),
-                SocketHints.createEnumSocketHint("thresholdType", ThresholdTypesEnum.THRESH_BINARY),
+                SocketHints.createEnumSocketHint("thresholdType",
+                    CVAdaptThresholdTypesEnum.THRESH_BINARY),
                 SocketHints.Inputs.createNumberSpinnerSocketHint("blockSize", 0.0),
                 SocketHints.Inputs.createNumberSpinnerSocketHint("C", 0.0),
                 SocketHints.Outputs.createMatSocketHint("dst"),
@@ -274,7 +275,7 @@ public class CVOperations {
                     -> new Size(1, 1)).build(),
                 SocketHints.Inputs.createNumberSpinnerSocketHint("sigmaX", 0.0),
                 SocketHints.Inputs.createNumberSpinnerSocketHint("sigmaY", 0.0), SocketHints
-                    .createEnumSocketHint("borderType", BorderTypesEnum.BORDER_DEFAULT),
+                    .createEnumSocketHint("borderType", CVBorderTypesEnum.BORDER_DEFAULT),
                 SocketHints.Outputs.createMatSocketHint("dst"),
                 (src, ksize, sigmaX, sigmaY, borderType, dst) -> {
                   opencv_imgproc.GaussianBlur(src, dst, ksize, sigmaX.doubleValue(), sigmaY
@@ -370,7 +371,7 @@ public class CVOperations {
                 SocketHints.Inputs.createMatSocketHint("src", false),
                 SocketHints.Inputs.createNumberSpinnerSocketHint("thresh", 0),
                 SocketHints.Inputs.createNumberSpinnerSocketHint("maxval", 0),
-                SocketHints.createEnumSocketHint("type", ThresholdTypesEnum.THRESH_BINARY),
+                SocketHints.createEnumSocketHint("type", CVThresholdTypesEnum.THRESH_BINARY),
                 SocketHints.Outputs.createMatSocketHint("dst"),
                 (src, thresh, maxval, type, dst) -> {
                   opencv_imgproc.threshold(src, dst, thresh.doubleValue(), maxval.doubleValue(),
@@ -379,6 +380,51 @@ public class CVOperations {
             ))
     );
   }
+
+  public enum CVThresholdTypesEnum {
+    THRESH_BINARY(ThresholdTypesEnum.THRESH_BINARY.value),
+    THRESH_BINARY_INV(ThresholdTypesEnum.THRESH_BINARY_INV.value),
+    THRESH_TRUNC(ThresholdTypesEnum.THRESH_TRUNC.value),
+    THRESH_TOZERO(ThresholdTypesEnum.THRESH_TOZERO.value),
+    THRESH_TOZERO_INV(ThresholdTypesEnum.THRESH_TOZERO_INV.value),
+    THRESH_OTSU(ThresholdTypesEnum.THRESH_OTSU.value),
+    THRESH_TRIANGLE(ThresholdTypesEnum.THRESH_TRIANGLE.value);
+
+    public final int value;
+
+    CVThresholdTypesEnum(int value) {
+      this.value = value;
+    }
+  }
+
+  public enum CVAdaptThresholdTypesEnum {
+    THRESH_BINARY(ThresholdTypesEnum.THRESH_BINARY.value),
+    THRESH_BINARY_INV(ThresholdTypesEnum.THRESH_BINARY_INV.value);
+
+    public final int value;
+
+    CVAdaptThresholdTypesEnum(int value) {
+      this.value = value;
+    }
+  }
+
+  public enum CVBorderTypesEnum {
+
+    BORDER_CONSTANT(BorderTypesEnum.BORDER_CONSTANT.value),
+    R_REPLICATE(BorderTypesEnum.BORDER_REPLICATE.value),
+    BORDER_REFLECT(BorderTypesEnum.BORDER_REFLECT.value),
+    BORDER_REFLECT_101(BorderTypesEnum.BORDER_REFLECT_101.value),
+    BORDER_REFLECT101(BorderTypesEnum.BORDER_REFLECT101.value),
+    BORDER_DEFAULT(BorderTypesEnum.BORDER_DEFAULT.value),
+    BORDER_ISOLATED(BorderTypesEnum.BORDER_ISOLATED.value);
+
+    public final int value;
+
+    CVBorderTypesEnum(int value) {
+      this.value = value;
+    }
+  }
+
 
   /**
    * All of the operations that this list supplies.
