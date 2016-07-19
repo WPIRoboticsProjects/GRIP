@@ -1,21 +1,14 @@
 	/**
-	 * Sets the values of pixels in a binary image to their distance to the nearest black pixel.
+	 * Finds contours in an image.
 	 *
-	 * @param input The image on which to perform the Distance Transform.
-	 * @param type The Transform.
-	 * @param maskSize the size of the mask.
-	 * @param output The image in which to store the output.
+	 * @param input The image to find contours in.
+	 * @param externalOnly if only external contours are to be found.
+	 * @param contours vector of contours to put contours in.
 	 */
-	void $tMeth.name($step.name())(Mat *input, bool *externalOnly, vector<vector<Point> > *contours) {
+	void $fileName::#func($step ["input", "externalOnly", "contours"]) {
 		vector<Vec4i> hierarchy;
-		contours->clear();
-		int mode;
-		if(*externalOnly) {
-			mode = RETR_EXTERNAL;
-		}
-		else {
-			mode = RETR_LIST;
-		}
+		contours.clear();
+		int mode = externalOnly ? RETR_EXTERNAL : RETR_LIST;
 		int method = CHAIN_APPROX_SIMPLE;
-		findContours(*input, *contours, hierarchy, mode, method);
+		findContours(input, contours, hierarchy, mode, method);
 	}

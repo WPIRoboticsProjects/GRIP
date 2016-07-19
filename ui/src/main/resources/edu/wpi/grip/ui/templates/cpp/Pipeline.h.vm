@@ -21,6 +21,7 @@ using namespace std;
 #if($step.name().equals("Find_Lines") || $step.name().equals("Filter_Lines"))
 #parse("src/main/resources/edu/wpi/grip/ui/templates/cpp/operations/Lines.vm")
 #end
+#enumType($step)
 #end
 /**
 * $fileName class.
@@ -32,7 +33,7 @@ using namespace std;
 class $fileName #if(!$loadLib): public AbsPipeline #end{
 	private:
 #foreach( $source in $pipeline.getSources())
-		#cType($source.type()) *$source.value();
+		#cType($source.type()) $source.value();
 #end
 #foreach($step in $pipeline.getSteps())
 #if($step.name() == "Switch" || $step.name() == "Valve")
@@ -45,23 +46,22 @@ class $fileName #if(!$loadLib): public AbsPipeline #end{
 #end
 #foreach($step in $pipeline.getSteps())
 #foreach($output in $step.getOutputs())
-		#cType($output.type()) *$output.name();
+		#cType($output.type()) $output.name();
 #end
 #end
 #foreach($moving in $pipeline.getMovingThresholds())
-		Mat *lastImage$moving.num();
+		Mat lastImage$moving.num();
 #end
 #foreach($step in $pipeline.getUniqueSteps())
-#set($toParse = "src/main/resources/edu/wpi/grip/ui/templates/cpp/operations/" + $step.name())
-#set($toParse = $toParse + ".vm")
-#parse($toParse)
-
+#if($step.name() == "Switch" || $step.name() == "Valve")
+		template<typename T>
+#end
+		void #headerFunc($step);
 #end
 
 	public:
 		$fileName();
 		void Process();
-	
 #foreach($source in $pipeline.getSources())
 		void #setter($source);
 #end
@@ -76,11 +76,16 @@ class $fileName #if(!$loadLib): public AbsPipeline #end{
 #end
 #foreach($step in $pipeline.getSteps())
 #foreach($out in $step.getOutputs())
-		#cType($out.type())* get${out.name()}();
+#set($outSym = "#funPassType($output.type())")
+#if($outSym.equals("&") || !$loadLib)
+#set($ptr = true)
+#else
+#set($ptr = false)
+#end
+	#cType($out.type())#if($ptr)*#end get${out.name()}();
 #end
 #end
 };
-
 #if(!$loadLib)
 extern "C" AbsPipeline * makePipeline();
 #end

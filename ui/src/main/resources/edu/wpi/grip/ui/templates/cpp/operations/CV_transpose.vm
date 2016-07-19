@@ -3,6 +3,6 @@
 	 * @param src the source Mat.
 	 * @param dst the transpose of src.
 	 */
-	void $tMeth.name($step.name())(Mat *src, Mat *dst) {
-		transpose(*src, *dst);
+	void $fileName::#func($step ["src", "dst"]) {
+		transpose(src, dst);
 	}

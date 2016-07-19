@@ -4,6 +4,6 @@
 	 * @param channel zero indexed channel number to extract.
 	 * @param dst output image.
 	 */
-	void $tMeth.name($step.name())(Mat *src, double *channel, Mat *dst) {
-		extractChannel(*src, *dst, (int)*channel);
+	void $fileName::#func($step ["src", "channel", "dst"]) {
+		extractChannel(src, dst, (int)channel);
 	}

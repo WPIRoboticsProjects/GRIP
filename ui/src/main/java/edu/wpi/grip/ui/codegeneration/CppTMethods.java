@@ -26,9 +26,6 @@ public class CppTMethods extends TemplateMethods {
     }
     out.append(name(step.name())).append('(');
     for (TInput input : step.getInputs()) {
-      if (!input.type().equals("List")) {
-        out.append('&');
-      }
       out.append(input.name());
       out.append(", ");
     }

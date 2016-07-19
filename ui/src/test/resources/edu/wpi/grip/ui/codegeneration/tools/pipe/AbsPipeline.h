@@ -14,10 +14,10 @@ using namespace std;
 class AbsPipeline{
     
 public:
-    typedef void (AbsPipeline::*MatSource)(Mat*);
+    typedef void (AbsPipeline::*MatSource)(Mat&);
     typedef void* (AbsPipeline::*Output)();
     typedef void (AbsPipeline::*Condition)(bool);
-    typedef void (AbsPipeline::*NumSource)(double*);
+    typedef void (AbsPipeline::*NumSource)(double);
     virtual void Process() = 0;
     map<int, MatSource> getMatSources();
     map<String, Output> getOutputs();

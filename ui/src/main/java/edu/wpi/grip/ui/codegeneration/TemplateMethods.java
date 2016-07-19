@@ -8,6 +8,12 @@ import edu.wpi.grip.generated.opencv_core.enumeration.LineTypesEnum;
 import edu.wpi.grip.ui.codegeneration.data.TStep;
 
 import com.google.common.base.CaseFormat;
+import org.bytedeco.javacpp.opencv_core.Point;
+import org.bytedeco.javacpp.opencv_core.Scalar;
+import org.bytedeco.javacpp.opencv_core.Size;
+
+import java.nio.DoubleBuffer;
+import java.util.Optional;
 
 public abstract class TemplateMethods {
 
@@ -26,8 +32,8 @@ public abstract class TemplateMethods {
       case CPP:
         return new CppTMethods();
       default:
-        throw new IllegalArgumentException(lang
-            + " is not a supported language for code generation.");
+        throw new IllegalArgumentException(
+            lang + " is not a supported language for code generation.");
     }
   }
 
@@ -38,12 +44,48 @@ public abstract class TemplateMethods {
    * @return the value of the socket or "null" if there is no value
    */
   public static String parseSocketValue(Socket socket) {
-    if (socket.getValue().isPresent() && !socket.getValue().get().toString()
-        .contains("bytedeco") && !socket.getValue().get().toString().contains("Infinity")
+    if (socket.getValue().isPresent() && !socket.getValue().get().toString().contains("bytedeco")
+        && !socket.getValue().get().toString().contains("Infinity")
         && !socket.getValue().get().toString().contains("ContoursReport")) {
       return socket.getValue().get().toString();
+    } else {
+      Optional initValOptional = socket.getSocketHint().createInitialValue();
+      if (initValOptional.isPresent()) {
+        Object initVal = initValOptional.get();
+        String type = parseSocketType(socket);
+        StringBuilder valueBuilder = new StringBuilder();
+        if (type.equalsIgnoreCase("Point")) {
+          Point pointVal = (Point) initVal;
+          valueBuilder.append("(").append(pointVal.x()).append(", ").append(pointVal.y())
+              .append(")");
+        } else if (type.equalsIgnoreCase("Size")) {
+          Size sizeVal = (Size) initVal;
+          valueBuilder.append("(").append(sizeVal.width()).append(", ").append(sizeVal.height())
+              .append(")");
+        } else if (type.equals("Scalar")) {
+          Scalar scaleVal = (Scalar) initVal;
+          DoubleBuffer buff = scaleVal.asBuffer();
+          StringBuilder temp = new StringBuilder();
+          temp.append("(").append(buff.get());
+          while (buff.hasRemaining()) {
+            temp.append(", ").append(buff.get());
+          }
+          temp.append(")");
+          if(temp.toString().contains("E")) {
+            valueBuilder.append("(-1)");
+          } else {
+            valueBuilder.append(temp.toString());
+          }
+        }
+        else if(type.equals("Mat")) {
+          return "";
+        }
+        if (valueBuilder.length() > 0) {
+          return valueBuilder.toString();
+        }
+      }
     }
-    return "null";
+    return "source";
   }
 
   /**
@@ -72,7 +114,6 @@ public abstract class TemplateMethods {
         || LineTypesEnum.class.equals(socket.getSocketHint().getType())) {
       type.append("CoreEnum");
     }
-
     return type.toString();
   }
 

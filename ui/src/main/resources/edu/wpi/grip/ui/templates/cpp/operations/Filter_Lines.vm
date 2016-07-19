@@ -6,14 +6,13 @@
 	 * @param angle The minimum and maximum angle of a line to be kept.
 	 * @param outputs The output lines after the filter.
 	 */
-	void $tMeth.name($step.name())(vector<Line> *inputs,double *minLength,double angle[2],
-	vector<Line> *outputs) {
-	outputs->clear();
-	for (Line line: *inputs) {
-		if (line.length()>abs(*minLength)) {
+	void $fileName::#func($step ["inputs", "minLength", "angle", "outputs"]) {
+	outputs.clear();
+	for (Line line: inputs) {
+		if (line.length()>abs(minLength)) {
 			if ((line.angle() >= angle[0] && line.angle() <= angle[1]) ||
 					(line.angle() + 180.0 >= angle[0] && line.angle() + 180.0 <=angle[1])) {
-				outputs->push_back(line);
+				outputs.push_back(line);
 			}
 		}
 	}

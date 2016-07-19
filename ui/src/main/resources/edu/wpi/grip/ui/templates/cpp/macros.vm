@@ -5,35 +5,71 @@ vector<vector<Point> >#elseif ($type.equals("BlobsReport"))
 vector<KeyPoint>#elseif ($type.equals("LinesReport"))
 vector<Line>#elseif($type == "Integer" )
 int#elseif($type == "Boolean" || "boolean")
-bool#else
-$type#end #end
+bool#elseif($type.equals("String"))
+string#elseif($type.contains("Enum"))
+int#elseif($type.equalsIgnoreCase("BlurType"))
+BlurType#elseif($type.contains("Type"))
+int#elseif($type.equalsIgnoreCase("MaskSize"))
+string#elseif($type.equalsIgnoreCase("Interpolation"))
+int#else
+$type#end#end
+
+#macro(funPassType $baseType)
+#set($type = "#cType($baseType)")
+#if($type.equals("double") || $type.equals("int") || $type.equals("bool") || $type.equals("string"))
+#else
+&#end#end
 
 #macro(setter $source)
-set$source.value()(#cType($source.type()) *$source.value())#end
+set$source.value()(#cType($source.type()) #funPassType($source.type())$source.value())#end
 
-#macro(func $step)
-$tMeth.name($step.name())(#foreach($inp in $step.getInputs()) #cType($inp.type()) *$inp.name(), #end#foreach($out in $step.getOutputs()) #cType($out.type()) *#cName($out.name())#if($velocityCount <$step.getOutputs().size()), #end#end)#end
+#macro(param $inp $name)
+#set($type = "#cType($inp.type())")
+#if($type.equalsIgnoreCase("list"))
+double ${name}[]#else
+$type #funPassType($inp.type())$name#end#end
+
+#macro(func $step $names)
+#set($name = $tMeth.name($step.name()))
+#set($count = 0)
+#if($name.contains("Switch"))
+pipeline$name(bool sw, T &onTrue, T &onFalse, T &output)#elseif($name.contains("Valve"))
+pipeline$name(bool sw, T &input, T &output)#else
+$name(#foreach($inp in $step.getInputs())#param($inp $names[$count])#set($count = $count + 1), #end#if($name.equalsIgnoreCase("ThresholdMoving"))Mat &lastImage, #end#foreach($out in $step.getOutputs())#cType($out.type()) &$names[$count]#set($count = $count + 1)#if($velocityCount <$step.getOutputs().size()), #end#end)#end#end
+
+#macro(headerFunc $step)
+#set($numVars = $step.getInputs().size() + $step.getOutputs().size())
+#set($varArray = [])
+#foreach($i in [0 .. $numVars])
+#set($randomBoolWeDoNotCareAbout = $varArray.add(""))
+#end
+#func($step $varArray)
+#end
 
 #macro (newInput $input)
-#if ($input.type().contains("CoreEnum"))
+#if ($input.value().toLowerCase().contains("source") || $input.value().toLowerCase().contains("output"))
+	#cType($input.type()) $input.name()= $input.value();
+#elseif ($input.type().contains("CoreEnum"))
 	int $input.name() = $input.value();
 #elseif ($input.type().contains("Enum"))
 	int $input.name() = $input.value();
 #elseif ($input.type().equals("MaskSize") )
-    String $input.name() = "$input.value()";
+    string $input.name() = "$input.value()";
 #elseif ($input.type().equals("FlipCode") || $input.type().equals("BlurType") )
 	$input.type() $input.name() = $input.type()::#cvVal($input.value());
 #elseif ($input.type().contains("Type") || $input.type().equals("Interpolation"))
 	int $input.name() = #cvVal($input.value());
 #elseif ($input.type().equals("String"))
-	$input.type() $input.name() = "$input.value()";
+	string $input.name() = "$input.value()";
 #elseif ($input.type().equals("List"))
 #set($inputEndValue = $input.value().length() - 1)
 	double ${input.name()}[] = {$input.value().substring(1,$inputEndValue)};
+#elseif ($input.type().equals("Point") || $input.type().equals("Size") || $input.type().equalsIgnoreCase("Scalar"))
+	#cType($input.type()) ${input.name()}$input.value();
 #elseif ($input.value().equals("null"))
 	#cType($input.type()) $input.name();
-#elseif ($input.value().toLowerCase().contains("source") || $input.value().toLowerCase().contains("output"))
-	#cType($input.type()) $input.name()= *$input.value();
+#elseif ($input.type().equals("Mat"))
+	#cType($input.type()) $input.name()$input.value();
 #else
 	#cType($input.type()) $input.name() = $input.value();
 #end#end
@@ -54,3 +90,27 @@ MEDIAN#elseif($value.equals("Bilateral Filter"))
 BILATERAL#else
 $value#end#end
 
+#macro(enumType $uniStep)
+#set($name = $tMeth.name($uniStep.name()))
+#if($uniStep.name().equalsIgnoreCase("Blur"))
+/**
+* A representation of the different types of blurs that can be used.
+*
+*/
+enum BlurType {
+	BOX, GAUSSIAN, MEDIAN, BILATERAL
+};
+#elseif($name.contains("Flip"))
+/**
+ * Code used for CV_flip. 
+ * Per OpenCV spec 0 -> flip on X axis.
+ * >0 -> flip on Y axis.
+ * <0 -> flip on both axes.
+ */
+enum FlipCode {
+	X_AXIS = 0,
+	Y_AXIS = 1,
+	BOTH_AXES = -1,
+};
+#end
+#end

@@ -4,7 +4,7 @@
 */
 $fileName::$fileName() {
 #foreach($source in $pipeline.getSources())
-	this->$source.value() = new #cType($source.type())();
+##	this->$source.value() = new #cType($source.type())();
 #end
 #foreach($step in $pipeline.getSteps())
 #if($step.name() == "Switch" || $step.name() == "Valve")
@@ -16,11 +16,11 @@ $fileName::$fileName() {
 #end
 #foreach($step in $pipeline.getSteps())
 #foreach($output in $step.getOutputs())
-	this->$output.name() = new #cType($output.type())();
+##	this->$output.name() = new #cType($output.type())();
 #end
 #end
 #foreach($moving in $pipeline.getMovingThresholds())
-	this->lastImage$moving.num() = new Mat();
+##	this->lastImage$moving.num() = new Mat();
 #end
 #if(!$loadLib)
 #foreach($source in $pipeline.getSources())
@@ -68,9 +68,9 @@ void $fileName::Process(){
  * This method is a generated setter for $source.value().
  * @param source the $source.type() to set
  */
-void $fileName::set${source.value()}(#cType(${source.type()}) *${source.value()}){
+void $fileName::set${source.value()}(#cType(${source.type()}) #funPassType($source.type())${source.value()}){
 #if($source.type().equals("Mat"))
-	$source.value()->copyTo(*this->${source.value()});
+	${source.value()}.copyTo(this->${source.value()});
 #else
 	this->$source.value() = ${source.value()};
 #end
@@ -93,14 +93,26 @@ void $fileName::set$step.name()${step.num()}(bool value){
 #end
 #foreach($step in $pipeline.getSteps())
 #foreach($output in $step.getOutputs())
+#set($outSym = "#funPassType($output.type())")
+#if($outSym.equals("&") || !$loadLib)
+#set($ptr = true)
+#else
+#set($ptr = false)
+#end
 /**
  * This method is a generated getter for the output of a $step.name().
  * @return ${output.baseType()} output from $step.name().
  */
-#cType($output.type())* $fileName::get${output.name()}(){
-	return this->${output.name()};
+#cType($output.type())#if($ptr)*#end $fileName::get${output.name()}(){
+	return #if($ptr)&#end(this->${output.name()});
 }
 #end
+#end
+#foreach($step in $pipeline.getUniqueSteps())
+#set($toParse = "src/main/resources/edu/wpi/grip/ui/templates/cpp/operations/" + $step.name())
+#set($toParse = $toParse + ".vm")
+#parse($toParse)
+
 #end
 #if(!$loadLib)
 extern "C" AbsPipeline * makePipeline(){

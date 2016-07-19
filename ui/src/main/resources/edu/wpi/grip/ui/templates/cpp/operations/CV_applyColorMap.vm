@@ -4,6 +4,6 @@
 	 * @param colorMap the type of color map to apply.
 	 * @param dst Output after Color Map is applied.
 	 */
-	void $tMeth.name($step.name())(Mat *src, int *colorMap, Mat *dst) {
-		applyColorMap(*src, *dst, *colorMap);
+	void $fileName::#func($step ["src", "colorMap", "dst"]) {
+		applyColorMap(src, dst, colorMap);
 	}

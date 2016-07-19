@@ -8,15 +8,14 @@
 	 * @param rows number of columns in the Mat.
 	 * @param highestValue highest value contained in the Mat.
 	 */
-	void $tMeth.name($step.name())(Mat *src, Size *size, bool *empty, double *channels,
-		double *cols, double *rows, double *highestValue) {
-		*empty = src->empty();
-		*channels = src->channels();
-		*cols = src->cols;
-		*rows = src->rows;
+	void $fileName::#func($step ["src", "size", "empty", "channels", "cols", "rows", "highestValue"]) {
+		empty = src.empty();
+		channels = src.channels();
+		cols = src.cols;
+		rows = src.rows;
 		double lowestValue;
-		minMaxLoc(*src, &lowestValue, highestValue);
-		Size matSize = src->size();
-		size->height = matSize.height;
-		size->width = matSize.width;
+		minMaxLoc(src, &lowestValue, &highestValue);
+		Size matSize = src.size();
+		size.height = matSize.height;
+		size.width = matSize.width;
 	}

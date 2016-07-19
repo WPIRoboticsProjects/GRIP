@@ -1,11 +1,4 @@
 	/**
-	* A representation of the different types of blurs that can be used.
-	*
-	*/
-	enum BlurType {
-		BOX, GAUSSIAN, MEDIAN, BILATERAL
-	};
-	/**
 	 * Softens an image using one of several filters.
 	 *
 	 * @param input The image on which to perform the blur.
@@ -13,24 +6,24 @@
 	 * @param doubleRadius The radius for the blur.
 	 * @param output The image in which to store the output.
 	 */
-	void $tMeth.name($step.name())(Mat *input, BlurType *type, double *doubleRadius, Mat *output) {
-		int radius = (int)(*doubleRadius + 0.5);
+	void $fileName::#func($step, ["input", "type", "doubleRadius", "output"]) {
+		int radius = (int)(doubleRadius + 0.5);
 		int kernelSize;
-		switch(*type) {
+		switch(type) {
 			case BOX:
 				kernelSize = 2 * radius + 1;
-				blur(*input,*output,Size(kernelSize, kernelSize));
+				blur(input,output,Size(kernelSize, kernelSize));
 				break;
 			case GAUSSIAN:
 				kernelSize = 6 * radius + 1;
-				GaussianBlur(*input, *output, Size(kernelSize, kernelSize), radius);
+				GaussianBlur(input, output, Size(kernelSize, kernelSize), radius);
 				break;
 			case MEDIAN:
 				kernelSize = 2 * radius + 1;
-				medianBlur(*input, *output, kernelSize);
+				medianBlur(input, output, kernelSize);
 				break;
 			case BILATERAL:
-				bilateralFilter(*input, *output, -1, radius, radius);
+				bilateralFilter(input, output, -1, radius, radius);
 				break;
         }
 	}

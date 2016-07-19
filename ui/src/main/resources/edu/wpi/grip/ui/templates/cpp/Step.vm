@@ -5,12 +5,12 @@
 	bool $boolInp.name() = this->$boolInp.name();
 #set($onTrue = $step.getInputs().get(1))
 #set($onFalse = $step.getInputs().get(2))
-#newInput($onTrue);
-#newInput($onFalse);
+#newInput($onTrue)
+#newInput($onFalse)
 #else
 	bool $boolInp.name()= this->$boolInp.name();
 #set($onTrue = $step.getInputs().get(1))
-#newInput($onTrue);
+#newInput($onTrue)
 #end
 #else
 #foreach($input in $step.getInputs())

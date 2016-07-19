@@ -7,10 +7,6 @@
 	 * @param interpolation type of interpolation to use.
 	 * @param dst output image.
 	 */
-	void $tMeth.name($step.name())(Mat *src, Size *dSize, double *fx, double *fy,
-		int *interpolation, Mat *dst) {
-		if (!dSize) {
-			Size dSize(0,0);
-		}
-		resize(*src, *dst, *dSize, *fx, *fy, *interpolation);
+	void $fileName::#func($step ["src", "dSize", "fx", "fy", "interpolation", "dst"]) {
+		resize(src, dst, dSize, fx, fy, interpolation);
 	}
