@@ -8,6 +8,7 @@ import edu.wpi.grip.generated.opencv_core.enumeration.LineTypesEnum;
 import edu.wpi.grip.ui.codegeneration.data.TStep;
 
 import com.google.common.base.CaseFormat;
+
 import org.bytedeco.javacpp.opencv_core.Point;
 import org.bytedeco.javacpp.opencv_core.Scalar;
 import org.bytedeco.javacpp.opencv_core.Size;
@@ -54,30 +55,29 @@ public abstract class TemplateMethods {
         Object initVal = initValOptional.get();
         String type = parseSocketType(socket);
         StringBuilder valueBuilder = new StringBuilder();
-        if (type.equalsIgnoreCase("Point")) {
+        if ("Point".equalsIgnoreCase(type)) {
           Point pointVal = (Point) initVal;
-          valueBuilder.append("(").append(pointVal.x()).append(", ").append(pointVal.y())
-              .append(")");
-        } else if (type.equalsIgnoreCase("Size")) {
+          valueBuilder.append('(').append(pointVal.x()).append(", ").append(pointVal.y())
+              .append(')');
+        } else if ("Size".equalsIgnoreCase(type)) {
           Size sizeVal = (Size) initVal;
-          valueBuilder.append("(").append(sizeVal.width()).append(", ").append(sizeVal.height())
-              .append(")");
-        } else if (type.equals("Scalar")) {
+          valueBuilder.append('(').append(sizeVal.width()).append(", ").append(sizeVal.height())
+              .append(')');
+        } else if ("Scalar".equals(type)) {
           Scalar scaleVal = (Scalar) initVal;
           DoubleBuffer buff = scaleVal.asBuffer();
           StringBuilder temp = new StringBuilder();
-          temp.append("(").append(buff.get());
+          temp.append('(').append(buff.get());
           while (buff.hasRemaining()) {
             temp.append(", ").append(buff.get());
           }
-          temp.append(")");
-          if(temp.toString().contains("E")) {
+          temp.append(')');
+          if (temp.toString().contains("E")) {
             valueBuilder.append("(-1)");
           } else {
             valueBuilder.append(temp.toString());
           }
-        }
-        else if(type.equals("Mat")) {
+        } else if ("Mat".equals(type)) {
           return "";
         }
         if (valueBuilder.length() > 0) {
