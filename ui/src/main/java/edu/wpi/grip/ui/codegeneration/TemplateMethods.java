@@ -135,16 +135,4 @@ public abstract class TemplateMethods {
    */
   public abstract String callOp(TStep step);
 
-  /**
-   * Converts a scalar value String into the appropriate string for openCV.
-   * Since bytedeco uses Double.maxValue 
-   * @param val
-   * @return
-   */
-  private static String convertScalarValue(String val){
-    if(val.contains("E")){
-      return "-1";
-    }
-    return val;
-  }
 }
