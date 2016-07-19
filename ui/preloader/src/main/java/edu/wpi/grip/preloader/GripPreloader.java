@@ -3,17 +3,24 @@ package edu.wpi.grip.preloader;
 import java.io.IOException;
 import javafx.application.Preloader;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.ProgressBar;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
 public final class GripPreloader extends Preloader {
 
+  private ProgressBar progressBar;
   private Stage preloaderStage;
 
   @Override
   public void start(Stage preloaderStage) throws IOException {
-    Scene scene = new Scene(FXMLLoader.load(GripPreloader.class.getResource("Preloader.fxml")));
+    Parent root = FXMLLoader.load(GripPreloader.class.getResource("Preloader.fxml"));
+    Scene scene = new Scene(root);
+
+    progressBar = (ProgressBar) root.getChildrenUnmodifiable().filtered(
+        p -> p instanceof ProgressBar).get(0);
 
     preloaderStage.setScene(scene);
     preloaderStage.initStyle(StageStyle.TRANSPARENT);
@@ -25,8 +32,11 @@ public final class GripPreloader extends Preloader {
   }
 
   @Override
-  public void handleStateChangeNotification(StateChangeNotification stateChangeNotification) {
-    if (stateChangeNotification.getType() == StateChangeNotification.Type.BEFORE_START) {
+  public void handleApplicationNotification(PreloaderNotification pn) {
+    if (pn instanceof ProgressNotification) {
+      progressBar.setProgress(((ProgressNotification) pn).getProgress());
+    } else if (pn instanceof StateChangeNotification
+        && ((StateChangeNotification) pn).getType() == StateChangeNotification.Type.BEFORE_START) {
       preloaderStage.hide();
     }
   }

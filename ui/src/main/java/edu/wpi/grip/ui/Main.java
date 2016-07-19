@@ -30,6 +30,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.application.Preloader;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -81,20 +82,23 @@ public class Main extends Application {
       // Otherwise, run with both the core and UI modules, and show the JavaFX stage
       injector = Guice.createInjector(Modules.override(new GripCoreModule(), new GripFileModule(),
           new GripSourcesHardwareModule()).with(new GripNetworkModule(), new GripUiModule()));
-
       injector.injectMembers(this);
+      notifyPreloader(new Preloader.ProgressNotification(0.15));
 
       System.setProperty("prism.lcdtext", "false");
       Font.loadFont(this.getClass().getResource("roboto/Roboto-Regular.ttf").openStream(), -1);
       Font.loadFont(this.getClass().getResource("roboto/Roboto-Bold.ttf").openStream(), -1);
       Font.loadFont(this.getClass().getResource("roboto/Roboto-Italic.ttf").openStream(), -1);
       Font.loadFont(this.getClass().getResource("roboto/Roboto-BoldItalic.ttf").openStream(), -1);
+      notifyPreloader(new Preloader.ProgressNotification(0.3));
     }
 
     operations.addOperations();
     cvOperations.addOperations();
+    notifyPreloader(new Preloader.ProgressNotification(0.45));
     server.addHandler(pipelineSwitcher);
     server.start();
+    notifyPreloader(new Preloader.ProgressNotification(0.6));
 
     // If there was a file specified on the command line, open it immediately
     if (!parameters.isEmpty()) {
@@ -107,6 +111,7 @@ public class Main extends Application {
     }
 
     pipelineRunner.startAsync();
+    notifyPreloader(new Preloader.ProgressNotification(0.75));
   }
 
   @Override
@@ -115,12 +120,16 @@ public class Main extends Application {
       root = FXMLLoader.load(Main.class.getResource("MainWindow.fxml"), null, null,
           injector::getInstance);
       root.setStyle("-fx-font-size: " + DPIUtility.FONT_SIZE + "px");
+      notifyPreloader(new Preloader.ProgressNotification(0.9));
 
       // If this isn't here this can cause a deadlock on windows. See issue #297
       stage.setOnCloseRequest(event -> SafeShutdown.exit(0, Platform::exit));
       stage.setTitle("GRIP Computer Vision Engine");
       stage.getIcons().add(new Image("/edu/wpi/grip/ui/icons/grip.png"));
       stage.setScene(new Scene(root));
+      notifyPreloader(new Preloader.ProgressNotification(1.0));
+      notifyPreloader(new Preloader.StateChangeNotification(
+          Preloader.StateChangeNotification.Type.BEFORE_START));
       stage.show();
     }
   }
