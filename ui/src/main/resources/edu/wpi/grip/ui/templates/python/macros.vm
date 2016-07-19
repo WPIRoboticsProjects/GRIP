@@ -9,15 +9,14 @@ self.__$tMeth.pyName($inp.name())#end
 #input($inp) = $inp.value().substring(0,1)#elseif($inp.value().contains("source"))
 #input($inp) = self.__$inp.value()#elseif ($inp.type().contains("Enum") ||
 $input.type().contains("Type") || $input.type().equals("Interpolation"))
-#input($inp) = cv2.#enum($inp.value())#elseif($inp.value().equals("null"))
+#input($inp) = cv2.#enum($inp.value())#elseif($inp.value().equals("null") || $inp.type().equals("Mat"))
 #input($inp) = None#elseif($inp.value().equals("false"))
 #input($inp) = False#elseif($inp.value().equals("true"))
 #input($inp) = True#elseif ($inp.type().equals("List"))
 #set($inputEndValue = $inp.value().length() - 1)
 #input($inp) = [$inp.value().substring(1,$inputEndValue)]#elseif ($inp.type().equals("String"))
 #input($inp) = "$inp.value()"#elseif($inp.type().equals("Size") || $inp.type().equals("Point") || $inp.type().equals("Scalar"))
-#input($inp) = $inp.value()
-#else
+#input($inp) = $inp.value()#else
 #input($inp) = $inp.value()#end
 #else##connected socket
 #input($inp) = self.$tMeth.pyName($inp.value())#end#end

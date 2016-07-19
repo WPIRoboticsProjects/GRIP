@@ -32,6 +32,8 @@ MutableOf<$obj>#end
 #elseif ($input.type().equals("List"))
 #set($inputEndValue = $input.value().length() - 1)
 		double[] ${tMeth.name($input.name())} = {$input.value().substring(1,$inputEndValue)};
+#elseif ($input.type().equals("Mat") && ! ($input.value().toLowerCase().contains("source") || $input.value().toLowerCase().contains("output")))
+		$input.type() ${tMeth.name($input.name())} = new ${input.type()}($input.value());
 #else
 		#socketType($input.type()) ${tMeth.name($input.name())} = $input.value();
 #end

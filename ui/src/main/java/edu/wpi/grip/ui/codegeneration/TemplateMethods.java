@@ -65,18 +65,27 @@ public abstract class TemplateMethods {
         } else if (type.equals("Scalar")) {
           Scalar scaleVal = (Scalar) initVal;
           DoubleBuffer buff = scaleVal.asBuffer();
-          valueBuilder.append("(").append(buff.get());
+          StringBuilder temp = new StringBuilder();
+          temp.append("(").append(buff.get());
           while (buff.hasRemaining()) {
-            valueBuilder.append(", ").append(buff.get());
+            temp.append(", ").append(buff.get());
           }
-          valueBuilder.append(")");
+          temp.append(")");
+          if(temp.toString().contains("E")) {
+            valueBuilder.append("(-1)");
+          } else {
+            valueBuilder.append(temp.toString());
+          }
+        }
+        else if(type.equals("Mat")) {
+          return "";
         }
         if (valueBuilder.length() > 0) {
           return valueBuilder.toString();
         }
       }
     }
-    return "null";
+    return "source";
   }
 
   /**
@@ -125,4 +134,16 @@ public abstract class TemplateMethods {
    */
   public abstract String callOp(TStep step);
 
+  /**
+   * Converts a scalar value String into the appropriate string for openCV.
+   * Since bytedeco uses Double.maxValue 
+   * @param val
+   * @return
+   */
+  private static String convertScalarValue(String val){
+    if(val.contains("E")){
+      return "-1";
+    }
+    return val;
+  }
 }

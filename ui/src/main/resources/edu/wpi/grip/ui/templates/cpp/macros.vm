@@ -68,6 +68,8 @@ $name(#foreach($inp in $step.getInputs())#param($inp $names[$count])#set($count 
 	#cType($input.type()) ${input.name()}$input.value();
 #elseif ($input.value().equals("null"))
 	#cType($input.type()) $input.name();
+#elseif ($input.type().equals("Mat"))
+	#cType($input.type()) $input.name()$input.value();
 #else
 	#cType($input.type()) $input.name() = $input.value();
 #end#end
