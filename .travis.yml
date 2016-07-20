@@ -21,17 +21,23 @@ addons:
       - gcc-4.8
       - g++-4.8
       - oracle-java8-installer
-
+      - python3
+      - ant
+      - cmake
 before_install:
-  - .travis-scripts/install.sh
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then .travis-scripts/osx-opencv-install.sh; fi
+#  - .travis-scripts/install.sh
+#  - |
+#    if [[ "$TRAVIS_OS_NAME" == "osx" ]]; 
+#    then .travis-scripts/osx-opencv-install.sh; 
+#    else .travis-scripts/linux-opencv-install.sh;
+#    fi
 # Only do an assemble when we aren't building a pull request
 install:
   - '[ "${TRAVIS_PULL_REQUEST}" = "false" ] && ./gradlew :ui:assemble --stacktrace || ./gradlew --stacktrace '
 
 script:
-  - if [[ "TRAVIS_OS_NAME" == "osx" ]]; then ./gradlew :ui:test -Pgeneration; fi
   - ./gradlew checkstyleMain checkstyleTest pmdMain jacocoTestReport jacocoRootReport test --stacktrace -Pheadless=true -PlogTests
+# -Pgeneration
 
 after_success:
   - if [[ "$TRAVIS_OS_NAME" != "osx" ]]; then codecov         ; fi
