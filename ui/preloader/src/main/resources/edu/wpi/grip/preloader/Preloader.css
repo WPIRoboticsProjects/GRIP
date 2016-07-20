@@ -1,0 +1,7 @@
+.root {
+    -fx-padding: 25;
+}
+
+.progress-bar {
+    -fx-accent: #6C8058;
+}
