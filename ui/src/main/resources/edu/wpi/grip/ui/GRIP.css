@@ -121,6 +121,10 @@ VBox.sockets {
     -fx-font-weight: bold;
 }
 
+.inputs {
+	-fx-spacing: 0.5em;
+}
+
 .socket {
     -fx-hgap: 0.5em;
     -fx-vgap: 0.5em;
@@ -128,7 +132,7 @@ VBox.sockets {
 }
 
 .socket .socket-control {
-    -fx-pref-width: 12em;
+    -fx-min-width: 12em;
 }
 
 .socket-handle {

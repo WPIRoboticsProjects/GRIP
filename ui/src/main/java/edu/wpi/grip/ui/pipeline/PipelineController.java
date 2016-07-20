@@ -1,5 +1,20 @@
 package edu.wpi.grip.ui.pipeline;
 
+import com.google.common.eventbus.EventBus;
+import com.google.common.eventbus.Subscribe;
+import com.google.inject.Singleton;
+
+import com.sun.javafx.application.PlatformImpl;
+
+import java.util.Collection;
+import java.util.Map;
+import java.util.NavigableMap;
+import java.util.TreeMap;
+import java.util.stream.Collectors;
+
+import javax.annotation.Nullable;
+import javax.inject.Inject;
+
 import edu.wpi.grip.core.Connection;
 import edu.wpi.grip.core.Pipeline;
 import edu.wpi.grip.core.Source;
@@ -20,18 +35,6 @@ import edu.wpi.grip.ui.pipeline.input.InputSocketController;
 import edu.wpi.grip.ui.pipeline.source.SourceController;
 import edu.wpi.grip.ui.pipeline.source.SourceControllerFactory;
 import edu.wpi.grip.ui.util.ControllerMap;
-
-import com.google.common.eventbus.EventBus;
-import com.google.common.eventbus.Subscribe;
-import com.google.inject.Singleton;
-import com.sun.javafx.application.PlatformImpl;
-
-import java.util.Collection;
-import java.util.Map;
-import java.util.NavigableMap;
-import java.util.TreeMap;
-import java.util.stream.Collectors;
-
 import javafx.beans.InvalidationListener;
 import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.collections.ObservableList;
@@ -45,9 +48,6 @@ import javafx.scene.input.TransferMode;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
-
-import javax.annotation.Nullable;
-import javax.inject.Inject;
 
 /**
  * A JavaFX controller for the pipeline.  This controller renders a list of steps.
@@ -210,9 +210,11 @@ public final class PipelineController {
    */
   private InputSocketController findInputSocketView(InputSocket socket) {
     for (StepController stepController : stepsMapManager.keySet()) {
-      for (InputSocketController socketView : stepController.getInputSockets()) {
-        if (socketView.getSocket() == socket) {
-          return socketView;
+      for (InputsController inputs : stepController.getInputs()) {
+        for (InputSocketController socketView : inputs.getInputSockets()) {
+          if (socketView.getSocket() == socket) {
+            return socketView;
+          }
         }
       }
     }

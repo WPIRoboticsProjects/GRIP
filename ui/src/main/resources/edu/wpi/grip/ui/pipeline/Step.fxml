@@ -79,7 +79,7 @@
         </graphic>
     </Label>
     <Separator orientation="HORIZONTAL" />
-    <VBox fx:id="inputs" styleClass="sockets" />
+    <HBox fx:id="inputs" styleClass="inputs" />
     <Separator orientation="HORIZONTAL" />
     <VBox fx:id="outputs" styleClass="sockets" />
 </VBox>
