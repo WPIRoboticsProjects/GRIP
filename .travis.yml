@@ -30,9 +30,11 @@ install:
   - '[ "${TRAVIS_PULL_REQUEST}" = "false" ] && ./gradlew :ui:assemble --stacktrace || ./gradlew --stacktrace '
 
 script:
-  - if [[ "TRAVIS_OS_NAME" == "osx" ]]; then ./gradlew :ui:test -Pgeneration; else
+  - if [[ "TRAVIS_OS_NAME" == "osx" ]]; then 
+  - ./gradlew :ui:test -Pgeneration
+  - else
   - ./gradlew checkstyleMain checkstyleTest pmdMain jacocoTestReport jacocoRootReport test --stacktrace -Pheadless=true -PlogTests
- fi
+  - fi
 
 after_success:
   - if [[ "$TRAVIS_OS_NAME" != "osx" ]]; then codecov         ; fi
