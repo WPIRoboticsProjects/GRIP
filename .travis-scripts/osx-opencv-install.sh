@@ -5,6 +5,8 @@ brew install gcc
 brew upgrade gcc
 brew install cmake
 brew upgrade cmake
+brew install ant
+brew upgrade ant
 brew install python3
 brew linkapps python3
 pip3 install numpy
@@ -22,6 +24,7 @@ cmake -D CMAKE_BUILD_TYPE=RELEASE \
  -D PYTHON3_PACKAGES_PATH=$(python3 -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())") \
  -D INSTALL_C_EXAMPLES=OFF -D INSTALL_PYTHON_EXAMPLES=ON \
  -D BUILD_EXAMPLES=ON ..
+make
 export JNIDIR=/System/Library/Frameworks/JavaVM.framework/Versions/Current/Headers/
 export OPEN_CV_LIB=/usr/local/lib
 export OPEN_CV_JAR=/usr/local/share/OpenCV/java/opencv-310.jar
