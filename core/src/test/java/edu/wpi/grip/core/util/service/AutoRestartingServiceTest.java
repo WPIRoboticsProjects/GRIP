@@ -16,6 +16,8 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import static com.google.common.truth.Truth.assertThat;
 import static org.junit.Assert.assertEquals;
@@ -41,6 +43,8 @@ public class AutoRestartingServiceTest {
 
   @Rule
   public Timeout timeout = new Timeout(10, TimeUnit.SECONDS);
+
+  private static final Logger logger = Logger.getLogger(AutoRestartingServiceTest.class.getName());
 
   @Before
   public void setUp() {
@@ -118,7 +122,7 @@ public class AutoRestartingServiceTest {
       restartingService.startAsync();
       fail("Should have thrown an IllegalStateException");
     } catch (IllegalStateException e) {
-      // This is expected
+      logger.log(Level.OFF, e.getMessage(), e);
     }
 
     restartingService.awaitRunning();
@@ -138,6 +142,7 @@ public class AutoRestartingServiceTest {
     final AutoRestartingService<WaitThenThrowOnRunService> restartingService =
         new AutoRestartingService<>(recordingSupplier, () -> true);
 
+    @SuppressWarnings("PMD.PrematureDeclaration")
     final Service initialDelegate = restartingService.getDelegate();
 
     try {
@@ -153,7 +158,6 @@ public class AutoRestartingServiceTest {
       }
       assertThat(expected.getCause()).hasMessage("kaboom!");
     }
-
 
     try {
       restartingService.startAsync();
@@ -230,7 +234,7 @@ public class AutoRestartingServiceTest {
     private boolean startUpCalled = false;
     private boolean runCalled = false;
     private boolean shutDownCalled = false;
-    private State expectedShutdownState = State.STOPPING;
+    private final State expectedShutdownState = State.STOPPING;
 
     @Override
     protected void startUp() {
@@ -278,22 +282,13 @@ public class AutoRestartingServiceTest {
   }
 
   private class WaitThenThrowOnRunService extends AbstractExecutionThreadService {
-    private boolean shutDownCalled = false;
-    private boolean throwOnShutDown = false;
-    private CountDownLatch runLatch = new CountDownLatch(1);
+    @SuppressWarnings("PMD.FinalFieldCouldBeStatic")
+    private final CountDownLatch runLatch = new CountDownLatch(1);
 
     @Override
     protected void run() throws InterruptedException {
       runLatch.await();
       throw new UnsupportedOperationException("kaboom!");
-    }
-
-    @Override
-    protected void shutDown() {
-      shutDownCalled = true;
-      if (throwOnShutDown) {
-        throw new UnsupportedOperationException("double kaboom!");
-      }
     }
 
     @Override

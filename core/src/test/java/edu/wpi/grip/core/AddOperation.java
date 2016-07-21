@@ -22,9 +22,9 @@ import java.util.List;
 public class AddOperation implements Operation {
   public static final OperationDescription DESCRIPTION = OperationDescription
       .builder().name("OpenCV Add").summary("Compute the per-pixel sum of two images.").build();
-  private SocketHint<Mat> aHint = SocketHints.Inputs.createMatSocketHint("a", false);
-  private SocketHint<Mat> bHint = SocketHints.Inputs.createMatSocketHint("b", false);
-  private SocketHint<Mat> sumHint = SocketHints.Inputs.createMatSocketHint("sum", true);
+  private final SocketHint<Mat> aHint = SocketHints.Inputs.createMatSocketHint("a", false);
+  private final SocketHint<Mat> bHint = SocketHints.Inputs.createMatSocketHint("b", false);
+  private final SocketHint<Mat> sumHint = SocketHints.Inputs.createMatSocketHint("sum", true);
 
   private InputSocket<Mat> a;
   private InputSocket<Mat> b;

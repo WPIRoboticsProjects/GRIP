@@ -63,13 +63,13 @@ public class CompatibilityTest {
     Reader temp = new FileReader(file);
     BufferedReader reader = new BufferedReader(temp);
     String line = "";
-    String oldText = "";
+    StringBuffer oldText = new StringBuffer();
     while ((line = reader.readLine()) != null) {
-      oldText += line + "\r\n";
+      oldText.append(line).append("\r\n");
     }
     reader.close();
-    String newText = oldText.replaceAll("REPLACEME", photoFileName); //This gives the correct
-    // location of the test photo needed to the project file
+    String newText = oldText.toString().replaceAll("REPLACEME", photoFileName); //This gives the
+    // correct location of the test photo needed to the project file
 
     //Write the altered project file text
     FileWriter writer2 = new FileWriter(file);

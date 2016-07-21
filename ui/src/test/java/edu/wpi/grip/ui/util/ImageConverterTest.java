@@ -81,7 +81,9 @@ public class ImageConverterTest extends ApplicationTest {
   }
 
   private void assertSameImage(ImageWithData imageWithData, Image javaFXImage) {
-    assertEquals(imageWithData.getCols(), Math.round(javaFXImage.getWidth()));
-    assertEquals(imageWithData.getRows(), Math.round(javaFXImage.getHeight()));
+    assertEquals("Image was not the same", imageWithData.getCols(),
+        Math.round(javaFXImage.getWidth()));
+    assertEquals("Image was not the same", imageWithData.getRows(),
+        Math.round(javaFXImage.getHeight()));
   }
 }

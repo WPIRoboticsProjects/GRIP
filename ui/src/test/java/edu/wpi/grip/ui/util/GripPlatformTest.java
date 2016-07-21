@@ -22,7 +22,6 @@ public class GripPlatformTest extends ApplicationTest {
 
   @Rule
   public Timeout globalTimeout = Timeout.seconds(10); // 10 seconds max per method tested
-  private EventBus eventBus;
   private GripPlatform platform;
   private GripPlatform unRegisteredPlatform;
 
@@ -35,7 +34,8 @@ public class GripPlatformTest extends ApplicationTest {
 
   @Before
   public void setUp() {
-    this.eventBus = new EventBus();
+    EventBus eventBus = new EventBus();
+
     this.platform = new GripPlatform(eventBus);
     eventBus.register(this.platform);
 
@@ -44,6 +44,7 @@ public class GripPlatformTest extends ApplicationTest {
   }
 
   @Test
+  @SuppressWarnings("PMD.JUnitTestsShouldIncludeAssert")
   public void testRunAsSoonAsPossibleRunsInCorrectThreadWhenNotCalledFromFXThread() throws
       Exception {
     final Waiter waiter = new Waiter();
@@ -69,6 +70,7 @@ public class GripPlatformTest extends ApplicationTest {
   }
 
   @Test
+  @SuppressWarnings("PMD.JUnitTestsShouldIncludeAssert")
   public void testRunAsSoonAsPossibleDoesNotDeadlockWhenRunInsideItself() throws Exception {
     final Waiter waiter = new Waiter();
     platform.runAsSoonAsPossible(() -> {

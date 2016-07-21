@@ -34,7 +34,7 @@ import static org.junit.Assert.assertTrue;
 public class GripServerTest {
 
   private final DefaultHttpClient client;
-  private GripServer instance;
+  private final GripServer instance;
 
   public static class TestServerFactory implements GripServer.JettyServerFactory {
 

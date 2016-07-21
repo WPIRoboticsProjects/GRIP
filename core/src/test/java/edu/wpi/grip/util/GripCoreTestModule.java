@@ -44,6 +44,7 @@ public class GripCoreTestModule extends GripCoreModule {
         + "method called.";
   }
 
+  @SuppressWarnings("PMD.JUnit4TestShouldUseBeforeAnnotation")
   public void setUp() {
     instanceAlive = true;
     setUp = true;
@@ -54,6 +55,7 @@ public class GripCoreTestModule extends GripCoreModule {
    * in the {@link org.junit.After} method for any test that uses this class. If this is not called
    * then the next test that tries to use an instance of this class will throw an exception.
    */
+  @SuppressWarnings("PMD.JUnit4TestShouldUseAfterAnnotation")
   public void tearDown() {
     try {
       final List<Throwable> throwables = new ArrayList<>(2);
