@@ -3,4 +3,3 @@
 <?import javafx.scene.layout.VBox?>
 <VBox fx:controller="edu.wpi.grip.ui.pipeline.InputsController" fx:id="root"
       xmlns:fx="http://javafx.com/fxml/1" styleClass="socket"/>
-

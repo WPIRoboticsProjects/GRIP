@@ -80,6 +80,23 @@
     </Label>
     <Separator orientation="HORIZONTAL" />
     <HBox fx:id="inputs" styleClass="inputs" />
+    <Button fx:id="Expand" onMouseClicked="#expand" styleClass="move-right"
+            HBox.hgrow="NEVER">
+        <graphic>
+            <ImageView>
+                <Image url="/edu/wpi/grip/ui/icons/right.png" />
+                <fitWidth>
+                    <DPIUtility fx:constant="SMALL_ICON_SIZE" />
+                </fitWidth>
+                <fitHeight>
+                    <DPIUtility fx:constant="SMALL_ICON_SIZE" />
+                </fitHeight>
+            </ImageView>
+        </graphic>
+        <tooltip>
+            <Tooltip text="Move Step Right" />
+        </tooltip>
+    </Button>
     <Separator orientation="HORIZONTAL" />
     <VBox fx:id="outputs" styleClass="sockets" />
 </VBox>

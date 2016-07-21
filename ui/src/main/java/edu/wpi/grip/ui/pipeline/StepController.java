@@ -22,6 +22,7 @@ import java.util.List;
 
 import javafx.fxml.FXML;
 import javafx.scene.Node;
+import javafx.scene.control.Button;
 import javafx.scene.control.Labeled;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -55,6 +56,8 @@ public class StepController implements Controller {
   private HBox inputs;
   @FXML
   private VBox outputs;
+  @FXML
+  private Button expand;
   private ControllerMap<InputsController, Node> inputsMapManager;
   private ControllerMap<OutputSocketController, Node> outputSocketMapManager;
 
@@ -86,6 +89,9 @@ public class StepController implements Controller {
 
     // Add a SocketControlView for each input socket and output socket
     final int numSplits = step.getInputSockets().size()/6 + 1;
+    if(numSplits == 1){
+      expand.setVisible(true);
+    }
     int extra = step.getInputSockets().size()%numSplits;
     int index = 0;
     for(int i = 0; i < numSplits; i++){
@@ -100,7 +106,6 @@ public class StepController implements Controller {
         extra--;
       }
       inputsMapManager.add(inputsControllerFactory.create(tmpInputs));
-
     }
 
     for (OutputSocket<?> outputSocket : step.getOutputSockets()) {
@@ -156,6 +161,10 @@ public class StepController implements Controller {
   @FXML
   private void moveStepRight() {
     pipeline.moveStep(step, +1);
+  }
+
+  @FXML
+  private void expand() {
   }
 
   /**
