@@ -9,7 +9,6 @@ import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.core.sources.ImageFileSource;
 import edu.wpi.grip.generated.opencv_imgproc.enumeration.AdaptiveThresholdTypesEnum;
-import edu.wpi.grip.generated.opencv_imgproc.enumeration.ThresholdTypesEnum;
 import edu.wpi.grip.ui.codegeneration.AbstractGenerationTest;
 import edu.wpi.grip.ui.codegeneration.tools.GenType;
 import edu.wpi.grip.ui.codegeneration.tools.HelperTools;

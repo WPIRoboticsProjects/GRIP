@@ -13,7 +13,6 @@ import edu.wpi.grip.ui.codegeneration.tools.HelperTools;
 import edu.wpi.grip.ui.codegeneration.tools.PipelineInterfacer;
 import edu.wpi.grip.util.Files;
 
-import org.junit.Ignore;
 import org.junit.Test;
 import org.opencv.core.Mat;
 
