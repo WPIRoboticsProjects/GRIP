@@ -1,5 +1,14 @@
 package edu.wpi.grip.ui.pipeline;
 
+import com.google.inject.assistedinject.Assisted;
+
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
+import javax.inject.Inject;
+
 import edu.wpi.grip.core.Pipeline;
 import edu.wpi.grip.core.Step;
 import edu.wpi.grip.core.sockets.InputSocket;
@@ -9,17 +18,12 @@ import edu.wpi.grip.ui.annotations.ParametrizedController;
 import edu.wpi.grip.ui.components.ExceptionWitnessResponderButton;
 import edu.wpi.grip.ui.dragging.StepDragService;
 import edu.wpi.grip.ui.pipeline.input.InputSocketController;
-import edu.wpi.grip.ui.pipeline.input.InputSocketControllerFactory;
 import edu.wpi.grip.ui.util.ControllerMap;
 import edu.wpi.grip.ui.util.StyleClassNameUtility;
-
-import com.google.inject.assistedinject.Assisted;
-
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-
+import javafx.animation.KeyFrame;
+import javafx.animation.KeyValue;
+import javafx.animation.Timeline;
+import javafx.beans.property.DoubleProperty;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
@@ -28,8 +32,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-
-import javax.inject.Inject;
+import javafx.util.Duration;
 
 /**
  * A JavaFX control that shows a step in the pipeline.  This control shows the name of the operation
@@ -37,6 +40,8 @@ import javax.inject.Inject;
  */
 @ParametrizedController(url = "Step.fxml")
 public class StepController implements Controller {
+
+  private final int splitSize = 6;
 
   private final Pipeline pipeline;
   private final InputsController.Factory inputsControllerFactory;
@@ -51,6 +56,8 @@ public class StepController implements Controller {
   @FXML
   private ImageView icon;
   @FXML
+  private ImageView expandIcon;
+  @FXML
   private HBox buttons;
   @FXML
   private HBox inputs;
@@ -58,6 +65,7 @@ public class StepController implements Controller {
   private VBox outputs;
   @FXML
   private Button expand;
+  private boolean expanded = true;
   private ControllerMap<InputsController, Node> inputsMapManager;
   private ControllerMap<OutputSocketController, Node> outputSocketMapManager;
 
@@ -87,26 +95,12 @@ public class StepController implements Controller {
         new Image(InputStream.class.cast(icon))));
     buttons.getChildren().add(0, exceptionWitnessResponderButtonFactory.create(step, "Step Error"));
 
-    // Add a SocketControlView for each input socket and output socket
-    final int numSplits = step.getInputSockets().size()/6 + 1;
-    if(numSplits == 1){
-      expand.setVisible(true);
+    if (step.getInputSockets().size() > splitSize) {
+      expandIcon.setImage(new Image("/edu/wpi/grip/ui/icons/left-expand.png"));
+    } else {
+      expandIcon.fitWidthProperty().setValue(0);
     }
-    int extra = step.getInputSockets().size()%numSplits;
-    int index = 0;
-    for(int i = 0; i < numSplits; i++){
-      List<InputSocket> tmpInputs = new ArrayList();
-      for(int j = 0; j < step.getInputSockets().size()/numSplits; j++) {
-        tmpInputs.add(step.getInputSockets().get(index));
-        index++;
-      }
-      if(extra > 0) {
-        tmpInputs.add(step.getInputSockets().get(index));
-        index++;
-        extra--;
-      }
-      inputsMapManager.add(inputsControllerFactory.create(tmpInputs));
-    }
+    setUpSockets();
 
     for (OutputSocket<?> outputSocket : step.getOutputSockets()) {
       outputSocketMapManager.add(outputSocketControllerFactory.create(outputSocket));
@@ -164,7 +158,55 @@ public class StepController implements Controller {
   }
 
   @FXML
+  private void expandIcon() {
+
+  }
+
+  @FXML
   private void expand() {
+    if (step.getInputSockets().size() > splitSize) {
+
+      inputsMapManager.clear();
+      if (expanded) {
+        expanded = false;
+        expandIcon.setImage(new Image("/edu/wpi/grip/ui/icons/right-expand.png"));
+      } else {
+        expanded = true;
+        expandIcon.setImage(new Image("/edu/wpi/grip/ui/icons/left-expand.png"));
+      }
+      setUpSockets();
+    }
+  }
+  private void setUpSockets() {
+    final int numSplits = step.getInputSockets().size() / splitSize + 1;
+    int extra = step.getInputSockets().size() % numSplits;
+    int index = 0;
+    for (int i = 0; i < numSplits; i++) {
+      List<InputSocket> tmpInputs = new ArrayList();
+      for (int j = 0; j < step.getInputSockets().size() / numSplits; j++) {
+        tmpInputs.add(step.getInputSockets().get(index));
+        index++;
+      }
+      if (extra > 0) {
+        tmpInputs.add(step.getInputSockets().get(index));
+        index++;
+        extra--;
+      }
+      inputsMapManager.add(inputsControllerFactory.create(tmpInputs));
+      if (!expanded) {
+        break;
+      }
+      if(i>0){
+        //Fade in
+        DoubleProperty opacity = inputs.getChildren().get(i).opacityProperty();
+        Timeline fadeIn = new Timeline(
+            new KeyFrame(Duration.ZERO, new KeyValue(opacity, 0.0)),
+            new KeyFrame(new Duration(500), new KeyValue(opacity, 1.0))
+        );
+        fadeIn.play();
+      }
+    }
+
   }
 
   /**
