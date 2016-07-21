@@ -304,6 +304,13 @@ project (":ui:preloader") {
     apply plugin: 'java'
     apply plugin: 'idea'
     apply plugin: 'jacoco'
+    apply plugin: 'application'
+
+    task run(overwrite: true, type: JavaExec) {
+        classpath = sourceSets.main.runtimeClasspath
+        main = 'edu.wpi.grip.preloader.GripPreloader'
+        args 'windowed'
+    }
 }
 
 project(":ui") {

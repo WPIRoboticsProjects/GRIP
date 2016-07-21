@@ -14,6 +14,10 @@ public final class GripPreloader extends Preloader {
   private ProgressBar progressBar;
   private Stage preloaderStage;
 
+  public static void main(String[] args) {
+    launch(args);
+  }
+
   @Override
   public void start(Stage preloaderStage) throws IOException {
     Parent root = FXMLLoader.load(GripPreloader.class.getResource("Preloader.fxml"));
@@ -23,8 +27,13 @@ public final class GripPreloader extends Preloader {
         p -> p instanceof ProgressBar).get(0);
 
     System.setProperty("prism.lcdtext", "false");
+
+    if (getParameters().getRaw().contains("windowed")) {
+      preloaderStage.initStyle(StageStyle.UTILITY);
+    } else {
+      preloaderStage.initStyle(StageStyle.TRANSPARENT);
+    }
     preloaderStage.setScene(scene);
-    preloaderStage.initStyle(StageStyle.TRANSPARENT);
     preloaderStage.setAlwaysOnTop(true);
     preloaderStage.setResizable(false);
     preloaderStage.show();
