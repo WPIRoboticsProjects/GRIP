@@ -24,8 +24,6 @@ public class PipelineGenerator {
   @Inject
   private Pipeline pipeline;
   @Inject
-  private Exporter exporter;
-  @Inject
   private EventBus eventBus;
   @Inject
   private Connection.Factory<Object> factory;
@@ -55,12 +53,16 @@ public class PipelineGenerator {
   }
 
   public void export(String fileName) {
-    exporter.export(pipeline, Language.JAVA, codeDir.toPath().resolve(fileName + ".java").toFile(),
-        false);
-    exporter.export(pipeline, Language.PYTHON, codeDir.toPath().resolve(fileName + ".py").toFile(),
-        false);
-    exporter.export(pipeline, Language.CPP, codeDir.toPath().resolve(fileName + ".cpp").toFile(),
-        false);
+    
+    new Exporter(pipeline.getSteps(), Language.JAVA, 
+        codeDir.toPath().resolve(fileName + ".java").toFile(),
+        false).run();
+    new Exporter(pipeline.getSteps(), Language.PYTHON, 
+        codeDir.toPath().resolve(fileName + ".py").toFile(),
+        false).run();
+    new Exporter(pipeline.getSteps(), Language.CPP, 
+        codeDir.toPath().resolve(fileName + ".cpp").toFile(),
+        false).run();
   }
 
 }

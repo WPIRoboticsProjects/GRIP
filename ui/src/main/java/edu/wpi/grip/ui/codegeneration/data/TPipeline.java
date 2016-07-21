@@ -1,20 +1,21 @@
 package edu.wpi.grip.ui.codegeneration.data;
 
 import edu.wpi.grip.core.Connection;
-import edu.wpi.grip.core.Pipeline;
 import edu.wpi.grip.core.Step;
 import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.ui.codegeneration.TemplateMethods;
+
+import com.google.common.collect.ImmutableList;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-
 /**
- * TPipeline(template pipeline) is a data structure that holds the information about a pipeline
+ * TPipeline(template pipeline) is a data structure 
+ * that holds the information about a pipeline
  * needed by the velocity templates to generate code.
  */
 public class TPipeline {
@@ -28,29 +29,29 @@ public class TPipeline {
   /**
    * Creates a Tpipeline from a pipeline
    *
-   * @param pipeline The current grip pipeline.
+   * @param steps The list of steps from the pipeline to generate.
    */
-  public TPipeline(Pipeline pipeline) {
+  public TPipeline(ImmutableList<Step> steps) {
     this.uniqueSources = new HashMap<>();
     this.steps = new ArrayList<>();
     this.numSources = 0;
     connections = new HashMap<>();
-    set(pipeline);
+    set(steps);
   }
 
   /**
    * sets up the entire Tpipeline by creating the Tsteps
    *
-   * @param pipeline The grip pipeline used to create the TPipeline.
+   * @param pipeSteps The list of steps used to create the TPipeline.
    */
-  public void set(Pipeline pipeline) {
-    for (Step step : pipeline.getSteps()) {
+  public void set(ImmutableList<Step> pipeSteps) {
+    for (Step step : pipeSteps) {
       TStep tStep = makeStep(step.getOperationDescription().name().replaceAll(" ", "_"));
       steps.add(tStep);
       int numOutputs = 0;
       for (OutputSocket output : step.getOutputSockets()) {
-        TOutput tOutput = new TOutput(TemplateMethods.parseSocketType(output), tStep.name()
-            + tStep.num() + "Output" + numOutputs);
+        TOutput tOutput = new TOutput(TemplateMethods.parseSocketType(output),
+            tStep.name() + tStep.num() + "Output" + numOutputs);
         numOutputs++;
         tStep.addOutput(tOutput);
         if (!output.getConnections().isEmpty()) {
@@ -60,9 +61,9 @@ public class TPipeline {
         }
       }
     }
-    for (int i = 0; i < pipeline.getSteps().size(); i++) {
+    for (int i = 0; i < pipeSteps.size(); i++) {
       TStep tStep = this.steps.get(i);
-      for (InputSocket input : pipeline.getSteps().get(i).getInputSockets()) {
+      for (InputSocket input : pipeSteps.get(i).getInputSockets()) {
         TInput tInput;
         String type = TemplateMethods.parseSocketType(input);
         if ("Type".equals(type)) {
@@ -76,9 +77,9 @@ public class TPipeline {
           } else {
             tInput = null;
             for (Object con : input.getConnections()) {
-              //Connections is a set. Should only have one element
-              tInput = createInput(type, name, "Connection" + ((Connection) con).getOutputSocket()
-                  .toString());
+              // Connections is a set. Should only have one element
+              tInput = createInput(type, name,
+                  "Connection" + ((Connection) con).getOutputSocket().toString());
             }
           }
         } else {
@@ -92,8 +93,8 @@ public class TPipeline {
   /**
    * Creates a TInput for a TStep
    *
-   * @param type  The data type of the input
-   * @param name  The name of the input
+   * @param type The data type of the input
+   * @param name The name of the input
    * @param value The value of the input
    * @return The generated TInput.
    */
@@ -181,6 +182,7 @@ public class TPipeline {
 
   /**
    * creates a new step from a name
+   * 
    * @param opName the name of the step
    * @return a new step with the the opName and correct number.
    */

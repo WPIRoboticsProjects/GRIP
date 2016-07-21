@@ -80,8 +80,6 @@ public class MainWindowController {
   private Palette palette;
   @Inject
   private Project project;
-  @Inject
-  private Exporter exporter;
 
   private Stage aboutDialogStage;
 
@@ -264,7 +262,10 @@ public class MainWindowController {
       return;
     }
     Language lang = Language.get(fileChooser.getSelectedExtensionFilter().getDescription());
-    exporter.export(pipeline, lang, file, true);
+    Exporter exporter = new Exporter(pipeline.getSteps(), lang, file, true);
+    Thread exportRunner = new Thread(exporter);
+    exportRunner.setDaemon(true);
+    exportRunner.start();
   }
 
   @FXML

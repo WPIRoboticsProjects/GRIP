@@ -26,14 +26,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import javax.inject.Inject;
-
 import static org.junit.Assert.assertTrue;
 
 @Category(GenerationTest.class)
 public class FindContoursGenerationTest extends AbstractGenerationTest {
-  @Inject
-  private Exporter exporter;
   private List<Number> hVal = new ArrayList<Number>();
   private List<Number> sVal = new ArrayList<Number>();
   private List<Number> lVal = new ArrayList<Number>();
