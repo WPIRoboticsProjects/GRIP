@@ -10,6 +10,8 @@ import edu.wpi.grip.core.util.Icon;
 
 import com.google.common.collect.ImmutableList;
 
+import org.bytedeco.javacpp.opencv_core;
+
 import java.util.List;
 
 import static org.bytedeco.javacpp.opencv_core.Mat;
@@ -19,6 +21,7 @@ import static org.bytedeco.javacpp.opencv_imgproc.arcLength;
 import static org.bytedeco.javacpp.opencv_imgproc.boundingRect;
 import static org.bytedeco.javacpp.opencv_imgproc.contourArea;
 import static org.bytedeco.javacpp.opencv_imgproc.convexHull;
+import static org.bytedeco.javacpp.opencv_imgproc.minAreaRect;
 
 /**
  * An {@link Operation} that takes in a list of contours and outputs a list of any contours in the
@@ -50,6 +53,9 @@ public class AdvancedFilterContoursOperation implements Operation {
 
   private final SocketHint<Number> minPerimeterHint =
       SocketHints.Inputs.createNumberSpinnerSocketHint("Min Perimeter", 0, 0, Integer.MAX_VALUE);
+
+  private final SocketHint<Boolean> rotatedRectHint =
+      SocketHints.createBooleanSocketHint("Best Fit Rectangles", false);
 
   private final SocketHint<Number> maxPerimeterHint =
       SocketHints.Inputs.createNumberSpinnerSocketHint("Max Perimeter", 10000, 0,
@@ -89,6 +95,7 @@ public class AdvancedFilterContoursOperation implements Operation {
   private final InputSocket<Number> maxAreaSocket;
   private final InputSocket<Number> minPerimeterSocket;
   private final InputSocket<Number> maxPerimeterSocket;
+  private final InputSocket<Boolean> rotatedRectSocket;
   private final InputSocket<Number> minWidthSocket;
   private final InputSocket<Number> maxWidthSocket;
   private final InputSocket<Number> minHeightSocket;
@@ -109,6 +116,7 @@ public class AdvancedFilterContoursOperation implements Operation {
     this.maxAreaSocket = inputSocketFactory.create(maxAreaHint);
     this.minPerimeterSocket = inputSocketFactory.create(minPerimeterHint);
     this.maxPerimeterSocket = inputSocketFactory.create(maxPerimeterHint);
+    this.rotatedRectSocket = inputSocketFactory.create(rotatedRectHint);
     this.minWidthSocket = inputSocketFactory.create(minWidthHint);
     this.maxWidthSocket = inputSocketFactory.create(maxWidthHint);
     this.minHeightSocket = inputSocketFactory.create(minHeightHint);
@@ -130,6 +138,7 @@ public class AdvancedFilterContoursOperation implements Operation {
         maxAreaSocket,
         minPerimeterSocket,
         maxPerimeterSocket,
+        rotatedRectSocket,
         minWidthSocket,
         maxWidthSocket,
         minHeightSocket,
@@ -157,6 +166,7 @@ public class AdvancedFilterContoursOperation implements Operation {
     final double maxArea = maxAreaSocket.getValue().get().doubleValue();
     final double minPerimeter = minPerimeterSocket.getValue().get().doubleValue();
     final double maxPerimeter = maxPerimeterSocket.getValue().get().doubleValue();
+    final boolean rotatedRect = rotatedRectSocket.getValue().get().booleanValue();
     final double minWidth = minWidthSocket.getValue().get().doubleValue();
     final double maxWidth = maxWidthSocket.getValue().get().doubleValue();
     final double minHeight = minHeightSocket.getValue().get().doubleValue();
@@ -180,11 +190,33 @@ public class AdvancedFilterContoursOperation implements Operation {
     for (int i = 0; i < inputContours.size(); i++) {
       final Mat contour = inputContours.get(i);
 
-      final Rect bb = boundingRect(contour);
-      if (bb.width() < minWidth || bb.width() > maxWidth) {
+      double width;
+      double height;
+      if (rotatedRect) {
+        final opencv_core.RotatedRect bb = minAreaRect(contour);
+        opencv_core.Point2f points = new opencv_core.Point2f(4);
+        bb.points(points);
+        final double rotatedWidth = Math.sqrt( Math.pow(points.position(0).x() - points.position(1)
+            .x(), 2) + Math.pow(points.position(0).y() - points.position(1).y(), 2));
+        final double rotatedHeight = Math.sqrt( Math.pow(points.position(1).x() - points.position(2)
+            .x(), 2) + Math.pow(points.position(1).y() - points.position(2).y(), 2));
+        if (Math.abs(bb.angle()) >= 45) {
+          width = rotatedWidth;
+          height = rotatedHeight;
+        } else {
+          width = rotatedHeight;
+          height = rotatedWidth;
+        }
+      } else {
+        final Rect normbb = boundingRect(contour);
+        width = normbb.width();
+        height = normbb.height();
+      }
+
+      if (width < minWidth || width > maxWidth) {
         continue;
       }
-      if (bb.height() < minHeight || bb.height() > maxHeight) {
+      if (width < minHeight || width > maxHeight) {
         continue;
       }
 
@@ -192,7 +224,7 @@ public class AdvancedFilterContoursOperation implements Operation {
       if (area < minArea || area > maxArea) {
         continue;
       }
-      if (arcLength(contour, true) < minPerimeter || arcLength(contour, true) > minPerimeter) {
+      if (arcLength(contour, true) < minPerimeter || arcLength(contour, true) > maxPerimeter) {
         continue;
       }
 
@@ -206,7 +238,7 @@ public class AdvancedFilterContoursOperation implements Operation {
         continue;
       }
 
-      final double ratio = (double) bb.width() / bb.height();
+      final double ratio = width / height;
       if (ratio < minRatio || ratio > maxRatio) {
         continue;
       }
