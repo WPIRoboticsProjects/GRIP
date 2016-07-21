@@ -41,7 +41,7 @@ class Line {
 	}
 };
 
-#if(!$loadLib)
+#if($testing)
 extern "C" vector<Vec6d> getLines(string name, AbsPipeline* obj){
 	vector<Line> *lines = (vector<Line> *) (obj->*(obj->getOutputs()[name]))();
 	vector<Vec6d> out;

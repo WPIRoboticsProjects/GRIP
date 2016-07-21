@@ -262,7 +262,7 @@ public class MainWindowController {
       return;
     }
     Language lang = Language.get(fileChooser.getSelectedExtensionFilter().getDescription());
-    Exporter exporter = new Exporter(pipeline.getSteps(), lang, file, true);
+    Exporter exporter = new Exporter(pipeline.getSteps(), lang, file);
     Thread exportRunner = new Thread(exporter);
     exportRunner.setDaemon(true);
     exportRunner.start();

@@ -29,23 +29,36 @@ public class Exporter implements Runnable {
   private final ImmutableList<Step> steps;
   private final Language lang;
   private final File dir;
-  private final boolean notTesting;
+  private final boolean testing;
 
   /**
-   * Constructor for an exporter.
+   * Constructor for an exporter with testing option.
+   * In general for non grip testing, the version of the constructor 
+   * without testing boolean should be called. 
    * 
    * @param steps an Immutable List of the steps in the pipeline to generate.
    * @param lang the language to generate code for.
    * @param dir the file to generate the main code to.
-   * @param notTesting true when not in testing false during testing.
+   * @param testing if true enables features that allow for junit run tests for generated code.
    */
-  public Exporter(ImmutableList<Step> steps, Language lang, File dir, boolean notTesting) {
+  public Exporter(ImmutableList<Step> steps, Language lang, File dir, boolean testing) {
     this.steps = steps;
     this.lang = lang;
     this.dir = dir;
-    this.notTesting = notTesting;
+    this.testing = testing;
   }
-
+  
+  /**
+   * Constructor for an exporter for use when not testing.
+   * 
+   * @param steps an Immutable List of the steps in the pipeline to generate.
+   * @param lang the language to generate code for.
+   * @param dir the file to generate the main code to.
+   */
+  public Exporter(ImmutableList<Step> steps, Language lang, File dir) {
+    this(steps, lang, dir, false);
+  }
+  
   @Override
   public void run() {
     TPipeline tPipeline = new TPipeline(steps);
@@ -54,7 +67,7 @@ public class Exporter implements Runnable {
     context.put("pipeline", tPipeline);
     context.put("tMeth", tempMeth);
     context.put("fileName", dir.getName().substring(0, dir.getName().lastIndexOf(".")));
-    context.put("loadLib", notTesting);
+    context.put("testing", testing);
     StringBuilder templateDirBuilder = new StringBuilder(50);
     templateDirBuilder.append("src/main/resources/edu/wpi/grip/ui/templates/").append(lang.filePath)
         .append('/');

@@ -56,13 +56,13 @@ public class PipelineGenerator {
     
     new Exporter(pipeline.getSteps(), Language.JAVA, 
         codeDir.toPath().resolve(fileName + ".java").toFile(),
-        false).run();
+        true).run();
     new Exporter(pipeline.getSteps(), Language.PYTHON, 
         codeDir.toPath().resolve(fileName + ".py").toFile(),
-        false).run();
+        true).run();
     new Exporter(pipeline.getSteps(), Language.CPP, 
         codeDir.toPath().resolve(fileName + ".cpp").toFile(),
-        false).run();
+        true).run();
   }
 
 }

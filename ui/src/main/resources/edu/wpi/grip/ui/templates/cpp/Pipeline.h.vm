@@ -1,6 +1,6 @@
 #set($lines = false)
 #pragma once
-#if(!$loadLib)
+#if($testing)
 \#include "AbsPipeline.h"
 \#include <String>
 #end
@@ -30,7 +30,7 @@ using namespace std;
 *
 * Make sure to set sources before running process()
 */
-class $fileName #if(!$loadLib): public AbsPipeline #end{
+class $fileName #if($testing): public AbsPipeline #end{
 	private:
 #foreach( $source in $pipeline.getSources())
 		#cType($source.type()) $source.value();
@@ -77,7 +77,7 @@ class $fileName #if(!$loadLib): public AbsPipeline #end{
 #foreach($step in $pipeline.getSteps())
 #foreach($out in $step.getOutputs())
 #set($outSym = "#funPassType($output.type())")
-#if($outSym.equals("&") || !$loadLib)
+#if($outSym.equals("&") || $testing)
 #set($ptr = true)
 #else
 #set($ptr = false)
@@ -86,6 +86,6 @@ class $fileName #if(!$loadLib): public AbsPipeline #end{
 #end
 #end
 };
-#if(!$loadLib)
+#if($testing)
 extern "C" AbsPipeline * makePipeline();
 #end

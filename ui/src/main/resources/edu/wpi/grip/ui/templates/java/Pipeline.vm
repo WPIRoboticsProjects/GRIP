@@ -53,7 +53,7 @@ public class $fileName{
 	private boolean $boolName#if($boolInp.hasValue()) = $boolInp.value()#end;
 #end
 #end
-#if($loadLib)
+#if(!$testing)
 	static{
 		System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
 	}

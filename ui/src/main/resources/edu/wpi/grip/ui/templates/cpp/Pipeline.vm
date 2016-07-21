@@ -22,7 +22,7 @@ $fileName::$fileName() {
 #foreach($moving in $pipeline.getMovingThresholds())
 ##	this->lastImage$moving.num() = new Mat();
 #end
-#if(!$loadLib)
+#if($testing)
 #foreach($source in $pipeline.getSources())
 #set($num = $velocityCount - 1)
 #if($source.type().equalsIgnoreCase("Mat"))
@@ -94,7 +94,7 @@ void $fileName::set$step.name()${step.num()}(bool value){
 #foreach($step in $pipeline.getSteps())
 #foreach($output in $step.getOutputs())
 #set($outSym = "#funPassType($output.type())")
-#if($outSym.equals("&") || !$loadLib)
+#if($outSym.equals("&") || $testing)
 #set($ptr = true)
 #else
 #set($ptr = false)
@@ -114,7 +114,7 @@ void $fileName::set$step.name()${step.num()}(bool value){
 #parse($toParse)
 
 #end
-#if(!$loadLib)
+#if($testing)
 extern "C" AbsPipeline * makePipeline(){
     return new ${fileName}();
 }
