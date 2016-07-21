@@ -1,14 +1,5 @@
 package edu.wpi.grip.ui.pipeline;
 
-import com.google.inject.assistedinject.Assisted;
-
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-
-import javax.inject.Inject;
-
 import edu.wpi.grip.core.Pipeline;
 import edu.wpi.grip.core.Step;
 import edu.wpi.grip.core.sockets.InputSocket;
@@ -20,6 +11,14 @@ import edu.wpi.grip.ui.dragging.StepDragService;
 import edu.wpi.grip.ui.pipeline.input.InputSocketController;
 import edu.wpi.grip.ui.util.ControllerMap;
 import edu.wpi.grip.ui.util.StyleClassNameUtility;
+
+import com.google.inject.assistedinject.Assisted;
+
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
@@ -33,6 +32,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.util.Duration;
+import javax.inject.Inject;
 
 /**
  * A JavaFX control that shows a step in the pipeline.  This control shows the name of the operation
@@ -41,7 +41,7 @@ import javafx.util.Duration;
 @ParametrizedController(url = "Step.fxml")
 public class StepController implements Controller {
 
-  private final int splitSize = 6;
+  private static final int splitSize = 6;
 
   private final Pipeline pipeline;
   private final InputsController.Factory inputsControllerFactory;
@@ -158,11 +158,6 @@ public class StepController implements Controller {
   }
 
   @FXML
-  private void expandIcon() {
-
-  }
-
-  @FXML
   private void expand() {
     if (step.getInputSockets().size() > splitSize) {
 
@@ -177,6 +172,7 @@ public class StepController implements Controller {
       setUpSockets();
     }
   }
+
   private void setUpSockets() {
     final int numSplits = step.getInputSockets().size() / splitSize + 1;
     int extra = step.getInputSockets().size() % numSplits;
@@ -196,7 +192,7 @@ public class StepController implements Controller {
       if (!expanded) {
         break;
       }
-      if(i>0){
+      if (i > 0) {
         //Fade in
         DoubleProperty opacity = inputs.getChildren().get(i).opacityProperty();
         Timeline fadeIn = new Timeline(

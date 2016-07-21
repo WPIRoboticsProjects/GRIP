@@ -1,32 +1,22 @@
 package edu.wpi.grip.ui.pipeline;
 
-import com.google.inject.assistedinject.Assisted;
-
-import java.io.InputStream;
-import java.util.Collection;
-import java.util.List;
-
-import javax.inject.Inject;
-
-import edu.wpi.grip.core.Pipeline;
-import edu.wpi.grip.core.Step;
 import edu.wpi.grip.core.sockets.InputSocket;
-import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.ui.Controller;
 import edu.wpi.grip.ui.annotations.ParametrizedController;
-import edu.wpi.grip.ui.components.ExceptionWitnessResponderButton;
-import edu.wpi.grip.ui.dragging.StepDragService;
 import edu.wpi.grip.ui.pipeline.input.InputSocketController;
 import edu.wpi.grip.ui.pipeline.input.InputSocketControllerFactory;
 import edu.wpi.grip.ui.util.ControllerMap;
-import edu.wpi.grip.ui.util.StyleClassNameUtility;
+
+import com.google.inject.assistedinject.Assisted;
+
+import java.util.Collection;
+import java.util.List;
+
+
 import javafx.fxml.FXML;
 import javafx.scene.Node;
-import javafx.scene.control.Labeled;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javax.inject.Inject;
 
 /**
  * A JavaFX control that shows inputs in a step.
