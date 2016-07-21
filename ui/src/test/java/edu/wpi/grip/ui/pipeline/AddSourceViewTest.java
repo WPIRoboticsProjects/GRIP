@@ -17,7 +17,7 @@ import org.testfx.util.WaitForAsyncUtils;
 import java.io.IOException;
 import java.util.Optional;
 import java.util.Properties;
-
+import javafx.application.Platform;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
@@ -51,22 +51,22 @@ public class AddSourceViewTest {
 
     @After
     public void after() {
-      // Ensuer that all of the dialogs that were created get closed afterward.
+      // Ensure that all of the dialogs that were created get closed afterward.
       addSourceView.closeDialogs();
     }
 
     @Test
     @SuppressWarnings("PMD.JUnitTestsShouldIncludeAssert")
     public void testClickOnCreateWebCameraOpensDialog() throws Exception {
-      clickOn(addSourceView.getWebcamButton());
+      Platform.runLater(() -> addSourceView.getMenuButton().fire());
       WaitForAsyncUtils.waitForFxEvents();
-      verifyThat("." + AddSourceView.SOURCE_DIALOG_STYLE_CLASS, NodeMatchers.isVisible());
+      verifyThat('.' + AddSourceView.SOURCE_DIALOG_STYLE_CLASS, NodeMatchers.isVisible());
     }
 
     @Test
     @SuppressWarnings("PMD.JUnitTestsShouldIncludeAssert")
     public void testClickOnCreateIPCameraOpensDialog() throws Exception {
-      clickOn(addSourceView.getIpcamButton());
+      Platform.runLater(() -> addSourceView.getIpcamButton().fire());
       WaitForAsyncUtils.waitForFxEvents();
       verifyThat("." + AddSourceView.SOURCE_DIALOG_STYLE_CLASS, NodeMatchers.isVisible());
     }
@@ -74,7 +74,7 @@ public class AddSourceViewTest {
     @Test
     public void testCreatesSourceStarted() throws Exception {
       // When
-      clickOn(addSourceView.getWebcamButton());
+      Platform.runLater(() -> addSourceView.getWebcamButton().fire());
       WaitForAsyncUtils.waitForFxEvents();
       verifyThat("." + AddSourceView.SOURCE_DIALOG_STYLE_CLASS, NodeMatchers.isVisible());
 
@@ -148,7 +148,7 @@ public class AddSourceViewTest {
     @SuppressWarnings("PMD.JUnitTestsShouldIncludeAssert")
     public void testWhenStartFailsDialogStillCloses() throws Exception {
       // When
-      clickOn(addSourceView.getWebcamButton());
+      Platform.runLater(() -> addSourceView.getWebcamButton().fire());
       WaitForAsyncUtils.waitForFxEvents();
 
       clickOn("OK");
@@ -162,7 +162,7 @@ public class AddSourceViewTest {
     @Test
     public void testCreatesSourceStartedFails() throws Exception {
       // When
-      clickOn(addSourceView.getWebcamButton());
+      Platform.runLater(() -> addSourceView.getWebcamButton().fire());
       WaitForAsyncUtils.waitForFxEvents();
       verifyThat("." + AddSourceView.SOURCE_DIALOG_STYLE_CLASS, NodeMatchers.isVisible());
 
