@@ -58,7 +58,7 @@ $fileName::$fileName() {
 void $fileName::Process(){
 #foreach($step in $pipeline.getSteps())
 	//Step $step.name()$step.num():
-#parse("src/main/resources/edu/wpi/grip/ui/templates/cpp/Step.vm")
+#parse("$vmLoc/Step.vm")
 
 #end
 }
@@ -109,7 +109,7 @@ void $fileName::set$step.name()${step.num()}(bool value){
 #end
 #end
 #foreach($step in $pipeline.getUniqueSteps())
-#set($toParse = "src/main/resources/edu/wpi/grip/ui/templates/cpp/operations/" + $step.name())
+#set($toParse = "$vmLoc/operations/" + $step.name())
 #set($toParse = $toParse + ".vm")
 #parse($toParse)
 

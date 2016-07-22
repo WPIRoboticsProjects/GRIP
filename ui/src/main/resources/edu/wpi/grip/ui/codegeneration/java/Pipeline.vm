@@ -71,7 +71,7 @@ public class $fileName{
 	public void process(){
 #foreach($step in $pipeline.getSteps())
 		//Step  $step.name()$step.num():
-#parse("src/main/resources/edu/wpi/grip/ui/templates/java/CV Step.vm")
+#parse("$vmLoc/CV Step.vm")
 
 #end
 	}
@@ -116,7 +116,7 @@ public class $fileName{
 #end
 
 #foreach($step in $pipeline.getUniqueSteps())
-#set($toParse = "src/main/resources/edu/wpi/grip/ui/templates/java/operations/" + $step.name())
+#set($toParse = "$vmLoc/operations/" + $step.name())
 #set($toParse = $toParse + ".vm")
 #parse($toParse)
 
@@ -125,5 +125,5 @@ public class $fileName{
 }
 #if($needsMut)
 
-#parse("src/main/resources/edu/wpi/grip/ui/templates/java/mutableof.vm")
+#parse("$vmLoc/mutableof.vm")
 #end

@@ -1,4 +1,4 @@
-#parse("src/main/resources/edu/wpi/grip/ui/templates/java/operations/Lines.vm")
+#parse("$vmLoc/operations/Lines.vm")
 	/**
 	 * Finds all line segments in an image.
 	 * @param input The image on which to perform the find lines.

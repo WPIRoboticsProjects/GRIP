@@ -19,7 +19,7 @@ using namespace std;
 
 #foreach($step in $pipeline.getUniqueSteps())
 #if($step.name().equals("Find_Lines") || $step.name().equals("Filter_Lines"))
-#parse("src/main/resources/edu/wpi/grip/ui/templates/cpp/operations/Lines.vm")
+#parse("$vmLoc/operations/Lines.vm")
 #end
 #enumType($step)
 #end

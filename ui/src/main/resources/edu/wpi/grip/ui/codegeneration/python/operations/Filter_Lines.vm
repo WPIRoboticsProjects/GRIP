@@ -1,4 +1,4 @@
-#parse("src/main/resources/edu/wpi/grip/ui/templates/python/operations/Lines.vm")
+#parse("$vmLoc/operations/Lines.vm")
     @staticmethod
     def $tMeth.name($step.name())(inputs, min_length, angle):
         """Filters out lines that do not meet certain criteria.

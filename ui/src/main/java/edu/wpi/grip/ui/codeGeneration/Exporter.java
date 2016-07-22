@@ -9,6 +9,8 @@ import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
 import org.apache.velocity.exception.ResourceNotFoundException;
+import org.apache.velocity.runtime.RuntimeConstants;
+import org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -68,13 +70,14 @@ public class Exporter implements Runnable {
     context.put("tMeth", tempMeth);
     context.put("fileName", dir.getName().substring(0, dir.getName().lastIndexOf(".")));
     context.put("testing", testing);
-    StringBuilder templateDirBuilder = new StringBuilder(50);
-    templateDirBuilder.append("src/main/resources/edu/wpi/grip/ui/templates/").append(lang.filePath)
-        .append('/');
-    final String templateDir = templateDirBuilder.toString().replaceAll("/", File.separator);
+    String templateDir = "/edu/wpi/grip/ui/codegeneration/" + lang.filePath;
+    templateDir = templateDir.replaceAll("/", File.separator);
+    context.put("vmLoc", templateDir);
     VelocityEngine ve = new VelocityEngine();
     Properties props = new Properties();
-    props.put("velocimacro.library", templateDir + "macros.vm");
+    props.put("velocimacro.library", templateDir + File.separator + "macros.vm");
+    props.put(RuntimeConstants.RESOURCE_LOADER, "classpath");
+    props.put("classpath.resource.loader.class", ClasspathResourceLoader.class.getName());
     ve.init(props);
     try {
       generateCode(ve, templateDir, dir, context);
@@ -86,6 +89,7 @@ public class Exporter implements Runnable {
       String missingOperation = error.substring(error.lastIndexOf('/') + 1, error.lastIndexOf('.'));
       logger.log(Level.SEVERE,
           "The operation " + missingOperation + " is not supported for export to " + lang, e);
+      throw e; 
     }
   }
 
@@ -100,7 +104,7 @@ public class Exporter implements Runnable {
    */
   private void generateCode(VelocityEngine ve, String templateDir, File file,
       VelocityContext context) {
-    Template tm = ve.getTemplate(templateDir + PIPELINE_TEMPLATE);
+    Template tm = ve.getTemplate(templateDir + File.separator + PIPELINE_TEMPLATE);
     StringWriter sw = new StringWriter();
     tm.merge(context, sw);
     try (PrintWriter writer = new PrintWriter(file.getAbsolutePath(), "UTF-8")) {
@@ -121,7 +125,7 @@ public class Exporter implements Runnable {
    */
   private void generateH(VelocityEngine ve, String templateDir, File file,
       VelocityContext context) {
-    Template tm = ve.getTemplate(templateDir + PIPELINE_HTEMPLATE);
+    Template tm = ve.getTemplate(templateDir + File.separator + PIPELINE_HTEMPLATE);
     StringWriter sw = new StringWriter();
     tm.merge(context, sw);
     try (PrintWriter writer = new PrintWriter(file.getParentFile().getAbsolutePath()

@@ -1,0 +1,7 @@
+#if ($step.name() == "Switch")
+#parse("$vmLoc/Switch.vm")
+#elseif ( $step.name() == "Valve")
+#parse("$vmLoc/Valve.vm")
+#else
+#parse("$vmLoc/BasicStep.vm")
+#end

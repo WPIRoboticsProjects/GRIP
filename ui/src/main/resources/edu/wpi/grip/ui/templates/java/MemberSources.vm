@@ -1,5 +1,0 @@
-#if($i<$numSources)
-	protected Mat source$i;
-#set($i= $i +1)
-#parse("src/main/resources/edu/wpi/grip/ui/templates/java/MemberSources.vm")
-#end

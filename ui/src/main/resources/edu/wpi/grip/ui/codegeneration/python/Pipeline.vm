@@ -38,7 +38,7 @@ class $fileName:
         Requires all sources to be set.
         """
 #foreach($step in $pipeline.getSteps())
-#parse("src/main/resources/edu/wpi/grip/ui/templates/python/step.vm")
+#parse("$vmLoc/step.vm")
 
 
 #end
@@ -61,7 +61,7 @@ class $fileName:
 #end
 
 #foreach($step in $pipeline.getUniqueSteps())
-#set($toParse = "src/main/resources/edu/wpi/grip/ui/templates/python/operations/" + $step.name())
+#set($toParse = "$vmLoc/operations/" + $step.name())
 #set($toParse = $toParse + ".vm")
 #parse($toParse)
 
@@ -71,7 +71,7 @@ class $fileName:
 #set($addedEnums = [])
 #foreach($enum in $enums)
 #if(!$addedEnums.contains($enum))
-#parse("src/main/resources/edu/wpi/grip/ui/templates/python/enums/${enum}.vm")
+#parse("$vmLoc/enums/${enum}.vm")
 #addToList($addedEnums $enum)
 #end
 
