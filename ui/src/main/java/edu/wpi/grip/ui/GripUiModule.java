@@ -5,6 +5,7 @@ import edu.wpi.grip.core.util.GripMode;
 import edu.wpi.grip.ui.annotations.ParametrizedController;
 import edu.wpi.grip.ui.components.ExceptionWitnessResponderButton;
 import edu.wpi.grip.ui.components.StartStoppableButton;
+import edu.wpi.grip.ui.pipeline.InputsController;
 import edu.wpi.grip.ui.pipeline.OutputSocketController;
 import edu.wpi.grip.ui.pipeline.SocketHandleView;
 import edu.wpi.grip.ui.pipeline.StepController;
@@ -65,6 +66,10 @@ public class GripUiModule extends AbstractModule {
     install(new FactoryModuleBuilder()
         .implement(StepController.class, StepController.class)
         .build(StepController.Factory.class));
+
+    install(new FactoryModuleBuilder()
+        .implement(InputsController.class, InputsController.class)
+        .build(InputsController.Factory.class));
 
     // Source Factories
     install(new FactoryModuleBuilder().build(new TypeLiteral<SourceController

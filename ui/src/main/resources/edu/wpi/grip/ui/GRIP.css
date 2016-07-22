@@ -100,7 +100,7 @@ Button.add-source {
 }
 
 .step {
-    -fx-pref-width: 15em;
+    -fx-pref-width: 12em;
     -fx-border-color: -fx-box-border;
     -fx-background-color: -fx-background;
     -fx-padding: 1.0em;
@@ -113,12 +113,24 @@ Button.delete, Button.move-left, Button.move-right, .start-stoppable-button, .ex
     -fx-pref-width: 2em;
 }
 
+.expand {
+	-fx-pref-width: 0em;
+	-fx-background-color: transparent;
+    -fx-background-radius: 00;
+    -fx-text-fill: black;
+}
+
 VBox.sockets {
     -fx-spacing: 0.5em;
 }
 
 .step .title {
     -fx-font-weight: bold;
+}
+
+.inputs {
+	-fx-pref-width: 0em;
+	-fx-spacing: 0.5em;
 }
 
 .socket {
@@ -128,7 +140,8 @@ VBox.sockets {
 }
 
 .socket .socket-control {
-    -fx-pref-width: 12em;
+    -fx-min-width: 12em;
+    -fx-spacing: 0.5em;
 }
 
 .socket-handle {

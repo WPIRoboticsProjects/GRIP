@@ -24,6 +24,7 @@ import edu.wpi.grip.ui.util.ControllerMap;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import com.google.inject.Singleton;
+
 import com.sun.javafx.application.PlatformImpl;
 
 import java.util.Collection;
@@ -45,7 +46,6 @@ import javafx.scene.input.TransferMode;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
-
 import javax.annotation.Nullable;
 import javax.inject.Inject;
 
@@ -210,9 +210,11 @@ public final class PipelineController {
    */
   private InputSocketController findInputSocketView(InputSocket socket) {
     for (StepController stepController : stepsMapManager.keySet()) {
-      for (InputSocketController socketView : stepController.getInputSockets()) {
-        if (socketView.getSocket() == socket) {
-          return socketView;
+      for (InputsController inputs : stepController.getInputs()) {
+        for (InputSocketController socketView : inputs.getInputSockets()) {
+          if (socketView.getSocket() == socket) {
+            return socketView;
+          }
         }
       }
     }

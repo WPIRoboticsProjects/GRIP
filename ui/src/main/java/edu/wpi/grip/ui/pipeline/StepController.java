@@ -9,23 +9,29 @@ import edu.wpi.grip.ui.annotations.ParametrizedController;
 import edu.wpi.grip.ui.components.ExceptionWitnessResponderButton;
 import edu.wpi.grip.ui.dragging.StepDragService;
 import edu.wpi.grip.ui.pipeline.input.InputSocketController;
-import edu.wpi.grip.ui.pipeline.input.InputSocketControllerFactory;
 import edu.wpi.grip.ui.util.ControllerMap;
 import edu.wpi.grip.ui.util.StyleClassNameUtility;
 
 import com.google.inject.assistedinject.Assisted;
 
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
+import javafx.animation.KeyFrame;
+import javafx.animation.KeyValue;
+import javafx.animation.Timeline;
+import javafx.beans.property.DoubleProperty;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
+import javafx.scene.control.Button;
 import javafx.scene.control.Labeled;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-
+import javafx.util.Duration;
 import javax.inject.Inject;
 
 /**
@@ -35,8 +41,10 @@ import javax.inject.Inject;
 @ParametrizedController(url = "Step.fxml")
 public class StepController implements Controller {
 
+  private static final int splitSize = 6;
+
   private final Pipeline pipeline;
-  private final InputSocketControllerFactory inputSocketControllerFactory;
+  private final InputsController.Factory inputsControllerFactory;
   private final OutputSocketController.Factory outputSocketControllerFactory;
   private final ExceptionWitnessResponderButton.Factory exceptionWitnessResponderButtonFactory;
   private final StepDragService stepDragService;
@@ -48,23 +56,28 @@ public class StepController implements Controller {
   @FXML
   private ImageView icon;
   @FXML
+  private ImageView expandIcon;
+  @FXML
   private HBox buttons;
   @FXML
-  private VBox inputs;
+  private HBox inputs;
   @FXML
   private VBox outputs;
-  private ControllerMap<InputSocketController, Node> inputSocketMapManager;
+  @FXML
+  private Button expand;
+  private boolean expanded = true;
+  private ControllerMap<InputsController, Node> inputsMapManager;
   private ControllerMap<OutputSocketController, Node> outputSocketMapManager;
 
   @Inject
   StepController(Pipeline pipeline,
-                 InputSocketControllerFactory inputSocketControllerFactory,
+                 InputsController.Factory inputsControllerFactory,
                  OutputSocketController.Factory outputSocketControllerFactory,
                  ExceptionWitnessResponderButton.Factory exceptionWitnessResponderButtonFactory,
                  StepDragService stepDragService,
                  @Assisted Step step) {
     this.pipeline = pipeline;
-    this.inputSocketControllerFactory = inputSocketControllerFactory;
+    this.inputsControllerFactory = inputsControllerFactory;
     this.outputSocketControllerFactory = outputSocketControllerFactory;
     this.exceptionWitnessResponderButtonFactory = exceptionWitnessResponderButtonFactory;
     this.stepDragService = stepDragService;
@@ -73,7 +86,7 @@ public class StepController implements Controller {
 
   @FXML
   private void initialize() {
-    inputSocketMapManager = new ControllerMap<>(inputs.getChildren());
+    inputsMapManager = new ControllerMap<>(inputs.getChildren());
     outputSocketMapManager = new ControllerMap<>(outputs.getChildren());
 
     root.getStyleClass().add(StyleClassNameUtility.classNameFor(step));
@@ -82,10 +95,12 @@ public class StepController implements Controller {
         new Image(InputStream.class.cast(icon))));
     buttons.getChildren().add(0, exceptionWitnessResponderButtonFactory.create(step, "Step Error"));
 
-    // Add a SocketControlView for each input socket and output socket
-    for (InputSocket<?> inputSocket : step.getInputSockets()) {
-      inputSocketMapManager.add(inputSocketControllerFactory.create(inputSocket));
+    if (step.getInputSockets().size() > splitSize) {
+      expandIcon.setImage(new Image("/edu/wpi/grip/ui/icons/left-expand.png"));
+    } else {
+      expandIcon.fitWidthProperty().setValue(0);
     }
+    setUpSockets();
 
     for (OutputSocket<?> outputSocket : step.getOutputSockets()) {
       outputSocketMapManager.add(outputSocketControllerFactory.create(outputSocket));
@@ -107,8 +122,8 @@ public class StepController implements Controller {
    * An unmodifiable collection of {@link InputSocketController}s corresponding to the input sockets
    * of this step.
    */
-  public Collection<InputSocketController> getInputSockets() {
-    return inputSocketMapManager.keySet();
+  public Collection<InputsController> getInputs() {
+    return inputsMapManager.keySet();
   }
 
   /**
@@ -140,6 +155,54 @@ public class StepController implements Controller {
   @FXML
   private void moveStepRight() {
     pipeline.moveStep(step, +1);
+  }
+
+  @FXML
+  private void expand() {
+    if (step.getInputSockets().size() > splitSize) {
+
+      inputsMapManager.clear();
+      if (expanded) {
+        expanded = false;
+        expandIcon.setImage(new Image("/edu/wpi/grip/ui/icons/right-expand.png"));
+      } else {
+        expanded = true;
+        expandIcon.setImage(new Image("/edu/wpi/grip/ui/icons/left-expand.png"));
+      }
+      setUpSockets();
+    }
+  }
+
+  private void setUpSockets() {
+    final int numSplits = step.getInputSockets().size() / splitSize + 1;
+    int extra = step.getInputSockets().size() % numSplits;
+    int index = 0;
+    for (int i = 0; i < numSplits; i++) {
+      List<InputSocket> tmpInputs = new ArrayList();
+      for (int j = 0; j < step.getInputSockets().size() / numSplits; j++) {
+        tmpInputs.add(step.getInputSockets().get(index));
+        index++;
+      }
+      if (extra > 0) {
+        tmpInputs.add(step.getInputSockets().get(index));
+        index++;
+        extra--;
+      }
+      inputsMapManager.add(inputsControllerFactory.create(tmpInputs));
+      if (!expanded) {
+        break;
+      }
+      if (i > 0) {
+        //Fade in
+        DoubleProperty opacity = inputs.getChildren().get(i).opacityProperty();
+        Timeline fadeIn = new Timeline(
+            new KeyFrame(Duration.ZERO, new KeyValue(opacity, 0.0)),
+            new KeyFrame(new Duration(500), new KeyValue(opacity, 1.0))
+        );
+        fadeIn.play();
+      }
+    }
+
   }
 
   /**
