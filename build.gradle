@@ -314,7 +314,7 @@ project(":ui") {
     dependencies {
         compile project(path: ':core', configuration: 'shadow')
         ideProvider project(path: ':core', configuration: 'compile')
-        compile group: 'org.controlsfx', name: 'controlsfx', version: '8.40.10'
+        compile group: 'org.controlsfx', name: 'controlsfx', version: '8.40.11'
         compile group: 'com.hierynomus', name: 'sshj', version: '0.16.0'
         testCompile files(project(':core').sourceSets.test.output.classesDir)
         testCompile files(project(':core').sourceSets.test.output.resourcesDir)
