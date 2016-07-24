@@ -26,7 +26,7 @@ import static org.junit.Assert.assertTrue;
 import static org.testfx.api.FxAssert.verifyThat;
 
 @RunWith(Enclosed.class)
-public class AddSourceViewTest {
+public class AddSourceButtonTest {
 
   /**
    * Tests what happens when a source is created and started successfully
@@ -34,7 +34,7 @@ public class AddSourceViewTest {
   public static class AddSourceViewNoExceptionsTest extends ApplicationTest {
 
     private EventBus eventBus;
-    private AddSourceView addSourceView;
+    private AddSourceButton addSourceView;
     private MockCameraSourceFactory mockCameraSourceFactory;
 
     @Override
@@ -42,7 +42,7 @@ public class AddSourceViewTest {
       this.eventBus = new EventBus("Test Event Bus");
       this.mockCameraSourceFactory = new MockCameraSourceFactory(eventBus);
 
-      addSourceView = new AddSourceView(eventBus, null, null, mockCameraSourceFactory, null);
+      addSourceView = new AddSourceButton(eventBus, null, null, mockCameraSourceFactory, null);
 
       final Scene scene = new Scene(addSourceView, 800, 600);
       stage.setScene(scene);
@@ -60,7 +60,7 @@ public class AddSourceViewTest {
     public void testClickOnCreateWebCameraOpensDialog() throws Exception {
       Platform.runLater(() -> addSourceView.getWebcamButton().fire());
       WaitForAsyncUtils.waitForFxEvents();
-      verifyThat('.' + AddSourceView.SOURCE_DIALOG_STYLE_CLASS, NodeMatchers.isVisible());
+      verifyThat('.' + AddSourceButton.SOURCE_DIALOG_STYLE_CLASS, NodeMatchers.isVisible());
     }
 
     @Test
@@ -68,7 +68,7 @@ public class AddSourceViewTest {
     public void testClickOnCreateIPCameraOpensDialog() throws Exception {
       Platform.runLater(() -> addSourceView.getIpcamButton().fire());
       WaitForAsyncUtils.waitForFxEvents();
-      verifyThat("." + AddSourceView.SOURCE_DIALOG_STYLE_CLASS, NodeMatchers.isVisible());
+      verifyThat("." + AddSourceButton.SOURCE_DIALOG_STYLE_CLASS, NodeMatchers.isVisible());
     }
 
     @Test
@@ -76,7 +76,7 @@ public class AddSourceViewTest {
       // When
       Platform.runLater(() -> addSourceView.getWebcamButton().fire());
       WaitForAsyncUtils.waitForFxEvents();
-      verifyThat("." + AddSourceView.SOURCE_DIALOG_STYLE_CLASS, NodeMatchers.isVisible());
+      verifyThat("." + AddSourceButton.SOURCE_DIALOG_STYLE_CLASS, NodeMatchers.isVisible());
 
       clickOn("OK");
       WaitForAsyncUtils.waitForFxEvents();
@@ -85,7 +85,7 @@ public class AddSourceViewTest {
       Optional<CameraSource> cameraSource = mockCameraSourceFactory.lastSourceCreated;
       assertTrue("A source was not constructed", cameraSource.isPresent());
       assertTrue("A source was not created started", cameraSource.get().isRunning());
-      verifyThat("." + AddSourceView.SOURCE_DIALOG_STYLE_CLASS, NodeMatchers.isNull());
+      verifyThat("." + AddSourceButton.SOURCE_DIALOG_STYLE_CLASS, NodeMatchers.isNull());
     }
 
     class MockCameraSourceFactory implements CameraSource.Factory {
@@ -123,7 +123,7 @@ public class AddSourceViewTest {
    */
   public static class AddSourceViewWithExceptionsTest extends ApplicationTest {
     private EventBus eventBus;
-    private AddSourceView addSourceView;
+    private AddSourceButton addSourceView;
     private MockCameraSourceFactory mockCameraSourceFactory;
 
     @Override
@@ -131,7 +131,7 @@ public class AddSourceViewTest {
       this.eventBus = new EventBus("Test Event Bus");
       this.mockCameraSourceFactory = new MockCameraSourceFactory(eventBus);
 
-      addSourceView = new AddSourceView(eventBus, null, null, mockCameraSourceFactory, null);
+      addSourceView = new AddSourceButton(eventBus, null, null, mockCameraSourceFactory, null);
 
       final Scene scene = new Scene(addSourceView, 800, 600);
       stage.setScene(scene);
@@ -156,7 +156,7 @@ public class AddSourceViewTest {
       WaitForAsyncUtils.waitForFxEvents();
 
       // The dialog should not have closed because the source wasn't started
-      verifyThat("." + AddSourceView.SOURCE_DIALOG_STYLE_CLASS, NodeMatchers.isNull());
+      verifyThat("." + AddSourceButton.SOURCE_DIALOG_STYLE_CLASS, NodeMatchers.isNull());
     }
 
     @Test
@@ -164,7 +164,7 @@ public class AddSourceViewTest {
       // When
       Platform.runLater(() -> addSourceView.getWebcamButton().fire());
       WaitForAsyncUtils.waitForFxEvents();
-      verifyThat("." + AddSourceView.SOURCE_DIALOG_STYLE_CLASS, NodeMatchers.isVisible());
+      verifyThat("." + AddSourceButton.SOURCE_DIALOG_STYLE_CLASS, NodeMatchers.isVisible());
 
       clickOn("OK");
       WaitForAsyncUtils.waitForFxEvents();

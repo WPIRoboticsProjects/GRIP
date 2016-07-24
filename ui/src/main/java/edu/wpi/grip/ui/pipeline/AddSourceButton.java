@@ -39,7 +39,6 @@ import javafx.scene.control.Spinner;
 import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
@@ -51,7 +50,7 @@ import javafx.stage.FileChooser.ExtensionFilter;
  * construct that source.  As an example, the image file source results in a file picker that the
  * user can use to browse for an image.
  */
-public class AddSourceView extends HBox {
+public class AddSourceButton extends MenuButton {
 
   @VisibleForTesting
   static final String SOURCE_DIALOG_STYLE_CLASS = "source-dialog";
@@ -62,18 +61,15 @@ public class AddSourceView extends HBox {
   private final MenuItem httpButton;
   private Optional<Dialog> activeDialog = Optional.empty();
 
-  private final MenuButton menuButton = new MenuButton("Add Source");
-
   @Inject
-  AddSourceView(EventBus eventBus,
+  AddSourceButton(EventBus eventBus,
                 MultiImageFileSource.Factory multiImageSourceFactory,
                 ImageFileSource.Factory imageSourceFactory,
                 CameraSource.Factory cameraSourceFactory,
                 HttpSource.Factory httpSourceFactory) {
     this.eventBus = eventBus;
 
-    this.setFillHeight(true);
-    this.getChildren().add(menuButton);
+    this.setText("Add Source");
 
     addMenuItem("Image(s)",
         getClass().getResource("/edu/wpi/grip/ui/icons/add-image.png"), mouseEvent -> {
@@ -257,7 +253,7 @@ public class AddSourceView extends HBox {
     final MenuItem menuItem = new MenuItem(text, graphic);
     menuItem.setOnAction(onActionEvent);
 
-    menuButton.getItems().add(menuItem);
+    getItems().add(menuItem);
     return menuItem;
   }
 
@@ -290,7 +286,7 @@ public class AddSourceView extends HBox {
   }
 
   public interface Factory {
-    AddSourceView create();
+    AddSourceButton create();
   }
 
   private static class SourceDialog extends Dialog<ButtonType> {
