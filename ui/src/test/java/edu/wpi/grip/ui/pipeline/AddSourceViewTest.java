@@ -58,7 +58,7 @@ public class AddSourceViewTest {
     @Test
     @SuppressWarnings("PMD.JUnitTestsShouldIncludeAssert")
     public void testClickOnCreateWebCameraOpensDialog() throws Exception {
-      Platform.runLater(() -> addSourceView.getMenuButton().fire());
+      Platform.runLater(() -> addSourceView.getWebcamButton().fire());
       WaitForAsyncUtils.waitForFxEvents();
       verifyThat('.' + AddSourceView.SOURCE_DIALOG_STYLE_CLASS, NodeMatchers.isVisible());
     }
@@ -140,7 +140,7 @@ public class AddSourceViewTest {
 
     @After
     public void after() {
-      // Ensuer that all of the dialogs that were created get closed afterward.
+      // Ensure that all of the dialogs that were created get closed afterward.
       addSourceView.closeDialogs();
     }
 

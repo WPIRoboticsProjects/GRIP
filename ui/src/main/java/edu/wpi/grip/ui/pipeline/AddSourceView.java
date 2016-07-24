@@ -59,6 +59,7 @@ public class AddSourceView extends HBox {
 
   private final MenuItem webcamButton;
   private final MenuItem ipcamButton;
+  private final MenuItem httpButton;
   private Optional<Dialog> activeDialog = Optional.empty();
 
   private final MenuButton menuButton = new MenuButton("Add Source");
@@ -74,9 +75,8 @@ public class AddSourceView extends HBox {
     this.setFillHeight(true);
     this.getChildren().add(menuButton);
 
-    addMenuItem("Add\nImage(s)",
-        getClass().getResource("/edu/wpi/grip/ui/icons/add-image.png"),
-        mouseEvent -> {
+    addMenuItem("Image(s)",
+        getClass().getResource("/edu/wpi/grip/ui/icons/add-image.png"), mouseEvent -> {
           // Show a file picker so the user can open one or more images from disk
           final FileChooser fileChooser = new FileChooser();
           fileChooser.setTitle("Open an image");
@@ -122,10 +122,8 @@ public class AddSourceView extends HBox {
           }
         });
 
-    webcamButton = addMenuItem(
-        "Add\nWebcam",
-        getClass().getResource("/edu/wpi/grip/ui/icons/add-webcam.png"),
-        mouseEvent -> {
+    webcamButton = addMenuItem("Webcam",
+        getClass().getResource("/edu/wpi/grip/ui/icons/add-webcam.png"), mouseEvent -> {
           final Parent root = this.getScene().getRoot();
 
           // Show a dialog for the user to pick a camera index
@@ -149,10 +147,8 @@ public class AddSourceView extends HBox {
               e -> dialog.errorText.setText(e.getMessage()));
         });
 
-    ipcamButton = addMenuItem(
-        "Add IP\nCamera",
-        getClass().getResource("/edu/wpi/grip/ui/icons/add-webcam.png"),
-        mouseEvent -> {
+    ipcamButton = addMenuItem("IP Camera",
+        getClass().getResource("/edu/wpi/grip/ui/icons/add-webcam.png"), mouseEvent -> {
           final Parent root = this.getScene().getRoot();
 
           // Show a dialog for the user to pick a camera URL
@@ -197,8 +193,8 @@ public class AddSourceView extends HBox {
               e -> dialog.errorText.setText(e.getMessage()));
         });
 
-    addMenuItem("Add\nHTTP source", getClass().getResource("/edu/wpi/grip/ui/icons/publish.png"),
-        mouseEvent -> {
+    httpButton = addMenuItem("HTTP",
+        getClass().getResource("/edu/wpi/grip/ui/icons/publish.png"), mouseEvent -> {
           final Parent root = this.getScene().getRoot();
           // Show a dialog to pick the server path images will be uploaded on
           final String imageRoot = GripServer.IMAGE_UPLOAD_PATH + "/";
@@ -266,11 +262,6 @@ public class AddSourceView extends HBox {
   }
 
   @VisibleForTesting
-  MenuButton getMenuButton() {
-    return menuButton;
-  }
-
-  @VisibleForTesting
   MenuItem getWebcamButton() {
     return webcamButton;
   }
@@ -278,6 +269,11 @@ public class AddSourceView extends HBox {
   @VisibleForTesting
   MenuItem getIpcamButton() {
     return ipcamButton;
+  }
+
+  @VisibleForTesting
+  MenuItem getHttpButton() {
+    return httpButton;
   }
 
   @VisibleForTesting
