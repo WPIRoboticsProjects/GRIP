@@ -20,7 +20,7 @@
                 </maxWidth>
                 <Label maxWidth="Infinity" styleClass="pane-title" text="Sources" />
                 <Separator orientation="HORIZONTAL" />
-                <VBox fx:id="addSourceBox"/>
+                <VBox fx:id="addSourceBox" styleClass="addSource" />
                 <VBox fx:id="sourcesBox" styleClass="sources" />
             </VBox>
             <Separator orientation="VERTICAL" />

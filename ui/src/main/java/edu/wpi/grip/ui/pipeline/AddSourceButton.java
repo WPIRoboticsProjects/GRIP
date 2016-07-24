@@ -67,10 +67,9 @@ public class AddSourceButton extends MenuButton {
                 ImageFileSource.Factory imageSourceFactory,
                 CameraSource.Factory cameraSourceFactory,
                 HttpSource.Factory httpSourceFactory) {
+    super("Add Source");
     this.eventBus = eventBus;
-
-    this.setText("Add Source");
-
+    
     addMenuItem("Image(s)",
         getClass().getResource("/edu/wpi/grip/ui/icons/add-image.png"), mouseEvent -> {
           // Show a file picker so the user can open one or more images from disk
@@ -250,7 +249,7 @@ public class AddSourceButton extends MenuButton {
     graphic.setFitWidth(DPIUtility.SMALL_ICON_SIZE);
     graphic.setFitHeight(DPIUtility.SMALL_ICON_SIZE);
 
-    final MenuItem menuItem = new MenuItem(text, graphic);
+    final MenuItem menuItem = new MenuItem("  " + text, graphic);
     menuItem.setOnAction(onActionEvent);
 
     getItems().add(menuItem);
