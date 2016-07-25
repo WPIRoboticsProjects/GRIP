@@ -144,8 +144,8 @@ public class StepController implements Controller {
 
   @FXML
   private void moveStepLeft() {
-    for(InputSocketController input: inputSockets){
-      if(!inputSocketMapManager.containsKey(input)){
+    for (InputSocketController input : inputSockets) {
+      if (!inputSocketMapManager.containsKey(input)) {
         inputSocketMapManager.add(input);
       }
     }
@@ -154,8 +154,8 @@ public class StepController implements Controller {
 
   @FXML
   private void moveStepRight() {
-    for(InputSocketController input: inputSockets){
-      if(input.getSocket().getConnections().isEmpty()){
+    for (InputSocketController input : inputSockets) {
+      if (input.getSocket().getConnections().isEmpty()) {
         inputSocketMapManager.remove(input);
       }
     }
@@ -163,18 +163,18 @@ public class StepController implements Controller {
   }
 
   @FXML
-  private void expand(){
-    if(expanded){
-      for(InputSocketController input: inputSockets){
-        if(input.getSocket().getConnections().isEmpty()) {
+  private void expand() {
+    if (expanded) {
+      for (InputSocketController input : inputSockets) {
+        if (input.getSocket().getConnections().isEmpty()) {
           inputSocketMapManager.remove(input);
         }
       }
       expandIcon.setImage(new Image("/edu/wpi/grip/ui/icons/down.png"));
       expanded = false;
     } else {
-      for(InputSocketController input: inputSockets){
-        if(!inputSocketMapManager.containsKey(input)){
+      for (InputSocketController input : inputSockets) {
+        if (!inputSocketMapManager.containsKey(input)) {
           inputSocketMapManager.add(input);
         }
       }
