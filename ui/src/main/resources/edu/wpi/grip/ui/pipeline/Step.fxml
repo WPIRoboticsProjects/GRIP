@@ -79,7 +79,6 @@
         </graphic>
     </Label>
     <Separator orientation="HORIZONTAL" />
-    <VBox fx:id="inputs" styleClass="sockets" />
     <Button fx:id="Expand" onMouseClicked="#expand" styleClass="expand"
             maxWidth="Infinity" prefHeight="0" HBox.hgrow="ALWAYS">
         <graphic>
@@ -93,6 +92,7 @@
             <Tooltip text="Expands and contracts the shown sockets"/>
         </tooltip>
     </Button>
+    <VBox fx:id="inputs" styleClass="sockets" />
     <Separator orientation="HORIZONTAL" />
     <VBox fx:id="outputs" styleClass="sockets" />
 </VBox>

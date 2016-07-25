@@ -114,9 +114,7 @@ Button.delete, Button.move-left, Button.move-right, .start-stoppable-button, .ex
 }
 
 .expand {
-	-fx-background-color: transparent;
-    -fx-background-radius: 00;
-    -fx-text-fill: black;
+    -fx-background-color: transparent;
 }
 
 VBox.sockets {
