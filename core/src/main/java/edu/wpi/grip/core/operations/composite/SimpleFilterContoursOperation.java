@@ -19,11 +19,11 @@ import static org.bytedeco.javacpp.opencv_imgproc.contourArea;
 
 /**
  * An {@link Operation} that takes in a list of contours and outputs a list of any contours in the
- * input that match all of several criteria.  Right now, the user can specify a minimum area,
- * minimum perimeter, and ranges for width and height. This is useful because running a Find
- * Contours on a real-life image typically leads to many small undesirable contours from noise and
- * small objects, as well as contours that do not meet the expected characteristics of the feature
- * we're actually looking for.  So, this operation can help narrow them down.
+ * input that match all of several criteria.  The user can specify a minimum area and perimeter.
+ * This is useful because running a FindContours on a real-life image typically leads to many small
+ * undesirable contours from noise and small objects, as well as contours that do not meet the
+ * expected characteristics of the feature we're actually looking for.  So, this operation can
+ * help narrow them down.
  */
 public class SimpleFilterContoursOperation implements Operation {
 

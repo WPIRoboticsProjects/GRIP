@@ -55,7 +55,7 @@ public class AdvancedFilterContoursOperation implements Operation {
       SocketHints.Inputs.createNumberSpinnerSocketHint("Min Perimeter", 0, 0, Integer.MAX_VALUE);
 
   private final SocketHint<Boolean> rotatedRectHint =
-      SocketHints.createBooleanSocketHint("Best Fit Rectangles", false);
+      SocketHints.createBooleanSocketHint("Rotated Rectangles", false);
 
   private final SocketHint<Number> maxPerimeterHint =
       SocketHints.Inputs.createNumberSpinnerSocketHint("Max Perimeter", 10000, 0,
