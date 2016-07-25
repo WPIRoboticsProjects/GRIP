@@ -144,22 +144,12 @@ public class StepController implements Controller {
 
   @FXML
   private void moveStepLeft() {
-    for (InputSocketController input : inputSockets) {
-      if (!inputSocketMapManager.containsKey(input)) {
-        inputSocketMapManager.add(input);
-      }
-    }
-    //pipeline.moveStep(step, -1);
+    pipeline.moveStep(step, -1);
   }
 
   @FXML
   private void moveStepRight() {
-    for (InputSocketController input : inputSockets) {
-      if (input.getSocket().getConnections().isEmpty()) {
-        inputSocketMapManager.remove(input);
-      }
-    }
-    //pipeline.moveStep(step, +1);
+    pipeline.moveStep(step, +1);
   }
 
   @FXML
