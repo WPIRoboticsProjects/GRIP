@@ -4,6 +4,8 @@ import edu.wpi.grip.core.Pipeline;
 import edu.wpi.grip.core.Step;
 import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.sockets.OutputSocket;
+import edu.wpi.grip.core.sockets.Socket;
+import edu.wpi.grip.core.sockets.SocketHint;
 import edu.wpi.grip.ui.Controller;
 import edu.wpi.grip.ui.annotations.ParametrizedController;
 import edu.wpi.grip.ui.components.ExceptionWitnessResponderButton;
@@ -22,6 +24,7 @@ import java.util.List;
 
 import javafx.fxml.FXML;
 import javafx.scene.Node;
+import javafx.scene.control.Button;
 import javafx.scene.control.Labeled;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -59,6 +62,8 @@ public class StepController implements Controller {
   private VBox outputs;
   @FXML
   private ImageView expandIcon;
+  @FXML
+  private Button expand;
   private ControllerMap<InputSocketController, Node> inputSocketMapManager;
   private ControllerMap<OutputSocketController, Node> outputSocketMapManager;
 
@@ -89,12 +94,21 @@ public class StepController implements Controller {
         new Image(InputStream.class.cast(icon))));
     buttons.getChildren().add(0, exceptionWitnessResponderButtonFactory.create(step, "Step Error"));
 
-    expandIcon.setImage(new Image("/edu/wpi/grip/ui/icons/up.png"));
+    if (step.getInputSockets().stream()
+        .allMatch(inputSocket -> inputSocket.getSocketHint().getView()
+            .equals(SocketHint.View.NONE))){
+      expand.setManaged(false);
+    } else {
+      expandIcon.setImage(new Image("/edu/wpi/grip/ui/icons/up.png"));
+    }
+
     // Add a SocketControlView for each input socket and output socket
     for (InputSocket<?> inputSocket : step.getInputSockets()) {
       InputSocketController tempSocket = inputSocketControllerFactory.create(inputSocket);
       inputSocketMapManager.add(tempSocket);
-      inputSockets.add(tempSocket);
+      if(!inputSocket.getSocketHint().getView().equals(SocketHint.View.NONE)) {
+        inputSockets.add(tempSocket);
+      }
     }
 
     for (OutputSocket<?> outputSocket : step.getOutputSockets()) {
