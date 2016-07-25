@@ -108,27 +108,48 @@
       </grip:Input>
       <grip:Output step="6" socket="0" previewed="true"/>
     </grip:Step>
-    <grip:Step name="Filter Contours">
+    <grip:Step name="Advanced Filter Contours">
       <grip:Input step="7" socket="0"/>
       <grip:Input step="7" socket="1">
         <value>2.0</value>
       </grip:Input>
       <grip:Input step="7" socket="2">
-        <value>3.0</value>
+        <value>10000.0</value>
       </grip:Input>
       <grip:Input step="7" socket="3">
-        <value>1.0</value>
+        <value>3.0</value>
       </grip:Input>
       <grip:Input step="7" socket="4">
         <value>1000.0</value>
       </grip:Input>
-      <grip:Input step="7" socket="5">
-        <value>3.0</value>
+	  <grip:Input step="7" socket="5">
+		<value>true</value>
       </grip:Input>
       <grip:Input step="7" socket="6">
-        <value>20.0</value>
+        <value>1.0</value>
       </grip:Input>
       <grip:Input step="7" socket="7">
+        <value>10000.0</value>
+      </grip:Input>
+      <grip:Input step="7" socket="8">
+        <value>3.0</value>
+      </grip:Input>
+      <grip:Input step="7" socket="9">
+        <value>10000.0</value>
+      </grip:Input>
+      <grip:Input step="7" socket="10">
+        <value>20.0</value>
+      </grip:Input>
+      <grip:Input step="7" socket="11">
+        <value>20.0</value>
+      </grip:Input>
+      <grip:Input step="7" socket="12">
+        <value>20.0</value>
+      </grip:Input>
+      <grip:Input step="7" socket="13">
+        <value>20.0</value>
+      </grip:Input>
+      <grip:Input step="7" socket="14">
         <value>
           <int>0</int>
           <int>100</int>

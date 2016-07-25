@@ -54,12 +54,12 @@ public class AdvancedFilterContoursOperation implements Operation {
   private final SocketHint<Number> minPerimeterHint =
       SocketHints.Inputs.createNumberSpinnerSocketHint("Min Perimeter", 0, 0, Integer.MAX_VALUE);
 
-  private final SocketHint<Boolean> rotatedRectHint =
-      SocketHints.createBooleanSocketHint("Rotated Rectangles", false);
-
   private final SocketHint<Number> maxPerimeterHint =
       SocketHints.Inputs.createNumberSpinnerSocketHint("Max Perimeter", 10000, 0,
           Integer.MAX_VALUE);
+
+  private final SocketHint<Boolean> rotatedRectHint =
+      SocketHints.createBooleanSocketHint("Rotated Rectangles", false);
 
   private final SocketHint<Number> minWidthHint =
       SocketHints.Inputs.createNumberSpinnerSocketHint("Min Width", 0, 0, Integer.MAX_VALUE);
@@ -100,11 +100,11 @@ public class AdvancedFilterContoursOperation implements Operation {
   private final InputSocket<Number> maxWidthSocket;
   private final InputSocket<Number> minHeightSocket;
   private final InputSocket<Number> maxHeightSocket;
-  private final InputSocket<List<Number>> soliditySocket;
   private final InputSocket<Number> minVertexSocket;
   private final InputSocket<Number> maxVertexSocket;
   private final InputSocket<Number> minRatioSocket;
   private final InputSocket<Number> maxRatioSocket;
+  private final InputSocket<List<Number>> soliditySocket;
 
   private final OutputSocket<ContoursReport> outputSocket;
 
@@ -121,11 +121,11 @@ public class AdvancedFilterContoursOperation implements Operation {
     this.maxWidthSocket = inputSocketFactory.create(maxWidthHint);
     this.minHeightSocket = inputSocketFactory.create(minHeightHint);
     this.maxHeightSocket = inputSocketFactory.create(maxHeightHint);
-    this.soliditySocket = inputSocketFactory.create(solidityHint);
     this.minVertexSocket = inputSocketFactory.create(minVertexHint);
     this.maxVertexSocket = inputSocketFactory.create(maxVertexHint);
     this.minRatioSocket = inputSocketFactory.create(minRatioHint);
     this.maxRatioSocket = inputSocketFactory.create(maxRatioHint);
+    this.soliditySocket = inputSocketFactory.create(solidityHint);
 
     this.outputSocket = outputSocketFactory.create(contoursHint);
   }
