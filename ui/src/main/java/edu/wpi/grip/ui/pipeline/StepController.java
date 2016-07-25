@@ -4,7 +4,6 @@ import edu.wpi.grip.core.Pipeline;
 import edu.wpi.grip.core.Step;
 import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.sockets.OutputSocket;
-import edu.wpi.grip.core.sockets.Socket;
 import edu.wpi.grip.core.sockets.SocketHint;
 import edu.wpi.grip.ui.Controller;
 import edu.wpi.grip.ui.annotations.ParametrizedController;
@@ -96,7 +95,7 @@ public class StepController implements Controller {
 
     if (step.getInputSockets().stream()
         .allMatch(inputSocket -> inputSocket.getSocketHint().getView()
-            .equals(SocketHint.View.NONE))){
+            .equals(SocketHint.View.NONE))) {
       expand.setManaged(false);
     } else {
       expandIcon.setImage(new Image("/edu/wpi/grip/ui/icons/up.png"));
@@ -106,7 +105,7 @@ public class StepController implements Controller {
     for (InputSocket<?> inputSocket : step.getInputSockets()) {
       InputSocketController tempSocket = inputSocketControllerFactory.create(inputSocket);
       inputSocketMapManager.add(tempSocket);
-      if(!inputSocket.getSocketHint().getView().equals(SocketHint.View.NONE)) {
+      if (!inputSocket.getSocketHint().getView().equals(SocketHint.View.NONE)) {
         inputSockets.add(tempSocket);
       }
     }
