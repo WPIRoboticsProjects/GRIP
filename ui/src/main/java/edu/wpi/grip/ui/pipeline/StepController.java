@@ -16,7 +16,9 @@ import edu.wpi.grip.ui.util.StyleClassNameUtility;
 import com.google.inject.assistedinject.Assisted;
 
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import javafx.fxml.FXML;
 import javafx.scene.Node;
@@ -41,6 +43,8 @@ public class StepController implements Controller {
   private final ExceptionWitnessResponderButton.Factory exceptionWitnessResponderButtonFactory;
   private final StepDragService stepDragService;
   private final Step step;
+  private final List<InputSocketController> inputSockets;
+  private boolean expanded = true;
   @FXML
   private VBox root;
   @FXML
@@ -53,6 +57,8 @@ public class StepController implements Controller {
   private VBox inputs;
   @FXML
   private VBox outputs;
+  @FXML
+  private ImageView expandIcon;
   private ControllerMap<InputSocketController, Node> inputSocketMapManager;
   private ControllerMap<OutputSocketController, Node> outputSocketMapManager;
 
@@ -69,6 +75,7 @@ public class StepController implements Controller {
     this.exceptionWitnessResponderButtonFactory = exceptionWitnessResponderButtonFactory;
     this.stepDragService = stepDragService;
     this.step = step;
+    inputSockets = new ArrayList<>();
   }
 
   @FXML
@@ -82,9 +89,12 @@ public class StepController implements Controller {
         new Image(InputStream.class.cast(icon))));
     buttons.getChildren().add(0, exceptionWitnessResponderButtonFactory.create(step, "Step Error"));
 
+    expandIcon.setImage(new Image("/edu/wpi/grip/ui/icons/up.png"));
     // Add a SocketControlView for each input socket and output socket
     for (InputSocket<?> inputSocket : step.getInputSockets()) {
-      inputSocketMapManager.add(inputSocketControllerFactory.create(inputSocket));
+      InputSocketController tempSocket = inputSocketControllerFactory.create(inputSocket);
+      inputSocketMapManager.add(tempSocket);
+      inputSockets.add(tempSocket);
     }
 
     for (OutputSocket<?> outputSocket : step.getOutputSockets()) {
@@ -134,12 +144,44 @@ public class StepController implements Controller {
 
   @FXML
   private void moveStepLeft() {
-    pipeline.moveStep(step, -1);
+    for(InputSocketController input: inputSockets){
+      if(!inputSocketMapManager.containsKey(input)){
+        inputSocketMapManager.add(input);
+      }
+    }
+    //pipeline.moveStep(step, -1);
   }
 
   @FXML
   private void moveStepRight() {
-    pipeline.moveStep(step, +1);
+    for(InputSocketController input: inputSockets){
+      if(input.getSocket().getConnections().isEmpty()){
+        inputSocketMapManager.remove(input);
+      }
+    }
+    //pipeline.moveStep(step, +1);
+  }
+
+  @FXML
+  private void expand(){
+    if(expanded){
+      for(InputSocketController input: inputSockets){
+        if(input.getSocket().getConnections().isEmpty()) {
+          inputSocketMapManager.remove(input);
+        }
+      }
+      expandIcon.setImage(new Image("/edu/wpi/grip/ui/icons/down.png"));
+      expanded = false;
+    } else {
+      for(InputSocketController input: inputSockets){
+        if(!inputSocketMapManager.containsKey(input)){
+          inputSocketMapManager.add(input);
+        }
+      }
+      expandIcon.setImage(new Image("/edu/wpi/grip/ui/icons/up.png"));
+      expanded = true;
+    }
+
   }
 
   /**

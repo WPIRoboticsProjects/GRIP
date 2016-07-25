@@ -113,6 +113,12 @@ Button.delete, Button.move-left, Button.move-right, .start-stoppable-button, .ex
     -fx-pref-width: 2em;
 }
 
+.expand {
+	-fx-background-color: transparent;
+    -fx-background-radius: 00;
+    -fx-text-fill: black;
+}
+
 VBox.sockets {
     -fx-spacing: 0.5em;
 }

@@ -80,6 +80,19 @@
     </Label>
     <Separator orientation="HORIZONTAL" />
     <VBox fx:id="inputs" styleClass="sockets" />
+    <Button fx:id="Expand" onMouseClicked="#expand" styleClass="expand"
+            maxWidth="Infinity" prefHeight="0" HBox.hgrow="ALWAYS">
+        <graphic>
+            <ImageView fx:id="expandIcon">
+                <fitHeight>
+                    <DPIUtility fx:constant="SMALL_ICON_SIZE" />
+                </fitHeight>
+            </ImageView>
+        </graphic>
+        <tooltip>
+            <Tooltip text="Expands and contracts the shown sockets"/>
+        </tooltip>
+    </Button>
     <Separator orientation="HORIZONTAL" />
     <VBox fx:id="outputs" styleClass="sockets" />
 </VBox>
