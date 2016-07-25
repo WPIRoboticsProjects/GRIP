@@ -114,7 +114,14 @@ public interface InputSocket<T> extends Socket<T> {
 
     @Override
     public boolean equals(Object o) {
-      return o instanceof InputSocket && decorated.equals(o);
+      if (o instanceof InputSocket) {
+        if (decorated.equals(o)) {
+          return true;
+        } else if (o instanceof Decorator) {
+          return decorated.equals(((Decorator) o).decorated);
+        }
+      }
+      return false;
     }
 
     @Override
