@@ -17,6 +17,7 @@ edu.wpi.grip.core.sockets
 edu.wpi.grip.core.sources
 edu.wpi.grip.core.util
 edu.wpi.grip.core.util.service
+edu.wpi.grip.preloader
 edu.wpi.grip.ui
 edu.wpi.grip.ui.annotations
 edu.wpi.grip.ui.components
