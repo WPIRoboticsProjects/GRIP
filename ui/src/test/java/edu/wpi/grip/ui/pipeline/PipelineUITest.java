@@ -41,6 +41,7 @@ import javafx.scene.input.MouseButton;
 import javafx.stage.Stage;
 
 import static junit.framework.Assert.assertEquals;
+import static junit.framework.TestCase.assertTrue;
 import static junit.framework.TestCase.fail;
 import static org.testfx.api.FxAssert.verifyThat;
 import static org.testfx.api.FxAssert.verifyThatIter;
@@ -111,23 +112,20 @@ public class PipelineUITest extends ApplicationTest {
 
   @Test
   public void testMinimizeButton() {
-    Step addStep = addOperation(1, additionOperation);
     Step desaturateStep = addOperation(1, desaturateOperation);
     Step blurStep = addOperation(1, blurOperation);
+    assertTrue("blur input socket size is:" + blurStep.getInputSockets().size(),
+        blurStep.getInputSockets().size()>0);
 
     drag(StyleClassNameUtility.cssSelectorForOutputSocketHandleOn(desaturateStep),  MouseButton
         .PRIMARY).dropTo(StyleClassNameUtility.cssSelectorForInputSocketHandleOn(blurStep));
 
     clickOn(".pipeline .blur-step .expand", MouseButton.PRIMARY);
-    Connection connection0 = assertStepConnected("The desat step did not connect to the blur "
-        + "step", desaturateStep, blurStep);
-    verifyThat(".pipeline", NodeMatchers.hasChildren(1, "."
-        + StyleClassNameUtility.classNameFor(connection0)));
     clickOn(".pipeline .blur-step .expand", MouseButton.PRIMARY);
-    Connection connection1 = assertStepConnected("The desat step did not connect to the blur "
+    Connection connection = assertStepConnected("The desaturate step did not connect to the blur "
         + "step", desaturateStep, blurStep);
     verifyThat(".pipeline", NodeMatchers.hasChildren(1, "."
-        + StyleClassNameUtility.classNameFor(connection1)));
+        + StyleClassNameUtility.classNameFor(connection)));
   }
 
   @Test
