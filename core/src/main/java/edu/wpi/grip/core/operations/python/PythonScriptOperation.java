@@ -1,4 +1,4 @@
-package edu.wpi.grip.core.operations;
+package edu.wpi.grip.core.operations.python;
 
 import edu.wpi.grip.core.Operation;
 import edu.wpi.grip.core.OperationDescription;
@@ -13,7 +13,6 @@ import org.python.core.PyObject;
 import org.python.core.PySequence;
 
 import java.util.List;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
@@ -81,7 +80,7 @@ public class PythonScriptOperation implements Operation {
         .name(pythonScriptFile.name())
         .summary(pythonScriptFile.summary())
         .icon(Icon.iconStream("python"))
-        .category(OperationDescription.Category.MISCELLANEOUS)
+        .category(OperationDescription.Category.CUSTOM)
         .build();
   }
 
@@ -121,44 +120,31 @@ public class PythonScriptOperation implements Operation {
       pyInputs[i] = Py.java2py(inputSockets.get(i).getValue().get());
     }
 
-    try {
-      PyObject pyOutput = this.scriptFile.performFunction().__call__(pyInputs);
+    PyObject pyOutput = this.scriptFile.performFunction().__call__(pyInputs);
 
-      if (pyOutput.isSequenceType()) {
-        /*
-         * If the Python function returned a sequence type, there must be multiple outputs for
-         * this step.
-         * Each element in the sequence is assigned to one output socket.
-         */
-        PySequence pySequence = (PySequence) pyOutput;
-        Object[] javaOutputs = Py.tojava(pySequence, Object[].class);
+    if (pyOutput.isSequenceType()) {
+      // If the Python function returned a sequence type,
+      // there must be multiple outputs for this step.
+      // Each element in the sequence is assigned to one output socket.
+      PySequence pySequence = (PySequence) pyOutput;
+      Object[] javaOutputs = Py.tojava(pySequence, Object[].class);
 
-        if (outputSockets.size() != javaOutputs.length) {
-          throw new IllegalArgumentException(wrongNumberOfArgumentsMsg(outputSockets.size(),
-              javaOutputs.length));
-        }
-
-        for (int i = 0; i < javaOutputs.length; i++) {
-          outputSockets.get(i).setValue(javaOutputs[i]);
-        }
-      } else {
-        /* If the Python script did not return a sequence, there should only be one
-        output socket. */
-        if (outputSockets.size() != 1) {
-          throw new IllegalArgumentException(wrongNumberOfArgumentsMsg(outputSockets.size(), 1));
-        }
-
-        Object javaOutput = Py.tojava(pyOutput, outputSockets.get(0).getSocketHint().getType());
-        outputSockets.get(0).setValue(javaOutput);
+      if (outputSockets.size() != javaOutputs.length) {
+        throw new IllegalArgumentException(wrongNumberOfArgumentsMsg(outputSockets.size(),
+            javaOutputs.length));
       }
-    } catch (RuntimeException e) {
-      /* Exceptions can happen if there's a mistake in a Python script, so just print a
-      stack trace and leave the
-       * current state of the output sockets alone.
-       *
-       * TODO: communicate the error to the GUI.
-       */
-      logger.log(Level.WARNING, e.getMessage(), e);
+
+      for (int i = 0; i < javaOutputs.length; i++) {
+        outputSockets.get(i).setValue(javaOutputs[i]);
+      }
+    } else {
+      // If the Python script did not return a sequence, there should only be one output socket.
+      if (outputSockets.size() != 1) {
+        throw new IllegalArgumentException(wrongNumberOfArgumentsMsg(outputSockets.size(), 1));
+      }
+
+      Object javaOutput = Py.tojava(pyOutput, outputSockets.get(0).getSocketHint().getType());
+      outputSockets.get(0).setValue(javaOutput);
     }
   }
 }

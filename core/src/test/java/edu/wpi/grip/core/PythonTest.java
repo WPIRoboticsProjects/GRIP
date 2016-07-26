@@ -1,6 +1,6 @@
 package edu.wpi.grip.core;
 
-import edu.wpi.grip.core.operations.PythonScriptFile;
+import edu.wpi.grip.core.operations.python.PythonScriptFile;
 import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.core.sockets.Socket;

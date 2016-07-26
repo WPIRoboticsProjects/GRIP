@@ -10,8 +10,8 @@ import java.lang.reflect.Method;
 
 import javafx.beans.property.ObjectProperty;
 import javafx.fxml.FXML;
-import javafx.scene.control.Tab;
 import javafx.scene.control.TextField;
+import javafx.scene.control.TitledPane;
 import javafx.scene.layout.VBox;
 
 import javax.inject.Singleton;
@@ -24,13 +24,14 @@ public class PaletteController {
 
   @FXML private VBox root;
   @FXML private CustomTextField operationSearch;
-  @FXML private Tab allOperations;
-  @FXML private Tab imgprocOperations;
-  @FXML private Tab featureOperations;
-  @FXML private Tab networkOperations;
-  @FXML private Tab logicalOperations;
-  @FXML private Tab opencvOperations;
-  @FXML private Tab miscellaneousOperations;
+  @FXML private TitledPane allOperations;
+  @FXML private TitledPane imgprocOperations;
+  @FXML private TitledPane featureOperations;
+  @FXML private TitledPane networkOperations;
+  @FXML private TitledPane logicalOperations;
+  @FXML private TitledPane opencvOperations;
+  @FXML private TitledPane miscellaneousOperations;
+  @FXML private TitledPane customOperations;
 
   @FXML
   protected void initialize() {
@@ -51,6 +52,7 @@ public class PaletteController {
     logicalOperations.setUserData(OperationDescription.Category.LOGICAL);
     opencvOperations.setUserData(OperationDescription.Category.OPENCV);
     miscellaneousOperations.setUserData(OperationDescription.Category.MISCELLANEOUS);
+    customOperations.setUserData(OperationDescription.Category.CUSTOM);
 
     // Bind the filterText of all of the individual tabs to the search field
     operationSearch.textProperty().addListener(observable -> {
@@ -67,6 +69,8 @@ public class PaletteController {
       opencvOperations.getProperties().put(OperationListController.FILTER_TEXT, operationSearch
           .getText());
       miscellaneousOperations.getProperties().put(OperationListController.FILTER_TEXT,
+          operationSearch.getText());
+      customOperations.getProperties().put(OperationListController.FILTER_TEXT,
           operationSearch.getText());
     });
 

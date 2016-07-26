@@ -1,4 +1,4 @@
-package edu.wpi.grip.core.operations;
+package edu.wpi.grip.core.operations.python;
 
 
 import edu.wpi.grip.core.OperationMetaData;
@@ -25,6 +25,20 @@ import java.util.Properties;
  */
 @AutoValue
 public abstract class PythonScriptFile {
+
+  public static final String TEMPLATE =
+      "import edu.wpi.grip.core.sockets as grip\n\n"
+          + "name = \"Addition Sample\"\n"
+          + "summary = \"The sample python operation to add two numbers\"\n\n"
+          + "inputs = [\n"
+          + "  grip.SocketHints.createNumberSocketHint(\"a\", 0.0),\n"
+          + "  grip.SocketHints.createNumberSocketHint(\"b\", 0.0),\n"
+          + "]\n"
+          + "outputs = [\n"
+          + "  grip.SocketHints.createNumberSocketHint(\"sum\", 0.0),\n"
+          + "]\n\n"
+          + "def perform(a, b):\n"
+          + "  return a + b\n";
 
   static {
     Properties pythonProperties = new Properties();

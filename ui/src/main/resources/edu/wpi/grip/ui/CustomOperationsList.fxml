@@ -5,8 +5,12 @@
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.TitledPane?>
 <?import javafx.scene.layout.VBox?>
-<TitledPane fx:controller="edu.wpi.grip.ui.OperationListController" xmlns:fx="http://javafx.com/fxml/1" fx:id="root">
+<?import javafx.scene.control.Button?>
+<TitledPane fx:controller="edu.wpi.grip.ui.CustomOperationsListController" xmlns:fx="http://javafx.com/fxml/1" fx:id="root">
     <ScrollPane fitToHeight="true" fitToWidth="true" hbarPolicy="NEVER" VBox.vgrow="ALWAYS">
-        <VBox fx:id="operations"/>
+        <VBox>
+            <VBox fx:id="operations"/>
+            <Button text="Create New" onAction="#createNewPythonOperation"/>
+        </VBox>
     </ScrollPane>
 </TitledPane>
