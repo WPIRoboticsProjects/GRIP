@@ -47,8 +47,8 @@ public class Main {
 
   @SuppressWarnings("JavadocMethod")
   public static void main(String[] args) throws IOException, InterruptedException {
-    final Injector injector = Guice.createInjector(Modules.override(
-        new GripCoreModule(), new GripSourcesHardwareModule()).with(new GripNetworkModule()));
+    final Injector injector = Guice.createInjector(Modules.override(new GripCoreModule(),
+        new GripFileModule(), new GripSourcesHardwareModule()).with(new GripNetworkModule()));
     injector.getInstance(Main.class).start(args);
   }
 
