@@ -7,6 +7,8 @@ import edu.wpi.grip.core.OperationMetaData;
 import edu.wpi.grip.core.Pipeline;
 import edu.wpi.grip.core.Step;
 import edu.wpi.grip.core.SubtractionOperation;
+import edu.wpi.grip.core.operations.composite.BlurOperation;
+import edu.wpi.grip.core.operations.composite.DesaturateOperation;
 import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.core.util.MockExceptionWitness;
@@ -49,6 +51,8 @@ public class PipelineUITest extends ApplicationTest {
   private EventBus eventBus;
   private OperationMetaData additionOperation;
   private OperationMetaData subtractionOperation;
+  private OperationMetaData blurOperation;
+  private OperationMetaData desaturateOperation;
   private PipelineController pipelineController;
   private Pipeline pipeline;
 
@@ -66,6 +70,10 @@ public class PipelineUITest extends ApplicationTest {
         AdditionOperation(isf, osf));
     subtractionOperation = new OperationMetaData(SubtractionOperation.DESCRIPTION, () -> new
         SubtractionOperation(isf, osf));
+    blurOperation = new OperationMetaData(BlurOperation.DESCRIPTION, () -> new
+        BlurOperation(isf, osf));
+    desaturateOperation = new OperationMetaData(DesaturateOperation.DESCRIPTION, () -> new
+        DesaturateOperation(isf, osf));
     pipelineController = injector.getInstance(PipelineController.class);
     final Scene scene = new Scene(TestAnnotationFXMLLoader.load(pipelineController), 800, 600);
     stage.setScene(scene);
@@ -99,6 +107,27 @@ public class PipelineUITest extends ApplicationTest {
     verifyThat(".pipeline", NodeMatchers.hasChildren(1, "."
         + StyleClassNameUtility.classNameFor(connection)));
 
+  }
+
+  @Test
+  public void testMinimizeButton() {
+    Step addStep = addOperation(1, additionOperation);
+    Step desaturateStep = addOperation(1, desaturateOperation);
+    Step blurStep = addOperation(1, blurOperation);
+
+    drag(StyleClassNameUtility.cssSelectorForOutputSocketHandleOn(desaturateStep),  MouseButton
+        .PRIMARY).dropTo(StyleClassNameUtility.cssSelectorForInputSocketHandleOn(blurStep));
+
+    clickOn(".pipeline .blur-step .expand", MouseButton.PRIMARY);
+    Connection connection0 = assertStepConnected("The desat step did not connect to the blur "
+        + "step", desaturateStep, blurStep);
+    verifyThat(".pipeline", NodeMatchers.hasChildren(1, "."
+        + StyleClassNameUtility.classNameFor(connection0)));
+    clickOn(".pipeline .blur-step .expand", MouseButton.PRIMARY);
+    Connection connection1 = assertStepConnected("The desat step did not connect to the blur "
+        + "step", desaturateStep, blurStep);
+    verifyThat(".pipeline", NodeMatchers.hasChildren(1, "."
+        + StyleClassNameUtility.classNameFor(connection1)));
   }
 
   @Test
