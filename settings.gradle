@@ -1,3 +1,2 @@
-include 'core', 'ui'
+include 'core', 'ui', 'ui:preloader'
 rootProject.name = 'GRIP'
-

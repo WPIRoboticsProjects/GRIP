@@ -301,6 +301,19 @@ project(":core") {
     }
 }
 
+project (":ui:preloader") {
+    apply plugin: 'java'
+    apply plugin: 'idea'
+    apply plugin: 'jacoco'
+    apply plugin: 'application'
+
+    task run(overwrite: true, type: JavaExec) {
+        classpath = sourceSets.main.runtimeClasspath
+        main = 'edu.wpi.grip.preloader.GripPreloader'
+        args 'windowed'
+    }
+}
+
 project(":ui") {
     apply plugin: 'java'
     apply plugin: 'idea'
@@ -314,6 +327,7 @@ project(":ui") {
 
     dependencies {
         compile project(path: ':core', configuration: 'shadow')
+        compile project(path: ':ui:preloader')
         ideProvider project(path: ':core', configuration: 'compile')
         compile group: 'org.controlsfx', name: 'controlsfx', version: '8.40.11'
         compile group: 'com.hierynomus', name: 'sshj', version: '0.16.0'
@@ -325,6 +339,7 @@ project(":ui") {
     }
 
     evaluationDependsOn(':core')
+    evaluationDependsOnChildren()
     compileTestJava.dependsOn tasks.getByPath(':core:testClasses')
 
     idea.module {
@@ -344,6 +359,8 @@ project(":ui") {
 
     jfx {
         mainClass = "edu.wpi.grip.ui.Main"
+        preLoader = "edu.wpi.grip.preloader.GripPreloader"
+
         identifier = "GRIP"
         appName = "GRIP"
         vendor = "Worcester Polytechnic Institute"
