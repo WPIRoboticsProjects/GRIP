@@ -197,6 +197,7 @@ public class Operations {
     )).addAll(
         Stream.of(PythonOperationUtils.DIRECTORY.listFiles((dir, name) -> name.endsWith(".py")))
             .map(PythonOperationUtils::read)
+            .filter(code -> code != null) // read() returns null if the file couldn't be read
             .map(PythonScriptFile::create)
             .map(psf -> new OperationMetaData(PythonScriptOperation.descriptionFor(psf),
                 () -> new PythonScriptOperation(isf, osf, psf)))

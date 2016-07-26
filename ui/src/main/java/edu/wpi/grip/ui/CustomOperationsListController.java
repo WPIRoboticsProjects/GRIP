@@ -36,6 +36,7 @@ public class CustomOperationsListController extends OperationListController {
   @Inject private EventBus eventBus;
   @Inject private InputSocket.Factory isf;
   @Inject private OutputSocket.Factory osf;
+  private final Pattern namePattern = Pattern.compile("name *= *\"(.*)\" *");
 
   @FXML
   @SuppressWarnings("PMD.UnusedPrivateMethod")
@@ -54,9 +55,8 @@ public class CustomOperationsListController extends OperationListController {
       String[] lines = code.split("\n");
       String name = null;
       // Find the name in the user code
-      final Pattern p = Pattern.compile("name *= *\"(.*)\" *");
       for (String line : lines) {
-        Matcher m = p.matcher(line);
+        Matcher m = namePattern.matcher(line);
         if (m.matches()) {
           name = m.group(1);
           break;

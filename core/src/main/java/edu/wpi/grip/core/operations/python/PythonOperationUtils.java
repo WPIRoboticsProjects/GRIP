@@ -6,11 +6,15 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Utility class handling functionality for custom python operation files on disk.
  */
 public final class PythonOperationUtils {
+
+  private static final Logger log = Logger.getLogger(PythonOperationUtils.class.getName());
 
   /**
    * The directory where custom python operation files are stored.
@@ -18,7 +22,7 @@ public final class PythonOperationUtils {
   public static final File DIRECTORY = new File(GripFileManager.GRIP_DIRECTORY, "operations");
 
   private PythonOperationUtils() {
-
+    // Utility class, avoid instantiation
   }
 
   /**
@@ -35,7 +39,8 @@ public final class PythonOperationUtils {
     try {
       return new String(Files.readAllBytes(file.toPath()), Charset.forName("UTF-8"));
     } catch (IOException e) {
-      throw new RuntimeException("Could not read " + file.getAbsolutePath(), e);
+      log.log(Level.WARNING, "Could not read " + file.getAbsolutePath(), e);
+      return null;
     }
   }
 
