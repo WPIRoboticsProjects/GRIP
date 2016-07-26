@@ -170,16 +170,16 @@ public class StepController implements Controller {
     if (expanded) {
       for (InputSocketController input : inputSockets) {
         if (input.getSocket().getConnections().isEmpty()) {
-          inputSocketMapManager.remove(input);
+          input.getRoot().setVisible(false);
+          input.getRoot().setManaged(false);
         }
       }
       expandIcon.setImage(new Image("/edu/wpi/grip/ui/icons/down.png"));
       expanded = false;
     } else {
       for (InputSocketController input : inputSockets) {
-        if (!inputSocketMapManager.containsKey(input)) {
-          inputSocketMapManager.add(input);
-        }
+        input.getRoot().setManaged(true);
+        input.getRoot().setVisible(true);
       }
       expandIcon.setImage(new Image("/edu/wpi/grip/ui/icons/up.png"));
       expanded = true;
