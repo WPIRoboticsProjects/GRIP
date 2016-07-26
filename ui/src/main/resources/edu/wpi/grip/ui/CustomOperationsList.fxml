@@ -10,7 +10,7 @@
     <ScrollPane fitToHeight="true" fitToWidth="true" hbarPolicy="NEVER" VBox.vgrow="ALWAYS">
         <VBox>
             <VBox fx:id="operations"/>
-            <Button text="Create New" onAction="#createNewPythonOperation"/>
+            <Button text="Create New" onAction="#createNewPythonOperation" maxWidth="Infinity"/>
         </VBox>
     </ScrollPane>
 </TitledPane>

@@ -8,7 +8,7 @@
 <VBox styleClass="palette" fx:controller="edu.wpi.grip.ui.PaletteController"
       xmlns:fx="http://javafx.com/fxml/1" onKeyPressed="operationSearch.requestFocus()" fx:id="root">
     <Label styleClass="pane-title" text="Operation Palette" maxWidth="Infinity"/>
-    <Accordion VBox.vgrow="ALWAYS">
+    <Accordion VBox.vgrow="ALWAYS" expandedPane="$allOperations">
         <panes>
             <fx:include source="OperationList.fxml" fx:id="allOperations" text="All"/>
             <fx:include source="OperationList.fxml" fx:id="imgprocOperations" text="Image Processing"/>
