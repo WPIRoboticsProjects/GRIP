@@ -120,12 +120,12 @@ public class PipelineUITest extends ApplicationTest {
     drag(StyleClassNameUtility.cssSelectorForOutputSocketHandleOn(desaturateStep),  MouseButton
         .PRIMARY).dropTo(StyleClassNameUtility.cssSelectorForInputSocketHandleOn(blurStep));
 
-    //clickOn(".pipeline .blur-step .expand", MouseButton.PRIMARY);
-    //clickOn(".pipeline .blur-step .expand", MouseButton.PRIMARY);
-    Connection connection = assertStepConnected("The desaturate step did not connect to the blur "
-        + "step", desaturateStep, blurStep);
-    verifyThat(".pipeline", NodeMatchers.hasChildren(1, "."
-        + StyleClassNameUtility.classNameFor(connection)));
+    clickOn(".pipeline .blur-step .expand", MouseButton.PRIMARY);
+    clickOn(".pipeline .blur-step .expand", MouseButton.PRIMARY);
+
+    assertTrue("blur input socket size is:" + blurStep.getInputSockets().size(),
+        blurStep.getInputSockets().size() > 0);
+
   }
 
   @Test
