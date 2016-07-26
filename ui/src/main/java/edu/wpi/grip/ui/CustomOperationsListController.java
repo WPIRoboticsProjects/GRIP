@@ -20,7 +20,6 @@ import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
@@ -38,13 +37,9 @@ public class CustomOperationsListController extends OperationListController {
   @Inject private InputSocket.Factory isf;
   @Inject private OutputSocket.Factory osf;
 
-  @Override
-  protected void initialize() {
-    super.initialize();
-  }
-
   @FXML
-  private void createNewPythonOperation(ActionEvent actionEvent) {
+  @SuppressWarnings("PMD.UnusedPrivateMethod")
+  private void createNewPythonOperation() {
     Dialog<String> dialog = new TextInputDialog();
     dialog.getDialogPane().setContent(new TextArea(PythonScriptFile.TEMPLATE));
     dialog.setResultConverter(bt -> {
