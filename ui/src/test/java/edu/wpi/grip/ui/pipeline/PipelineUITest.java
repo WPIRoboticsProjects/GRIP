@@ -115,7 +115,7 @@ public class PipelineUITest extends ApplicationTest {
     Step desaturateStep = addOperation(1, desaturateOperation);
     Step blurStep = addOperation(1, blurOperation);
     assertTrue("blur input socket size is:" + blurStep.getInputSockets().size(),
-        blurStep.getInputSockets().size()>0);
+        blurStep.getInputSockets().size() > 0);
 
     drag(StyleClassNameUtility.cssSelectorForOutputSocketHandleOn(desaturateStep),  MouseButton
         .PRIMARY).dropTo(StyleClassNameUtility.cssSelectorForInputSocketHandleOn(blurStep));
