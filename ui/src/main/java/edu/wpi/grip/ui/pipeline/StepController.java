@@ -21,6 +21,13 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import javafx.animation.KeyFrame;
+import javafx.animation.KeyValue;
+import javafx.animation.Timeline;
+import javafx.animation.TimelineBuilder;
+import javafx.beans.property.DoubleProperty;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
@@ -29,7 +36,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-
+import javafx.util.Duration;
 import javax.inject.Inject;
 
 /**
@@ -169,22 +176,87 @@ public class StepController implements Controller {
   private void expand() {
     if (expanded) {
       for (InputSocketController input : inputSockets) {
+        inputs.setMaxHeight(inputs.getHeight());
+        inputs.setPrefHeight(inputs.getHeight());
         if (input.getSocket().getConnections().isEmpty()) {
-          input.getRoot().setVisible(false);
-          input.getRoot().setManaged(false);
+          fadeOut(input);
         }
       }
+      closeUp();
       expandIcon.setImage(new Image("/edu/wpi/grip/ui/icons/down.png"));
       expanded = false;
     } else {
       for (InputSocketController input : inputSockets) {
-        input.getRoot().setManaged(true);
-        input.getRoot().setVisible(true);
+        fadeIn(input);
       }
+      reopen();
       expandIcon.setImage(new Image("/edu/wpi/grip/ui/icons/up.png"));
       expanded = true;
     }
 
+  }
+
+  /**
+   * Makes an animation to make an input socket fade out over 0.1 seconds.
+   *
+   * @param input the input socket controller that will be faded out.
+   */
+  private void fadeOut(InputSocketController input) {
+    DoubleProperty opacity = input.getRoot().opacityProperty();
+    Timeline fadeOut = new Timeline(
+        new KeyFrame(Duration.ZERO, new KeyValue(opacity, 1.0)),
+        new KeyFrame(new Duration(100), new KeyValue(opacity, 0.0)));
+    fadeOut.setOnFinished(new EventHandler<ActionEvent>() {
+      @Override
+      public void handle(ActionEvent event) {
+        for (InputSocketController input : inputSockets) {
+          input.getRoot().setVisible(false);
+          input.getRoot().setManaged(false);
+        }
+      }
+    });
+    fadeOut.play();
+  }
+
+  /**
+   * Makes an animation to make an input socket fade in over 0.25 seconds.
+   *
+   * @param input the input socket controller that will be faded out.
+   */
+  private void fadeIn(InputSocketController input) {
+    input.getRoot().setVisible(true);
+    DoubleProperty opacity = input.getRoot().opacityProperty();
+    Timeline fadeIn = new Timeline(
+        new KeyFrame(new Duration(250), new KeyValue(opacity, 1.0)));
+    fadeIn.setOnFinished(new EventHandler<ActionEvent>() {
+      @Override
+      public void handle(ActionEvent event) {
+        for (InputSocketController input : inputSockets) {
+          input.getRoot().setManaged(true);
+        }
+      }
+    });
+    fadeIn.play();
+  }
+
+  /**
+   * Makes an animation to make the input vbox slide closed over .25 seconds
+   */
+  private void closeUp() {
+    Timeline animation = TimelineBuilder.create().cycleCount(1).keyFrames(
+        new KeyFrame(Duration.seconds(0.25),
+            new KeyValue(inputs.prefHeightProperty(), 0))).build();
+    animation.play();
+  }
+
+  /**
+   * Makes an animation to make the input vbox slide open over .1 seconds
+   */
+  private void reopen() {
+    Timeline animation = TimelineBuilder.create().cycleCount(1).keyFrames(
+        new KeyFrame(Duration.seconds(0.1),
+            new KeyValue(inputs.prefHeightProperty(), inputs.getMaxHeight()))).build();
+    animation.play();
   }
 
   /**
