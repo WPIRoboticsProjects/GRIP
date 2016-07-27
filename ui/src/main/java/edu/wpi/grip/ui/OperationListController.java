@@ -1,7 +1,9 @@
 package edu.wpi.grip.ui;
 
+import edu.wpi.grip.core.OperationDescription;
 import edu.wpi.grip.core.OperationMetaData;
 import edu.wpi.grip.core.events.OperationAddedEvent;
+import edu.wpi.grip.core.events.OperationRemovedEvent;
 import edu.wpi.grip.ui.annotations.ParametrizedController;
 import edu.wpi.grip.ui.util.ControllerMap;
 import edu.wpi.grip.ui.util.SearchUtility;
@@ -88,6 +90,18 @@ public class OperationListController {
         .getUserData()) {
       PlatformImpl.runAndWait(() ->
           operationsMapManager.add(operationControllerFactory.create(operationMetaData)));
+    }
+  }
+
+  @Subscribe
+  public void onOperationRemoved(OperationRemovedEvent event) {
+    OperationDescription removedOperation = event.getRemovedOperation();
+    if (root.getUserData() == null || removedOperation.category() == root.getUserData()) {
+      PlatformImpl.runAndWait(() -> operationsMapManager.remove(operationsMapManager.keySet()
+          .stream()
+          .filter(c -> c.getOperationDescription().equals(removedOperation))
+          .findFirst()
+          .orElse(null)));
     }
   }
 

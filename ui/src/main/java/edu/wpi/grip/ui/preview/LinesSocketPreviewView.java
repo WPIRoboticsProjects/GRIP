@@ -9,6 +9,7 @@ import edu.wpi.grip.ui.util.ImageConverter;
 import com.google.common.eventbus.Subscribe;
 
 import java.util.List;
+
 import javafx.application.Platform;
 import javafx.geometry.Orientation;
 import javafx.scene.control.CheckBox;

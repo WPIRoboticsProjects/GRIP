@@ -11,7 +11,7 @@
     <ScrollPane fitToHeight="true" fitToWidth="true" hbarPolicy="NEVER" VBox.vgrow="ALWAYS">
         <VBox>
             <VBox fx:id="operations"/>
-            <Button text="Create New" onAction="#createNewPythonOperation" maxWidth="Infinity">
+            <Button text="Create New" fx:id="createNewButton" onAction="#createNewPythonOperation" maxWidth="Infinity">
                 <VBox.margin>
                     <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                 </VBox.margin>

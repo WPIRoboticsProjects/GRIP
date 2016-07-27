@@ -321,6 +321,7 @@ project(":ui") {
         testCompile group: 'org.testfx', name: 'testfx-core', version: '4.0.+'
         testCompile group: 'org.testfx', name: 'testfx-junit', version: '4.0.+'
         testRuntime group: 'org.testfx', name: 'openjfx-monocle', version: '1.8.0_20'
+        compile group: 'org.fxmisc.richtext', name: 'richtextfx', version: '0.7-M2'
     }
 
     evaluationDependsOn(':core')
