@@ -219,7 +219,7 @@ public class StepController implements Controller {
   }
 
   /**
-   * Makes an animation to make an input socket fade in over 0.25 seconds.
+   * Makes an animation to make an input socket fade in over 0.1 seconds.
    *
    * @param input the input socket controller that will be faded out.
    */
@@ -227,7 +227,7 @@ public class StepController implements Controller {
     input.getRoot().setVisible(true);
     DoubleProperty opacity = input.getRoot().opacityProperty();
     Timeline fadeIn = new Timeline(
-        new KeyFrame(new Duration(250), new KeyValue(opacity, 1.0)));
+        new KeyFrame(new Duration(100), new KeyValue(opacity, 1.0)));
     fadeIn.setOnFinished(new EventHandler<ActionEvent>() {
       @Override
       public void handle(ActionEvent event) {
