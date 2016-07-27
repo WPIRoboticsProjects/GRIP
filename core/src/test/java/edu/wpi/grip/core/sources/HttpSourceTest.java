@@ -57,7 +57,7 @@ public class HttpSourceTest {
         contextStore,
         GripServer.IMAGE_UPLOAD_PATH);
 
-    logoFile = new File(Files.class.getResource("/edu/wpi/grip/images/GRIP_Logo.png").toURI());
+    logoFile = new File(Files.class.getResource("/edu/wpi/grip/images/old_GRIP_Logo.png").toURI());
     postClient = HttpClients.createDefault();
   }
 

@@ -19,7 +19,7 @@ public class Files {
     try {
       textFile = new File(Files.class.getResource("/edu/wpi/grip/images/NotAnImage.txt").toURI());
       imageFile = new ImageWithData(new File(
-          Files.class.getResource("/edu/wpi/grip/images/GRIP_Logo.png").toURI()), 183, 480);
+          Files.class.getResource("/edu/wpi/grip/images/old_GRIP_Logo.png").toURI()), 183, 480);
       gompeiJpegFile = new ImageWithData(new File(
           Files.class.getResource("/edu/wpi/grip/images/gompei.jpeg").toURI()), 220, 225);
       testphotoURI = Files.class.getResource("/edu/wpi/grip/images/testphoto.png").toURI();
