@@ -1,8 +1,8 @@
 package edu.wpi.grip.ui;
 
-import edu.wpi.grip.core.GripFileManager;
 import edu.wpi.grip.core.OperationMetaData;
 import edu.wpi.grip.core.events.OperationAddedEvent;
+import edu.wpi.grip.core.operations.python.PythonOperationUtils;
 import edu.wpi.grip.core.operations.python.PythonScriptFile;
 import edu.wpi.grip.core.operations.python.PythonScriptOperation;
 import edu.wpi.grip.core.sockets.InputSocket;
@@ -12,6 +12,8 @@ import edu.wpi.grip.ui.annotations.ParametrizedController;
 import com.google.common.eventbus.EventBus;
 import com.google.common.io.Files;
 import com.google.inject.Inject;
+
+import org.python.core.PyException;
 
 import java.io.File;
 import java.io.IOException;
@@ -80,8 +82,7 @@ public class CustomOperationsListController extends OperationListController {
         a.showAndWait();
         return;
       }
-      File file = new File(GripFileManager.GRIP_DIRECTORY + File.separator + "operations",
-          name.replaceAll("[\\s]", "_") + ".py");
+      File file = new File(PythonOperationUtils.DIRECTORY, name.replaceAll("[\\s]+", "_") + ".py");
       if (file.exists()) {
         Alert a = new Alert(Alert.AlertType.ERROR);
         a.setContentText("A file for the custom operation \"" + name + "\" already exists");
@@ -96,11 +97,19 @@ public class CustomOperationsListController extends OperationListController {
         a.showAndWait();
         return;
       }
-      PythonScriptFile pcs = PythonScriptFile.create(code);
-      eventBus.post(new OperationAddedEvent(new OperationMetaData(
-          PythonScriptOperation.descriptionFor(pcs),
-          () -> new PythonScriptOperation(isf, osf, pcs)
-      )));
+      try {
+        PythonScriptFile script = PythonScriptFile.create(code);
+        eventBus.post(new OperationAddedEvent(new OperationMetaData(
+            PythonScriptOperation.descriptionFor(script),
+            () -> new PythonScriptOperation(isf, osf, script)
+        )));
+      } catch (PyException e) {
+        // Malformed script, alert the user
+        Alert a = new Alert(Alert.AlertType.ERROR);
+        a.setTitle("Error in python script");
+        a.setContentText("Error message: " + e.value.__getitem__(0).toString()); // wow
+        a.showAndWait();
+      }
     }
   }
 

@@ -56,18 +56,18 @@ public class PaletteController {
 
     // Bind the filterText of all of the individual tabs to the search field
     operationSearch.textProperty().addListener(observable -> {
-      allOperations.getProperties().put(OperationListController.FILTER_TEXT, operationSearch
-          .getText());
-      imgprocOperations.getProperties().put(OperationListController.FILTER_TEXT, operationSearch
-          .getText());
-      featureOperations.getProperties().put(OperationListController.FILTER_TEXT, operationSearch
-          .getText());
-      networkOperations.getProperties().put(OperationListController.FILTER_TEXT, operationSearch
-          .getText());
-      logicalOperations.getProperties().put(OperationListController.FILTER_TEXT, operationSearch
-          .getText());
-      opencvOperations.getProperties().put(OperationListController.FILTER_TEXT, operationSearch
-          .getText());
+      allOperations.getProperties().put(OperationListController.FILTER_TEXT,
+          operationSearch.getText());
+      imgprocOperations.getProperties().put(OperationListController.FILTER_TEXT,
+          operationSearch.getText());
+      featureOperations.getProperties().put(OperationListController.FILTER_TEXT,
+          operationSearch.getText());
+      networkOperations.getProperties().put(OperationListController.FILTER_TEXT,
+          operationSearch.getText());
+      logicalOperations.getProperties().put(OperationListController.FILTER_TEXT,
+          operationSearch.getText());
+      opencvOperations.getProperties().put(OperationListController.FILTER_TEXT,
+          operationSearch.getText());
       miscellaneousOperations.getProperties().put(OperationListController.FILTER_TEXT,
           operationSearch.getText());
       customOperations.getProperties().put(OperationListController.FILTER_TEXT,

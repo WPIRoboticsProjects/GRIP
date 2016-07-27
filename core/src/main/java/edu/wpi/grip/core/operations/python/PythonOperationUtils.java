@@ -2,6 +2,8 @@ package edu.wpi.grip.core.operations.python;
 
 import edu.wpi.grip.core.GripFileManager;
 
+import org.python.core.PyException;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -52,6 +54,24 @@ public final class PythonOperationUtils {
       return;
     }
     DIRECTORY.mkdirs();
+  }
+
+  /**
+   * Tries to create a {@code PythonScriptFile} from the given python script. If the script has
+   * errors (syntax or runtime), the first one encountered will be logged along with the contents
+   * of the script.
+   *
+   * @param code the python script to create a {@code PythonScriptFile} from
+   * @return a {@code PythonScriptFile} for the given python script
+   */
+  public static PythonScriptFile tryCreate(String code) {
+    try {
+      return PythonScriptFile.create(code);
+    } catch (PyException e) {
+      log.log(Level.WARNING, "Error in python script", e);
+      log.log(Level.WARNING, "Erroneous code:\n" + code);
+      return null;
+    }
   }
 
 }
