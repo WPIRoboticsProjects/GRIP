@@ -35,8 +35,8 @@ public class SimpleFilterContoursOperation implements Operation {
           .icon(Icon.iconStream("find-contours"))
           .build();
 
-  private final SocketHint<ContoursReport> contoursHint = new SocketHint.Builder<>(ContoursReport
-      .class)
+  private final SocketHint<ContoursReport> contoursHint =
+      new SocketHint.Builder<>(ContoursReport.class)
       .identifier("Contours").initialValueSupplier(ContoursReport::new).build();
 
   private final SocketHint<Number> minAreaHint =
@@ -53,8 +53,8 @@ public class SimpleFilterContoursOperation implements Operation {
   private final OutputSocket<ContoursReport> outputSocket;
 
   @SuppressWarnings("JavadocMethod")
-  public SimpleFilterContoursOperation(InputSocket.Factory inputSocketFactory, OutputSocket.Factory
-      outputSocketFactory) {
+  public SimpleFilterContoursOperation(
+      InputSocket.Factory inputSocketFactory, OutputSocket.Factory outputSocketFactory) {
     this.contoursSocket = inputSocketFactory.create(contoursHint);
     this.minAreaSocket = inputSocketFactory.create(minAreaHint);
     this.minPerimeterSocket = inputSocketFactory.create(minPerimeterHint);
@@ -107,7 +107,9 @@ public class SimpleFilterContoursOperation implements Operation {
 
     outputContours.resize(filteredContourCount);
 
-    outputSocket.setValue(new ContoursReport(outputContours,
-        inputSocket.getValue().get().getRows(), inputSocket.getValue().get().getCols()));
+    outputSocket.setValue(new ContoursReport(
+        outputContours,
+        inputSocket.getValue().get().getRows(),
+        inputSocket.getValue().get().getCols()));
   }
 }

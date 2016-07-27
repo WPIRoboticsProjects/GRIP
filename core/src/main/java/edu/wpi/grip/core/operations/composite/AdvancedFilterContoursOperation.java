@@ -10,13 +10,13 @@ import edu.wpi.grip.core.util.Icon;
 
 import com.google.common.collect.ImmutableList;
 
-import org.bytedeco.javacpp.opencv_core;
-
 import java.util.List;
 
 import static org.bytedeco.javacpp.opencv_core.Mat;
 import static org.bytedeco.javacpp.opencv_core.MatVector;
+import static org.bytedeco.javacpp.opencv_core.Point2f;
 import static org.bytedeco.javacpp.opencv_core.Rect;
+import static org.bytedeco.javacpp.opencv_core.RotatedRect;
 import static org.bytedeco.javacpp.opencv_imgproc.arcLength;
 import static org.bytedeco.javacpp.opencv_imgproc.boundingRect;
 import static org.bytedeco.javacpp.opencv_imgproc.contourArea;
@@ -193,13 +193,15 @@ public class AdvancedFilterContoursOperation implements Operation {
       double width;
       double height;
       if (rotatedRect) {
-        final opencv_core.RotatedRect bb = minAreaRect(contour);
-        opencv_core.Point2f points = new opencv_core.Point2f(4);
+        final RotatedRect bb = minAreaRect(contour);
+        Point2f points = new Point2f(4);
         bb.points(points);
-        final double rotatedWidth = Math.sqrt( Math.pow(points.position(0).x() - points.position(1)
-            .x(), 2) + Math.pow(points.position(0).y() - points.position(1).y(), 2));
-        final double rotatedHeight = Math.sqrt( Math.pow(points.position(1).x() - points.position(2)
-            .x(), 2) + Math.pow(points.position(1).y() - points.position(2).y(), 2));
+        final double rotatedWidth = Math.sqrt(Math.pow(points.position(0).x()
+            - points.position(1).x(), 2)
+            + Math.pow(points.position(0).y() - points.position(1).y(), 2));
+        final double rotatedHeight = Math.sqrt( Math.pow(points.position(1).x()
+            - points.position(2).x(), 2)
+            + Math.pow(points.position(1).y() - points.position(2).y(), 2));
         if (Math.abs(bb.angle()) >= 45) {
           width = rotatedWidth;
           height = rotatedHeight;
