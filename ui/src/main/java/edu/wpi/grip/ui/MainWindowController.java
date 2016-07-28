@@ -43,7 +43,6 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
@@ -302,7 +301,6 @@ public class MainWindowController {
       analysisStage.setScene(new Scene(loader.load()));
       AnalysisWindowController controller = loader.getController();
       controller.setBenchmarker(benchmarkRunner);
-      analysisStage.initModality(Modality.WINDOW_MODAL);
       analysisStage.initOwner(root.getScene().getWindow());
       analysisStage.setTitle("Pipeline Analysis");
       analysisStage.getIcons().add(new Image("/edu/wpi/grip/ui/icons/grip.png"));

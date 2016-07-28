@@ -2,6 +2,7 @@ package edu.wpi.grip.ui.pipeline;
 
 import edu.wpi.grip.core.Pipeline;
 import edu.wpi.grip.core.Step;
+import edu.wpi.grip.core.events.BenchmarkEvent;
 import edu.wpi.grip.core.events.TimerEvent;
 import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.sockets.OutputSocket;
@@ -23,6 +24,7 @@ import java.util.Collection;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Labeled;
 import javafx.scene.image.Image;
@@ -49,6 +51,12 @@ public class StepController implements Controller {
   private VBox root;
   @FXML
   private Labeled title;
+  @FXML
+  private Button deleteButton;
+  @FXML
+  private Button moveLeftButton;
+  @FXML
+  private Button moveRightButton;
   @FXML
   private Label elapsedTime;
   @FXML
@@ -156,6 +164,15 @@ public class StepController implements Controller {
     }
     Platform.runLater(() ->
         elapsedTime.setText(String.format("Ran in %.1f ms", event.getElapsedTime() / 1e3)));
+  }
+
+  @Subscribe
+  private void onBenchmark(BenchmarkEvent e) {
+    Platform.runLater(() -> {
+      deleteButton.setDisable(e.isStart());
+      moveLeftButton.setDisable(e.isStart());
+      moveRightButton.setDisable(e.isStart());
+    });
   }
 
   /**

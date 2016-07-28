@@ -106,11 +106,10 @@ public class Step {
    * InputSocket#getValue()} are not empty. If one input is invalid then the perform method will not
    * run and all output sockets will be assigned to their default values.
    *
-   * @param benchmarking if this step is being benchmarked. The operation's perform method will be
-   *                     called if every input is valid regardless of 'dirtiness' if it's being
-   *                     benchmarked.
+   * @param force if this step should be forced to run. If {@code true}, the operation's perform
+   *              method will be called if every input is valid regardless of 'dirtiness'.
    */
-  protected final void runPerform(boolean benchmarking) {
+  protected final void runPerform(boolean force) {
     boolean anyDirty = false; // Keeps track of if there are sockets that are dirty
 
     for (InputSocket<?> inputSocket : inputSockets) {
@@ -125,7 +124,7 @@ public class Step {
       // If one value is true then this will stay true
       anyDirty |= inputSocket.dirtied();
     }
-    if (!benchmarking && !anyDirty) {
+    if (!force && !anyDirty) {
       // If there aren't any dirty inputs don't clear the exceptions, just return
       return;
     }

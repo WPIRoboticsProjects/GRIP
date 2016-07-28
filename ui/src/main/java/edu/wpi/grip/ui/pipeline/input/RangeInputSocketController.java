@@ -94,8 +94,6 @@ public class RangeInputSocketController extends InputSocketController<List<Numbe
 
 
     this.setContent(new VBox(this.slider, label));
-
-    this.slider.disableProperty().bind(this.getHandle().connectedProperty());
   }
 
   private String getLowHighLabelText() {
