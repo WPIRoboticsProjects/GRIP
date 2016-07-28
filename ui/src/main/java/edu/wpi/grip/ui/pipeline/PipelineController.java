@@ -31,7 +31,6 @@ import java.util.Map;
 import java.util.NavigableMap;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
-
 import javafx.beans.InvalidationListener;
 import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.collections.ObservableList;
@@ -43,9 +42,7 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
-
 import javax.annotation.Nullable;
 import javax.inject.Inject;
 
@@ -61,7 +58,7 @@ public final class PipelineController {
   @FXML
   private VBox sourcesBox;
   @FXML
-  private Pane addSourcePane;
+  private VBox addSourceBox;
   @FXML
   private HBox stepBox;
   @FXML
@@ -78,7 +75,7 @@ public final class PipelineController {
   @Inject
   private StepController.Factory stepControllerFactory;
   @Inject
-  private AddSourceView addSourceView;
+  private AddSourceButton addSourceButton;
   @Inject
   private OperationDragService operationDragService;
   @Inject
@@ -135,7 +132,7 @@ public final class PipelineController {
       });
     });
 
-    addSourcePane.getChildren().add(addSourceView);
+    addSourceBox.getChildren().add(addSourceButton);
   }
 
   /**

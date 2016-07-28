@@ -3,6 +3,8 @@ package edu.wpi.grip.util;
 
 import edu.wpi.grip.core.FileManager;
 import edu.wpi.grip.core.GripCoreModule;
+import edu.wpi.grip.core.ManualPipelineRunner;
+import edu.wpi.grip.core.PipelineRunner;
 import edu.wpi.grip.core.http.GripServer;
 import edu.wpi.grip.core.http.GripServerTest;
 import edu.wpi.grip.core.sources.CameraSource;
@@ -82,6 +84,7 @@ public class GripCoreTestModule extends GripCoreModule {
     // HTTP server injection bindings
     bind(GripServer.JettyServerFactory.class).to(GripServerTest.TestServerFactory.class);
     bind(GripServer.class).asEagerSingleton();
+    bind(PipelineRunner.class).to(ManualPipelineRunner.class);
   }
 
   @Override

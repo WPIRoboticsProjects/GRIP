@@ -3,12 +3,14 @@ package edu.wpi.grip.core;
 import edu.wpi.grip.core.metrics.MockTimer;
 
 import com.google.common.eventbus.EventBus;
+import com.google.inject.Inject;
 
 /*
  * Do not extend this class. The object is registered in the constructor
  */
 public final class ManualPipelineRunner extends PipelineRunner {
 
+  @Inject
   public ManualPipelineRunner(EventBus eventBus, Pipeline pipeline) {
     super(eventBus, () -> pipeline, MockTimer.simpleFactory(eventBus));
     // This is fine because it is in a test
@@ -17,7 +19,8 @@ public final class ManualPipelineRunner extends PipelineRunner {
 
   @Override
   public PipelineRunner startAsync() {
-    throw new UnsupportedOperationException();
+    // NOPE
+    return this;
   }
 
   public void runPipeline() {
