@@ -1,4 +1,4 @@
-![logo](https://cloud.githubusercontent.com/assets/3964980/11156885/6fa1967a-8a1c-11e5-8c78-e552ffba31c0.png)
+![logo](https://cloud.githubusercontent.com/assets/7980882/17218311/55668842-54b5-11e6-9028-efd9d767f36a.png)
 
 [![Join the chat at https://gitter.im/WPIRoboticsProjects/GRIP](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/WPIRoboticsProjects/GRIP?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 [![Build Status](https://travis-ci.org/WPIRoboticsProjects/GRIP.svg?branch=master)](https://travis-ci.org/WPIRoboticsProjects/GRIP)
