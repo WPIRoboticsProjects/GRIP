@@ -93,8 +93,6 @@ public class Main extends Application {
       notifyPreloader(new Preloader.ProgressNotification(0.3));
     }
 
-    operations.addOperations();
-    cvOperations.addOperations();
     notifyPreloader(new Preloader.ProgressNotification(0.45));
     server.addHandler(pipelineSwitcher);
     server.start();
@@ -120,6 +118,9 @@ public class Main extends Application {
       root = FXMLLoader.load(Main.class.getResource("MainWindow.fxml"), null, null,
           injector::getInstance);
       root.setStyle("-fx-font-size: " + DPIUtility.FONT_SIZE + "px");
+
+      operations.addOperations();
+      cvOperations.addOperations();
       notifyPreloader(new Preloader.ProgressNotification(0.9));
 
       // If this isn't here this can cause a deadlock on windows. See issue #297
