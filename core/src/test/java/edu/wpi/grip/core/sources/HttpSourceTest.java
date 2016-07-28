@@ -35,7 +35,7 @@ import static org.junit.Assert.assertTrue;
  */
 public class HttpSourceTest {
 
-  private File logoFile;
+  private File oldLogoFile;
 
   private GripServer server;
   private HttpSource source;
@@ -57,7 +57,8 @@ public class HttpSourceTest {
         contextStore,
         GripServer.IMAGE_UPLOAD_PATH);
 
-    logoFile = new File(Files.class.getResource("/edu/wpi/grip/images/old_GRIP_Logo.png").toURI());
+    oldLogoFile = new File(Files.class.getResource(
+        "/edu/wpi/grip/images/old_GRIP_Logo.png").toURI());
     postClient = HttpClients.createDefault();
   }
 
@@ -77,7 +78,7 @@ public class HttpSourceTest {
         "The value should not be present since the source has been initialized but no image POSTed",
         imageSource.getValue().get().empty());
 
-    doPost(GripServer.IMAGE_UPLOAD_PATH, logoFile);
+    doPost(GripServer.IMAGE_UPLOAD_PATH, oldLogoFile);
     source.updateOutputSockets();
     assertFalse(
         "The value should now be present after POSTing the image",
