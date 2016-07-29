@@ -8,6 +8,7 @@ import org.fxmisc.richtext.CodeArea;
 import org.fxmisc.richtext.LineNumberFactory;
 import org.fxmisc.richtext.model.StyleSpans;
 import org.fxmisc.richtext.model.StyleSpansBuilder;
+import org.python.core.PyException;
 
 import java.io.File;
 import java.io.IOException;
@@ -23,6 +24,7 @@ import java.util.regex.Pattern;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.FileChooser;
 import javafx.stage.Window;
@@ -135,10 +137,12 @@ public class PythonEditorController {
    * Gets the script text in the editor.
    */
   public @Nullable String getScript() {
-    if (scriptFileName() == null) {
+    String script = codeArea.getText();
+    try {
+      PythonScriptFile.create(script);
+      return script;
+    } catch (PyException e) {
       return null;
-    } else {
-      return codeArea.getText();
     }
   }
 
@@ -159,16 +163,18 @@ public class PythonEditorController {
   }
 
   @FXML
-  private void save() {
+  private boolean save() {
     if (scriptFile == null) {
       String fileName = scriptFileName();
-      if (fileName == null) {
-        // No 'name' property
-        Alert noNameAlert = new Alert(Alert.AlertType.ERROR);
-        noNameAlert.setTitle("No operation name");
-        noNameAlert.setContentText("This operation needs a name!");
-        noNameAlert.showAndWait();
-        return;
+      try {
+        PythonScriptFile.create(codeArea.getText());
+      } catch (PyException e) {
+        Alert malformed = new Alert(Alert.AlertType.ERROR);
+        malformed.setTitle("Error in script");
+        malformed.setHeaderText("There is an error in the python script");
+        malformed.getDialogPane().setContent(new Label(e.toString()));
+        malformed.showAndWait();
+        return false;
       }
       scriptFile = new File(PythonOperationUtils.DIRECTORY, fileName);
     }
@@ -177,8 +183,14 @@ public class PythonEditorController {
           scriptFile.getAbsoluteFile().toPath(),
           codeArea.getText().getBytes(Charset.defaultCharset())
       );
+      return true;
     } catch (IOException e) {
       logger.log(Level.WARNING, "Could not save to " + scriptFile, e);
+      Alert couldNotSave = new Alert(Alert.AlertType.ERROR);
+      couldNotSave.setTitle("Could not save custom operation");
+      couldNotSave.setContentText("Could not save to file: " + scriptFile);
+      couldNotSave.showAndWait();
+      return false;
     }
   }
 
@@ -186,7 +198,7 @@ public class PythonEditorController {
   private void saveAs() {
     FileChooser chooser = new FileChooser();
     chooser.setInitialDirectory(PythonOperationUtils.DIRECTORY);
-    chooser.setTitle("Choose ");
+    chooser.setTitle("Choose save file");
     chooser.setSelectedExtensionFilter(
         new FileChooser.ExtensionFilter("Custom GRIP operations", "*.py"));
     String fileName = scriptFileName();
@@ -204,8 +216,10 @@ public class PythonEditorController {
 
   @FXML
   private void saveAndExit() {
-    save();
-    exit();
+    if (save() && getScript() != null) {
+      // Don't exit if there's a problem with the script
+      exit();
+    }
   }
 
   @FXML
@@ -231,6 +245,10 @@ public class PythonEditorController {
       codeArea.replaceText(code);
     } catch (IOException e) {
       logger.log(Level.WARNING, "Could not read file " + file, e);
+      Alert couldNotRead = new Alert(Alert.AlertType.ERROR);
+      couldNotRead.setTitle("Could not read custom operation");
+      couldNotRead.setContentText("Could not read from file: " + file);
+      couldNotRead.showAndWait();
     }
   }
 

@@ -69,7 +69,6 @@ public final class PythonOperationUtils {
       return PythonScriptFile.create(code);
     } catch (PyException e) {
       log.log(Level.WARNING, "Error in python script", e);
-      log.log(Level.WARNING, "Erroneous code:\n" + code);
       return null;
     }
   }
