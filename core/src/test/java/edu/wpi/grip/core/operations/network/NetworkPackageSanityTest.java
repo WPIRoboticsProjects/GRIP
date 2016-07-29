@@ -7,5 +7,6 @@ public class NetworkPackageSanityTest extends AbstractPackageSanityTests {
   public NetworkPackageSanityTest() {
     super();
     publicApiOnly();
+    ignoreClasses(c -> c.getName().contains("Mock"));
   }
 }

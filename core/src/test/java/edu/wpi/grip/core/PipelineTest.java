@@ -4,6 +4,7 @@ import edu.wpi.grip.core.events.ConnectionAddedEvent;
 import edu.wpi.grip.core.events.ConnectionRemovedEvent;
 import edu.wpi.grip.core.events.SourceAddedEvent;
 import edu.wpi.grip.core.events.SourceRemovedEvent;
+import edu.wpi.grip.core.operations.network.MockGripNetworkModule;
 import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.sockets.MockInputSocket;
 import edu.wpi.grip.core.sockets.MockOutputSocket;
@@ -15,6 +16,7 @@ import edu.wpi.grip.util.GripCoreTestModule;
 import com.google.common.eventbus.EventBus;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
+import com.google.inject.util.Modules;
 
 import org.junit.After;
 import org.junit.Before;
@@ -43,7 +45,8 @@ public class PipelineTest {
   public void setUp() {
     testModule = new GripCoreTestModule();
     testModule.setUp();
-    final Injector injector = Guice.createInjector(testModule);
+    final Injector injector = Guice.createInjector(Modules.override(testModule)
+        .with(new MockGripNetworkModule()));
     stepFactory = injector.getInstance(Step.Factory.class);
     eventBus = injector.getInstance(EventBus.class);
     pipeline = injector.getInstance(Pipeline.class);

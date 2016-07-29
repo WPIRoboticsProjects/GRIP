@@ -7,6 +7,7 @@ import edu.wpi.grip.core.OperationMetaData;
 import edu.wpi.grip.core.Pipeline;
 import edu.wpi.grip.core.Step;
 import edu.wpi.grip.core.SubtractionOperation;
+import edu.wpi.grip.core.operations.network.MockGripNetworkModule;
 import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.core.util.MockExceptionWitness;
@@ -56,8 +57,8 @@ public class PipelineUITest extends ApplicationTest {
   public void start(Stage stage) {
     testModule = new GripCoreTestModule();
     testModule.setUp();
-    final Injector injector = Guice.createInjector(Modules.override(testModule).with(new
-        GripUiModule()));
+    final Injector injector = Guice.createInjector(Modules.override(testModule)
+        .with(new GripUiModule(), new MockGripNetworkModule()));
     eventBus = injector.getInstance(EventBus.class);
     pipeline = injector.getInstance(Pipeline.class);
     InputSocket.Factory isf = injector.getInstance(InputSocket.Factory.class);

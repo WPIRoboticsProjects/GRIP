@@ -46,4 +46,5 @@ public class MockMapNetworkPublisher<T> extends MapNetworkPublisher<T> implement
   public <T> MapNetworkPublisher<T> create(Set<String> keys) {
     return new MockMapNetworkPublisher<>(keys);
   }
+
 }
