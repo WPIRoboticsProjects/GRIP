@@ -209,10 +209,8 @@ public class StepController implements Controller {
     fadeOut.setOnFinished(new EventHandler<ActionEvent>() {
       @Override
       public void handle(ActionEvent event) {
-        for (InputSocketController input : inputSockets) {
           input.getRoot().setVisible(false);
           input.getRoot().setManaged(false);
-        }
       }
     });
     fadeOut.play();
