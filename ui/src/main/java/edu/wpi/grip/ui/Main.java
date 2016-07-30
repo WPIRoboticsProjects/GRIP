@@ -43,6 +43,7 @@ public class Main extends Application {
 
   private final Object dialogLock = new Object();
   private static final Logger logger = Logger.getLogger(Main.class.getName());
+  private static final String MAIN_TITLE = "GRIP Computer Vision Engine";
 
   /**
    * JavaFX insists on creating the main application with its own reflection code, so we can't
@@ -123,9 +124,17 @@ public class Main extends Application {
       cvOperations.addOperations();
       notifyPreloader(new Preloader.ProgressNotification(0.9));
 
+      project.addDirtyListener((observable, oldValue, newValue) -> {
+        if (newValue) {
+          stage.setTitle(MAIN_TITLE + " | Edited");
+        } else {
+          stage.setTitle(MAIN_TITLE);
+        }
+      });
+
       // If this isn't here this can cause a deadlock on windows. See issue #297
       stage.setOnCloseRequest(event -> SafeShutdown.exit(0, Platform::exit));
-      stage.setTitle("GRIP Computer Vision Engine");
+      stage.setTitle(MAIN_TITLE);
       stage.getIcons().add(new Image("/edu/wpi/grip/ui/icons/grip.png"));
       stage.setScene(new Scene(root));
       notifyPreloader(new Preloader.ProgressNotification(1.0));

@@ -2,8 +2,10 @@ package edu.wpi.grip.core.serialization;
 
 import edu.wpi.grip.core.Pipeline;
 import edu.wpi.grip.core.PipelineRunner;
+import edu.wpi.grip.core.events.DirtiesSaveEvent;
 
 import com.google.common.annotations.VisibleForTesting;
+import com.google.common.eventbus.Subscribe;
 import com.google.common.reflect.ClassPath;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
@@ -20,7 +22,8 @@ import java.io.StringReader;
 import java.io.Writer;
 import java.nio.charset.StandardCharsets;
 import java.util.Optional;
-
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.value.ChangeListener;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
@@ -36,6 +39,7 @@ public class Project {
   @Inject
   private PipelineRunner pipelineRunner;
   private Optional<File> file = Optional.empty();
+  private final SimpleBooleanProperty saveIsDirty = new SimpleBooleanProperty(false);
 
   @Inject
   public void initialize(StepConverter stepConverter,
@@ -109,6 +113,7 @@ public class Project {
     this.pipeline.clear();
     this.xstream.fromXML(reader);
     pipelineRunner.startAsync();
+    saveIsDirty.set(false);
   }
 
   /**
@@ -124,5 +129,27 @@ public class Project {
 
   public void save(Writer writer) {
     this.xstream.toXML(this.pipeline, writer);
+    saveIsDirty.set(false);
+  }
+
+  public boolean isSaveDirty() {
+    return saveIsDirty.get();
+  }
+
+  public void addDirtyListener(ChangeListener<Boolean> changeListener) {
+    saveIsDirty.addListener(changeListener);
+  }
+
+  public void removeDirtyListener(ChangeListener<Boolean> changeListener) {
+    saveIsDirty.removeListener(changeListener);
+  }
+
+  @Subscribe
+  public void onDirtiesSaveEvent(DirtiesSaveEvent dirtySaveEvent) {
+    // Only update the flag the save isn't already dirty
+    // We don't need to be redundantly checking if the event dirties the save
+    if (!saveIsDirty.get() && dirtySaveEvent.doesDirtySave()) {
+      saveIsDirty.set(true);
+    }
   }
 }

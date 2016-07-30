@@ -10,7 +10,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * An event that occurs when the value stored in a socket changes.  This can happen, for example, as
  * the result of an operation completing, or as a response to user input.
  */
-public class SocketChangedEvent implements RunPipelineEvent {
+public class SocketChangedEvent implements RunPipelineEvent, DirtiesSaveEvent {
   private final Socket socket;
 
   /**
@@ -29,6 +29,18 @@ public class SocketChangedEvent implements RunPipelineEvent {
   public boolean isRegarding(Socket socket) {
     // This is necessary as some of the sockets are just decorators for other sockets.
     return socket.equals(this.socket);
+  }
+
+  /**
+   * This event will only dirty the save if the InputSocket does not have connections.
+   * Thus the value can only have been changed by a UI component.
+   * If the socket has connections then the value change is triggered by another socket's change.
+   *
+   * @return True if this should dirty the save.
+   */
+  @Override
+  public boolean doesDirtySave() {
+    return socket.getDirection() == Socket.Direction.INPUT && socket.getConnections().isEmpty();
   }
 
   @Override
