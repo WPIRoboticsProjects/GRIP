@@ -7,7 +7,7 @@ buildscript {
     }
 
     dependencies {
-        classpath group: 'de.dynamicfiles.projects.gradle.plugins', name: 'javafx-gradle-plugin', version: '8.5.1'
+        classpath group: 'de.dynamicfiles.projects.gradle.plugins', name: 'javafx-gradle-plugin', version: '8.5.2'
         classpath 'com.netflix.nebula:gradle-aggregate-javadocs-plugin:2.2.+'
         classpath 'net.ltgt.gradle:gradle-errorprone-plugin:0.0.8'
     }
@@ -375,10 +375,9 @@ project(":ui") {
         // See: https://plumbr.eu/blog/java/on-a-quest-for-missing-stacktraces
         jvmArgs = ["-XX:-OmitStackTraceInFastThrow"]
 
-        // This was a workaround introduced by the plugin dev.  For some reason the build fails
-        // when the workaround is enabled in Java 1.8.0_101.  If you are building with a version
-        // less than _101 you may need to set this to false.
-        skipNativeLauncherWorkaround124 = true
+        bundleArguments = [
+                "linux.launcher.url": file('src/main/deploy/launcher').toURI().toURL()
+        ]
     }
     mainClassName = jfx.mainClass
 }
