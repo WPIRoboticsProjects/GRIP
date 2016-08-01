@@ -69,4 +69,4 @@ Include details about your configuration and environment:</br>
 
 ### Code Formatting
 
-* GRIP follows the [Google Java Styleguide](https://google.github.io/styleguide/javaguide.html) with a few modifications regarding import order. We use the gradle [checkstyle](http://checkstyle.sourceforge.net/) plugin to ensure that code conforms to this styleguide. There are plugins for most majore IDE's that support importing the `checkstyle.xml` file.
+* GRIP follows the [Google Java Styleguide](https://google.github.io/styleguide/javaguide.html) with a few modifications regarding import order. We use the gradle [checkstyle](http://checkstyle.sourceforge.net/) plugin to ensure that code conforms to this styleguide. There are plugins for most major IDE's that support importing the `checkstyle.xml` file.
