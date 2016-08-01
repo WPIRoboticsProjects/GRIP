@@ -40,22 +40,17 @@ public class SocketChangedEvent implements RunPipelineEvent, DirtiesSaveEvent {
    */
   @Override
   public boolean doesDirtySave() {
-    return socket.getDirection() == Socket.Direction.INPUT && socket.getConnections().isEmpty();
+    return pipelineShouldRun();
   }
 
   @Override
   public boolean pipelineShouldRun() {
     /*
      * The pipeline should only flag an update when it is an input changing. A changed output
-      * doesn't mean
-     * the pipeline is dirty.
-     * If the socket is connected to another socket then then the input will only change
-     * because of the
-     * pipeline thread.
-     * In that case we don't want the pipeline to be releasing itself.
-     * If the connections are empty then the change must have come from the UI so we need to
-     * run the pipeline
-     * with the new values.
+     * doesn't mean the pipeline is dirty. If the socket is connected to another socket then then
+     * the input will only change because of the pipeline thread. In that case we don't want the
+     * pipeline to be releasing itself. If the connections are empty then the change must have come
+     * from the UI so we need to run the pipeline with the new values.
      */
     return socket.getDirection().equals(Socket.Direction.INPUT) && socket.getConnections()
         .isEmpty();
