@@ -3,6 +3,7 @@ package edu.wpi.grip.ui;
 import edu.wpi.grip.core.GripCoreModule;
 import edu.wpi.grip.core.GripFileModule;
 import edu.wpi.grip.core.PipelineRunner;
+import edu.wpi.grip.core.events.DirtiesSaveEvent;
 import edu.wpi.grip.core.events.UnexpectedThrowableEvent;
 import edu.wpi.grip.core.http.GripServer;
 import edu.wpi.grip.core.http.HttpPipelineSwitcher;
@@ -31,6 +32,7 @@ import java.util.logging.Logger;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.application.Preloader;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -61,6 +63,7 @@ public class Main extends Application {
   @Inject private HttpPipelineSwitcher pipelineSwitcher;
   private Parent root;
   private boolean headless;
+  private final SimpleBooleanProperty dirty = new SimpleBooleanProperty(false);
 
   public static void main(String[] args) {
     launch(args);
@@ -124,7 +127,7 @@ public class Main extends Application {
       cvOperations.addOperations();
       notifyPreloader(new Preloader.ProgressNotification(0.9));
 
-      project.addDirtyListener((observable, oldValue, newValue) -> {
+      dirty.addListener((observable, oldValue, newValue) -> {
         if (newValue) {
           stage.setTitle(MAIN_TITLE + " | Edited");
         } else {
@@ -146,6 +149,13 @@ public class Main extends Application {
 
   public void stop() {
     SafeShutdown.flagStopping();
+  }
+
+  @Subscribe
+  public void onDirtiesSaveEvent(DirtiesSaveEvent dirtySaveEvent) {
+    if (dirty.get() != dirtySaveEvent.doesDirtySave()) {
+      dirty.set(dirtySaveEvent.doesDirtySave());
+    }
   }
 
   @Subscribe
