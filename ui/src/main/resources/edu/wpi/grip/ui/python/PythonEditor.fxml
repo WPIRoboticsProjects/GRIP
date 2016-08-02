@@ -34,21 +34,9 @@
         <menus>
           <Menu mnemonicParsing="false" text="File">
             <items>
-                  <MenuItem mnemonicParsing="false" onAction="#openFile" text="Open">
-                     <accelerator>
-                        <KeyCodeCombination alt="UP" code="O" control="UP" meta="DOWN" shift="UP" shortcut="UP" />
-                     </accelerator>
-                  </MenuItem>
-                  <MenuItem mnemonicParsing="false" onAction="#save" text="Save">
-                     <accelerator>
-                        <KeyCodeCombination alt="UP" code="S" control="UP" meta="DOWN" shift="UP" shortcut="UP" />
-                     </accelerator>
-                  </MenuItem>
-                  <MenuItem mnemonicParsing="false" onAction="#saveAs" text="Save As">
-                     <accelerator>
-                        <KeyCodeCombination alt="UP" code="S" control="UP" meta="DOWN" shift="DOWN" shortcut="UP" />
-                     </accelerator>
-                  </MenuItem>
+                  <MenuItem mnemonicParsing="false" onAction="#openFile" text="Open" accelerator="Shortcut+O" />
+                  <MenuItem mnemonicParsing="false" onAction="#save" text="Save" accelerator="Shortcut+S" />
+                  <MenuItem mnemonicParsing="false" onAction="#saveAs" text="Save As" accelerator="Shortcut+Shift+S" />
             </items>
           </Menu>
             <Menu mnemonicParsing="false" text="Help">

@@ -6,6 +6,7 @@ import edu.wpi.grip.core.OperationMetaData;
 import edu.wpi.grip.core.Step;
 import edu.wpi.grip.core.events.OperationAddedEvent;
 import edu.wpi.grip.core.events.StepAddedEvent;
+import edu.wpi.grip.core.operations.network.MockGripNetworkModule;
 import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.util.GripCoreTestModule;
@@ -40,7 +41,8 @@ public class PaletteTest extends ApplicationTest {
   public void start(Stage stage) throws IOException {
     testModule.setUp();
 
-    Injector injector = Guice.createInjector(Modules.override(testModule).with(new GripUiModule()));
+    Injector injector = Guice.createInjector(
+        Modules.override(testModule, new MockGripNetworkModule()).with(new GripUiModule()));
     eventBus = injector.getInstance(EventBus.class);
 
     FXMLLoader loader = new FXMLLoader(getClass().getResource("Palette.fxml"));
@@ -62,7 +64,7 @@ public class PaletteTest extends ApplicationTest {
         operation)));
 
     // Record when a a StepAddedEvent happens
-    Step[] step = new Step[]{null};
+    Step[] step = new Step[] {null};
     eventBus.register(new Object() {
       @Subscribe
       public void onStepAdded(StepAddedEvent event) {

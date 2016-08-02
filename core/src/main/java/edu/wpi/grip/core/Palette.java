@@ -22,8 +22,13 @@ import static com.google.common.base.Preconditions.checkNotNull;
 @Singleton
 public class Palette {
 
-  @Inject private EventBus eventBus;
+  private final EventBus eventBus;
   private final Map<String, OperationMetaData> operations = new LinkedHashMap<>();
+
+  @Inject
+  Palette(EventBus eventBus) {
+    this.eventBus = eventBus;
+  }
 
   @Subscribe
   public void onOperationAdded(OperationAddedEvent event) {

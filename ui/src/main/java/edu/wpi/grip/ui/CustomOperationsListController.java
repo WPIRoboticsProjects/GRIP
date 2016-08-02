@@ -1,6 +1,8 @@
 package edu.wpi.grip.ui;
 
 import edu.wpi.grip.core.OperationMetaData;
+import edu.wpi.grip.core.Palette;
+import edu.wpi.grip.core.Pipeline;
 import edu.wpi.grip.core.events.OperationAddedEvent;
 import edu.wpi.grip.core.operations.python.PythonScriptFile;
 import edu.wpi.grip.core.operations.python.PythonScriptOperation;
@@ -30,11 +32,22 @@ public class CustomOperationsListController extends OperationListController {
   @Inject private EventBus eventBus;
   @Inject private InputSocket.Factory isf;
   @Inject private OutputSocket.Factory osf;
+  @Inject private Palette palette;
+  @Inject private Main main;
+  @Inject private Pipeline pipeline;
 
   @FXML
   @SuppressWarnings("PMD.UnusedPrivateMethod")
   private void createNewPythonOperation() {
     PythonEditorController editorController = loadEditor();
+    editorController.injectMembers(
+        name -> palette.getOperationByName(name).isPresent()
+            || pipeline.getSteps()
+            .stream()
+            .map(step -> step.getOperationDescription().name())
+            .anyMatch(name::equals),
+        main.getHostServices()
+    );
     Stage stage = new Stage();
     stage.setTitle("Python Script Editor");
     stage.setScene(new Scene(editorController.getRoot()));

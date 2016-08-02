@@ -62,7 +62,7 @@ public class OperationListController {
 
       if (!filter.isEmpty() && numMatches > 0) {
         // If we're filtering some operations and there's at least one match, set the title to
-        // bold and show the umber of matches.
+        // bold and show the number of matches.
         // This lets the user quickly see which tabs have matching operations when searching.
         root.setText(baseText + " (" + numMatches + ")");
         root.styleProperty().setValue("-fx-font-weight: bold");

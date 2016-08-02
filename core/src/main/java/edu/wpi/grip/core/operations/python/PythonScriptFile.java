@@ -19,7 +19,6 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.List;
 import java.util.Properties;
-import java.util.logging.Logger;
 
 /**
  * Converts a string of Python Code or a Python File into something the {@link
@@ -27,8 +26,6 @@ import java.util.logging.Logger;
  */
 @AutoValue
 public abstract class PythonScriptFile {
-
-  private static final Logger logger = Logger.getLogger(PythonScriptFile.class.getName());
 
   /**
    * Template for custom python operations. Includes imports for sockets, as well as OpenCV

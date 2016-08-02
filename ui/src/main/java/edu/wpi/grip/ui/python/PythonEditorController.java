@@ -17,11 +17,14 @@ import java.nio.file.Files;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Locale;
+import java.util.function.Predicate;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Stream;
 
+import javafx.application.HostServices;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
@@ -32,6 +35,8 @@ import javafx.stage.WindowEvent;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+
+import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * Controller for the python editor.
@@ -45,6 +50,8 @@ public class PythonEditorController {
   @FXML private BorderPane root;
   private final CodeArea codeArea = new CodeArea();
   private File scriptFile = null;
+  private Predicate<String> operationNameTaken;
+  private HostServices hostServices;
 
   /**
    * Array of python keywords.
@@ -117,6 +124,17 @@ public class PythonEditorController {
   }
 
   /**
+   * Injects members required for this controller.
+   *
+   * @param operationNameTaken predicate testing if an operation with a given name is in the palette
+   *                           or pipeline
+   */
+  public void injectMembers(Predicate<String> operationNameTaken, HostServices hostServices) {
+    this.operationNameTaken = checkNotNull(operationNameTaken, "operationNameTaken");
+    this.hostServices = checkNotNull(hostServices, "hostServices");
+  }
+
+  /**
    * Gets the window displaying the editor.
    */
   private Window getWindow() {
@@ -134,9 +152,13 @@ public class PythonEditorController {
   }
 
   /**
-   * Gets the script text in the editor.
+   * Gets the script text in the editor. Returns null if no name is present, the name is already
+   * used for another operation, or if there is an error in the script.
    */
   public @Nullable String getScript() {
+    if (checkName()) {
+      return null;
+    }
     String script = codeArea.getText();
     try {
       PythonScriptFile.create(script);
@@ -147,33 +169,99 @@ public class PythonEditorController {
   }
 
   /**
-   * Creates the name of the file to save the script to based on the operation name.
+   * Extracts the name of the operation from the script. Returns null if no name is present.
    */
-  private @Nullable String scriptFileName() {
+  private @Nullable String extractName() {
     final Pattern namePattern = Pattern.compile("name *= *\"(.*)\" *");
+    String name = null;
     String code = codeArea.getText();
     String[] lines = code.split("\n");
     for (String line : lines) {
       Matcher m = namePattern.matcher(line);
       if (m.matches()) {
-        return m.group(1).replaceAll("[ \\t]+", "_").toLowerCase(Locale.ENGLISH) + ".py";
+        name = m.group(1).trim();
+        break;
       }
     }
-    return null;
+    return name;
   }
 
+  /**
+   * Checks if the operation name is present and not used by any other operation in the palette
+   * or pipeline. This will show an alert dialog notifying the user if either does not hold.
+   */
+  private boolean checkName() {
+    String name = extractName();
+    if (name == null || name.isEmpty()) {
+      Alert noName = new Alert(Alert.AlertType.ERROR);
+      noName.setTitle("No Name");
+      noName.setHeaderText("This operation needs a name!");
+      noName.showAndWait();
+    }
+    if (operationNameTaken.test(name)) {
+      Alert nameInUseAlert = new Alert(Alert.AlertType.ERROR);
+      nameInUseAlert.setTitle("Already in Use");
+      nameInUseAlert.setHeaderText("An operation already exists with the name '" + name + "'");
+      nameInUseAlert.setContentText("You won't be able to save this script until you change the "
+          + "name to something that doesn't belong to another operation.");
+      nameInUseAlert.showAndWait();
+      return true;
+    }
+    return false;
+  }
+
+  /**
+   * Creates the name of the file to save the script to based on the operation name.
+   * Returns null if the script has an error, or if the assigned name is already in use.
+   */
+  @SuppressWarnings("PMD")
+  private @Nullable String scriptFileName() {
+    String name = extractName();
+    if (name != null) {
+      name = name.trim().replaceAll("[ \\t]+", "_").toLowerCase(Locale.ENGLISH);
+      final String regex = name + "_?([0-9]*?)\\.py"; // e.g. $name.py, $name_2.py, etc.
+      boolean needsNumber = Stream.of(PythonOperationUtils.DIRECTORY.list())
+          .filter(n -> n.matches(regex))
+          .count() > 0;
+      if (needsNumber) {
+        int currentMax = Stream.of(PythonOperationUtils.DIRECTORY.list())
+            .filter(n -> n.matches(regex))
+            .map(n -> n.replaceAll(regex, "$1"))
+            .mapToInt(n -> n.isEmpty() ? 0 : Integer.valueOf(n))
+            .max()
+            .orElse(1);
+        name = name + '_' + (currentMax + 1);
+      }
+      return name.concat(".py");
+    } else {
+      return null;
+    }
+  }
+
+  private void showScriptErrorAlert(String message) {
+    Alert malformed = new Alert(Alert.AlertType.ERROR);
+    malformed.setTitle("Error in script");
+    malformed.setHeaderText("There is an error in the python script");
+    malformed.getDialogPane().setContent(new Label(message));
+    malformed.showAndWait();
+  }
+
+  /**
+   * Tries to save the script to disk. Does not save if the script has an error.
+   *
+   * @return true if the script was saved, false otherwise
+   */
   @FXML
   private boolean save() {
+    if (checkName()) {
+      return false;
+    }
     if (scriptFile == null) {
       String fileName = scriptFileName();
       try {
         PythonScriptFile.create(codeArea.getText());
       } catch (PyException e) {
-        Alert malformed = new Alert(Alert.AlertType.ERROR);
-        malformed.setTitle("Error in script");
-        malformed.setHeaderText("There is an error in the python script");
-        malformed.getDialogPane().setContent(new Label(e.toString()));
-        malformed.showAndWait();
+        showScriptErrorAlert(e.toString());
         return false;
       }
       scriptFile = new File(PythonOperationUtils.DIRECTORY, fileName);
@@ -194,8 +282,22 @@ public class PythonEditorController {
     }
   }
 
+  /**
+   * Tries to 'save-as' the script to disk. Does nothing if the script has an error.
+   */
   @FXML
   private void saveAs() {
+    if (checkName()) {
+      // No name
+      return;
+    }
+    try {
+      PythonScriptFile.create(codeArea.getText());
+    } catch (PyException e) {
+      // Error in script
+      showScriptErrorAlert(e.toString());
+      return;
+    }
     FileChooser chooser = new FileChooser();
     chooser.setInitialDirectory(PythonOperationUtils.DIRECTORY);
     chooser.setTitle("Choose save file");
@@ -254,7 +356,7 @@ public class PythonEditorController {
 
   @FXML
   private void openWiki() {
-    // TODO
+    hostServices.showDocument("https://github.com/WPIRoboticsProjects/GRIP/wiki");
   }
 
 }
