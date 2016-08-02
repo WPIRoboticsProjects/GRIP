@@ -21,7 +21,10 @@ import java.io.Reader;
 import java.io.StringReader;
 import java.io.Writer;
 import java.nio.charset.StandardCharsets;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Optional;
+import java.util.function.Consumer;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
@@ -37,7 +40,7 @@ public class Project {
   @Inject
   private PipelineRunner pipelineRunner;
   private Optional<File> file = Optional.empty();
-  private boolean saveIsDirty = false;
+  private final ObservableBoolean saveIsDirty = new ObservableBoolean();
 
   @Inject
   public void initialize(StepConverter stepConverter,
@@ -111,7 +114,7 @@ public class Project {
     this.pipeline.clear();
     this.xstream.fromXML(reader);
     pipelineRunner.startAsync();
-    saveIsDirty = false;
+    saveIsDirty.set(false);
   }
 
   /**
@@ -127,19 +130,42 @@ public class Project {
 
   public void save(Writer writer) {
     this.xstream.toXML(this.pipeline, writer);
-    saveIsDirty = false;
+    saveIsDirty.set(false);
   }
 
   public boolean isSaveDirty() {
-    return saveIsDirty;
+    return saveIsDirty.get();
+  }
+
+  public void addIsSaveDirtyConsumer(Consumer<Boolean> consumer) {
+    saveIsDirty.addConsumer(consumer);
   }
 
   @Subscribe
   public void onDirtiesSaveEvent(DirtiesSaveEvent dirtySaveEvent) {
     // Only update the flag the save isn't already dirty
     // We don't need to be redundantly checking if the event dirties the save
-    if (!saveIsDirty && dirtySaveEvent.doesDirtySave()) {
-      saveIsDirty = true;
+    if (!saveIsDirty.get() && dirtySaveEvent.doesDirtySave()) {
+      saveIsDirty.set(true);
+    }
+  }
+
+  private static final class ObservableBoolean {
+
+    private boolean b = false;
+    private final List<Consumer<Boolean>> consumers = new LinkedList<>();
+
+    public void set(boolean b) {
+      this.b = b;
+      consumers.parallelStream().forEach(c -> c.accept(b));
+    }
+
+    public boolean get() {
+      return b;
+    }
+
+    public void addConsumer(Consumer<Boolean> consumer) {
+      consumers.add(consumer);
     }
   }
 }
