@@ -63,11 +63,11 @@ public class PythonScriptOperation implements Operation {
 
     this.scriptFile = checkNotNull(scriptFile);
 
-    this.inputSockets = scriptFile.inputSocketHints().stream()
+    this.inputSockets = scriptFile.getInputSocketHints().stream()
         .map(isf::create)
         .collect(Collectors.toList());
 
-    this.outputSockets = scriptFile.outputSocketHints().stream()
+    this.outputSockets = scriptFile.getOutputSocketHints().stream()
         .map(osf::create)
         .collect(Collectors.toList());
   }
@@ -78,8 +78,8 @@ public class PythonScriptOperation implements Operation {
    */
   public static OperationDescription descriptionFor(PythonScriptFile pythonScriptFile) {
     return OperationDescription.builder()
-        .name(pythonScriptFile.name())
-        .summary(pythonScriptFile.summary())
+        .name(pythonScriptFile.getName())
+        .summary(pythonScriptFile.getSummary())
         .icon(Icon.iconStream("python"))
         .category(OperationDescription.Category.MISCELLANEOUS)
         .build();
@@ -122,7 +122,7 @@ public class PythonScriptOperation implements Operation {
     }
 
     try {
-      PyObject pyOutput = this.scriptFile.performFunction().__call__(pyInputs);
+      PyObject pyOutput = this.scriptFile.getPerformFunction().__call__(pyInputs);
 
       if (pyOutput.isSequenceType()) {
         /*
