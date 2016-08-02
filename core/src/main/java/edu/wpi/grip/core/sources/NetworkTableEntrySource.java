@@ -1,6 +1,7 @@
 package edu.wpi.grip.core.sources;
 
 import edu.wpi.grip.core.Source;
+import edu.wpi.grip.core.events.SourceHasPendingUpdateEvent;
 import edu.wpi.grip.core.events.SourceRemovedEvent;
 import edu.wpi.grip.core.operations.network.MapNetworkReceiverFactory;
 import edu.wpi.grip.core.operations.network.NetworkReceiver;
@@ -10,6 +11,7 @@ import edu.wpi.grip.core.sockets.SocketHints;
 import edu.wpi.grip.core.util.ExceptionWitness;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import com.google.inject.assistedinject.Assisted;
 import com.google.inject.assistedinject.AssistedInject;
@@ -51,11 +53,13 @@ public class NetworkTableEntrySource extends Source {
 
   @AssistedInject
   NetworkTableEntrySource(
+      EventBus eventBus,
       ExceptionWitness.Factory exceptionWitnessFactory,
       OutputSocket.Factory osf,
       @Named("ntManager") MapNetworkReceiverFactory networkReceiverFactory,
       @Assisted Properties properties) {
-    this(exceptionWitnessFactory,
+    this(eventBus,
+        exceptionWitnessFactory,
         osf,
         networkReceiverFactory,
         properties.getProperty(PATH_PROPERTY),
@@ -64,6 +68,7 @@ public class NetworkTableEntrySource extends Source {
 
   @AssistedInject
   NetworkTableEntrySource(
+      EventBus eventBus,
       ExceptionWitness.Factory exceptionWitnessFactory,
       OutputSocket.Factory osf,
       @Named("ntManager") MapNetworkReceiverFactory networkReceiverFactory,
@@ -74,6 +79,8 @@ public class NetworkTableEntrySource extends Source {
     this.type = type;
     networkReceiver = networkReceiverFactory.create(path);
     output = osf.create(createOutputSocket(type));
+
+    networkReceiver.addListener(o -> eventBus.post(new SourceHasPendingUpdateEvent(this)));
   }
 
   @Override

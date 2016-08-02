@@ -1,5 +1,7 @@
 package edu.wpi.grip.core.operations.network;
 
+import java.util.function.Consumer;
+
 import static com.google.common.base.Preconditions.checkArgument;
 
 /**
@@ -26,6 +28,13 @@ public abstract class NetworkReceiver implements AutoCloseable {
    * @return The value of this NetworkReceiver
    */
   public abstract Object getValue();
+
+  /**
+   * Add a listener to the NetworkReceiver item.
+   *
+   * @param consumer The consumer to call when this item has a update
+   */
+  public abstract void addListener(Consumer<Object> consumer);
 
   /**
    * Close the network reciever. This should not throw an exception.

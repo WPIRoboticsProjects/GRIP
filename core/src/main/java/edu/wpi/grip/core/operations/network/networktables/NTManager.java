@@ -21,13 +21,15 @@ import edu.wpi.first.wpilibj.networktables.NetworkTablesJNI;
 import edu.wpi.first.wpilibj.tables.ITable;
 
 import java.io.File;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Consumer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javafx.beans.property.SimpleObjectProperty;
 import javax.inject.Inject;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -47,7 +49,7 @@ public class NTManager implements Manager, MapNetworkPublisherFactory, MapNetwor
    * https://github.com/PeterJohnson/ntcore/blob/e6054f543a6ab10aa27af6cace855da66d67ee44
    * /include/ntcore_c.h#L39
    */
-  private static final Map<Integer, Level> ntLogLevels = ImmutableMap.<Integer, Level>builder()
+  protected static final Map<Integer, Level> ntLogLevels = ImmutableMap.<Integer, Level>builder()
       .put(40, Level.SEVERE)
       .put(30, Level.WARNING)
       .put(20, Level.INFO)
@@ -136,16 +138,13 @@ public class NTManager implements Manager, MapNetworkPublisherFactory, MapNetwor
   private static final class NTReceiver extends NetworkReceiver {
 
     private int entryListenerFunctionUid;
-    private final SimpleObjectProperty objectProperty = new SimpleObjectProperty();
+    private Object object = false;
+    private final List<Consumer<Object>> listeners = new LinkedList<>();
 
     protected NTReceiver(String path) {
       super(path);
-      NetworkTablesJNI.addConnectionListener((uid, connected, conn) -> {
-        if (connected) {
-          addListener();
-          NetworkTablesJNI.removeConnectionListener(uid);
-        }
-      }, true);
+      addListener();
+
       synchronized (NetworkTable.class) {
         NetworkTable.initialize();
       }
@@ -153,7 +152,10 @@ public class NTManager implements Manager, MapNetworkPublisherFactory, MapNetwor
 
     private void addListener() {
       entryListenerFunctionUid = NetworkTablesJNI.addEntryListener(path,
-          (uid, key, value, flags) -> objectProperty.set(value),
+          (uid, key, value, flags) -> {
+            object = value;
+            listeners.forEach(c -> c.accept(object));
+          },
           ITable.NOTIFY_IMMEDIATE
               | ITable.NOTIFY_NEW
               | ITable.NOTIFY_UPDATE
@@ -162,8 +164,13 @@ public class NTManager implements Manager, MapNetworkPublisherFactory, MapNetwor
     }
 
     @Override
+    public void addListener(Consumer<Object> consumer) {
+      listeners.add(consumer);
+    }
+
+    @Override
     public Object getValue() {
-      return objectProperty.getValue();
+      return object;
     }
 
     @Override
