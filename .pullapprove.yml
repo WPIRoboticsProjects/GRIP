@@ -1,10 +1,11 @@
 approve_by_comment: true
 approve_regex: ^(Approved|LGTM)
+author_approval: required
 reject_regex: ^Rejected
 reset_on_push: true
 reviewers:
   -
     name: "GRIP Merge Approvers"
-    required: 1
+    required: 3
     teams:
-      - grip-merge-approvers
+      - grip
