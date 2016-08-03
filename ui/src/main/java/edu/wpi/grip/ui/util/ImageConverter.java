@@ -44,8 +44,6 @@ public final class ImageConverter {
           + "Thread");
     }
 
-    final int width = mat.cols();
-    final int height = mat.rows();
     final int channels = mat.channels();
 
     assert channels == 3 || channels == 1 :
@@ -58,6 +56,9 @@ public final class ImageConverter {
     if (mat.empty()) {
       return null;
     }
+
+    final int width = mat.cols();
+    final int height = mat.rows();
 
     // If the size of the Mat changed for whatever reason, allocate a new image with the proper
     // dimensions and a buffer

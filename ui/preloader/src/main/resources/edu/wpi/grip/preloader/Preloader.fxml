@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.net.URL?>
+<?import javafx.scene.control.ProgressBar?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.stage.Screen?>
+<VBox id="root" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <ImageView fitWidth="${screen.visualBounds.width / 4}" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@grip.png" />
+         </image>
+         <fx:define>
+            <Screen fx:factory="getPrimary" fx:id="screen"/>
+         </fx:define>
+      </ImageView>
+      <ProgressBar id="progress-bar" maxWidth="1.7976931348623157E308" />
+   </children>
+   <stylesheets>
+      <URL value="@Preloader.css" />
+   </stylesheets>
+</VBox>

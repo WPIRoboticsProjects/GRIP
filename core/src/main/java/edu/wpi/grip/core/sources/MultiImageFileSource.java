@@ -209,7 +209,7 @@ public final class MultiImageFileSource extends Source implements PreviousNext {
    * Assigns the output socket to the next image. (Wraps around)
    */
   @Override
-  public final void next() {
+  public void next() {
     currentImage = Optional.of(addIndexAndGetImageByOffset(+1));
     eventBus.post(new SourceHasPendingUpdateEvent(this));
   }
@@ -218,7 +218,7 @@ public final class MultiImageFileSource extends Source implements PreviousNext {
    * Assigns the output socket to the previous image. (Wraps around)
    */
   @Override
-  public final void previous() {
+  public void previous() {
     currentImage = Optional.of(addIndexAndGetImageByOffset(-1));
     eventBus.post(new SourceHasPendingUpdateEvent(this));
   }

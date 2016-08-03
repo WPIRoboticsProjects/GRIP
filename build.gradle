@@ -7,6 +7,7 @@ buildscript {
     }
 
     dependencies {
+        classpath group: 'de.dynamicfiles.projects.gradle.plugins', name: 'javafx-gradle-plugin', version: '8.5.2'
         classpath 'com.netflix.nebula:gradle-aggregate-javadocs-plugin:2.2.+'
         classpath 'net.ltgt.gradle:gradle-errorprone-plugin:0.0.8'
     }
@@ -84,12 +85,13 @@ def getVersionSimple = { ->
     }
 }
 
-allprojects {
+configure(allprojects - project(':ui:linuxLauncher')) {
     apply plugin: 'java'
     apply plugin: 'application'
     apply plugin: 'jacoco'
     apply plugin: 'net.ltgt.errorprone'
     apply plugin: 'checkstyle'
+    apply plugin: 'pmd'
     apply plugin: 'findbugs'
 
     configurations.errorprone {
@@ -99,12 +101,23 @@ allprojects {
     checkstyle {
         configFile = new File(rootDir, "checkstyle.xml")
         toolVersion = '6.19'
+        if (project.hasProperty("ignoreCheckstyle")) {
+            ignoreFailures = true
+        }
     }
 
     tasks.withType(Checkstyle) {
         // Remove checkstyle dependencies on compilation
         // (This neuters :core:checkstyleGenerated, but since that's not needed anyway, who cares)
         it.dependsOn = []
+    }
+
+    pmd {
+        consoleOutput = true
+        sourceSets = [sourceSets.main]
+        reportsDir = file("$project.buildDir/reports/pmd")
+        ruleSetFiles = files(new File(rootDir, "pmd-ruleset.xml"))
+        ruleSets = []
     }
 
     findbugs {
@@ -311,12 +324,49 @@ project(":core") {
     }
 }
 
+project (":ui:linuxLauncher") {
+    apply plugin: 'cpp'
+
+    model {
+        binaries {
+            all {
+                cppCompiler.args '-pthread', '-ldl'
+                linker.args '-pthread', '-ldl'
+            }
+        }
+        components {
+            linuxLauncher(NativeExecutableSpec) {
+                sources {
+                    cpp {
+                        source {
+                            srcDir "src/cpp"
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+project (":ui:preloader") {
+    apply plugin: 'java'
+    apply plugin: 'idea'
+    apply plugin: 'jacoco'
+    apply plugin: 'application'
+
+    task run(overwrite: true, type: JavaExec) {
+        classpath = sourceSets.main.runtimeClasspath
+        main = 'edu.wpi.grip.preloader.GripPreloader'
+        args 'windowed'
+    }
+}
+
 project(":ui") {
     apply plugin: 'java'
     apply plugin: 'idea'
     apply plugin: 'jacoco'
     apply plugin: 'application'
-    apply from: 'http://dl.bintray.com/shemnon/javafx-gradle/8.1.1/javafx.plugin'
+    apply plugin: 'javafx-gradle-plugin'
 
     configurations {
         ideProvider
@@ -324,8 +374,9 @@ project(":ui") {
 
     dependencies {
         compile project(path: ':core', configuration: 'shadow')
+        compile project(path: ':ui:preloader')
         ideProvider project(path: ':core', configuration: 'compile')
-        compile group: 'org.controlsfx', name: 'controlsfx', version: '8.40.10'
+        compile group: 'org.controlsfx', name: 'controlsfx', version: '8.40.11'
         compile group: 'com.hierynomus', name: 'sshj', version: '0.16.0'
         testCompile files(project(':core').sourceSets.test.output.classesDir)
         testCompile files(project(':core').sourceSets.test.output.resourcesDir)
@@ -335,6 +386,10 @@ project(":ui") {
     }
 
     evaluationDependsOn(':core')
+    evaluationDependsOn(':ui:preloader')
+    if (System.getProperty("os.name").toLowerCase().contains("linux")) {
+        jfxNative.dependsOn tasks.getByPath(':ui:linuxLauncher:linuxLauncherExecutable')
+    }
     compileTestJava.dependsOn tasks.getByPath(':core:testClasses')
 
     idea.module {
@@ -352,20 +407,16 @@ project(":ui") {
     }
 
 
-    javafx {
-        profiles {
-            linux {
-                category = 'Development'
-                bundleArguments = [
-                        // for DEB bundles
-                        'email': 'wpilib@wpi.edu', // This is the email used for the deb maintainer field.
-                ]
-            }
-        }
-        appID = 'GRIP'
-        appName = 'GRIP'
+    jfx {
         mainClass = "edu.wpi.grip.ui.Main"
-        version = getVersionSimple()
+        preLoader = "edu.wpi.grip.preloader.GripPreloader"
+
+        identifier = "GRIP"
+        appName = "GRIP"
+        vendor = "Worcester Polytechnic Institute"
+        nativeReleaseVersion = "${getVersionSimple()}-${arch}"
+
+        jfxMainAppJarName = "${jfx.appName}-${jfx.nativeReleaseVersion}.jar"
 
         // This prevents the JIT from eating stack traces that get thrown a lot
         // This is slower but means we actually get the stack traces instead of
@@ -373,18 +424,12 @@ project(":ui") {
         // and as such, would be useless.
         // See: https://plumbr.eu/blog/java/on-a-quest-for-missing-stacktraces
         jvmArgs = ["-XX:-OmitStackTraceInFastThrow"]
-    }
-    mainClassName = javafx.mainClass
 
-    // The JavaFX plugin does not provide a way to change the installer artifact's name without changing the appName or appID,
-    // so instead, we simply rename the artifact to append the architecture (x86 or x64)
-    jfxDeploy.doLast {
-        def filet = fileTree(dir: 'build/distributions', include: "${javafx.appName}-${getVersionSimple()}.*")
-        filet.each { File f ->
-            def f2 = new File(f.getParentFile(), "${f.getName().replace("${getVersionSimple()}", "${getVersionSimple()}-${arch}")}")
-            f.renameTo(f2)
-        }
+        bundleArguments = [
+                "linux.launcher.url": file('linuxLauncher/build/exe/linuxLauncher/linuxLauncher').toURI().toURL()
+        ]
     }
+    mainClassName = jfx.mainClass
 }
 
 /*
@@ -393,23 +438,25 @@ project(":ui") {
  */
 task jacocoRootReport(type: JacocoReport, group: 'Coverage reports') {
     description = 'Generates an aggregate report from all subprojects'
-    dependsOn(subprojects.test)
+    configure(subprojects - project(':ui:linuxLauncher')) {
+        dependsOn(test)
 
-    additionalSourceDirs = files(subprojects.sourceSets.main.allSource.srcDirs)
-    sourceDirectories = files(subprojects.sourceSets.main.allSource.srcDirs)
-    classDirectories = files(subprojects.sourceSets.main.output)
-    executionData = files(subprojects.jacocoTestReport.executionData)
+        additionalSourceDirs = files(sourceSets.main.allSource.srcDirs)
+        sourceDirectories = files(sourceSets.main.allSource.srcDirs)
+        classDirectories = files(sourceSets.main.output)
+        executionData = files(jacocoTestReport.executionData)
 
-    reports {
-        html.enabled = true
-        xml.enabled = true
-    }
+        reports {
+            html.enabled = true
+            xml.enabled = true
+        }
 
-    doFirst {
-        executionData = files(executionData.findAll { it.exists() })
+        doFirst {
+            executionData = files(executionData.findAll { it.exists() })
+        }
     }
 }
 
 task wrapper(type: Wrapper) {
-    gradleVersion = '2.13'
+    gradleVersion = '2.14.1'
 }

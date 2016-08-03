@@ -6,6 +6,7 @@ import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableSet;
 
 import java.io.InputStream;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 
@@ -104,39 +105,25 @@ public class OperationDescription {
 
     OperationDescription that = (OperationDescription) o;
 
-    if (name() != null ? !name().equals(that.name()) : that.name() != null) {
-      return false;
-    }
-    if (summary() != null ? !summary().equals(that.summary()) : that.summary() != null) {
-      return false;
-    }
-    if (category() != that.category()) {
-      return false;
-    }
-    if (icon() != null ? !icon().equals(that.icon()) : that.icon() != null) {
-      return false;
-    }
-    return aliases() != null ? aliases().equals(that.aliases()) : that.aliases() == null;
-
+    return Objects.equals(name, that.name)
+        && Objects.equals(summary, that.summary)
+        && Objects.equals(category, that.category)
+        && Objects.equals(icon, that.icon)
+        && Objects.equals(aliases, that.aliases);
   }
 
   @Override
   public int hashCode() {
-    int result = name() != null ? name().hashCode() : 0;
-    result = 31 * result + (summary() != null ? summary().hashCode() : 0);
-    result = 31 * result + (category() != null ? category().hashCode() : 0);
-    result = 31 * result + (icon() != null ? icon().hashCode() : 0);
-    result = 31 * result + (aliases() != null ? aliases().hashCode() : 0);
-    return result;
+    return Objects.hash(name, summary, category, icon, aliases);
   }
 
   @Override
   public String toString() {
     return MoreObjects.toStringHelper(this)
-        .add("name", name())
-        .add("summary", summary())
-        .add("aliases", aliases())
-        .add("category", category())
+        .add("name", name)
+        .add("summary", summary)
+        .add("aliases", aliases)
+        .add("category", category)
         .toString();
   }
 

@@ -23,14 +23,14 @@ import static com.google.common.base.Preconditions.checkNotNull;
 public class GripPlatform {
 
   private final EventBus eventBus;
-  private final Logger logger;
+
+  private static final Logger logger = Logger.getLogger(GripPlatform.class.getName());
 
   @Inject
-  GripPlatform(EventBus eventBus, Logger logger) {
+  GripPlatform(EventBus eventBus) {
     checkArgument(!(eventBus instanceof AsyncEventBus), "This class has not been tested to work "
         + "with the AsyncEventBus");
     this.eventBus = eventBus;
-    this.logger = logger;
   }
 
   /**

@@ -56,7 +56,7 @@ public class NTManager implements Manager, MapNetworkPublisherFactory {
       .put(6, Level.FINEST)
       .build();
 
-  private final Logger logger = Logger.getLogger(getClass().getName());
+  private static final Logger logger = Logger.getLogger(NTManager.class.getName());
 
   @Inject
   private PipelineRunner pipelineRunner;

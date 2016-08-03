@@ -39,7 +39,7 @@ public class ImageFileSourceTest {
   public void testLoadImageToMat() throws IOException {
     // Given above setup
     // When
-    final ImageFileSource fileSource = new ImageFileSource(eventBus, osf, origin -> null, this
+    final ImageFileSource fileSource = new ImageFileSource(osf, origin -> null, this
         .imageFile.file);
     fileSource.initialize();
     OutputSocket<Mat> outputSocket = fileSource.getOutputSockets().get(0);
@@ -52,7 +52,7 @@ public class ImageFileSourceTest {
 
   @Test(expected = IOException.class)
   public void testReadInTextFile() throws IOException {
-    final ImageFileSource fileSource = new ImageFileSource(eventBus, osf, origin -> null, this
+    final ImageFileSource fileSource = new ImageFileSource(osf, origin -> null, this
         .textFile);
     fileSource.initialize();
     OutputSocket<Mat> outputSocket = fileSource.getOutputSockets().get(0);
@@ -63,14 +63,14 @@ public class ImageFileSourceTest {
   public void testReadInFileWithoutExtension() throws MalformedURLException, IOException {
     final File testFile = new File("temp" + File.separator + "fdkajdl3eaf");
 
-    final ImageFileSource fileSource = new ImageFileSource(eventBus, osf, origin -> null, testFile);
+    final ImageFileSource fileSource = new ImageFileSource(osf, origin -> null, testFile);
     fileSource.initialize();
     fail("initialize() should have thrown an IOException");
   }
 
   @Test
   public void testCallingInitializeAfterGetOutputSocketUpdatesOutputSocket() throws IOException {
-    final ImageFileSource source = new ImageFileSource(eventBus, osf, origin -> null, this
+    final ImageFileSource source = new ImageFileSource(osf, origin -> null, this
         .imageFile.file);
     // Calling this before loading the image should throw an exception
     final OutputSocket<Mat> imageSource = source.getOutputSockets().get(0);

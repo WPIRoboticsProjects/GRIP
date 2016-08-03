@@ -37,7 +37,8 @@ public class BlobsSocketPreviewView extends SocketPreviewView<BlobsReport> {
   private final Label infoLabel = new Label();
   private final Mat tmp = new Mat();
   private final GripPlatform platform;
-  private boolean showInputImage = false;
+  @SuppressWarnings("PMD.ImmutableField")
+  private boolean showInputImage;
 
   /**
    * @param socket An output socket to preview.

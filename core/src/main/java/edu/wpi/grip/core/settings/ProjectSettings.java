@@ -136,7 +136,7 @@ public class ProjectSettings implements Cloneable {
   }
 
   private String computeFRCAddress(int teamNumber) {
-    return "roborio-" + teamNumber + "-frc.local";
+    return "roboRIO-" + teamNumber + "-FRC.local";
   }
 
   public int getServerPort() {

@@ -13,7 +13,8 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * exception is deemed fatal.
  */
 public final class UnexpectedThrowableEvent {
-  private final Logger logger = Logger.getLogger(getClass().getName());
+  private static final Logger logger = Logger.getLogger(UnexpectedThrowableEvent.class.getName());
+
   private final Throwable throwable;
   private final boolean fatal;
   private final String message;
@@ -27,7 +28,7 @@ public final class UnexpectedThrowableEvent {
   public UnexpectedThrowableEvent(Throwable throwable, String message, boolean fatal) {
     this.throwable = checkNotNull(throwable, "Throwable can not be null");
     this.message = checkNotNull(message, "Message can not be null");
-    this.fatal = (throwable instanceof Error) || fatal;
+    this.fatal = throwable instanceof Error || fatal;
   }
 
   public UnexpectedThrowableEvent(Throwable throwable, String message) {

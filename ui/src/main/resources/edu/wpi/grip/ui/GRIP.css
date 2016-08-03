@@ -72,6 +72,15 @@ Label.operation-description {
     -fx-padding: 0.5em;
 }
 
+.addSource {
+    -fx-padding: 0.5em;
+    -fx-spacing: 1em;
+}
+
+.addSource * {
+    -fx-max-width: Infinity;
+}
+
 .sources {
     -fx-padding: 0.5em;
     -fx-spacing: 1em;

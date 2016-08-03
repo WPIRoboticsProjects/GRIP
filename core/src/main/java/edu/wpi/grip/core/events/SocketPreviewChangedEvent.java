@@ -10,8 +10,8 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * An event that occurs when a {@link OutputSocket} is set to be either previewed or not previewed.
  * The GUI listens for these events so it knows which sockets to show previews for.
  */
-public class SocketPreviewChangedEvent {
-  private OutputSocket socket;
+public class SocketPreviewChangedEvent implements DirtiesSaveEvent {
+  private final OutputSocket socket;
 
   /**
    * @param socket The socket being previewed.

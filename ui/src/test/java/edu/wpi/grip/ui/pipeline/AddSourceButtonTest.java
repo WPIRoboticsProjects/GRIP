@@ -17,7 +17,7 @@ import org.testfx.util.WaitForAsyncUtils;
 import java.io.IOException;
 import java.util.Optional;
 import java.util.Properties;
-
+import javafx.application.Platform;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
@@ -26,7 +26,7 @@ import static org.junit.Assert.assertTrue;
 import static org.testfx.api.FxAssert.verifyThat;
 
 @RunWith(Enclosed.class)
-public class AddSourceViewTest {
+public class AddSourceButtonTest {
 
   /**
    * Tests what happens when a source is created and started successfully
@@ -34,7 +34,7 @@ public class AddSourceViewTest {
   public static class AddSourceViewNoExceptionsTest extends ApplicationTest {
 
     private EventBus eventBus;
-    private AddSourceView addSourceView;
+    private AddSourceButton addSourceView;
     private MockCameraSourceFactory mockCameraSourceFactory;
 
     @Override
@@ -42,7 +42,7 @@ public class AddSourceViewTest {
       this.eventBus = new EventBus("Test Event Bus");
       this.mockCameraSourceFactory = new MockCameraSourceFactory(eventBus);
 
-      addSourceView = new AddSourceView(eventBus, null, null, mockCameraSourceFactory, null);
+      addSourceView = new AddSourceButton(eventBus, null, null, mockCameraSourceFactory, null);
 
       final Scene scene = new Scene(addSourceView, 800, 600);
       stage.setScene(scene);
@@ -51,32 +51,32 @@ public class AddSourceViewTest {
 
     @After
     public void after() {
-      // Ensuer that all of the dialogs that were created get closed afterward.
+      // Ensure that all of the dialogs that were created get closed afterward.
       addSourceView.closeDialogs();
     }
 
     @Test
     @SuppressWarnings("PMD.JUnitTestsShouldIncludeAssert")
     public void testClickOnCreateWebCameraOpensDialog() throws Exception {
-      clickOn(addSourceView.getWebcamButton());
+      Platform.runLater(() -> addSourceView.getWebcamButton().fire());
       WaitForAsyncUtils.waitForFxEvents();
-      verifyThat("." + AddSourceView.SOURCE_DIALOG_STYLE_CLASS, NodeMatchers.isVisible());
+      verifyThat('.' + AddSourceButton.SOURCE_DIALOG_STYLE_CLASS, NodeMatchers.isVisible());
     }
 
     @Test
     @SuppressWarnings("PMD.JUnitTestsShouldIncludeAssert")
     public void testClickOnCreateIPCameraOpensDialog() throws Exception {
-      clickOn(addSourceView.getIpcamButton());
+      Platform.runLater(() -> addSourceView.getIpcamButton().fire());
       WaitForAsyncUtils.waitForFxEvents();
-      verifyThat("." + AddSourceView.SOURCE_DIALOG_STYLE_CLASS, NodeMatchers.isVisible());
+      verifyThat("." + AddSourceButton.SOURCE_DIALOG_STYLE_CLASS, NodeMatchers.isVisible());
     }
 
     @Test
     public void testCreatesSourceStarted() throws Exception {
       // When
-      clickOn(addSourceView.getWebcamButton());
+      Platform.runLater(() -> addSourceView.getWebcamButton().fire());
       WaitForAsyncUtils.waitForFxEvents();
-      verifyThat("." + AddSourceView.SOURCE_DIALOG_STYLE_CLASS, NodeMatchers.isVisible());
+      verifyThat("." + AddSourceButton.SOURCE_DIALOG_STYLE_CLASS, NodeMatchers.isVisible());
 
       clickOn("OK");
       WaitForAsyncUtils.waitForFxEvents();
@@ -85,7 +85,7 @@ public class AddSourceViewTest {
       Optional<CameraSource> cameraSource = mockCameraSourceFactory.lastSourceCreated;
       assertTrue("A source was not constructed", cameraSource.isPresent());
       assertTrue("A source was not created started", cameraSource.get().isRunning());
-      verifyThat("." + AddSourceView.SOURCE_DIALOG_STYLE_CLASS, NodeMatchers.isNull());
+      verifyThat("." + AddSourceButton.SOURCE_DIALOG_STYLE_CLASS, NodeMatchers.isNull());
     }
 
     class MockCameraSourceFactory implements CameraSource.Factory {
@@ -123,7 +123,7 @@ public class AddSourceViewTest {
    */
   public static class AddSourceViewWithExceptionsTest extends ApplicationTest {
     private EventBus eventBus;
-    private AddSourceView addSourceView;
+    private AddSourceButton addSourceView;
     private MockCameraSourceFactory mockCameraSourceFactory;
 
     @Override
@@ -131,7 +131,7 @@ public class AddSourceViewTest {
       this.eventBus = new EventBus("Test Event Bus");
       this.mockCameraSourceFactory = new MockCameraSourceFactory(eventBus);
 
-      addSourceView = new AddSourceView(eventBus, null, null, mockCameraSourceFactory, null);
+      addSourceView = new AddSourceButton(eventBus, null, null, mockCameraSourceFactory, null);
 
       final Scene scene = new Scene(addSourceView, 800, 600);
       stage.setScene(scene);
@@ -140,7 +140,7 @@ public class AddSourceViewTest {
 
     @After
     public void after() {
-      // Ensuer that all of the dialogs that were created get closed afterward.
+      // Ensure that all of the dialogs that were created get closed afterward.
       addSourceView.closeDialogs();
     }
 
@@ -148,7 +148,7 @@ public class AddSourceViewTest {
     @SuppressWarnings("PMD.JUnitTestsShouldIncludeAssert")
     public void testWhenStartFailsDialogStillCloses() throws Exception {
       // When
-      clickOn(addSourceView.getWebcamButton());
+      Platform.runLater(() -> addSourceView.getWebcamButton().fire());
       WaitForAsyncUtils.waitForFxEvents();
 
       clickOn("OK");
@@ -156,15 +156,15 @@ public class AddSourceViewTest {
       WaitForAsyncUtils.waitForFxEvents();
 
       // The dialog should not have closed because the source wasn't started
-      verifyThat("." + AddSourceView.SOURCE_DIALOG_STYLE_CLASS, NodeMatchers.isNull());
+      verifyThat("." + AddSourceButton.SOURCE_DIALOG_STYLE_CLASS, NodeMatchers.isNull());
     }
 
     @Test
     public void testCreatesSourceStartedFails() throws Exception {
       // When
-      clickOn(addSourceView.getWebcamButton());
+      Platform.runLater(() -> addSourceView.getWebcamButton().fire());
       WaitForAsyncUtils.waitForFxEvents();
-      verifyThat("." + AddSourceView.SOURCE_DIALOG_STYLE_CLASS, NodeMatchers.isVisible());
+      verifyThat("." + AddSourceButton.SOURCE_DIALOG_STYLE_CLASS, NodeMatchers.isVisible());
 
       clickOn("OK");
       WaitForAsyncUtils.waitForFxEvents();
