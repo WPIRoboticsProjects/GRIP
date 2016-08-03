@@ -1,6 +1,7 @@
 package edu.wpi.grip.core.operations.network.ros;
 
 import edu.wpi.grip.core.operations.composite.BlobsReport;
+import edu.wpi.grip.core.operations.composite.Contour;
 import edu.wpi.grip.core.operations.composite.ContoursReport;
 import edu.wpi.grip.core.operations.composite.LinesReport;
 
@@ -62,18 +63,18 @@ public abstract class JavaToMessageConverter<J, M extends Message> {
         @Override
         void doConvert(ContoursReport contoursReport, grip_msgs.Contours contoursMsg, MessageFactory
             messageFactory) {
-          final List<ContoursReport.Contour> reportContours = contoursReport.getProcessedContours();
+          final List<Contour> reportContours = contoursReport.getProcessedContours();
           final List<grip_msgs.Contour> contours = reportContours
               .stream()
               .map(contour -> {
                 final grip_msgs.Contour rosContour = messageFactory.newFromType(grip_msgs.Contour
                     ._TYPE);
-                rosContour.setArea(contour.area());
-                rosContour.setCenterX(contour.centerX());
-                rosContour.setCenterY(contour.centerY());
-                rosContour.setHeight(contour.height());
-                rosContour.setWidth(contour.width());
-                rosContour.setSolidity(contour.solidity());
+                rosContour.setArea(contour.getArea());
+                rosContour.setCenterX(contour.getCenterX());
+                rosContour.setCenterY(contour.getCenterY());
+                rosContour.setHeight(contour.getHeight());
+                rosContour.setWidth(contour.getWidth());
+                rosContour.setSolidity(contour.getSolidity());
                 return rosContour;
               }).collect(Collectors.toList());
           contoursMsg.setContours(contours);

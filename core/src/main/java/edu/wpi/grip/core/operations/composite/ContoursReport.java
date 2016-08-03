@@ -5,8 +5,6 @@ import edu.wpi.grip.core.operations.network.Publishable;
 import edu.wpi.grip.core.sockets.NoSocketTypeLabel;
 import edu.wpi.grip.core.sockets.Socket;
 
-import com.google.auto.value.AutoValue;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -69,8 +67,8 @@ public final class ContoursReport implements Publishable {
     double[] height = getHeights();
     double[] solidity = getSolidity();
     for (int i = 0; i < contours.size(); i++) {
-      processedContours.add(Contour.create(area[i], centerX[i], centerY[i], width[i], height[i],
-          solidity[i]));
+      processedContours.add(
+          new Contour(area[i], centerX[i], centerY[i], width[i], height[i], solidity[i]));
     }
     return processedContours;
   }
@@ -153,23 +151,4 @@ public final class ContoursReport implements Publishable {
     return solidities;
   }
 
-  @AutoValue
-  public abstract static class Contour {
-    static Contour create(double area, double centerX, double centerY, double width, double
-        height, double solidity) {
-      return new AutoValue_ContoursReport_Contour(area, centerX, centerY, width, height, solidity);
-    }
-
-    public abstract double area();
-
-    public abstract double centerX();
-
-    public abstract double centerY();
-
-    public abstract double width();
-
-    public abstract double height();
-
-    public abstract double solidity();
-  }
 }

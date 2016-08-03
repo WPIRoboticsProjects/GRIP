@@ -80,11 +80,11 @@ data class PythonScriptFile private constructor(
 
         private fun convertPyToSocketHint(list : List<*>) : List<SocketHint<PyObject>> {
             return list.map {
-                if (it is SocketHint<*>) {
+                if (it is SocketHint<*> && it.type is PyObject) {
                     it as SocketHint<PyObject>
                 } else {
                     throw ClassCastException("Return from socket hint method must be type " +
-                            "'SocketHint'")
+                            "'SocketHint<PyObject>'")
                 }
             }
         }

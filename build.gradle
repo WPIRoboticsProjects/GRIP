@@ -222,7 +222,6 @@ project(":core") {
         compile group: 'com.thoughtworks.xstream', name: 'xstream', version: '1.4.9'
         compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.4'
         compile group: 'com.google.guava', name: 'guava', version: '19.0'
-        compile group: 'com.google.auto.value', name: 'auto-value', version: '1.2'
         compile group: 'com.google.code.gson', name: 'gson', version: '2.6.2'
         compile group: 'org.eclipse.jetty', name:'jetty-server', version:'9.3.8.v20160314'
         testCompile group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.5.2'
