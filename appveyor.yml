@@ -6,7 +6,7 @@ build_script:
 
 # to run your custom scripts instead of automatic tests
 test_script:
-  - gradlew.bat checkstyleMain checkstyleTest pmdMain findbugsMain findbugsTest jacocoTestReport jacocoRootReport test --stacktrace -Pheadless=true -PlogTests
+  - gradlew.bat checkstyleMain checkstyleTest pmdMain findbugsMain jacocoTestReport jacocoRootReport test --stacktrace -Pheadless=true -PlogTests
 
 platform:
   - x64

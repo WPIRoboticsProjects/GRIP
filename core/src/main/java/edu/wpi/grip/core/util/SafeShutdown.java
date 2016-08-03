@@ -1,5 +1,7 @@
 package edu.wpi.grip.core.util;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 import javax.annotation.Nullable;
 
 /**
@@ -16,8 +18,10 @@ public final class SafeShutdown {
      * flagging a shutdown
      * that we can't control.
      */
+
     Runtime.getRuntime().addShutdownHook(new Thread() {
       @Override
+      @SuppressFBWarnings("ST_WRITE_TO_STATIC_FROM_INSTANCE_METHOD")
       public void run() {
         SafeShutdown.stopping = true;
       }

@@ -9,6 +9,8 @@ import edu.wpi.grip.core.util.Icon;
 
 import com.google.common.collect.ImmutableList;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 import org.bytedeco.javacpp.BytePointer;
 import org.bytedeco.javacpp.IntPointer;
 
@@ -133,6 +135,7 @@ public class PublishVideoOperation implements Operation {
   };
 
   @SuppressWarnings("JavadocMethod")
+  @SuppressFBWarnings("ST_WRITE_TO_STATIC_FROM_INSTANCE_METHOD") // Don't need sync in constructor
   public PublishVideoOperation(InputSocket.Factory inputSocketFactory) {
     if (numSteps != 0) {
       throw new IllegalStateException("Only one instance of PublishVideoOperation may exist");

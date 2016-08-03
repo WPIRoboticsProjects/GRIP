@@ -12,6 +12,8 @@ import com.google.gson.GsonBuilder;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 import org.eclipse.jetty.server.Request;
 
 import java.io.IOException;
@@ -69,6 +71,7 @@ public final class DataHandler extends PedanticHandler {
   }
 
   @Override
+  @SuppressFBWarnings("UW_UNCOND_WAIT") // Bug in FindBugs. There is a condition.
   protected void handleIfPassed(String target,
                                 Request baseRequest,
                                 HttpServletRequest request,

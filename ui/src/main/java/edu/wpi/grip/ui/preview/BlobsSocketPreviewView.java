@@ -8,6 +8,8 @@ import edu.wpi.grip.ui.util.ImageConverter;
 
 import com.google.common.eventbus.Subscribe;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 import javafx.application.Platform;
 import javafx.geometry.Orientation;
 import javafx.scene.control.CheckBox;
@@ -38,7 +40,8 @@ public class BlobsSocketPreviewView extends SocketPreviewView<BlobsReport> {
   private final Mat tmp = new Mat();
   private final GripPlatform platform;
   @SuppressWarnings("PMD.ImmutableField")
-  private boolean showInputImage;
+  @SuppressFBWarnings("IS2_INCONSISTENT_SYNC") // No sync needed in constructor
+  private boolean showInputImage = false;
 
   /**
    * @param socket An output socket to preview.
