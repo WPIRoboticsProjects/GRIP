@@ -6,7 +6,6 @@ import edu.wpi.grip.core.sockets.InputSocket
 import edu.wpi.grip.core.sockets.OutputSocket
 import edu.wpi.grip.core.sockets.SocketHint
 import org.python.core.PyFunction
-import org.python.core.PyObject
 import org.python.core.PyString
 import org.python.core.PySystemState
 import org.python.util.PythonInterpreter
@@ -18,11 +17,11 @@ import java.util.*
  * Converts a string of Python Code or a Python File into something the [ ] can handle.
  */
 data class PythonScriptFile private constructor(
-        val name : String,
-        val summary : String,
-        val inputSocketHints : List<SocketHint<PyObject>>,
-        val outputSocketHints : List<SocketHint<PyObject>>,
-        val performFunction : PyFunction
+        val name: String,
+        val summary: String,
+        val inputSocketHints: List<SocketHint<*>>,
+        val outputSocketHints: List<SocketHint<*>>,
+        val performFunction: PyFunction
 ) {
 
 
@@ -78,18 +77,19 @@ data class PythonScriptFile private constructor(
             return create(interpreter, null)
         }
 
-        private fun convertPyToSocketHint(list : List<*>) : List<SocketHint<PyObject>> {
+        private fun convertPyToSocketHint(list: List<*>): List<SocketHint<*>> {
             return list.map {
-                if (it is SocketHint<*> && it.type is PyObject) {
-                    it as SocketHint<PyObject>
+                if (it is SocketHint<*>) {
+                    it
                 } else {
-                    throw ClassCastException("Return from socket hint method must be type " +
-                            "'SocketHint<PyObject>'")
+                    throw ClassCastException(
+                            "Return from socket hint method must be type 'SocketHint' " +
+                                    "but was $it")
+
                 }
             }
         }
 
-        @SuppressWarnings("unchecked")
         private fun create(interpreter: PythonInterpreter, alternativeName: String?):
                 PythonScriptFile {
             val name = interpreter.get<PyString>("name", PyString::class.java)
