@@ -178,9 +178,9 @@ public class NTManager implements Manager, MapNetworkPublisherFactory, MapNetwor
       NetworkTablesJNI.removeEntryListener(entryListenerFunctionUid);
 
       synchronized (NetworkTable.class) {
-        // This publisher is no longer used.
+        // This receiver is no longer used.
         if (NTManager.count.addAndGet(-1) == 0) {
-          // We are the last publisher so shut it down
+          // We are the last resource using NetworkTables so shut it down
           NetworkTable.shutdown();
         }
       }
@@ -247,7 +247,7 @@ public class NTManager implements Manager, MapNetworkPublisherFactory, MapNetwor
       synchronized (NetworkTable.class) {
         // This publisher is no longer used.
         if (NTManager.count.addAndGet(-1) == 0) {
-          // We are the last publisher so shut it down
+          // We are the last resource using NetworkTables so shut it down
           NetworkTable.shutdown();
         }
       }

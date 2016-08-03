@@ -10,8 +10,11 @@ import com.google.common.eventbus.EventBus;
 import edu.wpi.first.wpilibj.networktables.NetworkTablesJNI;
 
 import org.junit.After;
-import org.junit.Assert;
 import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 public class NetworkTableEntrySourceTest {
 
@@ -51,8 +54,9 @@ public class NetworkTableEntrySourceTest {
         BOOLEAN_PATH,
         NetworkTableEntrySource.Types.BOOLEAN);
 
-    Assert.assertTrue(source.updateOutputSockets());
-    Assert.assertTrue((boolean) source.getOutputSockets().get(0).getValue().get());
+    assertTrue("Socket could not be updated", source.updateOutputSockets());
+    assertTrue("The socket's value was false, expected true.",
+        (boolean) source.getOutputSockets().get(0).getValue().get());
   }
 
   @Test
@@ -64,7 +68,7 @@ public class NetworkTableEntrySourceTest {
         NUMBER_PATH,
         NetworkTableEntrySource.Types.BOOLEAN);
 
-    Assert.assertFalse(source.updateOutputSockets());
+    assertFalse("The socket was able to update with an invalid type", source.updateOutputSockets());
   }
 
   @Test
@@ -76,7 +80,7 @@ public class NetworkTableEntrySourceTest {
         STRING_PATH,
         NetworkTableEntrySource.Types.BOOLEAN);
 
-    Assert.assertFalse(source.updateOutputSockets());
+    assertFalse("The socket was able to update with an invalid type", source.updateOutputSockets());
   }
 
   @Test
@@ -88,8 +92,8 @@ public class NetworkTableEntrySourceTest {
         NUMBER_PATH,
         NetworkTableEntrySource.Types.NUMBER);
 
-    Assert.assertTrue(source.updateOutputSockets());
-    Assert.assertEquals(
+    assertTrue("Socket could not be updated", source.updateOutputSockets());
+    assertEquals("Expected numbers to be equal -- they are not equal",
         TEST_NUMBER, (double) source.getOutputSockets().get(0).getValue().get(), 0.00001);
   }
 
@@ -102,7 +106,7 @@ public class NetworkTableEntrySourceTest {
         BOOLEAN_PATH,
         NetworkTableEntrySource.Types.NUMBER);
 
-    Assert.assertFalse(source.updateOutputSockets());
+    assertFalse("The socket was able to update with an invalid type", source.updateOutputSockets());
   }
 
   @Test
@@ -114,7 +118,7 @@ public class NetworkTableEntrySourceTest {
         STRING_PATH,
         NetworkTableEntrySource.Types.NUMBER);
 
-    Assert.assertFalse(source.updateOutputSockets());
+    assertFalse("The socket was able to update with an invalid type", source.updateOutputSockets());
   }
 
   @Test
@@ -126,8 +130,9 @@ public class NetworkTableEntrySourceTest {
         STRING_PATH,
         NetworkTableEntrySource.Types.STRING);
 
-    Assert.assertTrue(source.updateOutputSockets());
-    Assert.assertEquals(TEST_STRING, source.getOutputSockets().get(0).getValue().get());
+    assertTrue("Socket could not be updated", source.updateOutputSockets());
+    assertEquals("Expected Strings to be equal -- they are not equal",
+        TEST_STRING, source.getOutputSockets().get(0).getValue().get());
   }
 
   @Test
@@ -139,7 +144,7 @@ public class NetworkTableEntrySourceTest {
         BOOLEAN_PATH,
         NetworkTableEntrySource.Types.STRING);
 
-    Assert.assertFalse(source.updateOutputSockets());
+    assertFalse("The socket was able to update with an invalid type", source.updateOutputSockets());
   }
 
   @Test
@@ -151,7 +156,7 @@ public class NetworkTableEntrySourceTest {
         NUMBER_PATH,
         NetworkTableEntrySource.Types.STRING);
 
-    Assert.assertFalse(source.updateOutputSockets());
+    assertFalse("The socket was able to update with an invalid type", source.updateOutputSockets());
   }
 
 }

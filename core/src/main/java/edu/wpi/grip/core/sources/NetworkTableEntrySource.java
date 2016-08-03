@@ -10,6 +10,7 @@ import edu.wpi.grip.core.sockets.SocketHint;
 import edu.wpi.grip.core.sockets.SocketHints;
 import edu.wpi.grip.core.util.ExceptionWitness;
 
+import com.google.common.base.CaseFormat;
 import com.google.common.collect.ImmutableList;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
@@ -24,12 +25,13 @@ import java.util.Properties;
 /**
  * Provides a way to get a {@link Types Type} from a NetworkTable that GRIP is connected to.
  */
-@XStreamAlias("grip:NetworkValue")
+@XStreamAlias("grip:NetworkTableValue")
 public class NetworkTableEntrySource extends Source {
 
   private static final String PATH_PROPERTY = "networktable_path";
   private static final String TYPE_PROPERTY = "BOOLEAN";
 
+  private final EventBus eventBus;
   private final OutputSocket output;
   private final String path;
   private final Types type;
@@ -42,13 +44,35 @@ public class NetworkTableEntrySource extends Source {
   }
 
   public enum Types {
-    BOOLEAN, NUMBER, STRING;
+    BOOLEAN {
+      @Override
+      protected SocketHint createSocketHint() {
+        return SocketHints.Outputs.createBooleanSocketHint(Types.BOOLEAN.toString(), false);
+      }
+    },
+    NUMBER {
+      @Override
+      protected SocketHint createSocketHint() {
+        return SocketHints.Outputs.createNumberSocketHint(Types.NUMBER.toString(), 0.0);
+      }
+    },
+    STRING {
+      @Override
+      protected SocketHint createSocketHint() {
+        return SocketHints.Outputs.createStringSocketHint(Types.STRING.toString(), "");
+      }
+    };
+
+    Types() {
+
+    }
+
+    protected abstract SocketHint createSocketHint();
 
     @Override
     public String toString() {
-      return super.toString().charAt(0) + super.toString().substring(1).toLowerCase();
+      return CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, name());
     }
-
   }
 
   @AssistedInject
@@ -75,12 +99,11 @@ public class NetworkTableEntrySource extends Source {
       @Assisted String path,
       @Assisted Types type) {
     super(exceptionWitnessFactory);
+    this.eventBus = eventBus;
     this.path = path;
     this.type = type;
     networkReceiver = networkReceiverFactory.create(path);
-    output = osf.create(createOutputSocket(type));
-
-    networkReceiver.addListener(o -> eventBus.post(new SourceHasPendingUpdateEvent(this)));
+    output = osf.create(type.createSocketHint());
   }
 
   @Override
@@ -117,31 +140,13 @@ public class NetworkTableEntrySource extends Source {
 
   @Override
   public void initialize() {
-    updateOutputSockets();
+    networkReceiver.addListener(o -> eventBus.post(new SourceHasPendingUpdateEvent(this)));
   }
 
   @Subscribe
   public void onSourceRemovedEvent(SourceRemovedEvent event) {
     if (event.getSource() == this) {
       networkReceiver.close();
-    }
-  }
-
-  /**
-   * Create a SocketHint from the given type.
-   *
-   * @param type The type of SocketHint to create
-   */
-  private static SocketHint createOutputSocket(Types type) {
-    switch (type) {
-      case BOOLEAN:
-        return SocketHints.Outputs.createBooleanSocketHint(Types.BOOLEAN.toString(), false);
-      case NUMBER:
-        return SocketHints.Outputs.createNumberSocketHint(Types.NUMBER.toString(), 0.0);
-      case STRING:
-        return SocketHints.Outputs.createStringSocketHint(Types.STRING.toString(), "");
-      default:
-        throw new IllegalArgumentException("Invalid NetworkTable source type");
     }
   }
 }

@@ -3,6 +3,7 @@ package edu.wpi.grip.core.operations.network;
 import java.util.function.Consumer;
 
 import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * Manages the interface between the {@link PublishAnnotatedOperation} and the actual network
@@ -18,7 +19,8 @@ public abstract class NetworkReceiver implements AutoCloseable {
    * @param path The path of the object to get
    */
   public NetworkReceiver(String path) {
-    checkArgument(!path.isEmpty(), "Name cannot be an empty string");
+    checkNotNull(path, "Path cannot be null");
+    checkArgument(!path.isEmpty(), "Path cannot be an empty string");
     this.path = path;
   }
 
