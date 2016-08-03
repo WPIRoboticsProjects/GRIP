@@ -1,3 +1,5 @@
+import groovy.xml.XmlUtil
+
 buildscript {
     repositories {
         jcenter()
@@ -124,23 +126,24 @@ configure(allprojects - project(':ui:linuxLauncher')) {
         sourceSets = [sourceSets.main]
         excludeFilter = new File(rootDir, "findBugsSuppressions.xml")
         effort = "max"
+        ignoreFailures = true // Error will be reported by checkFindBugsReport
     }
 
     task checkFindBugsReport << {
-        try {
-            def xmlReport = findbugsMain.reports.getXml()
-            def slurped = new XmlSlurper().parse(xmlReport.destination)
-            def bugsFound = slurped.BugInstance.size()
+        def xmlReport = findbugsMain.reports.getXml().destination
+        if (findbugsMain.reports.getXml().destination.exists()) {
+            def bugs = (new XmlParser().parse(xmlReport)).BugInstance
+            def bugsFound = bugs.size()
             if (bugsFound > 0) {
-                new XmlNodePrinter().printList(slurped.BugInstance.list())
-                throw new GradleException("$bugsFound FindBugs rule violations were found. See the report at: $xmlReport.destination")
+                bugs.each { System.out.println(new XmlUtil().serialize(it)) }
+                throw new GradleException("$bugsFound FindBugs rule violations were found. See the report at: $xmlReport")
             }
-        } catch (Exception e) {
-
         }
     }
 
-    findbugsMain.finalizedBy checkFindBugsReport
+    tasks.withType(FindBugs) {
+        it.finalizedBy checkFindBugsReport
+    }
 
     repositories {
         mavenCentral()
