@@ -126,23 +126,21 @@ configure(allprojects - project(':ui:linuxLauncher')) {
         sourceSets = [sourceSets.main]
         excludeFilter = new File(rootDir, "findBugsSuppressions.xml")
         effort = "max"
-        ignoreFailures = true // Error will be reported by checkFindBugsReport
-    }
-
-    task checkFindBugsReport << {
-        def xmlReport = findbugsMain.reports.getXml().destination
-        if (findbugsMain.reports.getXml().destination.exists()) {
-            def bugs = (new XmlParser().parse(xmlReport)).BugInstance
-            def bugsFound = bugs.size()
-            if (bugsFound > 0) {
-                bugs.each { System.out.println(new XmlUtil().serialize(it)) }
-                throw new GradleException("$bugsFound FindBugs rule violations were found. See the report at: $xmlReport")
-            }
-        }
+        ignoreFailures = true // Error will be reported below...
     }
 
     tasks.withType(FindBugs) {
-        it.finalizedBy checkFindBugsReport
+        it.finalizedBy {
+            def xmlReport = it.reports.getXml().destination
+            if (xmlReport.exists()) {
+                def bugs = (new XmlParser().parse(xmlReport)).BugInstance
+                def bugsFound = bugs.size()
+                if (bugsFound > 0) {
+                    bugs.each { System.out.println(new XmlUtil().serialize(it)) }
+                    throw new GradleException("$bugsFound FindBugs rule violations were found. See the report at: $xmlReport")
+                }
+            }
+        }
     }
 
     repositories {
