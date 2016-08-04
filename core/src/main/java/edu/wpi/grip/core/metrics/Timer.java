@@ -29,23 +29,18 @@ public class Timer {
   private boolean started = false;
 
   private final Object target;
-  private Analysis analysis;
   private long elapsedTime = 0;
 
   @Inject
   Timer(EventBus eventBus, @Assisted Object target) {
-    this.eventBus = eventBus;
-    this.stopwatch = Stopwatch.createUnstarted();
-    this.target = checkNotNull(target, "target");
-    this.analysis = new Analysis();
+    this(eventBus, target, Stopwatch.createUnstarted());
   }
 
   @VisibleForTesting
   Timer(EventBus eventBus, Object target, Stopwatch stopwatch) {
     this.eventBus = eventBus;
-    this.target = target;
     this.stopwatch = stopwatch;
-    this.analysis = new Analysis();
+    this.target = checkNotNull(target, "target");
   }
 
   /**
@@ -75,8 +70,7 @@ public class Timer {
     }
     stopwatch.stop();
     this.elapsedTime = stopwatch.elapsed(TimeUnit.MICROSECONDS);
-    analysis = analysis.add(elapsedTime);
-    eventBus.post(new TimerEvent(this, target, elapsedTime, analysis));
+    eventBus.post(new TimerEvent(this, target, elapsedTime));
     started = false;
   }
 
@@ -89,7 +83,6 @@ public class Timer {
       started = false;
     }
     elapsedTime = 0;
-    analysis = new Analysis();
   }
 
   /**

@@ -6,13 +6,16 @@ import edu.wpi.grip.core.events.RunStoppedEvent;
 import edu.wpi.grip.core.events.TimerEvent;
 import edu.wpi.grip.core.metrics.Analysis;
 import edu.wpi.grip.core.metrics.BenchmarkRunner;
+import edu.wpi.grip.core.metrics.FixedSizeQueue;
 import edu.wpi.grip.core.metrics.Statistics;
 
 import com.google.common.eventbus.Subscribe;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Function;
 
 import javafx.beans.Observable;
 import javafx.beans.property.Property;
@@ -61,9 +64,10 @@ public class AnalysisWindowController {
   private final ObservableList<StepAnalysisEntry> tableItems
       = FXCollections.observableArrayList(extractor);
 
-  private Analysis analysis = new Analysis();
   private Statistics lastStats = Statistics.NIL;
   private final Map<Step, TimeView> timeViewMap = new HashMap<>();
+  private final Map<Step, Collection<Long>> sampleMap = new HashMap<>();
+  private Function<Step, FixedSizeQueue<Long>> computeFunction = s -> new FixedSizeQueue<>(1);
 
   /**
    * Initializes the controller. This should only be called by the FXML loader.
@@ -77,15 +81,15 @@ public class AnalysisWindowController {
     timeColumn.setCellValueFactory(e -> e.getValue().analysisProperty());
     timeColumn.setCellFactory(col -> new TableCell<StepAnalysisEntry, Analysis>() {
       @Override
-      protected void updateItem(Analysis item, boolean empty) {
-        if (item == null || empty) {
+      protected void updateItem(Analysis analysis, boolean empty) {
+        if (analysis == null || empty) {
           setGraphic(null);
         } else {
           Step step = tableItems.get(this.getIndex()).getStep();
           TimeView view = timeViewMap.computeIfAbsent(step, s -> new TimeView());
-          view.update(item.getAverage(),
-              item.getAverage() / lastStats.getSum(),
-              lastStats.hotness(item.getAverage()));
+          view.update(analysis.getAverage(),
+              analysis.getAverage() / lastStats.getSum(),
+              lastStats.hotness(analysis.getAverage()));
           setGraphic(null);
           setGraphic(view);
         }
@@ -109,25 +113,32 @@ public class AnalysisWindowController {
       Step source = (Step) event.getTarget();
       Optional<StepAnalysisEntry> possibleEntry
           = tableItems.stream().filter(e -> e.getStep() == source).findAny();
+      Collection<Long> samples = sampleMap.computeIfAbsent(source, computeFunction);
+      samples.add(event.getElapsedTime());
+      Analysis stepAnalysis = Analysis.of(samples);
       if (possibleEntry.isPresent()) {
-        possibleEntry.get().setAnalysis(event.getData());
+        possibleEntry.get().setAnalysis(stepAnalysis);
       } else {
         StepAnalysisEntry entry = new StepAnalysisEntry();
         entry.setStep(source);
-        entry.setAnalysis(event.getData());
+        entry.setAnalysis(stepAnalysis);
         tableItems.add(entry);
       }
-      analysis = analysis.add(event.getData().getAverage());
     }
   }
 
   @Subscribe
   @SuppressWarnings({"PMD.UnusedPrivateMethod", "PMD.UnusedFormalParameter"})
   private void onPipelineFinish(@Nullable RunStoppedEvent event) {
+    double[] averageRunTimes = sampleMap.values()
+        .parallelStream()
+        .mapToDouble(samples ->
+            samples.parallelStream().mapToLong(Long::longValue).average().orElse(0)
+        )
+        .toArray();
+    Analysis analysis = Analysis.of(averageRunTimes);
     // Update the stats after the pipeline finishes
     lastStats = analysis.getStatistics();
-    // Reset for the next run
-    analysis = new Analysis();
   }
 
   @Subscribe
@@ -135,6 +146,9 @@ public class AnalysisWindowController {
   private void onBenchmark(BenchmarkEvent event) {
     benchmarkButton.setDisable(event.isStart());
     benchmarkRunsField.setDisable(event.isStart());
+    if (!event.isStart()) {
+      sampleMap.clear();
+    }
   }
 
   public void setBenchmarker(BenchmarkRunner benchmarker) {
@@ -145,7 +159,9 @@ public class AnalysisWindowController {
   @SuppressWarnings("PMD.UnusedPrivateMethod")
   private void runBenchmark() {
     if (benchmarkRunsField.getText().length() > 0) {
-      benchmarker.run(Integer.parseInt(benchmarkRunsField.getText()));
+      final int numRuns = Integer.parseInt(benchmarkRunsField.getText());
+      computeFunction = s -> new FixedSizeQueue<>(numRuns);
+      benchmarker.run(numRuns);
     }
   }
 

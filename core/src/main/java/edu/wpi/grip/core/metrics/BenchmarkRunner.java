@@ -108,6 +108,7 @@ public class BenchmarkRunner {
     isBenchmarking.set(false);
     runsRemaining.set(0);
     timers.get().forEach(Timer::reset);
+    timers.get().clear();
   }
 
   /**

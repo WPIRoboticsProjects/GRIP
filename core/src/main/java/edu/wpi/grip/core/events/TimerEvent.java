@@ -1,6 +1,5 @@
 package edu.wpi.grip.core.events;
 
-import edu.wpi.grip.core.metrics.Analysis;
 import edu.wpi.grip.core.metrics.Timer;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -22,7 +21,6 @@ public class TimerEvent {
   private final Timer timer;
   private final Object target;
   private final long elapsedTime;
-  private final Analysis data;
 
   /**
    * Creates a new timer event.
@@ -30,16 +28,13 @@ public class TimerEvent {
    * @param timer       the timer that posted this event
    * @param target      the object that was timed
    * @param elapsedTime the time elapsed in microseconds
-   * @param data        the analysis data of the event
    */
-  public TimerEvent(Timer timer, Object target, long elapsedTime, Analysis data) {
+  public TimerEvent(Timer timer, Object target, long elapsedTime) {
     checkNotNull(timer, "timer");
     checkNotNull(target, "target");
-    checkNotNull(data, "data");
     this.timer = timer;
     this.target = target;
     this.elapsedTime = elapsedTime;
-    this.data = data;
   }
 
   /**
@@ -63,10 +58,4 @@ public class TimerEvent {
     return elapsedTime;
   }
 
-  /**
-   * Gets the analysis of the historical timing data for the action.
-   */
-  public Analysis getData() {
-    return data;
-  }
 }
