@@ -6,9 +6,9 @@ import edu.wpi.grip.core.events.RunStoppedEvent;
 import edu.wpi.grip.core.events.TimerEvent;
 import edu.wpi.grip.core.metrics.Analysis;
 import edu.wpi.grip.core.metrics.BenchmarkRunner;
-import edu.wpi.grip.core.metrics.FixedSizeQueue;
 import edu.wpi.grip.core.metrics.Statistics;
 
+import com.google.common.collect.EvictingQueue;
 import com.google.common.eventbus.Subscribe;
 
 import java.util.Collection;
@@ -67,7 +67,7 @@ public class AnalysisWindowController {
   private Statistics lastStats = Statistics.NIL;
   private final Map<Step, TimeView> timeViewMap = new HashMap<>();
   private final Map<Step, Collection<Long>> sampleMap = new HashMap<>();
-  private Function<Step, FixedSizeQueue<Long>> computeFunction = s -> new FixedSizeQueue<>(1);
+  private Function<Step, EvictingQueue<Long>> computeFunction = s -> EvictingQueue.create(1);
 
   /**
    * Initializes the controller. This should only be called by the FXML loader.
@@ -160,7 +160,7 @@ public class AnalysisWindowController {
   private void runBenchmark() {
     if (benchmarkRunsField.getText().length() > 0) {
       final int numRuns = Integer.parseInt(benchmarkRunsField.getText());
-      computeFunction = s -> new FixedSizeQueue<>(numRuns);
+      computeFunction = s -> EvictingQueue.create(numRuns);
       benchmarker.run(numRuns);
     }
   }
