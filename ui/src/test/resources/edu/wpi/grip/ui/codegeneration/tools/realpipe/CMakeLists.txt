@@ -1,9 +1,16 @@
 cmake_minimum_required(VERSION 3.5.2)
 set(LINK_OPTIONS -O2)
-set(CMAKE_LDFLAGS "${CMAKE_LDFLAGS} -L. -L/usr/local/lib ")
+set(CMAKE_LDFLAGS "${CMAKE_LDFLAGS} -L. -L$ENV{OPEN_CV_LIB}")
+set(CV_HEADERS $ENV{OPEN_CV_HEADERS})
+if(${CV_HEADERS})
+    include_directories(${OPEN_CV_HEADERS})
+endif(${CV_HEADERS})
 set(NAME "Pipeline" CACHE STRING "The file to compile")
 include_directories(${CMAKE_SOURCE_DIR}/pipelib/pipe/)
 LINK_DIRECTORIES(${CMAKE_SOURCE_DIR}/pipelib/pipe)
+IF(${CMAKE_SYSTEM_NAME MATCHES "Windows"})
+    add_definitions(-DON_WIN)
+ENDIF(${CMAKE_SYSTEM_NAME MATCHES "Windows"})
 set ( CXX_SRCS
     ${CMAKE_SOURCE_DIR}/${NAME}
     )
