@@ -47,12 +47,12 @@ public final class HttpImageHandler extends PedanticHandler {
   /**
    * The most recent image. Could be a local field, but this is more memory-efficient.
    */
-  private Mat image = null;
+  private Mat image;
 
   /**
    * The most recent bytes received.
    */
-  private byte[] lastBytes = null;
+  private byte[] lastBytes;
 
   /**
    * Creates an image handler on the default upload path {@code /GRIP/upload/image}.

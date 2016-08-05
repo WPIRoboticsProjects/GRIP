@@ -42,6 +42,9 @@ import javax.annotation.Nullable;
  */
 @SuppressWarnings("PMD.MoreThanOneLogger")
 public class GripCoreModule extends AbstractModule {
+
+  private final EventBus eventBus;
+
   private static final Logger logger = Logger.getLogger(GripCoreModule.class.getName());
 
   // This is in a static initialization block so that we don't create a ton of
@@ -92,8 +95,6 @@ public class GripCoreModule extends AbstractModule {
       throw new IllegalStateException("Failed to configure the Logger", exception);
     }
   }
-
-  private final EventBus eventBus;
 
   /*
    * This class should not be used in tests. Use GRIPCoreTestModule for tests.

@@ -28,6 +28,8 @@ import javax.inject.Inject;
  */
 public class Main {
 
+  private static final Logger logger = Logger.getLogger(Main.class.getName());
+
   @Inject
   private Project project;
   @Inject
@@ -39,20 +41,18 @@ public class Main {
   @Inject
   private CVOperations cvOperations;
   @Inject
-  private Logger logger;
-  @Inject
   private GripServer gripServer;
   @Inject
   private HttpPipelineSwitcher pipelineSwitcher;
 
-  @SuppressWarnings({"PMD.SystemPrintln", "JavadocMethod"})
+  @SuppressWarnings("JavadocMethod")
   public static void main(String[] args) throws IOException, InterruptedException {
-    final Injector injector = Guice.createInjector(Modules.override(
-        new GripCoreModule(), new GripSourcesHardwareModule()).with(new GripNetworkModule()));
+    final Injector injector = Guice.createInjector(Modules.override(new GripCoreModule(),
+        new GripFileModule(), new GripSourcesHardwareModule()).with(new GripNetworkModule()));
     injector.getInstance(Main.class).start(args);
   }
 
-  @SuppressWarnings({"PMD.SystemPrintln", "JavadocMethod"})
+  @SuppressWarnings("JavadocMethod")
   public void start(String[] args) throws IOException, InterruptedException {
     String projectPath = null;
     if (args.length == 1) {

@@ -27,7 +27,7 @@ public final class ExceptionEvent {
   public ExceptionEvent(Object origin, Exception exception, @Nullable String message) {
     this.exception = Optional.of(exception);
     this.origin = checkNotNull(origin, "The origin cannot be null");
-    this.message = message != null ? message : exception.getMessage();
+    this.message = message == null ? exception.getMessage() : message;
   }
 
   /**

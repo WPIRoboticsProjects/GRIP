@@ -23,7 +23,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 /**
  * Displays an alert with an exception and provides a place for a user to supply information about
  * what caused the error. Includes a textbox with formatted markdown to allow the issue to be pasted
- * into GitHub easily. Also, provides links with quick access to the githup issue page.
+ * into GitHub easily. Also, provides links with quick access to the GitHub issue page.
  */
 public final class ExceptionAlert extends Alert {
   private static final String PROJECT_ISSUE_LINK = "https://github"
@@ -124,7 +124,7 @@ public final class ExceptionAlert extends Alert {
    * Call this to assign the initial focus element. This is not done in the constructor so that the
    * object is not exposed to any other threads from within the objects constructor
    */
-  public final void setInitialFocus() {
+  public void setInitialFocus() {
     Platform.runLater(initialFocusElement::requestFocus);
   }
 
@@ -162,12 +162,12 @@ public final class ExceptionAlert extends Alert {
    * @return The markdown text for the System info.
    */
   private String generateSystemInfoMessage() {
-    final StringBuilder systemInfo = new StringBuilder("## System Info:\n\n");
-    systemInfo.append("Property Name | Property \n ----- | -----\n");
-    systemInfo.append("GRIP Version | " + edu.wpi.grip.core.Main.class.getPackage()
-        .getImplementationVersion() + "\n");
+    final StringBuilder systemInfo = new StringBuilder(
+        "## System Info:\n\nProperty Name | Property\n ----- | -----\nGRIP Version | ");
+    systemInfo.append(edu.wpi.grip.core.Main.class.getPackage().getImplementationVersion())
+        .append('\n');
     for (String option : systemProperties) {
-      systemInfo.append(option).append(" | ").append(System.getProperty(option)).append("\n");
+      systemInfo.append(option).append(" | ").append(System.getProperty(option)).append('\n');
     }
     return systemInfo.append("\n").toString();
   }
