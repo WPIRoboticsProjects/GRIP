@@ -1,3 +1,4 @@
-include 'core', 'ui'
+include 'core', 'ui', 'ui:preloader', 'ui:linuxLauncher'
 rootProject.name = 'GRIP'
+include 'linuxLauncher'
 

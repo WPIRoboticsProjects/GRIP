@@ -1,0 +1,1341 @@
+Aug 05, 2016 3:20:30 PM java.util.logging.LogManager$RootLogger log
+CONFIG: Configuration done.
+Aug 05, 2016 3:20:30 PM java.util.logging.LogManager$RootLogger log
+CONFIG: GRIP Version: 1.4.0-64-g4eefca3
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Module execution: 309ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: TypeListeners & ProvisionListener creation: 3ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Scopes creation: 3ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Converters creation: 1ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Binding creation: 16ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Module annotated method scanners creation: 1ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Private environment creation: 1ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Injector construction: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Binding initialization: 35ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Binding indexing: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Collecting injection requests: 1ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Binding validation: 7ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Static validation: 1ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Instance member validation: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Provider verification: 1ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Static member injection: 1ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Module execution: 1ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: TypeListeners & ProvisionListener creation: 1ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Scopes creation: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Converters creation: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Binding creation: 5ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Module annotated method scanners creation: 1ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Private environment creation: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Injector construction: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Binding initialization: 2ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Binding indexing: 1ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Collecting injection requests: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Binding validation: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Static validation: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Instance member validation: 1ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Provider verification: 2ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Static member injection: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Instance injection: 1ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Preloading singletons: 2ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Module execution: 1ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: TypeListeners & ProvisionListener creation: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Scopes creation: 1ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Converters creation: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Binding creation: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Module annotated method scanners creation: 1ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Private environment creation: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Injector construction: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Binding initialization: 1ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Binding indexing: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Collecting injection requests: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Binding validation: 1ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Static validation: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Instance member validation: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Provider verification: 1ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Static member injection: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Instance injection: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Preloading singletons: 1ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Module execution: 1ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: TypeListeners & ProvisionListener creation: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Scopes creation: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Converters creation: 1ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Binding creation: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Module annotated method scanners creation: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Private environment creation: 1ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Injector construction: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Binding initialization: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Binding indexing: 1ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Collecting injection requests: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Binding validation: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Static validation: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Instance member validation: 1ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Provider verification: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Static member injection: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Instance injection: 1ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Preloading singletons: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Module execution: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: TypeListeners & ProvisionListener creation: 1ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Scopes creation: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Converters creation: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Binding creation: 1ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Module annotated method scanners creation: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Private environment creation: 1ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Injector construction: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Binding initialization: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Binding indexing: 1ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Collecting injection requests: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Binding validation: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Static validation: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Instance member validation: 1ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Provider verification: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Static member injection: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Instance injection: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Preloading singletons: 1ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Module execution: 1ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: TypeListeners & ProvisionListener creation: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Scopes creation: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Converters creation: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Binding creation: 1ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Module annotated method scanners creation: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Private environment creation: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Injector construction: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Binding initialization: 1ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Binding indexing: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Collecting injection requests: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Binding validation: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Static validation: 1ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Instance member validation: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Provider verification: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Static member injection: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Instance injection: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Preloading singletons: 1ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Module execution: 2ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: TypeListeners & ProvisionListener creation: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Scopes creation: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Converters creation: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Binding creation: 1ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Module annotated method scanners creation: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Private environment creation: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Injector construction: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Binding initialization: 1ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Binding indexing: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Collecting injection requests: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Binding validation: 1ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Static validation: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Instance member validation: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Provider verification: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Static member injection: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Instance injection: 1ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Preloading singletons: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Module execution: 1ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: TypeListeners & ProvisionListener creation: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Scopes creation: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Converters creation: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Binding creation: 1ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Module annotated method scanners creation: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Private environment creation: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Injector construction: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Binding initialization: 1ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Binding indexing: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Collecting injection requests: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Binding validation: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Static validation: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Instance member validation: 1ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Provider verification: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Static member injection: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Instance injection: 1ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Preloading singletons: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Module execution: 1ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: TypeListeners & ProvisionListener creation: 1ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Scopes creation: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Converters creation: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Binding creation: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Module annotated method scanners creation: 1ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Private environment creation: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Injector construction: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Binding initialization: 1ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Binding indexing: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Collecting injection requests: 1ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Binding validation: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Static validation: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Instance member validation: 1ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Provider verification: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Static member injection: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Instance injection: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Preloading singletons: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Module execution: 1ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: TypeListeners & ProvisionListener creation: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Scopes creation: 1ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Converters creation: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Binding creation: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Module annotated method scanners creation: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Private environment creation: 1ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Injector construction: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Binding initialization: 1ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Binding indexing: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Collecting injection requests: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Binding validation: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Static validation: 1ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Instance member validation: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Provider verification: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Static member injection: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Instance injection: 1ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Preloading singletons: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Module execution: 1ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: TypeListeners & ProvisionListener creation: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Scopes creation: 1ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Converters creation: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Binding creation: 1ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Module annotated method scanners creation: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Private environment creation: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Injector construction: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Binding initialization: 1ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Binding indexing: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Collecting injection requests: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Binding validation: 1ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Static validation: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Instance member validation: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Provider verification: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Static member injection: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Instance injection: 1ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Preloading singletons: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Module execution: 1ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: TypeListeners & ProvisionListener creation: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Scopes creation: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Converters creation: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Binding creation: 1ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Module annotated method scanners creation: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Private environment creation: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Injector construction: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Binding initialization: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Binding indexing: 1ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Collecting injection requests: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Binding validation: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Static validation: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Instance member validation: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Provider verification: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Static member injection: 1ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Instance injection: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Preloading singletons: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Module execution: 1ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: TypeListeners & ProvisionListener creation: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Scopes creation: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Converters creation: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Binding creation: 1ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Module annotated method scanners creation: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Private environment creation: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Injector construction: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Binding initialization: 2ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Binding indexing: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Collecting injection requests: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Binding validation: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Static validation: 1ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Instance member validation: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Provider verification: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Static member injection: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Instance injection: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Preloading singletons: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Module execution: 1ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: TypeListeners & ProvisionListener creation: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Scopes creation: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Converters creation: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Binding creation: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Module annotated method scanners creation: 1ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Private environment creation: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Injector construction: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Binding initialization: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Binding indexing: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Collecting injection requests: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Binding validation: 1ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Static validation: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Instance member validation: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Provider verification: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Static member injection: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Instance injection: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Preloading singletons: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Module execution: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: TypeListeners & ProvisionListener creation: 1ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Scopes creation: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Converters creation: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Binding creation: 1ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Module annotated method scanners creation: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Private environment creation: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Injector construction: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Binding initialization: 1ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Binding indexing: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Collecting injection requests: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Binding validation: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Static validation: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Instance member validation: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Provider verification: 1ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Static member injection: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Instance injection: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Preloading singletons: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Module execution: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: TypeListeners & ProvisionListener creation: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Scopes creation: 1ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Converters creation: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Binding creation: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Module annotated method scanners creation: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Private environment creation: 1ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Injector construction: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Binding initialization: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Binding indexing: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Collecting injection requests: 1ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Binding validation: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Static validation: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Instance member validation: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Provider verification: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Static member injection: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Instance injection: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Preloading singletons: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Module execution: 1ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: TypeListeners & ProvisionListener creation: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Scopes creation: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Converters creation: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Binding creation: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Module annotated method scanners creation: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Private environment creation: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Injector construction: 1ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Binding initialization: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Binding indexing: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Collecting injection requests: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Binding validation: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Static validation: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Instance member validation: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Provider verification: 1ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Static member injection: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Instance injection: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Preloading singletons: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Module execution: 1ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: TypeListeners & ProvisionListener creation: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Scopes creation: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Converters creation: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Binding creation: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Module annotated method scanners creation: 1ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Private environment creation: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Injector construction: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Binding initialization: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Binding indexing: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Collecting injection requests: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Binding validation: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Static validation: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Instance member validation: 1ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Provider verification: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Static member injection: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Instance injection: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Preloading singletons: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Module execution: 1ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: TypeListeners & ProvisionListener creation: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Scopes creation: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Converters creation: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Binding creation: 1ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Module annotated method scanners creation: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Private environment creation: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Injector construction: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Binding initialization: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Binding indexing: 1ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Collecting injection requests: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Binding validation: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Static validation: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Instance member validation: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Provider verification: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Static member injection: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Instance injection: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Preloading singletons: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Module execution: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: TypeListeners & ProvisionListener creation: 1ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Scopes creation: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Converters creation: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Binding creation: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Module annotated method scanners creation: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Private environment creation: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Injector construction: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Binding initialization: 1ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Binding indexing: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Collecting injection requests: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Binding validation: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Static validation: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Instance member validation: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Provider verification: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Static member injection: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Instance injection: 1ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Preloading singletons: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Module execution: 1ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: TypeListeners & ProvisionListener creation: 1ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Scopes creation: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Converters creation: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Binding creation: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Module annotated method scanners creation: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Private environment creation: 1ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Injector construction: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Binding initialization: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Binding indexing: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Collecting injection requests: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Binding validation: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Static validation: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Instance member validation: 1ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Provider verification: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Static member injection: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Instance injection: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Preloading singletons: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Module execution: 1ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: TypeListeners & ProvisionListener creation: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Scopes creation: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Converters creation: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Binding creation: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Module annotated method scanners creation: 1ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Private environment creation: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Injector construction: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Binding initialization: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Binding indexing: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Collecting injection requests: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Binding validation: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Static validation: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Instance member validation: 1ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Provider verification: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Static member injection: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Instance injection: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Preloading singletons: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Module execution: 1ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: TypeListeners & ProvisionListener creation: 1ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Scopes creation: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Converters creation: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Binding creation: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Module annotated method scanners creation: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Private environment creation: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Injector construction: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Binding initialization: 1ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Binding indexing: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Collecting injection requests: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Binding validation: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Static validation: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Instance member validation: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Provider verification: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Static member injection: 1ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Instance injection: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Preloading singletons: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Module execution: 1ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: TypeListeners & ProvisionListener creation: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Scopes creation: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Converters creation: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Binding creation: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Module annotated method scanners creation: 1ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Private environment creation: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Injector construction: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Binding initialization: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Binding indexing: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Collecting injection requests: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Binding validation: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Static validation: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Instance member validation: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Provider verification: 1ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Static member injection: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Instance injection: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Preloading singletons: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Module execution: 1ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: TypeListeners & ProvisionListener creation: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Scopes creation: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Converters creation: 1ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Binding creation: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Module annotated method scanners creation: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Private environment creation: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Injector construction: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Binding initialization: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Binding indexing: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Collecting injection requests: 1ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Binding validation: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Static validation: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Instance member validation: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Provider verification: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Static member injection: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Instance injection: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Preloading singletons: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Module execution: 1ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: TypeListeners & ProvisionListener creation: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Scopes creation: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Converters creation: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Binding creation: 1ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Module annotated method scanners creation: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Private environment creation: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Injector construction: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Binding initialization: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Binding indexing: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Collecting injection requests: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Binding validation: 1ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Static validation: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Instance member validation: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Provider verification: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Static member injection: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Instance injection: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Preloading singletons: 1ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Module execution: 1ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: TypeListeners & ProvisionListener creation: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Scopes creation: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Converters creation: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Binding creation: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Module annotated method scanners creation: 1ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Private environment creation: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Injector construction: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Binding initialization: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Binding indexing: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Collecting injection requests: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Binding validation: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Static validation: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Instance member validation: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Provider verification: 1ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Static member injection: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Instance injection: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Preloading singletons: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Module execution: 1ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: TypeListeners & ProvisionListener creation: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Scopes creation: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Converters creation: 1ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Binding creation: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Module annotated method scanners creation: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Private environment creation: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Injector construction: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Binding initialization: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Binding indexing: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Collecting injection requests: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Binding validation: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Static validation: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Instance member validation: 1ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Provider verification: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Static member injection: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Instance injection: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Preloading singletons: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Module execution: 1ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: TypeListeners & ProvisionListener creation: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Scopes creation: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Converters creation: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Binding creation: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Module annotated method scanners creation: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Private environment creation: 1ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Injector construction: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Binding initialization: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Binding indexing: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Collecting injection requests: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Binding validation: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Static validation: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Instance member validation: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Provider verification: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Static member injection: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Instance injection: 1ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Preloading singletons: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Module execution: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: TypeListeners & ProvisionListener creation: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Scopes creation: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Converters creation: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Binding creation: 1ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Module annotated method scanners creation: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Private environment creation: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Injector construction: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Binding initialization: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Binding indexing: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Collecting injection requests: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Binding validation: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Static validation: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Instance member validation: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Provider verification: 1ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Static member injection: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Instance injection: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Preloading singletons: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Module execution: 1ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: TypeListeners & ProvisionListener creation: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Scopes creation: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Converters creation: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Binding creation: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Module annotated method scanners creation: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Private environment creation: 1ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Injector construction: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Binding initialization: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Binding indexing: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Collecting injection requests: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Binding validation: 1ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Static validation: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Instance member validation: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Provider verification: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Static member injection: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Instance injection: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Preloading singletons: 0ms
+Aug 05, 2016 3:20:30 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Instance injection: 164ms
+Aug 05, 2016 3:20:31 PM com.google.inject.internal.util.Stopwatch resetAndLog
+FINE: Preloading singletons: 434ms
+Aug 05, 2016 3:20:31 PM edu.wpi.grip.core.operations.network.networktables.NTManager lambda$new$0
+FINE: NetworkTables: Dispatcher.cpp:297 client trying to connect
+Aug 05, 2016 3:20:31 PM edu.wpi.grip.core.operations.network.networktables.NTManager lambda$new$0
+SEVERE: NetworkTables: TCPConnector.cpp:157 select() to  port 1735 error 61 - Connection refused
+Aug 05, 2016 3:20:32 PM edu.wpi.grip.core.util.service.LoggingListener starting
+INFO: [PipelineRunner] Starting
+Aug 05, 2016 3:20:32 PM edu.wpi.grip.core.util.service.LoggingListener running
+FINE: [PipelineRunner] Running
+Aug 05, 2016 3:20:34 PM javafx.scene.Scene$13 invalidated
+FINE: Changed focus from null to TabPane@3ec58fb0[styleClass=tab-pane]
+Aug 05, 2016 3:20:35 PM javafx.scene.Node$FocusedProperty markInvalid
+FINE: ReadOnlyBooleanProperty [bean: TabPane@3ec58fb0[styleClass=tab-pane], name: focused, value: true] focused=true
+Aug 05, 2016 3:20:35 PM javafx.scene.Node$FocusedProperty markInvalid
+FINE: ReadOnlyBooleanProperty [bean: TabPane@3ec58fb0[styleClass=tab-pane], name: focused, value: false] focused=false
+Aug 05, 2016 3:20:35 PM javafx.scene.Node$FocusedProperty markInvalid
+FINE: ReadOnlyBooleanProperty [bean: ScrollPane[id=bottomPane, styleClass=scroll-pane], name: focused, value: true] focused=true
+Aug 05, 2016 3:20:35 PM javafx.scene.Scene$13 invalidated
+FINE: Changed focus from TabPane@3ec58fb0[styleClass=tab-pane] to ScrollPane[id=bottomPane, styleClass=scroll-pane]
+Aug 05, 2016 3:20:36 PM javafx.scene.Node$FocusedProperty markInvalid
+FINE: ReadOnlyBooleanProperty [bean: ScrollPane[id=bottomPane, styleClass=scroll-pane], name: focused, value: false] focused=false
+Aug 05, 2016 3:20:36 PM javafx.scene.Node$FocusedProperty markInvalid
+FINE: ReadOnlyBooleanProperty [bean: AddSourceButton@7cca9f6a[styleClass=menu-button]'Add Source', name: focused, value: true] focused=true
+Aug 05, 2016 3:20:36 PM javafx.scene.Scene$13 invalidated
+FINE: Changed focus from ScrollPane[id=bottomPane, styleClass=scroll-pane] to AddSourceButton@7cca9f6a[styleClass=menu-button]'Add Source'
+Aug 05, 2016 3:20:36 PM javafx.scene.Scene$13 invalidated
+FINE: Changed focus from null to ContextMenuContent[id=null, styleClass=context-menu]
+Aug 05, 2016 3:20:36 PM javafx.scene.Node$FocusedProperty markInvalid
+FINE: ReadOnlyBooleanProperty [bean: ContextMenuContent[id=null, styleClass=context-menu], name: focused, value: true] focused=true
+Aug 05, 2016 3:20:36 PM javafx.scene.Node$FocusedProperty markInvalid
+FINE: ReadOnlyBooleanProperty [bean: ContextMenuContent[id=null, styleClass=context-menu], name: focused, value: false] focused=false
+Aug 05, 2016 3:20:36 PM javafx.scene.Node$FocusedProperty markInvalid
+FINE: ReadOnlyBooleanProperty [bean: ContextMenuContent$MenuItemContainer[id=null, styleClass=menu-item], name: focused, value: true] focused=true
+Aug 05, 2016 3:20:36 PM javafx.scene.Scene$13 invalidated
+FINE: Changed focus from ContextMenuContent[id=null, styleClass=context-menu] to ContextMenuContent$MenuItemContainer[id=null, styleClass=menu-item]
+Aug 05, 2016 3:20:37 PM javafx.scene.Node$FocusedProperty markInvalid
+FINE: ReadOnlyBooleanProperty [bean: ContextMenuContent$MenuItemContainer[id=null, styleClass=menu-item], name: focused, value: false] focused=false
+Aug 05, 2016 3:20:37 PM javafx.scene.Node$FocusedProperty markInvalid
+FINE: ReadOnlyBooleanProperty [bean: ContextMenuContent$MenuItemContainer[id=null, styleClass=menu-item], name: focused, value: true] focused=true
+Aug 05, 2016 3:20:37 PM javafx.scene.Scene$13 invalidated
+FINE: Changed focus from ContextMenuContent$MenuItemContainer[id=null, styleClass=menu-item] to ContextMenuContent$MenuItemContainer[id=null, styleClass=menu-item]
+Aug 05, 2016 3:20:37 PM javafx.scene.Scene$13 invalidated
+FINE: Changed focus from null to Button@43a33c49[styleClass=button]'OK'
+Aug 05, 2016 3:20:37 PM javafx.scene.Node$FocusedProperty markInvalid
+FINE: ReadOnlyBooleanProperty [bean: ContextMenuContent$MenuItemContainer[id=null, styleClass=menu-item], name: focused, value: false] focused=false
+Aug 05, 2016 3:20:37 PM javafx.scene.Scene$13 invalidated
+FINE: Changed focus from ContextMenuContent$MenuItemContainer[id=null, styleClass=menu-item] to ContextMenuContent[id=null, styleClass=context-menu]
+Aug 05, 2016 3:20:37 PM javafx.scene.Node$FocusedProperty markInvalid
+FINE: ReadOnlyBooleanProperty [bean: AddSourceButton@7cca9f6a[styleClass=menu-button]'Add Source', name: focused, value: false] focused=false
+Aug 05, 2016 3:20:37 PM javafx.scene.Node$FocusedProperty markInvalid
+FINE: ReadOnlyBooleanProperty [bean: Button@43a33c49[styleClass=button]'OK', name: focused, value: true] focused=true
+Aug 05, 2016 3:20:38 PM javafx.scene.Node$FocusedProperty markInvalid
+FINE: ReadOnlyBooleanProperty [bean: Button@43a33c49[styleClass=button]'OK', name: focused, value: false] focused=false
+Aug 05, 2016 3:20:38 PM javafx.scene.Node$FocusedProperty markInvalid
+FINE: ReadOnlyBooleanProperty [bean: AddSourceButton@7cca9f6a[styleClass=menu-button]'Add Source', name: focused, value: true] focused=true
+Aug 05, 2016 3:20:38 PM edu.wpi.grip.core.util.service.LoggingListener starting
+INFO: [CameraSource] Starting
+Aug 05, 2016 3:20:39 PM edu.wpi.grip.core.util.service.LoggingListener starting
+INFO: [CameraSource] Starting
+Aug 05, 2016 3:20:39 PM edu.wpi.grip.core.util.service.LoggingListener starting
+INFO: [CameraSource] Starting
+Aug 05, 2016 3:20:39 PM edu.wpi.grip.core.util.service.LoggingListener failed
+SEVERE: [CameraSource] Failed from: STARTING
+edu.wpi.grip.core.sources.GrabberService$GrabberServiceException: [Webcam 0] Failed to start
+	at edu.wpi.grip.core.sources.GrabberService.startUp(GrabberService.java:55)
+	at com.google.common.util.concurrent.AbstractExecutionThreadService$1$2.run(AbstractExecutionThreadService.java:54)
+	at com.google.common.util.concurrent.Callables$3.run(Callables.java:100)
+	at java.lang.Thread.run(Thread.java:745)
+Caused by: org.bytedeco.javacv.FrameGrabber$Exception: avformat_open_input() error -5: Could not open input "0". (Has setFormat() been called?)
+	at org.bytedeco.javacv.FFmpegFrameGrabber.startUnsafe(FFmpegFrameGrabber.java:437)
+	at org.bytedeco.javacv.FFmpegFrameGrabber.start(FFmpegFrameGrabber.java:385)
+	at edu.wpi.grip.core.sources.GrabberService.startUp(GrabberService.java:53)
+	... 3 more
+
+Aug 05, 2016 3:20:39 PM edu.wpi.grip.core.util.service.LoggingListener failed
+SEVERE: [CameraSource] Failed from: STARTING
+edu.wpi.grip.core.sources.GrabberService$GrabberServiceException: [Webcam 0] Failed to start
+	at edu.wpi.grip.core.sources.GrabberService.startUp(GrabberService.java:55)
+	at com.google.common.util.concurrent.AbstractExecutionThreadService$1$2.run(AbstractExecutionThreadService.java:54)
+	at com.google.common.util.concurrent.Callables$3.run(Callables.java:100)
+	at java.lang.Thread.run(Thread.java:745)
+Caused by: org.bytedeco.javacv.FrameGrabber$Exception: avformat_open_input() error -5: Could not open input "0". (Has setFormat() been called?)
+	at org.bytedeco.javacv.FFmpegFrameGrabber.startUnsafe(FFmpegFrameGrabber.java:437)
+	at org.bytedeco.javacv.FFmpegFrameGrabber.start(FFmpegFrameGrabber.java:385)
+	at edu.wpi.grip.core.sources.GrabberService.startUp(GrabberService.java:53)
+	... 3 more
+
+Aug 05, 2016 3:20:39 PM edu.wpi.grip.core.util.service.LoggingListener starting
+INFO: [CameraSource] Starting
+Aug 05, 2016 3:20:39 PM edu.wpi.grip.core.util.service.LoggingListener failed
+SEVERE: [CameraSource] Failed from: STARTING
+edu.wpi.grip.core.sources.GrabberService$GrabberServiceException: [Webcam 0] Failed to start
+	at edu.wpi.grip.core.sources.GrabberService.startUp(GrabberService.java:55)
+	at com.google.common.util.concurrent.AbstractExecutionThreadService$1$2.run(AbstractExecutionThreadService.java:54)
+	at com.google.common.util.concurrent.Callables$3.run(Callables.java:100)
+	at java.lang.Thread.run(Thread.java:745)
+Caused by: org.bytedeco.javacv.FrameGrabber$Exception: avformat_open_input() error -5: Could not open input "0". (Has setFormat() been called?)
+	at org.bytedeco.javacv.FFmpegFrameGrabber.startUnsafe(FFmpegFrameGrabber.java:437)
+	at org.bytedeco.javacv.FFmpegFrameGrabber.start(FFmpegFrameGrabber.java:385)
+	at edu.wpi.grip.core.sources.GrabberService.startUp(GrabberService.java:53)
+	... 3 more
+
+Aug 05, 2016 3:20:39 PM edu.wpi.grip.core.util.service.LoggingListener starting
+INFO: [CameraSource] Starting
+Aug 05, 2016 3:20:39 PM edu.wpi.grip.core.util.service.LoggingListener failed
+SEVERE: [CameraSource] Failed from: STARTING
+edu.wpi.grip.core.sources.GrabberService$GrabberServiceException: [Webcam 0] Failed to start
+	at edu.wpi.grip.core.sources.GrabberService.startUp(GrabberService.java:55)
+	at com.google.common.util.concurrent.AbstractExecutionThreadService$1$2.run(AbstractExecutionThreadService.java:54)
+	at com.google.common.util.concurrent.Callables$3.run(Callables.java:100)
+	at java.lang.Thread.run(Thread.java:745)
+Caused by: org.bytedeco.javacv.FrameGrabber$Exception: avformat_open_input() error -5: Could not open input "0". (Has setFormat() been called?)
+	at org.bytedeco.javacv.FFmpegFrameGrabber.startUnsafe(FFmpegFrameGrabber.java:437)
+	at org.bytedeco.javacv.FFmpegFrameGrabber.start(FFmpegFrameGrabber.java:385)
+	at edu.wpi.grip.core.sources.GrabberService.startUp(GrabberService.java:53)
+	... 3 more
+
+Aug 05, 2016 3:20:39 PM edu.wpi.grip.core.util.service.LoggingListener starting
+INFO: [CameraSource] Starting
+Aug 05, 2016 3:20:39 PM edu.wpi.grip.core.util.service.LoggingListener failed
+SEVERE: [CameraSource] Failed from: STARTING
+edu.wpi.grip.core.sources.GrabberService$GrabberServiceException: [Webcam 0] Failed to start
+	at edu.wpi.grip.core.sources.GrabberService.startUp(GrabberService.java:55)
+	at com.google.common.util.concurrent.AbstractExecutionThreadService$1$2.run(AbstractExecutionThreadService.java:54)
+	at com.google.common.util.concurrent.Callables$3.run(Callables.java:100)
+	at java.lang.Thread.run(Thread.java:745)
+Caused by: org.bytedeco.javacv.FrameGrabber$Exception: avformat_open_input() error -5: Could not open input "0". (Has setFormat() been called?)
+	at org.bytedeco.javacv.FFmpegFrameGrabber.startUnsafe(FFmpegFrameGrabber.java:437)
+	at org.bytedeco.javacv.FFmpegFrameGrabber.start(FFmpegFrameGrabber.java:385)
+	at edu.wpi.grip.core.sources.GrabberService.startUp(GrabberService.java:53)
+	... 3 more
+
+Aug 05, 2016 3:20:39 PM edu.wpi.grip.core.util.service.LoggingListener starting
+INFO: [CameraSource] Starting
+Aug 05, 2016 3:20:39 PM edu.wpi.grip.core.util.service.LoggingListener failed
+SEVERE: [CameraSource] Failed from: STARTING
+edu.wpi.grip.core.sources.GrabberService$GrabberServiceException: [Webcam 0] Failed to start
+	at edu.wpi.grip.core.sources.GrabberService.startUp(GrabberService.java:55)
+	at com.google.common.util.concurrent.AbstractExecutionThreadService$1$2.run(AbstractExecutionThreadService.java:54)
+	at com.google.common.util.concurrent.Callables$3.run(Callables.java:100)
+	at java.lang.Thread.run(Thread.java:745)
+Caused by: org.bytedeco.javacv.FrameGrabber$Exception: avformat_open_input() error -5: Could not open input "0". (Has setFormat() been called?)
+	at org.bytedeco.javacv.FFmpegFrameGrabber.startUnsafe(FFmpegFrameGrabber.java:437)
+	at org.bytedeco.javacv.FFmpegFrameGrabber.start(FFmpegFrameGrabber.java:385)
+	at edu.wpi.grip.core.sources.GrabberService.startUp(GrabberService.java:53)
+	... 3 more
+
+Aug 05, 2016 3:20:39 PM edu.wpi.grip.core.util.service.LoggingListener starting
+INFO: [CameraSource] Starting
+Aug 05, 2016 3:20:39 PM edu.wpi.grip.core.util.service.LoggingListener failed
+SEVERE: [CameraSource] Failed from: STARTING
+edu.wpi.grip.core.sources.GrabberService$GrabberServiceException: [Webcam 0] Failed to start
+	at edu.wpi.grip.core.sources.GrabberService.startUp(GrabberService.java:55)
+	at com.google.common.util.concurrent.AbstractExecutionThreadService$1$2.run(AbstractExecutionThreadService.java:54)
+	at com.google.common.util.concurrent.Callables$3.run(Callables.java:100)
+	at java.lang.Thread.run(Thread.java:745)
+Caused by: org.bytedeco.javacv.FrameGrabber$Exception: avformat_open_input() error -5: Could not open input "0". (Has setFormat() been called?)
+	at org.bytedeco.javacv.FFmpegFrameGrabber.startUnsafe(FFmpegFrameGrabber.java:437)
+	at org.bytedeco.javacv.FFmpegFrameGrabber.start(FFmpegFrameGrabber.java:385)
+	at edu.wpi.grip.core.sources.GrabberService.startUp(GrabberService.java:53)
+	... 3 more
+
+Aug 05, 2016 3:20:39 PM edu.wpi.grip.core.util.service.LoggingListener starting
+INFO: [CameraSource] Starting
+Aug 05, 2016 3:20:39 PM edu.wpi.grip.core.util.service.LoggingListener failed
+SEVERE: [CameraSource] Failed from: STARTING
+edu.wpi.grip.core.sources.GrabberService$GrabberServiceException: [Webcam 0] Failed to start
+	at edu.wpi.grip.core.sources.GrabberService.startUp(GrabberService.java:55)
+	at com.google.common.util.concurrent.AbstractExecutionThreadService$1$2.run(AbstractExecutionThreadService.java:54)
+	at com.google.common.util.concurrent.Callables$3.run(Callables.java:100)
+	at java.lang.Thread.run(Thread.java:745)
+Caused by: org.bytedeco.javacv.FrameGrabber$Exception: avformat_open_input() error -5: Could not open input "0". (Has setFormat() been called?)
+	at org.bytedeco.javacv.FFmpegFrameGrabber.startUnsafe(FFmpegFrameGrabber.java:437)
+	at org.bytedeco.javacv.FFmpegFrameGrabber.start(FFmpegFrameGrabber.java:385)
+	at edu.wpi.grip.core.sources.GrabberService.startUp(GrabberService.java:53)
+	... 3 more
+
+Aug 05, 2016 3:20:39 PM edu.wpi.grip.core.util.service.LoggingListener starting
+INFO: [CameraSource] Starting
+Aug 05, 2016 3:20:39 PM edu.wpi.grip.core.util.service.LoggingListener failed
+SEVERE: [CameraSource] Failed from: STARTING
+edu.wpi.grip.core.sources.GrabberService$GrabberServiceException: [Webcam 0] Failed to start
+	at edu.wpi.grip.core.sources.GrabberService.startUp(GrabberService.java:55)
+	at com.google.common.util.concurrent.AbstractExecutionThreadService$1$2.run(AbstractExecutionThreadService.java:54)
+	at com.google.common.util.concurrent.Callables$3.run(Callables.java:100)
+	at java.lang.Thread.run(Thread.java:745)
+Caused by: org.bytedeco.javacv.FrameGrabber$Exception: avformat_open_input() error -5: Could not open input "0". (Has setFormat() been called?)
+	at org.bytedeco.javacv.FFmpegFrameGrabber.startUnsafe(FFmpegFrameGrabber.java:437)
+	at org.bytedeco.javacv.FFmpegFrameGrabber.start(FFmpegFrameGrabber.java:385)
+	at edu.wpi.grip.core.sources.GrabberService.startUp(GrabberService.java:53)
+	... 3 more
+
+Aug 05, 2016 3:20:39 PM edu.wpi.grip.core.util.service.LoggingListener starting
+INFO: [CameraSource] Starting
+Aug 05, 2016 3:20:39 PM edu.wpi.grip.core.util.service.LoggingListener failed
+SEVERE: [CameraSource] Failed from: STARTING
+edu.wpi.grip.core.sources.GrabberService$GrabberServiceException: [Webcam 0] Failed to start
+	at edu.wpi.grip.core.sources.GrabberService.startUp(GrabberService.java:55)
+	at com.google.common.util.concurrent.AbstractExecutionThreadService$1$2.run(AbstractExecutionThreadService.java:54)
+	at com.google.common.util.concurrent.Callables$3.run(Callables.java:100)
+	at java.lang.Thread.run(Thread.java:745)
+Caused by: org.bytedeco.javacv.FrameGrabber$Exception: avformat_open_input() error -5: Could not open input "0". (Has setFormat() been called?)
+	at org.bytedeco.javacv.FFmpegFrameGrabber.startUnsafe(FFmpegFrameGrabber.java:437)
+	at org.bytedeco.javacv.FFmpegFrameGrabber.start(FFmpegFrameGrabber.java:385)
+	at edu.wpi.grip.core.sources.GrabberService.startUp(GrabberService.java:53)
+	... 3 more
+
+Aug 05, 2016 3:20:39 PM edu.wpi.grip.core.util.service.LoggingListener starting
+INFO: [CameraSource] Starting
+Aug 05, 2016 3:20:39 PM edu.wpi.grip.core.util.service.LoggingListener failed
+SEVERE: [CameraSource] Failed from: STARTING
+edu.wpi.grip.core.sources.GrabberService$GrabberServiceException: [Webcam 0] Failed to start
+	at edu.wpi.grip.core.sources.GrabberService.startUp(GrabberService.java:55)
+	at com.google.common.util.concurrent.AbstractExecutionThreadService$1$2.run(AbstractExecutionThreadService.java:54)
+	at com.google.common.util.concurrent.Callables$3.run(Callables.java:100)
+	at java.lang.Thread.run(Thread.java:745)
+Caused by: org.bytedeco.javacv.FrameGrabber$Exception: avformat_open_input() error -5: Could not open input "0". (Has setFormat() been called?)
+	at org.bytedeco.javacv.FFmpegFrameGrabber.startUnsafe(FFmpegFrameGrabber.java:437)
+	at org.bytedeco.javacv.FFmpegFrameGrabber.start(FFmpegFrameGrabber.java:385)
+	at edu.wpi.grip.core.sources.GrabberService.startUp(GrabberService.java:53)
+	... 3 more
+

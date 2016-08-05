@@ -2,17 +2,17 @@ install:
   - choco install -y InnoSetup
 
 build_script:
-  - gradlew.bat :ui:assemble --stacktrace
+  - gradlew.bat :ui:jfxNative --stacktrace
 
 # to run your custom scripts instead of automatic tests
 test_script:
-  - gradlew.bat checkstyleMain checkstyleTest jacocoTestReport jacocoRootReport test --stacktrace -Pheadless=true -PlogTests
+  - gradlew.bat checkstyleMain checkstyleTest pmdMain jacocoTestReport jacocoRootReport test --stacktrace -Pheadless=true -PlogTests
 
 platform:
   - x64
 
 artifacts:
-  - path: ui\build\distributions\*.exe
+  - path: ui\build\jfx\native\*.exe
 
 
 deploy:

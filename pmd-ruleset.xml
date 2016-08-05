@@ -1,0 +1,40 @@
+<?xml version="1.0"?>
+<ruleset name="GripRuleset"
+         xmlns="http://pmd.sourceforge.net/ruleset/2.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0 http://pmd.sourceforge.net/ruleset_2_0_0.xsd">
+    <rule ref="rulesets/java/basic.xml">
+        <exclude name="UselessParentheses" />
+    </rule>
+    <rule ref="rulesets/java/braces.xml" />
+    <rule ref="rulesets/java/design.xml">
+        <exclude name="AccessorClassGeneration" />
+        <exclude name="AvoidSynchronizedAtMethodLevel" />
+        <exclude name="CloseResource" />
+        <exclude name="ConfusingTernary" />
+        <exclude name="UncommentedEmptyConstructor" />
+        <exclude name="UseUtilityClass" />
+        <exclude name="UseVarargs" />
+    </rule>
+    <rule ref="rulesets/java/empty.xml" />
+    <rule ref="rulesets/java/imports.xml">
+        <exclude name="TooManyStaticImports" />
+    </rule>
+    <rule ref="rulesets/java/junit.xml" />
+    <rule ref="rulesets/java/logging-java.xml">
+        <exclude name="GuardLogStatementJavaUtil" />
+    </rule>
+    <rule ref="rulesets/java/migrating.xml" />
+    <rule ref="rulesets/java/optimizations.xml">
+        <exclude name="AvoidInstantiatingObjectsInLoops" />
+        <exclude name="LocalVariableCouldBeFinal" />
+        <exclude name="MethodArgumentCouldBeFinal" />
+        <exclude name="RedundantFieldInitializer" />
+    </rule>
+    <rule ref="rulesets/java/strings.xml">
+        <exclude name="AvoidDuplicateLiterals" />
+    </rule>
+    <rule ref="rulesets/java/unnecessary.xml">
+        <exclude name="UselessParentheses" />
+    </rule>
+</ruleset>

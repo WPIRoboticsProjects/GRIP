@@ -49,6 +49,7 @@ public class GrabberService extends AbstractExecutionThreadService {
     serviceThread = Optional.of(Thread.currentThread());
     try {
       frameGrabber = frameGrabberSupplier.get();
+      frameGrabber.setFormat("avfoundation");
       frameGrabber.start();
     } catch (FrameGrabber.Exception ex) {
       throw new GrabberServiceException("Failed to start", ex);

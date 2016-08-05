@@ -125,7 +125,7 @@ public class SaveImageOperation implements Operation {
     byte[] buffer = new byte[128 * 1024];
     int bufferSize = (int) imagePointer.limit();
     if (bufferSize > buffer.length) {
-      buffer = new byte[(int)(imagePointer.limit())];
+      buffer = new byte[(int) imagePointer.limit()];
     }
     imagePointer.get(buffer, 0, bufferSize);
 
