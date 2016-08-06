@@ -371,7 +371,9 @@ public class CameraSource extends Source implements RestartableService {
       } else if (StandardSystemProperty.OS_NAME.value().contains("Linux")) {
         return new OpenCVFrameGrabber(deviceNumber);
       } else {
-        return new FFmpegFrameGrabber("" + deviceNumber);
+        StringBuilder devNumb = new StringBuilder();
+        devNumb.append(deviceNumber);
+        return new FFmpegFrameGrabber(devNumb.toString());
       }
     }
 
