@@ -135,7 +135,8 @@ public class PublishVideoOperation implements Operation {
   };
 
   @SuppressWarnings("JavadocMethod")
-  @SuppressFBWarnings("ST_WRITE_TO_STATIC_FROM_INSTANCE_METHOD") // Don't need sync in constructor
+  @SuppressFBWarnings(value = "ST_WRITE_TO_STATIC_FROM_INSTANCE_METHOD",
+      justification = "Do not need to synchronize inside of a constructor")
   public PublishVideoOperation(InputSocket.Factory inputSocketFactory) {
     if (numSteps != 0) {
       throw new IllegalStateException("Only one instance of PublishVideoOperation may exist");

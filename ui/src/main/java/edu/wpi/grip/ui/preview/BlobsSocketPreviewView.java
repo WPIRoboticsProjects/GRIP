@@ -40,7 +40,8 @@ public class BlobsSocketPreviewView extends SocketPreviewView<BlobsReport> {
   private final Mat tmp = new Mat();
   private final GripPlatform platform;
   @SuppressWarnings("PMD.ImmutableField")
-  @SuppressFBWarnings("IS2_INCONSISTENT_SYNC") // No sync needed in constructor
+  @SuppressFBWarnings(value = "IS2_INCONSISTENT_SYNC",
+      justification = "Do not need to synchronize inside of a constructor")
   private boolean showInputImage = false;
 
   /**

@@ -21,7 +21,8 @@ public final class SafeShutdown {
 
     Runtime.getRuntime().addShutdownHook(new Thread() {
       @Override
-      @SuppressFBWarnings("ST_WRITE_TO_STATIC_FROM_INSTANCE_METHOD")
+      @SuppressFBWarnings(value = "ST_WRITE_TO_STATIC_FROM_INSTANCE_METHOD",
+          justification = "Static variable is volatile")
       public void run() {
         SafeShutdown.stopping = true;
       }

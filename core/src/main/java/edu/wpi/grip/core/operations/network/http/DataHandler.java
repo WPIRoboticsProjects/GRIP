@@ -71,7 +71,8 @@ public final class DataHandler extends PedanticHandler {
   }
 
   @Override
-  @SuppressFBWarnings("UW_UNCOND_WAIT") // Bug in FindBugs. There is a condition.
+  @SuppressFBWarnings(value = "UW_UNCOND_WAIT",
+      justification = "A bug in FindBugs.  There is a condidtion (outside of the try)")
   protected void handleIfPassed(String target,
                                 Request baseRequest,
                                 HttpServletRequest request,
