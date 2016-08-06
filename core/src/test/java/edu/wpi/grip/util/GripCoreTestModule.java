@@ -13,6 +13,8 @@ import edu.wpi.grip.core.util.MockFileManager;
 
 import com.google.common.eventbus.SubscriberExceptionContext;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -30,6 +32,8 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * that exceptions always get dumped for the test that has just run.
  */
 public class GripCoreTestModule extends GripCoreModule {
+  @SuppressFBWarnings(value = "ST_WRITE_TO_STATIC_FROM_INSTANCE_METHOD",
+      justification = "Member is volatile")
   private static volatile boolean instanceAlive = false;
 
   private final ConcurrentLinkedQueue<ThreadThrowablePair> threadExceptions = new

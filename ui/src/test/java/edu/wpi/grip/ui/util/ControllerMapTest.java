@@ -110,7 +110,7 @@ public class ControllerMapTest extends ApplicationTest {
     });
   }
 
-  private class MockPane extends Pane {
+  private static class MockPane extends Pane {
 
     private final ControllerMap controllerMap;
 
@@ -121,7 +121,7 @@ public class ControllerMapTest extends ApplicationTest {
 
   }
 
-  private class MockController implements Controller {
+  private static class MockController implements Controller {
 
     private final Pane pane = new Pane();
 

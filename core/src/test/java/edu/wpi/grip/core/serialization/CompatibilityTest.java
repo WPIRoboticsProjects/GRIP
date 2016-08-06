@@ -16,10 +16,14 @@ import org.junit.Test;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.io.Reader;
+import java.io.Writer;
 import java.net.URI;
+import java.nio.charset.StandardCharsets;
 
 import static junit.framework.TestCase.assertEquals;
 
@@ -60,22 +64,22 @@ public class CompatibilityTest {
     //Open the project save file and read it into a string so that we can alter it
     File file = new File(fileName);
 
-    Reader temp = new FileReader(file);
+    Reader temp = new InputStreamReader(new FileInputStream(file), StandardCharsets.UTF_8);
     BufferedReader reader = new BufferedReader(temp);
     String line = "";
-    String oldText = "";
+    StringBuffer oldText = new StringBuffer();
     while ((line = reader.readLine()) != null) {
-      oldText += line + "\r\n";
+      oldText.append(line).append("\r\n");
     }
     reader.close();
-    String newText = oldText.replaceAll("REPLACEME", photoFileName); //This gives the correct
-    // location of the test photo needed to the project file
+    String newText = oldText.toString().replaceAll("REPLACEME", photoFileName); //This gives the
+    // correct location of the test photo needed to the project file
 
     //Write the altered project file text
-    FileWriter writer2 = new FileWriter(file);
-    writer2.write(newText);
+    Writer writer = new OutputStreamWriter(new FileOutputStream(file), StandardCharsets.UTF_8);
+    writer.write(newText);
 
-    writer2.close();
+    writer.close();
 
     //Open the test file as a project
     project.open(file);
