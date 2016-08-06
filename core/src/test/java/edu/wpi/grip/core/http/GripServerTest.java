@@ -19,6 +19,7 @@ import org.junit.Test;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.nio.charset.Charset;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -71,7 +72,7 @@ public class GripServerTest {
       didRun[0] = true;
     });
     instance.addHandler(h);
-    HttpResponse response = doPost(path, path.getBytes());
+    HttpResponse response = doPost(path, path.getBytes(Charset.defaultCharset()));
     EntityUtils.consume(response.getEntity());
     assertTrue("Handler should have run", didRun[0]);
     didRun[0] = false;
