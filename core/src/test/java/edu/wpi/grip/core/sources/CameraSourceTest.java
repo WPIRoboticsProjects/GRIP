@@ -17,6 +17,8 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.util.Modules;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 import net.jodah.concurrentunit.Waiter;
 
 import org.bytedeco.javacpp.indexer.Indexer;
@@ -68,6 +70,8 @@ public class CameraSourceTest {
 
     final EventBus eventBus = new EventBus();
     class UnhandledExceptionWitness {
+      @SuppressFBWarnings(value = "UMAC_UNCALLABLE_METHOD_OF_ANONYMOUS_CLASS",
+          justification = "This method is called by Guava's EventBus")
       @Subscribe
       public void onUnexpectedThrowableEvent(UnexpectedThrowableEvent event) {
         event.handleSafely((throwable, message, isFatal) -> {
@@ -257,7 +261,7 @@ public class CameraSourceTest {
     }
   }
 
-  class MockFrameGrabber extends FrameGrabber {
+  static class MockFrameGrabber extends FrameGrabber {
     private final Frame frame;
     private final Indexer frameIdx;
     private boolean shouldThrowAtStart = false;
@@ -313,7 +317,7 @@ public class CameraSourceTest {
     }
   }
 
-  class MockFrameGrabberFactory implements CameraSource.FrameGrabberFactory {
+  static class MockFrameGrabberFactory implements CameraSource.FrameGrabberFactory {
     private final MockFrameGrabber frameGrabber = new MockFrameGrabber();
 
     @Override

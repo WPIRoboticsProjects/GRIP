@@ -17,6 +17,8 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.util.Modules;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 import org.junit.Test;
 import org.testfx.framework.junit.ApplicationTest;
 import org.testfx.util.WaitForAsyncUtils;
@@ -24,7 +26,6 @@ import org.testfx.util.WaitForAsyncUtils;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
-
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
@@ -66,6 +67,8 @@ public class PaletteTest extends ApplicationTest {
     // Record when a a StepAddedEvent happens
     Step[] step = new Step[]{null};
     eventBus.register(new Object() {
+      @SuppressFBWarnings(value = "UMAC_UNCALLABLE_METHOD_OF_ANONYMOUS_CLASS",
+          justification = "This method is called by Guava's EventBus")
       @Subscribe
       public void onStepAdded(StepAddedEvent event) {
         step[0] = event.getStep();

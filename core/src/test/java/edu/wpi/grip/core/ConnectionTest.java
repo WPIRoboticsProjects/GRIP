@@ -69,7 +69,7 @@ public class ConnectionTest {
     );
   }
 
-  private class MockPipeline extends Pipeline {
+  private static class MockPipeline extends Pipeline {
   }
 
 

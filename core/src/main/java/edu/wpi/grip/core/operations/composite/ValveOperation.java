@@ -16,7 +16,7 @@ import java.util.Optional;
 
 public class ValveOperation implements Operation {
 
-  public static OperationDescription DESCRIPTION =
+  public static final OperationDescription DESCRIPTION =
       OperationDescription.builder()
           .name("Valve")
           .summary("Toggle an output socket on or off using a boolean")

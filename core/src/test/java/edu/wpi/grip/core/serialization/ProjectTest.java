@@ -157,7 +157,6 @@ public class ProjectTest {
     final Step step2 = stepFactory.create(pythonAdditionOperationFromURL);
     final InputSocket<Number> a2 = (InputSocket<Number>) step2.getInputSockets().get(0);
     final InputSocket<Number> b2 = (InputSocket<Number>) step2.getInputSockets().get(1);
-    final OutputSocket<Number> sum2 = (OutputSocket<Number>) step2.getOutputSockets().get(0);
 
     a1.setValue(12);
     b1.setValue(34);

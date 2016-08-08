@@ -9,6 +9,7 @@ import org.junit.Test;
 import org.testfx.framework.junit.ApplicationTest;
 
 import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
 
 import javafx.scene.Scene;
@@ -38,7 +39,8 @@ public class ImageConverterTest extends ApplicationTest {
   public void testConvertImage() throws Exception {
     Mat mat = new Mat();
     ImageLoadingUtility.loadImage(
-        URLDecoder.decode(Paths.get(gompeiImage.file.toURI()).toString()), mat);
+        URLDecoder.decode(Paths.get(gompeiImage.file.toURI()).toString(),
+            StandardCharsets.UTF_8.name()), mat);
     interact(() -> {
       Image javaFXImage = converter.convert(mat);
       assertSameImage(gompeiImage, javaFXImage);
@@ -56,9 +58,11 @@ public class ImageConverterTest extends ApplicationTest {
     Mat gompeiMat = new Mat();
     Mat imageMat = new Mat();
     ImageLoadingUtility.loadImage(
-        URLDecoder.decode(Paths.get(gompeiImage.file.toURI()).toString()), gompeiMat);
+        URLDecoder.decode(Paths.get(gompeiImage.file.toURI()).toString(),
+            StandardCharsets.UTF_8.name()), gompeiMat);
     ImageLoadingUtility.loadImage(
-        URLDecoder.decode(Paths.get(imageFile.file.toURI()).toString()), imageMat);
+        URLDecoder.decode(Paths.get(imageFile.file.toURI()).toString(),
+            StandardCharsets.UTF_8.name()), imageMat);
     interact(() -> {
       converter.convert(gompeiMat);
       Image javaFXImage = converter.convert(imageMat);
@@ -70,7 +74,8 @@ public class ImageConverterTest extends ApplicationTest {
   public void testConvertSingleChanelImage() throws Exception {
     final Mat gompeiMat = new Mat();
     ImageLoadingUtility.loadImage(
-        URLDecoder.decode(Paths.get(gompeiImage.file.toURI()).toString()), gompeiMat);
+        URLDecoder.decode(Paths.get(gompeiImage.file.toURI()).toString(),
+            StandardCharsets.UTF_8.name()), gompeiMat);
     final Mat desaturatedMat = new Mat();
     cvtColor(gompeiMat, desaturatedMat, COLOR_BGR2GRAY);
 
