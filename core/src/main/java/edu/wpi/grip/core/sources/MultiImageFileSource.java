@@ -72,8 +72,7 @@ public final class MultiImageFileSource extends Source implements PreviousNext {
             return URLDecoder.decode(Paths.get(file.toURI()).toString(),
                 StandardCharsets.UTF_8.name());
           } catch (UnsupportedEncodingException e) {
-            Throwables.propagate(e);
-            return "";
+            throw Throwables.propagate(e);
           }
         }).collect(Collectors.toList()).toArray(new String[files.size()]), index);
   }
