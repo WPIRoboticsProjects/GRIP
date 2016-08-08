@@ -8,6 +8,7 @@ import edu.wpi.grip.core.settings.SettingsProvider;
 import edu.wpi.grip.ui.components.LogTextArea;
 import edu.wpi.grip.ui.util.StringInMemoryFile;
 
+import com.google.common.base.Throwables;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import com.google.common.hash.Hashing;
@@ -22,11 +23,12 @@ import net.schmizz.sshj.xfer.FileSystemFile;
 import net.schmizz.sshj.xfer.LoggingTransferListener;
 import net.schmizz.sshj.xfer.scp.SCPFileTransfer;
 
-import java.io.DataInputStream;
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.InterruptedIOException;
 import java.io.StringWriter;
+import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.net.UnknownHostException;
@@ -34,7 +36,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.BooleanProperty;
@@ -44,7 +45,6 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleButton;
-
 import javax.inject.Inject;
 
 /**
@@ -57,7 +57,7 @@ public class DeployController {
   private static final String GRIP_WRAPPER = "grip";
   private static final URL LOCAL_GRIP_URL = Project.class.getProtectionDomain().getCodeSource()
       .getLocation();
-  private static final String LOCAL_GRIP_PATH = URLDecoder.decode(LOCAL_GRIP_URL.getPath());
+  private static final String LOCAL_GRIP_PATH;
   private static final Logger logger = Logger.getLogger(DeployController.class.getName());
 
   @FXML
@@ -95,6 +95,16 @@ public class DeployController {
   private SettingsProvider settingsProvider;
 
   private Optional<Thread> deployThread = Optional.empty();
+
+  static {
+    String path = "";
+    try {
+      path = URLDecoder.decode(LOCAL_GRIP_URL.getPath(), StandardCharsets.UTF_8.name());
+    } catch (UnsupportedEncodingException e) {
+      Throwables.propagate(e);
+    }
+    LOCAL_GRIP_PATH = path;
+  }
 
   @FXML
   protected void initialize() {
@@ -211,8 +221,9 @@ public class DeployController {
         // session to close it.
         final Session.Command md5Cmd = session.exec("md5sum " + pathStr + GRIP_JAR);
         final String remoteMd5Sum;
-        try (DataInputStream stream = new DataInputStream(md5Cmd.getInputStream())) {
-          remoteMd5Sum = stream.readLine();
+        try (BufferedReader reader = new BufferedReader(
+            new InputStreamReader(md5Cmd.getInputStream()))) {
+          remoteMd5Sum = reader.readLine();
         }
         String localMd5Sum = Resources.asByteSource(LOCAL_GRIP_URL).hash(Hashing.md5()).toString();
 
