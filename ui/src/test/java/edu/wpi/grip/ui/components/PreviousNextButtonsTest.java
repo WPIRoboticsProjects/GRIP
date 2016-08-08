@@ -61,7 +61,7 @@ public class PreviousNextButtonsTest extends ApplicationTest {
         .isSelected());
   }
 
-  class MockPreviousNext implements PreviousNext {
+  static class MockPreviousNext implements PreviousNext {
 
     private int index;
 

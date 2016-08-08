@@ -88,7 +88,7 @@ public class AddSourceButtonTest {
       verifyThat("." + AddSourceButton.SOURCE_DIALOG_STYLE_CLASS, NodeMatchers.isNull());
     }
 
-    class MockCameraSourceFactory implements CameraSource.Factory {
+    static class MockCameraSourceFactory implements CameraSource.Factory {
       private final EventBus eventBus;
       private Optional<CameraSource> lastSourceCreated = Optional.empty();
 
@@ -176,7 +176,7 @@ public class AddSourceButtonTest {
           .isRunning());
     }
 
-    class MockCameraSourceFactory implements CameraSource.Factory {
+    static class MockCameraSourceFactory implements CameraSource.Factory {
       private final EventBus eventBus;
       private Optional<CameraSource> lastSourceCreated = Optional.empty();
 

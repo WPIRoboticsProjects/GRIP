@@ -4,6 +4,8 @@ import com.google.common.util.concurrent.AbstractExecutionThreadService;
 import com.google.common.util.concurrent.MoreExecutors;
 import com.google.common.util.concurrent.Service;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
@@ -41,6 +43,8 @@ public class AutoRestartingServiceTest {
   private Throwable thrownByExecutionThread;
   private Executor exceptionCatchingExecutor;
 
+  @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD",
+      justification = "A JUnit rule -- used by JUnit")
   @Rule
   public Timeout timeout = new Timeout(10, TimeUnit.SECONDS);
 
@@ -214,7 +218,7 @@ public class AutoRestartingServiceTest {
   /**
    * Records all instances of the object returned by {@link Supplier#get()}
    */
-  private class RecordingSupplier<S extends Service> implements Supplier<S> {
+  private static class RecordingSupplier<S extends Service> implements Supplier<S> {
     private final LinkedList<S> services = new LinkedList<>();
     private final Supplier<S> serviceSupplier;
 

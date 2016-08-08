@@ -6,6 +6,8 @@ import edu.wpi.grip.core.events.SocketPreviewChangedEvent;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 import org.junit.Before;
 import org.junit.Test;
 
@@ -52,6 +54,8 @@ public class SocketTest {
     final boolean[] handled = new boolean[]{false};
     final Double[] value = new Double[]{0.0};
     Object eventHandler = new Object() {
+      @SuppressFBWarnings(value = "UMAC_UNCALLABLE_METHOD_OF_ANONYMOUS_CLASS",
+          justification = "This method is called by Guava's EventBus")
       @Subscribe
       public void onSocketChanged(SocketChangedEvent e) {
         handled[0] = true;
@@ -74,6 +78,8 @@ public class SocketTest {
 
     final boolean[] handled = new boolean[]{false};
     Object eventHandler = new Object() {
+      @SuppressFBWarnings(value = "UMAC_UNCALLABLE_METHOD_OF_ANONYMOUS_CLASS",
+          justification = "This method is called by Guava's EventBus")
       @Subscribe
       public void onSocketPreviewed(SocketPreviewChangedEvent e) {
         handled[0] = true;

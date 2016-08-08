@@ -68,7 +68,7 @@ public class OutputSocketControllerTest extends ApplicationTest {
         initiallyPreviewedOutputSocketController.previewButton().isSelected());
   }
 
-  private class InitiallyPreviewedOutputSocket extends MockOutputSocket {
+  private static class InitiallyPreviewedOutputSocket extends MockOutputSocket {
     public InitiallyPreviewedOutputSocket(String socketName) {
       super(socketName);
       this.setPreviewed(true);

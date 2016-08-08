@@ -2,6 +2,8 @@ package edu.wpi.grip.ui.util;
 
 import com.google.common.eventbus.EventBus;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 import net.jodah.concurrentunit.Waiter;
 
 import org.junit.Before;
@@ -20,6 +22,8 @@ import static org.junit.Assert.assertTrue;
 
 public class GripPlatformTest extends ApplicationTest {
 
+  @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD",
+      justification = "A JUnit rule -- used by JUnit")
   @Rule
   public Timeout globalTimeout = Timeout.seconds(10); // 10 seconds max per method tested
   private GripPlatform platform;
