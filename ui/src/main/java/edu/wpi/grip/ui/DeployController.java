@@ -222,7 +222,7 @@ public class DeployController {
         final Session.Command md5Cmd = session.exec("md5sum " + pathStr + GRIP_JAR);
         final String remoteMd5Sum;
         try (BufferedReader reader = new BufferedReader(
-            new InputStreamReader(md5Cmd.getInputStream()))) {
+            new InputStreamReader(md5Cmd.getInputStream(), StandardCharsets.UTF_8))) {
           remoteMd5Sum = reader.readLine();
         }
         String localMd5Sum = Resources.asByteSource(LOCAL_GRIP_URL).hash(Hashing.md5()).toString();
