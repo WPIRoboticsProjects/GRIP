@@ -19,8 +19,6 @@ public class ConnectionTest {
   private static final Number testValue = Double.valueOf(12345.6789);
 
   private EventBus eventBus;
-  private SocketHint<Number> fooHint;
-  private SocketHint<Number> barHint;
 
   private OutputSocket<Number> foo;
   private InputSocket<Number> bar;
@@ -29,8 +27,8 @@ public class ConnectionTest {
   public void setUp() {
     eventBus = new EventBus();
 
-    fooHint = SocketHints.createNumberSocketHint("foo", 0.0);
-    barHint = SocketHints.createNumberSocketHint("bar", 0.0);
+    SocketHint<Number> fooHint = SocketHints.createNumberSocketHint("foo", 0.0);
+    SocketHint<Number> barHint = SocketHints.createNumberSocketHint("bar", 0.0);
 
     InputSocket.Factory isf = new MockInputSocketFactory(eventBus);
     OutputSocket.Factory osf = new MockOutputSocketFactory(eventBus);

@@ -83,6 +83,7 @@ public class PipelineUITest extends ApplicationTest {
     addAdditionOperation();
   }
 
+  @SuppressWarnings("PMD.JUnitTestsShouldIncludeAssert")
   @Test
   public void testConnectingTwoOperations() {
     // Given

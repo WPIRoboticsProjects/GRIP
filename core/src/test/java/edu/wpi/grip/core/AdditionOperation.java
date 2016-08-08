@@ -15,13 +15,13 @@ public class AdditionOperation implements Operation {
           .name("Add")
           .summary("Compute the sum of two doubles")
           .build();
-  private SocketHint<Number> aHint = SocketHints.createNumberSocketHint("a", 0.0);
-  private SocketHint<Number> bHint = SocketHints.createNumberSocketHint("b", 0.0);
-  private SocketHint<Number> cHint = SocketHints.Outputs.createNumberSocketHint("c", 0.0);
+  private final SocketHint<Number> aHint = SocketHints.createNumberSocketHint("a", 0.0);
+  private final SocketHint<Number> bHint = SocketHints.createNumberSocketHint("b", 0.0);
+  private final SocketHint<Number> cHint = SocketHints.Outputs.createNumberSocketHint("c", 0.0);
 
-  private InputSocket<Number> a;
-  private InputSocket<Number> b;
-  private OutputSocket<Number> c;
+  private final InputSocket<Number> a;
+  private final InputSocket<Number> b;
+  private final OutputSocket<Number> c;
 
   public AdditionOperation(InputSocket.Factory isf, OutputSocket.Factory osf) {
     a = isf.create(aHint);

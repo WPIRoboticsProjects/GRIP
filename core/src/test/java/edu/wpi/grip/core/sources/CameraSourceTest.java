@@ -34,6 +34,8 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.concurrent.TimeoutException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import static com.google.common.truth.Truth.assertThat;
 import static org.junit.Assert.assertEquals;
@@ -51,6 +53,8 @@ public class CameraSourceTest {
   private MockFrameGrabberFactory mockFrameGrabberFactory;
   private OutputSocket.Factory osf;
 
+  private static final Logger logger = Logger.getLogger(CameraSourceTest.class.getName());
+
   @Before
   public void setUp() throws Exception {
     this.testModule = new GripCoreTestModule();
@@ -64,7 +68,7 @@ public class CameraSourceTest {
       @Subscribe
       public void onUnexpectedThrowableEvent(UnexpectedThrowableEvent event) {
         event.handleSafely((throwable, message, isFatal) -> {
-          throwable.printStackTrace();
+          logger.log(Level.SEVERE, throwable.getMessage(), throwable);
         });
       }
     }
@@ -246,7 +250,7 @@ public class CameraSourceTest {
     try {
       source.stopAndAwait();
     } catch (IllegalStateException e) {
-      // This could happen if the thread is interrupted.
+      logger.log(Level.INFO, e.getMessage(), e);
     }
   }
 
@@ -284,7 +288,7 @@ public class CameraSourceTest {
 
     @Override
     public void trigger() throws Exception {
-
+      /* no-op */
     }
 
     @Override
@@ -307,7 +311,7 @@ public class CameraSourceTest {
   }
 
   class MockFrameGrabberFactory implements CameraSource.FrameGrabberFactory {
-    private MockFrameGrabber frameGrabber = new MockFrameGrabber();
+    private final MockFrameGrabber frameGrabber = new MockFrameGrabber();
 
     @Override
     public FrameGrabber create(int deviceNumber) {
