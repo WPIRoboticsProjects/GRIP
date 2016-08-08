@@ -20,14 +20,12 @@ import static org.junit.Assert.assertTrue;
 public class OutputSocketControllerTest extends ApplicationTest {
 
   private MockOutputSocket outputSocket;
-  private InitiallyPreviewedOutputSocket initiallyPreviewedOutputSocket;
   private OutputSocketController defaultOutputSocketController;
   private OutputSocketController initiallyPreviewedOutputSocketController;
 
   @Override
   public void start(Stage stage) {
     outputSocket = new MockOutputSocket("Mock Output");
-    initiallyPreviewedOutputSocket = new InitiallyPreviewedOutputSocket("Initially previewed");
 
     final SocketHandleView.Factory socketHandleFactory
         = socket -> new SocketHandleView(new EventBus(), null, null, new SocketHandleView
@@ -35,7 +33,8 @@ public class OutputSocketControllerTest extends ApplicationTest {
     defaultOutputSocketController =
         new OutputSocketController(socketHandleFactory, outputSocket);
     initiallyPreviewedOutputSocketController =
-        new OutputSocketController(socketHandleFactory, initiallyPreviewedOutputSocket);
+        new OutputSocketController(socketHandleFactory,
+            new InitiallyPreviewedOutputSocket("Initially previewed"));
 
     final GridPane gridPane = new GridPane();
     gridPane.add(TestAnnotationFXMLLoader.load(defaultOutputSocketController), 0, 0);

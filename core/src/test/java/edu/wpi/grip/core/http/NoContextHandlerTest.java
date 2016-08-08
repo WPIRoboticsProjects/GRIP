@@ -29,8 +29,8 @@ import static org.junit.Assert.assertEquals;
 public class NoContextHandlerTest {
 
   private final ContextStore contextStore = new ContextStore();
-  private HandlerCollection handlers = new HandlerCollection();
-  private NoContextHandler handler = new NoContextHandler(contextStore);
+  private final HandlerCollection handlers = new HandlerCollection();
+  private final NoContextHandler handler = new NoContextHandler(contextStore);
   private Server server;
   private DefaultHttpClient client;
 
