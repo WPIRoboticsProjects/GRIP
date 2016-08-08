@@ -94,6 +94,7 @@ public class InputSocketControllerFactoryTest extends ApplicationTest {
   }
 
   @Before
+  @SuppressWarnings("PMD.JUnit4TestShouldUseAfterAnnotation")
   public void tearDown() {
     testModule.tearDown();
   }

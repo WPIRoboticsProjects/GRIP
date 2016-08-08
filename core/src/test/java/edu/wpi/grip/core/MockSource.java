@@ -37,6 +37,6 @@ public class MockSource extends Source {
 
   @Override
   public void initialize() throws IOException {
-
+    // This source has no init because it is just a mock.
   }
 }

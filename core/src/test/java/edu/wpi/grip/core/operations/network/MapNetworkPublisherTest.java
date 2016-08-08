@@ -107,14 +107,16 @@ public class MapNetworkPublisherTest {
       super(keys);
     }
 
+    @SuppressWarnings("PMD.EmptyMethodInAbstractClassShouldBeAbstract")
     @Override
     protected void publishNameChanged(Optional<String> oldName, String newName) {
-            /* no-op */
+      /* no-op */
     }
 
+    @SuppressWarnings("PMD.EmptyMethodInAbstractClassShouldBeAbstract")
     @Override
     public void close() {
-            /* no-op */
+      /* no-op */
     }
   }
 

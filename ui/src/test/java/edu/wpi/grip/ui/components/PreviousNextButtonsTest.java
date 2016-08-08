@@ -31,6 +31,7 @@ public class PreviousNextButtonsTest extends ApplicationTest {
     WaitForAsyncUtils.waitForFxEvents();
   }
 
+  @SuppressWarnings("PMD.JUnitTestsShouldIncludeAssert")
   @Test
   public void testInitialState() {
     verifyThat(previousNextButtons, NodeMatchers.hasChild("." + PreviousNextButtons

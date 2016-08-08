@@ -18,9 +18,9 @@ public class SubtractionOperation implements Operation {
           .name("Subtract")
           .summary("Computer the difference between two doubles")
           .build();
-  private SocketHint<Number> aHint = SocketHints.createNumberSocketHint("a", 0.0);
-  private SocketHint<Number> bHint = SocketHints.createNumberSocketHint("b", 0.0);
-  private SocketHint<Number> cHint = SocketHints.Outputs.createNumberSocketHint("c", 0.0);
+  private final SocketHint<Number> aHint = SocketHints.createNumberSocketHint("a", 0.0);
+  private final SocketHint<Number> bHint = SocketHints.createNumberSocketHint("b", 0.0);
+  private final SocketHint<Number> cHint = SocketHints.Outputs.createNumberSocketHint("c", 0.0);
 
   private InputSocket<Number> a;
   private InputSocket<Number> b;

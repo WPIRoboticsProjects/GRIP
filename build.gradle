@@ -7,7 +7,7 @@ buildscript {
     }
 
     dependencies {
-        classpath group: 'de.dynamicfiles.projects.gradle.plugins', name: 'javafx-gradle-plugin', version: '8.5.1'
+        classpath group: 'de.dynamicfiles.projects.gradle.plugins', name: 'javafx-gradle-plugin', version: '8.5.2'
         classpath 'com.netflix.nebula:gradle-aggregate-javadocs-plugin:2.2.+'
         classpath 'net.ltgt.gradle:gradle-errorprone-plugin:0.0.8'
     }
@@ -85,7 +85,7 @@ def getVersionSimple = { ->
     }
 }
 
-allprojects {
+configure(allprojects - project(':ui:linuxLauncher')) {
     apply plugin: 'java'
     apply plugin: 'application'
     apply plugin: 'jacoco'
@@ -301,6 +301,30 @@ project(":core") {
     }
 }
 
+project (":ui:linuxLauncher") {
+    apply plugin: 'cpp'
+
+    model {
+        binaries {
+            all {
+                cppCompiler.args '-pthread', '-ldl'
+                linker.args '-pthread', '-ldl'
+            }
+        }
+        components {
+            linuxLauncher(NativeExecutableSpec) {
+                sources {
+                    cpp {
+                        source {
+                            srcDir "src/cpp"
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
 project (":ui:preloader") {
     apply plugin: 'java'
     apply plugin: 'idea'
@@ -339,7 +363,10 @@ project(":ui") {
     }
 
     evaluationDependsOn(':core')
-    evaluationDependsOnChildren()
+    evaluationDependsOn(':ui:preloader')
+    if (System.getProperty("os.name").toLowerCase().contains("linux")) {
+        jfxNative.dependsOn tasks.getByPath(':ui:linuxLauncher:linuxLauncherExecutable')
+    }
     compileTestJava.dependsOn tasks.getByPath(':core:testClasses')
 
     idea.module {
@@ -375,10 +402,9 @@ project(":ui") {
         // See: https://plumbr.eu/blog/java/on-a-quest-for-missing-stacktraces
         jvmArgs = ["-XX:-OmitStackTraceInFastThrow"]
 
-        // This was a workaround introduced by the plugin dev.  For some reason the build fails
-        // when the workaround is enabled in Java 1.8.0_101.  If you are building with a version
-        // less than _101 you may need to set this to false.
-        skipNativeLauncherWorkaround124 = true
+        bundleArguments = [
+                "linux.launcher.url": file('linuxLauncher/build/exe/linuxLauncher/linuxLauncher').toURI().toURL()
+        ]
     }
     mainClassName = jfx.mainClass
 }
@@ -389,20 +415,22 @@ project(":ui") {
  */
 task jacocoRootReport(type: JacocoReport, group: 'Coverage reports') {
     description = 'Generates an aggregate report from all subprojects'
-    dependsOn(subprojects.test)
+    configure(subprojects - project(':ui:linuxLauncher')) {
+        dependsOn(test)
 
-    additionalSourceDirs = files(subprojects.sourceSets.main.allSource.srcDirs)
-    sourceDirectories = files(subprojects.sourceSets.main.allSource.srcDirs)
-    classDirectories = files(subprojects.sourceSets.main.output)
-    executionData = files(subprojects.jacocoTestReport.executionData)
+        additionalSourceDirs = files(sourceSets.main.allSource.srcDirs)
+        sourceDirectories = files(sourceSets.main.allSource.srcDirs)
+        classDirectories = files(sourceSets.main.output)
+        executionData = files(jacocoTestReport.executionData)
 
-    reports {
-        html.enabled = true
-        xml.enabled = true
-    }
+        reports {
+            html.enabled = true
+            xml.enabled = true
+        }
 
-    doFirst {
-        executionData = files(executionData.findAll { it.exists() })
+        doFirst {
+            executionData = files(executionData.findAll { it.exists() })
+        }
     }
 }
 

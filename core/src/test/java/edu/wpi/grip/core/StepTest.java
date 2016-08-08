@@ -21,7 +21,7 @@ import static org.junit.Assert.assertEquals;
 public class StepTest {
   private EventBus eventBus;
   private OperationMetaData additionMeta;
-  private GripCoreTestModule testModule = new GripCoreTestModule();
+  private final GripCoreTestModule testModule = new GripCoreTestModule();
 
   @Before
   public void setUp() {

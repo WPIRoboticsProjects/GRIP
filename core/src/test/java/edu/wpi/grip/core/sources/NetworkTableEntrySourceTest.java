@@ -18,9 +18,9 @@ import static org.junit.Assert.assertTrue;
 
 public class NetworkTableEntrySourceTest {
 
-  private EventBus eventBus;
-  private MockOutputSocketFactory osf;
-  private TestingNTManager testingNtManager;
+  private final EventBus eventBus;
+  private final MockOutputSocketFactory osf;
+  private final TestingNTManager testingNtManager;
 
   private NetworkTableEntrySource source;
 

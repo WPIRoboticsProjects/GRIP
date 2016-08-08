@@ -27,6 +27,6 @@ public class MockOperation implements Operation {
 
   @Override
   public void perform() {
-
+    // This operation does nothing because it is a mock.
   }
 }
