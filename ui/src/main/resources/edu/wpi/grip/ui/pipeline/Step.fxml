@@ -79,6 +79,19 @@
         </graphic>
     </Label>
     <Separator orientation="HORIZONTAL" />
+    <Button fx:id="expand" onMouseClicked="#expand" styleClass="expand"
+            maxWidth="Infinity" prefHeight="0" HBox.hgrow="ALWAYS">
+        <graphic>
+            <ImageView fx:id="expandIcon">
+                <fitHeight>
+                    <DPIUtility fx:constant="SMALL_ICON_SIZE" />
+                </fitHeight>
+            </ImageView>
+        </graphic>
+        <tooltip>
+            <Tooltip text="Minimizes/Maximizes the inputs in the step"/>
+        </tooltip>
+    </Button>
     <VBox fx:id="inputs" styleClass="sockets" />
     <Separator orientation="HORIZONTAL" />
     <VBox fx:id="outputs" styleClass="sockets" />
