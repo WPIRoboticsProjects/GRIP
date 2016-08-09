@@ -25,7 +25,7 @@ import java.util.Properties;
 /**
  * Provides a way to get a {@link Types Type} from a NetworkTable that GRIP is connected to.
  */
-@XStreamAlias("grip:NetworkTableValue")
+@XStreamAlias("grip:NetworkTableEntry")
 public class NetworkTableEntrySource extends Source {
 
   private static final String PATH_PROPERTY = "networktable_path";
