@@ -9,11 +9,14 @@ import edu.wpi.grip.ui.Controller;
 import edu.wpi.grip.ui.annotations.ParametrizedController;
 import edu.wpi.grip.ui.components.ExceptionWitnessResponderButton;
 import edu.wpi.grip.ui.dragging.StepDragService;
+import edu.wpi.grip.ui.events.SetStepsExpandedEvent;
 import edu.wpi.grip.ui.pipeline.input.InputSocketController;
 import edu.wpi.grip.ui.pipeline.input.InputSocketControllerFactory;
 import edu.wpi.grip.ui.util.ControllerMap;
 import edu.wpi.grip.ui.util.StyleClassNameUtility;
 
+import com.google.common.eventbus.EventBus;
+import com.google.common.eventbus.Subscribe;
 import com.google.inject.assistedinject.Assisted;
 
 import java.io.InputStream;
@@ -22,13 +25,16 @@ import java.util.function.Predicate;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
+import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Labeled;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.util.Duration;
@@ -46,8 +52,9 @@ public class StepController implements Controller {
   private final OutputSocketController.Factory outputSocketControllerFactory;
   private final ExceptionWitnessResponderButton.Factory exceptionWitnessResponderButtonFactory;
   private final StepDragService stepDragService;
+  private final EventBus eventBus;
   private final Step step;
-  private boolean expanded = true;
+  private final BooleanProperty expanded = new SimpleBooleanProperty(true);
   @FXML
   private VBox root;
   @FXML
@@ -78,12 +85,14 @@ public class StepController implements Controller {
                  OutputSocketController.Factory outputSocketControllerFactory,
                  ExceptionWitnessResponderButton.Factory exceptionWitnessResponderButtonFactory,
                  StepDragService stepDragService,
+                 EventBus eventBus,
                  @Assisted Step step) {
     this.pipeline = pipeline;
     this.inputSocketControllerFactory = inputSocketControllerFactory;
     this.outputSocketControllerFactory = outputSocketControllerFactory;
     this.exceptionWitnessResponderButtonFactory = exceptionWitnessResponderButtonFactory;
     this.stepDragService = stepDragService;
+    this.eventBus = eventBus;
     this.step = step;
   }
 
@@ -104,6 +113,22 @@ public class StepController implements Controller {
       expand.setManaged(false);
     } else {
       expandIcon.setImage(UP_ARROW);
+      expanded.addListener(((observable, oldValue, newValue) -> {
+        if (newValue) {
+          inputSocketMapManager.keySet().stream()
+              .filter(interactiveInputSocketFilter)
+              .forEach(this::fadeIn);
+          reopen();
+          expandIcon.setImage(UP_ARROW);
+        } else {
+          inputSocketMapManager.keySet().stream()
+              .filter(interactiveInputSocketFilter)
+              .filter(i -> i.getSocket().getConnections().isEmpty())
+              .forEach(this::fadeOut);
+          closeUp();
+          expandIcon.setImage(DOWN_ARROW);
+        }
+      }));
     }
 
     // Add a SocketControlView for each input socket and output socket
@@ -166,25 +191,23 @@ public class StepController implements Controller {
     pipeline.moveStep(step, +1);
   }
 
+  /**
+   * Clicking the arrow at the top of the step will cause the step to either expand or retract.
+   * Double clicking the arrow at the top of the step will cause all steps to either expand or
+   * retract.
+   */
   @FXML
-  private void expand() {
-    if (expanded) {
-      inputSocketMapManager.keySet().stream()
-          .filter(interactiveInputSocketFilter)
-          .filter(i -> i.getSocket().getConnections().isEmpty())
-          .forEach(this::fadeOut);
-      closeUp();
-      expandIcon.setImage(DOWN_ARROW);
-      expanded = false;
-    } else {
-      inputSocketMapManager.keySet().stream()
-          .filter(interactiveInputSocketFilter)
-          .forEach(this::fadeIn);
-      reopen();
-      expandIcon.setImage(UP_ARROW);
-      expanded = true;
+  private void toggleExpand(MouseEvent event) {
+    if (event.getClickCount() == 1) {
+      expanded.set(!expanded.get());
+    } else if (event.getClickCount() == 2) {
+      eventBus.post(new SetStepsExpandedEvent(expanded.get()));
     }
+  }
 
+  @Subscribe
+  public void setExpanded(SetStepsExpandedEvent event) {
+    expanded.set(event.isExpanded());
   }
 
   /**

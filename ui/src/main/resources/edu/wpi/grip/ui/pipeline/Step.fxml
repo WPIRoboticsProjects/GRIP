@@ -79,7 +79,7 @@
         </graphic>
     </Label>
     <Separator orientation="HORIZONTAL" />
-    <Button fx:id="expand" onMouseClicked="#expand" styleClass="expand"
+    <Button fx:id="expand" onMouseClicked="#toggleExpand" styleClass="expand"
             maxWidth="Infinity" prefHeight="0" HBox.hgrow="ALWAYS">
         <graphic>
             <ImageView fx:id="expandIcon">
