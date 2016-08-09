@@ -21,6 +21,7 @@ plugins {
     id 'jacoco'
     id 'com.google.osdetector' version '1.4.0'
     id 'com.github.johnrengelman.shadow' version '1.2.3'
+    id "com.dorongold.task-tree" version "1.2.2"
 }
 apply plugin: 'nebula-aggregate-javadocs'
 
@@ -116,14 +117,14 @@ configure(subprojects - project(':ui:linuxLauncher')) {
 
     pmd {
         consoleOutput = true
-        sourceSets = [sourceSets.main]
+        sourceSets = [sourceSets.main, sourceSets.test]
         reportsDir = file("$project.buildDir/reports/pmd")
         ruleSetFiles = files(new File(rootDir, "pmd-ruleset.xml"))
         ruleSets = []
     }
 
     findbugs {
-        sourceSets = [sourceSets.main]
+        sourceSets = [sourceSets.main, sourceSets.test]
         excludeFilter = new File(rootDir, "findBugsSuppressions.xml")
         effort = "max"
     }

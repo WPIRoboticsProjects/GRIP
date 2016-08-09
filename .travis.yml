@@ -30,7 +30,7 @@ install:
   - '[ "${TRAVIS_PULL_REQUEST}" = "false" ] && ./gradlew :ui:jfxNative --stacktrace || ./gradlew --stacktrace '
 
 script:
-  - ./gradlew checkstyleMain checkstyleTest pmdMain pmdTest findbugsMain findbugsTest jacocoTestReport jacocoRootReport test --stacktrace -Pheadless=true -PlogTests
+  - ./gradlew check jacocoTestReport jacocoRootReport --stacktrace -Pheadless=true -PlogTests
 
 after_success:
   - if [[ "$TRAVIS_OS_NAME" != "osx" ]]; then codecov         ; fi
