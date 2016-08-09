@@ -17,17 +17,12 @@ import edu.wpi.grip.ui.util.StyleClassNameUtility;
 import com.google.inject.assistedinject.Assisted;
 
 import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
-
+import java.util.function.Predicate;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
-import javafx.animation.TimelineBuilder;
 import javafx.beans.property.DoubleProperty;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
@@ -52,7 +47,6 @@ public class StepController implements Controller {
   private final ExceptionWitnessResponderButton.Factory exceptionWitnessResponderButtonFactory;
   private final StepDragService stepDragService;
   private final Step step;
-  private final List<InputSocketController> inputSockets;
   private boolean expanded = true;
   @FXML
   private VBox root;
@@ -75,6 +69,8 @@ public class StepController implements Controller {
 
   private static final Image UP_ARROW = new Image("/edu/wpi/grip/ui/icons/up.png");
   private static final Image DOWN_ARROW = new Image("/edu/wpi/grip/ui/icons/down.png");
+  private static final Predicate<InputSocketController> interactiveInputSocketFilter
+      = i -> !i.getSocket().getSocketHint().getView().equals(SocketHint.View.NONE);
 
   @Inject
   StepController(Pipeline pipeline,
@@ -89,7 +85,6 @@ public class StepController implements Controller {
     this.exceptionWitnessResponderButtonFactory = exceptionWitnessResponderButtonFactory;
     this.stepDragService = stepDragService;
     this.step = step;
-    inputSockets = new ArrayList<>();
   }
 
   @FXML
@@ -113,11 +108,7 @@ public class StepController implements Controller {
 
     // Add a SocketControlView for each input socket and output socket
     for (InputSocket<?> inputSocket : step.getInputSockets()) {
-      InputSocketController tempSocket = inputSocketControllerFactory.create(inputSocket);
-      inputSocketMapManager.add(tempSocket);
-      if (!inputSocket.getSocketHint().getView().equals(SocketHint.View.NONE)) {
-        inputSockets.add(tempSocket);
-      }
+      inputSocketMapManager.add(inputSocketControllerFactory.create(inputSocket));
     }
 
     for (OutputSocket<?> outputSocket : step.getOutputSockets()) {
@@ -178,20 +169,17 @@ public class StepController implements Controller {
   @FXML
   private void expand() {
     if (expanded) {
-      for (InputSocketController input : inputSockets) {
-        inputs.setMaxHeight(inputs.getHeight());
-        inputs.setPrefHeight(inputs.getHeight());
-        if (input.getSocket().getConnections().isEmpty()) {
-          fadeOut(input);
-        }
-      }
+      inputSocketMapManager.keySet().stream()
+          .filter(interactiveInputSocketFilter)
+          .filter(i -> i.getSocket().getConnections().isEmpty())
+          .forEach(this::fadeOut);
       closeUp();
       expandIcon.setImage(DOWN_ARROW);
       expanded = false;
     } else {
-      for (InputSocketController input : inputSockets) {
-        fadeIn(input);
-      }
+      inputSocketMapManager.keySet().stream()
+          .filter(interactiveInputSocketFilter)
+          .forEach(this::fadeIn);
       reopen();
       expandIcon.setImage(UP_ARROW);
       expanded = true;
@@ -209,12 +197,9 @@ public class StepController implements Controller {
     Timeline fadeOut = new Timeline(
         new KeyFrame(Duration.ZERO, new KeyValue(opacity, 1.0)),
         new KeyFrame(new Duration(100), new KeyValue(opacity, 0.0)));
-    fadeOut.setOnFinished(new EventHandler<ActionEvent>() {
-      @Override
-      public void handle(ActionEvent event) {
-          input.getRoot().setVisible(false);
-          input.getRoot().setManaged(false);
-      }
+    fadeOut.setOnFinished(event -> {
+      input.getRoot().setVisible(false);
+      input.getRoot().setManaged(false);
     });
     fadeOut.play();
   }
@@ -229,14 +214,8 @@ public class StepController implements Controller {
     DoubleProperty opacity = input.getRoot().opacityProperty();
     Timeline fadeIn = new Timeline(
         new KeyFrame(new Duration(100), new KeyValue(opacity, 1.0)));
-    fadeIn.setOnFinished(new EventHandler<ActionEvent>() {
-      @Override
-      public void handle(ActionEvent event) {
-        for (InputSocketController input : inputSockets) {
-          input.getRoot().setManaged(true);
-        }
-      }
-    });
+    fadeIn.setOnFinished(
+        event -> inputSocketMapManager.keySet().forEach(i -> input.getRoot().setManaged(true)));
     fadeIn.play();
   }
 
@@ -244,9 +223,9 @@ public class StepController implements Controller {
    * Makes an animation to make the input vbox slide closed over .25 seconds
    */
   private void closeUp() {
-    Timeline animation = TimelineBuilder.create().cycleCount(1).keyFrames(
+    Timeline animation = new Timeline(
         new KeyFrame(Duration.seconds(0.25),
-            new KeyValue(inputs.prefHeightProperty(), 0))).build();
+            new KeyValue(inputs.prefHeightProperty(), 0)));
     animation.play();
   }
 
@@ -254,9 +233,9 @@ public class StepController implements Controller {
    * Makes an animation to make the input vbox slide open over .1 seconds
    */
   private void reopen() {
-    Timeline animation = TimelineBuilder.create().cycleCount(1).keyFrames(
+    Timeline animation = new Timeline(
         new KeyFrame(Duration.seconds(0.1),
-            new KeyValue(inputs.prefHeightProperty(), inputs.getMaxHeight()))).build();
+            new KeyValue(inputs.prefHeightProperty(), inputs.getMaxHeight())));
     animation.play();
   }
 
