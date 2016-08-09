@@ -73,6 +73,9 @@ public class StepController implements Controller {
   private ControllerMap<InputSocketController, Node> inputSocketMapManager;
   private ControllerMap<OutputSocketController, Node> outputSocketMapManager;
 
+  private static final Image UP_ARROW = new Image("/edu/wpi/grip/ui/icons/up.png");
+  private static final Image DOWN_ARROW = new Image("/edu/wpi/grip/ui/icons/down.png");
+
   @Inject
   StepController(Pipeline pipeline,
                  InputSocketControllerFactory inputSocketControllerFactory,
@@ -105,7 +108,7 @@ public class StepController implements Controller {
             .equals(SocketHint.View.NONE))) {
       expand.setManaged(false);
     } else {
-      expandIcon.setImage(new Image("/edu/wpi/grip/ui/icons/up.png"));
+      expandIcon.setImage(UP_ARROW);
     }
 
     // Add a SocketControlView for each input socket and output socket
@@ -183,14 +186,14 @@ public class StepController implements Controller {
         }
       }
       closeUp();
-      expandIcon.setImage(new Image("/edu/wpi/grip/ui/icons/down.png"));
+      expandIcon.setImage(DOWN_ARROW);
       expanded = false;
     } else {
       for (InputSocketController input : inputSockets) {
         fadeIn(input);
       }
       reopen();
-      expandIcon.setImage(new Image("/edu/wpi/grip/ui/icons/up.png"));
+      expandIcon.setImage(UP_ARROW);
       expanded = true;
     }
 
