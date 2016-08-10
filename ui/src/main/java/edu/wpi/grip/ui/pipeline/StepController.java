@@ -34,6 +34,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Labeled;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -193,15 +194,15 @@ public class StepController implements Controller {
 
   /**
    * Clicking the arrow at the top of the step will cause the step to either expand or retract.
-   * Double clicking the arrow at the top of the step will cause all steps to either expand or
+   * Secondary clicking the arrow at the top of the step will cause all steps to either expand or
    * retract.
    */
   @FXML
   private void toggleExpand(MouseEvent event) {
-    if (event.getClickCount() == 1) {
+    if (event.getButton().equals(MouseButton.PRIMARY)) {
       expanded.set(!expanded.get());
-    } else if (event.getClickCount() == 2) {
-      eventBus.post(new SetStepsExpandedEvent(expanded.get()));
+    } else if (event.getButton().equals(MouseButton.SECONDARY)) {
+      eventBus.post(new SetStepsExpandedEvent(!expanded.get()));
     }
   }
 
