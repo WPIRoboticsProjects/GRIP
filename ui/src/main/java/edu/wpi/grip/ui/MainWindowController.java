@@ -122,7 +122,7 @@ public class MainWindowController {
         // If the user chose "Save", automatically show a save dialog and block until the user
         // has had a chance to save the project.
         try {
-          saveProject();
+          return saveProject();
         } catch (IOException e) {
           logger.log(Level.SEVERE, e.getMessage(), e.getCause());
         }
