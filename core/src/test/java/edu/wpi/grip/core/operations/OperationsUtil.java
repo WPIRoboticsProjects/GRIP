@@ -4,6 +4,8 @@ import edu.wpi.grip.core.OperationMetaData;
 
 import com.google.common.collect.ImmutableList;
 
+import java.util.Locale;
+
 import javax.inject.Inject;
 
 import static org.junit.Assert.fail;
@@ -17,14 +19,15 @@ public class OperationsUtil {
   }
 
   public OperationMetaData getMetaData(String opName) {
-    opName = opName.toLowerCase().replaceAll("[^a-zA-Z]", "");
+    Locale locOpName = new Locale(opName);
+    String newOpName = locOpName.toString().toLowerCase().replaceAll("[^a-zA-Z]", "");
     for (OperationMetaData data : operations()) {
       String dataName = data.getDescription().name().toLowerCase().replaceAll("[^a-zA-Z]", "");
-      if (dataName.equals(opName)) {
+      if (dataName.equals(newOpName)) {
         return data;
       }
     }
-    fail("Given operation name " + opName + " does not match any CV operation");
+    fail("Given operation name " + newOpName + " does not match any CV operation");
     return null; //Never going to happen since line above throws error
   }
 }

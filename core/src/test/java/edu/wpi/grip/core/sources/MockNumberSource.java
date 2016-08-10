@@ -16,9 +16,9 @@ import java.util.Properties;
 
 public class MockNumberSource extends Source {
   
-  private static int numberOf;
+  private static int numberOf = 0;
   private final int id;
-  private OutputSocket<Number> outputSocket;
+  private final OutputSocket<Number> outputSocket;
   private final SocketHint<Number> outputSocketHint = 
       SocketHints.Outputs.createNumberSocketHint("Num", Math.PI);
 
@@ -58,7 +58,7 @@ public class MockNumberSource extends Source {
 
   @Override
   public void initialize() throws IOException {
-    
+    //Initialize doesn't need to do anything for a number source.
   }
 
 }
