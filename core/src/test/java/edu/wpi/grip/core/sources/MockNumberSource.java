@@ -8,18 +8,22 @@ import edu.wpi.grip.core.util.ExceptionWitness.Factory;
 
 import com.google.common.collect.ImmutableList;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 import java.io.IOException;
 import java.util.List;
 import java.util.Properties;
 
 public class MockNumberSource extends Source {
   
-  private static int numberOf = 0;
+  private static int numberOf;
   private final int id;
   private OutputSocket<Number> outputSocket;
   private final SocketHint<Number> outputSocketHint = 
       SocketHints.Outputs.createNumberSocketHint("Num", Math.PI);
-  
+
+  @SuppressFBWarnings(value = "ST_WRITE_TO_STATIC_FROM_INSTANCE_METHOD",
+      justification = "Do not need to synchronize inside of a constructor")
   public MockNumberSource(Factory exceptionWitnessFactory, double value, OutputSocket.Factory osf) {
     super(exceptionWitnessFactory);
     id = numberOf++;
