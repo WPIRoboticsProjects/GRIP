@@ -71,7 +71,6 @@ public class Exporter implements Runnable {
     context.put("fileName", dir.getName().substring(0, dir.getName().lastIndexOf(".")));
     context.put("testing", testing);
     String templateDir = "/edu/wpi/grip/ui/codegeneration/" + lang.filePath;
-    templateDir = templateDir.replaceAll("/", File.separator);
     context.put("vmLoc", templateDir);
     VelocityEngine ve = new VelocityEngine();
     Properties props = new Properties();

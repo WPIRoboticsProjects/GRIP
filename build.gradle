@@ -479,7 +479,6 @@ project(":ui") {
         }
     }
 
-
     jfx {
         mainClass = "edu.wpi.grip.ui.Main"
         preLoader = "edu.wpi.grip.preloader.GripPreloader"
