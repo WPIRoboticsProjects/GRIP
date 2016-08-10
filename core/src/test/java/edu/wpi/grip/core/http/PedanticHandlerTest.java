@@ -16,6 +16,7 @@ import org.junit.Test;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -100,7 +101,8 @@ public class PedanticHandlerTest {
   private void sendHttpRequest(String path) throws IOException {
     HttpPost post = new HttpPost("http://localhost:" + getServerPort() + path);
     BasicHttpEntity httpEntity = new BasicHttpEntity();
-    httpEntity.setContent(new ByteArrayInputStream("http_request_bytes".getBytes()));
+    httpEntity.setContent(
+        new ByteArrayInputStream("http_request_bytes".getBytes(StandardCharsets.UTF_8)));
     post.setEntity(httpEntity);
     HttpResponse resp = client.execute(post);
     EntityUtils.consume(resp.getEntity());

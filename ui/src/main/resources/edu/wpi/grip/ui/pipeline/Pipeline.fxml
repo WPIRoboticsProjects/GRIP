@@ -5,7 +5,6 @@
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.Group?>
 <?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.shape.Rectangle?>
@@ -21,7 +20,7 @@
                 </maxWidth>
                 <Label maxWidth="Infinity" styleClass="pane-title" text="Sources" />
                 <Separator orientation="HORIZONTAL" />
-                <Pane fx:id="addSourcePane" />
+                <VBox fx:id="addSourceBox" styleClass="addSource" />
                 <VBox fx:id="sourcesBox" styleClass="sources" />
             </VBox>
             <Separator orientation="VERTICAL" />

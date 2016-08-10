@@ -30,10 +30,12 @@ public class StartStoppableButtonTest extends ApplicationTest {
     restartableService = new AutoRestartingService<>(() -> new AbstractIdleService() {
       @Override
       protected void startUp() {
+        /* no-op */
       }
 
       @Override
       protected void shutDown() {
+        /* no-op */
       }
     }, () -> false);
     startStoppableButton = new StartStoppableButton(restartableService);
@@ -42,6 +44,7 @@ public class StartStoppableButtonTest extends ApplicationTest {
     stage.show();
   }
 
+  @SuppressWarnings("PMD.JUnitTestsShouldIncludeAssert")
   @Test
   public void testInitialState() {
     WaitForAsyncUtils.waitForFxEvents();

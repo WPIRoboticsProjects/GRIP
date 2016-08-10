@@ -24,25 +24,23 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
-
 import javafx.application.Platform;
+import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
-import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.Control;
 import javafx.scene.control.Dialog;
+import javafx.scene.control.MenuButton;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.Spinner;
 import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.text.Text;
-import javafx.scene.text.TextAlignment;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 
@@ -52,29 +50,28 @@ import javafx.stage.FileChooser.ExtensionFilter;
  * construct that source.  As an example, the image file source results in a file picker that the
  * user can use to browse for an image.
  */
-public class AddSourceView extends HBox {
+public class AddSourceButton extends MenuButton {
 
   @VisibleForTesting
   static final String SOURCE_DIALOG_STYLE_CLASS = "source-dialog";
   private final EventBus eventBus;
 
-  private final Button webcamButton;
-  private final Button ipcamButton;
+  private final MenuItem webcamButton;
+  private final MenuItem ipcamButton;
+  private final MenuItem httpButton;
   private Optional<Dialog> activeDialog = Optional.empty();
 
   @Inject
-  AddSourceView(EventBus eventBus,
+  AddSourceButton(EventBus eventBus,
                 MultiImageFileSource.Factory multiImageSourceFactory,
                 ImageFileSource.Factory imageSourceFactory,
                 CameraSource.Factory cameraSourceFactory,
                 HttpSource.Factory httpSourceFactory) {
+    super("Add Source");
     this.eventBus = eventBus;
-
-    this.setFillHeight(true);
-
-    addButton("Add\nImage(s)",
-        getClass().getResource("/edu/wpi/grip/ui/icons/add-image.png"),
-        mouseEvent -> {
+    
+    addMenuItem("Image(s)",
+        getClass().getResource("/edu/wpi/grip/ui/icons/add-image.png"), mouseEvent -> {
           // Show a file picker so the user can open one or more images from disk
           final FileChooser fileChooser = new FileChooser();
           fileChooser.setTitle("Open an image");
@@ -120,14 +117,12 @@ public class AddSourceView extends HBox {
           }
         });
 
-    webcamButton = addButton(
-        "Add\nWebcam",
-        getClass().getResource("/edu/wpi/grip/ui/icons/add-webcam.png"),
-        mouseEvent -> {
+    webcamButton = addMenuItem("Webcam",
+        getClass().getResource("/edu/wpi/grip/ui/icons/add-webcam.png"), mouseEvent -> {
           final Parent root = this.getScene().getRoot();
 
           // Show a dialog for the user to pick a camera index
-          final Spinner<Integer> cameraIndex = new Spinner<Integer>(0, Integer.MAX_VALUE, 0);
+          final Spinner<Integer> cameraIndex = new Spinner<>(0, Integer.MAX_VALUE, 0);
           final SourceDialog dialog = new SourceDialog(root, cameraIndex);
 
           dialog.setTitle("Add Webcam");
@@ -144,15 +139,11 @@ public class AddSourceView extends HBox {
                 cameraSource.initialize();
                 return cameraSource;
               },
-              e -> {
-                dialog.errorText.setText(e.getMessage());
-              });
+              e -> dialog.errorText.setText(e.getMessage()));
         });
 
-    ipcamButton = addButton(
-        "Add IP\nCamera",
-        getClass().getResource("/edu/wpi/grip/ui/icons/add-webcam.png"),
-        mouseEvent -> {
+    ipcamButton = addMenuItem("IP Camera",
+        getClass().getResource("/edu/wpi/grip/ui/icons/add-webcam.png"), mouseEvent -> {
           final Parent root = this.getScene().getRoot();
 
           // Show a dialog for the user to pick a camera URL
@@ -197,8 +188,8 @@ public class AddSourceView extends HBox {
               e -> dialog.errorText.setText(e.getMessage()));
         });
 
-    addButton("Add\nHTTP source", getClass().getResource("/edu/wpi/grip/ui/icons/publish.png"),
-        mouseEvent -> {
+    httpButton = addMenuItem("HTTP",
+        getClass().getResource("/edu/wpi/grip/ui/icons/publish.png"), mouseEvent -> {
           final Parent root = this.getScene().getRoot();
           // Show a dialog to pick the server path images will be uploaded on
           final String imageRoot = GripServer.IMAGE_UPLOAD_PATH + "/";
@@ -252,29 +243,32 @@ public class AddSourceView extends HBox {
   /**
    * Add a new button for adding a source.  This method takes care of setting the event handler.
    */
-  private Button addButton(String text, URL graphicURL, EventHandler<? super MouseEvent>
-      onMouseClicked) {
+  private MenuItem addMenuItem(String text, URL graphicURL, EventHandler<ActionEvent>
+      onActionEvent) {
     final ImageView graphic = new ImageView(graphicURL.toString());
     graphic.setFitWidth(DPIUtility.SMALL_ICON_SIZE);
     graphic.setFitHeight(DPIUtility.SMALL_ICON_SIZE);
 
-    final Button button = new Button(text, graphic);
-    button.setTextAlignment(TextAlignment.CENTER);
-    button.setContentDisplay(ContentDisplay.TOP);
-    button.setOnMouseClicked(onMouseClicked);
+    final MenuItem menuItem = new MenuItem("  " + text, graphic);
+    menuItem.setOnAction(onActionEvent);
 
-    this.getChildren().add(button);
-    return button;
+    getItems().add(menuItem);
+    return menuItem;
   }
 
   @VisibleForTesting
-  Button getWebcamButton() {
+  MenuItem getWebcamButton() {
     return webcamButton;
   }
 
   @VisibleForTesting
-  Button getIpcamButton() {
+  MenuItem getIpcamButton() {
     return ipcamButton;
+  }
+
+  @VisibleForTesting
+  MenuItem getHttpButton() {
+    return httpButton;
   }
 
   @VisibleForTesting
@@ -291,7 +285,7 @@ public class AddSourceView extends HBox {
   }
 
   public interface Factory {
-    AddSourceView create();
+    AddSourceButton create();
   }
 
   private static class SourceDialog extends Dialog<ButtonType> {

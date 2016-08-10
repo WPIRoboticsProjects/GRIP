@@ -26,13 +26,11 @@ import static org.junit.Assert.fail;
 public class ImageFileSourceTest {
   private final ImageWithData imageFile = Files.imageFile;
   private final File textFile = Files.textFile;
-  private EventBus eventBus;
   private OutputSocket.Factory osf;
 
   @Before
   public void setUp() throws URISyntaxException {
-    this.eventBus = new EventBus();
-    osf = new MockOutputSocketFactory(eventBus);
+    osf = new MockOutputSocketFactory(new EventBus());
   }
 
   @Test
