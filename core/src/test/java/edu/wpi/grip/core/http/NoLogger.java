@@ -5,7 +5,7 @@ import org.eclipse.jetty.util.log.Logger;
 /**
  * Jetty logger implementation that ignores all logging calls.
  */
-@SuppressWarnings("PMD.UncommentedEmptyMethodBody")
+@SuppressWarnings("PMD.UncommentedEmptyMethod")
 public class NoLogger implements Logger {
 
   @Override

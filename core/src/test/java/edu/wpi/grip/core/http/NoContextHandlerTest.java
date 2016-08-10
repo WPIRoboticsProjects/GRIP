@@ -18,6 +18,7 @@ import org.junit.Test;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -28,8 +29,8 @@ import static org.junit.Assert.assertEquals;
 public class NoContextHandlerTest {
 
   private final ContextStore contextStore = new ContextStore();
-  private HandlerCollection handlers = new HandlerCollection();
-  private NoContextHandler handler = new NoContextHandler(contextStore);
+  private final HandlerCollection handlers = new HandlerCollection();
+  private final NoContextHandler handler = new NoContextHandler(contextStore);
   private Server server;
   private DefaultHttpClient client;
 
@@ -71,7 +72,8 @@ public class NoContextHandlerTest {
   private CloseableHttpResponse sendHttpRequest(String path) throws IOException {
     HttpPost post = new HttpPost("http://localhost:" + getServerPort() + path);
     BasicHttpEntity httpEntity = new BasicHttpEntity();
-    httpEntity.setContent(new ByteArrayInputStream("http_request_bytes".getBytes()));
+    httpEntity.setContent(
+        new ByteArrayInputStream("http_request_bytes".getBytes(StandardCharsets.UTF_8)));
     post.setEntity(httpEntity);
     return client.execute(post);
   }

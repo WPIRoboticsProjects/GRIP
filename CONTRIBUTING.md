@@ -69,4 +69,4 @@ Include details about your configuration and environment:</br>
 
 ### Code Formatting
 
-* GRIP uses standard Java formatting rules, although we don't care if your line length is over 80 characters. You can probably use your IDE's built-in formatter. This helps keep the code more consistent and readable.
+* GRIP follows the [Google Java Styleguide](https://google.github.io/styleguide/javaguide.html) with a few modifications regarding import order. We use the gradle [checkstyle](http://checkstyle.sourceforge.net/) plugin to ensure that code conforms to this styleguide. There are plugins for most major IDE's that support importing the `checkstyle.xml` file.
