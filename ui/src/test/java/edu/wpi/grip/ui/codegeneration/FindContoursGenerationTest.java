@@ -44,8 +44,8 @@ public class FindContoursGenerationTest extends AbstractGenerationTest {
   }
 
   void generatePipeline(boolean externalBool) {
-    Step step0 = gen.addStep(new OperationMetaData(HSLThresholdOperation.DESCRIPTION, () -> new
-        HSLThresholdOperation(isf, osf)));
+    Step step0 = gen.addStep(new OperationMetaData(HSLThresholdOperation.DESCRIPTION,
+        () -> new HSLThresholdOperation(isf, osf)));
     ImageFileSource img = loadImage(Files.imageFile);
     OutputSocket imgOut0 = pipeline.getSources().get(0).getOutputSockets().get(0);
 
@@ -61,8 +61,8 @@ public class FindContoursGenerationTest extends AbstractGenerationTest {
       }
     }
 
-    Step step1 = gen.addStep(new OperationMetaData(FindContoursOperation.DESCRIPTION, () -> new
-        FindContoursOperation(isf, osf)));
+    Step step1 = gen.addStep(new OperationMetaData(FindContoursOperation.DESCRIPTION,
+        () -> new FindContoursOperation(isf, osf)));
     OutputSocket imgOut1 = pipeline.getSteps().get(0).getOutputSockets().get(0);
     for (InputSocket sock : step1.getInputSockets()) {
       if (sock.getSocketHint().isCompatibleWith(imgOut1.getSocketHint())) {
@@ -99,24 +99,24 @@ public class FindContoursGenerationTest extends AbstractGenerationTest {
     org.bytedeco.javacpp.opencv_core.Mat matOut = new org.bytedeco.javacpp.opencv_core.Mat();
     matOut.create(conOut.getRows(), conOut.getCols(), org.bytedeco.javacpp.opencv_core.CV_8UC3);
     org.bytedeco.javacpp.opencv_core.bitwise_xor(matOut, matOut, matOut);
-    org.bytedeco.javacpp.opencv_imgproc.drawContours(matOut, conOut.getContours(), -1, org
-        .bytedeco.javacpp.opencv_core.Scalar.WHITE);
+    org.bytedeco.javacpp.opencv_imgproc.drawContours(matOut, conOut.getContours(), -1,
+        org.bytedeco.javacpp.opencv_core.Scalar.WHITE);
 
-    //exporter.export(pipeline, Language.JAVA,new File() , false);
+    // exporter.export(pipeline, Language.JAVA,new File() , false);
     pip.setMatSource(0, Files.imageFile.file);
     pip.process();
-    Mat genMat = new Mat(conOut.getRows(), conOut.getCols(),
-        opencv_core.CV_8UC3, new Scalar(0, 0, 0));
-    List<MatOfPoint> gen = (List<MatOfPoint>) pip.getOutput("Find_Contours0Output0",
-        GenType.CONTOURS);
+    Mat genMat =
+        new Mat(conOut.getRows(), conOut.getCols(), opencv_core.CV_8UC3, new Scalar(0, 0, 0));
+    List<MatOfPoint> gen =
+        (List<MatOfPoint>) pip.getOutput("Find_Contours0Output0", GenType.CONTOURS);
 
     Imgproc.drawContours(genMat, gen, -1, new Scalar(255, 255, 255));
 
     Mat gripMat = HelperTools.bytedecoMatToCVMat(matOut);
-    //HelperTools.displayMats(genMat,gripMat);
+    // HelperTools.displayMats(genMat,gripMat);
     assertMatWithin(genMat, gripMat, 8.0);
-    assertTrue("Number of Contours is not the same. grip: " + conOut.getContours().size()
-        + " gen: " + gen.size(), conOut.getContours().size() == gen.size());
+    assertTrue("Number of Contours is not the same. grip: " + conOut.getContours().size() + " gen: "
+        + gen.size(), conOut.getContours().size() == gen.size());
 
   }
 }

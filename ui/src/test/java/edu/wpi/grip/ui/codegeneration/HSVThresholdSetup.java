@@ -17,10 +17,8 @@ public class HSVThresholdSetup {
     List<Number> sVal = Arrays.asList(0.0d, 255.0d);
     List<Number> vVal = Arrays.asList(0.0d, 255.0d);
 
-    Step hsv = caller.gen.addStep(new OperationMetaData(
-        HSVThresholdOperation.DESCRIPTION,
-        () -> new HSVThresholdOperation(caller.isf, caller.osf)
-    ));
+    Step hsv = caller.gen.addStep(new OperationMetaData(HSVThresholdOperation.DESCRIPTION,
+        () -> new HSVThresholdOperation(caller.isf, caller.osf)));
     ImageFileSource img = caller.loadImage(Files.imageFile);
     OutputSocket imgOut = caller.pipeline.getSources().get(0).getOutputSockets().get(0);
     for (InputSocket sock : hsv.getInputSockets()) {

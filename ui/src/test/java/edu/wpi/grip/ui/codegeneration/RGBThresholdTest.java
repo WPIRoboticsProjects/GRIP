@@ -24,9 +24,8 @@ import static org.junit.Assert.assertTrue;
 public class RGBThresholdTest extends AbstractGenerationTest {
 
   boolean setup() {
-    final Step rgb = gen.addStep(
-        new OperationMetaData(RGBThresholdOperation.DESCRIPTION,
-            () -> new RGBThresholdOperation(isf, osf)));
+    final Step rgb = gen.addStep(new OperationMetaData(RGBThresholdOperation.DESCRIPTION,
+        () -> new RGBThresholdOperation(isf, osf)));
     ImageFileSource img = loadImage(Files.gompeiJpegFile);
     OutputSocket imgOut = pipeline.getSources().get(0).getOutputSockets().get(0);
     List<Double> rVal = new ArrayList<Double>();
@@ -58,8 +57,8 @@ public class RGBThresholdTest extends AbstractGenerationTest {
     runner.runPipeline();
     Optional out = pipeline.getSteps().get(0).getOutputSockets().get(0).getValue();
     assertTrue("Pipeline did not process", out.isPresent());
-    assertFalse("Pipeline output is empty", ((org.bytedeco.javacpp.opencv_core.Mat) out.get())
-        .empty());
+    assertFalse("Pipeline output is empty",
+        ((org.bytedeco.javacpp.opencv_core.Mat) out.get()).empty());
     pip.setMatSource(0, Files.gompeiJpegFile.file);
     pip.process();
     Mat genMat = (Mat) pip.getOutput("RGB_Threshold0Output0", GenType.IMAGE);

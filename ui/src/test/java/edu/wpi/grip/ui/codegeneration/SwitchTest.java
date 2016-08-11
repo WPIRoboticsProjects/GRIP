@@ -14,11 +14,10 @@ import org.junit.Test;
 
 import javax.inject.Inject;
 
-
 import static org.junit.Assert.assertEquals;
 
 public class SwitchTest extends AbstractGenerationTest {
-  
+
   private int onTrueSourceNum = 0;
   private int onFalseSourceNum = 1;
   @Inject
@@ -31,8 +30,8 @@ public class SwitchTest extends AbstractGenerationTest {
   }
 
   boolean setup(Source onTrue, Source onFalse, Boolean initVal) {
-    Step step = gen.addStep(new OperationMetaData(
-        SwitchOperation.DESCRIPTION, () -> new SwitchOperation(isf, osf)));
+    Step step = gen.addStep(
+        new OperationMetaData(SwitchOperation.DESCRIPTION, () -> new SwitchOperation(isf, osf)));
     for (InputSocket sock : step.getInputSockets()) {
       String sockHint = sock.getSocketHint().getIdentifier();
       if (sockHint.equalsIgnoreCase("if True")) {
@@ -45,15 +44,14 @@ public class SwitchTest extends AbstractGenerationTest {
     }
     return true;
   }
-  
+
   @Test
   public void testNumberTrueInit() {
     Number onTrue = new Double(Math.PI);
     Number onFalse = new Double(Math.E);
     Boolean initVal = new Boolean(true);
     test(() -> setupNum(onTrue, onFalse, initVal),
-        (pip) -> validateNum(pip, onTrue, onFalse, initVal),
-        "SwitchNumTrueTest");
+        (pip) -> validateNum(pip, onTrue, onFalse, initVal), "SwitchNumTrueTest");
   }
 
   @Test
@@ -62,8 +60,7 @@ public class SwitchTest extends AbstractGenerationTest {
     Number onFalse = new Double(Math.E);
     Boolean initVal = new Boolean(false);
     test(() -> setupNum(onTrue, onFalse, initVal),
-        (pip) -> validateNum(pip, onTrue, onFalse, initVal),
-        "SwitchNumFalseTest");
+        (pip) -> validateNum(pip, onTrue, onFalse, initVal), "SwitchNumFalseTest");
   }
 
   void validateNum(PipelineInterfacer pip, Number onTrue, Number onFalse, Boolean initVal) {

@@ -19,7 +19,6 @@ import org.opencv.core.Mat;
 
 import java.util.Optional;
 
-
 import static org.junit.Assert.assertTrue;
 
 public class ThresholdMovingTest extends AbstractGenerationTest {
@@ -35,12 +34,10 @@ public class ThresholdMovingTest extends AbstractGenerationTest {
     int stepnum = 0;
     ImageFileSource img = loadImage(Files.gompeiJpegFile);
     ThresholdSwitch[] threshs = new ThresholdSwitch[num];
-    OutputSocket imgOut = pipeline.getSources().get(0).getOutputSockets()
-        .get(0);
+    OutputSocket imgOut = pipeline.getSources().get(0).getOutputSockets().get(0);
     for (int idx = 0; idx < num; idx++) {
-      Step blur = gen
-          .addStep(new OperationMetaData(BlurOperation.DESCRIPTION,
-              () -> new BlurOperation(isf, osf)));
+      Step blur = gen.addStep(
+          new OperationMetaData(BlurOperation.DESCRIPTION, () -> new BlurOperation(isf, osf)));
       for (InputSocket sock : blur.getInputSockets()) {
         String socketHint = sock.getSocketHint().getIdentifier();
         if (socketHint.equals("Input")) {
@@ -49,9 +46,8 @@ public class ThresholdMovingTest extends AbstractGenerationTest {
           sock.setValue(new Double(Math.PI * (idx + 1)));
         }
       } // end of blur
-      Step swtch = gen
-          .addStep(new OperationMetaData(SwitchOperation.DESCRIPTION,
-              () -> new SwitchOperation(isf, osf)));
+      Step swtch = gen.addStep(
+          new OperationMetaData(SwitchOperation.DESCRIPTION, () -> new SwitchOperation(isf, osf)));
       for (InputSocket sock : swtch.getInputSockets()) {
         String sockHint = sock.getSocketHint().getIdentifier();
         if (sockHint.equals("If True")) {
@@ -60,12 +56,10 @@ public class ThresholdMovingTest extends AbstractGenerationTest {
           gen.connect(blur.getOutputSockets().get(0), sock);
         }
       }
-      Step move = gen
-          .addStep(new OperationMetaData(ThresholdMoving.DESCRIPTION,
-              () -> new ThresholdMoving(isf, osf)));
+      Step move = gen.addStep(
+          new OperationMetaData(ThresholdMoving.DESCRIPTION, () -> new ThresholdMoving(isf, osf)));
       for (InputSocket sock : move.getInputSockets()) {
-        if (sock.getSocketHint().getIdentifier()
-            .equalsIgnoreCase("image")) {
+        if (sock.getSocketHint().getIdentifier().equalsIgnoreCase("image")) {
           gen.connect(swtch.getOutputSockets().get(0), sock);
         }
       }
@@ -102,8 +96,7 @@ public class ThresholdMovingTest extends AbstractGenerationTest {
   }
 
   void validate(PipelineInterfacer pip, ThresholdSwitch[] threshs) {
-    ManualPipelineRunner runner = new ManualPipelineRunner(eventBus,
-        pipeline);
+    ManualPipelineRunner runner = new ManualPipelineRunner(eventBus, pipeline);
     runner.runPipeline();
     pip.setMatSource(0, Files.gompeiJpegFile.file);
     pip.process();
@@ -120,10 +113,9 @@ public class ThresholdMovingTest extends AbstractGenerationTest {
     runner.runPipeline();
     pip.process();
     for (int idx = 0; idx < threshs.length; idx++) {
-      Mat genMat = (Mat) pip.getOutput("Threshold_Moving" + idx + "Output0",
-          GenType.IMAGE);
+      Mat genMat = (Mat) pip.getOutput("Threshold_Moving" + idx + "Output0", GenType.IMAGE);
       Mat gripMat = threshs[idx].getOutput();
-      //HelperTools.displayMats(genMat, gripMat);
+      // HelperTools.displayMats(genMat, gripMat);
       assertMatWithin(genMat, gripMat, 5.0);
     }
   }
@@ -153,8 +145,7 @@ public class ThresholdMovingTest extends AbstractGenerationTest {
     public Mat getOutput() {
       Optional out = thresh.getOutputSockets().get(0).getValue();
       assertTrue("Pipeline did not process", out.isPresent());
-      return HelperTools.bytedecoMatToCVMat(
-          (org.bytedeco.javacpp.opencv_core.Mat) out.get());
+      return HelperTools.bytedecoMatToCVMat((org.bytedeco.javacpp.opencv_core.Mat) out.get());
     }
   }
 }

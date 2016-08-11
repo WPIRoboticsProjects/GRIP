@@ -18,8 +18,8 @@ import static org.junit.Assert.assertTrue;
 public class NewPointGenerationTest extends AbstractGenerationTest {
 
   void generatePipeline(double x, double y) {
-    Step desat = gen.addStep(new OperationMetaData(NewPointOperation.DESCRIPTION, () -> new
-        NewPointOperation(isf, osf)));
+    Step desat = gen.addStep(new OperationMetaData(NewPointOperation.DESCRIPTION,
+        () -> new NewPointOperation(isf, osf)));
     for (InputSocket sock : desat.getInputSockets()) {
       if (sock.getSocketHint().getIdentifier().equals("x")) {
         sock.setValue(x);
@@ -41,14 +41,14 @@ public class NewPointGenerationTest extends AbstractGenerationTest {
     new ManualPipelineRunner(eventBus, pipeline).runPipeline();
     Optional out = pipeline.getSteps().get(0).getOutputSockets().get(0).getValue();
     assertTrue("Output is not present", out.isPresent());
-    org.bytedeco.javacpp.opencv_core.Point gripSize = (org.bytedeco.javacpp.opencv_core.Point) out
-        .get();
+    org.bytedeco.javacpp.opencv_core.Point gripSize =
+        (org.bytedeco.javacpp.opencv_core.Point) out.get();
     pip.process();
     Point genSize = (Point) pip.getOutput("New_Point0Output0", GenType.POINT);
-    assertTrue("The grip x: " + gripSize.x() + "does not equals the generated x: "
-        + genSize.x, gripSize.x() == genSize.x);
-    assertTrue("The grip y: " + gripSize.y() + "does not equals the generated y: "
-        + genSize.y, gripSize.y() == genSize.y);
+    assertTrue("The grip x: " + gripSize.x() + "does not equals the generated x: " + genSize.x,
+        gripSize.x() == genSize.x);
+    assertTrue("The grip y: " + gripSize.y() + "does not equals the generated y: " + genSize.y,
+        gripSize.y() == genSize.y);
   }
 
 }

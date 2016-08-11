@@ -16,7 +16,6 @@ import org.opencv.core.Mat;
 
 import java.util.Optional;
 
-
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
@@ -24,8 +23,8 @@ public class MaskTest extends AbstractGenerationTest {
 
   void setup() {
     HSVThresholdSetup.setup(this);
-    Step mask = gen.addStep(new OperationMetaData(
-        MaskOperation.DESCRIPTION, () -> new MaskOperation(isf, osf)));
+    Step mask = gen.addStep(
+        new OperationMetaData(MaskOperation.DESCRIPTION, () -> new MaskOperation(isf, osf)));
     OutputSocket hsvImg = pipeline.getSteps().get(0).getOutputSockets().get(0);
     for (InputSocket sock : mask.getInputSockets()) {
       String sockHint = sock.getSocketHint().getIdentifier();
@@ -49,8 +48,8 @@ public class MaskTest extends AbstractGenerationTest {
     new ManualPipelineRunner(eventBus, pipeline).runPipeline();
     Optional out = pipeline.getSteps().get(1).getOutputSockets().get(0).getValue();
     assertTrue("Pipeline did not process", out.isPresent());
-    assertFalse("Pipeline output is empty", ((org.bytedeco.javacpp.opencv_core.Mat) out.get())
-        .empty());
+    assertFalse("Pipeline output is empty",
+        ((org.bytedeco.javacpp.opencv_core.Mat) out.get()).empty());
     pip.setMatSource(0, Files.imageFile.file);
     pip.process();
     Mat genMat = (Mat) pip.getOutput("Mask0Output0", GenType.IMAGE);

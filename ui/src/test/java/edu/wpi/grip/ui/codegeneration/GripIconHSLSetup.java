@@ -27,7 +27,7 @@ public class GripIconHSLSetup {
   }
 
   public static void setup(AbstractGenerationTest caller, List<Number> hVal, List<Number> sVal,
-                           List<Number> lVal) {
+      List<Number> lVal) {
     Step hsl = caller.gen.addStep(new OperationMetaData(HSLThresholdOperation.DESCRIPTION,
         () -> new HSLThresholdOperation(caller.isf, caller.osf)));
     ImageFileSource img = caller.loadImage(Files.imageFile);

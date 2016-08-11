@@ -29,7 +29,6 @@ import org.opencv.core.Mat;
 
 import java.io.File;
 import java.io.IOException;
-import java.lang.Throwable;
 import java.nio.file.Files;
 import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;

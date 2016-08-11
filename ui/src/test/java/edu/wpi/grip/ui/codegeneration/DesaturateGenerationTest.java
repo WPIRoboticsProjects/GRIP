@@ -23,8 +23,8 @@ import static org.junit.Assert.assertTrue;
 public class DesaturateGenerationTest extends AbstractGenerationTest {
 
   void generatePipeline() {
-    Step desat = gen.addStep(new OperationMetaData(DesaturateOperation.DESCRIPTION, () -> new
-        DesaturateOperation(isf, osf)));
+    Step desat = gen.addStep(new OperationMetaData(DesaturateOperation.DESCRIPTION,
+        () -> new DesaturateOperation(isf, osf)));
     ImageFileSource img = loadImage(Files.gompeiJpegFile);
     OutputSocket imgOut = pipeline.getSources().get(0).getOutputSockets().get(0);
     for (InputSocket sock : desat.getInputSockets()) {

@@ -45,10 +45,9 @@ public class DistanceTransformGenerationTest extends AbstractGenerationTest {
     lVal.add(new Double(0.0));
     lVal.add(new Double(250.0));
     GripIconHSLSetup.setup(this, GripIconHSLSetup.defaultHVal, GripIconHSLSetup.defaultSVal, lVal);
-    Step dist = gen.addStep(new OperationMetaData(
-        DistanceTransformOperation.DESCRIPTION,
+    Step dist = gen.addStep(new OperationMetaData(DistanceTransformOperation.DESCRIPTION,
         () -> new DistanceTransformOperation(isf, osf)));
-    //output from HSL
+    // output from HSL
     OutputSocket hslImg = pipeline.getSteps().get(0).getOutputSockets().get(0);
     for (InputSocket sock : dist.getInputSockets()) {
       if (sock.getSocketHint().getIdentifier().equals("Input")) {
@@ -73,16 +72,16 @@ public class DistanceTransformGenerationTest extends AbstractGenerationTest {
     new ManualPipelineRunner(eventBus, pipeline).runPipeline();
     Optional out = pipeline.getSteps().get(1).getOutputSockets().get(0).getValue();
     assertTrue("Pipeline did not process", out.isPresent());
-    assertFalse("Pipeline output is empty", ((org.bytedeco.javacpp.opencv_core.Mat) out.get())
-        .empty());
+    assertFalse("Pipeline output is empty",
+        ((org.bytedeco.javacpp.opencv_core.Mat) out.get()).empty());
     pip.setMatSource(0, Files.imageFile.file);
     pip.process();
     Mat genMat = (Mat) pip.getOutput("Distance_Transform0Output0", GenType.IMAGE);
     Mat gripMat = new Mat();
     (HelperTools.bytedecoMatToCVMat((org.bytedeco.javacpp.opencv_core.Mat) out.get()))
-        .convertTo(gripMat, CvType.CV_32F); //distance transform outputs a 1 channel 32F Mat but
+        .convertTo(gripMat, CvType.CV_32F); // distance transform outputs a 1 channel 32F Mat but
     // grip outputs a 1 channel 8U Mat
-    //HelperTools.displayMats(genMat, gripMat);
+    // HelperTools.displayMats(genMat, gripMat);
     gripMat.convertTo(genMat, gripMat.type());
     assertMatWithin(genMat, gripMat, 10.0);
   }

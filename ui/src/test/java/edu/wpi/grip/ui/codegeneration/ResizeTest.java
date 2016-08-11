@@ -17,16 +17,14 @@ import org.opencv.core.Mat;
 
 import java.util.Optional;
 
-
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 public class ResizeTest extends AbstractGenerationTest {
 
   void setup(String interp) {
-    Step resize = gen.addStep(new OperationMetaData(
-        ResizeOperation.DESCRIPTION,
-        () -> new ResizeOperation(isf, osf)));
+    Step resize = gen.addStep(
+        new OperationMetaData(ResizeOperation.DESCRIPTION, () -> new ResizeOperation(isf, osf)));
     ImageFileSource img = loadImage(Files.gompeiJpegFile);
     OutputSocket imgOut = pipeline.getSources().get(0).getOutputSockets().get(0);
     for (InputSocket sock : resize.getInputSockets()) {
@@ -88,13 +86,13 @@ public class ResizeTest extends AbstractGenerationTest {
     runner.runPipeline();
     Optional out = pipeline.getSteps().get(0).getOutputSockets().get(0).getValue();
     assertTrue("Pipeline did not process", out.isPresent());
-    assertFalse("Pipeline output is empty", ((org.bytedeco.javacpp.opencv_core.Mat) out.get())
-        .empty());
+    assertFalse("Pipeline output is empty",
+        ((org.bytedeco.javacpp.opencv_core.Mat) out.get()).empty());
     pip.setMatSource(0, Files.gompeiJpegFile.file);
     pip.process();
     Mat genMat = (Mat) pip.getOutput("Resize_Image0Output0", GenType.IMAGE);
     Mat gripMat = HelperTools.bytedecoMatToCVMat((org.bytedeco.javacpp.opencv_core.Mat) out.get());
-    //HelperTools.displayMats(genMat, gripMat);
+    // HelperTools.displayMats(genMat, gripMat);
     assertMatWithin(genMat, gripMat, 16.0);
   }
 }

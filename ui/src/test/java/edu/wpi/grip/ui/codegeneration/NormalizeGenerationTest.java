@@ -25,8 +25,8 @@ import static org.junit.Assert.assertTrue;
 public class NormalizeGenerationTest extends AbstractGenerationTest {
 
   void generatePipeline(String type, double minVal, double maxVal) {
-    Step step = gen.addStep(new OperationMetaData(NormalizeOperation.DESCRIPTION, () -> new
-        NormalizeOperation(isf, osf)));
+    Step step = gen.addStep(new OperationMetaData(NormalizeOperation.DESCRIPTION,
+        () -> new NormalizeOperation(isf, osf)));
     ImageFileSource img = loadImage(Files.gompeiJpegFile);
     OutputSocket imgOut = pipeline.getSources().get(0).getOutputSockets().get(0);
 
@@ -80,8 +80,8 @@ public class NormalizeGenerationTest extends AbstractGenerationTest {
     runner.runPipeline();
     Optional out = pipeline.getSteps().get(0).getOutputSockets().get(0).getValue();
     assertTrue("Pipeline did not process", out.isPresent());
-    assertFalse("Pipeline output is empty", ((org.bytedeco.javacpp.opencv_core.Mat) out.get())
-         .empty());
+    assertFalse("Pipeline output is empty",
+        ((org.bytedeco.javacpp.opencv_core.Mat) out.get()).empty());
     pip.setMatSource(0, Files.gompeiJpegFile.file);
     pip.process();
     Mat genMat = (Mat) pip.getOutput("Normalize0Output0", GenType.IMAGE);

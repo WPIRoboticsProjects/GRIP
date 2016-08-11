@@ -18,8 +18,8 @@ import static org.junit.Assert.assertTrue;
 public class NewSizeGenerationTest extends AbstractGenerationTest {
 
   void generatePipeline(double width, double height) {
-    Step desat = gen.addStep(new OperationMetaData(NewSizeOperation.DESCRIPTION, () -> new
-        NewSizeOperation(isf, osf)));
+    Step desat = gen.addStep(
+        new OperationMetaData(NewSizeOperation.DESCRIPTION, () -> new NewSizeOperation(isf, osf)));
     for (InputSocket sock : desat.getInputSockets()) {
       if (sock.getSocketHint().getIdentifier().equals("width")) {
         sock.setValue(width);
@@ -41,8 +41,8 @@ public class NewSizeGenerationTest extends AbstractGenerationTest {
     new ManualPipelineRunner(eventBus, pipeline).runPipeline();
     Optional out = pipeline.getSteps().get(0).getOutputSockets().get(0).getValue();
     assertTrue("Output is not present", out.isPresent());
-    org.bytedeco.javacpp.opencv_core.Size gripSize = (org.bytedeco.javacpp.opencv_core.Size) out
-        .get();
+    org.bytedeco.javacpp.opencv_core.Size gripSize =
+        (org.bytedeco.javacpp.opencv_core.Size) out.get();
     pip.process();
     Size genSize = (Size) pip.getOutput("New_Size0Output0", GenType.SIZE);
     assertTrue("The grip width: " + gripSize.width() + "does not equals the generated width: "

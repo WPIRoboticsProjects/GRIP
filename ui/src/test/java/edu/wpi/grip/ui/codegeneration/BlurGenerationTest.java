@@ -27,16 +27,16 @@ public class BlurGenerationTest extends AbstractGenerationTest {
   private Double blurRatio = new Double(10.0);
 
   void generatePipeline(String blurType) {
-    Step step = gen.addStep(new OperationMetaData(BlurOperation.DESCRIPTION, () -> new
-        BlurOperation(isf, osf)));
+    Step step = gen.addStep(
+        new OperationMetaData(BlurOperation.DESCRIPTION, () -> new BlurOperation(isf, osf)));
     ImageFileSource img = loadImage(Files.gompeiJpegFile);
     OutputSocket imgOut = pipeline.getSources().get(0).getOutputSockets().get(0);
 
     for (InputSocket sock : step.getInputSockets()) {
       if (sock.getSocketHint().isCompatibleWith(imgOut.getSocketHint())) {
         gen.connect(imgOut, sock);
-      } else if (sock.getSocketHint().isCompatibleWith(Outputs.createNumberSocketHint("Number",
-          blurRatio))) {
+      } else if (sock.getSocketHint()
+          .isCompatibleWith(Outputs.createNumberSocketHint("Number", blurRatio))) {
         sock.setValue(blurRatio);
       } else if (sock.getSocketHint().getIdentifier().equals("Type")) {
         HelperTools.setEnumSocket(sock, blurType);
@@ -57,8 +57,7 @@ public class BlurGenerationTest extends AbstractGenerationTest {
     test(() -> {
       generatePipeline("Gaussian Blur");
       return true;
-    }, (pip) -> testPipeline(pip), "GaussianBlurTest"
-    );
+    }, (pip) -> testPipeline(pip), "GaussianBlurTest");
   }
 
   @Test
@@ -82,8 +81,8 @@ public class BlurGenerationTest extends AbstractGenerationTest {
     runner.runPipeline();
     Optional out = pipeline.getSteps().get(0).getOutputSockets().get(0).getValue();
     assertTrue("Pipeline did not process", out.isPresent());
-    assertFalse("Pipeline output is empty", ((org.bytedeco.javacpp.opencv_core.Mat) out.get())
-        .empty());
+    assertFalse("Pipeline output is empty",
+        ((org.bytedeco.javacpp.opencv_core.Mat) out.get()).empty());
     pip.setMatSource(0, Files.gompeiJpegFile.file);
     pip.process();
     Mat genMat = (Mat) pip.getOutput("Blur0Output0", GenType.IMAGE);

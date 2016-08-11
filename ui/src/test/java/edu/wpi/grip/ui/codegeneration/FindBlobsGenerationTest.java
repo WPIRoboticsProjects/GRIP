@@ -41,8 +41,8 @@ public class FindBlobsGenerationTest extends AbstractGenerationTest {
   }
 
   void generatePipeline(boolean darkBool, double minArea, List<Double> circularity) {
-    Step step0 = gen.addStep(new OperationMetaData(HSLThresholdOperation.DESCRIPTION, () -> new
-        HSLThresholdOperation(isf, osf)));
+    Step step0 = gen.addStep(new OperationMetaData(HSLThresholdOperation.DESCRIPTION,
+        () -> new HSLThresholdOperation(isf, osf)));
     ImageFileSource img = loadImage(Files.imageFile);
     OutputSocket imgOut0 = pipeline.getSources().get(0).getOutputSockets().get(0);
 
@@ -58,8 +58,8 @@ public class FindBlobsGenerationTest extends AbstractGenerationTest {
       }
     }
 
-    Step step1 = gen.addStep(new OperationMetaData(FindBlobsOperation.DESCRIPTION, () -> new
-        FindBlobsOperation(isf, osf)));
+    Step step1 = gen.addStep(new OperationMetaData(FindBlobsOperation.DESCRIPTION,
+        () -> new FindBlobsOperation(isf, osf)));
     OutputSocket imgOut1 = pipeline.getSteps().get(0).getOutputSockets().get(0);
     for (InputSocket sock : step1.getInputSockets()) {
       if (sock.getSocketHint().isCompatibleWith(imgOut1.getSocketHint())) {
@@ -79,8 +79,7 @@ public class FindBlobsGenerationTest extends AbstractGenerationTest {
     test(() -> {
       generatePipeline(false, 0, Arrays.asList(0.0, 1.0));
       return true;
-    },
-        (pip) -> testPipeline(pip), "FindBlobsTest");
+    }, (pip) -> testPipeline(pip), "FindBlobsTest");
   }
 
   @Test
@@ -88,8 +87,7 @@ public class FindBlobsGenerationTest extends AbstractGenerationTest {
     test(() -> {
       generatePipeline(true, 0, Arrays.asList(0.0, 1.0));
       return true;
-    },
-        (pip) -> testPipeline(pip), "FindBlackBlobsTest");
+    }, (pip) -> testPipeline(pip), "FindBlackBlobsTest");
   }
 
   @Test
@@ -97,8 +95,7 @@ public class FindBlobsGenerationTest extends AbstractGenerationTest {
     test(() -> {
       generatePipeline(false, 9, Arrays.asList(0.0, 0.9));
       return true;
-    },
-        (pip) -> testPipeline(pip), "FindSomeBlobsTest");
+    }, (pip) -> testPipeline(pip), "FindSomeBlobsTest");
   }
 
 
@@ -121,8 +118,7 @@ public class FindBlobsGenerationTest extends AbstractGenerationTest {
 
   public boolean containsBlob(List<BlobsReport.Blob> blobs, KeyPoint blob) {
     for (int i = 0; i < blobs.size(); i++) {
-      if ((blobs.get(i).x - blob.pt.x) <= 20
-          && (blobs.get(i).y - blob.pt.y) <= 20
+      if ((blobs.get(i).x - blob.pt.x) <= 20 && (blobs.get(i).y - blob.pt.y) <= 20
           && (blobs.get(i).size - blob.size) <= 10) {
         return true;
       }

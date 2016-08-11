@@ -42,8 +42,8 @@ public class WatershedGenerationTest extends AbstractGenerationTest {
   }
 
   void generatePipeline() {
-    Step step0 = gen.addStep(new OperationMetaData(HSLThresholdOperation.DESCRIPTION, () -> new
-        HSLThresholdOperation(isf, osf)));
+    Step step0 = gen.addStep(new OperationMetaData(HSLThresholdOperation.DESCRIPTION,
+        () -> new HSLThresholdOperation(isf, osf)));
     ImageFileSource img = loadImage(Files.imageFile);
     OutputSocket imgOut0 = pipeline.getSources().get(0).getOutputSockets().get(0);
 
@@ -59,8 +59,8 @@ public class WatershedGenerationTest extends AbstractGenerationTest {
       }
     }
 
-    Step step1 = gen.addStep(new OperationMetaData(FindContoursOperation.DESCRIPTION, () -> new
-        FindContoursOperation(isf, osf)));
+    Step step1 = gen.addStep(new OperationMetaData(FindContoursOperation.DESCRIPTION,
+        () -> new FindContoursOperation(isf, osf)));
     OutputSocket imgOut1 = pipeline.getSteps().get(0).getOutputSockets().get(0);
     for (InputSocket sock : step1.getInputSockets()) {
       if (sock.getSocketHint().isCompatibleWith(imgOut1.getSocketHint())) {
@@ -70,8 +70,8 @@ public class WatershedGenerationTest extends AbstractGenerationTest {
       }
     }
 
-    Step step2 = gen.addStep(new OperationMetaData(WatershedOperation.DESCRIPTION, () -> new
-        WatershedOperation(isf, osf)));
+    Step step2 = gen.addStep(new OperationMetaData(WatershedOperation.DESCRIPTION,
+        () -> new WatershedOperation(isf, osf)));
     OutputSocket imgOut2 = pipeline.getSteps().get(1).getOutputSockets().get(0);
     for (InputSocket sock : step2.getInputSockets()) {
       if (sock.getSocketHint().isCompatibleWith(imgOut2.getSocketHint())) {

@@ -48,13 +48,13 @@ public class FilterLinesGenerationTest extends AbstractGenerationTest {
 
   @Before
   public void ignoreIfWindows() {
-	  assumeFalse("OpenCV JNI bindings crash in Windows using Line segment detector",
-			  System.getProperty("os.name").toLowerCase().contains("windows"));
+    assumeFalse("OpenCV JNI bindings crash in Windows using Line segment detector",
+        System.getProperty("os.name").toLowerCase().contains("windows"));
   }
-  
+
   void generatePipeline() {
-    Step step0 = gen.addStep(new OperationMetaData(HSLThresholdOperation.DESCRIPTION, () -> new
-        HSLThresholdOperation(isf, osf)));
+    Step step0 = gen.addStep(new OperationMetaData(HSLThresholdOperation.DESCRIPTION,
+        () -> new HSLThresholdOperation(isf, osf)));
     ImageFileSource img = loadImage(Files.imageFile);
     OutputSocket imgOut0 = pipeline.getSources().get(0).getOutputSockets().get(0);
 
@@ -70,8 +70,8 @@ public class FilterLinesGenerationTest extends AbstractGenerationTest {
       }
     }
 
-    Step step1 = gen.addStep(new OperationMetaData(FindLinesOperation.DESCRIPTION, () -> new
-        FindLinesOperation(isf, osf)));
+    Step step1 = gen.addStep(new OperationMetaData(FindLinesOperation.DESCRIPTION,
+        () -> new FindLinesOperation(isf, osf)));
     OutputSocket imgOut1 = pipeline.getSteps().get(0).getOutputSockets().get(0);
     for (InputSocket sock : step1.getInputSockets()) {
       if (sock.getSocketHint().isCompatibleWith(imgOut1.getSocketHint())) {
@@ -79,8 +79,8 @@ public class FilterLinesGenerationTest extends AbstractGenerationTest {
       }
     }
 
-    Step step2 = gen.addStep(new OperationMetaData(FilterLinesOperation.DESCRIPTION, () -> new
-        FilterLinesOperation(isf, osf)));
+    Step step2 = gen.addStep(new OperationMetaData(FilterLinesOperation.DESCRIPTION,
+        () -> new FilterLinesOperation(isf, osf)));
     OutputSocket imgOut2 = pipeline.getSteps().get(1).getOutputSockets().get(0);
     for (InputSocket sock : step2.getInputSockets()) {
       if (sock.getSocketHint().isCompatibleWith(imgOut2.getSocketHint())) {
@@ -95,12 +95,11 @@ public class FilterLinesGenerationTest extends AbstractGenerationTest {
 
   @Test
   public void filterLinesTest() {
-	
+
     test(() -> {
       generatePipeline();
       return true;
-    },
-        (pip) -> testPipeline(pip), "FilterLinesTest");
+    }, (pip) -> testPipeline(pip), "FilterLinesTest");
   }
 
 
@@ -116,9 +115,8 @@ public class FilterLinesGenerationTest extends AbstractGenerationTest {
 
     List<TestLine> gripLin = GripLine.convertReport(linOut);
     List<TestLine> genLin = (List<TestLine>) pip.getOutput("Filter_Lines0Output0", GenType.LINES);
-    assertTrue("Number of lines is not the same. grip: " + linOut.getLines().size()
-            + " gen: " + genLin.size(),
-        (linOut.getLines().size() - genLin.size()) < 5);
+    assertTrue("Number of lines is not the same. grip: " + linOut.getLines().size() + " gen: "
+        + genLin.size(), (linOut.getLines().size() - genLin.size()) < 5);
     for (int i = 0; i < genLin.size(); i++) {
       assertTrue("griplin does not contain: " + genLin.get(i),
           TestLine.containsLin(genLin.get(i), gripLin));

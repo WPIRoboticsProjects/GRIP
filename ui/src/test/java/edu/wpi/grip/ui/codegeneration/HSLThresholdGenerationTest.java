@@ -3,6 +3,7 @@ package edu.wpi.grip.ui.codegeneration;
 import edu.wpi.grip.core.ManualPipelineRunner;
 import edu.wpi.grip.ui.codegeneration.tools.GenType;
 import edu.wpi.grip.ui.codegeneration.tools.HelperTools;
+import edu.wpi.grip.ui.codegeneration.tools.PipelineInterfacer;
 import edu.wpi.grip.util.Files;
 
 import org.junit.Test;
@@ -16,9 +17,9 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 public class HSLThresholdGenerationTest extends AbstractGenerationTest {
-  //H 0-49
-  //S 0-41
-  //L 0-67
+  // H 0-49
+  // S 0-41
+  // L 0-67
   private List<Number> hVal = new ArrayList<Number>();
   private List<Number> sVal = new ArrayList<Number>();
   private List<Number> lVal = new ArrayList<Number>();
@@ -36,20 +37,20 @@ public class HSLThresholdGenerationTest extends AbstractGenerationTest {
   public void testHSL() {
     test(() -> {
       GripIconHSLSetup.setup(this);
-      return true; //never can fail
-    }, (pip) -> {
-        new ManualPipelineRunner(eventBus, pipeline).runPipeline();
-        Optional out = pipeline.getSteps().get(0).getOutputSockets().get(0).getValue();
-        assertTrue("Output is not present", out.isPresent());
-        assertFalse("Output Mat is empty", ((org.bytedeco.javacpp.opencv_core.Mat) out.get())
-             .empty());
-        pip.setMatSource(0, Files.imageFile.file);
-        pip.process();
-        Mat genMat = (Mat) pip.getOutput("HSL_Threshold0Output0", GenType.IMAGE);
-        Mat gripMat = HelperTools.bytedecoMatToCVMat((org.bytedeco.javacpp.opencv_core.Mat) out
-             .get());
-        assertMatWithin(genMat, gripMat, 10.0);
-      }, "HSLTest");
+      return true; // never can fail
+    }, (pip) -> validate(pip), "HSLTest");
+  }
+
+  private void validate(PipelineInterfacer pip) {
+    new ManualPipelineRunner(eventBus, pipeline).runPipeline();
+    Optional out = pipeline.getSteps().get(0).getOutputSockets().get(0).getValue();
+    assertTrue("Output is not present", out.isPresent());
+    assertFalse("Output Mat is empty", ((org.bytedeco.javacpp.opencv_core.Mat) out.get()).empty());
+    pip.setMatSource(0, Files.imageFile.file);
+    pip.process();
+    Mat genMat = (Mat) pip.getOutput("HSL_Threshold0Output0", GenType.IMAGE);
+    Mat gripMat = HelperTools.bytedecoMatToCVMat((org.bytedeco.javacpp.opencv_core.Mat) out.get());
+    assertMatWithin(genMat, gripMat, 10.0);
   }
 
 }
