@@ -70,8 +70,8 @@ public abstract class AbstractGenerationTest {
     injector.injectMembers(gen);
   }
 
-  protected final void test(BooleanSupplier setup, Consumer<PipelineInterfacer> test, String
-      testName) {
+  protected final void test(BooleanSupplier setup, Consumer<PipelineInterfacer> test,
+      String testName) {
     assertTrue("Setup for " + testName + " reported an issue.", setup.getAsBoolean());
     String fileName = testName;
     gen.export(fileName);
@@ -86,14 +86,15 @@ public abstract class AbstractGenerationTest {
       CppPipelineInterfacer cpip = new CppPipelineInterfacer(fileName);
       test.accept(cpip);
     } catch (Throwable e) {
-        StringBuilder msg = new StringBuilder();
-        msg.append("In ").append(current).append(" there was a ").append(e.getClass().getName()).append("\n");
-        if (e.getMessage() != null) {
-          msg.append(e.getMessage());
-        }
-        AssertionError ae = new AssertionError(msg.toString(), e.getCause());
-        ae.setStackTrace(e.getStackTrace());
-        throw ae;
+      StringBuilder msg = new StringBuilder();
+      msg.append("In ").append(current).append(" there was a ").append(e.getClass().getName())
+          .append("\n");
+      if (e.getMessage() != null) {
+        msg.append(e.getMessage());
+      }
+      AssertionError ae = new AssertionError(msg.toString(), e.getCause());
+      ae.setStackTrace(e.getStackTrace());
+      throw ae;
     }
   }
 
@@ -110,6 +111,7 @@ public abstract class AbstractGenerationTest {
     PipelineCreator.cleanClasses();
     File img = new File("img.png");
     File testing = new File("testing.py");
+    File output = new File("output.txt");
     File dir = PipelineGenerator.codeDir.getAbsoluteFile();
     try {
       File[] toDelete = dir.listFiles((File file) -> {
@@ -123,6 +125,7 @@ public abstract class AbstractGenerationTest {
       }
       Files.deleteIfExists(img.toPath());
       Files.deleteIfExists(testing.toPath());
+      Files.deleteIfExists(output.toPath());
     } catch (IOException e) {
       e.printStackTrace();
     }
@@ -142,8 +145,7 @@ public abstract class AbstractGenerationTest {
 
   protected void assertMatWithin(Mat gen, Mat grip, double tolerance) {
     double diff = Math.abs(HelperTools.matAvgDiff(gen, grip));
-    assertTrue("Difference between two Mats was: " + diff
-            + ", which is greater than tolerance of: " + tolerance,
-        diff <= tolerance);
+    assertTrue("Difference between two Mats was: " + diff + ", which is greater than tolerance of: "
+        + tolerance, diff <= tolerance);
   }
 }
