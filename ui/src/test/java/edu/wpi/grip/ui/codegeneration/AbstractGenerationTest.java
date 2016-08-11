@@ -29,6 +29,7 @@ import org.opencv.core.Mat;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.Throwable;
 import java.nio.file.Files;
 import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
@@ -84,16 +85,15 @@ public abstract class AbstractGenerationTest {
       current = Language.CPP;
       CppPipelineInterfacer cpip = new CppPipelineInterfacer(fileName);
       test.accept(cpip);
-    } catch (AssertionError e) {
-      //Makes it easier to tell which language is throwing an error.
-      StringBuilder msg = new StringBuilder();
-      msg.append("In ").append(current).append(": ");
-      if (e.getMessage() != null) {
-        msg.append(e.getMessage());
-      }
-      AssertionError error = new AssertionError(msg.toString(), e.getCause());
-      error.setStackTrace(e.getStackTrace());
-      throw error;
+    } catch (Throwable e) {
+        StringBuilder msg = new StringBuilder();
+        msg.append("In ").append(current).append(" there was a ").append(e.getClass().getName()).append("\n");
+        if (e.getMessage() != null) {
+          msg.append(e.getMessage());
+        }
+        AssertionError ae = new AssertionError(msg.toString(), e.getCause());
+        ae.setStackTrace(e.getStackTrace());
+        throw ae;
     }
   }
 
@@ -115,7 +115,8 @@ public abstract class AbstractGenerationTest {
       File[] toDelete = dir.listFiles((File file) -> {
         String name = file.getName();
         return name.contains(".cpp") || name.contains(".py") || name.contains(".h")
-            || name.contains(".dylib") || name.contains(".so") || name.contains(".dll");
+            || name.contains(".dylib") || name.contains(".so") || name.contains(".dll")
+            || name.contains(".lib") || name.contains(".vcxproj") || name.contains(".exp");
       });
       for (File file : toDelete) {
         Files.deleteIfExists(file.toPath());

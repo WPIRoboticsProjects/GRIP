@@ -8,26 +8,39 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <map>
-using namespace cv;
-using namespace std;
+#include <String>
 
-class AbsPipeline{
+#ifdef ON_WIN
+#ifdef WIN_EXPORT
+//On Windows and creating the DLL of the real Pipeline
+#define DLL_TYPE __declspec(dllexport)
+#else
+//On Windows and using the header to link against the Pipeline
+#define DLL_TYPE __declspec(dllimport)
+#endif
+#else
+//Not on Windows so don't have to do any of this __declspec nonsense.
+//Still have to define the constant so that DLL_Type disappears in the preprocessed code.
+#define DLL_TYPE
+#endif
+
+class DLL_TYPE AbsPipeline{
     
 public:
-    typedef void (AbsPipeline::*MatSource)(Mat&);
+    typedef void (AbsPipeline::*MatSource)(cv::Mat&);
     typedef void* (AbsPipeline::*Output)();
     typedef void (AbsPipeline::*Condition)(bool);
     typedef void (AbsPipeline::*NumSource)(double);
     virtual void Process() = 0;
-    map<int, MatSource> getMatSources();
-    map<String, Output> getOutputs();
-    map<String, Condition> getConditions();
-    map<int, NumSource> getNumSources();
+    std::map<int, MatSource> getMatSources();
+    std::map<std::string, Output> getOutputs();
+    std::map<std::string, Condition> getConditions();
+    std::map<int, NumSource> getNumSources();
     void* libHandle;
     virtual ~AbsPipeline();
 protected:
-    map<int, MatSource> matSources;
-    map<String, Output> outputs;
-    map<String, Condition> conditions;
-    map<int, NumSource> numSources;
+    std::map<int, MatSource> matSources;
+    std::map<std::string, Output> outputs;
+    std::map<std::string, Condition> conditions;
+    std::map<int, NumSource> numSources;
 };

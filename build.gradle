@@ -409,19 +409,23 @@ project(":ui") {
            }
             exec {
                 workingDir 'build/classes/test/pipelib'
-                commandLine '"C:\\Program Files (x86)\\Microsoft Visual Studio 14.0\\VC\\vcvarsall.bat"', 'amd64', '&', 'MSBuild.exe', 'ALL_BUILD.vcxproj'
+                commandLine '"C:\\Program Files (x86)\\Microsoft Visual Studio 14.0\\VC\\vcvarsall.bat"', 'amd64', '&', 'cmake', '--build', '.', '--target', 'ALL_BUILD', '--config', 'Release'
             }
             exec {
                 workingDir 'build/classes/test'
-                commandLine 'copy', 'pipelib/genJNI.lib', '.'
+                commandLine 'cmd', '/C', 'copy /Y pipelib\\Release\\* .'
+            }
+            exec {
+                workingDir 'build/classes/test'
+                commandLine 'cmd', '/C', 'copy /Y pipelib\\pipe\\Release\\* .'
             }
             exec {
                 workingDir 'build/classes/test/pipelib'
-                commandLine 'copy' , '..\\..\\..\\..\\src\\test\\resources\\edu\\wpi\\grip\\ui\\codegeneration\\tools\\pipe\\AbsPipeline.h', 'pipe\\'
+                commandLine 'cmd', '/C', 'copy /Y ..\\..\\..\\..\\src\\test\\resources\\edu\\wpi\\grip\\ui\\codegeneration\\tools\\pipe\\AbsPipeline.h pipe\\'
             }
             exec {
                 workingDir 'build/classes/test'
-                commandLine 'copy', '..\\..\\..\\src\\test\\resources\\edu\\wpi\\grip\\ui\\codegeneration\\tools\\realpipe\\CMakeLists.txt', '.'
+                commandLine 'cmd', '/C', 'copy /Y ..\\..\\..\\src\\test\\resources\\edu\\wpi\\grip\\ui\\codegeneration\\tools\\realpipe\\CMakeLists.txt .'
             }
         } else {
             exec {
@@ -461,13 +465,21 @@ project(":ui") {
     if(project.hasProperty('generation') || project.hasProperty('genonly')){
         def cvNativeLibraryLocation = System.getenv('OPEN_CV_LIB')
         def cvJarLocation = System.getenv('OPEN_CV_JAR')
-        println cvJarLocation
-        println cvNativeLibraryLocation
+        def syst = osdetector.os
         test {
             dependsOn 'testSharedLib'
             classpath += files(cvJarLocation)
-            jvmArgs += ["-cp" , "$cvJarLocation"]
-            jvmArgs += "-Djava.library.path=$cvNativeLibraryLocation:build/classes/test"
+            jvmArgs("-cp" , "$cvJarLocation")
+            if(syst == "windows") {
+                def sysPath = System.getenv('PATH')
+                def libLoc = "$projectDir" + "\\build\\classes\\test"
+                def libPath = "-Djava.library.path=$cvNativeLibraryLocation;$libLoc;$cvJarLocation;$sysPath"
+                jvmArgs(libPath)
+                jvmArgs += libPath
+            }
+            else {
+                jvmArgs("-Djava.library.path=$cvNativeLibraryLocation:build/classes/test")
+            }
             if(project.hasProperty('genonly')){
                 useJUnit {
                     includeCategories 'edu.wpi.grip.ui.codegeneration.GenerationTest'

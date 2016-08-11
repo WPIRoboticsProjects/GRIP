@@ -37,12 +37,12 @@ class Line {
 	* @return the angle (in degrees between -180 and 180) between the two points.
 	*/
 	double angle() {
-		return (180*atan2(y2 - y1, x2 - x1)/M_PI);
+		return (180*atan2(y2 - y1, x2 - x1)/CV_PI);
 	}
 };
 
 #if($testing)
-extern "C" vector<Vec6d> getLines(string name, AbsPipeline* obj){
+vector<Vec6d> getLinesHelper(string name, AbsPipeline* obj) {
 	vector<Line> *lines = (vector<Line> *) (obj->*(obj->getOutputs()[name]))();
 	vector<Vec6d> out;
 	for (int idx = 0; idx<lines->size(); idx++) {
@@ -50,6 +50,9 @@ extern "C" vector<Vec6d> getLines(string name, AbsPipeline* obj){
 		out.push_back(Vec6d(l.x1, l.y1, l.x2, l.y2, l.length(), l.angle()));
 	}
 	return out;
+}
+extern "C" DLL_TYPE vector<Vec6d> getLines(string name, AbsPipeline* obj){
+    return getLinesHelper(name, obj);
 }
 
 #end

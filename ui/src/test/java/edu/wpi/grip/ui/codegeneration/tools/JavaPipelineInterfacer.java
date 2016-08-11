@@ -58,7 +58,7 @@ public class JavaPipelineInterfacer implements PipelineInterfacer {
         | InvocationTargetException | NoSuchMethodException
         | SecurityException e) {
       e.printStackTrace();
-      fail("process method doesn't exist");
+      fail("Failed to call process with exception: " + e.toString());
     }
   }
 

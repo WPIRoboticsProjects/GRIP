@@ -19,6 +19,7 @@ public class CppPipelineInterfacer implements PipelineInterfacer {
   private static File codeDir;
 
   static {
+	System.loadLibrary("pipe");
     System.loadLibrary("genJNI");
     codeDir = PipelineGenerator.codeDir.getAbsoluteFile();
   }
@@ -27,12 +28,31 @@ public class CppPipelineInterfacer implements PipelineInterfacer {
     try {
       String libBase = codeDir.getAbsolutePath() + File.separator + libName;
       Process cmake = new ProcessBuilder("cmake", "CMakeLists.txt", "-DNAME="
-          + libName).directory(codeDir).start();
+          + libName, "-G", "Visual Studio 14 2015 Win64").directory(codeDir).start();
       String error = runProcess(cmake);
       assertEquals("Failed to cmake " + libName + error, 0, cmake.exitValue());
-      Process make = new ProcessBuilder("make").directory(codeDir).start();
-      error = runProcess(make);
-      assertEquals("Failed to compile " + libName + error, 0, make.exitValue());
+      if(System.getProperty("os.name").toLowerCase().contains("windows")) {
+    	File outputFile = new File(libName + "output.txt");
+    	Process winMake = new ProcessBuilder(
+    			"C:\\Program Files (x86)\\Microsoft Visual Studio 14.0\\VC\\vcvarsall.bat", "amd64",
+    			"&", "cmake", "--build", ".", "--target", "ALL_BUILD", "--config", "Release")
+    			.directory(codeDir).redirectOutput(outputFile).start();
+    	//so windows doesn't lock forever waiting for output buffer to be read.
+    	error = runProcess(winMake);
+    	assertEquals("Failed to compile " + libName + error + " more details may be found in: "
+    	+ outputFile.getAbsolutePath(), 0, winMake.exitValue());
+    	outputFile.delete();
+    	Process copy = new ProcessBuilder(
+    			"cmd.exe", "/C", "move", "/Y", "Release\\*", ".")
+    			.directory(codeDir).start();
+    	error = runProcess(copy);
+    	assertEquals("Failed to copy library " + libName + error, 0, copy.exitValue());
+      }
+      else {
+        Process make = new ProcessBuilder("make").directory(codeDir).start();
+        error = runProcess(make);
+        assertEquals("Failed to compile " + libName + error, 0, make.exitValue());
+      }
     } catch (IOException e) {
       e.printStackTrace();
       fail("Could not compile " + libName + " due to :" + e.getMessage());

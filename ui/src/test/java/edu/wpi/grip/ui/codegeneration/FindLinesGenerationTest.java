@@ -15,6 +15,8 @@ import edu.wpi.grip.ui.codegeneration.tools.PipelineInterfacer;
 import edu.wpi.grip.ui.codegeneration.tools.TestLine;
 import edu.wpi.grip.util.Files;
 
+import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
@@ -25,6 +27,7 @@ import java.util.Optional;
 
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static org.junit.Assume.assumeFalse;
 
 @Category(GenerationTest.class)
 public class FindLinesGenerationTest extends AbstractGenerationTest {
@@ -39,6 +42,12 @@ public class FindLinesGenerationTest extends AbstractGenerationTest {
     sVal.add(new Double(83.2));
     lVal.add(new Double(1.0));
     lVal.add(new Double(101.0));
+  }
+
+  @Before
+  public void ignoreIfWindows() {
+	  assumeFalse("OpenCV JNI bindings crash in Windows using Line segment detector",
+			  System.getProperty("os.name").toLowerCase().contains("windows"));
   }
 
   void generatePipeline() {

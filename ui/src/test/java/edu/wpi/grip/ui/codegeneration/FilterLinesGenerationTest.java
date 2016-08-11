@@ -16,6 +16,7 @@ import edu.wpi.grip.ui.codegeneration.tools.PipelineInterfacer;
 import edu.wpi.grip.ui.codegeneration.tools.TestLine;
 import edu.wpi.grip.util.Files;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
@@ -25,6 +26,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assume.assumeFalse;
 
 @Category(GenerationTest.class)
 public class FilterLinesGenerationTest extends AbstractGenerationTest {
@@ -44,6 +46,12 @@ public class FilterLinesGenerationTest extends AbstractGenerationTest {
     lVal.add(new Double(101.0));
   }
 
+  @Before
+  public void ignoreIfWindows() {
+	  assumeFalse("OpenCV JNI bindings crash in Windows using Line segment detector",
+			  System.getProperty("os.name").toLowerCase().contains("windows"));
+  }
+  
   void generatePipeline() {
     Step step0 = gen.addStep(new OperationMetaData(HSLThresholdOperation.DESCRIPTION, () -> new
         HSLThresholdOperation(isf, osf)));
@@ -87,6 +95,7 @@ public class FilterLinesGenerationTest extends AbstractGenerationTest {
 
   @Test
   public void filterLinesTest() {
+	
     test(() -> {
       generatePipeline();
       return true;

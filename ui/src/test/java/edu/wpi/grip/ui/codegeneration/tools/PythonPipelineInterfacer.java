@@ -13,12 +13,15 @@ import org.opencv.imgcodecs.Imgcodecs;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
 
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
@@ -28,7 +31,9 @@ public class PythonPipelineInterfacer implements PipelineInterfacer {
   BufferedWriter out;
   static File codeDir = null;
   private PythonTMethods tMeth;
-
+  static String pythonCmd;
+  static final String newLine = System.lineSeparator();
+  private static final String outputFile = "output.txt";
   static {
     try {
       codeDir = new File(PipelineGenerator.class.getProtectionDomain()
@@ -37,56 +42,49 @@ public class PythonPipelineInterfacer implements PipelineInterfacer {
       e.printStackTrace();
       fail("Could not load code directory");
     }
+    if(System.getProperty("os.name").toLowerCase().contains("windows")) {
+        pythonCmd = "python";
+    } else {
+    	pythonCmd = "python3";
+    }
   }
 
   public PythonPipelineInterfacer(String className) {
     tMeth = new PythonTMethods();
-    try {
-      Runtime.getRuntime().exec("cd " + codeDir.getAbsolutePath().toString());
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
     str = new StringBuilder();
-    str.append("import sys\n");
-    str.append("import cv2\n");
-    str.append("sys.path.insert(0, \'");
-    str.append(codeDir.getAbsolutePath().toString());
-    str.append("\')\n");
-    str.append("import ");
-    str.append(className);
-    str.append("\n");
-    str.append("pipe = ");
-    str.append(className);
-    str.append(".");
-    str.append(className);
-    str.append("()\n");
+    str.append("import sys").append(newLine).append("import cv2")
+    .append(newLine).append("import os")
+    .append(newLine).append("sys.path.insert(0, ")
+    .append(pyPath(codeDir.getAbsolutePath()))
+    .append(")").append(newLine).append("import ")
+    .append(className).append(newLine).append("pipe = ")
+    .append(className).append(".").append(className)
+    .append("()").append(newLine);
     try {
       out = new BufferedWriter(new FileWriter("testing.py"));
     } catch (IOException e) {
       e.printStackTrace();
+      fail("Could not write the testing python file");
     }
   }
 
   @Override
   public void setNumSource(int num, Number value) {
-    str.append("source = ").append(value.doubleValue());
-    str.append("\n").append("pipe.set_source");
-    str.append(num).append("(source)\n");
+    str.append("source = ").append(value.doubleValue())
+    .append(newLine).append("pipe.set_source")
+    .append(num).append("(source)").append(newLine);
   }
   
   @Override
   public void setMatSource(int num, File img) {
-    str.append("source = cv2.imread(\"");
-    str.append(img.getAbsolutePath());
-    str.append("\")\n");
-    str.append("pipe.set_source");
-    str.append(num);
-    str.append("(source)\n");
+    str.append("source = cv2.imread(").append(pyPath(img.getAbsolutePath()))
+    .append(")").append(newLine).append("pipe.set_source")
+    .append(num).append("(source)").append(newLine);
   }
 
   @Override
   public void process() {
-    str.append("pipe.process()\n");
+    str.append("pipe.process()").append(newLine);
   }
 
   @Override
@@ -127,6 +125,7 @@ public class PythonPipelineInterfacer implements PipelineInterfacer {
 
     } catch (IOException e) {
       e.printStackTrace();
+      fail("Could not get Output " + name + " with type " + type);
     }
 
     return objectOut;
@@ -134,27 +133,24 @@ public class PythonPipelineInterfacer implements PipelineInterfacer {
 
   private Object getOutputImage(String name) throws IOException {
     StringBuilder temp = new StringBuilder();
-    temp.append("mat = pipe.");
-    temp.append(name);
-    temp.append("\n");
-    temp.append("cv2.imwrite(\"img.png\", mat)\n");
+    temp.append("mat = pipe.").append(name)
+    .append(newLine).append("cv2.imwrite(\"img.png\", mat)").append(newLine);
     runProcess(temp.toString());
 
     File img = new File("img.png");
+    if(!img.exists()) {
+    	fail("Output image does not exist!");
+    }
     Mat out = Imgcodecs.imread("img.png", -1);
     return out;
   }
 
   private Object getOutputPoint(String name) throws IOException {
     StringBuilder temp = new StringBuilder();
-    temp.append("print (int(pipe.");
-    temp.append(name);
-    temp.append("[0]))\n");
-    temp.append("print (int(pipe.");
-    temp.append(name);
-    temp.append("[1]))\n");
+    temp.append("print (int(pipe.").append(name)
+    .append("[0]))").append(newLine).append("print (int(pipe.")
+    .append(name).append("[1]))").append(newLine);
     BufferedReader in = runProcess(temp.toString());
-
     int val1 = new Integer(in.readLine()).intValue();
     int val2 = new Integer(in.readLine()).intValue();
     return new Point(val1, val2);
@@ -162,15 +158,12 @@ public class PythonPipelineInterfacer implements PipelineInterfacer {
 
   private Object getOutputBlobs(String name) throws IOException {
     StringBuilder temp = new StringBuilder();
-    temp.append("for blob in pipe.");
-    temp.append(name);
-    temp.append(":\n");
-    temp.append("        print((int)(blob.pt[0]))\n"
-        + "        print((int)(blob.pt[1]))\n"
-        + "        print((int)(blob.size))\n");
-
+    temp.append("for blob in pipe.").append(name)
+    .append(":").append(newLine)
+    .append("        print((int)(blob.pt[0]))").append(newLine)
+    .append("        print((int)(blob.pt[1]))").append(newLine)
+    .append("        print((int)(blob.size))").append(newLine);
     BufferedReader in = runProcess(temp.toString());
-
     MatOfKeyPoint blobs = new MatOfKeyPoint();
     String nextIn;
     assertTrue("empty blobs", (nextIn = in.readLine()) != null);
@@ -186,16 +179,13 @@ public class PythonPipelineInterfacer implements PipelineInterfacer {
 
   private Object getOutputLines(String name) throws IOException {
     StringBuilder temp = new StringBuilder();
-    temp.append("for line in pipe.");
-    temp.append(name);
-    temp.append(":\n");
-    temp.append("        print ((int)(line.x1))\n"
-        + "        print ((int)(line.y1))\n"
-        + "        print ((int)(line.x2))\n"
-        + "        print ((int)(line.y2))\n");
-
+    temp.append("for line in pipe.").append(name)
+    .append(":").append(newLine)
+    .append("        print ((int)(line.x1))").append(newLine)
+    .append("        print ((int)(line.y1))").append(newLine)
+    .append("        print ((int)(line.x2))").append(newLine)
+    .append("        print ((int)(line.y2))").append(newLine);
     BufferedReader in = runProcess(temp.toString());
-
     List<PyLine> lines = new ArrayList<>();
     String nextIn;
     assertTrue("empty Lines", (nextIn = in.readLine()) != null);
@@ -210,46 +200,45 @@ public class PythonPipelineInterfacer implements PipelineInterfacer {
 
   private Object getOutputContours(String name) throws IOException {
     StringBuilder temp = new StringBuilder();
-    temp.append("for contour in pipe.");
-    temp.append(name);
-    temp.append(":\n");
-    temp.append("        print (\'c\')\n"
-        + "        for point in contour:\n"
-        + "            print (point[0][0])\n"
-        + "            print (point[0][1])\n");
+    temp.append("for contour in pipe.")
+    .append(name).append(":").append(newLine)
+    .append("        print (\'c\')").append(newLine)
+    .append("        for point in contour:").append(newLine)
+    .append("            print (point[0][0])").append(newLine)
+    .append("            print (point[0][1])").append(newLine);
     BufferedReader in = runProcess(temp.toString());
-
-    List<MatOfPoint> contours = new ArrayList();
-    String nextIn;
-    assertTrue("empty contours", (nextIn = in.readLine()) != null);
-    while (nextIn != null) {
-      if (nextIn.equals("c")) {
-        nextIn = in.readLine();
-        List<Point> points = new ArrayList<>();
-        MatOfPoint tmpMat = new MatOfPoint();
-        while (!(nextIn == null || nextIn.isEmpty() || nextIn.equals("c"))) {
-          points.add(new Point(Integer.valueOf(nextIn), Integer.valueOf(in.readLine())));
-          nextIn = in.readLine();
-        }
-        tmpMat.fromList(points);
-        contours.add(tmpMat);
-      } else {
-        nextIn = in.readLine();
-      }
+    List<MatOfPoint> contours = new ArrayList<MatOfPoint>();
+    String nextIn = in.readLine();
+    assertTrue("empty contours", nextIn != null);
+    List<Point> points = new ArrayList<>();
+    while(nextIn != null) {
+    	if(nextIn.equals("c")) {
+    		if(points.size() > 0 ) {
+    			MatOfPoint tmpMat = new MatOfPoint();
+    			tmpMat.fromList(points);
+    			contours.add(tmpMat);
+    			points.clear();
+    		}
+    	} else {
+    		int x = Integer.valueOf(nextIn);
+    		int y = Integer.valueOf(in.readLine());
+    		points.add(new Point(x, y));
+    	}
+    	nextIn = in.readLine();
     }
-
-
+	MatOfPoint tmpMat = new MatOfPoint();
+	tmpMat.fromList(points);
+	contours.add(tmpMat);
+	points.clear();
     return contours;
   }
 
   private Object getOutputSize(String name) throws IOException {
     StringBuilder temp = new StringBuilder();
-    temp.append("print (int(pipe.");
-    temp.append(name);
-    temp.append("[0]))\n");
-    temp.append("print (int(pipe.");
-    temp.append(name);
-    temp.append("[1]))\n");
+    temp.append("print (int(pipe.").append(name)
+    .append("[0]))").append(newLine)
+    .append("print (int(pipe.").append(name)
+    .append("[1]))").append(newLine);
     BufferedReader in = runProcess(temp.toString());
     int val1 = new Integer(in.readLine()).intValue();
     int val2 = new Integer(in.readLine()).intValue();
@@ -258,9 +247,8 @@ public class PythonPipelineInterfacer implements PipelineInterfacer {
 
   private Object getOutputNum(String name) throws IOException {
     StringBuilder temp = new StringBuilder();
-    temp.append("print (pipe.");
-    temp.append(name);
-    temp.append(")\n");
+    temp.append("print (pipe.").append(name)
+   .append(")").append(newLine);
     BufferedReader in = runProcess(temp.toString());
     String input = in.readLine();
     if (!input.equals("None")) {
@@ -274,33 +262,41 @@ public class PythonPipelineInterfacer implements PipelineInterfacer {
   private BufferedReader runProcess(String temp) throws IOException {
     out.write(str.toString() + temp);
     out.close();
-    ProcessBuilder pb = new ProcessBuilder("python3", "testing.py");
+    ProcessBuilder pb = new ProcessBuilder(pythonCmd, "testing.py");
+    pb.redirectOutput(new File(outputFile));
     Process p = pb.start();
     try {
-      p.waitFor();
+     int exitCode = p.waitFor();
+     if(exitCode != 0) {
+    	 InputStream stdErr = p.getErrorStream();
+       try (BufferedReader reader = new BufferedReader(new InputStreamReader(stdErr))) {
+         StringBuilder errStr = new StringBuilder();
+         while (stdErr.available() > 0) {
+           errStr.append(reader.readLine());
+         }
+         fail("Process failed with nonZero exit code " + 
+         exitCode + " and error" + newLine + errStr.toString());
+       } 
+     }
     } catch (InterruptedException e1) {
       e1.printStackTrace();
     }
-    BufferedReader stdError = new BufferedReader(new InputStreamReader(p.getErrorStream()));
-
-    String s = null;
-
     try {
       out = new BufferedWriter(new FileWriter("testing.py"));
     } catch (IOException e) {
       e.printStackTrace();
+      fail("Could not run Process");
     }
-    return new BufferedReader(new InputStreamReader(p.getInputStream()));
+    return new BufferedReader(new FileReader(new File(outputFile)));
   }
 
   @Override
   public void setSwitch(String name, boolean value) {
-    str.append("pipe.set");
-    str.append(tMeth.pyName(name));
+    str.append("pipe.set").append(tMeth.pyName(name));
     if (value) {
-      str.append("(True)\n");
+      str.append("(True)").append(newLine);
     } else {
-      str.append("(False)\n");
+      str.append("(False)").append(newLine);
     }
   }
 
@@ -309,10 +305,17 @@ public class PythonPipelineInterfacer implements PipelineInterfacer {
     str.append("pipe.set");
     str.append(tMeth.pyName(name));
     if (value) {
-      str.append("(True)\n");
+      str.append("(True)").append(newLine);
     } else {
-      str.append("(False)\n");
+      str.append("(False)").append(newLine);
     }
   }
 
+  private String pyPath(String osPath) {
+	  StringBuilder pathBld = new StringBuilder();
+	  pathBld.append("os.path.normpath(\'")
+    .append(osPath.replaceAll(Matcher.quoteReplacement("\\"), "/"))
+    .append("\')");
+	 return pathBld.toString();
+  }
 }
