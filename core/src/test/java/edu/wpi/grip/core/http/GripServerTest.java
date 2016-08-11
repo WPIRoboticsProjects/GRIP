@@ -19,7 +19,7 @@ import org.junit.Test;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-
+import java.nio.charset.StandardCharsets;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -34,7 +34,7 @@ import static org.junit.Assert.assertTrue;
 public class GripServerTest {
 
   private final DefaultHttpClient client;
-  private GripServer instance;
+  private final GripServer instance;
 
   public static class TestServerFactory implements GripServer.JettyServerFactory {
 
@@ -71,12 +71,12 @@ public class GripServerTest {
       didRun[0] = true;
     });
     instance.addHandler(h);
-    HttpResponse response = doPost(path, path.getBytes());
+    HttpResponse response = doPost(path, path.getBytes(StandardCharsets.UTF_8));
     EntityUtils.consume(response.getEntity());
     assertTrue("Handler should have run", didRun[0]);
     didRun[0] = false;
     instance.removeHandler(h);
-    response = doPost(path, path.getBytes());
+    response = doPost(path, path.getBytes(StandardCharsets.UTF_8));
     EntityUtils.consume(response.getEntity());
     assertFalse("Handler should not have run", didRun[0]);
   }
@@ -89,7 +89,7 @@ public class GripServerTest {
       didRun[0] = true;
     });
     instance.addHandler(h);
-    doPost(path, path.getBytes());
+    doPost(path, path.getBytes(StandardCharsets.UTF_8));
     assertTrue("Handler should have run on " + path, didRun[0]);
   }
 
@@ -102,7 +102,7 @@ public class GripServerTest {
       throw new GripServerException("Expected");
     });
     instance.addHandler(h);
-    HttpResponse response = doPost(path, path.getBytes());
+    HttpResponse response = doPost(path, path.getBytes(StandardCharsets.UTF_8));
     assertEquals("Server should return an internal error (500)",
         500,
         response.getStatusLine().getStatusCode());

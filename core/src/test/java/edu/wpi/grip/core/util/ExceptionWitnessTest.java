@@ -77,7 +77,7 @@ public final class ExceptionWitnessTest {
   /**
    * Used to count the number of calls that ExceptionEvent and ExceptionClearedEvent fires.
    */
-  private class TestWitnessListener {
+  private static class TestWitnessListener {
     private int errorRunCount = 0;
     private int clearRunCount = 0;
     private Optional<Object> errorWitnessObserver = Optional.empty();

@@ -6,6 +6,8 @@ import edu.wpi.grip.core.events.SocketPreviewChangedEvent;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 import org.junit.Before;
 import org.junit.Test;
 
@@ -14,9 +16,10 @@ import static org.junit.Assert.assertTrue;
 
 public class SocketTest {
   private final EventBus eventBus = new EventBus();
-  private final Double testValue = 12345.6789;
   private SocketHint<Number> sh;
   private OutputSocket<Number> socket;
+
+  private static final Double TEST_VALUE = 12345.6789;
 
   @Before
   public void initialize() {
@@ -34,15 +37,15 @@ public class SocketTest {
 
   @Test
   public void testSetValue() throws Exception {
-    socket.setValue(testValue);
-    assertEquals(testValue, socket.getValue().get());
+    socket.setValue(TEST_VALUE);
+    assertEquals(TEST_VALUE, socket.getValue().get());
   }
 
   @Test
   public void testDefaultValue() throws Exception {
-    sh = SocketHints.Inputs.createNumberSliderSocketHint("foo", testValue, 0.0, 1.0);
+    sh = SocketHints.Inputs.createNumberSliderSocketHint("foo", TEST_VALUE, 0.0, 1.0);
     socket = new OutputSocketImpl<>(eventBus, sh);
-    assertEquals(testValue, socket.getValue().get());
+    assertEquals(TEST_VALUE, socket.getValue().get());
 
   }
 
@@ -51,6 +54,8 @@ public class SocketTest {
     final boolean[] handled = new boolean[]{false};
     final Double[] value = new Double[]{0.0};
     Object eventHandler = new Object() {
+      @SuppressFBWarnings(value = "UMAC_UNCALLABLE_METHOD_OF_ANONYMOUS_CLASS",
+          justification = "This method is called by Guava's EventBus")
       @Subscribe
       public void onSocketChanged(SocketChangedEvent e) {
         handled[0] = true;
@@ -59,11 +64,11 @@ public class SocketTest {
     };
 
     eventBus.register(eventHandler);
-    socket.setValue(testValue);
+    socket.setValue(TEST_VALUE);
     eventBus.unregister(eventHandler);
 
     assertTrue(handled[0]);
-    assertEquals(testValue, value[0]);
+    assertEquals(TEST_VALUE, value[0]);
   }
 
   @Test
@@ -73,6 +78,8 @@ public class SocketTest {
 
     final boolean[] handled = new boolean[]{false};
     Object eventHandler = new Object() {
+      @SuppressFBWarnings(value = "UMAC_UNCALLABLE_METHOD_OF_ANONYMOUS_CLASS",
+          justification = "This method is called by Guava's EventBus")
       @Subscribe
       public void onSocketPreviewed(SocketPreviewChangedEvent e) {
         handled[0] = true;

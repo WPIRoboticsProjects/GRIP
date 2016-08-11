@@ -9,6 +9,7 @@ import edu.wpi.grip.core.sockets.SocketHints;
 import edu.wpi.grip.core.util.ExceptionWitness;
 import edu.wpi.grip.core.util.ImageLoadingUtility;
 
+import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableList;
 import com.google.common.eventbus.EventBus;
 import com.google.common.math.IntMath;
@@ -20,7 +21,9 @@ import org.bytedeco.javacpp.opencv_core.Mat;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
@@ -62,10 +65,16 @@ public final class MultiImageFileSource extends Source implements PreviousNext {
       final OutputSocket.Factory outputSocketFactory,
       final ExceptionWitness.Factory exceptionWitnessFactory,
       @Assisted final List<File> files,
-      @Assisted final int index) {
+      @Assisted final int index) throws UnsupportedEncodingException {
     this(eventBus, outputSocketFactory, exceptionWitnessFactory, files.stream()
-        .map(file -> URLDecoder.decode(Paths.get(file.toURI()).toString()))
-        .collect(Collectors.toList()).toArray(new String[files.size()]), index);
+        .map(file -> {
+          try {
+            return URLDecoder.decode(Paths.get(file.toURI()).toString(),
+                StandardCharsets.UTF_8.name());
+          } catch (UnsupportedEncodingException e) {
+            throw Throwables.propagate(e);
+          }
+        }).collect(Collectors.toList()).toArray(new String[files.size()]), index);
   }
 
   @AssistedInject
@@ -73,7 +82,7 @@ public final class MultiImageFileSource extends Source implements PreviousNext {
       final EventBus eventBus,
       final OutputSocket.Factory outputSocketFactory,
       final ExceptionWitness.Factory exceptionWitnessFactory,
-      @Assisted final List<File> files) {
+      @Assisted final List<File> files) throws UnsupportedEncodingException {
     this(eventBus, outputSocketFactory, exceptionWitnessFactory, files, 0);
   }
 

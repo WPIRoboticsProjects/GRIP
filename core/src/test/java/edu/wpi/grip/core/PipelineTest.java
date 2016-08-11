@@ -381,7 +381,7 @@ public class PipelineTest {
         Arrays.asList(lowerStep, stepToMove, upperStep), pipeline.getSteps());
   }
 
-  private class MockConnection extends Connection {
+  private static class MockConnection extends Connection {
 
     /**
      * @param pipeline The pipeline to create the connection inside of.
