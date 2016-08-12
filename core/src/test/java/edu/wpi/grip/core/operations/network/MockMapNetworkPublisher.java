@@ -5,7 +5,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
-@SuppressWarnings("PMD.UncommentedEmptyMethodBody")
+@SuppressWarnings("PMD.UncommentedEmptyMethod")
 public class MockMapNetworkPublisher<T> extends MapNetworkPublisher<T> implements
     MapNetworkPublisherFactory {
 

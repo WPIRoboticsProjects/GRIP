@@ -14,6 +14,7 @@ import com.google.common.util.concurrent.Service;
 
 import java.util.Arrays;
 
+@SuppressWarnings("PMD.TestClassWithoutTestCases")
 public class CoreSanityTest extends AbstractPackageSanityTests {
 
   public CoreSanityTest() {

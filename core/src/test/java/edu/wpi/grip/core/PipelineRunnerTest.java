@@ -14,6 +14,9 @@ import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import com.google.common.util.concurrent.MoreExecutors;
 import com.google.common.util.concurrent.Service;
+
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 import net.jodah.concurrentunit.Waiter;
 import org.junit.After;
 import org.junit.Before;
@@ -141,6 +144,8 @@ public class PipelineRunnerTest {
         private ExceptionEvent event;
 
         @Subscribe
+        @SuppressFBWarnings(value = "UMAC_UNCALLABLE_METHOD_OF_ANONYMOUS_CLASS",
+            justification = "EventBus can call this method")
         public void onException(ExceptionEvent event) {
           this.event = event;
           callCount++;

@@ -15,6 +15,8 @@ import com.google.common.util.concurrent.Service;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 import net.jodah.concurrentunit.Waiter;
 
 import org.bytedeco.javacpp.indexer.Indexer;
@@ -34,6 +36,8 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.concurrent.TimeoutException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import static com.google.common.truth.Truth.assertThat;
 import static org.junit.Assert.assertEquals;
@@ -51,6 +55,8 @@ public class CameraSourceTest {
   private MockFrameGrabberFactory mockFrameGrabberFactory;
   private OutputSocket.Factory osf;
 
+  private static final Logger logger = Logger.getLogger(CameraSourceTest.class.getName());
+
   @Before
   public void setUp() throws Exception {
     this.testModule = new GripCoreTestModule();
@@ -61,10 +67,12 @@ public class CameraSourceTest {
 
     final EventBus eventBus = new EventBus();
     class UnhandledExceptionWitness {
+      @SuppressFBWarnings(value = "UMAC_UNCALLABLE_METHOD_OF_ANONYMOUS_CLASS",
+          justification = "This method is called by Guava's EventBus")
       @Subscribe
       public void onUnexpectedThrowableEvent(UnexpectedThrowableEvent event) {
         event.handleSafely((throwable, message, isFatal) -> {
-          throwable.printStackTrace();
+          logger.log(Level.SEVERE, throwable.getMessage(), throwable);
         });
       }
     }
@@ -246,11 +254,11 @@ public class CameraSourceTest {
     try {
       source.stopAndAwait();
     } catch (IllegalStateException e) {
-      // This could happen if the thread is interrupted.
+      logger.log(Level.INFO, e.getMessage(), e);
     }
   }
 
-  class MockFrameGrabber extends FrameGrabber {
+  static class MockFrameGrabber extends FrameGrabber {
     private final Frame frame;
     private final Indexer frameIdx;
     private boolean shouldThrowAtStart = false;
@@ -284,7 +292,7 @@ public class CameraSourceTest {
 
     @Override
     public void trigger() throws Exception {
-
+      /* no-op */
     }
 
     @Override
@@ -306,8 +314,8 @@ public class CameraSourceTest {
     }
   }
 
-  class MockFrameGrabberFactory implements CameraSource.FrameGrabberFactory {
-    private MockFrameGrabber frameGrabber = new MockFrameGrabber();
+  static class MockFrameGrabberFactory implements CameraSource.FrameGrabberFactory {
+    private final MockFrameGrabber frameGrabber = new MockFrameGrabber();
 
     @Override
     public FrameGrabber create(int deviceNumber) {

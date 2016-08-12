@@ -9,6 +9,8 @@ import edu.wpi.grip.core.util.Icon;
 
 import com.google.common.collect.ImmutableList;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 import org.bytedeco.javacpp.BytePointer;
 import org.bytedeco.javacpp.IntPointer;
 
@@ -133,6 +135,8 @@ public class PublishVideoOperation implements Operation {
   };
 
   @SuppressWarnings("JavadocMethod")
+  @SuppressFBWarnings(value = "ST_WRITE_TO_STATIC_FROM_INSTANCE_METHOD",
+      justification = "Do not need to synchronize inside of a constructor")
   public PublishVideoOperation(InputSocket.Factory inputSocketFactory) {
     if (numSteps != 0) {
       throw new IllegalStateException("Only one instance of PublishVideoOperation may exist");
@@ -141,7 +145,7 @@ public class PublishVideoOperation implements Operation {
         false));
     this.qualitySocket = inputSocketFactory.create(SocketHints.Inputs
         .createNumberSliderSocketHint("Quality", 80, 0, 100));
-    numSteps = numSteps + 1;
+    numSteps++;
 
     serverThread = new Thread(runServer, "Camera Server");
     serverThread.setDaemon(true);

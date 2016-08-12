@@ -29,14 +29,16 @@ public class NetworkPublisherTest {
 
   private abstract static class TestNetworkPublisher extends NetworkPublisher<Double> {
 
+    @SuppressWarnings("PMD.EmptyMethodInAbstractClassShouldBeAbstract")
     @Override
     public void publish(Double publish) {
-            /* no-op */
+      /* no-op */
     }
 
+    @SuppressWarnings("PMD.EmptyMethodInAbstractClassShouldBeAbstract")
     @Override
     public void close() {
-            /* no-op */
+      /* no-op */
     }
   }
 }
