@@ -8,13 +8,16 @@ import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import static org.junit.Assert.fail;
 
 public class JavaPipelineInterfacer implements PipelineInterfacer {
-  private Class pipeline;
+  private final Class pipeline;
   private Object instance;
-  private JavaTMethods tMeth;
+  private final JavaTMethods tMeth;
+  private static final Logger logger = Logger.getLogger(JavaPipelineInterfacer.class.getName());
 
   public JavaPipelineInterfacer(String className) {
     tMeth = new JavaTMethods();
@@ -24,8 +27,8 @@ public class JavaPipelineInterfacer implements PipelineInterfacer {
     } catch (InstantiationException | IllegalAccessException
         | IllegalArgumentException | InvocationTargetException
         | NoSuchMethodException | SecurityException e) {
-      e.printStackTrace();
       fail("Failure to instantiate class " + className);
+      logger.log(Level.WARNING, e.getMessage(), e);
     }
   }
 
@@ -34,9 +37,9 @@ public class JavaPipelineInterfacer implements PipelineInterfacer {
       pipeline.getMethod("setsource" + num, value.getClass()).invoke(instance, value);
     } catch (NoSuchMethodException | SecurityException | IllegalAccessException
         | IllegalArgumentException | InvocationTargetException e) {
-      e.printStackTrace();
-      fail("setsource" + num + " is not valid for class " + value.getClass().getSimpleName() + ""
+      fail("setsource" + num + " is not valid for class " + value.getClass().getSimpleName()
           + " because there was a: ");
+      logger.log(Level.WARNING, e.getMessage(), e);
     }
   }
 
@@ -49,7 +52,7 @@ public class JavaPipelineInterfacer implements PipelineInterfacer {
   public void setNumSource(int num, Number value) {
     setSource(num, value);
   }
-  
+
   @Override
   public void process() {
     try {
@@ -57,8 +60,8 @@ public class JavaPipelineInterfacer implements PipelineInterfacer {
     } catch (IllegalAccessException | IllegalArgumentException
         | InvocationTargetException | NoSuchMethodException
         | SecurityException e) {
-      e.printStackTrace();
       fail("Failed to call process with exception: " + e.toString());
+      logger.log(Level.WARNING, e.getMessage(), e);
     }
   }
 
@@ -70,20 +73,19 @@ public class JavaPipelineInterfacer implements PipelineInterfacer {
     } catch (IllegalAccessException | IllegalArgumentException
         | InvocationTargetException | NoSuchMethodException
         | SecurityException e) {
-      e.printStackTrace();
       fail(tMeth.name(name) + " method does not exist");
+      logger.log(Level.WARNING, e.getMessage(), e);
       return null;
     }
-    switch (type) {
-      case LINES:
-        List<Object> inputLines = (List<Object>) out;
-        ArrayList<JavaLine> lines = new ArrayList<JavaLine>(inputLines.size());
-        for (int idx = 0; idx < inputLines.size(); idx++) {
-          lines.add(idx, new JavaLine(inputLines.get(idx)));
-        }
-        return lines;
-      default:
-        return out;
+    if (type.equals(GenType.LINES)) {
+      List<Object> inputLines = (List<Object>) out;
+      ArrayList<JavaLine> lines = new ArrayList<JavaLine>(inputLines.size());
+      for (int idx = 0; idx < inputLines.size(); idx++) {
+        lines.add(idx, new JavaLine(inputLines.get(idx)));
+      }
+      return lines;
+    } else {
+      return out;
     }
   }
 
@@ -93,8 +95,8 @@ public class JavaPipelineInterfacer implements PipelineInterfacer {
       pipeline.getMethod("set" + tMeth.name(name), boolean.class).invoke(instance, value);
     } catch (NoSuchMethodException | SecurityException | IllegalAccessException
         | IllegalArgumentException | InvocationTargetException e) {
-      e.printStackTrace();
       fail(name + "is not a valid method");
+      logger.log(Level.WARNING, e.getMessage(), e);
     }
   }
 
@@ -104,8 +106,8 @@ public class JavaPipelineInterfacer implements PipelineInterfacer {
       pipeline.getMethod("set" + tMeth.name(name), boolean.class).invoke(instance, value);
     } catch (NoSuchMethodException | SecurityException | IllegalAccessException
         | IllegalArgumentException | InvocationTargetException e) {
-      e.printStackTrace();
       fail(name + "is not a valid method");
+      logger.log(Level.WARNING, e.getMessage(), e);
     }
   }
 

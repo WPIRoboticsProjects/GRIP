@@ -4,12 +4,12 @@ import org.opencv.core.Point;
 
 public class CppLine extends TestLine {
 
-  private double x1;
-  private double y1;
-  private double x2;
-  private double y2;
-  private double length;
-  private double angle;
+  private final double x1;
+  private final double y1;
+  private final double x2;
+  private final double y2;
+  private final double length;
+  private final double angle;
 
   /**
    * Creates a line from the parameters gotten from array. Note this takes length and angle as

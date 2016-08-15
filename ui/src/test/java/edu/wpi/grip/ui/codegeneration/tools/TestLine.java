@@ -18,11 +18,10 @@ public abstract class TestLine {
   public abstract Point getPoint2();
 
   public String toString() {
-    StringBuilder bld = new StringBuilder();
-    bld.append("P1: ").append(pointToStr(getPoint1()));
-    bld.append(" P2: ").append(pointToStr(getPoint2()));
-    bld.append(" Length=").append(getLength());
-    bld.append(" Angle=").append(getAngle());
+    StringBuilder bld = new StringBuilder(24);
+    bld.append("P1: ").append(pointToStr(getPoint1())).append(" P2: ")
+        .append(pointToStr(getPoint2())).append(" Length=").append(getLength())
+        .append(" Angle=").append(getAngle());
     return bld.toString();
   }
 
@@ -43,9 +42,9 @@ public abstract class TestLine {
   }
 
   private static String errorMessage(TestLine grip, TestLine gen) {
-    StringBuilder bld = new StringBuilder();
-    bld.append("Grip was:").append(grip.toString()).append("\n");
-    bld.append("Gen was:").append(gen.toString()).append("\n");
+    StringBuilder bld = new StringBuilder(22);
+    bld.append("Grip was:").append(grip.toString())
+        .append("\nGen was:").append(gen.toString()).append('\n');
     return bld.toString();
   }
 

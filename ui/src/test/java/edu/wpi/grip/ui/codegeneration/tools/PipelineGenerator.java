@@ -15,6 +15,8 @@ import com.google.common.eventbus.EventBus;
 
 import java.io.File;
 import java.net.URISyntaxException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.inject.Inject;
 
@@ -27,15 +29,16 @@ public class PipelineGenerator {
   private EventBus eventBus;
   @Inject
   private Connection.Factory<Object> factory;
-  public static File codeDir = null;
+  private static File codeDir = null;
+  private static final Logger logger = Logger.getLogger(PipelineGenerator.class.getName());
 
   static {
     try {
       codeDir = new File(PipelineGenerator.class.getProtectionDomain()
           .getCodeSource().getLocation().toURI());
     } catch (URISyntaxException e) {
-      e.printStackTrace();
       fail("Could not load code directory");
+      logger.log(Level.WARNING, e.getMessage(), e);
     }
   }
 
@@ -63,6 +66,10 @@ public class PipelineGenerator {
     new Exporter(pipeline.getSteps(), Language.CPP, 
         codeDir.toPath().resolve(fileName + ".cpp").toFile(),
         true).run();
+  }
+
+  public static File getCodeDir() {
+    return codeDir;
   }
 
 }

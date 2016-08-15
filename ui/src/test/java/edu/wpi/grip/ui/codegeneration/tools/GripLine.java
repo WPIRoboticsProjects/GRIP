@@ -10,12 +10,12 @@ import java.util.List;
 
 public class GripLine extends TestLine {
 
-  private double x1;
-  private double  y1;
-  private double x2;
-  private double y2;
-  private double angle;
-  private double length;
+  private final double x1;
+  private final double y1;
+  private final double x2;
+  private final double y2;
+  private final double angle;
+  private final double length;
 
   public GripLine(Line l) {
     x1 = l.x1;

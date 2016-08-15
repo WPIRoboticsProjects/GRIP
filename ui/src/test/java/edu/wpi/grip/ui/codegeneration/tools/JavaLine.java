@@ -3,12 +3,15 @@ package edu.wpi.grip.ui.codegeneration.tools;
 import org.opencv.core.Point;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import static org.junit.Assert.fail;
 
 public class JavaLine extends TestLine {
 
-  private Object line;
+  private final Object line;
+  private static final Logger logger = Logger.getLogger(JavaLine.class.getName());
 
   public JavaLine(Object line) {
     this.line = line;
@@ -20,8 +23,8 @@ public class JavaLine extends TestLine {
       return (double) line.getClass().getMethod("length").invoke(line);
     } catch (NoSuchMethodException | SecurityException
         | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-      e.printStackTrace();
       fail("length is not valid for class " + line.getClass().getSimpleName());
+      logger.log(Level.WARNING, e.getMessage(), e);
       return 0.0;
     }
   }
@@ -32,8 +35,8 @@ public class JavaLine extends TestLine {
       return (double) line.getClass().getMethod("angle").invoke(line);
     } catch (NoSuchMethodException | SecurityException
         | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-      e.printStackTrace();
       fail("angle is not valid for class " + line.getClass().getSimpleName());
+      logger.log(Level.WARNING, e.getMessage(), e);
       return 0.0;
     }
   }
@@ -45,8 +48,8 @@ public class JavaLine extends TestLine {
           line.getClass().getField("y1").getDouble(line));
     } catch (NoSuchFieldException | SecurityException
         | IllegalAccessException | IllegalArgumentException e) {
-      e.printStackTrace();
       fail("angle is not valid for class " + line.getClass().getSimpleName());
+      logger.log(Level.WARNING, e.getMessage(), e);
       return null;
     }
   }
@@ -58,8 +61,8 @@ public class JavaLine extends TestLine {
           line.getClass().getField("y2").getDouble(line));
     } catch (NoSuchFieldException | SecurityException
         | IllegalAccessException | IllegalArgumentException e) {
-      e.printStackTrace();
       fail("angle is not valid for class " + line.getClass().getSimpleName());
+      logger.log(Level.WARNING, e.getMessage(), e);
       return null;
     }
   }

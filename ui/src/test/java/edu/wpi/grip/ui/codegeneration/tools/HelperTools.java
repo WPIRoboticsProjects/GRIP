@@ -13,6 +13,8 @@ import java.awt.BorderLayout;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
@@ -23,6 +25,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 public class HelperTools {
+  private static final Logger logger = Logger.getLogger(HelperTools.class.getName());
 
   /**
    * Calculates the average per pixel difference between two Mats. If two Mats are perfectly equal
@@ -101,7 +104,7 @@ public class HelperTools {
     try {
       Thread.sleep(5000);
     } catch (InterruptedException e) {
-      e.printStackTrace();
+      logger.log(Level.WARNING, e.getMessage(), e);
     }
     frame.dispose();
   }
@@ -109,13 +112,13 @@ public class HelperTools {
   private static JLabel createImg(String label, Mat mat) {
     MatOfByte matOfBytes = new MatOfByte();
     Imgcodecs.imencode(".jpg", mat, matOfBytes);
-    BufferedImage img = null;
     try (ByteArrayInputStream imgStream = new ByteArrayInputStream(matOfBytes.toArray())) {
-      img = ImageIO.read(imgStream);
+      BufferedImage img = ImageIO.read(imgStream);
+      return new JLabel(label, new ImageIcon(img), 0);
     } catch (IOException e) {
-      e.printStackTrace();
+      logger.log(Level.WARNING, e.getMessage(), e);
+      return null;
     }
-    return new JLabel(label, new ImageIcon(img), 0);
-
   }
+
 }

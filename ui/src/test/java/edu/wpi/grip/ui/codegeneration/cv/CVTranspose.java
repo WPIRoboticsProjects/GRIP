@@ -3,8 +3,7 @@ package edu.wpi.grip.ui.codegeneration.cv;
 import edu.wpi.grip.core.ManualPipelineRunner;
 import edu.wpi.grip.core.Step;
 import edu.wpi.grip.core.sockets.OutputSocket;
-import edu.wpi.grip.core.sources.ImageFileSource;
-import edu.wpi.grip.ui.codegeneration.AbstractGenerationTest;
+import edu.wpi.grip.ui.codegeneration.AbstractGenerationTesting;
 import edu.wpi.grip.ui.codegeneration.tools.GenType;
 import edu.wpi.grip.ui.codegeneration.tools.HelperTools;
 import edu.wpi.grip.ui.codegeneration.tools.PipelineInterfacer;
@@ -18,11 +17,11 @@ import java.util.Optional;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-public class CVTranspose extends AbstractGenerationTest {
+public class CVTranspose extends AbstractGenerationTesting {
 
-  boolean setup() {
+  boolean set() {
     Step step = gen.addStep(opUtil.getMetaData("CV Transpose"));
-    ImageFileSource img = loadImage(Files.gompeiJpegFile);
+    loadImage(Files.gompeiJpegFile);
     OutputSocket imgOut = pipeline.getSources().get(0).getOutputSockets().get(0);
     gen.connect(imgOut, step.getInputSockets().get(0));
     return true;
@@ -30,7 +29,7 @@ public class CVTranspose extends AbstractGenerationTest {
 
   @Test
   public void transposeTest() {
-    test(() -> setup(), (pip) -> validate(pip), "TransposeTest");
+    test(() -> set(), (pip) -> validate(pip), "TransposeTest");
   }
 
   void validate(PipelineInterfacer pip) {

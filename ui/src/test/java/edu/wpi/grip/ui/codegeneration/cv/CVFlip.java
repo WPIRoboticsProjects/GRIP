@@ -4,8 +4,7 @@ import edu.wpi.grip.core.ManualPipelineRunner;
 import edu.wpi.grip.core.Step;
 import edu.wpi.grip.core.operations.opencv.enumeration.FlipCode;
 import edu.wpi.grip.core.sockets.OutputSocket;
-import edu.wpi.grip.core.sources.ImageFileSource;
-import edu.wpi.grip.ui.codegeneration.AbstractGenerationTest;
+import edu.wpi.grip.ui.codegeneration.AbstractGenerationTesting;
 import edu.wpi.grip.ui.codegeneration.tools.GenType;
 import edu.wpi.grip.ui.codegeneration.tools.HelperTools;
 import edu.wpi.grip.ui.codegeneration.tools.PipelineInterfacer;
@@ -19,11 +18,11 @@ import java.util.Optional;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-public class CVFlip extends AbstractGenerationTest {
+public class CVFlip extends AbstractGenerationTesting {
 
   boolean setup(FlipCode flip) {
     Step step = gen.addStep(opUtil.getMetaData("CV flip"));
-    ImageFileSource img = loadImage(Files.gompeiJpegFile);
+    loadImage(Files.gompeiJpegFile);
     OutputSocket imgOut = pipeline.getSources().get(0).getOutputSockets().get(0);
     gen.connect(imgOut, step.getInputSockets().get(0));
     step.getInputSockets().get(1).setValue(flip);

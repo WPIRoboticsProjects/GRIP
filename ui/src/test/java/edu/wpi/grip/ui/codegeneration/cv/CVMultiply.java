@@ -6,8 +6,7 @@ import edu.wpi.grip.core.Step;
 import edu.wpi.grip.core.operations.composite.BlurOperation;
 import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.sockets.OutputSocket;
-import edu.wpi.grip.core.sources.ImageFileSource;
-import edu.wpi.grip.ui.codegeneration.AbstractGenerationTest;
+import edu.wpi.grip.ui.codegeneration.AbstractGenerationTesting;
 import edu.wpi.grip.ui.codegeneration.tools.GenType;
 import edu.wpi.grip.ui.codegeneration.tools.HelperTools;
 import edu.wpi.grip.ui.codegeneration.tools.PipelineInterfacer;
@@ -21,19 +20,19 @@ import java.util.Optional;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-public class CVMultiply extends AbstractGenerationTest {
+public class CVMultiply extends AbstractGenerationTesting {
 
-  boolean setup() {
+  boolean set() {
     Step blur = gen.addStep(new OperationMetaData(BlurOperation.DESCRIPTION, () -> new
         BlurOperation(isf, osf)));
-    ImageFileSource img = loadImage(Files.gompeiJpegFile);
+    loadImage(Files.gompeiJpegFile);
     OutputSocket imgOut = pipeline.getSources().get(0).getOutputSockets().get(0);
     for (InputSocket sock : blur.getInputSockets()) {
       String sockHint = sock.getSocketHint().getIdentifier();
-      if (sockHint.equals("Input")) {
+      if ("Input".equals(sockHint)) {
         gen.connect(imgOut, sock);
-      } else if (sockHint.equals("Radius")) {
-        sock.setValue(new Double(10.0));
+      } else if ("Radius".equals(sockHint)) {
+        sock.setValue(10.0);
       } else if (sock.getSocketHint().getIdentifier().equals("Type")) {
         HelperTools.setEnumSocket(sock, "Box Blur");
       }
@@ -41,13 +40,13 @@ public class CVMultiply extends AbstractGenerationTest {
     Step max = gen.addStep(opUtil.getMetaData("CV Multiply"));
     gen.connect(imgOut, max.getInputSockets().get(0));
     gen.connect(blur.getOutputSockets().get(0), max.getInputSockets().get(1));
-    max.getInputSockets().get(2).setValue(new Integer(2));
+    max.getInputSockets().get(2).setValue(2);
     return true;
   }
   
   @Test
   public void cvMultiplyTest() {
-    test(() -> setup(), (pip) -> validate(pip), "CvMultiplyTest");
+    test(() -> set(), (pip) -> validate(pip), "CvMultiplyTest");
   }
   
   void validate(PipelineInterfacer pip) {

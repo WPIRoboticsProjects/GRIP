@@ -5,21 +5,20 @@ import edu.wpi.grip.core.Step;
 import edu.wpi.grip.core.operations.composite.HSVThresholdOperation;
 import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.sockets.OutputSocket;
-import edu.wpi.grip.core.sources.ImageFileSource;
 import edu.wpi.grip.util.Files;
 
 import java.util.Arrays;
 import java.util.List;
 
 public class HSVThresholdSetup {
-  static void setup(AbstractGenerationTest caller) {
+  static void setup(AbstractGenerationTesting caller) {
     List<Number> hVal = Arrays.asList(50.0d, 180.0d);
     List<Number> sVal = Arrays.asList(0.0d, 255.0d);
     List<Number> vVal = Arrays.asList(0.0d, 255.0d);
 
     Step hsv = caller.gen.addStep(new OperationMetaData(HSVThresholdOperation.DESCRIPTION,
         () -> new HSVThresholdOperation(caller.isf, caller.osf)));
-    ImageFileSource img = caller.loadImage(Files.imageFile);
+    caller.loadImage(Files.imageFile);
     OutputSocket imgOut = caller.pipeline.getSources().get(0).getOutputSockets().get(0);
     for (InputSocket sock : hsv.getInputSockets()) {
       if (sock.getSocketHint().getIdentifier().equals("Input")) {

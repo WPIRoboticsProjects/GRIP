@@ -5,6 +5,8 @@ import org.opencv.core.Core;
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.tools.JavaCompiler;
 import javax.tools.StandardJavaFileManager;
@@ -14,6 +16,8 @@ import javax.tools.ToolProvider;
 import static org.junit.Assert.fail;
 
 public class PipelineCreator {
+  private static final Logger logger = Logger.getLogger(PipelineCreator.class.getName());
+
   static {
     System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
   }
@@ -23,17 +27,17 @@ public class PipelineCreator {
     StandardJavaFileManager fileManager = compiler.getStandardFileManager(null, null, null);
     try {
       fileManager.setLocation(StandardLocation.CLASS_OUTPUT,
-          Arrays.asList(PipelineGenerator.codeDir));
+          Arrays.asList(PipelineGenerator.getCodeDir()));
     } catch (IOException e1) {
-      e1.printStackTrace();
       fail("FileManager could not set output location " + errorBase(fileName));
+      logger.log(Level.WARNING, e1.getMessage(), e1);
     }
     compiler.getTask(null, fileManager, null, null, null, fileManager.getJavaFileObjects(
-        PipelineGenerator.codeDir.toPath().resolve(fileName).toFile())).call();
+        PipelineGenerator.getCodeDir().toPath().resolve(fileName).toFile())).call();
     try {
       fileManager.close();
     } catch (IOException e) {
-      e.printStackTrace();
+      logger.log(Level.WARNING, e.getMessage(), e);
     }
   }
 
@@ -45,16 +49,15 @@ public class PipelineCreator {
         return Class.forName(fileName.replace(".java", ""));
       }
     } catch (ClassNotFoundException e) {
-      e.printStackTrace();
       fail("Unable to load class " + errorBase(fileName));
+      logger.log(Level.WARNING, e.getMessage(), e);
     }
     return null;
   }
 
   public static Class makeClass(String fileName) {
     compile(fileName);
-    Class claz = load(fileName);
-    return claz;
+    return load(fileName);
   }
 
   private static String errorBase(String fileName) {
@@ -63,13 +66,15 @@ public class PipelineCreator {
 
   public static void cleanClasses() {
     try {
-      File[] files = PipelineGenerator.codeDir.toPath().toFile().listFiles((file, name) -> name
+      File[] files = PipelineGenerator.getCodeDir().toPath().toFile().listFiles((file, name) -> name
           .contains(".class") || name.contains(".java"));
-      for (File file : files) {
-        file.delete();
+      if (files != null) {
+        for (File file : files) {
+          file.delete();
+        }
       }
     } catch (SecurityException e) {
-      e.printStackTrace(); //Doesn't matter signifigantly if we cannot delete the files.
+      logger.log(Level.WARNING, e.getMessage(), e);
     }
   }
 }

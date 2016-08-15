@@ -11,19 +11,23 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
+@SuppressWarnings("PMD.UseLocaleWithCaseConversions")
 public class CppPipelineInterfacer implements PipelineInterfacer {
   private static File codeDir;
+  private static final Logger logger = Logger.getLogger(CppPipelineInterfacer.class.getName());
 
   static {
     if (System.getProperty("os.name").toLowerCase().contains("windows")) {
       System.loadLibrary("pipe");
     }
     System.loadLibrary("genJNI");
-    codeDir = PipelineGenerator.codeDir.getAbsoluteFile();
+    codeDir = PipelineGenerator.getCodeDir().getAbsoluteFile();
   }
 
   public CppPipelineInterfacer(String libName) {
@@ -58,8 +62,8 @@ public class CppPipelineInterfacer implements PipelineInterfacer {
         assertEquals("Failed to compile " + libName + error, 0, make.exitValue());
       }
     } catch (IOException e) {
-      e.printStackTrace();
       fail("Could not compile " + libName + " due to :" + e.getMessage());
+      logger.log(Level.WARNING, e.getMessage(), e);
     }
     String platformLibName = System.mapLibraryName(libName);
     init(codeDir.getAbsolutePath() + File.separator + platformLibName);
@@ -68,28 +72,28 @@ public class CppPipelineInterfacer implements PipelineInterfacer {
 
   @Override
   public Object getOutput(String name, GenType type) {
-    name = name.toLowerCase().replaceAll("_", "");
+    String newName = name.toLowerCase().replaceAll("_", "");
     switch (type) {
       case BLOBS:
         MatOfKeyPoint blobs = new MatOfKeyPoint();
-        getBlobs(name, blobs.nativeObj);
+        getBlobs(newName, blobs.nativeObj);
         return blobs;
       case BOOLEAN:
-        return new Boolean(getBoolean(name));
+        return getBoolean(newName);
       case CONTOURS:
-        int numContours = getNumContours(name);
+        int numContours = getNumContours(newName);
         ArrayList<MatOfPoint> contours = new ArrayList<MatOfPoint>(numContours);
         long[] addresses = new long[numContours];
         for (int idx = 0; idx < numContours; idx++) {
           contours.add(idx, new MatOfPoint());
           addresses[idx] = contours.get(idx).nativeObj;
         }
-        getContours(name, addresses);
+        getContours(newName, addresses);
         return contours;
       case IMAGE:
-        return getMat(name);
+        return getMat(newName);
       case LINES:
-        double[][] linePts = getLines(name);
+        double[][] linePts = getLines(newName);
         List<CppLine> lines = new ArrayList<CppLine>(linePts.length);
         for (int idx = 0; idx < linePts.length; idx++) {
           double[] pts = linePts[idx];
@@ -99,12 +103,12 @@ public class CppPipelineInterfacer implements PipelineInterfacer {
       case LIST:
         break;
       case NUMBER:
-        return new Double(getDouble(name));
+        return getDouble(newName);
       case POINT:
-        double[] pnt = getSizeOrPoint(name, false);
+        double[] pnt = getSizeOrPoint(newName, false);
         return new Point(pnt[0], pnt[1]);
       case SIZE:
-        double[] sz = getSizeOrPoint(name, true);
+        double[] sz = getSizeOrPoint(newName, true);
         return new Size(sz[0], sz[1]);
       default:
         break;
@@ -139,7 +143,7 @@ public class CppPipelineInterfacer implements PipelineInterfacer {
     try {
       proc.waitFor();
     } catch (InterruptedException e) {
-      e.printStackTrace();
+      logger.log(Level.WARNING, e.getMessage(), e);
     }
   }
 
@@ -184,6 +188,8 @@ public class CppPipelineInterfacer implements PipelineInterfacer {
 
   private native int getNumContours(String name);
 
+  private native double[][] getLines(String name);
+
   /**
    * Gets the contours from specified output.
    *
@@ -193,8 +199,7 @@ public class CppPipelineInterfacer implements PipelineInterfacer {
    */
   private native void getContours(String name, long[] addrs);
 
-  private native double[][] getLines(String name);
+  private long nativeHandle; //NOPMD
 
-  private long nativeHandle;
 
 }

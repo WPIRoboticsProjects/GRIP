@@ -7,9 +7,8 @@ import edu.wpi.grip.core.operations.CVOperations;
 import edu.wpi.grip.core.operations.composite.DesaturateOperation;
 import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.sockets.OutputSocket;
-import edu.wpi.grip.core.sources.ImageFileSource;
 import edu.wpi.grip.generated.opencv_imgproc.enumeration.AdaptiveThresholdTypesEnum;
-import edu.wpi.grip.ui.codegeneration.AbstractGenerationTest;
+import edu.wpi.grip.ui.codegeneration.AbstractGenerationTesting;
 import edu.wpi.grip.ui.codegeneration.tools.GenType;
 import edu.wpi.grip.ui.codegeneration.tools.HelperTools;
 import edu.wpi.grip.ui.codegeneration.tools.PipelineInterfacer;
@@ -23,15 +22,13 @@ import java.util.Optional;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-public class CVAdaptiveThreshold extends AbstractGenerationTest {
-  private final double thresh = 50;
-  private final double maxval = 200;
+public class CVAdaptiveThreshold extends AbstractGenerationTesting {
 
   boolean setup(AdaptiveThresholdTypesEnum adaptMethod,
                 CVOperations.CVAdaptThresholdTypesEnum threshMethod) {
     Step desat = gen.addStep(new OperationMetaData(DesaturateOperation.DESCRIPTION, () -> new
         DesaturateOperation(isf, osf)));
-    ImageFileSource img = loadImage(Files.gompeiJpegFile);
+    loadImage(Files.gompeiJpegFile);
     OutputSocket imgOut = pipeline.getSources().get(0).getOutputSockets().get(0);
     for (InputSocket sock : desat.getInputSockets()) {
       if (sock.getSocketHint().getIdentifier().equals("Input")) {
