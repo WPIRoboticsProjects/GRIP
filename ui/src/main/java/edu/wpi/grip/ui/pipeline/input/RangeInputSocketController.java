@@ -11,10 +11,12 @@ import com.google.inject.assistedinject.Assisted;
 import org.controlsfx.control.RangeSlider;
 
 import java.util.List;
-
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
 
 import static com.google.common.base.Preconditions.checkArgument;
@@ -26,6 +28,10 @@ import static com.google.common.base.Preconditions.checkArgument;
 public class RangeInputSocketController extends InputSocketController<List<Number>> {
 
   private final RangeSlider slider;
+  private final BooleanProperty inverted = new SimpleBooleanProperty(false);
+
+  private static final String INVERTED_CSS
+      = RangeInputSocketController.class.getResource("InvertedRangeSlider.css").toExternalForm();
 
   /**
    * @param socket An <code>InputSocket</code> with a domain containing two <code>Number</code>s
@@ -75,6 +81,20 @@ public class RangeInputSocketController extends InputSocketController<List<Numbe
       List<Number> range = socket.getValue().get();
       range.set(1, slider.getHighValue());
       socket.setValue(range);
+    });
+
+    this.slider.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> {
+      if (event.getClickCount() == 2) {
+        inverted.set(!inverted.get());
+      }
+    });
+
+    this.inverted.addListener((observable, oldValue, newValue) -> {
+      if (newValue) {
+        this.slider.getStylesheets().add(INVERTED_CSS);
+      } else {
+       this.slider.getStylesheets().removeAll(INVERTED_CSS); // removeAll has no exceptions!
+      }
     });
   }
 
