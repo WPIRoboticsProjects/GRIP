@@ -255,7 +255,7 @@ public class MainWindowController {
     fileChooser.getExtensionFilters().add(new ExtensionFilter(Language.JAVA.name, "*.java"));
     fileChooser.getExtensionFilters().add(new ExtensionFilter(Language.CPP.name, "*.cpp"));
     fileChooser.getExtensionFilters().add(new ExtensionFilter(Language.PYTHON.name, "*.py"));
-    fileChooser.setInitialFileName("Pipeline");
+    fileChooser.setInitialFileName("Pipeline.java");
     final File file = fileChooser.showSaveDialog(root.getScene().getWindow());
     if (file == null) {
       return;

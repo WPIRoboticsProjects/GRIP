@@ -5,7 +5,7 @@ package edu.wpi.grip.ui.codegeneration;
  * Each language has a name as well as a directory for templates.
  */
 public enum Language {
-  JAVA("Java", "java"), CPP("C++", "cpp"), PYTHON("Python", "python");
+  JAVA("Java (*.java)", "java"), CPP("C++ (*.cpp)", "cpp"), PYTHON("Python (*.py)", "python");
   public final String name;
   public final String filePath;
 

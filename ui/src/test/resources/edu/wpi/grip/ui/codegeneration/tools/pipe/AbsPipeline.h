@@ -8,7 +8,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <map>
-#include <String>
+#include <string>
 
 #ifdef ON_WIN
 #ifdef WIN_EXPORT
