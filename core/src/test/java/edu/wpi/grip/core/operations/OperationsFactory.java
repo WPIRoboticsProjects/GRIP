@@ -51,19 +51,19 @@ public class OperationsFactory {
     }
 
     @Override
-    @SuppressWarnings("PMD.UncommentedEmptyMethod")
+    @SuppressWarnings("PMD.UncommentedEmptyMethodBody")
     public void publish(ROSMessagePublisher.Converter publish) {
 
     }
 
     @Override
-    @SuppressWarnings("PMD.UncommentedEmptyMethod")
+    @SuppressWarnings("PMD.UncommentedEmptyMethodBody")
     protected void publishNameChanged(Optional<String> oldName, String newName) {
 
     }
 
     @Override
-    @SuppressWarnings("PMD.UncommentedEmptyMethod")
+    @SuppressWarnings("PMD.UncommentedEmptyMethodBody")
     public void close() {
 
     }
