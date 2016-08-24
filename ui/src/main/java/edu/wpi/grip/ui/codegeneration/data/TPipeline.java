@@ -44,7 +44,7 @@ public class TPipeline {
    *
    * @param pipeSteps The list of steps used to create the TPipeline.
    */
-  public void set(ImmutableList<Step> pipeSteps) {
+  private void set(ImmutableList<Step> pipeSteps) {
     for (Step step : pipeSteps) {
       TStep tStep = makeStep(step.getOperationDescription().name().replaceAll(" ", "_"));
       steps.add(tStep);

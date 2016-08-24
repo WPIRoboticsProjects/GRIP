@@ -23,11 +23,8 @@ import javax.inject.Inject;
 import static org.junit.Assert.fail;
 
 public class PipelineGenerator {
-  @Inject
   private Pipeline pipeline;
-  @Inject
   private EventBus eventBus;
-  @Inject
   private Connection.Factory<Object> factory;
   private static File codeDir = null;
   private static final Logger logger = Logger.getLogger(PipelineGenerator.class.getName());
@@ -42,7 +39,11 @@ public class PipelineGenerator {
     }
   }
 
-  public PipelineGenerator() {
+  @Inject
+  public PipelineGenerator(Connection.Factory<Object> factory, EventBus eventBus,Pipeline pipeline) {
+    this.factory = factory;
+    this.eventBus = eventBus;
+    this.pipeline = pipeline;
   }
 
   public Step addStep(OperationMetaData data) {

@@ -32,13 +32,13 @@ public class GripIconHSLSetup {
     caller.loadImage(Files.imageFile);
     OutputSocket imgOut = caller.pipeline.getSources().get(0).getOutputSockets().get(0);
     for (InputSocket sock : hsl.getInputSockets()) {
-      if (sock.getSocketHint().getIdentifier().equals("Input")) {
+      if ("Input".equals(sock.getSocketHint().getIdentifier())) {
         caller.gen.connect(imgOut, sock);
-      } else if (sock.getSocketHint().getIdentifier().equals("Hue")) {
+      } else if ("Hue".equals(sock.getSocketHint().getIdentifier())) {
         sock.setValue(hVal);
-      } else if (sock.getSocketHint().getIdentifier().equals("Saturation")) {
+      } else if ("Saturation".equals(sock.getSocketHint().getIdentifier())) {
         sock.setValue(sVal);
-      } else if (sock.getSocketHint().getIdentifier().equals("Luminance")) {
+      } else if ("Luminance".equals(sock.getSocketHint().getIdentifier())) {
         sock.setValue(lVal);
       }
     }
