@@ -160,12 +160,13 @@ public final class ControllerMap<C extends Controller, N extends Node> implement
    * @param controller The controller to use as a lookup key for the move
    * @param distance   The distance to move the node. 0 means no movement.
    */
+  @SuppressWarnings("PMD.CompareObjectsWithEquals")
   public void moveByDistance(C controller, int distance) {
     checkNotNull(controller, "Controller can not be null");
-    final N node = checkNotNull(controllerNodeMap.get(controller));
     if (distance == 0) {
       return;
     }
+    final N node = checkNotNull(controllerNodeMap.get(controller));
     final int oldIndex = nodesList.indexOf(node);
     final int newIndex = Math.min(Math.max(oldIndex + distance, 0), nodesList.size() - 1);
     if (oldIndex != newIndex) {
