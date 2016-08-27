@@ -73,6 +73,10 @@ public class NetworkTableEntrySource extends Source {
     public String toString() {
       return CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, name());
     }
+
+    public String toProperty() {
+      return toString().toUpperCase();
+    }
   }
 
   @AssistedInject
@@ -134,7 +138,7 @@ public class NetworkTableEntrySource extends Source {
   public Properties getProperties() {
     Properties properties = new Properties();
     properties.setProperty(PATH_PROPERTY, path);
-    properties.setProperty(TYPE_PROPERTY, type.toString().toUpperCase());
+    properties.setProperty(TYPE_PROPERTY, type.toProperty());
     return properties;
   }
 
