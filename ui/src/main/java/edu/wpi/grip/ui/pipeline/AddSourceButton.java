@@ -7,6 +7,7 @@ import edu.wpi.grip.core.sources.CameraSource;
 import edu.wpi.grip.core.sources.HttpSource;
 import edu.wpi.grip.core.sources.ImageFileSource;
 import edu.wpi.grip.core.sources.MultiImageFileSource;
+import edu.wpi.grip.core.sources.NetworkTableEntrySource;
 import edu.wpi.grip.ui.util.DPIUtility;
 import edu.wpi.grip.ui.util.SupplierWithIO;
 
@@ -25,13 +26,15 @@ import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
-import javafx.scene.control.Control;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.MenuButton;
 import javafx.scene.control.MenuItem;
@@ -40,6 +43,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
+import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
@@ -59,6 +63,7 @@ public class AddSourceButton extends MenuButton {
   private final MenuItem webcamButton;
   private final MenuItem ipcamButton;
   private final MenuItem httpButton;
+  private final MenuItem networktablesButton;
   private Optional<Dialog> activeDialog = Optional.empty();
 
   @Inject
@@ -66,7 +71,8 @@ public class AddSourceButton extends MenuButton {
                 MultiImageFileSource.Factory multiImageSourceFactory,
                 ImageFileSource.Factory imageSourceFactory,
                 CameraSource.Factory cameraSourceFactory,
-                HttpSource.Factory httpSourceFactory) {
+                HttpSource.Factory httpSourceFactory,
+                NetworkTableEntrySource.Factory networkTableSourceFactory) {
     super("Add Source");
     this.eventBus = eventBus;
     
@@ -214,6 +220,46 @@ public class AddSourceButton extends MenuButton {
               });
         });
 
+    networktablesButton = addMenuItem("NetworkTable",
+        getClass().getResource("/edu/wpi/grip/ui/icons/publish.png"), mouseEvent -> {
+          final Parent root = this.getScene().getRoot();
+          // Show a dialog to pick the server path images will be uploaded on
+          final String rootString = "/";
+          final VBox fields = new VBox();
+          final TextField tablePath = new TextField(rootString);
+          final ComboBox<NetworkTableEntrySource.Types> type = new ComboBox<>();
+          final SourceDialog dialog = new SourceDialog(root, fields);
+
+          type.setPromptText("Select a data type");
+          type.getItems().setAll(NetworkTableEntrySource.Types.values());
+          type.setMaxWidth(Double.MAX_VALUE);
+          fields.getChildren().add(tablePath);
+          fields.getChildren().add(type);
+          tablePath.setPromptText("Ex: /GRIP/fps");
+          dialog.getDialogPane().lookupButton(ButtonType.OK).setDisable(true); // Default disabled
+
+          ChangeListener changeListener = (observable, oldValue, newValue) -> {
+            boolean valid = tablePath.getText().startsWith(rootString)
+                && tablePath.getText().length() > rootString.length()
+                && type.getValue() != null;
+            dialog.getDialogPane().lookupButton(ButtonType.OK).setDisable(!valid);
+          };
+
+          tablePath.textProperty().addListener(changeListener);
+          type.valueProperty().addListener(changeListener);
+
+          dialog.setTitle("Choose NetworkTable path");
+          dialog.setHeaderText("Enter the NetworkTable path");
+          dialog.showAndWait()
+              .filter(ButtonType.OK::equals)
+              .ifPresent(bt -> {
+                final NetworkTableEntrySource networkTableEntrySource
+                    = networkTableSourceFactory.create(tablePath.getText(), type.getValue());
+                networkTableEntrySource.initialize();
+                eventBus.post(new SourceAddedEvent(networkTableEntrySource));
+              });
+        });
+
   }
 
   /**
@@ -225,7 +271,6 @@ public class AddSourceButton extends MenuButton {
   private void loadCamera(Dialog<ButtonType> dialog, SupplierWithIO<CameraSource>
       cameraSourceSupplier, Consumer<IOException> failureCallback) {
     assert Platform.isFxApplicationThread() : "Should only run in FX thread";
-    activeDialog = Optional.of(dialog);
     dialog.showAndWait().filter(Predicate.isEqual(ButtonType.OK)).ifPresent(result -> {
       try {
         // Will try to create the camera with the values from the supplier
@@ -237,7 +282,6 @@ public class AddSourceButton extends MenuButton {
         loadCamera(dialog, cameraSourceSupplier, failureCallback);
       }
     });
-    activeDialog = Optional.empty();
   }
 
   /**
@@ -272,6 +316,11 @@ public class AddSourceButton extends MenuButton {
   }
 
   @VisibleForTesting
+  MenuItem getNetworktablesButton() {
+    return networktablesButton;
+  }
+
+  @VisibleForTesting
   void closeDialogs() {
     activeDialog.ifPresent(dialog -> {
       for (ButtonType bt : dialog.getDialogPane().getButtonTypes()) {
@@ -288,21 +337,24 @@ public class AddSourceButton extends MenuButton {
     AddSourceButton create();
   }
 
-  private static class SourceDialog extends Dialog<ButtonType> {
+  private class SourceDialog extends Dialog<ButtonType> {
     private final Text errorText = new Text();
 
-    private SourceDialog(final Parent root, Control inputField) {
+    private SourceDialog(final Parent root, Node customField) {
       super();
+
+      setOnShowing(event -> activeDialog = Optional.of(this));
+      setOnHidden(event -> activeDialog = Optional.empty());
 
       this.getDialogPane().getStyleClass().add(SOURCE_DIALOG_STYLE_CLASS);
 
       final GridPane gridContent = new GridPane();
       gridContent.setMaxWidth(Double.MAX_VALUE);
-      GridPane.setHgrow(inputField, Priority.ALWAYS);
+      GridPane.setHgrow(customField, Priority.ALWAYS);
       GridPane.setHgrow(errorText, Priority.NEVER);
-      errorText.wrappingWidthProperty().bind(inputField.widthProperty());
+      errorText.setWrappingWidth(customField.getLayoutBounds().getWidth());
       gridContent.add(errorText, 0, 0);
-      gridContent.add(inputField, 0, 1);
+      gridContent.add(customField, 0, 1);
 
       getDialogPane().setContent(gridContent);
       getDialogPane().setStyle(root.getStyle());

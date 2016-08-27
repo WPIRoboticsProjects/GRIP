@@ -34,5 +34,10 @@ public final class GripNetworkModule extends AbstractModule {
     bind(ROSNetworkPublisherFactory.class)
         .annotatedWith(Names.named("rosManager"))
         .to(ROSManager.class);
+
+    // Network receiver bindings
+    bind(MapNetworkReceiverFactory.class)
+        .annotatedWith(Names.named("ntManager"))
+        .to(NTManager.class);
   }
 }

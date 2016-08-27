@@ -4,6 +4,7 @@ import edu.wpi.grip.core.OperationMetaData;
 import edu.wpi.grip.core.Palette;
 import edu.wpi.grip.core.Step;
 import edu.wpi.grip.core.operations.OperationsFactory;
+import edu.wpi.grip.core.operations.network.MockGripNetworkModule;
 import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.ui.GripUiModule;
 import edu.wpi.grip.util.GripCoreTestModule;
@@ -56,7 +57,8 @@ public class InputSocketControllerFactoryTest extends ApplicationTest {
     GripCoreTestModule testModule = new GripCoreTestModule();
     testModule.setUp();
 
-    Injector injector = Guice.createInjector(testModule);
+    Injector injector = Guice.createInjector(Modules.override(testModule)
+        .with(new MockGripNetworkModule()));
     final Palette palette = injector.getInstance(Palette.class);
     final EventBus eventBus = injector.getInstance(EventBus.class);
     OperationsFactory.create(eventBus).addOperations();
@@ -80,7 +82,8 @@ public class InputSocketControllerFactoryTest extends ApplicationTest {
   public void start(Stage stage) {
     testModule = new GripCoreTestModule();
     testModule.setUp();
-    Injector injector = Guice.createInjector(Modules.override(testModule).with(new GripUiModule()));
+    Injector injector = Guice.createInjector(Modules.override(testModule)
+        .with(new GripUiModule(), new MockGripNetworkModule()));
     inputSocketControllerFactory = injector.getInstance(InputSocketControllerFactory.class);
     stepFactory = injector.getInstance(Step.Factory.class);
     gridPane = new GridPane();
