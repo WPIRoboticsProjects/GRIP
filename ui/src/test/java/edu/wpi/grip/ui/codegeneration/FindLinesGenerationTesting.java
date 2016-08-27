@@ -18,15 +18,12 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 import static org.junit.Assume.assumeFalse;
 
 @Category(GenerationTesting.class)
@@ -106,30 +103,6 @@ public class FindLinesGenerationTesting extends AbstractGenerationTesting {
       assertTrue("griplin does not contain: " + genLin.get(idx),
           TestLine.containsLin(genLin.get(idx), gripLin));
     }
-
   }
-
-  private double getLength(Object line) {
-    try {
-      return (double) line.getClass().getMethod("length").invoke(line);
-    } catch (NoSuchMethodException | SecurityException | IllegalAccessException
-        | IllegalArgumentException | InvocationTargetException e) {
-      logger.log(Level.WARNING, e.getMessage(), e);
-      fail("length is not valid for class " + line.getClass().getSimpleName());
-      return 0.0;
-    }
-  }
-
-  private double getAngle(Object line) {
-    try {
-      return (double) line.getClass().getMethod("angle").invoke(line);
-    } catch (NoSuchMethodException | SecurityException | IllegalAccessException
-        | IllegalArgumentException | InvocationTargetException e) {
-      logger.log(Level.WARNING, e.getMessage(), e);
-      fail("length is not valid for class " + line.getClass().getSimpleName());
-      return 0.0;
-    }
-  }
-
 
 }
