@@ -39,6 +39,7 @@ public class AdvancedFilterContoursOperation implements Operation {
           .summary("Find contours matching certain criteria")
           .category(OperationDescription.Category.FEATURE_DETECTION)
           .icon(Icon.iconStream("find-contours"))
+          .aliases("Filter Contours")
           .build();
 
   private final SocketHint<ContoursReport> contoursHint = new SocketHint.Builder<>(ContoursReport
