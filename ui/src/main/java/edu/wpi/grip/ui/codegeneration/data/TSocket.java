@@ -13,7 +13,7 @@ public class TSocket {
    * @param name the GRIP name of the socket.
    */
   protected TSocket(String type, String name) {
-    setType(type);
+    this.type = type;
     this.name = name;
   }
 
