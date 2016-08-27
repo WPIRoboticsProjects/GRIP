@@ -1,6 +1,5 @@
 package edu.wpi.grip.core.operations.network;
 
-import edu.wpi.grip.core.operations.network.networktables.TestingNTManager;
 import edu.wpi.grip.core.operations.network.ros.MockROSManager;
 import edu.wpi.grip.core.operations.network.ros.ROSNetworkPublisherFactory;
 
@@ -25,6 +24,6 @@ public final class MockGripNetworkModule extends AbstractModule {
 
     bind(MapNetworkReceiverFactory.class)
         .annotatedWith(Names.named("ntManager"))
-        .to(TestingNTManager.class);
+        .to(MockNetworkReceiver.class);
   }
 }

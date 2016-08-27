@@ -10,6 +10,7 @@ import com.google.common.eventbus.EventBus;
 import edu.wpi.first.wpilibj.networktables.NetworkTablesJNI;
 
 import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -20,9 +21,9 @@ public class NetworkTableEntrySourceTest {
 
   private final EventBus eventBus;
   private final MockOutputSocketFactory osf;
-  private final TestingNTManager testingNtManager;
 
   private NetworkTableEntrySource source;
+  private TestingNTManager testingNtManager;
 
   private static final double TEST_NUMBER = 13.13;
   private static final String TEST_STRING = "Some test string";
@@ -33,6 +34,10 @@ public class NetworkTableEntrySourceTest {
   public NetworkTableEntrySourceTest() {
     eventBus = new EventBus();
     osf = new MockOutputSocketFactory(eventBus);
+  }
+
+  @Before
+  public void setUp() {
     testingNtManager = new TestingNTManager();
 
     NetworkTablesJNI.putBoolean(BOOLEAN_PATH, true);
@@ -41,8 +46,9 @@ public class NetworkTableEntrySourceTest {
   }
 
   @After
-  public void cleanup() {
+  public void tearDown() {
     eventBus.post(new SourceRemovedEvent(source));
+    testingNtManager.close();
   }
 
   @Test

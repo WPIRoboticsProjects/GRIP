@@ -12,7 +12,7 @@ import java.util.logging.Logger;
  * This class encapsulates the way we map various settings to the global NetworkTables state.
  */
 @Singleton
-public class TestingNTManager extends NTManager {
+public class TestingNTManager extends NTManager implements AutoCloseable {
 
   private static final Logger logger = Logger.getLogger(TestingNTManager.class.getName());
 
@@ -31,6 +31,11 @@ public class TestingNTManager extends NTManager {
 
     NetworkTable.setServerMode();
     NetworkTable.initialize();
+  }
+
+  @Override
+  public void close() {
+    NetworkTable.shutdown();
   }
 
 }
