@@ -23,9 +23,9 @@ import javax.inject.Inject;
 import static org.junit.Assert.fail;
 
 public class PipelineGenerator {
-  private Pipeline pipeline;
-  private EventBus eventBus;
-  private Connection.Factory<Object> factory;
+  private final Pipeline pipeline;
+  private final EventBus eventBus;
+  private final Connection.Factory<Object> factory;
   private static File codeDir = null;
   private static final Logger logger = Logger.getLogger(PipelineGenerator.class.getName());
 
@@ -40,7 +40,8 @@ public class PipelineGenerator {
   }
 
   @Inject
-  public PipelineGenerator(Connection.Factory<Object> factory, EventBus eventBus,Pipeline pipeline) {
+  PipelineGenerator(Connection.Factory<Object> factory, EventBus eventBus,
+                    Pipeline pipeline) {
     this.factory = factory;
     this.eventBus = eventBus;
     this.pipeline = pipeline;

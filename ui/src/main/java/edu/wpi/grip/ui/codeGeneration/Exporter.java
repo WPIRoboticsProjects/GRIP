@@ -88,7 +88,6 @@ public class Exporter implements Runnable {
       String missingOperation = error.substring(error.lastIndexOf('/') + 1, error.lastIndexOf('.'));
       logger.log(Level.SEVERE,
           "The operation " + missingOperation + " is not supported for export to " + lang, e);
-      throw e; 
     }
   }
 

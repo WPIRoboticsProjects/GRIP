@@ -57,6 +57,7 @@ public class AbstractGenerationTesting {
   protected ImageFileSource.Factory imgfac;
   @Inject
   protected OperationsUtil opUtil;
+  @Inject
   protected PipelineGenerator gen;
 
   static {
@@ -69,7 +70,6 @@ public class AbstractGenerationTesting {
     testModule.setUp();
     final Injector injector = Guice.createInjector(testModule);
     injector.injectMembers(this);
-    gen = new PipelineGenerator();
     injector.injectMembers(gen);
   }
 
