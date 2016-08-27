@@ -106,30 +106,6 @@ public class FindLinesGenerationTesting extends AbstractGenerationTesting {
       assertTrue("griplin does not contain: " + genLin.get(idx),
           TestLine.containsLin(genLin.get(idx), gripLin));
     }
-
   }
-
-  private double getLength(Object line) {
-    try {
-      return (double) line.getClass().getMethod("length").invoke(line);
-    } catch (NoSuchMethodException | SecurityException | IllegalAccessException
-        | IllegalArgumentException | InvocationTargetException e) {
-      logger.log(Level.WARNING, e.getMessage(), e);
-      fail("length is not valid for class " + line.getClass().getSimpleName());
-      return 0.0;
-    }
-  }
-
-  private double getAngle(Object line) {
-    try {
-      return (double) line.getClass().getMethod("angle").invoke(line);
-    } catch (NoSuchMethodException | SecurityException | IllegalAccessException
-        | IllegalArgumentException | InvocationTargetException e) {
-      logger.log(Level.WARNING, e.getMessage(), e);
-      fail("length is not valid for class " + line.getClass().getSimpleName());
-      return 0.0;
-    }
-  }
-
 
 }
