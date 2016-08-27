@@ -27,7 +27,7 @@ before_install:
 
 # Only do an assemble when we aren't building a pull request
 install:
-  - '[ "${TRAVIS_PULL_REQUEST}" = "false" ] && ./gradlew :ui:jfxNative --stacktrace || ./gradlew --stacktrace '
+  - '[ "${TRAVIS_PULL_REQUEST}" = "false" ] && ./gradlew jfxNative --no-daemon --stacktrace || ./gradlew --stacktrace '
 
 script:
   - ./gradlew check jacocoTestReport jacocoRootReport --stacktrace -Pheadless=true -PlogTests
