@@ -88,3 +88,7 @@ bower_components
 **/generated
 */generated_tests
 /bin/
+
+### NetworkTables
+networktables.ini
+networktables.ini.bak

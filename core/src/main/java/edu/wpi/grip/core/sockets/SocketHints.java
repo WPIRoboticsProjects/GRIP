@@ -193,5 +193,13 @@ public final class SocketHints {
         defaultValue) {
       return createNumberSocketHintBuilder(identifier, defaultValue).build();
     }
+
+    public static SocketHint<String> createStringSocketHint(final String identifier,
+                                                            String defaultValue) {
+      return new SocketHint.Builder<String>(String.class)
+          .identifier(identifier)
+          .initialValue(defaultValue)
+          .build();
+    }
   }
 }

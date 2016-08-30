@@ -6,6 +6,7 @@ import edu.wpi.grip.core.OperationMetaData;
 import edu.wpi.grip.core.Step;
 import edu.wpi.grip.core.events.OperationAddedEvent;
 import edu.wpi.grip.core.events.StepAddedEvent;
+import edu.wpi.grip.core.operations.network.MockGripNetworkModule;
 import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.util.GripCoreTestModule;
@@ -16,6 +17,8 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.util.Modules;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 import org.junit.Test;
 import org.testfx.framework.junit.ApplicationTest;
 import org.testfx.util.WaitForAsyncUtils;
@@ -23,7 +26,6 @@ import org.testfx.util.WaitForAsyncUtils;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
-
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
@@ -40,7 +42,8 @@ public class PaletteTest extends ApplicationTest {
   public void start(Stage stage) throws IOException {
     testModule.setUp();
 
-    Injector injector = Guice.createInjector(Modules.override(testModule).with(new GripUiModule()));
+    Injector injector = Guice.createInjector(Modules.override(testModule)
+        .with(new GripUiModule(), new MockGripNetworkModule()));
     eventBus = injector.getInstance(EventBus.class);
 
     FXMLLoader loader = new FXMLLoader(getClass().getResource("Palette.fxml"));
@@ -64,6 +67,8 @@ public class PaletteTest extends ApplicationTest {
     // Record when a a StepAddedEvent happens
     Step[] step = new Step[]{null};
     eventBus.register(new Object() {
+      @SuppressFBWarnings(value = "UMAC_UNCALLABLE_METHOD_OF_ANONYMOUS_CLASS",
+          justification = "This method is called by Guava's EventBus")
       @Subscribe
       public void onStepAdded(StepAddedEvent event) {
         step[0] = event.getStep();

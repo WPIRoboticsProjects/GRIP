@@ -34,7 +34,9 @@
 
     <module name="SuppressWarningsFilter"/>
 
-    <!--<module name="NewlineAtEndOfFile" />--> <!-- Screwed up on Appveyor for some reason -->
+    <module name="NewlineAtEndOfFile">
+        <property name="lineSeparator" value="lf"/>
+    </module>
 
     <module name="TreeWalker">
         <module name="SuppressWarningsHolder"/>

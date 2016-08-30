@@ -1,6 +1,5 @@
 package edu.wpi.grip.ui.pipeline;
 
-
 import edu.wpi.grip.core.sources.CameraSource;
 import edu.wpi.grip.core.sources.MockCameraSource;
 
@@ -42,7 +41,9 @@ public class AddSourceButtonTest {
       this.eventBus = new EventBus("Test Event Bus");
       this.mockCameraSourceFactory = new MockCameraSourceFactory(eventBus);
 
-      addSourceView = new AddSourceButton(eventBus, null, null, mockCameraSourceFactory, null);
+
+      addSourceView
+          = new AddSourceButton(eventBus, null, null, mockCameraSourceFactory, null, null);
 
       final Scene scene = new Scene(addSourceView, 800, 600);
       stage.setScene(scene);
@@ -72,6 +73,22 @@ public class AddSourceButtonTest {
     }
 
     @Test
+    @SuppressWarnings("PMD.JUnitTestsShouldIncludeAssert")
+    public void testClickOnCreateHttpOpensDialog() throws Exception {
+      Platform.runLater(() -> addSourceView.getHttpButton().fire());
+      WaitForAsyncUtils.waitForFxEvents();
+      verifyThat("." + AddSourceButton.SOURCE_DIALOG_STYLE_CLASS, NodeMatchers.isVisible());
+    }
+
+    @Test
+    @SuppressWarnings("PMD.JUnitTestsShouldIncludeAssert")
+    public void testClickOnCreateNetworkTableOpensDialog() throws Exception {
+      Platform.runLater(() -> addSourceView.getNetworktablesButton().fire());
+      WaitForAsyncUtils.waitForFxEvents();
+      verifyThat("." + AddSourceButton.SOURCE_DIALOG_STYLE_CLASS, NodeMatchers.isVisible());
+    }
+
+    @Test
     public void testCreatesSourceStarted() throws Exception {
       // When
       Platform.runLater(() -> addSourceView.getWebcamButton().fire());
@@ -88,7 +105,7 @@ public class AddSourceButtonTest {
       verifyThat("." + AddSourceButton.SOURCE_DIALOG_STYLE_CLASS, NodeMatchers.isNull());
     }
 
-    class MockCameraSourceFactory implements CameraSource.Factory {
+    static class MockCameraSourceFactory implements CameraSource.Factory {
       private final EventBus eventBus;
       private Optional<CameraSource> lastSourceCreated = Optional.empty();
 
@@ -131,7 +148,8 @@ public class AddSourceButtonTest {
       this.eventBus = new EventBus("Test Event Bus");
       this.mockCameraSourceFactory = new MockCameraSourceFactory(eventBus);
 
-      addSourceView = new AddSourceButton(eventBus, null, null, mockCameraSourceFactory, null);
+      addSourceView
+          = new AddSourceButton(eventBus, null, null, mockCameraSourceFactory, null, null);
 
       final Scene scene = new Scene(addSourceView, 800, 600);
       stage.setScene(scene);
@@ -176,7 +194,7 @@ public class AddSourceButtonTest {
           .isRunning());
     }
 
-    class MockCameraSourceFactory implements CameraSource.Factory {
+    static class MockCameraSourceFactory implements CameraSource.Factory {
       private final EventBus eventBus;
       private Optional<CameraSource> lastSourceCreated = Optional.empty();
 

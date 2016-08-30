@@ -119,7 +119,7 @@ public class MainWindowController {
    * @return true If the user has not chosen to
    */
   private boolean showConfirmationDialogAndWait() {
-    if (!pipeline.getSteps().isEmpty()) {
+    if (!pipeline.getSteps().isEmpty() && project.isSaveDirty()) {
       final ButtonType save = new ButtonType("Save");
       final ButtonType dontSave = ButtonType.NO;
       final ButtonType cancel = ButtonType.CANCEL;
@@ -139,7 +139,7 @@ public class MainWindowController {
         // If the user chose "Save", automatically show a save dialog and block until the user
         // has had a chance to save the project.
         try {
-          saveProject();
+          return saveProject();
         } catch (IOException e) {
           logger.log(Level.SEVERE, e.getMessage(), e.getCause());
         }

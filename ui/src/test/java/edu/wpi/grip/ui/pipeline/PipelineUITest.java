@@ -8,6 +8,9 @@ import edu.wpi.grip.core.Pipeline;
 import edu.wpi.grip.core.Step;
 import edu.wpi.grip.core.SubtractionOperation;
 import edu.wpi.grip.core.metrics.MockTimer;
+import edu.wpi.grip.core.operations.composite.BlurOperation;
+import edu.wpi.grip.core.operations.composite.DesaturateOperation;
+import edu.wpi.grip.core.operations.network.MockGripNetworkModule;
 import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.core.util.MockExceptionWitness;
@@ -40,6 +43,7 @@ import javafx.scene.input.MouseButton;
 import javafx.stage.Stage;
 
 import static junit.framework.Assert.assertEquals;
+import static junit.framework.TestCase.assertTrue;
 import static junit.framework.TestCase.fail;
 import static org.testfx.api.FxAssert.verifyThat;
 import static org.testfx.api.FxAssert.verifyThatIter;
@@ -50,6 +54,8 @@ public class PipelineUITest extends ApplicationTest {
   private EventBus eventBus;
   private OperationMetaData additionOperation;
   private OperationMetaData subtractionOperation;
+  private OperationMetaData blurOperation;
+  private OperationMetaData desaturateOperation;
   private PipelineController pipelineController;
   private Pipeline pipeline;
 
@@ -57,8 +63,8 @@ public class PipelineUITest extends ApplicationTest {
   public void start(Stage stage) {
     testModule = new GripCoreTestModule();
     testModule.setUp();
-    final Injector injector = Guice.createInjector(Modules.override(testModule).with(new
-        GripUiModule()));
+    final Injector injector = Guice.createInjector(Modules.override(testModule)
+        .with(new GripUiModule(), new MockGripNetworkModule()));
     eventBus = injector.getInstance(EventBus.class);
     pipeline = injector.getInstance(Pipeline.class);
     InputSocket.Factory isf = injector.getInstance(InputSocket.Factory.class);
@@ -67,6 +73,10 @@ public class PipelineUITest extends ApplicationTest {
         AdditionOperation(isf, osf));
     subtractionOperation = new OperationMetaData(SubtractionOperation.DESCRIPTION, () -> new
         SubtractionOperation(isf, osf));
+    blurOperation = new OperationMetaData(BlurOperation.DESCRIPTION, () -> new
+        BlurOperation(isf, osf));
+    desaturateOperation = new OperationMetaData(DesaturateOperation.DESCRIPTION, () -> new
+        DesaturateOperation(isf, osf));
     pipelineController = injector.getInstance(PipelineController.class);
     final Scene scene = new Scene(TestAnnotationFXMLLoader.load(pipelineController), 800, 600);
     stage.setScene(scene);
@@ -84,6 +94,7 @@ public class PipelineUITest extends ApplicationTest {
     addAdditionOperation();
   }
 
+  @SuppressWarnings("PMD.JUnitTestsShouldIncludeAssert")
   @Test
   public void testConnectingTwoOperations() {
     // Given
@@ -99,6 +110,24 @@ public class PipelineUITest extends ApplicationTest {
         + "step", addStep, subtractStep);
     verifyThat(".pipeline", NodeMatchers.hasChildren(1, "."
         + StyleClassNameUtility.classNameFor(connection)));
+
+  }
+
+  @Test
+  public void testMinimizeButton() {
+    Step desaturateStep = addOperation(1, desaturateOperation);
+    Step blurStep = addOperation(1, blurOperation);
+    assertTrue("blur input socket size is:" + blurStep.getInputSockets().size(),
+        blurStep.getInputSockets().size() > 0);
+
+    drag(StyleClassNameUtility.cssSelectorForOutputSocketHandleOn(desaturateStep), MouseButton
+        .PRIMARY).dropTo(StyleClassNameUtility.cssSelectorForInputSocketHandleOn(blurStep));
+
+    clickOn(".pipeline .blur-step .expand", MouseButton.PRIMARY);
+    clickOn(".pipeline .blur-step .expand", MouseButton.PRIMARY);
+
+    assertTrue("blur input socket size is:" + blurStep.getInputSockets().size(),
+        blurStep.getInputSockets().size() > 0);
 
   }
 

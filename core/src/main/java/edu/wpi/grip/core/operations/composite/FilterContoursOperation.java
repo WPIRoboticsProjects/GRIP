@@ -191,7 +191,7 @@ public class FilterContoursOperation implements Operation {
         continue;
       }
 
-      final double ratio = bb.width() / bb.height();
+      final double ratio = (double) bb.width() / (double) bb.height();
       if (ratio < minRatio || ratio > maxRatio) {
         continue;
       }

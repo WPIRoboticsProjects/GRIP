@@ -13,6 +13,8 @@ import edu.wpi.grip.core.util.MockFileManager;
 
 import com.google.common.eventbus.SubscriberExceptionContext;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -30,6 +32,8 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * that exceptions always get dumped for the test that has just run.
  */
 public class GripCoreTestModule extends GripCoreModule {
+  @SuppressFBWarnings(value = "ST_WRITE_TO_STATIC_FROM_INSTANCE_METHOD",
+      justification = "Member is volatile")
   private static volatile boolean instanceAlive = false;
 
   private final ConcurrentLinkedQueue<ThreadThrowablePair> threadExceptions = new
@@ -44,6 +48,7 @@ public class GripCoreTestModule extends GripCoreModule {
         + "method called.";
   }
 
+  @SuppressWarnings("PMD.JUnit4TestShouldUseBeforeAnnotation")
   public void setUp() {
     instanceAlive = true;
     setUp = true;
@@ -54,6 +59,7 @@ public class GripCoreTestModule extends GripCoreModule {
    * in the {@link org.junit.After} method for any test that uses this class. If this is not called
    * then the next test that tries to use an instance of this class will throw an exception.
    */
+  @SuppressWarnings("PMD.JUnit4TestShouldUseAfterAnnotation")
   public void tearDown() {
     try {
       final List<Throwable> throwables = new ArrayList<>(2);
