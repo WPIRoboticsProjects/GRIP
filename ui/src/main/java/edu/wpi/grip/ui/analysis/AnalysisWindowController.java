@@ -32,7 +32,6 @@ import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
-import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.TableCell;
@@ -78,7 +77,8 @@ public class AnalysisWindowController {
   private final Map<Step, Collection<Long>> sampleMap = new HashMap<>();
   private static final int DEFAULT_NUM_RECENT_SAMPLES = 16;
   private int numRecentSamples = DEFAULT_NUM_RECENT_SAMPLES;
-  private static final String CSV_REPORT_HEADER = "Step,% Time,Average Time (ms),Standard deviation\n";
+  private static final String CSV_REPORT_HEADER
+      = "Step,% Time,Average Time (ms),Standard deviation\n";
   private String csvReport = CSV_REPORT_HEADER;
 
   /**

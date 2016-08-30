@@ -23,11 +23,6 @@ public final class Analysis {
   private final Statistics statistics;
 
   /**
-   * 'null' analysis.
-   */
-  public static Analysis NIL = Analysis.of();
-
-  /**
    * Class-private constructor. Use {@link #of(double...)} or {@link #of(Collection)}
    * factory methods.
    */

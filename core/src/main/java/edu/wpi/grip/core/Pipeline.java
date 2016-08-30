@@ -363,6 +363,7 @@ public class Pipeline implements ConnectionValidator, SettingsProvider, StepInde
 
   @Override
   public int indexOf(Step step) {
+    checkNotNull(step, "step");
     return readStepsSafely(steps -> steps.indexOf(step));
   }
 
