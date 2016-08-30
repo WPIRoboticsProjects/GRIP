@@ -129,6 +129,7 @@ public class GripCoreModule extends AbstractModule {
     install(new FactoryModuleBuilder().build(new TypeLiteral<Connection.Factory<Object>>() {
     }));
 
+    bind(StepIndexer.class).to(Pipeline.class);
     bind(ConnectionValidator.class).to(Pipeline.class);
     bind(Source.SourceFactory.class).to(Source.SourceFactoryImpl.class);
 

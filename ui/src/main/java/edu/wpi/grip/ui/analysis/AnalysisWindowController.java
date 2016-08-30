@@ -1,6 +1,8 @@
 package edu.wpi.grip.ui.analysis;
 
+import edu.wpi.grip.core.OperationDescription;
 import edu.wpi.grip.core.Step;
+import edu.wpi.grip.core.StepIndexer;
 import edu.wpi.grip.core.events.BenchmarkEvent;
 import edu.wpi.grip.core.events.RunStoppedEvent;
 import edu.wpi.grip.core.events.TimerEvent;
@@ -13,10 +15,13 @@ import com.google.common.eventbus.Subscribe;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
+import javafx.application.Platform;
 import javafx.beans.Observable;
 import javafx.beans.property.Property;
 import javafx.beans.property.SimpleObjectProperty;
@@ -25,12 +30,15 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.util.Callback;
@@ -64,10 +72,14 @@ public class AnalysisWindowController {
   private final ObservableList<StepAnalysisEntry> tableItems
       = FXCollections.observableArrayList(extractor);
 
+  private StepIndexer stepIndexer = null;
   private Statistics lastStats = Statistics.NIL;
   private final Map<Step, TimeView> timeViewMap = new HashMap<>();
   private final Map<Step, Collection<Long>> sampleMap = new HashMap<>();
-  private Function<Step, EvictingQueue<Long>> computeFunction = s -> EvictingQueue.create(1);
+  private static final int DEFAULT_NUM_RECENT_SAMPLES = 16;
+  private int numRecentSamples = DEFAULT_NUM_RECENT_SAMPLES;
+  private static final String CSV_REPORT_HEADER = "Step,% Time,Average Time (ms),Standard deviation\n";
+  private String csvReport = CSV_REPORT_HEADER;
 
   /**
    * Initializes the controller. This should only be called by the FXML loader.
@@ -113,7 +125,8 @@ public class AnalysisWindowController {
       Step source = (Step) event.getTarget();
       Optional<StepAnalysisEntry> possibleEntry
           = tableItems.stream().filter(e -> e.getStep() == source).findAny();
-      Collection<Long> samples = sampleMap.computeIfAbsent(source, computeFunction);
+      Collection<Long> samples = sampleMap.computeIfAbsent(source,
+          s -> EvictingQueue.create(numRecentSamples));
       samples.add(event.getElapsedTime());
       Analysis stepAnalysis = Analysis.of(samples);
       if (possibleEntry.isPresent()) {
@@ -130,11 +143,10 @@ public class AnalysisWindowController {
   @Subscribe
   @SuppressWarnings({"PMD.UnusedPrivateMethod", "PMD.UnusedFormalParameter"})
   private void onPipelineFinish(@Nullable RunStoppedEvent event) {
-    double[] averageRunTimes = sampleMap.values()
-        .parallelStream()
-        .mapToDouble(samples ->
-            samples.parallelStream().mapToLong(Long::longValue).average().orElse(0)
-        )
+    double[] averageRunTimes = sortedStream(sampleMap)
+        .parallel()
+        .map(Map.Entry::getValue)
+        .mapToDouble(s -> s.parallelStream().mapToLong(Long::longValue).average().orElse(0))
         .toArray();
     Analysis analysis = Analysis.of(averageRunTimes);
     // Update the stats after the pipeline finishes
@@ -147,12 +159,24 @@ public class AnalysisWindowController {
     benchmarkButton.setDisable(event.isStart());
     benchmarkRunsField.setDisable(event.isStart());
     if (!event.isStart()) {
+      csvReport = createReport();
+      numRecentSamples = DEFAULT_NUM_RECENT_SAMPLES; // reset queue size
       sampleMap.clear();
     }
   }
 
+  /**
+   * Sets the benchmark runner.
+   */
   public void setBenchmarker(BenchmarkRunner benchmarker) {
     this.benchmarker = checkNotNull(benchmarker, "benchmarker");
+  }
+
+  /**
+   * Sets the step indexer.
+   */
+  public void setStepIndexer(StepIndexer stepIndexer) {
+    this.stepIndexer = stepIndexer;
   }
 
   @FXML
@@ -160,10 +184,96 @@ public class AnalysisWindowController {
   private void runBenchmark() {
     if (benchmarkRunsField.getText().length() > 0) {
       final int numRuns = Integer.parseInt(benchmarkRunsField.getText());
-      computeFunction = s -> EvictingQueue.create(numRuns);
+      numRecentSamples = numRuns;
       benchmarker.run(numRuns);
     }
   }
+
+  @FXML
+  private void exportCsv() {
+    // Show benchmarking results
+    Platform.runLater(() -> {
+      Alert a = new Alert(Alert.AlertType.INFORMATION);
+      a.setHeaderText("Benchmarking results");
+      TextArea resultArea = new TextArea(csvReport);
+      a.getDialogPane().setContent(resultArea);
+      a.showAndWait();
+    });
+  }
+
+  /**
+   * Streams the entries in a {@code Map<Step, *>} sorted by the step's index according to the
+   * {@link #stepIndexer}.
+   *
+   * @param m   the map to stream
+   * @param <E> the type of the values in the map
+   * @return a stream of the entries in the map, sorted by their key's index.
+   */
+  private <E> Stream<Map.Entry<Step, E>> sortedStream(Map<Step, E> m) {
+    return m.entrySet()
+        .stream()
+        .sorted((e1, e2) -> stepIndexer.compare(e1.getKey(), e2.getKey()));
+  }
+
+  /**
+   * Creates a CSV report of the most recent benchmark.
+   */
+  private String createReport() {
+    StringBuilder sb = new StringBuilder(CSV_REPORT_HEADER);
+
+    // List of step names, in the order they run in
+    final List<String> stepNames = sortedStream(sampleMap)
+        .map(Map.Entry::getKey)
+        .map(Step::getOperationDescription)
+        .map(OperationDescription::name)
+        .collect(Collectors.toList());
+
+    // Statistics of each step's run time
+    final List<Statistics> statistics = sortedStream(sampleMap)
+        .map(Map.Entry::getValue)
+        .map(s -> s.stream().mapToDouble(Long::doubleValue).toArray())
+        .map(Statistics::of)
+        .collect(Collectors.toList());
+
+    // Average run times for each step
+    final List<Double> averageRunTimes = statistics
+        .stream()
+        .map(Statistics::getMean)
+        .map(t -> t / 1000) // convert us to ms
+        .collect(Collectors.toList());
+
+    // Average total run time for the whole pipeline
+    final double averageTotalRunTime = statistics
+        .stream()
+        .mapToDouble(Statistics::getMean)
+        .map(t -> t / 1000) // convert us to ms
+        .sum();
+
+    // What percent of the total each step took
+    final List<Double> percentRunTimes = averageRunTimes
+        .stream()
+        .map(t -> 100 * t / averageTotalRunTime)
+        .collect(Collectors.toList());
+
+    // Standard deviation in run times for each step
+    final List<Double> stddev = statistics
+        .stream()
+        .map(Statistics::getStandardDeviation)
+        .map(t -> t / 1000) // convert us to ms
+        .collect(Collectors.toList());
+    for (int i = 0; i < statistics.size(); i++) {
+      sb.append(stepNames.get(i));
+      sb.append(',');
+      sb.append(percentRunTimes.get(i));
+      sb.append(',');
+      sb.append(averageRunTimes.get(i));
+      sb.append(',');
+      sb.append(stddev.get(i));
+      sb.append('\n');
+    }
+    return sb.toString();
+  }
+
 
   private static class StepAnalysisEntry {
 

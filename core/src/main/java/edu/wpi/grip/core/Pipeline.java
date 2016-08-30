@@ -47,7 +47,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
  */
 @Singleton
 @XStreamAlias(value = "grip:Pipeline")
-public class Pipeline implements ConnectionValidator, SettingsProvider {
+public class Pipeline implements ConnectionValidator, SettingsProvider, StepIndexer {
 
   private final transient ReadWriteLock sourceLock = new ReentrantReadWriteLock();
 
@@ -359,7 +359,11 @@ public class Pipeline implements ConnectionValidator, SettingsProvider {
 
     // Do not lock while posting the event
     eventBus.post(new StepMovedEvent(step, delta));
+  }
 
+  @Override
+  public int indexOf(Step step) {
+    return readStepsSafely(steps -> steps.indexOf(step));
   }
 
   @Subscribe

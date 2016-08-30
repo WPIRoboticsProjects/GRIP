@@ -3,6 +3,7 @@ package edu.wpi.grip.ui;
 import edu.wpi.grip.core.Palette;
 import edu.wpi.grip.core.Pipeline;
 import edu.wpi.grip.core.PipelineRunner;
+import edu.wpi.grip.core.StepIndexer;
 import edu.wpi.grip.core.events.BenchmarkEvent;
 import edu.wpi.grip.core.events.ProjectSettingsChangedEvent;
 import edu.wpi.grip.core.events.TimerEvent;
@@ -89,6 +90,8 @@ public class MainWindowController {
   private Palette palette;
   @Inject
   private Project project;
+  @Inject
+  private StepIndexer stepIndexer;
   @Inject
   private BenchmarkRunner benchmarkRunner;
 
@@ -301,15 +304,14 @@ public class MainWindowController {
       analysisStage.setScene(new Scene(loader.load()));
       AnalysisWindowController controller = loader.getController();
       controller.setBenchmarker(benchmarkRunner);
+      controller.setStepIndexer(stepIndexer);
       analysisStage.initOwner(root.getScene().getWindow());
       analysisStage.setTitle("Pipeline Analysis");
       analysisStage.getIcons().add(new Image("/edu/wpi/grip/ui/icons/grip.png"));
-      analysisStage.setOnCloseRequest(event -> {
-        eventBus.post(BenchmarkEvent.finished());
-      });
+      analysisStage.setOnCloseRequest(event -> eventBus.post(BenchmarkEvent.finished()));
       eventBus.register(controller);
       analysisStage.showAndWait();
-      eventBus.unregister(controller);
+      eventBus.unregister(controller); // unregister to avoid memory leak
     } catch (IOException e) {
       throw new AssertionError("Analysis window FXML is not present or readable", e);
     }
