@@ -98,10 +98,17 @@ public final class Statistics {
    * that is not in the data set used to create these statistics will most likely have a useless
    * result.
    *
+   * <p>If this set of statistics was calculated from less than two data points, 'hotness' doesn't
+   * mean anything and this method will always return zero.
+   *
    * @param value the value to calculate the hotness of
    * @return the hotness of the given value.
    */
   public double hotness(double value) {
+    if (n < 2) {
+      // Hotness doesn't make sense if there's 0 or 1 data points
+      return 0;
+    }
     if (value <= mean) {
       // Avoid negative hotness
       return 0;

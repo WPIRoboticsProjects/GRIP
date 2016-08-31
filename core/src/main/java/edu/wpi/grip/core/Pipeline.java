@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
@@ -364,7 +365,13 @@ public class Pipeline implements ConnectionValidator, SettingsProvider, StepInde
   @Override
   public int indexOf(Step step) {
     checkNotNull(step, "step");
-    return readStepsSafely(steps -> steps.indexOf(step));
+    return readStepsSafely(steps -> {
+      int index = steps.indexOf(step);
+      if (index == -1) {
+        throw new NoSuchElementException("Step " + step + " is not in the pipeline");
+      }
+      return index;
+    });
   }
 
   @Subscribe
