@@ -6,15 +6,16 @@ import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.ui.codegeneration.TemplateMethods;
 
-import com.google.common.collect.ImmutableList;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+
+import static edu.wpi.grip.core.OperationDescription.Category.NETWORK;
 
 /**
- * TPipeline(template pipeline) is a data structure 
+ * TPipeline(template pipeline) is a data structure
  * that holds the information about a pipeline
  * needed by the velocity templates to generate code.
  */
@@ -31,12 +32,16 @@ public class TPipeline {
    *
    * @param steps The list of steps from the pipeline to generate.
    */
-  public TPipeline(ImmutableList<Step> steps) {
+  public TPipeline(List<Step> steps) {
     this.uniqueSources = new HashMap<>();
     this.steps = new ArrayList<>();
     this.numSources = 0;
     connections = new HashMap<>();
-    set(steps);
+    // Only use non-publishing steps
+    set(steps.stream()
+        .filter(s -> !s.getOperationDescription().category().equals(NETWORK))
+        .collect(Collectors.toList())
+    );
   }
 
   /**
@@ -44,7 +49,7 @@ public class TPipeline {
    *
    * @param pipeSteps The list of steps used to create the TPipeline.
    */
-  private void set(ImmutableList<Step> pipeSteps) {
+  private void set(List<Step> pipeSteps) {
     for (Step step : pipeSteps) {
       TStep tStep = makeStep(step.getOperationDescription().name().replaceAll(" ", "_"));
       steps.add(tStep);
@@ -56,7 +61,15 @@ public class TPipeline {
         tStep.addOutput(tOutput);
         if (!output.getConnections().isEmpty()) {
           for (Object con : output.getConnections()) {
-            connections.put(((Connection) con).getInputSocket(), tOutput);
+            Connection<?> c = (Connection<?>) con;
+            if (!c.getInputSocket()
+                .getStep()
+                .map(s -> s.getOperationDescription().category())
+                .get()
+                .equals(NETWORK)) {
+              // Only add the connection if it's not to a publishing step
+              connections.put(c.getInputSocket(), tOutput);
+            }
           }
         }
       }
