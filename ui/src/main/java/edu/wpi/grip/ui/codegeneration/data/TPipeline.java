@@ -25,6 +25,8 @@ public class TPipeline {
   private int numSources;
   private final Map<InputSocket, TOutput> connections;
   private final Map<String, Integer> uniqueSources;
+  // keep track of how many instances of each step are in the pipeline
+  private final Map<String, Integer> stepInstances;
 
 
   /**
@@ -36,7 +38,8 @@ public class TPipeline {
     this.uniqueSources = new HashMap<>();
     this.steps = new ArrayList<>();
     this.numSources = 0;
-    connections = new HashMap<>();
+    this.connections = new HashMap<>();
+    this.stepInstances = new HashMap<>();
     // Only use non-publishing steps
     set(steps.stream()
         .filter(s -> !s.getOperationDescription().category().equals(NETWORK))
@@ -50,14 +53,31 @@ public class TPipeline {
    * @param pipeSteps The list of steps used to create the TPipeline.
    */
   private void set(List<Step> pipeSteps) {
+    pipeSteps.stream()
+        .map(s -> s.getOperationDescription().name())
+        .forEach(n -> stepInstances.put(n, stepInstances.getOrDefault(n, 0) + 1));
     for (Step step : pipeSteps) {
       TStep tStep = makeStep(step.getOperationDescription().name().replaceAll(" ", "_"));
       steps.add(tStep);
-      int numOutputs = 0;
       for (OutputSocket output : step.getOutputSockets()) {
+        StringBuilder tNameBuilder = new StringBuilder(tStep.name());
+        if (stepInstances.get(step.getOperationDescription().name()) > 1) {
+          // Only add the number of there's more than one instance of that operation
+          tNameBuilder
+              .append('_')
+              .append(tStep.num());
+        }
+        if (step.getOutputSockets().size() == 1) {
+          // "Output" is descriptive enough if there's only one output
+          tNameBuilder.append("_Output");
+        } else {
+          // Use specific names for each output
+          tNameBuilder
+              .append('_')
+              .append(output.getSocketHint().getIdentifier().replace(' ', '_'));
+        }
         TOutput tOutput = new TOutput(TemplateMethods.parseSocketType(output),
-            tStep.name() + tStep.num() + "Output" + numOutputs);
-        numOutputs++;
+            tNameBuilder.toString());
         tStep.addOutput(tOutput);
         if (!output.getConnections().isEmpty()) {
           for (Object con : output.getConnections()) {
@@ -83,7 +103,16 @@ public class TPipeline {
           type = steps.get(i).name() + "Type";
         }
         type = type.replace("Number", "Double");
-        String name = tStep.name() + tStep.num() + TemplateMethods.parseSocketName(input);
+        StringBuilder nameBuilder = new StringBuilder(tStep.name());
+        if (stepInstances.get(pipeSteps.get(i).getOperationDescription().name()) > 1) {
+          nameBuilder
+              .append('_')
+              .append(tStep.num());
+        }
+        nameBuilder
+            .append('_')
+            .append(TemplateMethods.parseSocketName(input));
+        String name = nameBuilder.toString();
         if (!input.getConnections().isEmpty()) {
           if (connections.containsKey(input)) {
             tInput = new TInput(type, name, connections.get(input));
@@ -106,8 +135,8 @@ public class TPipeline {
   /**
    * Creates a TInput for a TStep
    *
-   * @param type The data type of the input
-   * @param name The name of the input
+   * @param type  The data type of the input
+   * @param name  The name of the input
    * @param value The value of the input
    * @return The generated TInput.
    */
@@ -195,7 +224,7 @@ public class TPipeline {
 
   /**
    * creates a new step from a name
-   * 
+   *
    * @param opName the name of the step
    * @return a new step with the the opName and correct number.
    */
@@ -207,6 +236,16 @@ public class TPipeline {
       }
     }
     return new TStep(opName, count);
+  }
+
+  /**
+   * Gets the number of instances of an operation in the pipeline.
+   *
+   * @param operationName the name of the operation
+   * @return the number of instances of an operation in this pipeline
+   */
+  public int instancesOfOperation(String operationName) {
+    return stepInstances.getOrDefault(operationName, 0);
   }
 
 

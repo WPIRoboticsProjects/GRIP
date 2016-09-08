@@ -2,13 +2,13 @@
 #if($step.name().toLowerCase().contains("switch") || $step.name().toLowerCase().contains("valve"))
 #set($boolInp = $step.getInputs().get(0))
 #if($step.name().toLowerCase().contains("switch"))
-	bool $boolInp.name() = this->$boolInp.name();
+	bool $tMeth.name($boolInp.name()) = this->$tMeth.name($boolInp.name());
 #set($onTrue = $step.getInputs().get(1))
 #set($onFalse = $step.getInputs().get(2))
 #newInput($onTrue)
 #newInput($onFalse)
 #else
-	bool $boolInp.name()= this->$boolInp.name();
+	bool $tMeth.name($boolInp.name()) = this->$tMeth.name($boolInp.name());
 #set($onTrue = $step.getInputs().get(1))
 #newInput($onTrue)
 #end

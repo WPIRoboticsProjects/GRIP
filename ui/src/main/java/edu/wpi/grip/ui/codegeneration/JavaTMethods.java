@@ -30,10 +30,10 @@ public class JavaTMethods extends TemplateMethods {
     }
     if (!step.getOutputs().isEmpty()) {
       for (int i = 0; i < step.getOutputs().size(); i++) {
-        if (step.getOutput(i).mutable()) {
-          out.append("mutOf");
-        }
         out.append(name(step.getOutputs().get(i).name()));
+        if (step.getOutput(i).mutable()) {
+          out.append("Ref");
+        }
         out.append(", ");
       }
       //removes the unneeded ", "

@@ -32,8 +32,8 @@ $type #funPassType($inp.type())$name#end#end
 #macro(func $step $names)
 #set($name = $tMeth.name($step.name()))
 #set($count = 0)
-#if($name.contains("Switch"))
-pipeline$name(bool sw, T &onTrue, T &onFalse, T &output)#elseif($name.contains("Valve"))
+#if($name.toLowerCase().contains("switch"))
+pipeline$name(bool sw, T &onTrue, T &onFalse, T &output)#elseif($name.toLowerCase().contains("valve"))
 pipeline$name(bool sw, T &input, T &output)#else
 $name(#foreach($inp in $step.getInputs())#param($inp $names[$count])#set($count = $count + 1), #end#if($name.equalsIgnoreCase("ThresholdMoving"))Mat &lastImage, #end#foreach($out in $step.getOutputs())#cType($out.type()) &$names[$count]#set($count = $count + 1)#if($velocityCount <$step.getOutputs().size()), #end#end)#end#end
 
@@ -48,30 +48,30 @@ $name(#foreach($inp in $step.getInputs())#param($inp $names[$count])#set($count 
 
 #macro (newInput $input)
 #if ($input.value().toLowerCase().contains("source") || $input.value().toLowerCase().contains("output"))
-	#cType($input.type()) $input.name()= $input.value();
+	#cType($input.type()) ${tMeth.name($input.name())} = $tMeth.name($input.value());
 #elseif ($input.type().contains("CoreEnum"))
-	int $input.name() = $input.value();
+	int ${tMeth.name($input.name())} = $input.value();
 #elseif ($input.type().contains("Enum"))
-	int $input.name() = $input.value();
+	int ${tMeth.name($input.name())} = $input.value();
 #elseif ($input.type().equals("MaskSize") )
-    string $input.name() = "$input.value()";
+    string ${tMeth.name($input.name())} = "$input.value()";
 #elseif ($input.type().equals("FlipCode") || $input.type().equals("BlurType") )
-	$input.type() $input.name() = $input.type()::#cvVal($input.value());
+	$input.type() ${tMeth.name($input.name())} = $input.type()::#cvVal($input.value());
 #elseif ($input.type().contains("Type") || $input.type().equals("Interpolation"))
-	int $input.name() = #cvVal($input.value());
+	int ${tMeth.name($input.name())} = #cvVal($input.value());
 #elseif ($input.type().equals("String"))
-	string $input.name() = "$input.value()";
+	string ${tMeth.name($input.name())} = "$input.value()";
 #elseif ($input.type().equals("List"))
 #set($inputEndValue = $input.value().length() - 1)
-	double ${input.name()}[] = {$input.value().substring(1,$inputEndValue)};
+	double ${tMeth.name($input.name())}[] = {$input.value().substring(1,$inputEndValue)};
 #elseif ($input.type().equals("Point") || $input.type().equals("Size") || $input.type().equalsIgnoreCase("Scalar"))
-	#cType($input.type()) ${input.name()}$input.value();
+	#cType($input.type()) ${tMeth.name($input.name())}$input.value();
 #elseif ($input.value().equals("null"))
-	#cType($input.type()) $input.name();
+	#cType($input.type()) ${tMeth.name($input.name())};
 #elseif ($input.type().equals("Mat"))
-	#cType($input.type()) $input.name()$input.value();
+	#cType($input.type()) ${tMeth.name($input.name())}$input.value();
 #else
-	#cType($input.type()) $input.name() = $input.value();
+	#cType($input.type()) ${tMeth.name($input.name())} = $input.value();
 #end#end
 
 #macro (cvVal $value)#if($value.equals("INF"))

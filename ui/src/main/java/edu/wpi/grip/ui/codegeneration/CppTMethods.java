@@ -5,8 +5,6 @@ import edu.wpi.grip.ui.codegeneration.data.TStep;
 
 import com.google.common.base.CaseFormat;
 
-import java.util.Locale;
-
 public class CppTMethods extends TemplateMethods {
   public CppTMethods() {
     super();
@@ -14,8 +12,7 @@ public class CppTMethods extends TemplateMethods {
 
   @Override
   public String name(String name) {
-    Locale locName = new Locale(name);
-    return CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, locName.toString().toUpperCase());
+    return CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.LOWER_CAMEL, name.replaceAll("\\s", ""));
   }
 
   @Override
@@ -26,7 +23,7 @@ public class CppTMethods extends TemplateMethods {
     }
     out.append(name(step.name())).append('(');
     for (TInput input : step.getInputs()) {
-      out.append(input.name());
+      out.append(name(input.name()));
       out.append(", ");
     }
     if (step.name().equals("Threshold_Moving")) {
@@ -37,11 +34,11 @@ public class CppTMethods extends TemplateMethods {
     if (!step.getOutputs().isEmpty()) {
       for (int i = 0; i < step.getOutputs().size() - 1; i++) {
         out.append("this->");
-        out.append(step.getOutputs().get(i).name());
+        out.append(name(step.getOutputs().get(i).name()));
         out.append(", ");
       }
       out.append("this->");
-      out.append(step.getOutputs().get(step.getOutputs().size() - 1).name());
+      out.append(name(step.getOutputs().get(step.getOutputs().size() - 1).name()));
     }
     out.append(')');
     return out.toString();

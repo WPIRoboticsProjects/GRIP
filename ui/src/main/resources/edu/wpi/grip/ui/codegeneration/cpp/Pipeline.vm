@@ -10,13 +10,13 @@ $fileName::$fileName() {
 #if($step.name() == "Switch" || $step.name() == "Valve")
 #set($boolInp = $step.getInput(0))
 #if($boolInp.hasValue())
-	this->$boolInp.name() = $boolInp.value();
+	this->$tMeth.name($boolInp.name()) = $boolInp.value();
 #end
 #end
 #end
 #foreach($step in $pipeline.getSteps())
 #foreach($output in $step.getOutputs())
-##	this->$output.name() = new #cType($output.type())();
+##	this->$tMeth.name($output.name()) = new #cType($output.type())();
 #end
 #end
 #foreach($moving in $pipeline.getMovingThresholds())
@@ -86,7 +86,7 @@ void $fileName::set${source.value()}(#cType(${source.type()}) #funPassType($sour
  * @param the condition to set
  */
 void $fileName::set$step.name()${step.num()}(bool value){
-	$boolName = value;
+	$tMeth.name($boolName) = value;
 }
 #end
 #end
@@ -103,8 +103,8 @@ void $fileName::set$step.name()${step.num()}(bool value){
  * This method is a generated getter for the output of a $step.name().
  * @return ${output.baseType()} output from $step.name().
  */
-#cType($output.type())#if($ptr)*#end $fileName::get${output.name()}(){
-	return #if($ptr)&#end(this->${output.name()});
+#cType($output.type())#if($ptr)*#end $fileName::${tMeth.name($output.name())}(){
+	return #if($ptr)&#end(this->${tMeth.name($output.name())});
 }
 #end
 #end

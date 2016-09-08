@@ -40,13 +40,13 @@ class $fileName #if($testing): public AbsPipeline #end{
 #set($boolInp = $step.getInput(0))
 #set($boolName = "$boolInp.name()")
 #if($boolInp.hasValue())
-		bool $boolName;
+		bool $tMeth.name($boolName);
 #end
 #end
 #end
 #foreach($step in $pipeline.getSteps())
 #foreach($output in $step.getOutputs())
-		#cType($output.type()) $output.name();
+		#cType($output.type()) $tMeth.name($output.name());
 #end
 #end
 #foreach($moving in $pipeline.getMovingThresholds())
@@ -70,7 +70,7 @@ class $fileName #if($testing): public AbsPipeline #end{
 #set($boolInp = $step.getInput(0))
 #set($boolName = "$boolInp.name()")
 #if($boolInp.hasValue())
-	 void set$step.name()${step.num()}(bool value);
+	 	void set$step.name()${step.num()}(bool value);
 #end
 #end
 #end
@@ -82,7 +82,7 @@ class $fileName #if($testing): public AbsPipeline #end{
 #else
 #set($ptr = false)
 #end
-	#cType($out.type())#if($ptr)*#end get${out.name()}();
+		#cType($out.type())#if($ptr)*#end ${tMeth.name($out.name())}();
 #end
 #end
 };
