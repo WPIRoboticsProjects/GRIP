@@ -16,8 +16,8 @@
             title: "{{ post.title }}",
             link: "{{ post.url | prepend: site.baseurl }}",
             simpleLink: "{{ post.url | prepend: site.baseurl }}".replace(/\.html/, ''),
-            content: "{{ post.content | strip_html | newline_to_br | strip_newlines }}".replace(/\<br \/\>/g, " "),
-            contentStripped: "{{ post.content | strip_newlines | strip_html }}"
+            content: "{{ post.content | strip_html | newline_to_br | strip_newlines | smartify }}".replace(/\<br \/\>/g, " "),
+            contentStripped: "{{ post.content | strip_newlines | strip_html | smartify }}"
           });
         {% endfor %}
     </script>
