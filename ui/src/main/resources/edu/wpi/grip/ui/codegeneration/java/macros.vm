@@ -1,5 +1,6 @@
-#macro (MutOf $obj)
-MutableOf<$obj>#end
+#macro (RefOf $obj)
+#set($needsRefClass = true)
+Ref<$obj>#end
 
 #macro (newInput $input)
 #if($input.mutable())##Is Mutable

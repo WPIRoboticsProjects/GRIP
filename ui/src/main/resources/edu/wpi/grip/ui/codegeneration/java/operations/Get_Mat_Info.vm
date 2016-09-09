@@ -10,8 +10,8 @@
 	 */
 	#set( $Num = "Number" )
 	#set( $bool = "Boolean" )
-	private void $tMeth.name($step.name())(Mat src, Size size, #MutOf($bool) empty,
-	#MutOf($Num) channels, #MutOf($Num) cols, #MutOf($Num) rows, #MutOf($Num) highestValue) {
+	private void $tMeth.name($step.name())(Mat src, Size size, #RefOf($bool) empty,
+	#RefOf($Num) channels, #RefOf($Num) cols, #RefOf($Num) rows, #RefOf($Num) highestValue) {
 		empty.set(Boolean.valueOf(src.empty()));
 		channels.set(Integer.valueOf(src.channels()));
 		cols.set(Integer.valueOf(src.cols()));

@@ -7,8 +7,7 @@ import edu.wpi.grip.generated.opencv_core.enumeration.CmpTypesEnum;
 import edu.wpi.grip.generated.opencv_core.enumeration.LineTypesEnum;
 import edu.wpi.grip.ui.codegeneration.data.TStep;
 
-import com.google.common.base.CaseFormat;
-
+import org.apache.commons.lang3.text.WordUtils;
 import org.bytedeco.javacpp.opencv_core.Point;
 import org.bytedeco.javacpp.opencv_core.Scalar;
 import org.bytedeco.javacpp.opencv_core.Size;
@@ -96,7 +95,7 @@ public abstract class TemplateMethods {
    */
   public static String parseSocketName(Socket socket) {
     String name = socket.getSocketHint().getIdentifier();
-    return CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.LOWER_CAMEL, name.replaceAll("\\s", ""));
+    return WordUtils.capitalize(name).replaceAll("[\\s]+", "_");
   }
 
   /**
@@ -106,7 +105,7 @@ public abstract class TemplateMethods {
    * @return The type of the socket with any needed additional information.
    */
   public static String parseSocketType(Socket socket) {
-    StringBuffer type = new StringBuffer();
+    StringBuilder type = new StringBuilder();
     type.append(socket.getSocketHint().getType().getSimpleName());
     if (BorderTypesEnum.class.equals(socket.getSocketHint().getType())
         || CmpTypesEnum.class.equals(socket.getSocketHint().getType())

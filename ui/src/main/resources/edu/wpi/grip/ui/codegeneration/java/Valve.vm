@@ -1,4 +1,4 @@
-#set($needsMut = true)
+#set($needsRefClass = true)
 		//Input
 #set($boolInp = $step.getInput(0))
 #if(!$boolInp.hasValue() )
@@ -19,9 +19,9 @@
 #end
 #end##end Is Mutable
 #set($out = $step.getOutput(0))
-#set($outMutName = "mutOf" + $tMeth.name($out.name()))
+#set($outMutName = $tMeth.name($out.name()) + "Ref")
 		//Output
-		#MutOf($out.baseType()) $outMutName = new #MutOf($out.baseType())();
+		#RefOf($out.baseType()) $outMutName = new #RefOf($out.baseType())();
 		pipelineValve($tMeth.name($boolInp.name()), $tMeth.name($input.name()), $outMutName);
 		//output assignment
 		$tMeth.name($out.name()) = ${outMutName}.get();

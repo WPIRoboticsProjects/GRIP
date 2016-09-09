@@ -1,6 +1,6 @@
 #**
 This creates the complete java pipeline.
-*##set($needsMut = false)
+*##set($needsRefClass = false)
 #set($lines = false)
 import java.io.File;
 import java.io.FileWriter;
@@ -26,7 +26,7 @@ import org.opencv.imgproc.*;
 *
 * @author GRIP
 */
-public class $fileName{
+public class $fileName {
 
 	//Outputs
 #foreach($step in $pipeline.getSteps())
@@ -62,13 +62,13 @@ public class $fileName{
 	/**
 	 * This constructor sets up the pipeline
 	 */
-	public $fileName(){
+	public $fileName() {
 	}
 
 	/**
 	 * This is the primary method that runs the entire pipeline and updates the outputs.
 	 */
-	public void process(){
+	public void process() {
 #foreach($step in $pipeline.getSteps())
 		//Step  $step.name()$step.num():
 #parse("$vmLoc/CV Step.vm")
@@ -81,7 +81,7 @@ public class $fileName{
 	 * This method is a generated setter for $source.value().
 	 * @param source the #socketType($source.type()) to set
 	 */
-	public void set${source.value()}(#socketType(${source.type()}) ${source.value()}){
+	public void set${source.value()}(#socketType(${source.type()}) ${source.value()}) {
 		this.$source.value() = ${source.value()};
 	}
 
@@ -95,7 +95,7 @@ public class $fileName{
 	 * This method is a generated setter for the condition of $step.name()
 	 * @param the condition to set
 	 */
-	 public void set$tMeth.name($step.name())$step.num()(boolean value){
+	 public void set$tMeth.name($step.name())$step.num()(boolean value) {
 	 	$boolName = value;
 	 }
 
@@ -108,7 +108,7 @@ public class $fileName{
 	 * This method is a generated getter for the output of a $step.name().
 	 * @return #socketType(${output.baseType()}) output from $step.name().
 	 */
-	public #socketType(${output.baseType()}) ${tMeth.name($output.name())}(){
+	public #socketType(${output.baseType()}) ${tMeth.name($output.name())}() {
 		return ${tMeth.name($output.name())};
 	}
 
@@ -122,8 +122,10 @@ public class $fileName{
 
 
 #end
-}
-#if($needsMut)
 
-#parse("$vmLoc/mutableof.vm")
+#if($needsRefClass)
+#parse("$vmLoc/Ref.vm")
 #end
+
+
+}

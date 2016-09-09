@@ -1,4 +1,4 @@
-#set($needsMut = true)
+#set($needsRefClass = true)
 		//Inputs
 #set($boolInp = $step.getInput(0))
 #if(!$boolInp.hasValue())
@@ -9,9 +9,9 @@
 #set($inputFalse = $step.getInput(2))
 #newInput($inputFalse)
 #set($out = $step.getOutput(0))
-#set($outMutName = "mutOf" + $tMeth.name($out.name()))
+#set($outMutName = $tMeth.name($out.name()) + "Ref")
 		//Output
-		#MutOf($out.baseType()) $outMutName = new #MutOf($out.baseType())();
+		#RefOf($out.baseType()) $outMutName = new #RefOf($out.baseType())();
 		pipelineSwitch($tMeth.name($boolInp.name()), $tMeth.name($inputTrue.name()),
 		$tMeth.name($inputFalse.name()), $outMutName);
 		//output assignment
