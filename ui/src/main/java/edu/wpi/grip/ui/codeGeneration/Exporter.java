@@ -1,5 +1,6 @@
 package edu.wpi.grip.ui.codegeneration;
 
+import edu.wpi.grip.core.OperationDescription;
 import edu.wpi.grip.core.Step;
 import edu.wpi.grip.ui.codegeneration.data.TPipeline;
 
@@ -18,8 +19,10 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.util.Properties;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 /**
  * Primary class for creating files and setting up code generation.
@@ -89,6 +92,37 @@ public class Exporter implements Runnable {
       logger.log(Level.SEVERE,
           "The operation " + missingOperation + " is not supported for export to " + lang, e);
     }
+  }
+
+  /**
+   * Gets the names of the non-exportable steps in the pipeline, if any exist.
+   *
+   * @return a set of the names of the non-exportable operations in the pipeline
+   */
+  public Set<String> getNonExportableSteps() {
+    return steps.stream()
+        .filter(s -> {
+          return s.getOperationDescription().category() != OperationDescription.Category.NETWORK;
+        })
+        .filter(s -> !isExportable(s))
+        .map(s -> s.getOperationDescription().name())
+        .collect(Collectors.toSet());
+  }
+
+  /**
+   * Checks if a step is exportable to this exporter's language.
+   *
+   * @param step the step to check
+   * @return true if the given step can be exported to the current language; false if it can't
+   */
+  private boolean isExportable(Step step) {
+    return Exporter.class.getResource(
+        String.format(
+            "/edu/wpi/grip/ui/codegeneration/%s/operations/%s.vm",
+            lang.filePath,
+            step.getOperationDescription().name().replace(' ', '_')
+        )
+    ) != null;
   }
 
   /**

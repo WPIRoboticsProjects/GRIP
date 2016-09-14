@@ -23,6 +23,7 @@ import org.controlsfx.control.StatusBar;
 import java.io.File;
 import java.io.IOException;
 import java.util.Optional;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -31,6 +32,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.SplitPane;
@@ -262,6 +264,15 @@ public class MainWindowController {
     }
     Language lang = Language.get(fileChooser.getSelectedExtensionFilter().getDescription());
     Exporter exporter = new Exporter(pipeline.getSteps(), lang, file);
+    final Set<String> nonExportableSteps = exporter.getNonExportableSteps();
+    if (!nonExportableSteps.isEmpty()) {
+      StringBuilder b = new StringBuilder("The following steps cannot be exported:\n");
+      nonExportableSteps.forEach(n -> b.append("  ").append(n).append('\n'));
+      Alert alert = new Alert(Alert.AlertType.WARNING);
+      alert.setContentText(b.toString());
+      alert.showAndWait();
+      return;
+    }
     Thread exportRunner = new Thread(exporter);
     exportRunner.setDaemon(true);
     exportRunner.start();
