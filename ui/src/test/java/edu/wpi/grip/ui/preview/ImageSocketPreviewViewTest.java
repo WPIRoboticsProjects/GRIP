@@ -1,5 +1,6 @@
 package edu.wpi.grip.ui.preview;
 
+import edu.wpi.grip.core.operations.network.MockGripNetworkModule;
 import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.core.sockets.SocketHint;
 import edu.wpi.grip.ui.GripUiModule;
@@ -33,8 +34,8 @@ public class ImageSocketPreviewViewTest extends ApplicationTest {
     testModule = new GripCoreTestModule();
     testModule.setUp();
 
-    final Injector injector = Guice.createInjector(Modules.override(testModule).with(new
-        GripUiModule()));
+    final Injector injector = Guice.createInjector(Modules.override(testModule)
+        .with(new GripUiModule(), new MockGripNetworkModule()));
     final ImageSocketPreviewView imageSocketPreviewView =
         new ImageSocketPreviewView(new MockGripPlatform(new EventBus()),
             injector.getInstance(OutputSocket.Factory.class)
