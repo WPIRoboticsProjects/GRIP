@@ -103,7 +103,7 @@ void $fileName::set$step.name()${step.num()}(bool value){
  * This method is a generated getter for the output of a $step.name().
  * @return ${output.baseType()} output from $step.name().
  */
-#cType($output.type())#if($ptr)*#end $fileName::${tMeth.name($output.name())}(){
+#cType($output.type())#if($ptr)*#end $fileName::${tMeth.getterName($output.name())}(){
 	return #if($ptr)&#end(this->${tMeth.name($output.name())});
 }
 #end

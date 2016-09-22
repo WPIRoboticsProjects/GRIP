@@ -98,7 +98,7 @@ public class WatershedGenerationTesting extends AbstractGenerationTesting {
 
     pip.setMatSource(0, Files.imageFile.file);
     pip.process();
-    Mat genMat = (Mat) pip.getOutput("Watershed0Output0", GenType.IMAGE);
+    Mat genMat = (Mat) pip.getOutput("Watershed_Output", GenType.IMAGE);
 
     HelperTools.displayMats(genMat, gripMat);
     assertMatWithin(genMat, gripMat, 8.0);

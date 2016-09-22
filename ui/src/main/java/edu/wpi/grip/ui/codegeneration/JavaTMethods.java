@@ -16,6 +16,16 @@ public class JavaTMethods extends TemplateMethods {
   }
 
   @Override
+  public String getterName(String name) {
+    return name(name);
+  }
+
+  @Override
+  public String setterName(String name) {
+    return name(name);
+  }
+
+  @Override
   public String callOp(TStep step) {
     StringBuilder out = new StringBuilder();
     out.append(name(step.name())).append('(');

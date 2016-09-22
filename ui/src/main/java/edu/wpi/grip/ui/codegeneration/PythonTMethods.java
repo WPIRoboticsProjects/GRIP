@@ -20,6 +20,16 @@ public class PythonTMethods extends TemplateMethods {
   }
 
   @Override
+  public String getterName(String name) {
+    return name(name);
+  }
+
+  @Override
+  public String setterName(String name) {
+    return name(name);
+  }
+
+  @Override
   public String callOp(TStep step) {
     StringBuilder method = new StringBuilder(20);
     method.append("self.").append(name(step.name())).append('(');

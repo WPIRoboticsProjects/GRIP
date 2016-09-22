@@ -108,7 +108,7 @@ public class $fileName {
 	 * This method is a generated getter for the output of a $step.name().
 	 * @return #socketType(${output.baseType()}) output from $step.name().
 	 */
-	public #socketType(${output.baseType()}) ${tMeth.name($output.name())}() {
+	public #socketType(${output.baseType()}) ${tMeth.getterName($output.name())}() {
 		return ${tMeth.name($output.name())};
 	}
 

@@ -108,7 +108,7 @@ public class CVApplyColorMap extends AbstractGenerationTesting {
     assertTrue("Pipeline did not process", out.isPresent());
     assertFalse("Pipeline output is empty", ((org.bytedeco.javacpp.opencv_core.Mat) out.get())
         .empty());
-    Mat genMat = (Mat) pip.getOutput("CV_ApplyColorMap0Output0", GenType.IMAGE);
+    Mat genMat = (Mat) pip.getOutput("CV_ApplyColorMap_Output", GenType.IMAGE);
     Mat gripMat = HelperTools.bytedecoMatToCVMat((org.bytedeco.javacpp.opencv_core.Mat) out.get());
     assertMatWithin(genMat, gripMat, 1.0);
   }

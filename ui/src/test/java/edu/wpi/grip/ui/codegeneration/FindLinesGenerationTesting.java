@@ -95,7 +95,7 @@ public class FindLinesGenerationTesting extends AbstractGenerationTesting {
     pip.setMatSource(0, Files.imageFile.file);
     pip.process();
     List<TestLine> gripLin = GripLine.convertReport(linOut);
-    List<TestLine> genLin = (List<TestLine>) pip.getOutput("Find_Lines0Output0", GenType.LINES);
+    List<TestLine> genLin = (List<TestLine>) pip.getOutput("Find_Lines_Output", GenType.LINES);
     assertTrue(
         "Number of lines is not the same. grip: " + gripLin.size() + " gen: " + genLin.size(),
         (linOut.getLines().size() - genLin.size()) < 5);

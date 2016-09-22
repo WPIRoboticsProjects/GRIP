@@ -83,7 +83,7 @@ public class NormalizeGenerationTesting extends AbstractGenerationTesting {
         ((org.bytedeco.javacpp.opencv_core.Mat) out.get()).empty());
     pip.setMatSource(0, Files.gompeiJpegFile.file);
     pip.process();
-    Mat genMat = (Mat) pip.getOutput("Normalize0Output0", GenType.IMAGE);
+    Mat genMat = (Mat) pip.getOutput("Normalize_Output", GenType.IMAGE);
     Mat gripMat = HelperTools.bytedecoMatToCVMat((org.bytedeco.javacpp.opencv_core.Mat) out.get());
     assertMatWithin(genMat, gripMat, 10.0);
   }

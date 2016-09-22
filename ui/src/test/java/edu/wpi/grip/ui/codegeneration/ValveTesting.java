@@ -45,10 +45,10 @@ public class ValveTesting extends AbstractGenerationTesting {
     pip.setValve("Valve0", true);
     pip.process();
     assertEquals("Valve did not trigger true properly", val,
-        pip.getOutput("Valve0Output0", GenType.NUMBER));
+        pip.getOutput("Valve_Output", GenType.NUMBER));
     pip.setValve("Valve0", false);
     pip.process();
     assertFalse("Valve did not trigger false properly",
-        val.equals(pip.getOutput("Valve0Output0", GenType.NUMBER)));
+        val.equals(pip.getOutput("Valve_Output", GenType.NUMBER)));
   }
 }

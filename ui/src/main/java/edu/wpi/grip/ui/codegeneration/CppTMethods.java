@@ -16,6 +16,16 @@ public class CppTMethods extends TemplateMethods {
   }
 
   @Override
+  public String getterName(String name) {
+    return "get" + name(name);
+  }
+
+  @Override
+  public String setterName(String name) {
+    return name(name);
+  }
+
+  @Override
   public String callOp(TStep step) {
     StringBuilder out = new StringBuilder();
     if (step.name().equals("Switch") || step.name().equals("Valve")) {

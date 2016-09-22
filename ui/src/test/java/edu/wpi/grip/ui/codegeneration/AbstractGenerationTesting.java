@@ -6,7 +6,7 @@ import edu.wpi.grip.core.operations.OperationsUtil;
 import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.core.sources.ImageFileSource;
-import edu.wpi.grip.ui.codegeneration.tools.CppPipelineInterfacer;
+//import edu.wpi.grip.ui.codegeneration.tools.CppPipelineInterfacer;
 import edu.wpi.grip.ui.codegeneration.tools.HelperTools;
 import edu.wpi.grip.ui.codegeneration.tools.JavaPipelineInterfacer;
 import edu.wpi.grip.ui.codegeneration.tools.PipelineCreator;
@@ -85,9 +85,9 @@ public class AbstractGenerationTesting {
       current = Language.PYTHON;
       PythonPipelineInterfacer ppip = new PythonPipelineInterfacer(fileName);
       test.accept(ppip);
-      current = Language.CPP;
-      CppPipelineInterfacer cpip = new CppPipelineInterfacer(fileName);
-      test.accept(cpip);
+      //current = Language.CPP;
+      //CppPipelineInterfacer cpip = new CppPipelineInterfacer(fileName);
+      //test.accept(cpip);
     } catch (Throwable e) {
       StringBuilder msg = new StringBuilder(20);
       msg.append("In ").append(current).append(" there was a ").append(e.getClass().getName())

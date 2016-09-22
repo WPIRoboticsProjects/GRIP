@@ -1,5 +1,7 @@
 package edu.wpi.grip.ui.codegeneration.tools;
 
+import edu.wpi.grip.ui.codegeneration.CppTMethods;
+
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfKeyPoint;
 import org.opencv.core.MatOfPoint;
@@ -20,6 +22,7 @@ import static org.junit.Assert.fail;
 @SuppressWarnings("PMD.UseLocaleWithCaseConversions")
 public class CppPipelineInterfacer implements PipelineInterfacer {
   private static File codeDir;
+  private final CppTMethods tMeth;
   private static final Logger logger = Logger.getLogger(CppPipelineInterfacer.class.getName());
 
   static {
@@ -31,6 +34,7 @@ public class CppPipelineInterfacer implements PipelineInterfacer {
   }
 
   public CppPipelineInterfacer(String libName) {
+    tMeth = new CppTMethods();
     try {
       String libBase = codeDir.getAbsolutePath() + File.separator + libName;
       if (System.getProperty("os.name").toLowerCase().contains("windows")) {
@@ -42,7 +46,7 @@ public class CppPipelineInterfacer implements PipelineInterfacer {
         Process winMake = new ProcessBuilder(
             "C:\\Program Files (x86)\\Microsoft Visual Studio 14.0\\VC\\vcvarsall.bat", "amd64",
             "&", "cmake", "--build", ".", "--target", "ALL_BUILD", "--config", "Release")
-                .directory(codeDir).redirectOutput(outputFile).start();
+            .directory(codeDir).redirectOutput(outputFile).start();
         // so windows doesn't lock forever waiting for output buffer to be read.
         error = runProcess(winMake);
         assertEquals("Failed to compile " + libName + error + " more details may be found in: "
@@ -72,7 +76,7 @@ public class CppPipelineInterfacer implements PipelineInterfacer {
 
   @Override
   public Object getOutput(String name, GenType type) {
-    String newName = name.toLowerCase().replaceAll("_", "");
+    String newName = tMeth.getterName(name);
     switch (type) {
       case BLOBS:
         MatOfKeyPoint blobs = new MatOfKeyPoint();
@@ -120,12 +124,12 @@ public class CppPipelineInterfacer implements PipelineInterfacer {
 
   @Override
   public void setSwitch(String name, boolean value) {
-    setCondition(name.toLowerCase().replaceAll("_", ""), value);
+    setCondition(tMeth.name(name), value);
   }
 
   @Override
   public void setValve(String name, boolean value) {
-    setCondition(name.toLowerCase().replaceAll("_", ""), value);
+    setCondition(tMeth.name(name), value);
   }
 
   private String runProcess(Process proc) throws IOException {
@@ -193,9 +197,9 @@ public class CppPipelineInterfacer implements PipelineInterfacer {
   /**
    * Gets the contours from specified output.
    *
-   * @param num the output number.
+   * @param num   the output number.
    * @param addrs an array of nativeAddresses of MatOfPoint objects. Note the size of addrs should
-   *        be the number returned from getNumContours.
+   *              be the number returned from getNumContours.
    */
   private native void getContours(String name, long[] addrs);
 

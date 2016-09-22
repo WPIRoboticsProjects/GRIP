@@ -108,7 +108,7 @@ public class ConvexHullsGenerationTesting extends AbstractGenerationTesting {
     Mat genMat =
         new Mat(conOut.getRows(), conOut.getCols(), opencv_core.CV_8UC3, new Scalar(0, 0, 0));
     List<MatOfPoint> gen =
-        (List<MatOfPoint>) pip.getOutput("Convex_Hulls0Output0", GenType.CONTOURS);
+        (List<MatOfPoint>) pip.getOutput("Convex_Hulls_Output", GenType.CONTOURS);
     Imgproc.drawContours(genMat, gen, -1, new Scalar(255, 255, 255));
 
     Mat gripMat = HelperTools.bytedecoMatToCVMat(matOut);

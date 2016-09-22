@@ -125,6 +125,22 @@ public abstract class TemplateMethods {
   public abstract String name(String name);
 
   /**
+   * Converts a name into the format for the correct language.
+   *
+   * @param name the unformatted name
+   * @return the name after it has been formatted
+   */
+  public abstract String getterName(String name);
+
+  /**
+   * Converts a name into the format for the correct language.
+   *
+   * @param name the unformatted name
+   * @return the name after it has been formatted
+   */
+  public abstract String setterName(String name);
+
+  /**
    * Converts a step into a string the represents the call of the operation in the correct language.
    * Used in the Templates
    *
