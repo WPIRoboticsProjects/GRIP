@@ -22,21 +22,25 @@ addons:
       - g++-4.8
       - oracle-java8-installer
       - python3
-      - ant
-      - cmake
 before_install:
-#  - .travis-scripts/install.sh
-#  - |
-#    if [[ "$TRAVIS_OS_NAME" == "osx" ]]; 
-#    then .travis-scripts/osx-opencv-install.sh; 
-#    else .travis-scripts/linux-opencv-install.sh;
-#    fi
+  - .travis-scripts/install.sh
+  - |
+    if [[ "$TRAVIS_OS_NAME" == "osx" ]];
+    then .travis-scripts/osx-opencv-install.sh;
+    else .travis-scripts/linux-opencv-install.sh;
+    fi
 # Only do an assemble when we aren't building a pull request
 install:
   - '[ "${TRAVIS_PULL_REQUEST}" = "false" ] && ./gradlew jfxNative --no-daemon --stacktrace || ./gradlew --stacktrace '
 
 script:
-  - ./gradlew check jacocoTestReport jacocoRootReport --stacktrace -Pheadless=true -PlogTests
+  # Only run code generation tests on OSX -- linux requires sudo to install OpenCV dependencies, and that environment
+  # will not be able to run MainWindowTest.testDragOperationFromPaletteToPipeline
+  - |
+    if [[ "$TRAVIS_OS_NAME" == "osx" ]];
+    then ./gradlew check jacocoTestReport jacocoRootReport --stacktrace -Pheadless=true -PlogTests -Pgeneration -PjniLocation=$HOME/opencv/jni;
+    else ./gradlew check jacocoTestReport jacocoRootReport --stacktrace -Pheadless=true -PlogTests;
+    fi
 
 after_success:
   - if [[ "$TRAVIS_OS_NAME" != "osx" ]]; then codecov         ; fi

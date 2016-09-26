@@ -6,14 +6,22 @@ buildscript {
         maven {
             url "https://plugins.gradle.org/m2/"
         }
+        maven {
+            url 'https://github.com/WPIRoboticsProjects/opencv-maven/raw/mvn-repo'
+        }
     }
 
     dependencies {
         classpath group: 'de.dynamicfiles.projects.gradle.plugins', name: 'javafx-gradle-plugin', version: '8.5.2'
         classpath 'com.netflix.nebula:gradle-aggregate-javadocs-plugin:2.2.+'
         classpath 'net.ltgt.gradle:gradle-errorprone-plugin:0.0.8'
+        classpath group: 'edu.wpi.first.wpilib.opencv', name: 'opencv-installer', version: '2.0.0'
     }
 }
+
+import edu.wpi.first.wpilib.opencv.installer.Installer
+import edu.wpi.first.wpilib.opencv.installer.platform.Platform
+
 plugins {
     id 'java'
     id 'idea'
@@ -26,9 +34,12 @@ plugins {
 apply plugin: 'nebula-aggregate-javadocs'
 
 def getGitCommit = { ->
-    String HEAD_REF = new File(rootDir, '.git/HEAD').text.replace("ref: ", "").replace("\n", "")
-    String COMMIT_HASH = new File(rootDir, ".git/${HEAD_REF}").text.substring(0, 7)
-    return COMMIT_HASH
+    def stdout = new ByteArrayOutputStream()
+    exec {
+        commandLine 'git', 'rev-parse', '--short', 'HEAD'
+        standardOutput = stdout
+    }
+    return stdout.toString().trim()
 }
 
 idea.project {
@@ -374,6 +385,12 @@ project(":ui") {
     apply plugin: 'application'
     apply plugin: 'javafx-gradle-plugin'
 
+    repositories {
+        maven {
+            url = "http://first.wpi.edu/FRC/roborio/maven/development"
+        }
+    }
+
     configurations {
         ideProvider
     }
@@ -393,12 +410,13 @@ project(":ui") {
         ideProvider project(path: ':core', configuration: 'compile')
         compile group: 'org.controlsfx', name: 'controlsfx', version: '8.40.11'
         compile group: 'com.hierynomus', name: 'sshj', version: '0.16.0'
-        compile group: 'org.apache.velocity', name: 'velocity', version: '1.7' 
+        compile group: 'org.apache.velocity', name: 'velocity', version: '1.7'
         testCompile files(project(':core').sourceSets.test.output.classesDir)
         testCompile files(project(':core').sourceSets.test.output.resourcesDir)
         testCompile group: 'org.testfx', name: 'testfx-core', version: '4.0.+'
         testCompile group: 'org.testfx', name: 'testfx-junit', version: '4.0.+'
         testRuntime group: 'org.testfx', name: 'openjfx-monocle', version: '1.8.0_20'
+        testCompile group: 'org.opencv', name: 'opencv-java', version: '3.1.0'
     }
 
     evaluationDependsOn(':core')
@@ -492,32 +510,19 @@ project(":ui") {
     }
 
     if(project.hasProperty('generation') || project.hasProperty('genonly')){
-        def cvNativeLibraryLocation = System.getenv('OPEN_CV_LIB')
-        def cvJarLocation = System.getenv('OPEN_CV_JAR')
         def syst = osdetector.os
         test {
-            dependsOn 'testSharedLib'
-            classpath += files(cvJarLocation)
-            jvmArgs("-cp" , "$cvJarLocation")
-            if(syst == "windows") {
-                def sysPath = System.getenv('PATH')
-                def libLoc = "$projectDir" + "\\build\\classes\\test"
-                def libPath = "-Djava.library.path=$cvNativeLibraryLocation;$libLoc;$cvJarLocation;$sysPath"
-                jvmArgs(libPath)
-                jvmArgs += libPath
-            }
-            else {
-                jvmArgs("-Djava.library.path=$cvNativeLibraryLocation:build/classes/test")
-            }
+            Platform platform = Installer.getPlatform()
+            Installer.setOpenCvVersion('3.1.0')
+            def jniLocation = project.getProperties().getOrDefault('jniLocation', platform.defaultJniLocation())
+            Installer.installJni("${jniLocation}")
+            def defaultLibPath = System.getProperty('java.library.path');
+            jvmArgs = ["-Djava.library.path=${defaultLibPath}${System.getProperty('path.separator')}${jniLocation}"]
             if(project.hasProperty('genonly')){
                 useJUnit {
-                    includeCategories 'edu.wpi.grip.ui.codegeneration.GenerationTest'
+                    includeCategories 'edu.wpi.grip.ui.codegeneration.GenerationTesting'
                 }
             }
-        }
-        compileTestJava {
-            classpath += files(cvNativeLibraryLocation)
-            classpath += files(cvJarLocation)
         }
     }
 
