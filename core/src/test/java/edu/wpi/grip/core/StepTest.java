@@ -1,5 +1,6 @@
 package edu.wpi.grip.core;
 
+import edu.wpi.grip.core.operations.network.MockGripNetworkModule;
 import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.core.sockets.Socket;
@@ -9,6 +10,7 @@ import edu.wpi.grip.util.GripCoreTestModule;
 import com.google.common.eventbus.EventBus;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
+import com.google.inject.util.Modules;
 
 import org.junit.After;
 import org.junit.Before;
@@ -24,7 +26,8 @@ public class StepTest {
   @Before
   public void setUp() {
     testModule.setUp();
-    Injector injector = Guice.createInjector(testModule);
+    Injector injector = Guice.createInjector(Modules.override(testModule)
+        .with(new MockGripNetworkModule()));
     InputSocket.Factory isf = injector.getInstance(InputSocket.Factory.class);
     OutputSocket.Factory osf = injector.getInstance(OutputSocket.Factory.class);
     additionMeta = new OperationMetaData(AdditionOperation.DESCRIPTION, () -> new

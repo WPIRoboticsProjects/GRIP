@@ -1,6 +1,5 @@
 package edu.wpi.grip.ui.pipeline;
 
-
 import edu.wpi.grip.core.sources.CameraSource;
 import edu.wpi.grip.core.sources.MockCameraSource;
 
@@ -42,7 +41,9 @@ public class AddSourceButtonTest {
       this.eventBus = new EventBus("Test Event Bus");
       this.mockCameraSourceFactory = new MockCameraSourceFactory(eventBus);
 
-      addSourceView = new AddSourceButton(eventBus, null, null, mockCameraSourceFactory, null);
+
+      addSourceView
+          = new AddSourceButton(eventBus, null, null, mockCameraSourceFactory, null, null);
 
       final Scene scene = new Scene(addSourceView, 800, 600);
       stage.setScene(scene);
@@ -67,6 +68,22 @@ public class AddSourceButtonTest {
     @SuppressWarnings("PMD.JUnitTestsShouldIncludeAssert")
     public void testClickOnCreateIPCameraOpensDialog() throws Exception {
       Platform.runLater(() -> addSourceView.getIpcamButton().fire());
+      WaitForAsyncUtils.waitForFxEvents();
+      verifyThat("." + AddSourceButton.SOURCE_DIALOG_STYLE_CLASS, NodeMatchers.isVisible());
+    }
+
+    @Test
+    @SuppressWarnings("PMD.JUnitTestsShouldIncludeAssert")
+    public void testClickOnCreateHttpOpensDialog() throws Exception {
+      Platform.runLater(() -> addSourceView.getHttpButton().fire());
+      WaitForAsyncUtils.waitForFxEvents();
+      verifyThat("." + AddSourceButton.SOURCE_DIALOG_STYLE_CLASS, NodeMatchers.isVisible());
+    }
+
+    @Test
+    @SuppressWarnings("PMD.JUnitTestsShouldIncludeAssert")
+    public void testClickOnCreateNetworkTableOpensDialog() throws Exception {
+      Platform.runLater(() -> addSourceView.getNetworktablesButton().fire());
       WaitForAsyncUtils.waitForFxEvents();
       verifyThat("." + AddSourceButton.SOURCE_DIALOG_STYLE_CLASS, NodeMatchers.isVisible());
     }
@@ -131,7 +148,8 @@ public class AddSourceButtonTest {
       this.eventBus = new EventBus("Test Event Bus");
       this.mockCameraSourceFactory = new MockCameraSourceFactory(eventBus);
 
-      addSourceView = new AddSourceButton(eventBus, null, null, mockCameraSourceFactory, null);
+      addSourceView
+          = new AddSourceButton(eventBus, null, null, mockCameraSourceFactory, null, null);
 
       final Scene scene = new Scene(addSourceView, 800, 600);
       stage.setScene(scene);
