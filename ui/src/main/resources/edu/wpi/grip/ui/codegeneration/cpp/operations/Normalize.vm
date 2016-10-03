@@ -1,0 +1,12 @@
+	/**
+	 * Normalizes or remaps the values of pixels in an image.
+	 *
+	 * @param input The image on which to perform the Normalize.
+	 * @param type The type of normalization.
+	 * @param min The minimum value.
+	 * @param max The maximum value.
+	 * @param output The image in which to store the output.
+	 */
+	void $fileName::#func($step, ["input", "type", "min", "max", "output"]) {
+	   normalize(input, output, min, max, type);
+	}

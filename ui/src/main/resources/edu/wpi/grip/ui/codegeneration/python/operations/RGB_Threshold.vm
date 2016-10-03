@@ -1,0 +1,13 @@
+    @staticmethod
+    def $tMeth.name($step.name())(input, red, green, blue, out):
+        """Segment an image based on color ranges.
+        Args:
+            input: A BGR numpy.ndarray.
+            hue: A list of two numbers the are the min and max red.
+            sat: A list of two numbers the are the min and max green.
+            lum: A list of two numbers the are the min and max blue.
+        Returns:
+            A black and white numpy.ndarray.
+        """
+        out = cv2.cvtColor(input, cv2.COLOR_BGR2RGB)
+        return cv2.inRange(out, (red[0], green[0], blue[0]),  (red[1], green[1], blue[1]))

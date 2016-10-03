@@ -1,0 +1,14 @@
+#foreach($input in $step.getInputs())
+#newInput($input)
+#end
+#foreach($output in $step.getOutputs())
+#if($output.mutable())
+		#RefOf($output.type()) ${tMeth.name($output.name())}Ref = new #RefOf($output.type())();
+#end
+#end
+		$tMeth.callOp($step);
+#foreach($output in $step.getOutputs())
+#if($output.mutable())
+		${tMeth.name($output.name())} = ${tMeth.name($output.name())}Ref.get();
+#end
+#end

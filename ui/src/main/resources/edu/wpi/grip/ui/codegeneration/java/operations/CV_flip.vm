@@ -1,0 +1,25 @@
+	/**
+	 * Code used for CV_flip. 
+	 * Per OpenCV spec 0 -> flip on X axis.
+	 * >0 -> flip on Y axis.
+	 * <0 -> flip on both axes.
+	 */
+	public enum FlipCode {
+		X_AXIS(0),
+		Y_AXIS(1),
+		BOTH_AXES(-1);
+		public final int value;
+		FlipCode(int value) {
+			this.value = value;
+		}
+	}	
+	
+	/**
+	 * Flips an image along X, Y or both axes.
+	 * @param src Image to flip.
+	 * @param flipcode FlipCode of which direction to flip.
+	 * @param dst flipped version of the Image.
+	 */
+	private void $tMeth.name($step.name())(Mat src, FlipCode flipcode, Mat dst) {
+		Core.flip(src, dst, flipcode.value);
+	}

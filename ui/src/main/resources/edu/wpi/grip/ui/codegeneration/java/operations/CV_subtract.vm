@@ -1,0 +1,9 @@
+	/**
+	 * Subtracts the second Mat from the first.
+	 * @param src1 the first Mat
+	 * @param src2 the second Mat
+	 * @param out the Mat that is the subtraction of the two Mats
+	 */
+	private void $tMeth.name($step.name())(Mat src1, Mat src2, Mat out) {
+		Core.subtract(src1, src2, out);
+	}

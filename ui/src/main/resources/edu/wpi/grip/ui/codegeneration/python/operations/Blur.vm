@@ -1,0 +1,22 @@
+#needs("BlurType")
+    @staticmethod
+    def $tMeth.name($step.name())(src, type, radius):
+        """Softens an image using one of several filters.
+        Args:
+            src: The source mat (numpy.ndarray).
+            type: The blurType to perform represented as an int.
+            radius: The radius for the blur as a float.
+        Returns:
+            A numpy.ndarray that has been blurred.
+        """
+        if(type is BlurType.Box_Blur):
+            ksize = 2 * round(radius) + 1
+            return cv2.blur(src,(ksize,ksize))
+        elif(type is BlurType.Gaussian_Blur):
+            ksize = 6 * round(radius) + 1
+            return cv2.GaussianBlur(src, (ksize,ksize), round(radius))
+        elif(type is BlurType.Median_Filter):
+            ksize = 2 * round(radius) + 1
+            return cv2.medianBlur(src, ksize)
+        else:
+            return cv2.bilateralFilter(src,-1,round(radius),round(radius))

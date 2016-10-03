@@ -1,0 +1,16 @@
+	/**
+	 * Performs a Gaussian blur on the image.
+	 * @param src the image to blur.
+	 * @param kSize the kernel size.
+	 * @param sigmaX the deviation in X for the Gaussian blur.
+	 * @param sigmaY the deviation in Y for the Gaussian blur.
+	 * @param borderType pixel extrapolation method.
+	 * @param dst the output image.
+	 */
+	private void $tMeth.name($step.name())(Mat src, Size kSize, double sigmaX, double sigmaY,
+		int	borderType, Mat dst) {
+		if (kSize == null) {
+			kSize = new Size(1,1);
+		}
+		Imgproc.GaussianBlur(src, dst, kSize, sigmaX, sigmaY, borderType);
+	}

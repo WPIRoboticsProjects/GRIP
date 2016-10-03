@@ -1,0 +1,13 @@
+    @staticmethod
+    def __valve(boolsw, on_true):
+        """return a value if a value is true or None if it is false.
+        Args:
+            boolsw: A boolean that determines what option to choose.
+            on_true: The output if true.
+        Returns:
+            Either the value of on_true or None.
+        """
+        if(boolsw):
+            return on_true
+        else:
+            return None

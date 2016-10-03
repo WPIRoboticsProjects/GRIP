@@ -1,0 +1,9 @@
+	/**
+	 * Applies a color Map to given Image.
+	 * @param src Image to apply Color Map to.
+	 * @param colorMap the type of color map to apply.
+	 * @param dst Output after Color Map is applied
+	 */
+	private void $tMeth.name($step.name())(Mat src, int colorMap, Mat dst) {
+		Imgproc.applyColorMap(src, dst, colorMap);
+	}

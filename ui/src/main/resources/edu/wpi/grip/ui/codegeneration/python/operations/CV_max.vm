@@ -1,0 +1,10 @@
+    @staticmethod
+    def $tMeth.name($step.name())(src1, src2):
+        """Performs a per element max.
+        Args:
+            src1: A numpy.ndarray.
+            src2: A numpy.ndarray.
+        Returns:
+            The max as a numpy.ndarray.
+        """
+        return cv2.max(src1, src2)

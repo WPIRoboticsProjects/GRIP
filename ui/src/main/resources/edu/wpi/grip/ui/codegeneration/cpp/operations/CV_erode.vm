@@ -1,0 +1,13 @@
+	/**
+	 * Expands area of lower value in an image.
+	 * @param src the Image to erode.
+	 * @param kernel the kernel for erosion.
+	 * @param anchor the center of the kernel.
+	 * @param iterations the number of times to perform the erosion.
+	 * @param borderType pixel extrapolation method.
+	 * @param borderValue value to be used for a constant border.
+	 * @param dst Output Image.
+	 */
+	void $fileName::#func($step ["src", "kernel", "anchor", "iterations", "borderType", "borderValue", "dst"]) {
+		erode(src, dst, kernel, anchor, (int)iterations, borderType, borderValue);
+	}

@@ -1,0 +1,13 @@
+    @staticmethod
+    def $tMeth.name($step.name())(src, mask):
+        """Finds the minimum and maximum values of the Mat as well as the associated Points.
+        Args:
+            src: A numpy.ndarray.
+            mask: A black and white numpy.ndarray.
+        Returns:
+            The minimum value.
+            The maximimum value.
+            The point where the minimum value is located.
+            The point where the maximum value is located/
+        """
+        return cv2.minMaxLoc(src, mask)

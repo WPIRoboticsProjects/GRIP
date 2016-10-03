@@ -1,0 +1,14 @@
+    @staticmethod
+    def $tMeth.name($step.name())(src, dx, dy, k_size, scale, delta, border_type):
+        """Find edges by calculating the requested derivative order for the given image.
+        Args:
+            src: A numpy.ndarray.
+            k_size: Odd number that is size of the kernel.
+            scale: Scaling factor for Sobel.
+            delta: Offset for values in Sobel.
+            border_type: Opencv enum.
+        Returns:
+            The result as a numpy.ndarray.
+        """
+        return cv2.Sobel(src, 0, (int)(dx + 0.5), (int)(dy + 0.5), (int)(k_size + 0.5),
+                            scale = scale, delta = delta, borderType = border_type)

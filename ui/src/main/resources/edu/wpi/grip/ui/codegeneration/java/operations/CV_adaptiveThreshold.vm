@@ -1,0 +1,15 @@
+	/**
+	 * Applies an adaptive threshold to an array.
+	 * @param src Input Image.
+	 * @param maxValue Value to assign to pixels that match the condition.
+	 * @param adaptiveMethod Adaptive threshold method to use.
+	 * @param thresholdType Type of threshold to use.
+	 * @param blockSize Size of a pixel area that is used to calculate a threshold.
+	 * @param c Constant to subtract from the mean.
+	 * @param dst Output of threshold.
+	 */
+	private void $tMeth.name($step.name())(Mat src, double maxValue, int adaptiveMethod,
+		int thresholdType, double blockSize, double c, Mat dst) {
+		Imgproc.adaptiveThreshold(src, dst, maxValue, adaptiveMethod, thresholdType,
+			(int)blockSize, c);
+	}

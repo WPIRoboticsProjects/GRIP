@@ -1,0 +1,10 @@
+	/**
+	 * Divides one image by another with given scale.
+	 * @param src1 Numerator image.
+	 * @param src2 Denominator image.
+	 * @param scale Scale for division.
+	 * @param dst Result image.
+	 */
+	void $fileName::#func($step ["src1", "src2", "scale", "dst"]) {
+		divide(src1, src2, dst, scale);
+	}

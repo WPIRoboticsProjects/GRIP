@@ -1,0 +1,23 @@
+	/**
+	 * Isolates overlapping objects from the background and each other.
+	 * @param input The image used to create the watershed.
+	 * @param contours The contours used to create the watershed.
+	 * @param output The image where the output is stored.
+	 */
+	private void $tMeth.name($step.name())(Mat input,List<MatOfPoint> contours, Mat output) {
+		final Mat markers = new Mat(input.size(), CvType.CV_32SC1, new Scalar(0.0));
+		Mat temp = new Mat(input.size(), CvType.CV_8UC3, new Scalar(0.0,0.0,0.0));
+		temp.convertTo(input,CvType.CV_8UC3);
+		try {
+			for (int i = 0; i < contours.size(); i++) {
+				Imgproc.drawContours(markers, contours, i, Scalar.all((i + 1) * (255
+					/contours.size())),-1);
+				}
+			Imgproc.circle(markers, new Point(5, 5), 3, Scalar.all(255), -1, Core.LINE_8, 0);
+			Imgproc.watershed(input, markers);
+			markers.convertTo(output, CvType.CV_8UC1);
+			Core.bitwise_not(output, output);
+		} finally {
+			markers.release();
+		}
+	}

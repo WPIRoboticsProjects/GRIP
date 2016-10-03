@@ -1,0 +1,9 @@
+	/**
+	 * Performs a median blur on the image.
+	 * @param src image to blur.
+	 * @param kSize size of blur.
+	 * @param dst output of blur.
+	 */
+	void $fileName::#func($step ["src", "kSize", "dst"]) {
+		medianBlur(src, dst, (int)kSize);
+	}
