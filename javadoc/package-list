@@ -20,6 +20,8 @@ edu.wpi.grip.core.util.service
 edu.wpi.grip.preloader
 edu.wpi.grip.ui
 edu.wpi.grip.ui.annotations
+edu.wpi.grip.ui.codegeneration
+edu.wpi.grip.ui.codegeneration.data
 edu.wpi.grip.ui.components
 edu.wpi.grip.ui.dragging
 edu.wpi.grip.ui.events
