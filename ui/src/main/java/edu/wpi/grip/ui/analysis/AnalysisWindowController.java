@@ -8,6 +8,7 @@ import edu.wpi.grip.core.events.RunStoppedEvent;
 import edu.wpi.grip.core.events.TimerEvent;
 import edu.wpi.grip.core.metrics.Analysis;
 import edu.wpi.grip.core.metrics.BenchmarkRunner;
+import edu.wpi.grip.core.metrics.CsvExporter;
 import edu.wpi.grip.core.metrics.Statistics;
 
 import com.google.common.collect.EvictingQueue;
@@ -77,9 +78,9 @@ public class AnalysisWindowController {
   private final Map<Step, Collection<Long>> sampleMap = new HashMap<>();
   private static final int DEFAULT_NUM_RECENT_SAMPLES = 16;
   private int numRecentSamples = DEFAULT_NUM_RECENT_SAMPLES;
-  private static final String CSV_REPORT_HEADER
-      = "Step,% Time,Average Time (ms),Standard deviation\n";
-  private String csvReport = CSV_REPORT_HEADER;
+  private String csvReport = "";
+  private final CsvExporter csvExporter = new CsvExporter(4,
+      "Step", "% Time", "Average Time (ms)", "Standard Deviation");
 
   /**
    * Initializes the controller. This should only be called by the FXML loader.
@@ -141,7 +142,7 @@ public class AnalysisWindowController {
   }
 
   @Subscribe
-  @SuppressWarnings({"PMD.UnusedPrivateMethod", "PMD.UnusedFormalParameter"})
+  @SuppressWarnings( {"PMD.UnusedPrivateMethod", "PMD.UnusedFormalParameter"})
   private void onPipelineFinish(@Nullable RunStoppedEvent event) {
     double[] averageRunTimes = sortedStream(sampleMap)
         .parallel()
@@ -162,6 +163,7 @@ public class AnalysisWindowController {
       csvReport = createReport();
       numRecentSamples = DEFAULT_NUM_RECENT_SAMPLES; // reset queue size
       sampleMap.clear();
+      csvExporter.clear();
     }
   }
 
@@ -207,6 +209,7 @@ public class AnalysisWindowController {
    *
    * @param m   the map to stream
    * @param <E> the type of the values in the map
+   *
    * @return a stream of the entries in the map, sorted by their key's index.
    */
   private <E> Stream<Map.Entry<Step, E>> sortedStream(Map<Step, E> m) {
@@ -219,8 +222,6 @@ public class AnalysisWindowController {
    * Creates a CSV report of the most recent benchmark.
    */
   private String createReport() {
-    StringBuilder sb = new StringBuilder(CSV_REPORT_HEADER);
-
     // List of step names, in the order they run in
     final List<String> stepNames = sortedStream(sampleMap)
         .map(Map.Entry::getKey)
@@ -262,16 +263,14 @@ public class AnalysisWindowController {
         .map(t -> t / 1000) // convert us to ms
         .collect(Collectors.toList());
     for (int i = 0; i < statistics.size(); i++) {
-      sb.append(stepNames.get(i));
-      sb.append(',');
-      sb.append(percentRunTimes.get(i));
-      sb.append(',');
-      sb.append(averageRunTimes.get(i));
-      sb.append(',');
-      sb.append(stddev.get(i));
-      sb.append('\n');
+      csvExporter.addRow(
+          stepNames.get(i),
+          percentRunTimes.get(i),
+          averageRunTimes.get(i),
+          stddev.get(i)
+      );
     }
-    return sb.toString();
+    return csvExporter.export();
   }
 
 
