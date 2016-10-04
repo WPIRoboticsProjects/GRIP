@@ -29,10 +29,10 @@ public class NetworkTableEntrySourceTest {
 
   private static final double TEST_NUMBER = 13.13;
   private static final String TEST_STRING = "Some test string";
-  private final ITable testTable = MockNetworkTable.getTable("/");
-  private static final String BOOLEAN_PATH = "/GRIP/test/boolean";
-  private static final String NUMBER_PATH = "/GRIP/test/number";
-  private static final String STRING_PATH = "/GRIP/test/string";
+  private final ITable testTable = MockNetworkTable.getTable("GRIP/test");
+  private static final String BOOLEAN_PATH = "boolean";
+  private static final String NUMBER_PATH = "number";
+  private static final String STRING_PATH = "string";
 
   public NetworkTableEntrySourceTest() {
     eventBus = new EventBus();
@@ -41,7 +41,7 @@ public class NetworkTableEntrySourceTest {
 
   @Before
   public void setUp() {
-    testingNtManager = MockNTReceiver::new;
+    testingNtManager = p -> new MockNTReceiver(p, testTable);
 
     testTable.putBoolean(BOOLEAN_PATH, true);
     testTable.putDouble(NUMBER_PATH, TEST_NUMBER);

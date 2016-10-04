@@ -18,7 +18,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 /**
  * NetworkTables implementation for tests that doesn't rely on the networking stack.
  */
-@SuppressWarnings({"OverloadMethodsDeclarationOrder", "PMD"})
+@SuppressWarnings( {"OverloadMethodsDeclarationOrder", "PMD"})
 public class MockNetworkTable implements ITable {
 
   private final Map<String, Object> entries = new HashMap<>();
@@ -36,8 +36,6 @@ public class MockNetworkTable implements ITable {
       double[].class
   );
 
-  private static final MockNetworkTable ROOT = new MockNetworkTable("/");
-
   private final String name;
 
   private MockNetworkTable(String name) {
@@ -45,20 +43,22 @@ public class MockNetworkTable implements ITable {
   }
 
   /**
-   * Gets the table for the given path.
+   * Gets a table for the given path.
+   *
+   * Note: this will <strong>always</strong> return a new table.
    */
   public static ITable getTable(String path) {
     checkNotNull(path, "path");
     checkArgument(!path.matches(".*/{2,}.*")); // can't have multiple slashes in path
     if ("/".equals(path) || path.isEmpty()) {
-      return ROOT;
+      return new MockNetworkTable("/");
     }
     String absolute = path;
     if (path.charAt(0) != '/') {
       absolute = '/' + path;
     }
     String[] subPaths = absolute.split("/");
-    ITable table = ROOT;
+    ITable table = new MockNetworkTable("/");
     for (String p : subPaths) {
       table = table.getSubTable(p);
     }
@@ -106,10 +106,13 @@ public class MockNetworkTable implements ITable {
 
   @Override
   public ITable getSubTable(String key) {
+    if (key.isEmpty()) {
+      return this;
+    }
     if (containsSubTable(key)) {
       return subTables.get(key);
     }
-    if (this == ROOT) {
+    if ("/".equals(name)) {
       String path = key;
       if (key.charAt(0) == '/') {
         path = key.substring(1);
@@ -119,12 +122,7 @@ public class MockNetworkTable implements ITable {
     if (!key.contains("/")) {
       return subTables.computeIfAbsent(key, k -> new MockNetworkTable(name + "/" + k));
     }
-    MockNetworkTable t;
-    if (key.charAt(0) == '/') {
-      t = ROOT;
-    } else {
-      t = this;
-    }
+    MockNetworkTable t = this;
     for (String p : key.split("/")) {
       t = (MockNetworkTable) t.getSubTable(p);
     }
@@ -133,7 +131,7 @@ public class MockNetworkTable implements ITable {
 
   @Override
   public Set<String> getKeys(int types) {
-    return null;
+    throw new UnsupportedOperationException();
   }
 
   @Override
