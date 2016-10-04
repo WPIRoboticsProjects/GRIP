@@ -1,0 +1,10 @@
+    @staticmethod
+    def $tMeth.name($step.name())(src1, src2):
+        """Calculates the absolute difference between two Mats.
+        Args:
+            src1: A numpy.ndarray.
+            src2 A numpy.ndarray.
+        Returns:
+            The absolute difference as a numpy.ndarray.
+        """
+        return cv2.absdiff(src1,src2)

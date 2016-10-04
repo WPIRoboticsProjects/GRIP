@@ -1,0 +1,15 @@
+	/**
+	 * Selects an output from two inputs based on a boolean.
+	 * @param sw The boolean that determines the output.
+	 * @param onTrue The output if sw is true.
+	 * @param onFalse The output if sw is false.
+	 * @param output The output which is equal to either onTrue or onFalse.
+	 */
+	private <T> void pipelineSwitch(boolean sw, T onTrue, T onFalse, #RefOf("T") output) {
+		if (sw) {
+			output.set(onTrue);
+		}
+		else {
+			output.set(onFalse);
+		}
+	}

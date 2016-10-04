@@ -1,0 +1,12 @@
+	/**
+	 * Apply a fixed-level threshold to each array element in an image.
+	 * @param src Image to threshold.
+	 * @param threshold threshold value.
+	 * @param maxVal Maximum value for THRES_BINARY and THRES_BINARY_INV
+	 * @param type Type of threshold to appy.
+	 * @param dst output Image.
+	 */
+	private void $tMeth.name($step.name())(Mat src, double threshold, double maxVal, int type,
+		Mat dst) {
+		Imgproc.threshold(src, dst, threshold, maxVal, type);
+	}

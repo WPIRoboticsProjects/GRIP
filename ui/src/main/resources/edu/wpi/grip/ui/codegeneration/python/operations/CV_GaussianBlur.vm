@@ -1,0 +1,17 @@
+    @staticmethod
+    def $tMeth.name($step.name())(src, k_size, sigma_x, sigma_y, border_type):
+        """Performs a Gaussian blur on the image.
+        Args:
+            src: A numpy.ndarray.
+            k_size: A list of two numbers that represent the kernel size.
+            sigma_x: The deviation in X for the Gaussian blur.
+            sigma_y: The deviation in X for the Gaussian blur.
+            border_type: Opencv enum representing the border type.
+        Returns:
+            A blurred numpy.ndarray.
+        """
+        if (k_size == None):
+            k_size = (1, 1)
+        k_size_int = ((int)(k_size[0]),(int)(k_size[1]))
+        return cv2.GaussianBlur(src, k_size_int, sigmaX=sigma_x, sigmaY=sigma_y,
+                            borderType=(int)(border_type))

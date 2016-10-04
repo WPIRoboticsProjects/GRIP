@@ -1,0 +1,11 @@
+	/**
+	 * Apply a fixed-level threshold to each array element in an image.
+	 * @param src Image to threshold.
+	 * @param thresh threshold value.
+	 * @param maxVal Maximum value for THRES_BINARY and THRES_BINARY_INV.
+	 * @param type Type of threshold to apply.
+	 * @param dst output Image.
+	 */
+	void $fileName::#func($step ["src", "thresh", "maxVal", "type", "dst"]) {
+		threshold(src, dst, thresh, maxVal, type);
+	}

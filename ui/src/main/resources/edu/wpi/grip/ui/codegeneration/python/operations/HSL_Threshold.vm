@@ -1,0 +1,13 @@
+    @staticmethod
+    def $tMeth.name($step.name())(input, hue, sat, lum):
+        """Segment an image based on hue, saturation, and luminance ranges.
+        Args:
+            input: A BGR numpy.ndarray.
+            hue: A list of two numbers the are the min and max hue.
+            sat: A list of two numbers the are the min and max saturation.
+            lum: A list of two numbers the are the min and max luminance.
+        Returns:
+            A black and white numpy.ndarray.
+        """
+        out = cv2.cvtColor(input, cv2.COLOR_BGR2HLS)
+        return cv2.inRange(out, (hue[0], lum[0], sat[0]),  (hue[1], lum[1], sat[1]))

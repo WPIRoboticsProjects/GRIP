@@ -1,0 +1,15 @@
+    @staticmethod
+    def $tMeth.name($step.name())(src, max_value, adaptive_method, threshold_type, block_size, c):
+        """Applies an adaptive threshold to an array.
+        Args:
+            src: A gray scale numpy.ndarray.
+            max_value: Value to assign to pixels that match the condition.
+            adaptive_method: Adaptive threshold method to use. (opencv enum)
+            threshold_type: Type of threshold to use. (opencv enum)
+            block_size: Size of a pixel area that is used to calculate a threshold.(number)
+            c: Constant to subtract from the mean.(number)
+        Returns:
+            A black and white numpy.ndarray.
+        """
+        return cv2.adaptiveThreshold(src, max_value, adaptive_method, threshold_type,
+                        (int)(block_size + 0.5), c)

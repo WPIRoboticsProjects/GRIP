@@ -1,0 +1,18 @@
+#set($needsRefClass = true)
+		//Inputs
+#set($boolInp = $step.getInput(0))
+#if(!$boolInp.hasValue())
+		$tMeth.name($boolInp.name()) = ${boolInp.value()}.$boolInp.baseType()Value();
+#end
+#set($inputTrue = $step.getInput(1))
+#newInput($inputTrue)
+#set($inputFalse = $step.getInput(2))
+#newInput($inputFalse)
+#set($out = $step.getOutput(0))
+#set($outMutName = $tMeth.name($out.name()) + "Ref")
+		//Output
+		#RefOf($out.baseType()) $outMutName = new #RefOf($out.baseType())();
+		pipelineSwitch($tMeth.name($boolInp.name()), $tMeth.name($inputTrue.name()),
+		$tMeth.name($inputFalse.name()), $outMutName);
+		//output assignment
+		$tMeth.name($out.name()) = ${outMutName}.get();

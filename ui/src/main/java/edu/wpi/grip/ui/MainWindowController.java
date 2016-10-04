@@ -14,6 +14,8 @@ import edu.wpi.grip.core.settings.SettingsProvider;
 import edu.wpi.grip.core.util.SafeShutdown;
 import edu.wpi.grip.core.util.service.SingleActionListener;
 import edu.wpi.grip.ui.analysis.AnalysisWindowController;
+import edu.wpi.grip.ui.codegeneration.Exporter;
+import edu.wpi.grip.ui.codegeneration.Language;
 import edu.wpi.grip.ui.components.StartStoppableButton;
 import edu.wpi.grip.ui.util.DPIUtility;
 
@@ -24,14 +26,17 @@ import com.google.common.util.concurrent.Service;
 import java.io.File;
 import java.io.IOException;
 import java.util.Optional;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javafx.application.Platform;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
@@ -256,6 +261,38 @@ public class MainWindowController {
       pipelineRunner.stopAsync();
       SafeShutdown.exit(0);
     }
+  }
+  
+  /**
+   * Controls the export button in the main menu. Opens a filechooser with language selection.
+   * The user can select the language to export to, save location and file name.
+   * @param actionEvent Unused event passed by the controller.
+   */
+  public void generate(ActionEvent actionEvent) {
+    final FileChooser fileChooser = new FileChooser();
+    fileChooser.setTitle("Export to");
+    fileChooser.getExtensionFilters().add(new ExtensionFilter(Language.JAVA.name, "*.java"));
+    fileChooser.getExtensionFilters().add(new ExtensionFilter(Language.CPP.name, "*.cpp"));
+    fileChooser.getExtensionFilters().add(new ExtensionFilter(Language.PYTHON.name, "*.py"));
+    fileChooser.setInitialFileName("Pipeline.java");
+    final File file = fileChooser.showSaveDialog(root.getScene().getWindow());
+    if (file == null) {
+      return;
+    }
+    Language lang = Language.get(fileChooser.getSelectedExtensionFilter().getDescription());
+    Exporter exporter = new Exporter(pipeline.getSteps(), lang, file);
+    final Set<String> nonExportableSteps = exporter.getNonExportableSteps();
+    if (!nonExportableSteps.isEmpty()) {
+      StringBuilder b = new StringBuilder("The following steps cannot be exported:\n");
+      nonExportableSteps.forEach(n -> b.append("  ").append(n).append('\n'));
+      Alert alert = new Alert(Alert.AlertType.WARNING);
+      alert.setContentText(b.toString());
+      alert.showAndWait();
+      return;
+    }
+    Thread exportRunner = new Thread(exporter);
+    exportRunner.setDaemon(true);
+    exportRunner.start();
   }
 
   @FXML

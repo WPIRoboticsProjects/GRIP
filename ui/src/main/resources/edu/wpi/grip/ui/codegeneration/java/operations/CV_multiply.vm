@@ -1,0 +1,10 @@
+	/**
+	 * Mutiplies one image by another with given scale.
+	 * @param src1 first image.
+	 * @param src2 second image.
+	 * @param scale Scale for multiplication.
+	 * @param dst Result image.
+	 */
+	private void $tMeth.name($step.name())(Mat src1, Mat src2, double scale, Mat dst) {
+		Core.multiply(src1, src2, dst, scale);
+	}

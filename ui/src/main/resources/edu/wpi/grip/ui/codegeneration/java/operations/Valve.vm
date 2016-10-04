@@ -1,0 +1,14 @@
+	/**
+	 * Sets an output if a value is true.
+	 * @param sw The boolean that determines the output.
+	 * @param input The output if sw is true.
+	 * @param output The output which is equal to the input or null.
+	 */
+	private static <T> void pipelineValve(boolean sw, T input, #RefOf("T") output) {
+		if (sw) {
+			output.set(input);
+		}
+		else {
+			output.set(null);
+		}
+	}

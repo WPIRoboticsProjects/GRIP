@@ -1,0 +1,9 @@
+	/**
+	 * Extracts given channel from an image.
+	 * @param src the image to extract.
+	 * @param channel zero indexed channel number to extract.
+	 * @param dst output image.
+	 */
+	private void $tMeth.name($step.name())(Mat src, double channel, Mat dst) {
+		Core.extractChannel(src, dst, (int)channel);
+	}

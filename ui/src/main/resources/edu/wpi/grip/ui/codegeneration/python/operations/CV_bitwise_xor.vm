@@ -1,0 +1,9 @@
+    @staticmethod
+    def $tMeth.name($step.name())(src1, src2):
+        """Computes the per channel exclusive or of two images.
+        Args:
+            src1: A numpy.ndarray.
+        Returns:
+            The inverse of the numpy.ndarray.
+        """
+        return cv2.bitwise_xor(src1, src2)

@@ -1,0 +1,73 @@
+#macro( input $inp)
+self.__$tMeth.pyName($inp.name())#end
+
+
+#macro(newInput $inp)
+#if($inp.hasValue())
+#if($inp.type().equals("BlurType") || $inp.type().equals("FlipCode"))
+#input($inp) = ${inp.type()}.$inp.value().replaceAll(' ','_')#elseif($inp.type().equals("MaskSize"))
+#input($inp) = $inp.value().substring(0,1)#elseif($inp.value().contains("source"))
+#input($inp) = self.__$inp.value()#elseif ($inp.type().contains("Enum") ||
+$input.type().contains("Type") || $input.type().equals("Interpolation"))
+#input($inp) = cv2.#enum($inp.value())#elseif($inp.value().equals("null") || $inp.type().equals("Mat"))
+#input($inp) = None#elseif($inp.value().equals("false"))
+#input($inp) = False#elseif($inp.value().equals("true"))
+#input($inp) = True#elseif ($inp.type().equals("List"))
+#set($inputEndValue = $inp.value().length() - 1)
+#input($inp) = [$inp.value().substring(1,$inputEndValue)]#elseif ($inp.type().equals("String"))
+#input($inp) = "$inp.value()"#elseif($inp.type().equals("Size") || $inp.type().equals("Point") || $inp.type().equals("Scalar"))
+#input($inp) = $inp.value()#else
+#input($inp) = $inp.value()#end
+#else##connected socket
+#input($inp) = self.$tMeth.pyName($inp.value())#end#end
+
+#macro(needs $enum)
+#set($BooleanThatDoesNotMatter = $enums.add($enum))#end
+
+#macro(addToList $list $ele)
+#set($BooleanThatDoesNotMatter = $list.add($ele))#end
+
+#macro(type $socket)
+#set($type = $socket.type())
+#if($type.equals("Mat") || $type.equals("Object"))
+numpy.ndarray#elseif($type.equalsIgnoreCase("Double") || $type.equalsIgnoreCase("Number"))
+float#else
+$type#end
+#end
+
+#macro(setter $src)
+    def set_${src.value()}(self, value):
+        """Sets $src.value() to given value checking for correct type.
+        """
+#if($src.type().equals("ContoursReport"))
+        assert isinstance(value, list)
+        for element in value:
+            assert isinstance(element, numpy.ndarray)
+#elseif($src.type().equals("BlobsReport"))
+        assert isinstance(value, list)
+        for element in value:
+            assert isinstance(element, cv2.KeyPoint)
+#elseif($src.type().equals("LinesReport"))
+        assert isinstance(value, list)
+        for element in value:
+            assert isinstance(element, self.Line)
+#else
+        assert isinstance(value, #type($src)) , "Source must be of type #type($src)"
+#end
+        self.__$src.value() = value
+    
+#end
+
+#macro(output $out)
+self.$tMeth.pyName($out.name())#end
+
+#macro (enum $val)#if($val.equals("CV_DIST_L1"))
+DIST_L1#elseif($val.equals("CV_DIST_L2"))
+DIST_L2#elseif($val.equals("CV_DIST_C"))
+DIST_C#elseif($val.equals("None"))
+INTER_NEAREST#elseif($val.equals("Linear"))
+INTER_LINEAR#elseif($val.equals("Cubic"))
+INTER_CUBIC#elseif($val.equals("Lanczos"))
+INTER_LANCZOS4#elseif($val.equals("Area"))
+INTER_AREA#else
+$val#end#end

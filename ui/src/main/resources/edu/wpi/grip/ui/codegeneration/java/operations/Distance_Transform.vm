@@ -1,0 +1,12 @@
+	/**
+	 * Sets the values of pixels in a binary image to their distance to the nearest black pixel.
+	 * @param input The image on which to perform the Distance Transform.
+	 * @param type The Transform.
+	 * @param maskSize the size of the mask.
+	 * @param output The image in which to store the output.
+	 */
+	private void $tMeth.name($step.name())(Mat input,int type, int maskSize,
+		Mat output) {
+		Imgproc.distanceTransform(input, output, type, maskSize);
+		output.convertTo(output, -1);
+	}

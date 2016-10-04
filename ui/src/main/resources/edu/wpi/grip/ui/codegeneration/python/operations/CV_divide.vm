@@ -1,0 +1,11 @@
+    @staticmethod
+    def $tMeth.name($step.name())(src1, src2, scale):
+        """Divides one image by another with given scale.
+        Args:
+            src1: A numpy.ndarray.
+            src2: A numpy.ndarray.
+            scale: value of the scale.
+        Returns
+            The result of the operation as a numpy.ndarray.
+        """
+        return cv2.divide(src1, src2, scale)

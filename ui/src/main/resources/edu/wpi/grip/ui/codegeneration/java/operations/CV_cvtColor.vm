@@ -1,0 +1,9 @@
+	/**
+	 * Converts an image from one color space to another.
+	 * @param src Image to convert.
+	 * @param code conversion code.
+	 * @param dst converted Image.
+	 */
+	private void $tMeth.name($step.name())(Mat src, int code, Mat dst) {
+		Imgproc.cvtColor(src, dst, code);
+	}

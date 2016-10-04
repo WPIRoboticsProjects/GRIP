@@ -1,0 +1,14 @@
+    @staticmethod
+    def $tMeth.name($step.name())(src, kernel, anchor, iterations, border_type, border_value):
+        """Expands area of higher value in an image.
+        Args:
+           src: A numpy.ndarray.
+           kernel: The kernel for dilation. A numpy.ndarray.
+           iterations: the number of times to dilate.
+           border_type: Opencv enum that represents a border type.
+           border_value: value to be used for a constant border.
+        Returns:
+            A numpy.ndarray after dilation.
+        """
+        return cv2.dilate(src, kernel, anchor, iterations = (int) (iterations +0.5),
+                            borderType = border_type, borderValue = border_value)

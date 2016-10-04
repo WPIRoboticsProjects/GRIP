@@ -1,0 +1,13 @@
+    @staticmethod
+    def $tMeth.name($step.name())(src, d_size, fx, fy, interpolation):
+        """Resizes an Image.
+        Args:
+            src: A numpy.ndarray.
+            d_size: Size to set the image.
+            fx: The scale factor for the x.
+            fy: The scale factor for the y.
+            interpolation: Opencv enum for the type of interpolation.
+        Returns:
+            A resized numpy.ndarray.
+        """
+        return cv2.resize(src, d_size, fx=fx, fy=fy, interpolation=interpolation)

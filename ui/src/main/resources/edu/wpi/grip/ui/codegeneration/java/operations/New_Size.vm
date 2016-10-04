@@ -1,0 +1,10 @@
+	/**
+	 * Fills a size with given width and height.
+	 * @param width the width of the size
+	 * @param height the height of the size
+	 * @param size the size to fill
+	 */
+	private void $tMeth.name($step.name())(double width, double height, Size size) {
+		size.height = height;
+		size.width = width;
+	}

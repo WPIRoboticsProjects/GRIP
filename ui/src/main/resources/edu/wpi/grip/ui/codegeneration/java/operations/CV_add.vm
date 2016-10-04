@@ -1,0 +1,9 @@
+	/**
+	 * Calculates the sum of two Mats.
+	 * @param src1 the first Mat
+	 * @param src2 the second Mat
+	 * @param out the Mat that is the sum of the two Mats
+	 */
+	private void $tMeth.name($step.name())(Mat src1, Mat src2, Mat out) {
+		Core.add(src1, src2, out);
+	}
