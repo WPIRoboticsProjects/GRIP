@@ -32,7 +32,7 @@ public class CsvExporter {
   private final Table<Integer, Integer, Object> dt = TreeBasedTable.create();
 
   /**
-   * Creates a new CSV exporter with the given number of data columns and column header
+   * Creates a new CSV exporter with the given number of data columns and column header.
    *
    * @param numCols the number of columns in the data table
    * @param headers the column headers to use
@@ -96,7 +96,7 @@ public class CsvExporter {
   /**
    * Exports a CSV table.
    *
-   * @return
+   * @return the CSV representation of the data given to this exporter
    */
   public String export() {
     StringBuilder sb = new StringBuilder();
