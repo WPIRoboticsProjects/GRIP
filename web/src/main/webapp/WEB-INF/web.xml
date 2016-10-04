@@ -16,5 +16,7 @@
 
     <listener>
         <listener-class>edu.wpi.grip.web.GripServletConfig</listener-class>
+        <!--<listener-class>org.jboss.resteasy.plugins.guice.GuiceResteasyBootstrapServletContextListener</listener-class>-->
+        <!--<listener-class>org.gwizard.swagger.SwaggerServletContextListener</listener-class>-->
     </listener>
 </web-app>
