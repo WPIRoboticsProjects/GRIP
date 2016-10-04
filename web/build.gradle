@@ -27,7 +27,8 @@ swagger {
             'invokerPackage'   : 'edu.wpi.grip.web.swagger',
             'modelPackage'     : 'edu.wpi.grip.web.swagger.model',
             'apiPackage'       : 'edu.wpi.grip.web.swagger.api',
-            'serializableModel': 'true'
+            'serializableModel': 'true',
+            'templateDir'      : "${project.projectDir.path}/swagger-template".toString()
     ]
 
     apis = ''
