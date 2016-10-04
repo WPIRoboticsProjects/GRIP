@@ -1,13 +1,15 @@
 package edu.wpi.grip.core.sources;
 
 import edu.wpi.grip.core.events.SourceRemovedEvent;
-import edu.wpi.grip.core.operations.network.networktables.TestingNTManager;
+import edu.wpi.grip.core.operations.network.MapNetworkReceiverFactory;
+import edu.wpi.grip.core.operations.network.networktables.MockNTReceiver;
+import edu.wpi.grip.core.operations.network.networktables.MockNetworkTable;
 import edu.wpi.grip.core.sockets.MockOutputSocketFactory;
 import edu.wpi.grip.core.util.MockExceptionWitness;
 
 import com.google.common.eventbus.EventBus;
 
-import edu.wpi.first.wpilibj.networktables.NetworkTablesJNI;
+import edu.wpi.first.wpilibj.tables.ITable;
 
 import org.junit.After;
 import org.junit.Before;
@@ -23,10 +25,11 @@ public class NetworkTableEntrySourceTest {
   private final MockOutputSocketFactory osf;
 
   private NetworkTableEntrySource source;
-  private TestingNTManager testingNtManager;
+  private MapNetworkReceiverFactory testingNtManager;
 
   private static final double TEST_NUMBER = 13.13;
   private static final String TEST_STRING = "Some test string";
+  private final ITable testTable = MockNetworkTable.getTable("/");
   private static final String BOOLEAN_PATH = "/GRIP/test/boolean";
   private static final String NUMBER_PATH = "/GRIP/test/number";
   private static final String STRING_PATH = "/GRIP/test/string";
@@ -38,17 +41,16 @@ public class NetworkTableEntrySourceTest {
 
   @Before
   public void setUp() {
-    testingNtManager = new TestingNTManager();
+    testingNtManager = MockNTReceiver::new;
 
-    NetworkTablesJNI.putBoolean(BOOLEAN_PATH, true);
-    NetworkTablesJNI.putDouble(NUMBER_PATH, TEST_NUMBER);
-    NetworkTablesJNI.putString(STRING_PATH, TEST_STRING);
+    testTable.putBoolean(BOOLEAN_PATH, true);
+    testTable.putDouble(NUMBER_PATH, TEST_NUMBER);
+    testTable.putString(STRING_PATH, TEST_STRING);
   }
 
   @After
   public void tearDown() {
     eventBus.post(new SourceRemovedEvent(source));
-    testingNtManager.close();
   }
 
   @Test
