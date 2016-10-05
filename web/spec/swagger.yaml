@@ -50,6 +50,20 @@ paths:
             type: array
             $ref: '#/definitions/Person'
   /steps:
+    put:
+      description: |
+        Creates a `Step` and adds it to the pipeline.
+      parameters:
+        -
+          name: operation-name
+          in: query
+          required: true
+          type: string
+      responses:
+        200:
+          description: Step added to the pipeline
+          schema:
+            $ref: '#/definitions/Step'
     get:
       description: |
         Gets `Step` objects

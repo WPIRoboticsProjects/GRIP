@@ -4,8 +4,9 @@ import edu.wpi.grip.core.events.ExceptionClearedEvent;
 import edu.wpi.grip.core.events.ExceptionEvent;
 import edu.wpi.grip.core.http.GripServer;
 import edu.wpi.grip.core.http.HttpPipelineSwitcher;
+import edu.wpi.grip.core.operations.BasicOperations;
 import edu.wpi.grip.core.operations.CVOperations;
-import edu.wpi.grip.core.operations.Operations;
+import edu.wpi.grip.core.operations.NetworkOperations;
 import edu.wpi.grip.core.operations.network.GripNetworkModule;
 import edu.wpi.grip.core.serialization.Project;
 import edu.wpi.grip.core.sources.GripSourcesHardwareModule;
@@ -35,11 +36,15 @@ public class Main {
   @Inject
   private PipelineRunner pipelineRunner;
   @Inject
+  private Palette palette;
+  @Inject
   private EventBus eventBus;
   @Inject
-  private Operations operations;
+  private BasicOperations basicOperations;
   @Inject
   private CVOperations cvOperations;
+  @Inject
+  private NetworkOperations networkOperations;
   @Inject
   private GripServer gripServer;
   @Inject
@@ -47,8 +52,11 @@ public class Main {
 
   @SuppressWarnings("JavadocMethod")
   public static void main(String[] args) throws IOException, InterruptedException {
-    final Injector injector = Guice.createInjector(Modules.override(new GripCoreModule(),
-        new GripFileModule(), new GripSourcesHardwareModule()).with(new GripNetworkModule()));
+    final Injector injector = Guice.createInjector(Modules.override(
+        new GripBasicModule(),
+        new GripCoreModule(),
+        new GripFileModule(),
+        new GripSourcesHardwareModule()).with(new GripNetworkModule()));
     injector.getInstance(Main.class).start(args);
   }
 
@@ -60,8 +68,9 @@ public class Main {
       projectPath = args[0];
     }
 
-    operations.addOperations();
-    cvOperations.addOperations();
+    palette.addOperations(basicOperations);
+    palette.addOperations(cvOperations);
+    palette.addOperations(networkOperations);
     gripServer.addHandler(pipelineSwitcher);
     gripServer.start();
 

@@ -1,14 +1,17 @@
 package edu.wpi.grip.core;
 
 import edu.wpi.grip.core.events.OperationAddedEvent;
+import edu.wpi.grip.core.operations.Operations;
 
-import com.google.common.eventbus.Subscribe;
+import com.google.common.eventbus.EventBus;
 
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
 
+import javax.inject.Inject;
+import javax.inject.Provider;
 import javax.inject.Singleton;
 
 import static com.google.common.base.Preconditions.checkArgument;
@@ -19,16 +22,32 @@ import static com.google.common.base.Preconditions.checkNotNull;
  */
 @Singleton
 public class Palette {
-
   private final Map<String, OperationMetaData> operations = new LinkedHashMap<>();
+  private final Provider<EventBus> eventBus;
 
-  @Subscribe
-  public void onOperationAdded(OperationAddedEvent event) {
-    final OperationMetaData operation = event.getOperation();
-    map(operation.getDescription().name(), operation);
-    for (String alias : operation.getDescription().aliases()) {
-      map(alias, operation);
+  @Inject
+  protected Palette(Provider<EventBus> eventBus) {
+    this.eventBus = eventBus;
+  }
+
+  /**
+   * Adds every {@link OperationMetaData} to this palette.
+   * @param operations The operations to add.
+   */
+  public void addOperations(Operations operations) {
+    operations.operations().forEach(this::addOperation);
+  }
+
+  /**
+   * Adds an OperationMetaData to the palette.
+   * @param operationMetaData The meta data to add.
+   */
+  public void addOperation(OperationMetaData operationMetaData) {
+    map(operationMetaData.getDescription().name(), operationMetaData);
+    for (String alias : operationMetaData.getDescription().aliases()) {
+      map(alias, operationMetaData);
     }
+    eventBus.get().post(new OperationAddedEvent(operationMetaData));
   }
 
   /**

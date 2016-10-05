@@ -99,6 +99,21 @@ def getVersionSimple = { ->
     }
 }
 
+subprojects {
+    repositories {
+        flatDir {
+            dirs "${rootDir.path}/core/libs"
+        }
+        maven {
+            url = "http://first.wpi.edu/FRC/roborio/maven/development"
+        }
+        maven {
+            url = "https://github.com/WPIRoboticsProjects/rosjava_mvn_repo/raw/master"
+        }
+        mavenLocal()
+    }
+}
+
 configure(subprojects - project(':ui:linuxLauncher')) {
     apply plugin: 'java'
     apply plugin: 'application'
@@ -231,18 +246,6 @@ project(":core") {
         shadow
     }
 
-    repositories {
-        flatDir {
-            dirs 'libs'
-        }
-        maven {
-            url = "http://first.wpi.edu/FRC/roborio/maven/development"
-        }
-        maven {
-            url = "https://github.com/WPIRoboticsProjects/rosjava_mvn_repo/raw/master"
-        }
-    }
-
     dependencies {
         compile group: 'com.google.code.findbugs', name: 'jsr305', version: '3.0.1'
         compile group: 'org.bytedeco', name: 'javacv', version: '1.1'
@@ -307,38 +310,20 @@ project(":core") {
     }
 
     sourceSets {
-        generated {
+        main {
             java {
                 /* Note: When referencing this it becomes `srcDirs` */
-                srcDir 'src/generated/java'
+                srcDir file("${project.projectDir.path}/src/generated/java")
             }
         }
     }
 
     task generateCodeFromSource(type: CodeGenerator) {
         description 'Generates the Operation Wrappers for the OpenCV methods.\n To skip run with parm `-PskipGenerate`'
-        dest sourceSets.generated.java.srcDirs
+        dest 'src/generated/java'
         removeExisting true
     }
     generateCodeFromSource.onlyIf { !project.hasProperty('skipGenerate') }
-    compileJava.source sourceSets.generated.java, sourceSets.main.java
-    compileJava.dependsOn generateCodeFromSource
-
-    // IDE setup
-    eclipse.classpath {
-        file.whenMerged { cp ->
-            sourceSets.generated.java.srcDirs.forEach { srcDir ->
-                def source_folder = new org.gradle.plugins.ide.eclipse.model.SourceFolder(srcDir.getAbsolutePath(), "build/classes/merged")
-                if (cp.entries.find() { it.path == source_folder.path } == null)
-                    cp.entries.add(source_folder)
-            }
-        }
-    }
-
-    idea.module {
-        sourceDirs += sourceSets.generated.java.srcDirs
-        sourceDirs += file('generated')
-    }
 }
 
 project (":ui:linuxLauncher") {

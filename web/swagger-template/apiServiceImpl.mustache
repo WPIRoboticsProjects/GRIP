@@ -18,7 +18,7 @@ import javax.ws.rs.core.SecurityContext;
 
 {{>generatedAnnotation}}
 {{#operations}}
-public class {{classname}}ServiceImpl extends {{classname}}Service {
+public class {{classname}}ServiceImpl implements {{classname}}Service {
   {{#operation}}
       @Override
       public Response {{nickname}}({{#isMultipart}}MultipartFormDataInput input,{{/isMultipart}}{{#allParams}}{{>serviceQueryParams}}{{>servicePathParams}}{{>serviceHeaderParams}}{{>serviceBodyParams}}{{^isMultipart}}{{>serviceFormParams}},{{/isMultipart}}{{#isMultipart}}{{^isFormParam}},{{/isFormParam}}{{/isMultipart}}{{/allParams}}SecurityContext securityContext)

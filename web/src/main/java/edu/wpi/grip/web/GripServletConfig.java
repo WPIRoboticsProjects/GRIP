@@ -1,20 +1,26 @@
 package edu.wpi.grip.web;
 
 
+import edu.wpi.grip.core.FileManager;
+import edu.wpi.grip.core.GripBasicModule;
+import edu.wpi.grip.core.Palette;
+import edu.wpi.grip.core.Pipeline;
+import edu.wpi.grip.web.api.PersonsApiServiceHandler;
+import edu.wpi.grip.web.api.StepApiServiceHandler;
 import edu.wpi.grip.web.swagger.api.PersonsApi;
+import edu.wpi.grip.web.swagger.api.PersonsApiService;
 import edu.wpi.grip.web.swagger.api.StepsApi;
+import edu.wpi.grip.web.swagger.api.StepsApiService;
 
+import com.google.common.eventbus.EventBus;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Module;
 import com.google.inject.Provides;
-import com.google.inject.TypeLiteral;
-import com.google.inject.matcher.Matchers;
 import com.google.inject.servlet.GuiceServletContextListener;
 import com.google.inject.servlet.ServletModule;
-import com.google.inject.spi.TypeEncounter;
-import com.google.inject.spi.TypeListener;
+import com.google.inject.servlet.SessionScoped;
 
 import org.gwizard.rest.JaxrsModule;
 import org.gwizard.rest.ObjectMapperContextResolver;
@@ -28,6 +34,7 @@ import org.jboss.resteasy.plugins.server.servlet.HttpServletDispatcher;
 
 import java.util.Collections;
 
+import javax.inject.Singleton;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import javax.ws.rs.GET;
@@ -36,7 +43,10 @@ import javax.ws.rs.Path;
 
 public class GripServletConfig extends GuiceServletContextListener {
   private EventListenerScanner eventListenerScanner;
-  /** A standard JAX-RS resource class */
+
+  /**
+   * A standard JAX-RS resource class.
+   */
   @Path("/hello")
   public static class HelloResource {
     @GET
@@ -50,10 +60,12 @@ public class GripServletConfig extends GuiceServletContextListener {
     final Injector injector = Guice.createInjector(
         //createServletModule(),
         createBasicModule(),
+        new GripBasicModule(),
         createServletModule(),
         new SwaggerModule());
     eventListenerScanner
         = injector.getInstance(EventListenerScanner.class);
+
     return injector;
   }
 
@@ -84,7 +96,6 @@ public class GripServletConfig extends GuiceServletContextListener {
 
       @Provides
       private SwaggerConfig swaggerConfig() {
-        System.out.println("Initializing swagger config");
         final SwaggerConfig swaggerConfig = new SwaggerConfig();
         swaggerConfig.setResourcePackages(
             Collections.singletonList("edu.wpi.grip.web.swagger.api"));
@@ -93,7 +104,24 @@ public class GripServletConfig extends GuiceServletContextListener {
 
       @Override
       protected void configure() {
+        bind(FileManager.class)
+            .toInstance((image, filename) -> {
+            });
+
         bind(HelloResource.class);
+
+        bind(EventBus.class)
+            .in(SessionScoped.class);
+        bind(Pipeline.class)
+            .in(SessionScoped.class);
+        bind(Palette.class)
+            .to(LoadedPalette.class);
+
+        bind(StepsApiService.class)
+            .to(StepApiServiceHandler.class);
+
+        bind(PersonsApiService.class)
+            .to(PersonsApiServiceHandler.class);
         bind(StepsApi.class);
         bind(PersonsApi.class);
       }
@@ -114,7 +142,7 @@ public class GripServletConfig extends GuiceServletContextListener {
         bind(ObjectMapperContextResolver.class);
 
         bind(HttpServletDispatcher.class)
-            .in(javax.inject.Singleton.class);
+            .in(Singleton.class);
         serve("/*")
             .with(HttpServletDispatcher.class);
 
@@ -125,7 +153,11 @@ public class GripServletConfig extends GuiceServletContextListener {
     };
   }
 
-  public static void main(String ... args) {
+  /**
+   * Main entry point for testing.
+   * @param args The input to the process
+   */
+  public static void main(String... args) {
     Guice.createInjector(createBasicModule(),
         new RestModule(),
         new SwaggerModule())

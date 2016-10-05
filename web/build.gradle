@@ -1,17 +1,19 @@
+buildscript {
+    ext.kotlin_version = '1.0.4'
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+    }
+}
 plugins {
     id 'org.detoeuf.swagger-codegen' version '1.6.3'
     id 'java'
     id 'war'
 }
 apply from: 'https://raw.github.com/akhikhl/gretty/master/pluginScripts/gretty.plugin'
-
-
-
-repositories {
-    mavenLocal()
-    mavenCentral()
-    jcenter()
-}
+apply plugin: "kotlin"
 
 gretty {
     servletContainer='tomcat8'
@@ -42,6 +44,9 @@ sourceSets {
             srcDir file("${project.buildDir.path}/swagger/src/main/java")
             srcDir file("${project.buildDir.path}/swagger/src/gen/java")
         }
+        kotlin {
+            srcDir file("${project.projectDir.path}/src/main/kotlin")
+        }
     }
 }
 ext {
@@ -50,10 +55,10 @@ ext {
 }
 
 dependencies {
+    compile group: 'org.jetbrains.kotlin', name: 'kotlin-stdlib', version: kotlin_version
     compile (group: 'javax.servlet', name: 'javax.servlet-api', version: '3.0.1') {
         force = true
     }
-//    compile group: 'io.swagger', name: 'swagger-jaxrs', version: '1.5.10'
     compile group: 'io.swagger', name: 'swagger-models', version: '1.5.10'
     compile (group: 'org.jboss.resteasy', name: 'resteasy-jaxrs', version: '3.0.19.Final') {
         exclude group: 'commons-httpclient', module: 'commons-httpclient'
@@ -61,19 +66,13 @@ dependencies {
         exclude group: 'javax.xml.bind', module: 'jaxb-api'
         exclude group: 'com.sun.xml.bind', module: 'jaxb-impl'
     }
-//    providedCompile 'org.jboss.resteasy:jaxrs-api:3.0.12.Final'
-//    providedCompile 'org.jboss.resteasy:resteasy-validator-provider-11:3.0.12.Final'
-//    providedCompile 'org.jboss.resteasy:resteasy-multipart-provider:3.0.12.Final'
-//    providedCompile 'javax.annotation:javax.annotation-api:1.2'
-//    providedCompile 'org.jboss.spec.javax.servlet:jboss-servlet-api_3.0_spec:1.0.0.Final'
     compile         'org.jboss.resteasy:resteasy-jackson2-provider:3.0.12.Final'
 
-//    compile sourceSets.swagger.output
+    compile project(path: ':core')
     compile group: 'org.gwizard', name: 'gwizard-rest', version: gwizard_version
     compile group: 'org.gwizard', name: 'gwizard-logging', version: gwizard_version
     compile (group: 'org.gwizard', name: 'gwizard-swagger', version: gwizard_version) {
         exclude group: 'javax.servlet', module: 'servlet-api'
-//        exclude group: 'javax.servlet', module: 'javax.servlet-api'
     }
     compile group: 'com.google.inject.extensions', name: 'guice-servlet', version: '4.1.0'
     compile group: 'com.fasterxml.jackson.core', name:'jackson-core', version: jackson_version
@@ -82,3 +81,8 @@ dependencies {
     compile group: 'com.fasterxml.jackson.core', name:'jackson-databind', version: jackson_version
     testCompile group: 'junit', name: 'junit', version: '4.11'
 }
+
+compileKotlin.dependsOn tasks.getByPath(':core:classes')
+compileKotlin.dependsOn tasks.getByPath(':web:swagger')
+compileJava.dependsOn tasks.getByPath(':core:classes')
+compileJava.dependsOn tasks.getByPath(':web:swagger')

@@ -4,7 +4,6 @@ import edu.wpi.grip.core.OperationMetaData;
 import edu.wpi.grip.core.Step;
 import edu.wpi.grip.core.util.MockExceptionWitness;
 
-import com.google.common.collect.ImmutableList;
 import com.google.common.eventbus.EventBus;
 
 import org.junit.Test;
@@ -18,7 +17,7 @@ import java.util.Collection;
 import java.util.List;
 
 @RunWith(Parameterized.class)
-public class OperationsTest {
+public class BasicOperationsTest {
 
   @Parameter
   public OperationMetaData operationMetaData;
@@ -27,16 +26,7 @@ public class OperationsTest {
   public static Collection<Object[]> data() {
     EventBus eventBus = new EventBus();
     List<OperationMetaData> operationMetaDatas =
-        ImmutableList.<OperationMetaData>builder()
-            .addAll(
-                OperationsFactory
-                    .create(eventBus)
-                    .operations())
-            .addAll(
-                OperationsFactory
-                    .createCV(eventBus)
-                    .operations())
-            .build();
+        OperationsFactory.create(eventBus).operations();
 
     Object[][] params = new Object[operationMetaDatas.size()][1];
     final int[] index = {0};

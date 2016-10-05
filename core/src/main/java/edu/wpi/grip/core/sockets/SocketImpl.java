@@ -15,6 +15,8 @@ import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 
+import javax.inject.Provider;
+
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 
@@ -24,7 +26,7 @@ import static com.google.common.base.Preconditions.checkState;
  * @param <T> The type of the value that this socket stores
  */
 public class SocketImpl<T> implements Socket<T> {
-  private final EventBus eventBus;
+  private final Provider<EventBus> eventBus;
   private final Direction direction;
   private final Set<Connection> connections = new HashSet<>();
   private final SocketHint<T> socketHint;
@@ -38,7 +40,7 @@ public class SocketImpl<T> implements Socket<T> {
    * @param socketHint {@link #getSocketHint}
    * @param direction  The direction that this socket represents
    */
-  SocketImpl(EventBus eventBus, SocketHint<T> socketHint, Direction direction) {
+  SocketImpl(Provider<EventBus> eventBus, SocketHint<T> socketHint, Direction direction) {
     this.eventBus = checkNotNull(eventBus, "EventBus can not be null");
     this.socketHint = checkNotNull(socketHint, "Socket Hint can not be null");
     this.direction = checkNotNull(direction, "Direction can not be null");
@@ -57,7 +59,7 @@ public class SocketImpl<T> implements Socket<T> {
     }
     this.value = optionalValue;
     onValueChanged();
-    eventBus.post(new SocketChangedEvent(this));
+    eventBus.get().post(new SocketChangedEvent(this));
   }
 
   @Override
@@ -108,7 +110,7 @@ public class SocketImpl<T> implements Socket<T> {
     this.connections.add(connection);
 
     if (this.connections.size() == 1) {
-      this.eventBus.post(new SocketConnectedChangedEvent(this));
+      this.eventBus.get().post(new SocketConnectedChangedEvent(this));
     }
   }
 
@@ -118,7 +120,7 @@ public class SocketImpl<T> implements Socket<T> {
     this.connections.remove(connection);
 
     if (this.connections.isEmpty()) {
-      this.eventBus.post(new SocketConnectedChangedEvent(this));
+      this.eventBus.get().post(new SocketConnectedChangedEvent(this));
     }
   }
 

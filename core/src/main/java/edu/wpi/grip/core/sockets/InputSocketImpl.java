@@ -10,6 +10,8 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import javax.inject.Provider;
+
 /**
  * Concrete implementation of the {@link InputSocket}.
  *
@@ -23,7 +25,7 @@ public class InputSocketImpl<T> extends SocketImpl<T> implements InputSocket<T> 
    * @param eventBus   The Guava {@link EventBus} used by the application.
    * @param socketHint {@link #getSocketHint}
    */
-  InputSocketImpl(EventBus eventBus, SocketHint<T> socketHint) {
+  InputSocketImpl(Provider<EventBus> eventBus, SocketHint<T> socketHint) {
     super(eventBus, socketHint, Socket.Direction.INPUT);
   }
 
@@ -55,10 +57,10 @@ public class InputSocketImpl<T> extends SocketImpl<T> implements InputSocket<T> 
    */
   @Singleton
   public static class FactoryImpl implements Factory {
-    private final EventBus eventBus;
+    private final Provider<EventBus> eventBus;
 
     @Inject
-    FactoryImpl(EventBus eventBus) {
+    FactoryImpl(Provider<EventBus> eventBus) {
       this.eventBus = eventBus;
     }
 
