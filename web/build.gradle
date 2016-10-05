@@ -30,6 +30,7 @@ swagger {
             'modelPackage'     : 'edu.wpi.grip.web.swagger.model',
             'apiPackage'       : 'edu.wpi.grip.web.swagger.api',
             'serializableModel': 'true',
+            'dateLibrary'      : 'java8',
             'templateDir'      : "${project.projectDir.path}/swagger-template".toString()
     ]
 

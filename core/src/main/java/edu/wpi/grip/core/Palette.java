@@ -5,10 +5,11 @@ import edu.wpi.grip.core.operations.Operations;
 
 import com.google.common.eventbus.EventBus;
 
-import java.util.Collection;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
@@ -63,10 +64,10 @@ public class Palette {
   }
 
   /**
-   * @return A collection of all available operations.
+   * @return A set of all available operations.
    */
-  public Collection<OperationMetaData> getOperations() {
-    return this.operations.values();
+  public Set<OperationMetaData> getOperations() {
+    return new HashSet<>(this.operations.values());
   }
 
   /**

@@ -5,8 +5,11 @@ import edu.wpi.grip.core.FileManager;
 import edu.wpi.grip.core.GripBasicModule;
 import edu.wpi.grip.core.Palette;
 import edu.wpi.grip.core.Pipeline;
+import edu.wpi.grip.web.api.OperationsApiServiceHandler;
 import edu.wpi.grip.web.api.PersonsApiServiceHandler;
 import edu.wpi.grip.web.api.StepApiServiceHandler;
+import edu.wpi.grip.web.swagger.api.OperationsApi;
+import edu.wpi.grip.web.swagger.api.OperationsApiService;
 import edu.wpi.grip.web.swagger.api.PersonsApi;
 import edu.wpi.grip.web.swagger.api.PersonsApiService;
 import edu.wpi.grip.web.swagger.api.StepsApi;
@@ -122,8 +125,13 @@ public class GripServletConfig extends GuiceServletContextListener {
 
         bind(PersonsApiService.class)
             .to(PersonsApiServiceHandler.class);
+
+        bind(OperationsApiService.class)
+            .to(OperationsApiServiceHandler.class);
+
         bind(StepsApi.class);
         bind(PersonsApi.class);
+        bind(OperationsApi.class);
       }
     };
   }

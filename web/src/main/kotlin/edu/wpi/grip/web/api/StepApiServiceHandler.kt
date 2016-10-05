@@ -47,10 +47,10 @@ class StepApiServiceHandler @Inject constructor(
         }
     }
 
-}
+    private fun Step.toSwagger(): edu.wpi.grip.web.swagger.model.Step {
+        val swagStep = edu.wpi.grip.web.swagger.model.Step()
+        swagStep.name = this.operationDescription.name();
+        return swagStep
+    }
 
-fun Step.toSwagger(): edu.wpi.grip.web.swagger.model.Step {
-    val swagStep = edu.wpi.grip.web.swagger.model.Step()
-    swagStep.name = this.operationDescription.name();
-    return swagStep
 }

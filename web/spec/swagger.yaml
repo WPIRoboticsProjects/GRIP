@@ -49,6 +49,20 @@ paths:
             title: ArrayOfPersons
             type: array
             $ref: '#/definitions/Person'
+  /operations:
+    get:
+      description: |
+        Gets all of the currently loaded `OperationDescriptions` that can be used to create
+        steps in a pipeline.
+      responses:
+        200:
+          description: Successful response
+          schema:
+            title: ArrayOfOperationDescriptions
+            type: array
+            uniqueItems: true
+            items:
+              $ref: '#/definitions/OperationDescription'
   /steps:
     put:
       description: |
@@ -80,7 +94,8 @@ paths:
           schema:
             title: ArrayOfSteps
             type: array
-            $ref: '#/definitions/Step'
+            items:
+              $ref: '#/definitions/Step'
         default:
           description: Unexpected error
           schema:
@@ -100,6 +115,26 @@ definitions:
     properties:
       name:
         type: string
+  OperationDescription:
+    type: object
+    properties:
+      name:
+        type: string
+      summary:
+        type: string
+      aliases:
+        type: array
+        items:
+          type: string
+      category:
+        type: string
+        enum:
+          - IMAGE_PROCESSING
+          - FEATURE_DETECTION
+          - NETWORK
+          - LOGICAL
+          - OPENCV
+          - MISCELLANEOUS
   Error:
     type: object
     properties:
