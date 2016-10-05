@@ -144,7 +144,7 @@ public class WatershedOperation implements Operation {
   /**
    * Finds the first available point to place a background marker for the watershed operation.
    */
-  private Point2f findBackgroundMarker(Mat markers, MatVector contours) {
+  private static Point2f findBackgroundMarker(Mat markers, MatVector contours) {
     final int cols = markers.cols();
     final int rows = markers.rows();
     final int minDist = 5;
@@ -174,7 +174,7 @@ public class WatershedOperation implements Operation {
     return backgroundLabel;
   }
 
-  private Point fromPoint2f(Point2f p) {
+  private static Point fromPoint2f(Point2f p) {
     return new Point((int) p.x(), (int) p.y());
   }
 
