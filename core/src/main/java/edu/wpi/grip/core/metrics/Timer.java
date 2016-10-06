@@ -26,7 +26,6 @@ public class Timer {
 
   private final EventBus eventBus;
   private final Stopwatch stopwatch;
-  private boolean started = false;
 
   private final Object target;
   private long elapsedTime = 0;
@@ -44,43 +43,40 @@ public class Timer {
   }
 
   /**
-   * Flags the timer as started. Call {@link #stopped()} to stop timing.
+   * Starts the timer. Call {@link #stop()} to stop timing.
    *
    * @throws IllegalStateException if this a call to this method is preceded by another call to
    *                               {@code started()}
    */
   public synchronized void started() {
-    if (started) {
+    if (stopwatch.isRunning()) {
       throw new IllegalStateException("Already started");
     }
     stopwatch.reset().start();
-    started = true;
   }
 
   /**
-   * Flags the timer as stopped. This will post a {@link TimerEvent} containing the elapsed time
+   * Stops the timer. This will post a {@link TimerEvent} containing the elapsed time
    * and analysis to the event bus.
    *
    * @throws IllegalStateException if this a call to this method is not preceded by a call to
    *                               {@link #started()}.
    */
-  public synchronized void stopped() {
-    if (!started) {
+  public synchronized void stop() {
+    if (!stopwatch.isRunning()) {
       throw new IllegalStateException("Already stopped");
     }
     stopwatch.stop();
     this.elapsedTime = stopwatch.elapsed(TimeUnit.MICROSECONDS);
     eventBus.post(new TimerEvent(this, target, elapsedTime));
-    started = false;
   }
 
   /**
    * Resets this timer.
    */
   public synchronized void reset() {
-    if (started) {
+    if (stopwatch.isRunning()) {
       stopwatch.stop();
-      started = false;
     }
     elapsedTime = 0;
   }
@@ -98,19 +94,19 @@ public class Timer {
    * @throws IllegalStateException if this timer is already timing something
    */
   public void time(Runnable target) {
-    if (started) {
+    if (stopwatch.isRunning()) {
       throw new IllegalStateException("This timer is already timing something");
     }
     try {
       started();
       target.run();
     } finally {
-      stopped();
+      stop();
     }
   }
 
   /**
-   * Gets the time elapsed between a call to {@link #started()} and a call to {@link #stopped()},
+   * Gets the time elapsed between a call to {@link #started()} and a call to {@link #stop()},
    * in microseconds.
    */
   public long getElapsedTime() {

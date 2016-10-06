@@ -35,7 +35,7 @@ public class TimerTest {
   @Test(expected = IllegalStateException.class)
   public void testStoppedWhenNotStarted() {
     Timer timer = new Timer(eventBus, this);
-    timer.stopped();
+    timer.stop();
     fail("Timer should have thrown an exception");
   }
 
@@ -43,8 +43,8 @@ public class TimerTest {
   public void testStoppedTwice() {
     Timer timer = new Timer(eventBus, this);
     timer.started();
-    timer.stopped();
-    timer.stopped();
+    timer.stop();
+    timer.stop();
     fail("Timer should have thrown an exception");
   }
 
@@ -52,7 +52,7 @@ public class TimerTest {
   public void testTiming() {
     Timer timer = new MockTimer(eventBus, this);
     timer.started();
-    timer.stopped();
+    timer.stop();
     assertEquals(WRONG_TIME_MSG, 1_000_000, timer.getElapsedTime());
   }
 
@@ -64,7 +64,7 @@ public class TimerTest {
     assertEquals("Elapsed time was not reset", 0, timer.getElapsedTime(), 0);
 
     timer.started();
-    timer.stopped();
+    timer.stop();
     assertEquals(WRONG_TIME_MSG, 1_000_000, timer.getElapsedTime());
     timer.reset();
     assertEquals("Elapsed time was not reset", 0, timer.getElapsedTime(), 0);
