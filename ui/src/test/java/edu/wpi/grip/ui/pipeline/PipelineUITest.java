@@ -12,7 +12,6 @@ import edu.wpi.grip.core.operations.composite.DesaturateOperation;
 import edu.wpi.grip.core.operations.network.MockGripNetworkModule;
 import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.sockets.OutputSocket;
-import edu.wpi.grip.core.util.MockExceptionWitness;
 import edu.wpi.grip.ui.GripUiModule;
 import edu.wpi.grip.ui.util.StyleClassNameUtility;
 import edu.wpi.grip.ui.util.TestAnnotationFXMLLoader;
@@ -186,7 +185,7 @@ public class PipelineUITest extends ApplicationTest {
   }
 
   private Step addOperation(int count, OperationMetaData operationMetaData) {
-    final Step step = new Step.Factory(origin -> new MockExceptionWitness(eventBus, origin))
+    final Step step = MockStep.createStepFactory(eventBus)
         .create(operationMetaData);
     pipeline.addStep(step);
 

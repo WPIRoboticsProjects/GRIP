@@ -1,8 +1,8 @@
 package edu.wpi.grip.core.operations;
 
+import edu.wpi.grip.core.MockStep;
 import edu.wpi.grip.core.OperationMetaData;
 import edu.wpi.grip.core.Step;
-import edu.wpi.grip.core.util.MockExceptionWitness;
 
 import com.google.common.eventbus.EventBus;
 
@@ -41,7 +41,7 @@ public class BasicOperationsTest {
   @Test
   public void testCreateAllSteps() {
     final Step step =
-        new Step.Factory((origin) -> new MockExceptionWitness(new EventBus(), origin))
+        MockStep.createStepFactory()
             .create(operationMetaData);
     step.setRemoved();
   }

@@ -7,7 +7,6 @@ import edu.wpi.grip.core.events.StopPipelineEvent;
 import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.sockets.MockInputSocket;
 import edu.wpi.grip.core.sockets.OutputSocket;
-import edu.wpi.grip.core.util.MockExceptionWitness;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.eventbus.EventBus;
@@ -18,6 +17,7 @@ import com.google.common.util.concurrent.Service;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 import net.jodah.concurrentunit.Waiter;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -156,7 +156,7 @@ public class PipelineRunnerTest {
       eventBus.register(exceptionEventReceiver);
       eventBus.register(new RenderWaiterResumer(renderWaiter));
 
-      final Step throwingStep = new Step.Factory(MockExceptionWitness.simpleFactory(eventBus))
+      final Step throwingStep = MockStep.createStepFactory(eventBus)
           .create(operationMetaData);
       final PipelineRunner runner = new PipelineRunner(eventBus, () -> ImmutableList.of(), () ->
           ImmutableList.of(throwingStep));
@@ -199,8 +199,8 @@ public class PipelineRunnerTest {
       renderWaiter = new Waiter();
       sourceCounter = new RunSourceCounter();
       operationCounter = new RunCounterOperation();
-      runCounterStep = new Step.Factory(MockExceptionWitness.MOCK_FACTORY).create(new
-          OperationMetaData(RunCounterOperation.DESCRIPTION, () -> operationCounter));
+      runCounterStep = MockStep.createStepFactory().create(
+          new OperationMetaData(RunCounterOperation.DESCRIPTION, () -> operationCounter));
       failureListener = new FailureListener();
 
     }

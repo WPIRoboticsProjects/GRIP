@@ -7,6 +7,7 @@ import edu.wpi.grip.core.Step;
 
 import java.util.Optional;
 import java.util.Set;
+import java.util.UUID;
 
 /**
  * Represents the input into an {@link Operation}.
@@ -110,6 +111,11 @@ public interface InputSocket<T> extends Socket<T> {
     @Override
     public void onValueChanged() {
       decorated.onValueChanged();
+    }
+
+    @Override
+    public UUID getUUID() {
+      return decorated.getUUID();
     }
 
     @Override

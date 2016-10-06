@@ -9,6 +9,9 @@ import edu.wpi.grip.core.sockets.OutputSocketImpl;
 import edu.wpi.grip.core.util.ExceptionWitness;
 import edu.wpi.grip.core.util.GripMode;
 
+import com.fasterxml.uuid.EthernetAddress;
+import com.fasterxml.uuid.Generators;
+import com.fasterxml.uuid.NoArgGenerator;
 import com.google.inject.AbstractModule;
 import com.google.inject.TypeLiteral;
 import com.google.inject.assistedinject.FactoryModuleBuilder;
@@ -26,6 +29,9 @@ public class GripBasicModule extends AbstractModule {
 
     install(new FactoryModuleBuilder().build(new TypeLiteral<Connection.Factory<Object>>() {
     }));
+
+    bind(NoArgGenerator.class)
+        .toInstance(Generators.timeBasedGenerator(EthernetAddress.fromInterface()));
 
     bind(ConnectionValidator.class).to(Pipeline.class);
 

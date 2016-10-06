@@ -14,6 +14,7 @@ import com.google.common.eventbus.EventBus;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
+import java.util.UUID;
 
 import javax.inject.Provider;
 
@@ -33,6 +34,7 @@ public class SocketImpl<T> implements Socket<T> {
   private Optional<Step> step = Optional.empty();
   private Optional<Source> source = Optional.empty();
   private Optional<? extends T> value = Optional.empty();
+  private final UUID uuid;
 
 
   /**
@@ -40,10 +42,14 @@ public class SocketImpl<T> implements Socket<T> {
    * @param socketHint {@link #getSocketHint}
    * @param direction  The direction that this socket represents
    */
-  SocketImpl(Provider<EventBus> eventBus, SocketHint<T> socketHint, Direction direction) {
+  SocketImpl(Provider<EventBus> eventBus,
+             SocketHint<T> socketHint,
+             Direction direction,
+             UUID uuid) {
     this.eventBus = checkNotNull(eventBus, "EventBus can not be null");
     this.socketHint = checkNotNull(socketHint, "Socket Hint can not be null");
     this.direction = checkNotNull(direction, "Direction can not be null");
+    this.uuid = checkNotNull(uuid, "UUID cannot be null");
   }
 
   @Override
@@ -122,6 +128,11 @@ public class SocketImpl<T> implements Socket<T> {
     if (this.connections.isEmpty()) {
       this.eventBus.get().post(new SocketConnectedChangedEvent(this));
     }
+  }
+
+  @Override
+  public UUID getUUID() {
+    return uuid;
   }
 
   @Override

@@ -5,7 +5,6 @@ import edu.wpi.grip.core.operations.network.MockGripNetworkModule;
 import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.core.sockets.Socket;
-import edu.wpi.grip.core.util.MockExceptionWitness;
 import edu.wpi.grip.util.GripCoreTestModule;
 
 import com.google.common.eventbus.EventBus;
@@ -44,7 +43,7 @@ public class PythonTest {
   public void testPython() throws Exception {
     PythonScriptFile pythonScriptFile = PythonScriptFile.create(PythonTest.class
         .getResource("/edu/wpi/grip/scripts/addition.py"));
-    Step step = new Step.Factory((origin) -> new MockExceptionWitness(eventBus, origin))
+    Step step = MockStep.createStepFactory(eventBus)
         .create(pythonScriptFile.toOperationMetaData(isf, osf));
     Socket aSocket = step.getInputSockets().get(0);
     Socket bSocket = step.getInputSockets().get(1);
@@ -68,7 +67,7 @@ public class PythonTest {
             + "outputs = [\n    grip.SocketHints.Outputs.createNumberSocketHint(\"sum\", 0.0),"
             + "\n]\n\n"
             + "def perform(a, b):\n    return a + b\n");
-    Step step = new Step.Factory((origin) -> new MockExceptionWitness(eventBus, origin))
+    Step step = MockStep.createStepFactory(eventBus)
         .create(pythonScriptFile.toOperationMetaData(isf, osf));
     Socket aSocket = step.getInputSockets().get(0);
     Socket bSocket = step.getInputSockets().get(1);
@@ -85,7 +84,7 @@ public class PythonTest {
 
   @Test
   public void testPythonMultipleOutputs() throws Exception {
-    Step step = new Step.Factory((origin) -> new MockExceptionWitness(eventBus, origin))
+    Step step = MockStep.createStepFactory(eventBus)
         .create(PythonScriptFile.create(
             PythonTest.class.getResource("/edu/wpi/grip/scripts/addition-subtraction.py"))
             .toOperationMetaData(isf, osf));
@@ -105,7 +104,7 @@ public class PythonTest {
 
   @Test
   public void testPythonWrongOutputCount() throws Exception {
-    Step step = new Step.Factory((origin) -> new MockExceptionWitness(eventBus, origin))
+    Step step = MockStep.createStepFactory(eventBus)
         .create(PythonScriptFile.create(
             PythonTest.class.getResource("/edu/wpi/grip/scripts/addition-wrong-output-count.py"))
             .toOperationMetaData(isf, osf)
@@ -122,7 +121,7 @@ public class PythonTest {
 
   @Test
   public void testPythonWrongOutputType() throws Exception {
-    Step step = new Step.Factory((origin) -> new MockExceptionWitness(eventBus, origin))
+    Step step = MockStep.createStepFactory(eventBus)
         .create(PythonScriptFile.create(
             PythonTest.class
                 .getResource("/edu/wpi/grip/scripts/addition-wrong-output-type.py"))
