@@ -260,6 +260,7 @@ project(":core") {
         compile group: 'com.google.auto.value', name: 'auto-value', version: '1.2'
         compile group: 'com.google.code.gson', name: 'gson', version: '2.6.2'
         compile group: 'org.eclipse.jetty', name:'jetty-server', version:'9.3.8.v20160314'
+        compile group: 'com.fasterxml.uuid', name: 'java-uuid-generator', version: '3.1.4'
         testCompile group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.5.2'
         testCompile group: 'org.apache.httpcomponents', name: 'httpcore', version: '4.2.2'
         testCompile group: 'org.apache.httpcomponents', name: 'httpmime', version: '4.5.2'

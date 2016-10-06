@@ -7,6 +7,7 @@ import javax.inject.Inject
 import javax.inject.Provider
 import javax.ws.rs.core.Response
 import javax.ws.rs.core.SecurityContext
+import edu.wpi.grip.web.swagger.model.OperationDescription as SwaggerOperationDescription
 
 
 class OperationsApiServiceHandler @Inject constructor(val palette: Provider<Palette>) :
@@ -22,9 +23,8 @@ class OperationsApiServiceHandler @Inject constructor(val palette: Provider<Pale
     }
 }
 
-fun OperationDescription.toSwagger():
-        edu.wpi.grip.web.swagger.model.OperationDescription {
-    val opDesc = edu.wpi.grip.web.swagger.model.OperationDescription()
+fun OperationDescription.toSwagger(): SwaggerOperationDescription {
+    val opDesc = SwaggerOperationDescription()
     opDesc.name = this.name()
     opDesc.summary = this.summary()
     opDesc.aliases = this.aliases().asList()
