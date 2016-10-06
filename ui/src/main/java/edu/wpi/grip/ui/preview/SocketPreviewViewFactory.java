@@ -3,6 +3,7 @@ package edu.wpi.grip.ui.preview;
 import edu.wpi.grip.core.operations.composite.BlobsReport;
 import edu.wpi.grip.core.operations.composite.ContoursReport;
 import edu.wpi.grip.core.operations.composite.LinesReport;
+import edu.wpi.grip.core.operations.composite.RectsReport;
 import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.ui.util.GripPlatform;
 
@@ -53,6 +54,9 @@ public class SocketPreviewViewFactory {
     } else if (socket.getSocketHint().getType() == BlobsReport.class) {
       previewView = (SocketPreviewView) new BlobsSocketPreviewView(platform,
           (OutputSocket<BlobsReport>) socket);
+    } else if (socket.getSocketHint().getType() == RectsReport.class) {
+      previewView = (SocketPreviewView) new RectangleSocketPreviewView(platform,
+          (OutputSocket<RectsReport>) socket);
     } else {
       previewView = new TextAreaSocketPreviewView<>(platform, socket);
     }

@@ -9,6 +9,7 @@ import edu.wpi.grip.ui.pipeline.OutputSocketController;
 import edu.wpi.grip.ui.pipeline.SocketHandleView;
 import edu.wpi.grip.ui.pipeline.StepController;
 import edu.wpi.grip.ui.pipeline.input.CheckboxInputSocketController;
+import edu.wpi.grip.ui.pipeline.input.FileInputSocketController;
 import edu.wpi.grip.ui.pipeline.input.InputSocketController;
 import edu.wpi.grip.ui.pipeline.input.ListSpinnerInputSocketController;
 import edu.wpi.grip.ui.pipeline.input.NumberSpinnerInputSocketController;
@@ -99,6 +100,7 @@ public class GripUiModule extends AbstractModule {
     install(new FactoryModuleBuilder().build(NumberSpinnerInputSocketController.Factory.class));
     install(new FactoryModuleBuilder().build(SliderInputSocketController.Factory.class));
     install(new FactoryModuleBuilder().build(TextFieldInputSocketController.Factory.class));
+    install(new FactoryModuleBuilder().build(FileInputSocketController.Factory.class));
     // END Input Socket Controller Factories
 
   }
