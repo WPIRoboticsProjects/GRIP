@@ -20,16 +20,16 @@ class OperationsApiServiceHandler @Inject constructor(val palette: Provider<Pale
                 .toList()
         return Response.ok(opList).build()
     }
+}
 
-    private fun OperationDescription.toSwagger():
-            edu.wpi.grip.web.swagger.model.OperationDescription {
-        val opDesc = edu.wpi.grip.web.swagger.model.OperationDescription()
-        opDesc.name = this.name()
-        opDesc.summary = this.summary()
-        opDesc.aliases = this.aliases().asList()
-        opDesc.category =
-                edu.wpi.grip.web.swagger.model.OperationDescription.CategoryEnum
-                        .valueOf(this.category().toString())
-        return opDesc
-    }
+fun OperationDescription.toSwagger():
+        edu.wpi.grip.web.swagger.model.OperationDescription {
+    val opDesc = edu.wpi.grip.web.swagger.model.OperationDescription()
+    opDesc.name = this.name()
+    opDesc.summary = this.summary()
+    opDesc.aliases = this.aliases().asList()
+    opDesc.category =
+            edu.wpi.grip.web.swagger.model.OperationDescription.CategoryEnum
+                    .valueOf(this.category().toString())
+    return opDesc
 }

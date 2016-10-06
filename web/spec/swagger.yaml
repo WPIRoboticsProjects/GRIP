@@ -115,7 +115,33 @@ definitions:
     properties:
       name:
         type: string
+      operation:
+        type: object
+        $ref: '#/definitions/OperationDescription'
+      inputSocket:
+        type: array
+        items:
+          $ref: '#/definitions/Socket'
+      outputSocket:
+        type: array
+        items:
+          $ref: '#/definitions/Socket'
+  Socket:
+    type: object
+    properties:
+      socketHint:
+        type: object
+        $ref: '#/definitions/SocketHint'
+  SocketHint:
+    type: object
+    properties:
+      identifier:
+        type: string
+      type:
+        type: string
   OperationDescription:
+    description: |
+      Describes an `Operation` that can be added to a `Pipeline`
     type: object
     properties:
       name:
