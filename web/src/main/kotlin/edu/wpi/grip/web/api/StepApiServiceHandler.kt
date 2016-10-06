@@ -3,8 +3,6 @@ package edu.wpi.grip.web.api
 import edu.wpi.grip.core.Palette
 import edu.wpi.grip.core.Pipeline
 import edu.wpi.grip.core.Step
-import edu.wpi.grip.core.sockets.Socket
-import edu.wpi.grip.core.sockets.SocketHint
 import edu.wpi.grip.web.swagger.api.StepsApiService
 import java.math.BigDecimal
 import javax.inject.Inject
@@ -49,26 +47,5 @@ class StepApiServiceHandler @Inject constructor(
         }
     }
 
-    private fun Step.toSwagger(): edu.wpi.grip.web.swagger.model.Step {
-        val swagStep = edu.wpi.grip.web.swagger.model.Step()
-        swagStep.name = this.operationDescription.name();
-        swagStep.operation = this.operationDescription.toSwagger()
-        swagStep.inputSocket = this.inputSockets.map {it.toSwagger()}
-        swagStep.outputSocket = this.outputSockets.map {it.toSwagger()}
-        return swagStep
-    }
-
-    private fun <T> Socket<T>.toSwagger(): edu.wpi.grip.web.swagger.model.Socket {
-        val socket = edu.wpi.grip.web.swagger.model.Socket()
-        socket.socketHint = this.socketHint.toSwagger()
-        return socket
-    }
-
-    private fun <T> SocketHint<T>.toSwagger() : edu.wpi.grip.web.swagger.model.SocketHint {
-        val socketHint = edu.wpi.grip.web.swagger.model.SocketHint()
-        socketHint.identifier = this.identifier
-        socketHint.type = this.typeLabel
-        return socketHint
-    }
-
 }
+

@@ -1,6 +1,5 @@
 package edu.wpi.grip.web.api
 
-import edu.wpi.grip.core.OperationDescription
 import edu.wpi.grip.core.Palette
 import edu.wpi.grip.web.swagger.api.OperationsApiService
 import javax.inject.Inject
@@ -23,13 +22,3 @@ class OperationsApiServiceHandler @Inject constructor(val palette: Provider<Pale
     }
 }
 
-fun OperationDescription.toSwagger(): SwaggerOperationDescription {
-    val opDesc = SwaggerOperationDescription()
-    opDesc.name = this.name()
-    opDesc.summary = this.summary()
-    opDesc.aliases = this.aliases().asList()
-    opDesc.category =
-            edu.wpi.grip.web.swagger.model.OperationDescription.CategoryEnum
-                    .valueOf(this.category().toString())
-    return opDesc
-}

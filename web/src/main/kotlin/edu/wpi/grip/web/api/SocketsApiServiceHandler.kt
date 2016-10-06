@@ -4,7 +4,6 @@ import edu.wpi.grip.web.swagger.api.SocketsApiService
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.IOException
-import java.util.*
 import java.util.concurrent.TimeUnit
 import javax.imageio.ImageIO
 import javax.ws.rs.core.MediaType
@@ -54,8 +53,6 @@ class SocketsApiServiceHandler: SocketsApiService {
                 }
             }
         }
-
-        UUID.randomUUID()
 
         val mediaType = MediaType("multipart", "x-mixed-replace", mapOf("boundary".to("BoundaryString")))
         return Response.ok(stream, mediaType).build()

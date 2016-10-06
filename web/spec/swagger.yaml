@@ -124,6 +124,9 @@ definitions:
     properties:
       name:
         type: string
+      uuid:
+        type: string
+        format: uuid
       operation:
         type: object
         $ref: '#/definitions/OperationDescription'
@@ -138,6 +141,9 @@ definitions:
   Socket:
     type: object
     properties:
+      uuid:
+        type: string
+        format: uuid
       socketHint:
         type: object
         $ref: '#/definitions/SocketHint'
