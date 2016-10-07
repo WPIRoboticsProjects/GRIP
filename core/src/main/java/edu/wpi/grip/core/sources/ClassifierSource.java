@@ -16,40 +16,39 @@ import java.util.List;
 import java.util.Properties;
 
 /**
- * A source for a single file's path. This will only supply the <i>path</i> to the file; it is up
- * to the operations to resolve the file associated with the path.
+ * A source for the path to a XML classifier file (e.g. haarcascade_face_default.xml).
  */
-@XStreamAlias("grip:File")
-public class FileSource extends Source {
+@XStreamAlias("grip:Classifier")
+public class ClassifierSource extends Source {
 
   private final String filePath;
   private static final String FILE_PATH_PROPERTY = "file_path";
 
   private final SocketHint<String> pathHint
-      = SocketHints.Outputs.createStringSocketHint("Path", "");
+      = SocketHints.Outputs.createStringSocketHint("Classifier file", "");
   private final OutputSocket<String> pathSocket;
 
   @AssistedInject
-  protected FileSource(EventBus eventBus,
-                       OutputSocket.Factory osf,
-                       ExceptionWitness.Factory exceptionWitnessFactory,
-                       @Assisted String filePath) {
+  protected ClassifierSource(EventBus eventBus,
+                             OutputSocket.Factory osf,
+                             ExceptionWitness.Factory exceptionWitnessFactory,
+                             @Assisted String filePath) {
     super(exceptionWitnessFactory);
     this.pathSocket = osf.create(pathHint);
     this.filePath = filePath;
   }
 
   @AssistedInject
-  protected FileSource(EventBus eventBus,
-                       OutputSocket.Factory osf,
-                       ExceptionWitness.Factory exceptionWitnessFactory,
-                       @Assisted Properties properties) {
+  protected ClassifierSource(EventBus eventBus,
+                             OutputSocket.Factory osf,
+                             ExceptionWitness.Factory exceptionWitnessFactory,
+                             @Assisted Properties properties) {
     this(eventBus, osf, exceptionWitnessFactory, properties.getProperty(FILE_PATH_PROPERTY));
   }
 
   @Override
   public String getName() {
-    return "File source";
+    return "Classifier source";
   }
 
   @Override
@@ -79,9 +78,9 @@ public class FileSource extends Source {
 
   public interface Factory {
 
-    FileSource create(String path);
+    ClassifierSource create(String path);
 
-    FileSource create(Properties properties);
+    ClassifierSource create(Properties properties);
   }
 
 }

@@ -4,7 +4,7 @@ import edu.wpi.grip.core.events.SourceAddedEvent;
 import edu.wpi.grip.core.events.UnexpectedThrowableEvent;
 import edu.wpi.grip.core.http.GripServer;
 import edu.wpi.grip.core.sources.CameraSource;
-import edu.wpi.grip.core.sources.FileSource;
+import edu.wpi.grip.core.sources.ClassifierSource;
 import edu.wpi.grip.core.sources.HttpSource;
 import edu.wpi.grip.core.sources.ImageFileSource;
 import edu.wpi.grip.core.sources.MultiImageFileSource;
@@ -65,7 +65,7 @@ public class AddSourceButton extends MenuButton {
   private final MenuItem ipcamButton;
   private final MenuItem httpButton;
   private final MenuItem networktablesButton;
-  private final MenuItem filesButton;
+  private final MenuItem classifierButton;
   private Optional<Dialog> activeDialog = Optional.empty();
 
   @Inject
@@ -75,7 +75,7 @@ public class AddSourceButton extends MenuButton {
                   CameraSource.Factory cameraSourceFactory,
                   HttpSource.Factory httpSourceFactory,
                   NetworkTableEntrySource.Factory networkTableSourceFactory,
-                  FileSource.Factory fileSourceFactory) {
+                  ClassifierSource.Factory classifierSourceFactory) {
     super("Add Source");
     this.eventBus = eventBus;
     
@@ -263,14 +263,15 @@ public class AddSourceButton extends MenuButton {
               });
         });
 
-    filesButton = addMenuItem("File",
+    classifierButton = addMenuItem("Classifier file",
         getClass().getResource("/edu/wpi/grip/ui/icons/add-image.png"),
         mouseEvent -> {
           FileChooser fc = new FileChooser();
-          fc.setTitle("Choose a file");
+          fc.setTitle("Choose a classifier file");
+          fc.getExtensionFilters().add(new ExtensionFilter("xml", "*.xml"));
           File file = fc.showOpenDialog(getScene().getWindow());
           if (file != null) {
-            FileSource source = fileSourceFactory.create(file.getAbsolutePath());
+            ClassifierSource source = classifierSourceFactory.create(file.getAbsolutePath());
             source.initialize();
             eventBus.post(new SourceAddedEvent(source));
           }
@@ -337,8 +338,8 @@ public class AddSourceButton extends MenuButton {
   }
 
   @VisibleForTesting
-  MenuItem getFilesButton() {
-    return filesButton;
+  MenuItem getClassifierButton() {
+    return classifierButton;
   }
 
   @VisibleForTesting
