@@ -37,7 +37,7 @@ public class CascadeClassifierOperation implements Operation {
   private final SocketHint<Mat> imageHint
       = SocketHints.Inputs.createMatSocketHint("Image", false);
   private final SocketHint<String> filePathHint
-      = SocketHints.Inputs.createFileSocketHint("Classifier file", lastFile);
+      = SocketHints.Inputs.createTextSocketHint("Classifier file", lastFile);
   private final SocketHint<RectsReport> outputHint =
       new SocketHint.Builder<>(RectsReport.class)
           .identifier("Detected areas")

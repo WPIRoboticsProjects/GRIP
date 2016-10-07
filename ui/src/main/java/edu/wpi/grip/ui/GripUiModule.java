@@ -9,7 +9,6 @@ import edu.wpi.grip.ui.pipeline.OutputSocketController;
 import edu.wpi.grip.ui.pipeline.SocketHandleView;
 import edu.wpi.grip.ui.pipeline.StepController;
 import edu.wpi.grip.ui.pipeline.input.CheckboxInputSocketController;
-import edu.wpi.grip.ui.pipeline.input.FileInputSocketController;
 import edu.wpi.grip.ui.pipeline.input.InputSocketController;
 import edu.wpi.grip.ui.pipeline.input.ListSpinnerInputSocketController;
 import edu.wpi.grip.ui.pipeline.input.NumberSpinnerInputSocketController;
@@ -18,6 +17,7 @@ import edu.wpi.grip.ui.pipeline.input.SelectInputSocketController;
 import edu.wpi.grip.ui.pipeline.input.SliderInputSocketController;
 import edu.wpi.grip.ui.pipeline.input.TextFieldInputSocketController;
 import edu.wpi.grip.ui.pipeline.source.CameraSourceController;
+import edu.wpi.grip.ui.pipeline.source.FileSourceController;
 import edu.wpi.grip.ui.pipeline.source.HttpSourceController;
 import edu.wpi.grip.ui.pipeline.source.MultiImageFileSourceController;
 import edu.wpi.grip.ui.pipeline.source.SourceController;
@@ -74,6 +74,7 @@ public class GripUiModule extends AbstractModule {
     install(new FactoryModuleBuilder().build(MultiImageFileSourceController.Factory.class));
     install(new FactoryModuleBuilder().build(CameraSourceController.Factory.class));
     install(new FactoryModuleBuilder().build(HttpSourceController.Factory.class));
+    install(new FactoryModuleBuilder().build(FileSourceController.Factory.class));
     // END Source Factories
 
     // Components
@@ -100,7 +101,6 @@ public class GripUiModule extends AbstractModule {
     install(new FactoryModuleBuilder().build(NumberSpinnerInputSocketController.Factory.class));
     install(new FactoryModuleBuilder().build(SliderInputSocketController.Factory.class));
     install(new FactoryModuleBuilder().build(TextFieldInputSocketController.Factory.class));
-    install(new FactoryModuleBuilder().build(FileInputSocketController.Factory.class));
     // END Input Socket Controller Factories
 
   }

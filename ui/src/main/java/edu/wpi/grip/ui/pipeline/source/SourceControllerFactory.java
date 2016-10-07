@@ -2,6 +2,7 @@ package edu.wpi.grip.ui.pipeline.source;
 
 import edu.wpi.grip.core.Source;
 import edu.wpi.grip.core.sources.CameraSource;
+import edu.wpi.grip.core.sources.FileSource;
 import edu.wpi.grip.core.sources.HttpSource;
 import edu.wpi.grip.core.sources.MultiImageFileSource;
 
@@ -21,6 +22,8 @@ public class SourceControllerFactory {
   private HttpSourceController.Factory httpSourceControllerFactory;
   @Inject
   private SourceController.BaseSourceControllerFactory<Source> baseSourceControllerFactory;
+  @Inject
+  private FileSourceController.Factory fileSourceControllerFactory;
 
   SourceControllerFactory() { /* no-op */ }
 
@@ -42,6 +45,9 @@ public class SourceControllerFactory {
     } else if (source instanceof HttpSource) {
       sourceController = (SourceController<S>) httpSourceControllerFactory.create(
           (HttpSource) source);
+    } else if (source instanceof FileSource) {
+      sourceController = (SourceController<S>) fileSourceControllerFactory.create(
+          (FileSource) source);
     } else {
       sourceController = (SourceController<S>) baseSourceControllerFactory.create(source);
     }

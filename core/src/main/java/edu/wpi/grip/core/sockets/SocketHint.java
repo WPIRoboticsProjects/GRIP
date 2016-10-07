@@ -59,7 +59,7 @@ public interface SocketHint<T> {
   Optional<T> createInitialValue();
 
   enum View {
-    NONE, TEXT, SLIDER, RANGE, SELECT, FILE, CHECKBOX
+    NONE, TEXT, SLIDER, RANGE, SELECT, CHECKBOX
   }
 
   /**

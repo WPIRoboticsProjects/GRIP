@@ -29,8 +29,6 @@ public final class InputSocketControllerFactory {
   private SelectInputSocketController.Factory<Object> selectInputSocketControllerFactory;
   @Inject
   private TextFieldInputSocketController.Factory textFieldInputSocketController;
-  @Inject
-  private FileInputSocketController.Factory fileInputSocketControllerFactory;
 
   /**
    * Create an instance of {@link InputSocketController} appropriate for the given socket.
@@ -93,10 +91,6 @@ public final class InputSocketControllerFactory {
               + "must be Booleans. "
               + socket.toString());
         }
-
-      case FILE:
-        return (InputSocketController<T>) fileInputSocketControllerFactory.create(
-            (InputSocket<String>) socket);
 
       default:
         throw new IllegalArgumentException("Could not create view for socket. "

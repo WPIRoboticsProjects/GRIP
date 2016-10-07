@@ -162,14 +162,6 @@ public final class SocketHints {
           .view(SocketHint.View.CHECKBOX)
           .build();
     }
-
-    public static SocketHint<String> createFileSocketHint(String identifier, String initialValue) {
-      return new SocketHint.Builder<>(String.class)
-          .identifier(identifier)
-          .initialValue(initialValue)
-          .view(SocketHint.View.FILE)
-          .build();
-    }
   }
 
   /**
