@@ -109,6 +109,23 @@ paths:
       responses:
         200:
           description: Streaming MJPG
+  /sockets/{uuid}/images:
+    get:
+      description: |
+        Gets an image MJPG stream for the given socket.
+      parameters:
+        -
+          name: uuid
+          in: path
+          description: The UUID of the socket to get an image stream from.
+          required: true
+          type: string
+          format: uuid
+      produces:
+        - multipart/x-mixed-replace
+      responses:
+        200:
+          description: The resulting stream from the output of the value from this Socket.
 
 
 definitions:

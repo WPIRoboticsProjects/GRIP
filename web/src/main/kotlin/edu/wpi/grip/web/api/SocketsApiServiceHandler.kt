@@ -1,20 +1,29 @@
 package edu.wpi.grip.web.api
 
+import com.google.common.eventbus.EventBus
+import edu.wpi.grip.core.Pipeline
 import edu.wpi.grip.web.swagger.api.SocketsApiService
+import org.bytedeco.javacpp.opencv_core
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.IOException
+import java.util.*
 import java.util.concurrent.TimeUnit
 import javax.imageio.ImageIO
+import javax.inject.Inject
+import javax.inject.Provider
 import javax.ws.rs.core.MediaType
 import javax.ws.rs.core.Response
 import javax.ws.rs.core.SecurityContext
 import javax.ws.rs.core.StreamingOutput
 
 
-class SocketsApiServiceHandler: SocketsApiService {
+class SocketsApiServiceHandler @Inject constructor(
+        val pipeline: Provider<Pipeline>,
+        val eventBus: Provider<EventBus>) :
+        SocketsApiService {
     val names = listOf("summer", "fall", "winter", "spring")
-    val imageByteList : List<ByteArray>
+    val imageByteList: List<ByteArray>
 
     init {
         imageByteList = names.map {
@@ -48,7 +57,7 @@ class SocketsApiServiceHandler: SocketsApiService {
                     it.write("\r\n\r\n".toByteArray())
                     it.flush()
                     TimeUnit.MILLISECONDS.sleep(50)
-                } catch (e : IOException) {
+                } catch (e: IOException) {
                     break
                 }
             }
@@ -56,5 +65,17 @@ class SocketsApiServiceHandler: SocketsApiService {
 
         val mediaType = MediaType("multipart", "x-mixed-replace", mapOf("boundary".to("BoundaryString")))
         return Response.ok(stream, mediaType).build()
+    }
+
+    override fun socketsUuidImagesGet(uuid: String, securityContext: SecurityContext): Response {
+        val realUUID = UUID.fromString(uuid)
+        val socket = pipeline.get().steps
+                .flatMap { it.outputSockets }
+                .filter { it.socketHint.type != opencv_core.Mat::class }
+                .single { it.uuid == realUUID }
+
+
+
+        TODO()
     }
 }
