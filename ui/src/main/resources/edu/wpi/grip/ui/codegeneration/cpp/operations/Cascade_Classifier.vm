@@ -1,0 +1,15 @@
+	/**
+	* Runs a cascade classifier on an image.
+	*
+	* @param input          the image to run the classifier on
+	* @param classifierFile the full path to the classifier XML file
+	* @param detections     the vector of Rects to store the detected regions in
+	*/
+	void $fileName::#func($step ["input", "classifierFile", "detections"]) {
+		CascadeClassfier classifier;
+		if (!classifier.load(classifierFile)) {
+			// Could not load that file
+			return;
+		}
+		classifier.detectMultiScale(input, detections);
+	}

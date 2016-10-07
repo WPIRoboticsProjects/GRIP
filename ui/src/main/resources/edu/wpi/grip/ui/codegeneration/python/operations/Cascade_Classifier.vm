@@ -1,0 +1,11 @@
+    @staticmethod
+    def $tMeth.name($step.name())(input, classifier_file):
+        """Sets the values of pixels in a binary image to their distance to the nearest black pixel.
+        Args:
+            input: A numpy.ndarray.
+            classifier_file: The full path to a cascade classifier XML file
+        Return:
+            A list of rectangles bounding the found regions of interest
+        """
+        classifier = cv2.CascadeClassifier(classifier_file)
+        return classifier.detectMultiScale(input)

@@ -1,0 +1,11 @@
+        /**
+         * Runs a cascade classifier on an image.
+         *
+         * @param input          the image to run the classifier on
+         * @param classifierFile the full path to the classifier XML file
+         * @param detections     the mat to store the detected regions in
+         */
+        private void $tMeth.name($step.name())(Mat input, String classifierFile, MatOfRect detections) {
+            CascadeClassifier classifier = new CascadeClassifier(classifierFile);
+            classifier.detectMultiScale(input, detections);
+        }
