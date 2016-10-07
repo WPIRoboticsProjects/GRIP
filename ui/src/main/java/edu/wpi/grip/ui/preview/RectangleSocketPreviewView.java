@@ -3,6 +3,7 @@ package edu.wpi.grip.ui.preview;
 import edu.wpi.grip.core.events.RenderEvent;
 import edu.wpi.grip.core.operations.composite.RectsReport;
 import edu.wpi.grip.core.sockets.OutputSocket;
+import edu.wpi.grip.core.util.ImageDrawer;
 import edu.wpi.grip.ui.util.GripPlatform;
 import edu.wpi.grip.ui.util.ImageConverter;
 
@@ -24,9 +25,6 @@ import javafx.scene.layout.VBox;
 import static org.bytedeco.javacpp.opencv_core.Mat;
 import static org.bytedeco.javacpp.opencv_core.Rect;
 import static org.bytedeco.javacpp.opencv_core.Scalar;
-import static org.bytedeco.javacpp.opencv_core.bitwise_xor;
-import static org.bytedeco.javacpp.opencv_imgproc.CV_GRAY2BGR;
-import static org.bytedeco.javacpp.opencv_imgproc.cvtColor;
 import static org.bytedeco.javacpp.opencv_imgproc.rectangle;
 
 /**
@@ -37,7 +35,6 @@ public class RectangleSocketPreviewView extends SocketPreviewView<RectsReport> {
   private final ImageConverter imageConverter = new ImageConverter();
   private final ImageView imageView = new ImageView();
   private final Label infoLabel = new Label();
-  private final Mat tmp = new Mat();
   private final GripPlatform platform;
   @SuppressWarnings("PMD.ImmutableField")
   @SuppressFBWarnings(value = "IS2_INCONSISTENT_SYNC",
@@ -78,24 +75,12 @@ public class RectangleSocketPreviewView extends SocketPreviewView<RectsReport> {
       Mat input = report.getImage();
 
       // If rectangles were found, draw them on the image before displaying it
-      if (!rectangles.isEmpty()) {
-        if (input.channels() == 3) {
-          input.copyTo(tmp);
-        } else {
-          cvtColor(input, tmp, CV_GRAY2BGR);
-        }
-
-        input = tmp;
-
-        // If we don't want to see the background image, set it to black
-        if (!this.showInputImage) {
-          bitwise_xor(tmp, tmp, tmp);
-        }
-
-        for (Rect r : rectangles) {
-          rectangle(input, r, Scalar.WHITE);
-        }
-      }
+      input = ImageDrawer.draw(
+          input,
+          showInputImage,
+          report::getRectangles,
+          (m, rr) -> rr.forEach(r -> rectangle(m, r, Scalar.WHITE))
+      );
       final Mat convertInput = input;
       final int numRegions = rectangles.size();
       platform.runAsSoonAsPossible(() -> {

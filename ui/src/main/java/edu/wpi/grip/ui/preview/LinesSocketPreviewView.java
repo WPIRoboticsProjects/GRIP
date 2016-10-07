@@ -3,6 +3,7 @@ package edu.wpi.grip.ui.preview;
 import edu.wpi.grip.core.events.RenderEvent;
 import edu.wpi.grip.core.operations.composite.LinesReport;
 import edu.wpi.grip.core.sockets.OutputSocket;
+import edu.wpi.grip.core.util.ImageDrawer;
 import edu.wpi.grip.ui.util.GripPlatform;
 import edu.wpi.grip.ui.util.ImageConverter;
 
@@ -11,6 +12,7 @@ import com.google.common.eventbus.Subscribe;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 import java.util.List;
+
 import javafx.application.Platform;
 import javafx.geometry.Orientation;
 import javafx.scene.control.CheckBox;
@@ -24,10 +26,7 @@ import static org.bytedeco.javacpp.opencv_core.LINE_8;
 import static org.bytedeco.javacpp.opencv_core.Mat;
 import static org.bytedeco.javacpp.opencv_core.Point;
 import static org.bytedeco.javacpp.opencv_core.Scalar;
-import static org.bytedeco.javacpp.opencv_core.bitwise_xor;
-import static org.bytedeco.javacpp.opencv_imgproc.CV_GRAY2BGR;
 import static org.bytedeco.javacpp.opencv_imgproc.circle;
-import static org.bytedeco.javacpp.opencv_imgproc.cvtColor;
 import static org.bytedeco.javacpp.opencv_imgproc.line;
 
 /**
@@ -39,11 +38,10 @@ public class LinesSocketPreviewView extends SocketPreviewView<LinesReport> {
   private final ImageConverter imageConverter = new ImageConverter();
   private final ImageView imageView = new ImageView();
   private final Label infoLabel = new Label();
-  private final Mat tmp = new Mat();
   private final GripPlatform platform;
   @SuppressWarnings("PMD.ImmutableField")
   @SuppressFBWarnings(value = "IS2_INCONSISTENT_SYNC",
-      justification = "Do not need to synchronize inside of a constructor")
+                      justification = "Do not need to synchronize inside of a constructor")
   private boolean showInputImage = false;
 
   /**
@@ -82,30 +80,13 @@ public class LinesSocketPreviewView extends SocketPreviewView<LinesReport> {
       final List<LinesReport.Line> lines = linesReport.getLines();
       Mat input = linesReport.getInput();
 
-      // If there were lines found, draw them on the image before displaying it
-      if (!linesReport.getLines().isEmpty()) {
-        if (input.channels() == 3) {
-          input.copyTo(tmp);
-        } else {
-          cvtColor(input, tmp, CV_GRAY2BGR);
-        }
+      input = ImageDrawer.draw(
+          input,
+          showInputImage,
+          linesReport::getLines,
+          (m, lr) -> lr.forEach(l -> drawLine(m, l))
+      );
 
-        input = tmp;
-
-        // If we don't want to see the background image, set it to black
-        if (!this.showInputImage) {
-          bitwise_xor(tmp, tmp, tmp);
-        }
-
-        // For each line in the report, draw a line along with the starting and ending points
-        for (LinesReport.Line line : lines) {
-          final Point startPoint = new Point((int) line.x1, (int) line.y1);
-          final Point endPoint = new Point((int) line.x2, (int) line.y2);
-          line(input, startPoint, endPoint, Scalar.WHITE, 2, LINE_8, 0);
-          circle(input, startPoint, 2, Scalar.WHITE, 2, LINE_8, 0);
-          circle(input, endPoint, 2, Scalar.WHITE, 2, LINE_8, 0);
-        }
-      }
       final Mat convertInput = input;
       final int numLines = lines.size();
       platform.runAsSoonAsPossible(() -> {
@@ -115,4 +96,13 @@ public class LinesSocketPreviewView extends SocketPreviewView<LinesReport> {
       });
     }
   }
+
+  private void drawLine(Mat image, LinesReport.Line line) {
+    final Point startPoint = new Point((int) line.x1, (int) line.y1);
+    final Point endPoint = new Point((int) line.x2, (int) line.y2);
+    line(image, startPoint, endPoint, Scalar.WHITE, 2, LINE_8, 0);
+    circle(image, startPoint, 2, Scalar.WHITE, 2, LINE_8, 0);
+    circle(image, endPoint, 2, Scalar.WHITE, 2, LINE_8, 0);
+  }
+
 }
