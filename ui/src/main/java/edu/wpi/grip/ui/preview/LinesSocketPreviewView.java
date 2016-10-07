@@ -3,7 +3,7 @@ package edu.wpi.grip.ui.preview;
 import edu.wpi.grip.core.events.RenderEvent;
 import edu.wpi.grip.core.operations.composite.LinesReport;
 import edu.wpi.grip.core.sockets.OutputSocket;
-import edu.wpi.grip.core.util.ImageDrawer;
+import edu.wpi.grip.core.util.MatUtils;
 import edu.wpi.grip.ui.util.GripPlatform;
 import edu.wpi.grip.ui.util.ImageConverter;
 
@@ -80,7 +80,7 @@ public class LinesSocketPreviewView extends SocketPreviewView<LinesReport> {
       final List<LinesReport.Line> lines = linesReport.getLines();
       Mat input = linesReport.getInput();
 
-      input = ImageDrawer.draw(
+      input = MatUtils.draw(
           input,
           showInputImage,
           linesReport::getLines,

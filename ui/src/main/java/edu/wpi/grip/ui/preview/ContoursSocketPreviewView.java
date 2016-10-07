@@ -3,7 +3,7 @@ package edu.wpi.grip.ui.preview;
 import edu.wpi.grip.core.events.RenderEvent;
 import edu.wpi.grip.core.operations.composite.ContoursReport;
 import edu.wpi.grip.core.sockets.OutputSocket;
-import edu.wpi.grip.core.util.ImageDrawer;
+import edu.wpi.grip.core.util.MatUtils;
 import edu.wpi.grip.ui.util.GripPlatform;
 import edu.wpi.grip.ui.util.ImageConverter;
 
@@ -77,7 +77,7 @@ public final class ContoursSocketPreviewView extends SocketPreviewView<ContoursR
         // render contours
         // by using OpenCV's drawContours function and converting the Mat into a JavaFX Image.
         this.tmp.create(contours.getRows(), contours.getCols(), CV_8UC3);
-        ImageDrawer.draw(
+        MatUtils.draw(
             tmp,
             false,
             contours::getContours,

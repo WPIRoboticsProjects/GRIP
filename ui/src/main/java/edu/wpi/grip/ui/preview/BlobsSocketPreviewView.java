@@ -3,7 +3,7 @@ package edu.wpi.grip.ui.preview;
 import edu.wpi.grip.core.events.RenderEvent;
 import edu.wpi.grip.core.operations.composite.BlobsReport;
 import edu.wpi.grip.core.sockets.OutputSocket;
-import edu.wpi.grip.core.util.ImageDrawer;
+import edu.wpi.grip.core.util.MatUtils;
 import edu.wpi.grip.ui.util.GripPlatform;
 import edu.wpi.grip.ui.util.ImageConverter;
 
@@ -78,7 +78,7 @@ public class BlobsSocketPreviewView extends SocketPreviewView<BlobsReport> {
       final BlobsReport blobsReport = this.getSocket().getValue().get();
       Mat input = blobsReport.getInput();
 
-      input = ImageDrawer.draw(
+      input = MatUtils.draw(
           input,
           showInputImage,
           blobsReport::getBlobs,

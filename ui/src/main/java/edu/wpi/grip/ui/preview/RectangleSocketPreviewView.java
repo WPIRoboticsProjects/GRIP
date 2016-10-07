@@ -3,7 +3,7 @@ package edu.wpi.grip.ui.preview;
 import edu.wpi.grip.core.events.RenderEvent;
 import edu.wpi.grip.core.operations.composite.RectsReport;
 import edu.wpi.grip.core.sockets.OutputSocket;
-import edu.wpi.grip.core.util.ImageDrawer;
+import edu.wpi.grip.core.util.MatUtils;
 import edu.wpi.grip.ui.util.GripPlatform;
 import edu.wpi.grip.ui.util.ImageConverter;
 
@@ -75,7 +75,7 @@ public class RectangleSocketPreviewView extends SocketPreviewView<RectsReport> {
       Mat input = report.getImage();
 
       // If rectangles were found, draw them on the image before displaying it
-      input = ImageDrawer.draw(
+      input = MatUtils.draw(
           input,
           showInputImage,
           report::getRectangles,
