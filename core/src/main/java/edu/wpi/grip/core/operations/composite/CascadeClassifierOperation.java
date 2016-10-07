@@ -13,6 +13,7 @@ import com.google.common.collect.ImmutableList;
 import org.bytedeco.javacpp.opencv_core.Mat;
 import org.bytedeco.javacpp.opencv_core.Rect;
 import org.bytedeco.javacpp.opencv_core.RectVector;
+import org.bytedeco.javacpp.opencv_core.Size;
 import org.bytedeco.javacpp.opencv_objdetect.CascadeClassifier;
 
 import java.util.ArrayList;
@@ -34,10 +35,24 @@ public class CascadeClassifierOperation implements Operation {
   private final CascadeClassifier classifier;
   private String lastFile = "";
 
-  private final SocketHint<Mat> imageHint
-      = SocketHints.Inputs.createMatSocketHint("Image", false);
-  private final SocketHint<String> filePathHint
-      = SocketHints.Inputs.createTextSocketHint("Classifier file", lastFile);
+  private final SocketHint<Mat> imageHint =
+      SocketHints.Inputs.createMatSocketHint("Image", false);
+  private final SocketHint<String> filePathHint =
+      SocketHints.Inputs.createTextSocketHint("Classifier file", lastFile);
+  private final SocketHint<Number> scaleHint =
+      SocketHints.Inputs.createNumberSpinnerSocketHint("Scale factor", 1.1, 1.01, Double.MAX_VALUE);
+  private final SocketHint<Number> minNeighborsHint =
+      SocketHints.Inputs.createNumberSpinnerSocketHint("Min neighbors", 3, 0, Integer.MAX_VALUE);
+  private final SocketHint<Size> minSizeHint =
+      new SocketHint.Builder<>(Size.class)
+          .identifier("Min size")
+          .initialValue(new Size(0, 0))
+          .build();
+  private final SocketHint<Size> maxSizeHint =
+      new SocketHint.Builder<>(Size.class)
+          .identifier("Max size")
+          .initialValue(new Size(0, 0))
+          .build();
   private final SocketHint<RectsReport> outputHint =
       new SocketHint.Builder<>(RectsReport.class)
           .identifier("Detected areas")
@@ -46,6 +61,10 @@ public class CascadeClassifierOperation implements Operation {
 
   private final InputSocket<Mat> imageSocket;
   private final InputSocket<String> filePath;
+  private final InputSocket<Number> scaleSocket;
+  private final InputSocket<Number> minNeighborsSocket;
+  private final InputSocket<Size> minSizeSocket;
+  private final InputSocket<Size> maxSizeSocket;
   private final OutputSocket<RectsReport> output;
 
   @SuppressWarnings("JavadocMethod")
@@ -53,6 +72,10 @@ public class CascadeClassifierOperation implements Operation {
     classifier = new CascadeClassifier();
     imageSocket = isf.create(imageHint);
     filePath = isf.create(filePathHint);
+    scaleSocket = isf.create(scaleHint);
+    minNeighborsSocket = isf.create(minNeighborsHint);
+    minSizeSocket = isf.create(minSizeHint);
+    maxSizeSocket = isf.create(maxSizeHint);
     output = osf.create(outputHint);
   }
 
@@ -60,7 +83,11 @@ public class CascadeClassifierOperation implements Operation {
   public List<InputSocket> getInputSockets() {
     return ImmutableList.of(
         imageSocket,
-        filePath
+        filePath,
+        scaleSocket,
+        minNeighborsSocket,
+        minSizeSocket,
+        maxSizeSocket
     );
   }
 
@@ -89,8 +116,12 @@ public class CascadeClassifierOperation implements Operation {
       }
     }
     final Mat image = imageSocket.getValue().get();
+    final double scaleFactor = (double) scaleSocket.getValue().get();
+    final int minNeighbors = minNeighborsSocket.getValue().get().intValue();
+    final Size minSize = minSizeSocket.getValue().get();
+    final Size maxSize = maxSizeSocket.getValue().get();
     RectVector detections = new RectVector();
-    classifier.detectMultiScale(image, detections);
+    classifier.detectMultiScale(image, detections, scaleFactor, minNeighbors, 0, minSize, maxSize);
     List<Rect> rects = new ArrayList<>();
     for (int i = 0; i < detections.size(); i++) {
       rects.add(detections.get(i));
