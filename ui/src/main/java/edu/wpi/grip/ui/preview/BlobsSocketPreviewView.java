@@ -3,7 +3,6 @@ package edu.wpi.grip.ui.preview;
 import edu.wpi.grip.core.events.RenderEvent;
 import edu.wpi.grip.core.operations.composite.BlobsReport;
 import edu.wpi.grip.core.sockets.OutputSocket;
-import edu.wpi.grip.core.util.MatUtils;
 import edu.wpi.grip.ui.util.GripPlatform;
 import edu.wpi.grip.ui.util.ImageConverter;
 
@@ -25,7 +24,6 @@ import static org.bytedeco.javacpp.opencv_core.Mat;
 import static org.bytedeco.javacpp.opencv_core.Point;
 import static org.bytedeco.javacpp.opencv_core.Scalar;
 import static org.bytedeco.javacpp.opencv_core.bitwise_xor;
-import static org.bytedeco.javacpp.opencv_core.cvInsertNodeIntoTree;
 import static org.bytedeco.javacpp.opencv_imgproc.CV_GRAY2BGR;
 import static org.bytedeco.javacpp.opencv_imgproc.circle;
 import static org.bytedeco.javacpp.opencv_imgproc.cvtColor;
@@ -39,10 +37,11 @@ public class BlobsSocketPreviewView extends SocketPreviewView<BlobsReport> {
   private final ImageConverter imageConverter = new ImageConverter();
   private final ImageView imageView = new ImageView();
   private final Label infoLabel = new Label();
+  private final Mat tmp = new Mat();
   private final GripPlatform platform;
   @SuppressWarnings("PMD.ImmutableField")
   @SuppressFBWarnings(value = "IS2_INCONSISTENT_SYNC",
-                      justification = "Do not need to synchronize inside of a constructor")
+      justification = "Do not need to synchronize inside of a constructor")
   private boolean showInputImage = false;
 
   /**
@@ -76,21 +75,31 @@ public class BlobsSocketPreviewView extends SocketPreviewView<BlobsReport> {
   private void convertImage() {
     synchronized (this) {
       final BlobsReport blobsReport = this.getSocket().getValue().get();
-      Mat input = blobsReport.getInput();
+      final Mat input = blobsReport.getInput();
 
-      input = MatUtils.draw(
-          input,
-          showInputImage,
-          blobsReport::getBlobs,
-          (m, br) -> br.forEach(b -> circle(
-              m, new Point((int) b.x, (int) b.y), (int) (b.size / 2), Scalar.WHITE, 2, LINE_8, 0)
-          )
-      );
+      if (input.channels() == 3) {
+        input.copyTo(tmp);
+      } else {
+        cvtColor(input, tmp, CV_GRAY2BGR);
+      }
+      // If we don't want to see the background image, set it to black
+      if (!this.showInputImage) {
+        bitwise_xor(tmp, tmp, tmp);
+      }
 
+      // If there were lines found, draw them on the image before displaying it
+      if (!blobsReport.getBlobs().isEmpty()) {
+        // For each line in the report, draw a line along with the starting and ending points
+        for (BlobsReport.Blob blob : blobsReport.getBlobs()) {
+          final Point point = new Point((int) blob.x, (int) blob.y);
+          circle(tmp, point, (int) (blob.size / 2), Scalar.WHITE, 2, LINE_8, 0);
+        }
+      }
+
+      final Mat output = tmp;
       final int numBlobs = blobsReport.getBlobs().size();
-      final Mat convertInput = input;
       platform.runAsSoonAsPossible(() -> {
-        final Image image = this.imageConverter.convert(convertInput);
+        final Image image = this.imageConverter.convert(output);
         this.imageView.setImage(image);
         this.infoLabel.setText("Found " + numBlobs + " blobs");
       });

@@ -3,7 +3,6 @@ package edu.wpi.grip.ui.preview;
 import edu.wpi.grip.core.events.RenderEvent;
 import edu.wpi.grip.core.operations.composite.ContoursReport;
 import edu.wpi.grip.core.sockets.OutputSocket;
-import edu.wpi.grip.core.util.MatUtils;
 import edu.wpi.grip.ui.util.GripPlatform;
 import edu.wpi.grip.ui.util.ImageConverter;
 
@@ -18,8 +17,8 @@ import javafx.scene.layout.VBox;
 
 import static org.bytedeco.javacpp.opencv_core.CV_8UC3;
 import static org.bytedeco.javacpp.opencv_core.Mat;
-import static org.bytedeco.javacpp.opencv_core.MatVector;
 import static org.bytedeco.javacpp.opencv_core.Scalar;
+import static org.bytedeco.javacpp.opencv_core.bitwise_xor;
 import static org.bytedeco.javacpp.opencv_imgproc.drawContours;
 
 /**
@@ -29,7 +28,7 @@ import static org.bytedeco.javacpp.opencv_imgproc.drawContours;
  */
 public final class ContoursSocketPreviewView extends SocketPreviewView<ContoursReport> {
 
-  private static final Scalar[] CONTOUR_COLORS = new Scalar[] {
+  private static final Scalar[] CONTOUR_COLORS = new Scalar[]{
       Scalar.RED,
       Scalar.YELLOW,
       Scalar.GREEN,
@@ -70,38 +69,34 @@ public final class ContoursSocketPreviewView extends SocketPreviewView<ContoursR
   private void render() {
     synchronized (this) {
       final ContoursReport contours = this.getSocket().getValue().get();
-      long numContours = contours.getContours().size();
+      long numContours = 0;
 
       if (!contours.getContours().isNull() && contours.getRows() > 0 && contours.getCols() > 0) {
         // Allocate a completely black OpenCV Mat to draw the contours onto.  We can easily
         // render contours
         // by using OpenCV's drawContours function and converting the Mat into a JavaFX Image.
         this.tmp.create(contours.getRows(), contours.getCols(), CV_8UC3);
-        MatUtils.draw(
-            tmp,
-            false,
-            contours::getContours,
-            (m, c) -> draw(m, c, numContours)
-        ).copyTo(tmp);
+        bitwise_xor(tmp, tmp, tmp);
+
+        numContours = contours.getContours().size();
+
+        if (this.colorContours.isSelected()) {
+          for (int i = 0; i < numContours; i++) {
+            drawContours(this.tmp, contours.getContours(), i, CONTOUR_COLORS[i % CONTOUR_COLORS
+                .length]);
+          }
+        } else {
+          drawContours(this.tmp, contours.getContours(), -1, Scalar.WHITE);
+        }
       }
 
       final long finalNumContours = numContours;
+      final Mat convertInput = tmp;
       platform.runAsSoonAsPossible(() -> {
-        final Image image = this.imageConverter.convert(tmp);
+        final Image image = this.imageConverter.convert(convertInput);
         this.imageView.setImage(image);
         this.infoLabel.setText("Found " + finalNumContours + " contours");
       });
     }
   }
-
-  private void draw(Mat image, MatVector contours, long size) {
-    if (colorContours.isSelected()) {
-      for (int i = 0; i < size; i++) {
-        drawContours(image, contours, i, CONTOUR_COLORS[i % CONTOUR_COLORS.length]);
-      }
-    } else {
-      drawContours(image, contours, -1, Scalar.WHITE);
-    }
-  }
-
 }
