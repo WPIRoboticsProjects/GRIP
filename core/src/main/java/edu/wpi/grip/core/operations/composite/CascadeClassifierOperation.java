@@ -105,7 +105,9 @@ public class CascadeClassifierOperation implements Operation {
         lastFile = fileName;
       } catch (RuntimeException e) {
         // Error with the config file, reset the classifier and throw an exception
-        classifier.load(lastFile);
+        if (!lastFile.isEmpty()) {
+          classifier.load(lastFile);
+        }
         throw new IllegalArgumentException("Invalid XML in configuration file", e);
       }
     }
