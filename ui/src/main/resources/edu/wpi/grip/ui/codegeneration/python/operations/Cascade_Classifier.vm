@@ -1,9 +1,13 @@
     @staticmethod
-    def $tMeth.name($step.name())(input, classifier_file):
+    def $tMeth.name($step.name())(input, classifier_file, scale_factor, min_neighbors, min_size, max_size):
         """Sets the values of pixels in a binary image to their distance to the nearest black pixel.
         Args:
             input: A numpy.ndarray.
             classifier_file: The full path to a cascade classifier XML file
+            scale_factor: the scale factor of each successive downsized image
+            min_neighbors: how many neighbors each candidate rectangle should have to retain it
+            min_size: the minimum possible object size
+            max_size: the maximum possible object size. If (0, 0), it is assumed to be unbounded
         Return:
             A list of rectangles bounding the found regions of interest
         """
