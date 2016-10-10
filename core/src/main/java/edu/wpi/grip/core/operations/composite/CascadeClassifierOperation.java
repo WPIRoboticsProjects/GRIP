@@ -44,15 +44,9 @@ public class CascadeClassifierOperation implements Operation {
   private final SocketHint<Number> minNeighborsHint =
       SocketHints.Inputs.createNumberSpinnerSocketHint("Min neighbors", 3, 0, Integer.MAX_VALUE);
   private final SocketHint<Size> minSizeHint =
-      new SocketHint.Builder<>(Size.class)
-          .identifier("Min size")
-          .initialValue(new Size(0, 0))
-          .build();
+      SocketHints.Inputs.createSizeSocketHint("Min size", true);
   private final SocketHint<Size> maxSizeHint =
-      new SocketHint.Builder<>(Size.class)
-          .identifier("Max size")
-          .initialValue(new Size(0, 0))
-          .build();
+      SocketHints.Inputs.createSizeSocketHint("Max size", true);
   private final SocketHint<RectsReport> outputHint =
       new SocketHint.Builder<>(RectsReport.class)
           .identifier("Detected areas")
