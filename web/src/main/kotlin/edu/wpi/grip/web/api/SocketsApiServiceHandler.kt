@@ -1,6 +1,5 @@
 package edu.wpi.grip.web.api
 
-import com.google.common.eventbus.EventBus
 import edu.wpi.grip.core.Pipeline
 import edu.wpi.grip.web.swagger.api.SocketsApiService
 import org.bytedeco.javacpp.opencv_core
@@ -19,8 +18,7 @@ import javax.ws.rs.core.StreamingOutput
 
 
 class SocketsApiServiceHandler @Inject constructor(
-        val pipeline: Provider<Pipeline>,
-        val eventBus: Provider<EventBus>) :
+        val pipeline: Provider<Pipeline>) :
         SocketsApiService {
     val names = listOf("summer", "fall", "winter", "spring")
     val imageByteList: List<ByteArray>

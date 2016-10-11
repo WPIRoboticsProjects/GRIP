@@ -9,6 +9,11 @@ import edu.wpi.grip.web.api.OperationsApiServiceHandler;
 import edu.wpi.grip.web.api.PersonsApiServiceHandler;
 import edu.wpi.grip.web.api.SocketsApiServiceHandler;
 import edu.wpi.grip.web.api.StepApiServiceHandler;
+import edu.wpi.grip.web.io.StreamingOutputEventListener;
+import edu.wpi.grip.web.session.GripSessionModule;
+import edu.wpi.grip.web.session.SessionCreatedEvent;
+import edu.wpi.grip.web.session.SessionDestroyedEvent;
+import edu.wpi.grip.web.session.SessionEventBus;
 import edu.wpi.grip.web.swagger.api.OperationsApi;
 import edu.wpi.grip.web.swagger.api.OperationsApiService;
 import edu.wpi.grip.web.swagger.api.PersonsApi;
@@ -28,6 +33,7 @@ import com.google.inject.servlet.GuiceServletContextListener;
 import com.google.inject.servlet.ServletModule;
 import com.google.inject.servlet.SessionScoped;
 
+import org.gwizard.logging.LoggingModule;
 import org.gwizard.rest.JaxrsModule;
 import org.gwizard.rest.ObjectMapperContextResolver;
 import org.gwizard.rest.RestModule;
@@ -37,17 +43,23 @@ import org.gwizard.swagger.SwaggerModule;
 import org.gwizard.web.EventListenerScanner;
 import org.jboss.resteasy.plugins.guice.GuiceResteasyBootstrapServletContextListener;
 import org.jboss.resteasy.plugins.server.servlet.HttpServletDispatcher;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Collections;
 
 import javax.inject.Singleton;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
+import javax.servlet.http.HttpSessionEvent;
+import javax.servlet.http.HttpSessionListener;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 
 
-public class GripServletConfig extends GuiceServletContextListener {
+public class GripServletConfig extends GuiceServletContextListener implements HttpSessionListener {
+  private static Logger logger = LoggerFactory.getLogger(GripServletConfig.class);
+  private final SessionEventBus sessionEventBus = new SessionEventBus("Session Event Bus");
   private EventListenerScanner eventListenerScanner;
 
   /**
@@ -64,13 +76,15 @@ public class GripServletConfig extends GuiceServletContextListener {
   @Override
   protected Injector getInjector() {
     final Injector injector = Guice.createInjector(
-        //createServletModule(),
+        new GripSessionModule(sessionEventBus),
         createBasicModule(),
         new GripBasicModule(),
         createServletModule(),
-        new SwaggerModule());
+        new SwaggerModule(),
+        new LoggingModule());
     eventListenerScanner
         = injector.getInstance(EventListenerScanner.class);
+
 
     return injector;
   }
@@ -123,6 +137,9 @@ public class GripServletConfig extends GuiceServletContextListener {
         bind(Palette.class)
             .to(LoadedPalette.class);
 
+        bind(StreamingOutputEventListener
+            .Factory.class);
+
         bind(StepsApiService.class)
             .to(StepApiServiceHandler.class);
 
@@ -168,12 +185,27 @@ public class GripServletConfig extends GuiceServletContextListener {
     };
   }
 
+  @Override
+  public void sessionCreated(HttpSessionEvent httpSessionEvent) {
+    logger.info("Config Session created {}", httpSessionEvent);
+    sessionEventBus.register(new SessionCreatedEvent(httpSessionEvent.getSession()));
+  }
+
+  @Override
+  public void sessionDestroyed(HttpSessionEvent httpSessionEvent) {
+    logger.info("Config Session destroyed {}", httpSessionEvent);
+    sessionEventBus.register(new SessionDestroyedEvent(httpSessionEvent.getSession()));
+  }
+
   /**
    * Main entry point for testing.
+   *
    * @param args The input to the process
    */
   public static void main(String... args) {
-    Guice.createInjector(createBasicModule(),
+    Guice.createInjector(
+        new GripSessionModule(new SessionEventBus("")),
+        createBasicModule(),
         new RestModule(),
         new SwaggerModule())
         .getInstance(Run.class).start();
