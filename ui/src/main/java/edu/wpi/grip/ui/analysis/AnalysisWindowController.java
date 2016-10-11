@@ -6,10 +6,9 @@ import edu.wpi.grip.core.StepIndexer;
 import edu.wpi.grip.core.events.BenchmarkEvent;
 import edu.wpi.grip.core.events.RunStoppedEvent;
 import edu.wpi.grip.core.events.TimerEvent;
-import edu.wpi.grip.core.metrics.Analysis;
+import edu.wpi.grip.core.metrics.Statistics;
 import edu.wpi.grip.core.metrics.BenchmarkRunner;
 import edu.wpi.grip.core.metrics.CsvExporter;
-import edu.wpi.grip.core.metrics.Statistics;
 
 import com.google.common.collect.EvictingQueue;
 import com.google.common.eventbus.Subscribe;
@@ -54,11 +53,11 @@ public class AnalysisWindowController {
 
   // Table
   @FXML
-  private TableView<StepAnalysisEntry> table;
+  private TableView<StepStatisticsEntry> table;
   @FXML
-  private TableColumn<StepAnalysisEntry, String> operationColumn;
+  private TableColumn<StepStatisticsEntry, String> operationColumn;
   @FXML
-  private TableColumn<StepAnalysisEntry, Analysis> timeColumn;
+  private TableColumn<StepStatisticsEntry, Statistics> timeColumn;
 
   // Benchmarking
   @FXML
@@ -67,9 +66,9 @@ public class AnalysisWindowController {
   private TextField benchmarkRunsField;
   private BenchmarkRunner benchmarker;
 
-  private final Callback<StepAnalysisEntry, Observable[]> extractor =
+  private final Callback<StepStatisticsEntry, Observable[]> extractor =
       entry -> new Observable[] {entry.stepProperty(), entry.analysisProperty()};
-  private final ObservableList<StepAnalysisEntry> tableItems
+  private final ObservableList<StepStatisticsEntry> tableItems
       = FXCollections.observableArrayList(extractor);
 
   private StepIndexer stepIndexer = null;
@@ -92,17 +91,17 @@ public class AnalysisWindowController {
     operationColumn.setCellValueFactory(
         e -> new SimpleStringProperty(e.getValue().getStep().getOperationDescription().name()));
     timeColumn.setCellValueFactory(e -> e.getValue().analysisProperty());
-    timeColumn.setCellFactory(col -> new TableCell<StepAnalysisEntry, Analysis>() {
+    timeColumn.setCellFactory(col -> new TableCell<StepStatisticsEntry, Statistics>() {
       @Override
-      protected void updateItem(Analysis analysis, boolean empty) {
-        if (analysis == null || empty) {
+      protected void updateItem(Statistics statistics, boolean empty) {
+        if (statistics == null || empty) {
           setGraphic(null);
         } else {
           Step step = tableItems.get(this.getIndex()).getStep();
           TimeView view = timeViewMap.computeIfAbsent(step, s -> new TimeView());
-          view.update(analysis.getAverage(),
-              analysis.getAverage() / lastStats.getSum(),
-              lastStats.hotness(analysis.getAverage()));
+          view.update(statistics.getMean(),
+              statistics.getMean() / lastStats.getSum(),
+              lastStats.hotness(statistics.getMean()));
           setGraphic(null);
           setGraphic(view);
         }
@@ -124,18 +123,18 @@ public class AnalysisWindowController {
   private void onRun(TimerEvent event) {
     if (event.getTarget() instanceof Step) {
       Step source = (Step) event.getTarget();
-      Optional<StepAnalysisEntry> possibleEntry
+      Optional<StepStatisticsEntry> possibleEntry
           = tableItems.stream().filter(e -> e.getStep() == source).findAny();
       Collection<Long> samples = sampleMap.computeIfAbsent(source,
           s -> EvictingQueue.create(numRecentSamples));
       samples.add(event.getElapsedTime());
-      Analysis stepAnalysis = Analysis.of(samples);
+      Statistics stepStatistics = Statistics.of(samples);
       if (possibleEntry.isPresent()) {
-        possibleEntry.get().setAnalysis(stepAnalysis);
+        possibleEntry.get().setStatistics(stepStatistics);
       } else {
-        StepAnalysisEntry entry = new StepAnalysisEntry();
+        StepStatisticsEntry entry = new StepStatisticsEntry();
         entry.setStep(source);
-        entry.setAnalysis(stepAnalysis);
+        entry.setStatistics(stepStatistics);
         tableItems.add(entry);
       }
     }
@@ -149,9 +148,9 @@ public class AnalysisWindowController {
         .map(Map.Entry::getValue)
         .mapToDouble(s -> s.parallelStream().mapToLong(Long::longValue).average().orElse(0))
         .toArray();
-    Analysis analysis = Analysis.of(averageRunTimes);
+    Statistics statistics = Statistics.of(averageRunTimes);
     // Update the stats after the pipeline finishes
-    lastStats = analysis.getStatistics();
+    lastStats = statistics;
   }
 
   @Subscribe
@@ -274,10 +273,10 @@ public class AnalysisWindowController {
   }
 
 
-  private static class StepAnalysisEntry {
+  private static class StepStatisticsEntry {
 
     private final Property<Step> stepProperty = new SimpleObjectProperty<>();
-    private final Property<Analysis> analysisProperty = new SimpleObjectProperty<>();
+    private final Property<Statistics> analysisProperty = new SimpleObjectProperty<>();
 
     public Property<Step> stepProperty() {
       return stepProperty;
@@ -291,15 +290,15 @@ public class AnalysisWindowController {
       stepProperty.setValue(step);
     }
 
-    public Property<Analysis> analysisProperty() {
+    public Property<Statistics> analysisProperty() {
       return analysisProperty;
     }
 
-    public Analysis getAnalysis() {
+    public Statistics getStatistics() {
       return analysisProperty.getValue();
     }
 
-    public void setAnalysis(Analysis analysis) {
+    public void setStatistics(Statistics analysis) {
       analysisProperty.setValue(analysis);
     }
 

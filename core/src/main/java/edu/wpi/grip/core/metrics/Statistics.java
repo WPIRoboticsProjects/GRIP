@@ -2,6 +2,8 @@ package edu.wpi.grip.core.metrics;
 
 import com.google.common.base.MoreObjects;
 
+import java.util.Collection;
+
 import javax.annotation.concurrent.Immutable;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -9,18 +11,19 @@ import static com.google.common.base.Preconditions.checkNotNull;
 /**
  * Statistics analysis. Contains:
  * <ul>
- * <li>Number of samples ({@code n})</li>
- * <li>Mean value ({@code mean})</li>
- * <li>Standard deviation ({@code s})</li>
+ * <li>Number of samples</li>
+ * <li>Sum</li>
+ * <li>Mean value</li>
+ * <li>Standard deviation</li>
  * </ul>
  */
 @Immutable
 public final class Statistics {
 
-  private final int n;
+  private final int numSamples;
   private final double sum;
   private final double mean;
-  private final double s;
+  private final double standardDeviation;
 
   /**
    * "null" statistics with every value set to zero.
@@ -49,27 +52,38 @@ public final class Statistics {
     return new Statistics(n, sum, mean, s);
   }
 
-  private Statistics(int n, double sum, double mean, double s) {
-    this.n = n;
+  /**
+   * Calculates the statistics of the given samples.
+   *
+   * @param samples the samples to analyze
+   * @return a statistical analysis of the given samples
+   */
+  public static Statistics of(Collection<? extends Number> samples) {
+    checkNotNull(samples);
+    return of(samples.stream().mapToDouble(Number::doubleValue).toArray());
+  }
+
+  private Statistics(int numSamples, double sum, double mean, double standardDeviation) {
+    this.numSamples = numSamples;
     this.sum = sum;
     this.mean = mean;
-    this.s = s;
+    this.standardDeviation = standardDeviation;
   }
 
   @Override
   public String toString() {
     return MoreObjects.toStringHelper(this)
-        .add("n", n)
+        .add("numSamples", numSamples)
         .add("mean", mean)
-        .add("s", s)
+        .add("standardDeviation", standardDeviation)
         .toString();
   }
 
   /**
    * Gets the number of samples.
    */
-  public int getN() {
-    return n;
+  public int getNumSamples() {
+    return numSamples;
   }
 
   /**
@@ -90,7 +104,7 @@ public final class Statistics {
    * Gets the standard deviation in the samples.
    */
   public double getStandardDeviation() {
-    return s;
+    return standardDeviation;
   }
 
   /**
@@ -105,7 +119,7 @@ public final class Statistics {
    * @return the hotness of the given value.
    */
   public double hotness(double value) {
-    if (n < 2) {
+    if (numSamples < 2) {
       // Hotness doesn't make sense if there's 0 or 1 data points
       return 0;
     }
@@ -113,7 +127,7 @@ public final class Statistics {
       // Avoid negative hotness
       return 0;
     }
-    return (value - mean) / s;
+    return (value - mean) / standardDeviation;
   }
 
 }
