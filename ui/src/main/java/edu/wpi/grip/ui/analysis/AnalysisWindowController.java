@@ -6,9 +6,9 @@ import edu.wpi.grip.core.StepIndexer;
 import edu.wpi.grip.core.events.BenchmarkEvent;
 import edu.wpi.grip.core.events.RunStoppedEvent;
 import edu.wpi.grip.core.events.TimerEvent;
-import edu.wpi.grip.core.metrics.Statistics;
 import edu.wpi.grip.core.metrics.BenchmarkRunner;
 import edu.wpi.grip.core.metrics.CsvExporter;
+import edu.wpi.grip.core.metrics.Statistics;
 
 import com.google.common.collect.EvictingQueue;
 import com.google.common.eventbus.Subscribe;
