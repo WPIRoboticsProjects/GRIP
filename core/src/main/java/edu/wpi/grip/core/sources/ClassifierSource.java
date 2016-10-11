@@ -3,7 +3,6 @@ package edu.wpi.grip.core.sources;
 import edu.wpi.grip.core.Source;
 import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.core.sockets.SocketHint;
-import edu.wpi.grip.core.sockets.SocketHints;
 import edu.wpi.grip.core.util.ExceptionWitness;
 
 import com.google.common.collect.ImmutableList;
@@ -11,6 +10,8 @@ import com.google.common.eventbus.EventBus;
 import com.google.inject.assistedinject.Assisted;
 import com.google.inject.assistedinject.AssistedInject;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
+
+import org.bytedeco.javacpp.opencv_objdetect.CascadeClassifier;
 
 import java.util.List;
 import java.util.Properties;
@@ -24,9 +25,11 @@ public class ClassifierSource extends Source {
   private final String filePath;
   private static final String FILE_PATH_PROPERTY = "file_path";
 
-  private final SocketHint<String> pathHint
-      = SocketHints.Outputs.createStringSocketHint("Classifier file", "");
-  private final OutputSocket<String> pathSocket;
+  private final SocketHint<CascadeClassifier> classifierHint =
+      new SocketHint.Builder<>(CascadeClassifier.class)
+          .identifier("Classifier")
+          .build();
+  private final OutputSocket<CascadeClassifier> classifierSocket;
 
   @AssistedInject
   protected ClassifierSource(EventBus eventBus,
@@ -34,7 +37,7 @@ public class ClassifierSource extends Source {
                              ExceptionWitness.Factory exceptionWitnessFactory,
                              @Assisted String filePath) {
     super(exceptionWitnessFactory);
-    this.pathSocket = osf.create(pathHint);
+    this.classifierSocket = osf.create(classifierHint);
     this.filePath = filePath;
   }
 
@@ -54,7 +57,7 @@ public class ClassifierSource extends Source {
   @Override
   protected List<OutputSocket> createOutputSockets() {
     return ImmutableList.of(
-        pathSocket
+        classifierSocket
     );
   }
 
@@ -73,7 +76,7 @@ public class ClassifierSource extends Source {
 
   @Override
   public void initialize() {
-    pathSocket.setValue(filePath);
+    classifierSocket.setValue(new CascadeClassifier(filePath));
   }
 
   public interface Factory {

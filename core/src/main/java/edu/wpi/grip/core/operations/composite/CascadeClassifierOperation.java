@@ -32,13 +32,12 @@ public class CascadeClassifierOperation implements Operation {
           .category(OperationDescription.Category.FEATURE_DETECTION)
           .build();
 
-  private final CascadeClassifier classifier;
-  private String lastFile = "";
-
   private final SocketHint<Mat> imageHint =
       SocketHints.Inputs.createMatSocketHint("Image", false);
-  private final SocketHint<String> filePathHint =
-      SocketHints.Inputs.createTextSocketHint("Classifier file", lastFile);
+  private final SocketHint<CascadeClassifier> classifierHint =
+      new SocketHint.Builder<>(CascadeClassifier.class)
+          .identifier("Classifier")
+          .build();
   private final SocketHint<Number> scaleHint =
       SocketHints.Inputs.createNumberSpinnerSocketHint("Scale factor", 1.1, 1.01, Double.MAX_VALUE);
   private final SocketHint<Number> minNeighborsHint =
@@ -54,7 +53,7 @@ public class CascadeClassifierOperation implements Operation {
           .build();
 
   private final InputSocket<Mat> imageSocket;
-  private final InputSocket<String> filePath;
+  private final InputSocket<CascadeClassifier> classifierSocket;
   private final InputSocket<Number> scaleSocket;
   private final InputSocket<Number> minNeighborsSocket;
   private final InputSocket<Size> minSizeSocket;
@@ -63,9 +62,8 @@ public class CascadeClassifierOperation implements Operation {
 
   @SuppressWarnings("JavadocMethod")
   public CascadeClassifierOperation(InputSocket.Factory isf, OutputSocket.Factory osf) {
-    classifier = new CascadeClassifier();
     imageSocket = isf.create(imageHint);
-    filePath = isf.create(filePathHint);
+    classifierSocket = isf.create(classifierHint);
     scaleSocket = isf.create(scaleHint);
     minNeighborsSocket = isf.create(minNeighborsHint);
     minSizeSocket = isf.create(minSizeHint);
@@ -77,7 +75,7 @@ public class CascadeClassifierOperation implements Operation {
   public List<InputSocket> getInputSockets() {
     return ImmutableList.of(
         imageSocket,
-        filePath,
+        classifierSocket,
         scaleSocket,
         minNeighborsSocket,
         minSizeSocket,
@@ -94,24 +92,14 @@ public class CascadeClassifierOperation implements Operation {
 
   @Override
   public void perform() {
-    if (!imageSocket.getValue().isPresent() || !filePath.getValue().isPresent()) {
+    if (!imageSocket.getValue().isPresent() || !classifierSocket.getValue().isPresent()) {
       return;
     }
-    final String fileName = filePath.getValue().get();
-    if (!fileName.equals(lastFile)) {
-      // Don't load the same file multiple times in a row
-      try {
-        classifier.load(fileName);
-        lastFile = fileName;
-      } catch (RuntimeException e) {
-        // Error with the config file, reset the classifier and throw an exception
-        if (!lastFile.isEmpty()) {
-          classifier.load(lastFile);
-        }
-        throw new IllegalArgumentException("Invalid XML in configuration file", e);
-      }
-    }
     final Mat image = imageSocket.getValue().get();
+    if (image.empty() || image.channels() != 3) {
+      throw new IllegalArgumentException("A cascade classifier needs a three-channel input");
+    }
+    final CascadeClassifier classifier = classifierSocket.getValue().get();
     final double scaleFactor = (double) scaleSocket.getValue().get();
     final int minNeighbors = minNeighborsSocket.getValue().get().intValue();
     final Size minSize = minSizeSocket.getValue().get();
