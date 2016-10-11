@@ -136,6 +136,15 @@ definitions:
         type: string
       single:
         type: boolean
+  Source:
+    type: object
+    properties:
+      name:
+        type: string
+      outputSockets:
+        type: array
+        items:
+          $ref: '#/definitions/Socket'
   Step:
     type: object
     properties:
@@ -147,11 +156,11 @@ definitions:
       operation:
         type: object
         $ref: '#/definitions/OperationDescription'
-      inputSocket:
+      inputSockets:
         type: array
         items:
           $ref: '#/definitions/Socket'
-      outputSocket:
+      outputSockets:
         type: array
         items:
           $ref: '#/definitions/Socket'

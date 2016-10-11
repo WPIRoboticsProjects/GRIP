@@ -35,8 +35,8 @@ fun Step.toSwagger(): SwaggerStep {
     swagStep.name = this.operationDescription.name()
     swagStep.uuid = this.uuid.toString()
     swagStep.operation = this.operationDescription.toSwagger()
-    swagStep.inputSocket = this.inputSockets.map {it.toSwagger()}
-    swagStep.outputSocket = this.outputSockets.map {it.toSwagger()}
+    swagStep.inputSockets = this.inputSockets.map {it.toSwagger()}
+    swagStep.outputSockets = this.outputSockets.map {it.toSwagger()}
     return swagStep
 }
 
