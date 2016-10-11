@@ -2,6 +2,7 @@ package edu.wpi.grip.core.operations.composite;
 
 import edu.wpi.grip.core.Operation;
 import edu.wpi.grip.core.OperationDescription;
+import edu.wpi.grip.core.Range;
 import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.core.sockets.SocketHint;
@@ -34,20 +35,20 @@ public class RGBThresholdOperation extends ThresholdOperation {
 
   private static final Logger logger = Logger.getLogger(RGBThresholdOperation.class.getName());
   private final SocketHint<Mat> inputHint = SocketHints.Inputs.createMatSocketHint("Input", false);
-  private final SocketHint<List<Number>> redHint = SocketHints.Inputs
-      .createNumberListRangeSocketHint("Red", 0.0, 255.0);
-  private final SocketHint<List<Number>> greenHint = SocketHints.Inputs
-      .createNumberListRangeSocketHint("Green", 0.0, 255.0);
-  private final SocketHint<List<Number>> blueHint = SocketHints.Inputs
-      .createNumberListRangeSocketHint("Blue", 0.0, 255.0);
+  private final SocketHint<Range> redHint = SocketHints.Inputs
+      .createNumberRangeSocketHint("Red", 0.0, 255.0);
+  private final SocketHint<Range> greenHint = SocketHints.Inputs
+      .createNumberRangeSocketHint("Green", 0.0, 255.0);
+  private final SocketHint<Range> blueHint = SocketHints.Inputs
+      .createNumberRangeSocketHint("Blue", 0.0, 255.0);
 
   private final SocketHint<Mat> outputHint = SocketHints.Outputs.createMatSocketHint("Output");
 
 
   private final InputSocket<Mat> inputSocket;
-  private final InputSocket<List<Number>> redSocket;
-  private final InputSocket<List<Number>> greenSocket;
-  private final InputSocket<List<Number>> blueSocket;
+  private final InputSocket<Range> redSocket;
+  private final InputSocket<Range> greenSocket;
+  private final InputSocket<Range> blueSocket;
 
   private final OutputSocket<Mat> outputSocket;
 
@@ -88,19 +89,19 @@ public class RGBThresholdOperation extends ThresholdOperation {
     }
 
     final Mat output = outputSocket.getValue().get();
-    final List<Number> channel1 = redSocket.getValue().get();
-    final List<Number> channel2 = greenSocket.getValue().get();
-    final List<Number> channel3 = blueSocket.getValue().get();
+    final Range channel1 = redSocket.getValue().get();
+    final Range channel2 = greenSocket.getValue().get();
+    final Range channel3 = blueSocket.getValue().get();
 
     final Scalar lowScalar = new Scalar(
-        channel3.get(0).doubleValue(),
-        channel2.get(0).doubleValue(),
-        channel1.get(0).doubleValue(), 0);
+        channel3.getMin(),
+        channel2.getMin(),
+        channel1.getMin(), 0);
 
     final Scalar highScalar = new Scalar(
-        channel3.get(1).doubleValue(),
-        channel2.get(1).doubleValue(),
-        channel1.get(1).doubleValue(), 0);
+        channel3.getMax(),
+        channel2.getMax(),
+        channel1.getMax(), 0);
 
     final Mat low = reallocateMatIfInputSizeOrWidthChanged(dataArray, 0, lowScalar, input);
     final Mat high = reallocateMatIfInputSizeOrWidthChanged(dataArray, 1, highScalar, input);

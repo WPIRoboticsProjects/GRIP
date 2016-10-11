@@ -1,5 +1,6 @@
 package edu.wpi.grip.ui.pipeline.input;
 
+import edu.wpi.grip.core.Range;
 import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.sockets.SocketHint;
 
@@ -69,12 +70,12 @@ public final class InputSocketControllerFactory {
         }
 
       case RANGE:
-        if (socketHint.getType().equals(List.class)) {
+        if (socketHint.getType().equals(Range.class)) {
           return (InputSocketController<T>) rangeInputSocketControllerFactory.create(
-              (InputSocket<List<Number>>) socket);
+              (InputSocket<Range>) socket);
         } else {
           throw new IllegalArgumentException("Could not create view for socket.  RANGE views must"
-              + " be Lists. "
+              + " be Ranges. "
               + socket.toString());
         }
 

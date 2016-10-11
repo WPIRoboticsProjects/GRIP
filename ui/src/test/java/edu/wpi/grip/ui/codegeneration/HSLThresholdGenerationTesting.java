@@ -1,6 +1,7 @@
 package edu.wpi.grip.ui.codegeneration;
 
 import edu.wpi.grip.core.ManualPipelineRunner;
+import edu.wpi.grip.core.Range;
 import edu.wpi.grip.ui.codegeneration.tools.GenType;
 import edu.wpi.grip.ui.codegeneration.tools.HelperTools;
 import edu.wpi.grip.ui.codegeneration.tools.PipelineInterfacer;
@@ -9,8 +10,6 @@ import edu.wpi.grip.util.Files;
 import org.junit.Test;
 import org.opencv.core.Mat;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 
 import static org.junit.Assert.assertFalse;
@@ -20,17 +19,11 @@ public class HSLThresholdGenerationTesting extends AbstractGenerationTesting {
   // H 0-49
   // S 0-41
   // L 0-67
-  private final List<Number> hVal = new ArrayList<Number>();
-  private final List<Number> sVal = new ArrayList<Number>();
-  private final List<Number> lVal = new ArrayList<Number>();
+  private final Range hVal = new Range(0, 49);
+  private final Range sVal = new Range(0, 41);
+  private final Range lVal = new Range(0, 67);
 
   public HSLThresholdGenerationTesting() {
-    hVal.add(new Double(0.0));
-    hVal.add(new Double(49.0));
-    sVal.add(new Double(0.0));
-    sVal.add(new Double(41.0));
-    lVal.add(new Double(0.0));
-    lVal.add(new Double(67.0));
   }
 
   @Test

@@ -2,6 +2,7 @@ package edu.wpi.grip.ui.codegeneration;
 
 import edu.wpi.grip.core.ManualPipelineRunner;
 import edu.wpi.grip.core.OperationMetaData;
+import edu.wpi.grip.core.Range;
 import edu.wpi.grip.core.Step;
 import edu.wpi.grip.core.operations.composite.ContoursReport;
 import edu.wpi.grip.core.operations.composite.FindContoursOperation;
@@ -22,7 +23,6 @@ import org.opencv.core.MatOfPoint;
 import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -31,17 +31,11 @@ import static org.junit.Assert.assertTrue;
 
 @Category(GenerationTesting.class)
 public class FindContoursGenerationTesting extends AbstractGenerationTesting {
-  private final List<Number> hVal = new ArrayList<Number>();
-  private final List<Number> sVal = new ArrayList<Number>();
-  private final List<Number> lVal = new ArrayList<Number>();
+  private final Range hVal = new Range(1.2, 51);
+  private final Range sVal = new Range(2.2, 83.2);
+  private final Range lVal = new Range(1, 101);
 
   public FindContoursGenerationTesting() {
-    hVal.add(new Double(1.2));
-    hVal.add(new Double(51.0));
-    sVal.add(new Double(2.2));
-    sVal.add(new Double(83.2));
-    lVal.add(new Double(1.0));
-    lVal.add(new Double(101.0));
   }
 
   void generatePipeline(boolean externalBool) {

@@ -25,7 +25,7 @@ set$source.value()(#cType($source.type()) #funPassType($source.type())$source.va
 
 #macro(param $inp $name)
 #set($type = "#cType($inp.type())")
-#if($type.equalsIgnoreCase("list"))
+#if($type.equalsIgnoreCase("range"))
 double ${name}[]#else
 $type #funPassType($inp.type())$name#end#end
 
@@ -61,7 +61,7 @@ $name(#foreach($inp in $step.getInputs())#param($inp $names[$count])#set($count 
 	int ${tMeth.name($input.name())} = #cvVal($input.value());
 #elseif ($input.type().equals("String"))
 	string ${tMeth.name($input.name())} = "$input.value()";
-#elseif ($input.type().equals("List"))
+#elseif ($input.type().equalsIgnoreCase("range"))
 #set($inputEndValue = $input.value().length() - 1)
 	double ${tMeth.name($input.name())}[] = {$input.value().substring(1,$inputEndValue)};
 #elseif ($input.type().equals("Point") || $input.type().equals("Size") || $input.type().equalsIgnoreCase("Scalar"))

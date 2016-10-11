@@ -3,6 +3,7 @@ package edu.wpi.grip.core.operations.composite;
 
 import edu.wpi.grip.core.Operation;
 import edu.wpi.grip.core.OperationDescription;
+import edu.wpi.grip.core.Range;
 import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.core.sockets.SocketHint;
@@ -37,19 +38,19 @@ public class HSLThresholdOperation extends ThresholdOperation {
 
   private static final Logger logger = Logger.getLogger(HSLThresholdOperation.class.getName());
   private final SocketHint<Mat> inputHint = SocketHints.Inputs.createMatSocketHint("Input", false);
-  private final SocketHint<List<Number>> hueHint = SocketHints.Inputs
-      .createNumberListRangeSocketHint("Hue", 0.0, 180.0);
-  private final SocketHint<List<Number>> saturationHint = SocketHints.Inputs
-      .createNumberListRangeSocketHint("Saturation", 0.0, 255.0);
-  private final SocketHint<List<Number>> luminanceHint = SocketHints.Inputs
-      .createNumberListRangeSocketHint("Luminance", 0.0, 255.0);
+  private final SocketHint<Range> hueHint = SocketHints.Inputs
+      .createNumberRangeSocketHint("Hue", 0.0, 180.0);
+  private final SocketHint<Range> saturationHint = SocketHints.Inputs
+      .createNumberRangeSocketHint("Saturation", 0.0, 255.0);
+  private final SocketHint<Range> luminanceHint = SocketHints.Inputs
+      .createNumberRangeSocketHint("Luminance", 0.0, 255.0);
 
   private final SocketHint<Mat> outputHint = SocketHints.Outputs.createMatSocketHint("Output");
 
   private final InputSocket<Mat> inputSocket;
-  private final InputSocket<List<Number>> hueSocket;
-  private final InputSocket<List<Number>> saturationSocket;
-  private final InputSocket<List<Number>> luminanceSocket;
+  private final InputSocket<Range> hueSocket;
+  private final InputSocket<Range> saturationSocket;
+  private final InputSocket<Range> luminanceSocket;
 
   private final OutputSocket<Mat> outputSocket;
 
@@ -91,20 +92,20 @@ public class HSLThresholdOperation extends ThresholdOperation {
     }
 
     final Mat output = outputSocket.getValue().get();
-    final List<Number> channel1 = hueSocket.getValue().get();
-    final List<Number> channel2 = saturationSocket.getValue().get();
-    final List<Number> channel3 = luminanceSocket.getValue().get();
+    final Range channel1 = hueSocket.getValue().get();
+    final Range channel2 = saturationSocket.getValue().get();
+    final Range channel3 = luminanceSocket.getValue().get();
 
     // Intentionally 1, 3, 2. This maps to the HLS open cv expects
     final Scalar lowScalar = new Scalar(
-        channel1.get(0).doubleValue(),
-        channel3.get(0).doubleValue(),
-        channel2.get(0).doubleValue(), 0);
+        channel1.getMin(),
+        channel3.getMin(),
+        channel2.getMin(), 0);
 
     final Scalar highScalar = new Scalar(
-        channel1.get(1).doubleValue(),
-        channel3.get(1).doubleValue(),
-        channel2.get(1).doubleValue(), 0);
+        channel1.getMax(),
+        channel3.getMax(),
+        channel2.getMax(), 0);
 
     final Mat low = reallocateMatIfInputSizeOrWidthChanged(dataArray, 0, lowScalar, input);
     final Mat high = reallocateMatIfInputSizeOrWidthChanged(dataArray, 1, highScalar, input);

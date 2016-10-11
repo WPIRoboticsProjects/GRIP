@@ -2,6 +2,7 @@ package edu.wpi.grip.core.operations.composite;
 
 import edu.wpi.grip.core.Operation;
 import edu.wpi.grip.core.OperationDescription;
+import edu.wpi.grip.core.Range;
 import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.core.sockets.SocketHint;
@@ -60,8 +61,8 @@ public class FilterContoursOperation implements Operation {
   private final SocketHint<Number> maxHeightHint =
       SocketHints.Inputs.createNumberSpinnerSocketHint("Max Height", 1000, 0, Integer.MAX_VALUE);
 
-  private final SocketHint<List<Number>> solidityHint =
-      SocketHints.Inputs.createNumberListRangeSocketHint("Solidity", 0, 100);
+  private final SocketHint<Range> solidityHint =
+      SocketHints.Inputs.createNumberRangeSocketHint("Solidity", 0, 100);
 
   private final SocketHint<Number> minVertexHint =
       SocketHints.Inputs.createNumberSpinnerSocketHint("Min Vertices", 0, 0, Integer.MAX_VALUE);
@@ -84,7 +85,7 @@ public class FilterContoursOperation implements Operation {
   private final InputSocket<Number> maxWidthSocket;
   private final InputSocket<Number> minHeightSocket;
   private final InputSocket<Number> maxHeightSocket;
-  private final InputSocket<List<Number>> soliditySocket;
+  private final InputSocket<Range> soliditySocket;
   private final InputSocket<Number> minVertexSocket;
   private final InputSocket<Number> maxVertexSocket;
   private final InputSocket<Number> minRatioSocket;
@@ -146,8 +147,8 @@ public class FilterContoursOperation implements Operation {
     final double maxWidth = maxWidthSocket.getValue().get().doubleValue();
     final double minHeight = minHeightSocket.getValue().get().doubleValue();
     final double maxHeight = maxHeightSocket.getValue().get().doubleValue();
-    final double minSolidity = soliditySocket.getValue().get().get(0).doubleValue();
-    final double maxSolidity = soliditySocket.getValue().get().get(1).doubleValue();
+    final double minSolidity = soliditySocket.getValue().get().getMin();
+    final double maxSolidity = soliditySocket.getValue().get().getMax();
     final double minVertexCount = minVertexSocket.getValue().get().doubleValue();
     final double maxVertexCount = maxVertexSocket.getValue().get().doubleValue();
     final double minRatio = minRatioSocket.getValue().get().doubleValue();
