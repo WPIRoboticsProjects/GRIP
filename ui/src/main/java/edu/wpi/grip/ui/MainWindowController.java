@@ -4,6 +4,7 @@ import edu.wpi.grip.core.Palette;
 import edu.wpi.grip.core.Pipeline;
 import edu.wpi.grip.core.PipelineRunner;
 import edu.wpi.grip.core.events.ProjectSettingsChangedEvent;
+import edu.wpi.grip.core.events.UnexpectedThrowableEvent;
 import edu.wpi.grip.core.serialization.Project;
 import edu.wpi.grip.core.settings.ProjectSettings;
 import edu.wpi.grip.core.settings.SettingsProvider;
@@ -153,7 +154,7 @@ public class MainWindowController {
    * pipeline, an "are you sure?" dialog is shown. (TODO)
    */
   @FXML
-  public void openProject() throws IOException {
+  public void openProject() {
     if (showConfirmationDialogAndWait()) {
       final FileChooser fileChooser = new FileChooser();
       fileChooser.setTitle("Open Project");
@@ -165,7 +166,15 @@ public class MainWindowController {
 
       final File file = fileChooser.showOpenDialog(root.getScene().getWindow());
       if (file != null) {
-        project.open(file);
+        Thread fileOpenThread = new Thread(() -> {
+          try {
+            project.open(file);
+          } catch (IOException e) {
+            eventBus.post(new UnexpectedThrowableEvent(e, "Failed to load save file"));
+          }
+        }, "Project Open Thread");
+        fileOpenThread.setDaemon(true);
+        fileOpenThread.start();
       }
     }
   }
