@@ -1,5 +1,6 @@
 include 'core', 'ui', 'ui:preloader', 'ui:linuxLauncher'
 rootProject.name = 'GRIP'
 include 'linuxLauncher'
-include 'web'
+include 'web:server'
+include 'web:client'
 
