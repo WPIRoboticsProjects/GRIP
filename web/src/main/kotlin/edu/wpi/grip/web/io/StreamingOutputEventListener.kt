@@ -14,12 +14,15 @@ import org.slf4j.LoggerFactory
 import java.io.IOException
 import java.io.OutputStream
 import java.util.concurrent.atomic.AtomicBoolean
+import java.util.concurrent.locks.ReentrantReadWriteLock
 import javax.annotation.concurrent.ThreadSafe
 import javax.inject.Inject
 import javax.inject.Named
 import javax.inject.Provider
 import javax.servlet.http.HttpSession
 import javax.ws.rs.core.StreamingOutput
+import kotlin.concurrent.read
+import kotlin.concurrent.write
 
 
 /**
@@ -36,6 +39,7 @@ private constructor(
     private val sessionDestroyed = AtomicBoolean(false)
     private val imagePointer = BytePointer()
     private val lock = Object()
+    private val readWriteLock = ReentrantReadWriteLock(true)
 
     @SessionScoped
     class Factory @Inject constructor(
@@ -57,14 +61,24 @@ private constructor(
 
     override fun write(output: OutputStream) {
         try {
+            var cachedBuffer = ByteArray(0)
             do {
                 val buffer = synchronized(lock) {
                     lock.wait()
                     if (sessionDestroyed.get()) return // Break out of the write
+                    val byteBuffer = readWriteLock.read {
+                        val byteBuffer : ByteArray
+                        if (cachedBuffer.size != imagePointer.limit()) {
+                            byteBuffer = ByteArray(imagePointer.limit())
+                            cachedBuffer = byteBuffer
+                        } else {
+                            byteBuffer = cachedBuffer
+                        }
 
-                    val byteBuffer = ByteArray(imagePointer.limit())
-                    imagePointer.get(byteBuffer) // Load the image pointer into the buffer
-                    lock.notifyAll()
+                        imagePointer.get(byteBuffer) // Load the image pointer into the buffer
+                        byteBuffer
+                    }
+
                     byteBuffer
                 }
                 try {
@@ -89,10 +103,10 @@ private constructor(
         if (changeEvent.isRegarding(socket)) {
             socket.value.ifPresent {
                 synchronized(lock) {
-                    opencv_imgcodecs.imencode(".jpeg", socket.value.get(), imagePointer)
+                    readWriteLock.write {
+                        opencv_imgcodecs.imencode(".jpeg", socket.value.get(), imagePointer)
+                    }
                     lock.notifyAll()
-                    // Now wait for the image to be copied
-                    lock.wait()
                 }
             }
         }
