@@ -323,7 +323,7 @@ project(":core") {
 
     task generateCodeFromSource(type: CodeGenerator) {
         description 'Generates the Operation Wrappers for the OpenCV methods.\n To skip run with parm `-PskipGenerate`'
-        dest 'src/generated/java'
+        dest "${project(':core').projectDir}/src/generated/java"
         removeExisting true
     }
     generateCodeFromSource.onlyIf { !project.hasProperty('skipGenerate') }

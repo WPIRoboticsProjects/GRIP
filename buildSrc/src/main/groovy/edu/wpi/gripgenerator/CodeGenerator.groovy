@@ -30,10 +30,11 @@ class CodeGenerator extends DefaultTask {
         if (dest instanceof LinkedHashSet) {
             LinkedHashSet destSet = dest;
             targetDirectoryString = destSet.getAt(0).toString()
-        } else  if (dest instanceof String) {
-            targetDirectoryString = dest
+        } else  if (dest instanceof String || dest instanceof GString) {
+            targetDirectoryString = dest.toString()
         } else {
-            throw new IllegalArgumentException("dest: $dest is an illegal type")
+            def dstClass = dest.class
+            throw new IllegalArgumentException("dest: $dest is an illegal type: $dstClass")
         }
 
 
