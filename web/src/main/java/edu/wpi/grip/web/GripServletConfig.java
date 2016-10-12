@@ -5,6 +5,8 @@ import edu.wpi.grip.core.FileManager;
 import edu.wpi.grip.core.GripBasicModule;
 import edu.wpi.grip.core.Palette;
 import edu.wpi.grip.core.Pipeline;
+import edu.wpi.grip.core.sources.CameraSource;
+import edu.wpi.grip.core.sources.GripSourcesHardwareModule;
 import edu.wpi.grip.web.api.OperationsApiServiceHandler;
 import edu.wpi.grip.web.api.PersonsApiServiceHandler;
 import edu.wpi.grip.web.api.SocketsApiServiceHandler;
@@ -15,6 +17,7 @@ import edu.wpi.grip.web.session.GripSessionModule;
 import edu.wpi.grip.web.session.SessionCreatedEvent;
 import edu.wpi.grip.web.session.SessionDestroyedEvent;
 import edu.wpi.grip.web.session.SessionEventBus;
+import edu.wpi.grip.web.session.SourcePendingEventHandler;
 import edu.wpi.grip.web.swagger.api.OperationsApi;
 import edu.wpi.grip.web.swagger.api.OperationsApiService;
 import edu.wpi.grip.web.swagger.api.PersonsApi;
@@ -32,6 +35,7 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Module;
 import com.google.inject.Provides;
+import com.google.inject.assistedinject.FactoryModuleBuilder;
 import com.google.inject.servlet.GuiceServletContextListener;
 import com.google.inject.servlet.ServletModule;
 import com.google.inject.servlet.SessionScoped;
@@ -54,6 +58,7 @@ import java.util.Collections;
 import javax.inject.Singleton;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
+import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpSessionEvent;
 import javax.servlet.http.HttpSessionListener;
 import javax.ws.rs.GET;
@@ -83,6 +88,7 @@ public class GripServletConfig extends GuiceServletContextListener implements Ht
         createBasicModule(),
         new GripBasicModule(),
         createServletModule(),
+        new GripSourcesHardwareModule(),
         new SwaggerModule(),
         new LoggingModule());
     eventListenerScanner
@@ -129,6 +135,26 @@ public class GripServletConfig extends GuiceServletContextListener implements Ht
         return swaggerConfig;
       }
 
+      @Provides
+      @SessionScoped
+      private EventBus eventBus(SourcePendingEventHandler handler, HttpSession session) {
+        LOGGER.info("New Event Bus for Session: " + session.getId());
+        final EventBus eventBus = new EventBus("Event Bus for Session: " + session.getId()) {
+          @Override
+          public void register(Object registered) {
+            LOGGER.info("Registering {} for session id {}", registered, session.getId());
+            super.register(registered);
+          }
+          @Override
+          public void post(Object event) {
+            LOGGER.trace("Posting event {} for session id {}", event, session.getId());
+            super.post(event);
+          }
+        };
+        eventBus.register(handler);
+        return eventBus;
+      }
+
       @Override
       protected void configure() {
         bind(FileManager.class)
@@ -137,12 +163,13 @@ public class GripServletConfig extends GuiceServletContextListener implements Ht
 
         bind(HelloResource.class);
 
-        bind(EventBus.class)
-            .in(SessionScoped.class);
         bind(Pipeline.class)
             .in(SessionScoped.class);
         bind(Palette.class)
             .to(LoadedPalette.class);
+        install(new FactoryModuleBuilder()
+            .implement(CameraSource.class, CameraSource.class)
+            .build(CameraSource.Factory.class));
 
         bind(StreamingOutputEventListener
             .Factory.class);

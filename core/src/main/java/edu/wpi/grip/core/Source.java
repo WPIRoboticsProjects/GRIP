@@ -65,6 +65,11 @@ public abstract class Source {
    */
   protected abstract boolean updateOutputSockets();
 
+  public boolean updateOutputSocketsPublic() {
+    //TODO: FIXME to make this public
+    return updateOutputSockets();
+  }
+
   /**
    * This is used for serialization/deserialization.
    *

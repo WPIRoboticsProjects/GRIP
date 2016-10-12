@@ -6,16 +6,17 @@ import com.google.inject.servlet.SessionScoped
 import edu.wpi.grip.core.events.SocketChangedEvent
 import edu.wpi.grip.core.sockets.OutputSocket
 import edu.wpi.grip.web.session.SessionDestroyedEvent
-import edu.wpi.grip.web.session.SessionEventBus
 import edu.wpi.grip.web.session.SessionEventRegistered
 import org.bytedeco.javacpp.BytePointer
 import org.bytedeco.javacpp.opencv_core.Mat
 import org.bytedeco.javacpp.opencv_imgcodecs
+import org.slf4j.LoggerFactory
 import java.io.IOException
 import java.io.OutputStream
 import java.util.concurrent.atomic.AtomicBoolean
 import javax.annotation.concurrent.ThreadSafe
 import javax.inject.Inject
+import javax.inject.Named
 import javax.inject.Provider
 import javax.servlet.http.HttpSession
 import javax.ws.rs.core.StreamingOutput
@@ -31,13 +32,14 @@ private constructor(
         private val outputStreamHandler: (OutputStream, ByteArray) -> Unit,
         private val socket: OutputSocket<Mat>,
         private val httpSession: HttpSession) : StreamingOutput {
+    private val LOGGER = LoggerFactory.getLogger(StreamingOutputEventListener::class.java)
     private val sessionDestroyed = AtomicBoolean(false)
     private val imagePointer = BytePointer()
     private val lock = Object()
 
     @SessionScoped
     class Factory @Inject constructor(
-            private val sessioneventBus: SessionEventBus,
+            private @Named("Session Event Bus") val sessionEventBus: EventBus,
             private val eventBus: EventBus,
             private val httpSessionProvider: Provider<HttpSession>) {
 
@@ -48,7 +50,7 @@ private constructor(
                     socket,
                     httpSessionProvider.get())
             eventBus.register(outputListener)
-            sessioneventBus.register(outputListener)
+            sessionEventBus.register(outputListener)
             return outputListener
         }
     }
@@ -66,7 +68,7 @@ private constructor(
                     byteBuffer
                 }
                 try {
-                    // Pass the image pointer to be
+                    // Pass the image pointer to be run
                     outputStreamHandler.invoke(output, buffer)
                 } catch (e: IOException) {
                     return
@@ -83,6 +85,7 @@ private constructor(
 
     @Subscribe
     fun onSocketChanged(changeEvent: SocketChangedEvent) {
+        LOGGER.info("Socket Changed event {}", changeEvent)
         if (changeEvent.isRegarding(socket)) {
             socket.value.ifPresent {
                 synchronized(lock) {

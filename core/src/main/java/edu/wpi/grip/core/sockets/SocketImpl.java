@@ -27,7 +27,7 @@ import static com.google.common.base.Preconditions.checkState;
  * @param <T> The type of the value that this socket stores
  */
 public class SocketImpl<T> implements Socket<T> {
-  private final Provider<EventBus> eventBus;
+  private final EventBus eventBus;
   private final Direction direction;
   private final Set<Connection> connections = new HashSet<>();
   private final SocketHint<T> socketHint;
@@ -46,7 +46,7 @@ public class SocketImpl<T> implements Socket<T> {
              SocketHint<T> socketHint,
              Direction direction,
              UUID uuid) {
-    this.eventBus = checkNotNull(eventBus, "EventBus can not be null");
+    this.eventBus = checkNotNull(eventBus, "EventBus can not be null").get();
     this.socketHint = checkNotNull(socketHint, "Socket Hint can not be null");
     this.direction = checkNotNull(direction, "Direction can not be null");
     this.uuid = checkNotNull(uuid, "UUID cannot be null");
@@ -65,7 +65,7 @@ public class SocketImpl<T> implements Socket<T> {
     }
     this.value = optionalValue;
     onValueChanged();
-    eventBus.get().post(new SocketChangedEvent(this));
+    eventBus.post(new SocketChangedEvent(this));
   }
 
   @Override
@@ -116,7 +116,7 @@ public class SocketImpl<T> implements Socket<T> {
     this.connections.add(connection);
 
     if (this.connections.size() == 1) {
-      this.eventBus.get().post(new SocketConnectedChangedEvent(this));
+      this.eventBus.post(new SocketConnectedChangedEvent(this));
     }
   }
 
@@ -126,7 +126,7 @@ public class SocketImpl<T> implements Socket<T> {
     this.connections.remove(connection);
 
     if (this.connections.isEmpty()) {
-      this.eventBus.get().post(new SocketConnectedChangedEvent(this));
+      this.eventBus.post(new SocketConnectedChangedEvent(this));
     }
   }
 

@@ -64,6 +64,14 @@ paths:
             items:
               $ref: '#/definitions/OperationDescription'
   /sources:
+    put:
+      description: |
+        Adds a `Source` to this sessions pipeline.
+      responses:
+        200:
+          description: Source added to pipeline.
+          schema:
+            $ref: '#/definitions/Source'
     get:
       description: |
         Returns all `Sources` in this sessions pipeline.

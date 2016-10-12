@@ -66,5 +66,6 @@ fun <T> SocketHint<T>.toSwagger() : SwaggerSocketHint {
 fun Source.toSwagger() : SwaggerSource {
     val source = SwaggerSource()
     source.name = this.name
+    source.outputSockets = this.outputSockets.map { it.toSwagger() }.toList()
     return source
 }

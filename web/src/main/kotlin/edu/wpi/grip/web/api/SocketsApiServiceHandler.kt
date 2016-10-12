@@ -1,6 +1,8 @@
 package edu.wpi.grip.web.api
 
 import edu.wpi.grip.core.Pipeline
+import edu.wpi.grip.core.sockets.OutputSocket
+import edu.wpi.grip.web.io.StreamingOutputEventListener
 import edu.wpi.grip.web.swagger.api.SocketsApiService
 import org.bytedeco.javacpp.opencv_core
 import java.io.ByteArrayOutputStream
@@ -18,7 +20,8 @@ import javax.ws.rs.core.StreamingOutput
 
 
 class SocketsApiServiceHandler @Inject constructor(
-        val pipeline: Provider<Pipeline>) :
+        val pipeline: Provider<Pipeline>,
+        val streamingOutputEventListenerFactory: StreamingOutputEventListener.Factory) :
         SocketsApiService {
     val names = listOf("summer", "fall", "winter", "spring")
     val imageByteList: List<ByteArray>
@@ -67,13 +70,24 @@ class SocketsApiServiceHandler @Inject constructor(
 
     override fun socketsUuidImagesGet(uuid: String, securityContext: SecurityContext): Response {
         val realUUID = UUID.fromString(uuid)
-        val socket = pipeline.get().steps
+        val socket = pipeline.get().sources
                 .flatMap { it.outputSockets }
                 .filter { it.socketHint.type != opencv_core.Mat::class }
                 .single { it.uuid == realUUID }
-
-
-
-        TODO()
+        val stream = streamingOutputEventListenerFactory.create({
+            os, byte ->
+            run {
+                os.write(("--BoundaryString\r\n"
+                        + "Content-type: image/jpeg\r\n"
+                        + "Content-Length: "
+                        + byte.size
+                        + "\r\n\r\n").toByteArray())
+                os.write(byte)
+                os.write("\r\n\r\n".toByteArray())
+                os.flush()
+            }
+        }, socket = socket as OutputSocket<opencv_core.Mat>)
+        val mediaType = MediaType("multipart", "x-mixed-replace", mapOf("boundary".to("BoundaryString")))
+        return Response.ok(stream, mediaType).build()
     }
 }
