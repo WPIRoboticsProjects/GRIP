@@ -172,7 +172,7 @@ public class MainWindowController {
           } catch (IOException e) {
             eventBus.post(new UnexpectedThrowableEvent(e, "Failed to load save file"));
           }
-        },"Project Open Thread");
+        }, "Project Open Thread");
         fileOpenThread.setDaemon(true);
         fileOpenThread.start();
       }
