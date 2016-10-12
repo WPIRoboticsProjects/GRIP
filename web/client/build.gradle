@@ -1,3 +1,10 @@
 plugins {
     id "com.moowork.node" version "0.13"
 }
+
+
+task installGlobalDependencies(type: NpmTask) {
+    args = ['install', '-g', 'typescript', 'webpack']
+}
+
+npm_install.dependsOn(installGlobalDependencies)

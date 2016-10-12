@@ -23,5 +23,16 @@
   "bugs": {
     "url": "https://github.com/WPIRoboticsProjects/GRIP/issues"
   },
-  "homepage": "https://github.com/WPIRoboticsProjects/GRIP#readme"
+  "homepage": "https://github.com/WPIRoboticsProjects/GRIP#readme",
+  "dependencies": {
+    "@types/react": "^0.14.41",
+    "@types/react-dom": "^0.14.17",
+    "http-proxy": "^1.15.1",
+    "react": "^15.3.2",
+    "react-dom": "^15.3.2"
+  },
+  "devDependencies": {
+    "source-map-loader": "^0.1.5",
+    "ts-loader": "^0.9.1"
+  }
 }
