@@ -110,7 +110,9 @@ subprojects {
         maven {
             url = "https://github.com/WPIRoboticsProjects/rosjava_mvn_repo/raw/master"
         }
-        mavenLocal()
+        maven {
+            url = "https://jitpack.io"
+        }
     }
 }
 
