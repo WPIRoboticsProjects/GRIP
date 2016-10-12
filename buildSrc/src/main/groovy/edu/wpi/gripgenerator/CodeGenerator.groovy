@@ -26,8 +26,16 @@ class CodeGenerator extends DefaultTask {
     @TaskAction
     def runAction() {
         //Get the target directory
-        LinkedHashSet destSet = dest;
-        String targetDirectoryString = destSet.getAt(0).toString()
+        String targetDirectoryString;
+        if (dest instanceof LinkedHashSet) {
+            LinkedHashSet destSet = dest;
+            targetDirectoryString = destSet.getAt(0).toString()
+        } else  if (dest instanceof String) {
+            targetDirectoryString = dest
+        } else {
+            throw new IllegalArgumentException("dest: $dest is an illegal type")
+        }
+
 
         //Generate all of the output units
         Map<String, CompilationUnit> files = FileParser.generateAllSourceCode();
