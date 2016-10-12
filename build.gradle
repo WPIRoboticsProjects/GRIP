@@ -327,6 +327,7 @@ project(":core") {
         removeExisting true
     }
     generateCodeFromSource.onlyIf { !project.hasProperty('skipGenerate') }
+    compileJava.dependsOn generateCodeFromSource
 }
 
 project (":ui:linuxLauncher") {
