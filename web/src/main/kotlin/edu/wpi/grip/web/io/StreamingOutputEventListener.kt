@@ -62,6 +62,7 @@ private constructor(
 
                     val byteBuffer = ByteArray(imagePointer.limit())
                     imagePointer.get(byteBuffer) // Load the image pointer into the buffer
+                    lock.notifyAll()
                     byteBuffer
                 }
                 try {
@@ -87,6 +88,8 @@ private constructor(
                 synchronized(lock) {
                     opencv_imgcodecs.imencode(".jpeg", socket.value.get(), imagePointer)
                     lock.notifyAll()
+                    // Now wait for the image to be copied
+                    lock.wait()
                 }
             }
         }

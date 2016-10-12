@@ -8,6 +8,7 @@ import edu.wpi.grip.core.Pipeline;
 import edu.wpi.grip.web.api.OperationsApiServiceHandler;
 import edu.wpi.grip.web.api.PersonsApiServiceHandler;
 import edu.wpi.grip.web.api.SocketsApiServiceHandler;
+import edu.wpi.grip.web.api.SourcesApiServiceHandler;
 import edu.wpi.grip.web.api.StepApiServiceHandler;
 import edu.wpi.grip.web.io.StreamingOutputEventListener;
 import edu.wpi.grip.web.session.GripSessionModule;
@@ -20,6 +21,8 @@ import edu.wpi.grip.web.swagger.api.PersonsApi;
 import edu.wpi.grip.web.swagger.api.PersonsApiService;
 import edu.wpi.grip.web.swagger.api.SocketsApi;
 import edu.wpi.grip.web.swagger.api.SocketsApiService;
+import edu.wpi.grip.web.swagger.api.SourcesApi;
+import edu.wpi.grip.web.swagger.api.SourcesApiService;
 import edu.wpi.grip.web.swagger.api.StepsApi;
 import edu.wpi.grip.web.swagger.api.StepsApiService;
 
@@ -58,7 +61,7 @@ import javax.ws.rs.Path;
 
 
 public class GripServletConfig extends GuiceServletContextListener implements HttpSessionListener {
-  private static Logger logger = LoggerFactory.getLogger(GripServletConfig.class);
+  private static Logger LOGGER = LoggerFactory.getLogger(GripServletConfig.class);
   private final SessionEventBus sessionEventBus = new SessionEventBus("Session Event Bus");
   private EventListenerScanner eventListenerScanner;
 
@@ -103,11 +106,15 @@ public class GripServletConfig extends GuiceServletContextListener implements Ht
 
   @Override
   public void contextDestroyed(ServletContextEvent servletContextEvent) {
-    eventListenerScanner.accept(visit -> {
-      if (visit instanceof ServletContextListener) {
-        ((ServletContextListener) visit).contextInitialized(servletContextEvent);
-      }
-    });
+    if (eventListenerScanner != null) {
+      eventListenerScanner.accept(visit -> {
+        if (visit instanceof ServletContextListener) {
+          ((ServletContextListener) visit).contextInitialized(servletContextEvent);
+        }
+      });
+    } else {
+      LOGGER.error("eventListenerScanner was null. Injector must have failed to be created");
+    }
     super.contextDestroyed(servletContextEvent);
   }
 
@@ -143,6 +150,9 @@ public class GripServletConfig extends GuiceServletContextListener implements Ht
         bind(StepsApiService.class)
             .to(StepApiServiceHandler.class);
 
+        bind(SourcesApiService.class)
+            .to(SourcesApiServiceHandler.class);
+
         bind(PersonsApiService.class)
             .to(PersonsApiServiceHandler.class);
 
@@ -153,6 +163,7 @@ public class GripServletConfig extends GuiceServletContextListener implements Ht
             .to(SocketsApiServiceHandler.class);
 
         bind(StepsApi.class);
+        bind(SourcesApi.class);
         bind(PersonsApi.class);
         bind(OperationsApi.class);
         bind(SocketsApi.class);
@@ -187,13 +198,13 @@ public class GripServletConfig extends GuiceServletContextListener implements Ht
 
   @Override
   public void sessionCreated(HttpSessionEvent httpSessionEvent) {
-    logger.info("Config Session created {}", httpSessionEvent);
+    LOGGER.info("Config Session created {}", httpSessionEvent);
     sessionEventBus.register(new SessionCreatedEvent(httpSessionEvent.getSession()));
   }
 
   @Override
   public void sessionDestroyed(HttpSessionEvent httpSessionEvent) {
-    logger.info("Config Session destroyed {}", httpSessionEvent);
+    LOGGER.info("Config Session destroyed {}", httpSessionEvent);
     sessionEventBus.register(new SessionDestroyedEvent(httpSessionEvent.getSession()));
   }
 

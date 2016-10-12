@@ -17,6 +17,8 @@ public class GripSessionModule extends AbstractModule {
 
   @Override
   protected void configure() {
+    bind(SessionEventBus.class)
+        .toInstance(sessionEventBus);
     bindListener(Matchers.any(), new TypeListener() {
       @Override
       public <I> void hear(TypeLiteral<I> type, TypeEncounter<I> encounter) {

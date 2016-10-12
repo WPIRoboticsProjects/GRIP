@@ -63,6 +63,19 @@ paths:
             uniqueItems: true
             items:
               $ref: '#/definitions/OperationDescription'
+  /sources:
+    get:
+      description: |
+        Returns all `Sources` in this sessions pipeline.
+      responses:
+        200:
+          description: List of sources
+          schema:
+            title: ArrayOfSources
+            type: array
+            uniqueItems: true
+            items:
+              $ref: '#/definitions/Step'
   /steps:
     put:
       description: |
