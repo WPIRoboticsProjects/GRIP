@@ -333,7 +333,7 @@ public class CameraSource extends Source implements RestartableService {
       TimeoutException, IOException {
     if (event.getSource() == this) {
       try {
-        this.stopAsync();
+        this.stopAndAwait();
       } finally {
         this.eventBus.unregister(this);
       }
