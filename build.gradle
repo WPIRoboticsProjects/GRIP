@@ -144,6 +144,8 @@ configure(subprojects - project(':ui:linuxLauncher')) {
     }
 
     pmd {
+        // Remove InvalidSlf4jMessageFormat exclusion after bumped to version 5.5.2
+        toolVersion = '5.5.1'
         consoleOutput = true
         sourceSets = [sourceSets.main, sourceSets.test]
         reportsDir = file("$project.buildDir/reports/pmd")

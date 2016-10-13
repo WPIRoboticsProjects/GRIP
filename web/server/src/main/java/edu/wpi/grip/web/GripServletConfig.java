@@ -66,7 +66,7 @@ import javax.ws.rs.Path;
 
 
 public class GripServletConfig extends GuiceServletContextListener implements HttpSessionListener {
-  private static Logger LOGGER = LoggerFactory.getLogger(GripServletConfig.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(GripServletConfig.class);
   private final SessionEventBus sessionEventBus = new SessionEventBus("Session Event Bus");
   private EventListenerScanner eventListenerScanner;
 
@@ -145,6 +145,7 @@ public class GripServletConfig extends GuiceServletContextListener implements Ht
             LOGGER.info("Registering {} for session id {}", registered, session.getId());
             super.register(registered);
           }
+
           @Override
           public void post(Object event) {
             LOGGER.trace("Posting event {} for session id {}", event, session.getId());
@@ -215,9 +216,6 @@ public class GripServletConfig extends GuiceServletContextListener implements Ht
             .in(Singleton.class);
         serve("/*")
             .with(HttpServletDispatcher.class);
-
-        serve("/grip")
-            .with(MJPG.class);
       }
 
     };
