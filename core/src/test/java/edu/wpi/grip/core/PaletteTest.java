@@ -13,12 +13,11 @@ import static org.junit.Assert.assertEquals;
 
 public class PaletteTest {
   private Palette palette;
-  private EventBus eventBus;
   private OperationMetaData operation;
 
   @Before
   public void setUp() {
-    eventBus = new EventBus();
+    final EventBus eventBus = new EventBus();
     palette = new Palette(() -> eventBus);
     operation = new OperationMetaData(OperationDescription.builder()
         .name("Find Target")

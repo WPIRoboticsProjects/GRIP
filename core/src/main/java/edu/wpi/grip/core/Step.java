@@ -82,7 +82,7 @@ public class Step {
   }
 
   /**
-   * @return a UUID to distinguish this class
+   * @return A UUID to distinguish this class.
    */
   public UUID getUuid() {
     return uuid;
