@@ -8,8 +8,8 @@ import edu.wpi.grip.core.PipelineRunner;
 import edu.wpi.grip.core.events.UnexpectedThrowableEvent;
 import edu.wpi.grip.core.http.GripServer;
 import edu.wpi.grip.core.http.HttpPipelineSwitcher;
-import edu.wpi.grip.core.operations.CVOperations;
 import edu.wpi.grip.core.operations.BasicOperations;
+import edu.wpi.grip.core.operations.CVOperations;
 import edu.wpi.grip.core.operations.NetworkOperations;
 import edu.wpi.grip.core.operations.network.GripNetworkModule;
 import edu.wpi.grip.core.serialization.Project;
@@ -31,6 +31,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.application.Preloader;
@@ -40,6 +41,7 @@ import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
+
 import javax.inject.Inject;
 
 public class Main extends Application {

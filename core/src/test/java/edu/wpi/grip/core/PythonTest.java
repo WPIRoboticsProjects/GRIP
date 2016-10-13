@@ -32,8 +32,10 @@ public class PythonTest {
   public void setUp() {
     testModule = new GripCoreTestModule();
     testModule.setUp();
-    final Injector injector = Guice.createInjector(Modules.override(testModule)
-        .with(new MockGripNetworkModule()));
+    final Injector injector = Guice.createInjector(
+        new GripBasicModule(),
+        Modules.override(testModule)
+            .with(new MockGripNetworkModule()));
     eventBus = injector.getInstance(EventBus.class);
     isf = injector.getInstance(InputSocket.Factory.class);
     osf = injector.getInstance(OutputSocket.Factory.class);

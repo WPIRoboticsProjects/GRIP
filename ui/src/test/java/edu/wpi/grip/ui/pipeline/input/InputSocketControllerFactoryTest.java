@@ -1,5 +1,6 @@
 package edu.wpi.grip.ui.pipeline.input;
 
+import edu.wpi.grip.core.GripBasicModule;
 import edu.wpi.grip.core.OperationMetaData;
 import edu.wpi.grip.core.Palette;
 import edu.wpi.grip.core.Step;
@@ -35,7 +36,7 @@ import static org.testfx.api.FxAssert.verifyThat;
 public class InputSocketControllerFactoryTest extends ApplicationTest {
 
   private final OperationMetaData operationMeta;
-  @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
+  @SuppressWarnings( {"PMD.UnusedPrivateField", "PMD.SingularField"})
   private final String name;
   private GripCoreTestModule testModule;
   private Step.Factory stepFactory;
@@ -57,8 +58,9 @@ public class InputSocketControllerFactoryTest extends ApplicationTest {
     GripCoreTestModule testModule = new GripCoreTestModule();
     testModule.setUp();
 
-    Injector injector = Guice.createInjector(Modules.override(testModule)
-        .with(new MockGripNetworkModule()));
+    Injector injector = Guice.createInjector(
+        Modules.override(new GripBasicModule(), testModule)
+            .with(new MockGripNetworkModule()));
     final Palette palette = injector.getInstance(Palette.class);
     final EventBus eventBus = injector.getInstance(EventBus.class);
     palette.addOperations(OperationsFactory.create(eventBus));
@@ -81,8 +83,9 @@ public class InputSocketControllerFactoryTest extends ApplicationTest {
   public void start(Stage stage) {
     testModule = new GripCoreTestModule();
     testModule.setUp();
-    Injector injector = Guice.createInjector(Modules.override(testModule)
-        .with(new GripUiModule(), new MockGripNetworkModule()));
+    Injector injector = Guice.createInjector(
+        Modules.override(new GripBasicModule(), testModule)
+            .with(new GripUiModule(), new MockGripNetworkModule()));
     inputSocketControllerFactory = injector.getInstance(InputSocketControllerFactory.class);
     stepFactory = injector.getInstance(Step.Factory.class);
     gridPane = new GridPane();

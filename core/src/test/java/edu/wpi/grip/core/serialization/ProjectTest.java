@@ -3,13 +3,14 @@ package edu.wpi.grip.core.serialization;
 import edu.wpi.grip.core.AddOperation;
 import edu.wpi.grip.core.AdditionOperation;
 import edu.wpi.grip.core.Connection;
+import edu.wpi.grip.core.GripBasicModule;
 import edu.wpi.grip.core.ManualPipelineRunner;
 import edu.wpi.grip.core.OperationMetaData;
+import edu.wpi.grip.core.Palette;
 import edu.wpi.grip.core.Pipeline;
 import edu.wpi.grip.core.PipelineRunner;
 import edu.wpi.grip.core.Step;
 import edu.wpi.grip.core.events.ConnectionAddedEvent;
-import edu.wpi.grip.core.events.OperationAddedEvent;
 import edu.wpi.grip.core.events.ProjectSettingsChangedEvent;
 import edu.wpi.grip.core.events.SourceAddedEvent;
 import edu.wpi.grip.core.operations.PythonScriptFile;
@@ -66,8 +67,10 @@ public class ProjectTest {
   public void setUp() throws Exception {
     testModule = new GripCoreTestModule();
     testModule.setUp();
-    final Injector injector = Guice.createInjector(Modules.override(testModule)
-        .with(new MockGripNetworkModule()));
+    final Injector injector = Guice.createInjector(
+        new GripBasicModule(),
+        Modules.override(testModule)
+            .with(new MockGripNetworkModule()));
     connectionFactory = injector
         .getInstance(Key.get(new TypeLiteral<Connection.Factory<Object>>() {
         }));
@@ -76,6 +79,7 @@ public class ProjectTest {
     eventBus = injector.getInstance(EventBus.class);
     project = injector.getInstance(Project.class);
     stepFactory = injector.getInstance(Step.Factory.class);
+    final Palette palette = injector.getInstance(Palette.class);
     final InputSocket.Factory isf = injector.getInstance(InputSocket.Factory.class);
     final OutputSocket.Factory osf = injector.getInstance(OutputSocket.Factory.class);
 
@@ -100,10 +104,10 @@ public class ProjectTest {
     opencvAddOperation = new OperationMetaData(AddOperation.DESCRIPTION,
         () -> new AddOperation(isf, osf));
 
-    eventBus.post(new OperationAddedEvent(pythonAdditionOperationFromURL));
-    eventBus.post(new OperationAddedEvent(pythonAdditionOperationFromSource));
-    eventBus.post(new OperationAddedEvent(additionOperation));
-    eventBus.post(new OperationAddedEvent(opencvAddOperation));
+    palette.addOperation(pythonAdditionOperationFromURL);
+    palette.addOperation(pythonAdditionOperationFromSource);
+    palette.addOperation(additionOperation);
+    palette.addOperation(opencvAddOperation);
   }
 
   @After

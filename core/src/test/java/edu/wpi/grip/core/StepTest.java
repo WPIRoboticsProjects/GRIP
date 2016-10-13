@@ -25,8 +25,10 @@ public class StepTest {
   @Before
   public void setUp() {
     testModule.setUp();
-    Injector injector = Guice.createInjector(Modules.override(testModule)
-        .with(new MockGripNetworkModule()));
+    Injector injector = Guice.createInjector(
+        new GripBasicModule(),
+        Modules.override(testModule)
+            .with(new MockGripNetworkModule()));
     InputSocket.Factory isf = injector.getInstance(InputSocket.Factory.class);
     OutputSocket.Factory osf = injector.getInstance(OutputSocket.Factory.class);
     additionMeta = new OperationMetaData(AdditionOperation.DESCRIPTION, () -> new

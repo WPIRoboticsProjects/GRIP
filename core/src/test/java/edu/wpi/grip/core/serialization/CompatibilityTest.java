@@ -1,5 +1,6 @@
 package edu.wpi.grip.core.serialization;
 
+import edu.wpi.grip.core.GripBasicModule;
 import edu.wpi.grip.core.Palette;
 import edu.wpi.grip.core.Pipeline;
 import edu.wpi.grip.core.operations.OperationsFactory;
@@ -48,7 +49,9 @@ public class CompatibilityTest {
     testModule = new GripCoreTestModule();
     testModule.setUp();
     //Set up the stuff we need for the core functionality for GRIP
-    final Injector injector = Guice.createInjector(testModule);
+    final Injector injector = Guice.createInjector(
+        new GripBasicModule(),
+        testModule);
 
     final EventBus eventBus = injector.getInstance(EventBus.class);
     pipeline = injector.getInstance(Pipeline.class);
