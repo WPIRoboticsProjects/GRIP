@@ -1,38 +1,49 @@
 {
-  "name": "grip_client",
-  "version": "0.1.0",
-  "description": "The html and javascript content for the GRIP server.",
+  "name": "react-typescript-boilerplate",
+  "version": "1.0.0",
+  "description": "Boilerplate project that uses Typescript, React, and Webpack",
   "main": "index.js",
   "scripts": {
+    "build:webpack": "NODE_ENV=production webpack --config config/webpack.prod.js",
+    "build": "npm run clean && npm run build:webpack",
+    "clean": "rimraf build",
+    "start": "node dev_server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "author": "George Lee",
+  "license": "ISC",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/WPIRoboticsProjects/GRIP.git"
+    "url": "https://github.com/keokilee/react-typescript-boilerplate.git"
   },
-  "keywords": [
-    "opencv",
-    "computer vision",
-    "WPI",
-    "Worcester Polytechnic Institute",
-    "FIRST",
-    "robotics"
-  ],
-  "author": "WPI Robotics Projects",
-  "license": "BSD-3-Clause",
   "bugs": {
-    "url": "https://github.com/WPIRoboticsProjects/GRIP/issues"
+    "url": "https://github.com/keokilee/react-typescript-boilerplate/issues"
   },
-  "homepage": "https://github.com/WPIRoboticsProjects/GRIP#readme",
-  "dependencies": {
-    "@types/react": "^0.14.41",
-    "@types/react-dom": "^0.14.17",
-    "http-proxy": "^1.15.1",
-    "react": "^15.3.2",
-    "react-dom": "^15.3.2"
-  },
+  "homepage": "https://github.com/keokilee/react-typescript-boilerplate",
   "devDependencies": {
-    "source-map-loader": "^0.1.5",
-    "ts-loader": "^0.9.1"
+    "babel-core": "^6.4.5",
+    "babel-loader": "^6.2.1",
+    "babel-plugin-react-transform": "^2.0.0",
+    "babel-preset-es2015": "^6.16.0",
+    "babel-preset-react": "^6.3.13",
+    "babel-preset-stage-0": "^6.3.13",
+    "express": "^4.13.4",
+    "react-transform-catch-errors": "^1.0.2",
+    "react-transform-hmr": "^1.0.2",
+    "redbox-react": "^1.2.2",
+    "rimraf": "^2.5.2",
+    "tslint": "^3.3.0",
+    "tslint-loader": "^2.1.0",
+    "webpack": "^1.12.15",
+    "webpack-dev-middleware": "^1.5.1",
+    "webpack-hot-middleware": "^2.6.4"
+  },
+  "dependencies": {
+    "react": "^15.3.0",
+    "react-dom": "^15.3.0",
+    "react-redux": "^4.1.2",
+    "redux": "^3.1.5",
+    "ts-loader": "^0.8.1",
+    "typescript": "^1.7.5"
   }
 }
