@@ -133,8 +133,6 @@ public class Main extends Application {
         }
       });
 
-      // If this isn't here this can cause a deadlock on windows. See issue #297
-      stage.setOnCloseRequest(event -> SafeShutdown.exit(0, Platform::exit));
       stage.setTitle(MAIN_TITLE);
       stage.getIcons().add(new Image("/edu/wpi/grip/ui/icons/grip.png"));
       stage.setScene(new Scene(root));
