@@ -8,13 +8,13 @@ export interface ICounterAction {
 }
 
 export function incrementCounter(counterId: number): ICounterAction {
-  return { type: ACTION.IncrementCounter, counterId };
+  return {type: ACTION.IncrementCounter, counterId};
 }
 
 export function decrementCounter(counterId: number): ICounterAction {
-  return { type: ACTION.DecrementCounter, counterId };
+  return {type: ACTION.DecrementCounter, counterId};
 }
 
 export function addCounter(): ICounterAction {
-  return { type: ACTION.AddCounter };
+  return {type: ACTION.AddCounter};
 }

@@ -1,8 +1,7 @@
 /// <reference path="../../typings/index.d.ts" />
 
 import * as React from 'react';
-
-import { Counter } from './counter';
+import {Counter} from './counter';
 
 interface ICounterListProps {
   counters: number[];

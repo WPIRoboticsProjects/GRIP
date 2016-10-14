@@ -12,12 +12,14 @@ import { CounterList } from './counter_list';
 function select(state) {
     return {
         counters: state.counters,
+        operations: state.operations,
     };
 }
 export let App = class App extends React.Component {
     render() {
         const { dispatch, counters } = this.props;
         return (<div>
+        <h1>GRIP Webapp</h1>
         <CounterList counters={counters} increment={(index) => dispatch(incrementCounter(index))} decrement={(index) => dispatch(decrementCounter(index))}/>
 
         <button onClick={() => dispatch(addCounter())}>Add Counter</button>

@@ -1,7 +1,7 @@
 /// <reference path="../typings/index.d.ts" />
 
-import { Reducer, combineReducers } from 'redux';
-import { ICounterAction, ACTION } from './actions';
+import {Reducer, combineReducers} from 'redux';
+import {ICounterAction, ACTION} from './actions';
 
 function counters(state: number[] = [0, 0, 0], action: ICounterAction): number[] {
   switch (action.type) {
@@ -27,4 +27,4 @@ function counters(state: number[] = [0, 0, 0], action: ICounterAction): number[]
   }
 }
 
-export const counterApp: Reducer = combineReducers({ counters });
+export const counterApp: Reducer = combineReducers({counters});
