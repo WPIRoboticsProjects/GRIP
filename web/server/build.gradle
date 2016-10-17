@@ -21,7 +21,7 @@ gretty {
 swagger {
     inputSpec = "${project(':web').projectDir.path}/spec/swagger.yaml"
 
-    output = 'build/swagger'
+    output = "${project.buildDir.path}/swagger"
     language = 'jaxrs-resteasy'
 
     additionalProperties = [

@@ -9,6 +9,7 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { incrementCounter, decrementCounter, addCounter } from '../actions';
 import { CounterList } from './counter_list';
+import { GripToolbar } from './GripToolbar';
 function select(state) {
     return {
         counters: state.counters,
@@ -19,6 +20,7 @@ export let App = class App extends React.Component {
     render() {
         const { dispatch, counters } = this.props;
         return (<div>
+        <GripToolbar />
         <h1>GRIP Webapp</h1>
         <CounterList counters={counters} increment={(index) => dispatch(incrementCounter(index))} decrement={(index) => dispatch(decrementCounter(index))}/>
 

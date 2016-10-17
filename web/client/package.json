@@ -1,5 +1,5 @@
 {
-  "name": "react-typescript-boilerplate",
+  "name": "grip-web",
   "version": "1.0.0",
   "description": "Boilerplate project that uses Typescript, React, and Webpack",
   "main": "index.js",
@@ -10,16 +10,16 @@
     "start": "node dev_server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "George Lee",
-  "license": "ISC",
+  "author": "WPI Robotics Projects",
+  "license": "3 Clause BSD",
   "repository": {
     "type": "git",
-    "url": "https://github.com/keokilee/react-typescript-boilerplate.git"
+    "url": "https://github.com/WPIRoboticsProjects/GRIP.git"
   },
   "bugs": {
-    "url": "https://github.com/keokilee/react-typescript-boilerplate/issues"
+    "url": "https://github.com/WPIRoboticsProjects/GRIP/issues"
   },
-  "homepage": "https://github.com/keokilee/react-typescript-boilerplate",
+  "homepage": "https://github.com/WPIRoboticsProjects/GRIP",
   "devDependencies": {
     "babel-core": "^6.4.5",
     "babel-loader": "^6.2.1",
@@ -40,9 +40,11 @@
   },
   "dependencies": {
     "grip-swagger": "file:../build/grip-swagger",
+    "material-ui": "^0.16.0",
     "react": "^15.3.0",
     "react-dom": "^15.3.0",
     "react-redux": "^4.1.2",
+    "react-tap-event-plugin": "^1.0.0",
     "redux": "^3.1.5",
     "ts-loader": "^0.8.1",
     "typescript": "^1.7.5"
