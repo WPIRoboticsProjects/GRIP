@@ -1,2 +1,5 @@
 /dist
 /typings
+
+app/**/*.js
+app/**/*.jsx
