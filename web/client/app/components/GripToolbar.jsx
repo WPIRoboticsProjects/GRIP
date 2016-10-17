@@ -11,6 +11,7 @@ export class GripToolbar extends React.Component {
     }
     render() {
         return (<Material.Toolbar>
+        <Material.ToolbarTitle text='GRIP'/>
         <Material.ToolbarGroup firstChild={true}>
           <Material.DropDownMenu value={this.state.value} onChange={this.handleChange}>
             <Material.MenuItem value={1} primaryText='All Broadcasts'/>

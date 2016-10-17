@@ -7,6 +7,17 @@ export interface ICounterAction {
   counterId?: number;
 }
 
+export enum OPERATION_ACTION { Add, }
+
+export interface IOperationAction {
+  type: OPERATION_ACTION;
+  name: string;
+}
+
+export function createOperationStep(name: string): IOperationAction {
+  return {type: OPERATION_ACTION.Add, name};
+}
+
 export function incrementCounter(counterId: number): ICounterAction {
   return {type: ACTION.IncrementCounter, counterId};
 }

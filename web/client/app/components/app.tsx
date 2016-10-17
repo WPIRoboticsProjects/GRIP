@@ -3,10 +3,11 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 
-import { incrementCounter, decrementCounter, addCounter } from '../actions';
+import {incrementCounter, decrementCounter, addCounter, createOperationStep} from '../actions';
 import { CounterList } from './counter_list';
 import {OperationDescription} from 'grip-swagger';
 import {GripToolbar} from './GripToolbar';
+import {OperationList} from './operation_list';
 
 interface IAppState {
   counters: number[];
@@ -34,10 +35,18 @@ export class App extends React.Component<IAppProps, {}> {
   public render(): React.ReactElement<{}> {
     const { dispatch, counters }: any = this.props;
 
+    const operation: OperationDescription = {
+      name: 'An operation',
+    };
+    const operation2: OperationDescription = {
+      name: 'A second op',
+    };
     return (
       <div>
         <GripToolbar/>
-        <h1>GRIP Webapp</h1>
+        <OperationList operationDescriptions={[operation, operation2]}
+                       createOperation={(name: string) => dispatch(createOperationStep(name))}
+        />
         <CounterList counters={counters}
                      increment={(index: number) => dispatch(incrementCounter(index))}
                      decrement={(index: number) => dispatch(decrementCounter(index))}

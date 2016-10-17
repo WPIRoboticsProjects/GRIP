@@ -7,9 +7,10 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 };
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { incrementCounter, decrementCounter, addCounter } from '../actions';
+import { incrementCounter, decrementCounter, addCounter, createOperationStep } from '../actions';
 import { CounterList } from './counter_list';
 import { GripToolbar } from './GripToolbar';
+import { OperationList } from './operation_list';
 function select(state) {
     return {
         counters: state.counters,
@@ -19,9 +20,15 @@ function select(state) {
 export let App = class App extends React.Component {
     render() {
         const { dispatch, counters } = this.props;
+        const operation = {
+            name: 'An operation',
+        };
+        const operation2 = {
+            name: 'A second op',
+        };
         return (<div>
         <GripToolbar />
-        <h1>GRIP Webapp</h1>
+        <OperationList operationDescriptions={[operation, operation2]} createOperation={(name) => dispatch(createOperationStep(name))}/>
         <CounterList counters={counters} increment={(index) => dispatch(incrementCounter(index))} decrement={(index) => dispatch(decrementCounter(index))}/>
 
         <button onClick={() => dispatch(addCounter())}>Add Counter</button>

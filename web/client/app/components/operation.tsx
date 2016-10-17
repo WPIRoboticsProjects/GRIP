@@ -2,14 +2,19 @@
 
 import {OperationDescription} from 'grip-swagger';
 import * as React from 'react';
+import {ListItem} from 'material-ui/List';
 
-interface IOperationProps {
+interface IOperationProps extends React.Props<{}> {
   operationDescription: OperationDescription;
   createOperation: () => void;
 }
 
 export class Operation extends React.Component<IOperationProps, {}> {
   public render(): React.ReactElement<{}> {
-    return (<div>Hello I'm bind!!!</div>);
+    return (
+      <ListItem primaryText={
+        this.props.operationDescription.name
+      }/>
+    );
   }
 }

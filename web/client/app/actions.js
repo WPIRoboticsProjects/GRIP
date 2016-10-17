@@ -5,6 +5,13 @@ export var ACTION;
     ACTION[ACTION["DecrementCounter"] = 1] = "DecrementCounter";
     ACTION[ACTION["AddCounter"] = 2] = "AddCounter";
 })(ACTION || (ACTION = {}));
+export var OPERATION_ACTION;
+(function (OPERATION_ACTION) {
+    OPERATION_ACTION[OPERATION_ACTION["Add"] = 0] = "Add";
+})(OPERATION_ACTION || (OPERATION_ACTION = {}));
+export function createOperationStep(name) {
+    return { type: OPERATION_ACTION.Add, name };
+}
 export function incrementCounter(counterId) {
     return { type: ACTION.IncrementCounter, counterId };
 }
