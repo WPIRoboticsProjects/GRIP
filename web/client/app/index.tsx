@@ -47,7 +47,7 @@ function configureStore(): Store {
 
 const store: Store = configureStore();
 const multiTheme: MuiTheme = getMuiTheme(darkBaseTheme);
-
+console.log(multiTheme);
 
 class Main extends React.Component<{}, {}> {
   public render(): React.ReactElement<MuiThemeProvider> {
