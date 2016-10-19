@@ -30,11 +30,11 @@ module.exports = {
     },
     {
       test: /\.scss$/,
-      loader: ExtractTextPlugin.extract('typings-for-css-modules?modules&sass&namedExport'),
+      loader: ExtractTextPlugin.extract('typings-for-css-modules?modules&sass&camelCase&namedExport&localIdentName=[path][name]---[local]---[hash:base64:5]'),
     },
     {
       test: /\.css$/,
-      loader: ExtractTextPlugin.extract('typings-for-css-modules?modules&namedExport'),
+      loader: ExtractTextPlugin.extract('typings-for-css-modules?modules&camelCase&namedExport&localIdentName=[path][name]---[local]---[hash:base64:5]'),
       include: /flexboxgrid/,
     }],
   },

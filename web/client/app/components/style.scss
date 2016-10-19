@@ -2,6 +2,11 @@
 .operationRoot {
   margin-bottom: 24px;
   margin-right: 24px;
-  max-width: 360px;
   width: 100%;
+}
+
+.container {
+  border: solid 1px #d9d9d9;
+  height: 500px;
+  overflow: hidden;
 }

@@ -8,6 +8,9 @@ import { CounterList } from './counter_list';
 import {OperationDescription} from 'grip-swagger';
 import {GripToolbar} from './GripToolbar';
 import {OperationList} from './operation_list';
+import {Grid} from 'react-flexbox-grid';
+import {Row} from 'react-flexbox-grid';
+import {Col} from 'react-flexbox-grid';
 
 interface IAppState {
   counters: number[];
@@ -44,14 +47,19 @@ export class App extends React.Component<IAppProps, {}> {
     return (
       <div>
         <GripToolbar/>
-        <OperationList operationDescriptions={[operation, operation2]}
-                       createOperation={(name: string) => dispatch(createOperationStep(name))}
-        />
+        <Grid>
+          <Row>
+            <Col xsOffset={6} xs={6}>
+              <OperationList operationDescriptions={[operation, operation2]}
+                             createOperation={(name: string) => dispatch(createOperationStep(name))}
+              />
+            </Col>
+          </Row>
+        </Grid>
         <CounterList counters={counters}
                      increment={(index: number) => dispatch(incrementCounter(index))}
                      decrement={(index: number) => dispatch(decrementCounter(index))}
         />
-
         <button onClick={() => dispatch(addCounter())}>Add Counter</button>
       </div>
     );

@@ -3,3 +3,4 @@
 
 app/**/*.js
 app/**/*.jsx
+app/**/*.scss.d.ts

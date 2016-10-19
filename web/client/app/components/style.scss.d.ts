@@ -1,1 +1,0 @@
-export const operationRoot: string;
