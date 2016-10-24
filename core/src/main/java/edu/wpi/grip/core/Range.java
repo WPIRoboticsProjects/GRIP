@@ -32,7 +32,8 @@ public class Range {
   }
 
   /**
-   * Creates a new range with the given bounds. This is equivalent to {@link new Range(min, max)}.
+   * Creates a new range with the given bounds. This is equivalent to
+   * {@link #Range(double, double) new Range(min, max)} .
    *
    * @param min the lower end of the range
    * @param max the upper end of the range
@@ -88,7 +89,7 @@ public class Range {
   }
 
   public String toString() {
-    return String.format("[%f, %f]", min, max);
+    return String.format("Range(%f, %f)", min, max);
   }
 
 }
