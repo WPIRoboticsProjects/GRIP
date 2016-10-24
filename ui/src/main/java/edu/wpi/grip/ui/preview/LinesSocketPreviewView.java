@@ -40,6 +40,8 @@ public class LinesSocketPreviewView extends SocketPreviewView<LinesReport> {
   private final ImageView imageView = new ImageView();
   private final Label infoLabel = new Label();
   private final Mat tmp = new Mat();
+  private final Point startPoint = new Point();
+  private final Point endPoint = new Point();
   private final GripPlatform platform;
   @SuppressWarnings("PMD.ImmutableField")
   @SuppressFBWarnings(value = "IS2_INCONSISTENT_SYNC",
@@ -99,8 +101,10 @@ public class LinesSocketPreviewView extends SocketPreviewView<LinesReport> {
 
         // For each line in the report, draw a line along with the starting and ending points
         for (LinesReport.Line line : lines) {
-          final Point startPoint = new Point((int) line.x1, (int) line.y1);
-          final Point endPoint = new Point((int) line.x2, (int) line.y2);
+          startPoint.x((int) line.x1);
+          startPoint.y((int) line.y1);
+          endPoint.x((int) line.x2);
+          endPoint.y((int) line.y2);
           line(input, startPoint, endPoint, Scalar.WHITE, 2, LINE_8, 0);
           circle(input, startPoint, 2, Scalar.WHITE, 2, LINE_8, 0);
           circle(input, endPoint, 2, Scalar.WHITE, 2, LINE_8, 0);

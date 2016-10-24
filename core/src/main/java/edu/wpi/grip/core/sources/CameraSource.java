@@ -333,7 +333,12 @@ public class CameraSource extends Source implements RestartableService {
       TimeoutException, IOException {
     if (event.getSource() == this) {
       try {
-        this.stopAsync();
+        // Stop the camera service and wait for it to terminate.
+        // If we just use stopAsync(), the camera service won't always have terminated by the time
+        // a new camera source is added. For webcam sources, this means that the video stream
+        // won't be freed and new sources won't be able to connect to the webcam until the
+        // application is closed.
+        this.stopAndAwait();
       } finally {
         this.eventBus.unregister(this);
       }
