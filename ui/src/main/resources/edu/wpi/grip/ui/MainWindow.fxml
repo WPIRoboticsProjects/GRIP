@@ -216,6 +216,7 @@
     <fx:define>
         <fx:include source="Deploy.fxml" fx:id="deployPane" />
         <fx:include source="AboutDialog.fxml" fx:id="aboutPane" />
+        <fx:include source="analysis/Analysis.fxml" fx:id="analysisPane" />
     </fx:define>
     <stylesheets>
         <URL value="@GRIP.css" />

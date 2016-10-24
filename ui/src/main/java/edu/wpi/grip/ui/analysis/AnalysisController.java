@@ -12,6 +12,7 @@ import edu.wpi.grip.core.metrics.Statistics;
 
 import com.google.common.collect.EvictingQueue;
 import com.google.common.eventbus.Subscribe;
+import com.google.inject.Inject;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -44,12 +45,10 @@ import javafx.util.Callback;
 
 import javax.annotation.Nullable;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-
 /**
- * Controller for the analysis window.
+ * Controller for the analysis view.
  */
-public class AnalysisWindowController {
+public class AnalysisController {
 
   // Table
   @FXML
@@ -64,6 +63,7 @@ public class AnalysisWindowController {
   private Button benchmarkButton;
   @FXML
   private TextField benchmarkRunsField;
+  @Inject
   private BenchmarkRunner benchmarker;
 
   private final Callback<StepStatisticsEntry, Observable[]> extractor =
@@ -71,7 +71,8 @@ public class AnalysisWindowController {
   private final ObservableList<StepStatisticsEntry> tableItems
       = FXCollections.observableArrayList(extractor);
 
-  private StepIndexer stepIndexer = null;
+  @Inject
+  private StepIndexer stepIndexer;
   private Statistics lastStats = Statistics.NIL;
   private final Map<Step, TimeView> timeViewMap = new HashMap<>();
   private final Map<Step, Collection<Long>> sampleMap = new HashMap<>();
@@ -164,20 +165,6 @@ public class AnalysisWindowController {
       sampleMap.clear();
       csvExporter.clear();
     }
-  }
-
-  /**
-   * Sets the benchmark runner.
-   */
-  public void setBenchmarker(BenchmarkRunner benchmarker) {
-    this.benchmarker = checkNotNull(benchmarker, "benchmarker");
-  }
-
-  /**
-   * Sets the step indexer.
-   */
-  public void setStepIndexer(StepIndexer stepIndexer) {
-    this.stepIndexer = stepIndexer;
   }
 
   @FXML

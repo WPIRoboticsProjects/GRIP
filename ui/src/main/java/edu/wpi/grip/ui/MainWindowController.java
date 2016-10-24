@@ -3,18 +3,15 @@ package edu.wpi.grip.ui;
 import edu.wpi.grip.core.Palette;
 import edu.wpi.grip.core.Pipeline;
 import edu.wpi.grip.core.PipelineRunner;
-import edu.wpi.grip.core.StepIndexer;
 import edu.wpi.grip.core.events.BenchmarkEvent;
 import edu.wpi.grip.core.events.ProjectSettingsChangedEvent;
 import edu.wpi.grip.core.events.TimerEvent;
 import edu.wpi.grip.core.events.UnexpectedThrowableEvent;
-import edu.wpi.grip.core.metrics.BenchmarkRunner;
 import edu.wpi.grip.core.serialization.Project;
 import edu.wpi.grip.core.settings.ProjectSettings;
 import edu.wpi.grip.core.settings.SettingsProvider;
 import edu.wpi.grip.core.util.SafeShutdown;
 import edu.wpi.grip.core.util.service.SingleActionListener;
-import edu.wpi.grip.ui.analysis.AnalysisWindowController;
 import edu.wpi.grip.ui.codegeneration.Exporter;
 import edu.wpi.grip.ui.codegeneration.Language;
 import edu.wpi.grip.ui.components.StartStoppableButton;
@@ -34,7 +31,6 @@ import java.util.logging.Logger;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
@@ -75,6 +71,8 @@ public class MainWindowController {
   @FXML
   private Pane aboutPane;
   @FXML
+  private Pane analysisPane;
+  @FXML
   private MenuItem analyzeMenuItem;
   @FXML
   private HBox statusBar;
@@ -96,12 +94,9 @@ public class MainWindowController {
   private Palette palette;
   @Inject
   private Project project;
-  @Inject
-  private StepIndexer stepIndexer;
-  @Inject
-  private BenchmarkRunner benchmarkRunner;
 
   private Stage aboutDialogStage;
+  private Stage analysisStage;
 
   @FXML
   protected void initialize() {
@@ -327,10 +322,9 @@ public class MainWindowController {
   @Subscribe
   @SuppressWarnings( {"PMD.UnusedPrivateMethod", "PMD.UnusedFormalParameter"})
   private void runStopped(TimerEvent event) {
-    if (!(event.getTarget() instanceof PipelineRunner)) {
-      return;
+    if (event.getTarget() instanceof PipelineRunner) {
+      Platform.runLater(() -> updateElapsedTimeLabel(event.getElapsedTime()));
     }
-    Platform.runLater(() -> updateElapsedTimeLabel(event.getElapsedTime()));
   }
 
   private void updateElapsedTimeLabel(long elapsed) {
@@ -341,25 +335,16 @@ public class MainWindowController {
   }
 
   @FXML
-  @SuppressWarnings( {"PMD.UnusedPrivateMethod"})
+  @SuppressWarnings("PMD.UnusedPrivateMethod")
   private void showAnalysis() {
-    Stage analysisStage = new Stage();
-    try {
-      FXMLLoader loader
-          = new FXMLLoader(getClass().getResource("/edu/wpi/grip/ui/analysis/AnalysisWindow.fxml"));
-      analysisStage.setScene(new Scene(loader.load()));
-      AnalysisWindowController controller = loader.getController();
-      controller.setBenchmarker(benchmarkRunner);
-      controller.setStepIndexer(stepIndexer);
+    if (analysisStage == null) {
+      analysisStage = new Stage();
+      analysisStage.setScene(new Scene(analysisPane));
       analysisStage.initOwner(root.getScene().getWindow());
       analysisStage.setTitle("Pipeline Analysis");
       analysisStage.getIcons().add(new Image("/edu/wpi/grip/ui/icons/grip.png"));
       analysisStage.setOnCloseRequest(event -> eventBus.post(BenchmarkEvent.finished()));
-      eventBus.register(controller);
-      analysisStage.showAndWait();
-      eventBus.unregister(controller); // unregister to avoid memory leak
-    } catch (IOException e) {
-      throw new AssertionError("Analysis window FXML is not present or readable", e);
     }
+    analysisStage.showAndWait();
   }
 }
