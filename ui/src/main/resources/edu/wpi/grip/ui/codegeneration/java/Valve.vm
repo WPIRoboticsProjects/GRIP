@@ -1,0 +1,27 @@
+#set($needsRefClass = true)
+		//Input
+#set($boolInp = $step.getInput(0))
+#if(!$boolInp.hasValue() )
+		$tMeth.name($boolInp.name()) = ${boolInp.value()}.$boolInp.baseType()Value();
+#end
+#set($input = $step.getInput(1))
+#if($input.mutable())##Is Mutable
+#if($input.number())##Is Number
+		Number $tMeth.name($input.name()) = ${input.value()};
+#else##Not number
+		$input.baseType() $tMeth.name($input.name()) = ${input.value()}.$input.baseType()Value();
+#end##end Is Number
+#else##Not Mutable
+#if($input.type() == "FlipCode")
+		$input.type() $tMeth.name($input.name()) = FlipCode.$input.value();
+#else
+		$input.type() $tMeth.name($input.name()) = $input.value();
+#end
+#end##end Is Mutable
+#set($out = $step.getOutput(0))
+#set($outMutName = $tMeth.name($out.name()) + "Ref")
+		//Output
+		#RefOf($out.baseType()) $outMutName = new #RefOf($out.baseType())();
+		pipelineValve($tMeth.name($boolInp.name()), $tMeth.name($input.name()), $outMutName);
+		//output assignment
+		$tMeth.name($out.name()) = ${outMutName}.get();

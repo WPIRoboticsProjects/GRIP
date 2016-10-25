@@ -1,0 +1,10 @@
+    @staticmethod
+    def $tMeth.name($step.name())(src, channel):
+        """Extracts given channel from an image.
+        Args:
+            src: A numpy.ndarray.
+            channel: Zero indexed channel number to extract.
+        Returns:
+             The result as a numpy.ndarray.
+        """
+        return cv2.extractChannel(src, (int) (channel + 0.5))

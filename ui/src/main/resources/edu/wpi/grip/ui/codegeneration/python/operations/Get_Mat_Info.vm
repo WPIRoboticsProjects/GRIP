@@ -1,0 +1,19 @@
+    @staticmethod
+    def $tMeth.name($step.name())(src):
+        """Gets information about given Mat.
+        Args:
+            src: A numpy.ndarray.
+        Returns:
+            The size of the mat as a list of two numbers.
+            A boolean that is true if the mat is empty.
+            The number of the channels in the mat.
+            The number of columns.
+            The number of rows.
+            The highest value in the mat.
+        """
+        cols, rows, channels = src.shape
+        empty = (src.size==0)
+        lowest_value, highest_value = cv2.minMaxLoc(src if (channels == 1)
+                            else cv2.cvtColor(src, cv2.COLOR_BGR2GRAY))
+        mat_size = (rows, cols)
+        return mat_size, empty, channels, cols, rows, highest_value

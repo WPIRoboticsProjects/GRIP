@@ -1,0 +1,14 @@
+	/**
+	 * Compute the convex hulls of contours.
+	 *
+	 * @param inputContours The contours on which to perform the operation.
+	 * @param outputContours The contours where the output will be stored.
+	 */
+	void $fileName::#func($step, ["inputContours", "outputContours"]) {
+		vector<vector<Point> > hull (inputContours.size());
+		outputContours.clear();
+		for (int i = 0; i < inputContours.size(); i++ ) {
+			convexHull(Mat((inputContours)[i]), hull[i], false);
+		}
+		outputContours = hull;
+	}

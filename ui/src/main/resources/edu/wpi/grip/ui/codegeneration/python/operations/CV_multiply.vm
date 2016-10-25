@@ -1,0 +1,11 @@
+    @staticmethod
+    def $tMeth.name($step.name())(src1, src2, scale):
+        """Mutiplies one image by another with given scale.
+        Args:
+            src1: A numpy.ndarray.
+            src2: A numpy.ndarray.
+            scale: Scale for multiplication.
+        Returns:
+            The result as a numpy.ndarray.
+        """
+        return cv2.multiply(src1, src2, scale)

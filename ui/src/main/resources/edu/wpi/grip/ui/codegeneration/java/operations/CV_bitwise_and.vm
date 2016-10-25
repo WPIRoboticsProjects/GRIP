@@ -1,0 +1,9 @@
+	/**
+	 * Computes the per channel and of two images.
+	 * @param src1 The first image to use.
+	 * @param src2 The second image to use.
+	 * @param dst the result image when the and is performed.
+	 */
+	private void $tMeth.name($step.name())(Mat src1, Mat src2, Mat dst) {
+		Core.bitwise_and(src1, src2, dst);
+	}

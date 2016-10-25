@@ -4,11 +4,14 @@ import edu.wpi.grip.core.Palette;
 import edu.wpi.grip.core.Pipeline;
 import edu.wpi.grip.core.PipelineRunner;
 import edu.wpi.grip.core.events.ProjectSettingsChangedEvent;
+import edu.wpi.grip.core.events.UnexpectedThrowableEvent;
 import edu.wpi.grip.core.serialization.Project;
 import edu.wpi.grip.core.settings.ProjectSettings;
 import edu.wpi.grip.core.settings.SettingsProvider;
 import edu.wpi.grip.core.util.SafeShutdown;
 import edu.wpi.grip.core.util.service.SingleActionListener;
+import edu.wpi.grip.ui.codegeneration.Exporter;
+import edu.wpi.grip.ui.codegeneration.Language;
 import edu.wpi.grip.ui.components.StartStoppableButton;
 import edu.wpi.grip.ui.util.DPIUtility;
 
@@ -21,13 +24,16 @@ import org.controlsfx.control.StatusBar;
 import java.io.File;
 import java.io.IOException;
 import java.util.Optional;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javafx.application.Platform;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.SplitPane;
@@ -148,7 +154,7 @@ public class MainWindowController {
    * pipeline, an "are you sure?" dialog is shown. (TODO)
    */
   @FXML
-  public void openProject() throws IOException {
+  public void openProject() {
     if (showConfirmationDialogAndWait()) {
       final FileChooser fileChooser = new FileChooser();
       fileChooser.setTitle("Open Project");
@@ -160,7 +166,15 @@ public class MainWindowController {
 
       final File file = fileChooser.showOpenDialog(root.getScene().getWindow());
       if (file != null) {
-        project.open(file);
+        Thread fileOpenThread = new Thread(() -> {
+          try {
+            project.open(file);
+          } catch (IOException e) {
+            eventBus.post(new UnexpectedThrowableEvent(e, "Failed to load save file"));
+          }
+        }, "Project Open Thread");
+        fileOpenThread.setDaemon(true);
+        fileOpenThread.start();
       }
     }
   }
@@ -239,6 +253,38 @@ public class MainWindowController {
       pipelineRunner.stopAsync();
       SafeShutdown.exit(0);
     }
+  }
+  
+  /**
+   * Controls the export button in the main menu. Opens a filechooser with language selection.
+   * The user can select the language to export to, save location and file name.
+   * @param actionEvent Unused event passed by the controller.
+   */
+  public void generate(ActionEvent actionEvent) {
+    final FileChooser fileChooser = new FileChooser();
+    fileChooser.setTitle("Export to");
+    fileChooser.getExtensionFilters().add(new ExtensionFilter(Language.JAVA.name, "*.java"));
+    fileChooser.getExtensionFilters().add(new ExtensionFilter(Language.CPP.name, "*.cpp"));
+    fileChooser.getExtensionFilters().add(new ExtensionFilter(Language.PYTHON.name, "*.py"));
+    fileChooser.setInitialFileName("Pipeline.java");
+    final File file = fileChooser.showSaveDialog(root.getScene().getWindow());
+    if (file == null) {
+      return;
+    }
+    Language lang = Language.get(fileChooser.getSelectedExtensionFilter().getDescription());
+    Exporter exporter = new Exporter(pipeline.getSteps(), lang, file);
+    final Set<String> nonExportableSteps = exporter.getNonExportableSteps();
+    if (!nonExportableSteps.isEmpty()) {
+      StringBuilder b = new StringBuilder("The following steps cannot be exported:\n");
+      nonExportableSteps.forEach(n -> b.append("  ").append(n).append('\n'));
+      Alert alert = new Alert(Alert.AlertType.WARNING);
+      alert.setContentText(b.toString());
+      alert.showAndWait();
+      return;
+    }
+    Thread exportRunner = new Thread(exporter);
+    exportRunner.setDaemon(true);
+    exportRunner.start();
   }
 
   @FXML

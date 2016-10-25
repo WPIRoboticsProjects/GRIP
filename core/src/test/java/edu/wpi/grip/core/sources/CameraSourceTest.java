@@ -2,6 +2,7 @@ package edu.wpi.grip.core.sources;
 
 
 import edu.wpi.grip.core.events.UnexpectedThrowableEvent;
+import edu.wpi.grip.core.operations.network.MockGripNetworkModule;
 import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.core.util.ImageLoadingUtility;
 import edu.wpi.grip.core.util.MockExceptionWitness;
@@ -14,6 +15,7 @@ import com.google.common.eventbus.Subscribe;
 import com.google.common.util.concurrent.Service;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
+import com.google.inject.util.Modules;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
@@ -61,7 +63,8 @@ public class CameraSourceTest {
   public void setUp() throws Exception {
     this.testModule = new GripCoreTestModule();
     testModule.setUp();
-    final Injector injector = Guice.createInjector(testModule);
+    final Injector injector = Guice.createInjector(Modules.override(testModule)
+        .with(new MockGripNetworkModule()));
     this.cameraSourceFactory = injector.getInstance(CameraSource.Factory.class);
     this.osf = injector.getInstance(OutputSocket.Factory.class);
 

@@ -6,14 +6,22 @@ buildscript {
         maven {
             url "https://plugins.gradle.org/m2/"
         }
+        maven {
+            url 'https://github.com/WPIRoboticsProjects/opencv-maven/raw/mvn-repo'
+        }
     }
 
     dependencies {
         classpath group: 'de.dynamicfiles.projects.gradle.plugins', name: 'javafx-gradle-plugin', version: '8.5.2'
         classpath 'com.netflix.nebula:gradle-aggregate-javadocs-plugin:2.2.+'
         classpath 'net.ltgt.gradle:gradle-errorprone-plugin:0.0.8'
+        classpath group: 'edu.wpi.first.wpilib.opencv', name: 'opencv-installer', version: '2.0.0'
     }
 }
+
+import edu.wpi.first.wpilib.opencv.installer.Installer
+import edu.wpi.first.wpilib.opencv.installer.platform.Platform
+
 plugins {
     id 'java'
     id 'idea'
@@ -26,9 +34,12 @@ plugins {
 apply plugin: 'nebula-aggregate-javadocs'
 
 def getGitCommit = { ->
-    String HEAD_REF = new File(rootDir, '.git/HEAD').text.replace("ref: ", "").replace("\n", "")
-    String COMMIT_HASH = new File(rootDir, ".git/${HEAD_REF}").text.substring(0, 7)
-    return COMMIT_HASH
+    def stdout = new ByteArrayOutputStream()
+    exec {
+        commandLine 'git', 'rev-parse', '--short', 'HEAD'
+        standardOutput = stdout
+    }
+    return stdout.toString().trim()
 }
 
 idea.project {
@@ -374,21 +385,42 @@ project(":ui") {
     apply plugin: 'application'
     apply plugin: 'javafx-gradle-plugin'
 
+    repositories {
+        maven {
+            url = "http://first.wpi.edu/FRC/roborio/maven/development"
+        }
+    }
+
     configurations {
         ideProvider
     }
-
+	if(!(project.hasProperty('generation') || project.hasProperty('genonly'))){
+	    sourceSets {
+            test {
+                java {
+                    exclude "**/ui/codegeneration"
+                    exclude "**/ui/codegeneration/**"
+                }
+            }
+	    }
+	}
     dependencies {
         compile project(path: ':core', configuration: 'shadow')
         compile project(path: ':ui:preloader')
         ideProvider project(path: ':core', configuration: 'compile')
         compile group: 'org.controlsfx', name: 'controlsfx', version: '8.40.11'
+<<<<<<< HEAD
         compile group: 'com.hierynomus', name: 'sshj', version: '0.17.2'
+=======
+        compile group: 'com.hierynomus', name: 'sshj', version: '0.16.0'
+        compile group: 'org.apache.velocity', name: 'velocity', version: '1.7'
+>>>>>>> WPIRoboticsProjects/master
         testCompile files(project(':core').sourceSets.test.output.classesDir)
         testCompile files(project(':core').sourceSets.test.output.resourcesDir)
         testCompile group: 'org.testfx', name: 'testfx-core', version: '4.0.+'
         testCompile group: 'org.testfx', name: 'testfx-junit', version: '4.0.+'
         testRuntime group: 'org.testfx', name: 'openjfx-monocle', version: '1.8.0_20'
+        testCompile group: 'org.opencv', name: 'opencv-java', version: '3.1.0'
     }
 
     evaluationDependsOn(':core')
@@ -412,6 +444,91 @@ project(":ui") {
         }
     }
 
+    task testSharedLib() {
+        description 'Compiles the shared library used by c++ generation testing.'
+        doLast {
+        def syst = osdetector.os
+        if(syst == "windows") {
+            exec {
+                ignoreExitValue true//if clean hasn't been called, directory already exists and mkdir fails.
+                workingDir 'build/classes/test'
+                commandLine 'cmd', '/c', 'mkdir', 'pipelib'
+            }
+            exec {
+                workingDir 'build/classes/test/pipelib'
+                commandLine '"C:\\Program Files (x86)\\Microsoft Visual Studio 14.0\\VC\\vcvarsall.bat"', 'amd64', '&', 'cmake', '-G', 'Visual Studio 14 2015 Win64', '..\\..\\..\\..\\src\\test\\resources\\edu\\wpi\\grip\\ui\\codegeneration\\tools\\'
+           }
+            exec {
+                workingDir 'build/classes/test/pipelib'
+                commandLine '"C:\\Program Files (x86)\\Microsoft Visual Studio 14.0\\VC\\vcvarsall.bat"', 'amd64', '&', 'cmake', '--build', '.', '--target', 'ALL_BUILD', '--config', 'Release'
+            }
+            exec {
+                workingDir 'build/classes/test'
+                commandLine 'cmd', '/C', 'copy /Y pipelib\\Release\\* .'
+            }
+            exec {
+                workingDir 'build/classes/test'
+                commandLine 'cmd', '/C', 'copy /Y pipelib\\pipe\\Release\\* .'
+            }
+            exec {
+                workingDir 'build/classes/test/pipelib'
+                commandLine 'cmd', '/C', 'copy /Y ..\\..\\..\\..\\src\\test\\resources\\edu\\wpi\\grip\\ui\\codegeneration\\tools\\pipe\\AbsPipeline.h pipe\\'
+            }
+            exec {
+                workingDir 'build/classes/test'
+                commandLine 'cmd', '/C', 'copy /Y ..\\..\\..\\src\\test\\resources\\edu\\wpi\\grip\\ui\\codegeneration\\tools\\realpipe\\CMakeLists.txt .'
+            }
+        } else {
+            exec {
+                ignoreExitValue true//if clean hasn't been called, directory already exists and mkdir fails.
+                workingDir 'build/classes/test'
+                commandLine 'mkdir', 'pipelib'
+            }
+            exec {
+                workingDir 'build/classes/test/pipelib'
+                commandLine 'cmake' , '../../../../src/test/resources/edu/wpi/grip/ui/codegeneration/tools/'
+           }
+            exec {
+                workingDir 'build/classes/test/pipelib'
+                commandLine 'make'
+            }
+            exec {
+                workingDir 'build/classes/test'
+                if(syst == "osx"){
+                    commandLine 'cp', 'pipelib/libgenJNI.dylib', '.'
+                }
+                if(syst == "linux"){
+                    commandLine 'cp' , 'pipelib/libgenJNI.so', '.'
+                }
+            }
+            exec {
+                workingDir 'build/classes/test/pipelib'
+                commandLine 'cp' , '../../../../src/test/resources/edu/wpi/grip/ui/codegeneration/tools/pipe/AbsPipeline.h', 'pipe/'
+            }
+            exec {
+                workingDir 'build/classes/test'
+                commandLine 'cp', '../../../src/test/resources/edu/wpi/grip/ui/codegeneration/tools/realpipe/CMakeLists.txt', '.'
+            }
+            }
+        }
+    }
+
+    if(project.hasProperty('generation') || project.hasProperty('genonly')){
+        def syst = osdetector.os
+        test {
+            Platform platform = Installer.getPlatform()
+            Installer.setOpenCvVersion('3.1.0')
+            def jniLocation = project.getProperties().getOrDefault('jniLocation', platform.defaultJniLocation())
+            Installer.installJni("${jniLocation}")
+            def defaultLibPath = System.getProperty('java.library.path');
+            jvmArgs = ["-Djava.library.path=${defaultLibPath}${System.getProperty('path.separator')}${jniLocation}"]
+            if(project.hasProperty('genonly')){
+                useJUnit {
+                    includeCategories 'edu.wpi.grip.ui.codegeneration.GenerationTesting'
+                }
+            }
+        }
+    }
 
     jfx {
         mainClass = "edu.wpi.grip.ui.Main"

@@ -1,0 +1,14 @@
+    @staticmethod
+    def __switch(boolsw, on_true, on_false):
+        """Selects an output from two inputs based on a boolean.
+        Args:
+            boolsw: A boolean that determines what option to choose.
+            on_true: The output if true.
+            on_false: The output if false.
+        Returns:
+            Either the value of on_true or on_false.
+        """
+        if(boolsw):
+            return on_true
+        else:
+            return on_false

@@ -1,0 +1,11 @@
+    @staticmethod
+    def $tMeth.name($step.name())(src1, scale, src2):
+        """Adds two images where one is multiplied by a number.
+        Args:
+            src1: A numpy.ndarray.
+            scale: Scale for the first image.
+            src2: A numpy.ndarray.
+        Returns:
+            The result as a numpy.ndarray.
+        """
+        return cv2.scaleAdd(src1, scale, src2)

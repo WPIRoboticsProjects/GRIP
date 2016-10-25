@@ -1,0 +1,1 @@
+FlipCode = Enum('FlipCode', [('X_AXIS' , 0),  ('Y_AXIS', 1), ('BOTH_AXES', -1)])

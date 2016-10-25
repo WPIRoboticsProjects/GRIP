@@ -1,0 +1,12 @@
+    @staticmethod
+    def $tMeth.name($step.name())(input, width, height, interpolation):
+        """Scales and image to an exact size.
+        Args:
+            input: A numpy.ndarray.
+            Width: The desired width in pixels.
+            Height: The desired height in pixels.
+            interpolation: Opencv enum for the type fo interpolation.
+        Returns:
+            A numpy.ndarray of the new size.
+        """
+        return cv2.resize(input, ((int)(width), (int)(height)), 0, 0, interpolation)

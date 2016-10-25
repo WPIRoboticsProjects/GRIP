@@ -88,3 +88,9 @@ bower_components
 **/generated
 */generated_tests
 /bin/
+ui/PipelineTest.java
+ui/CameraTest.java
+
+### NetworkTables
+networktables.ini
+networktables.ini.bak

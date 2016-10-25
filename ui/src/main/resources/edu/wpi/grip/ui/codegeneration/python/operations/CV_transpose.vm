@@ -1,0 +1,9 @@
+    @staticmethod
+    def $tMeth.name($step.name())(src):
+        """Computes the transpose of a Mat.
+        Args:
+            src: A numpy.ndarray.
+        Returns:
+            A numpy.ndarray.
+        """
+        return cv2.transpose(src)

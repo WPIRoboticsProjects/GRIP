@@ -1,0 +1,14 @@
+    @staticmethod
+    def $tMeth.name($step.name())(src, size, scale, delta, border_type):
+        """Performs a Laplacian on the image.
+        Args:
+            src: A numpy.ndarray.
+            size: Odd number that is size of the kernel.
+            scale: Scaling factor for Laplacian.
+            delta: Offset for values in Laplacian.
+            border_type: Opencv enum.
+        Returns:
+            The result as a numpy.ndarray.
+        """
+        return cv2.Laplacian(src, 0, ksize=(int)(size+0.5), scale=scale, delta=delta,
+                            borderType=border_type)

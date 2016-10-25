@@ -1,0 +1,10 @@
+    @staticmethod
+    def $tMeth.name($step.name())(width, height):
+        """Fills a size with given width and height.
+		Args:
+            width: A number for the width.
+            height: A number for the height.
+        Returns:
+            A list of two numbers that represent a size.
+        """
+        return (width, height)

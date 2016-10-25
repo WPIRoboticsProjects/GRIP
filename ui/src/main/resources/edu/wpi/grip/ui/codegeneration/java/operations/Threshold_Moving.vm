@@ -1,0 +1,14 @@
+	/**
+	 * Thresholds off parts of the image that have moved or changed between the previous and next image.
+	 * @param input The image on which to perform the Threshold Moving.
+	 * @param lastImage The mat where the previous image is stored.
+	 * @param output The image in which to store the output.
+	 */
+	private void $tMeth.name($step.name())(Mat input, Mat lastImage, Mat output) {
+		Size lastSize = lastImage.size();
+		Size inputSize = input.size();
+		if (!lastImage.empty() && lastSize.height == inputSize.height && lastSize.width == inputSize.width) {
+			Core.absdiff(input, lastImage, output);
+		}
+		input.copyTo(lastImage);
+	}

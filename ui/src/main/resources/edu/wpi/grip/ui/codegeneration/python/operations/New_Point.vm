@@ -1,0 +1,10 @@
+    @staticmethod
+    def $tMeth.name($step.name())(x, y):
+        """Fills a point with given x and y values.
+        Args:
+            x: A number for x.
+            y: A number for y.
+        Returns:
+            A list of two numbers that represent the point.
+        """
+        return (x,y)

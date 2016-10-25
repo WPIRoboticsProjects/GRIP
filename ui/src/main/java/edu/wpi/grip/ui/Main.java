@@ -61,6 +61,7 @@ public class Main extends Application {
   @Inject private HttpPipelineSwitcher pipelineSwitcher;
   private Parent root;
   private boolean headless;
+  private List<String> parameters;
 
   public static void main(String[] args) {
     launch(args);
@@ -68,7 +69,7 @@ public class Main extends Application {
 
   @Override
   public void init() throws IOException {
-    List<String> parameters = new ArrayList<>(getParameters().getRaw());
+    parameters = new ArrayList<>(getParameters().getRaw());
 
     if (parameters.contains("--headless")) {
       // If --headless was specified on the command line, run in headless mode (only use the core
@@ -99,16 +100,6 @@ public class Main extends Application {
     server.start();
     notifyPreloader(new Preloader.ProgressNotification(0.6));
 
-    // If there was a file specified on the command line, open it immediately
-    if (!parameters.isEmpty()) {
-      try {
-        project.open(new File(parameters.get(0)));
-      } catch (IOException e) {
-        logger.log(Level.SEVERE, "Error loading file: " + parameters.get(0));
-        throw e;
-      }
-    }
-
     pipelineRunner.startAsync();
     notifyPreloader(new Preloader.ProgressNotification(0.75));
   }
@@ -123,6 +114,16 @@ public class Main extends Application {
       operations.addOperations();
       cvOperations.addOperations();
       notifyPreloader(new Preloader.ProgressNotification(0.9));
+
+      // If there was a file specified on the command line, open it immediately
+      if (!parameters.isEmpty()) {
+        try {
+          project.open(new File(parameters.get(0)));
+        } catch (IOException e) {
+          logger.log(Level.SEVERE, "Error loading file: " + parameters.get(0));
+          throw e;
+        }
+      }
 
       project.addIsSaveDirtyConsumer(newValue -> {
         if (newValue) {

@@ -1,0 +1,13 @@
+	/**
+	 * Applies a canny edge detection to the image.
+	 * @param image image to use.
+	 * @param thres1 first threshold for the canny algorithm.
+	 * @param thres2 second threshold for the canny algorithm.
+	 * @param apertureSize aperture size for the canny operation.
+	 * @param gradient if the L2 norm should be used.
+	 * @param edges output of the canny.
+	 */
+	private void $tMeth.name($step.name())(Mat image, double thres1, double thres2,
+		double apertureSize, boolean gradient, Mat edges) {
+		Imgproc.Canny(image, edges, thres1, thres2, (int)apertureSize, gradient);
+	}
