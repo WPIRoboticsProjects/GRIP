@@ -52,10 +52,10 @@ public class SocketImpl<T> implements Socket<T> {
   @Override
   public void setValueOptional(Optional<? extends T> optionalValue) {
     checkNotNull(optionalValue, "The optional value can not be null");
+    if (optionalValue.isPresent()) {
+      getSocketHint().getType().cast(optionalValue.get());
+    }
     synchronized (this) {
-      if (optionalValue.isPresent()) {
-        getSocketHint().getType().cast(optionalValue.get());
-      }
       this.value = optionalValue;
       onValueChanged();
     }
