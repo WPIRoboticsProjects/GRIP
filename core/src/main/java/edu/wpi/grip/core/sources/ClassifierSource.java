@@ -13,6 +13,9 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
 
 import org.bytedeco.javacpp.opencv_objdetect.CascadeClassifier;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.Properties;
 
@@ -75,8 +78,16 @@ public class ClassifierSource extends Source {
   }
 
   @Override
-  public void initialize() {
-    classifierSocket.setValue(new CascadeClassifier(filePath));
+  public void initialize() throws IOException {
+    if (!Files.exists(Paths.get(filePath))) {
+      throw new IOException("File does not exist: " + filePath);
+    }
+    try {
+      classifierSocket.setValue(new CascadeClassifier(filePath));
+    } catch (Exception e) {
+      // OpenCV will throw an exception if given malformed XML
+      throw new IOException("Could not load cascade classifier XML", e);
+    }
   }
 
   public interface Factory {

@@ -272,7 +272,7 @@ public class AddSourceButton extends MenuButton {
           File file = fc.showOpenDialog(getScene().getWindow());
           if (file != null) {
             ClassifierSource source = classifierSourceFactory.create(file.getAbsolutePath());
-            source.initialize();
+            source.initializeSafely();
             eventBus.post(new SourceAddedEvent(source));
           }
         });
