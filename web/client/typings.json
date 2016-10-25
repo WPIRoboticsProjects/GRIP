@@ -9,6 +9,7 @@
     "redux": "github:DefinitelyTyped/DefinitelyTyped/redux/redux.d.ts#ba424f7ee39717d51c17699a09ac8df312a7e9a1"
   },
   "dependencies": {
-    "grip-swagger": "npm:grip-swagger"
+    "grip-swagger": "npm:grip-swagger",
+    "redux-thunk": "registry:npm/redux-thunk#2.0.0+20160525185520"
   }
 }

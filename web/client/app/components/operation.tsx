@@ -12,9 +12,13 @@ interface IOperationProps extends React.Props<{}> {
 export class Operation extends React.Component<IOperationProps, {}> {
   public render(): React.ReactElement<{}> {
     return (
-      <ListItem primaryText={
-        this.props.operationDescription.name
-      }/>
+      <ListItem
+        primaryText={
+          this.props.operationDescription.name
+        }
+        secondaryText={
+          this.props.operationDescription.summary
+        }/>
     );
   }
 }

@@ -1,4 +1,5 @@
 var path = require('path');
+var proxy = require('express-http-proxy');
 var express = require('express');
 var webpack = require('webpack');
 var config = require('./config/webpack.dev');
@@ -16,6 +17,12 @@ app.use(require('webpack-dev-middleware')(compiler, {
 }));
 
 app.use(require('webpack-hot-middleware')(compiler));
+
+app.use('/api', proxy('http://localhost:8080', {
+  forwardPath: function(req) {
+    return '/server' + require('url').parse(req.url).path;
+  }
+}));
 
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, 'index.html'));

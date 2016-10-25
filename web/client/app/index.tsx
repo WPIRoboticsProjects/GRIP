@@ -3,7 +3,8 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
-import {Store, createStore} from 'redux';
+import {Store, createStore, applyMiddleware, compose} from 'redux';
+import thunk from 'redux-thunk';
 import {Provider} from 'react-redux';
 import {App} from './components/app';
 import {counterApp} from './reducers';
@@ -11,6 +12,7 @@ import * as injectTapEventPluginExport from 'react-tap-event-plugin';
 import getMuiTheme from 'material-ui/styles/getMuiTheme';
 import darkBaseTheme from 'material-ui/styles/baseThemes/darkBaseTheme';
 import {MuiTheme} from 'material-ui/styles';
+import {fetchOperations} from './actions';
 
 // needed for onTouchTap
 // http://stackoverflow.com/a/34015469/988941
@@ -26,14 +28,18 @@ interface IHotModule {
 
 declare const module: IHotModule;
 
+/* tslint:disable */
+const composeEnhancers = window['__REDUX_DEVTOOLS_EXTENSION_COMPOSE__'] || compose;
+/* tslint:enable */
+
 function configureStore(): Store {
   const store: Store =
-    /* tslint:disable */
     createStore(
       counterApp,
-      window['__REDUX_DEVTOOLS_EXTENSION__'] &&
-      window['__REDUX_DEVTOOLS_EXTENSION__']());
-  /* tslint:enable */
+      composeEnhancers(
+        applyMiddleware(
+          thunk
+      )));
 
   if (module.hot) {
     module.hot.accept('./reducers', () => {
@@ -47,7 +53,9 @@ function configureStore(): Store {
 
 const store: Store = configureStore();
 const multiTheme: MuiTheme = getMuiTheme(darkBaseTheme);
-console.log(multiTheme);
+
+store.dispatch(fetchOperations());
+
 
 class Main extends React.Component<{}, {}> {
   public render(): React.ReactElement<MuiThemeProvider> {

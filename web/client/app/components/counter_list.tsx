@@ -1,10 +1,12 @@
 /// <reference path="../../typings/index.d.ts" />
+///<reference path='../../node_modules/immutable/dist/immutable.d.ts'/>
 
 import * as React from 'react';
 import {Counter} from './counter';
+import * as Immutable from 'immutable';
 
 interface ICounterListProps {
-  counters: number[];
+  counters: Immutable.List<number>;
   increment: (index: number) => void;
   decrement: (index: number) => void;
 }
