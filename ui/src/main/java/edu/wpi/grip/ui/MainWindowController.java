@@ -7,6 +7,7 @@ import edu.wpi.grip.core.events.ExceptionClearedEvent;
 import edu.wpi.grip.core.events.ExceptionEvent;
 import edu.wpi.grip.core.events.ProjectSettingsChangedEvent;
 import edu.wpi.grip.core.events.UnexpectedThrowableEvent;
+import edu.wpi.grip.core.events.WarningEvent;
 import edu.wpi.grip.core.exception.InvalidSaveException;
 import edu.wpi.grip.core.serialization.Project;
 import edu.wpi.grip.core.settings.ProjectSettings;
@@ -21,6 +22,7 @@ import edu.wpi.grip.ui.util.DPIUtility;
 
 import com.google.common.base.CaseFormat;
 import com.google.common.eventbus.EventBus;
+import com.google.common.eventbus.Subscribe;
 import com.google.common.util.concurrent.Service;
 
 import org.controlsfx.control.StatusBar;
@@ -33,7 +35,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javafx.application.Platform;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -269,10 +270,9 @@ public class MainWindowController {
   /**
    * Controls the export button in the main menu. Opens a filechooser with language selection.
    * The user can select the language to export to, save location and file name.
-   *
-   * @param actionEvent Unused event passed by the controller.
    */
-  public void generate(ActionEvent actionEvent) {
+  @FXML
+  public void generate() {
     final FileChooser fileChooser = new FileChooser();
     fileChooser.setTitle("Export to");
     fileChooser.getExtensionFilters().add(new ExtensionFilter(Language.JAVA.name, "*.java"));
@@ -285,13 +285,15 @@ public class MainWindowController {
     }
     Language lang = Language.get(fileChooser.getSelectedExtensionFilter().getDescription());
     Exporter exporter = new Exporter(pipeline.getSteps(), lang, file);
-    final Set<String> nonExportableSteps = exporter.getNonExportableSteps();
+    final Set<String> nonExportableSteps = exporter.getNonExportableStepNames();
     if (!nonExportableSteps.isEmpty()) {
-      StringBuilder b = new StringBuilder("The following steps cannot be exported:\n");
-      nonExportableSteps.forEach(n -> b.append("  ").append(n).append('\n'));
-      Alert alert = new Alert(Alert.AlertType.WARNING);
-      alert.setContentText(b.toString());
-      alert.showAndWait();
+      StringBuilder b = new StringBuilder(
+          "The following steps do not support code generation:\n\n"
+      );
+      nonExportableSteps.stream()
+          .sorted()
+          .forEach(n -> b.append(" - ").append(n).append("\n"));
+      eventBus.post(new WarningEvent("Cannot generate code", b.toString()));
       return;
     }
     Thread exportRunner = new Thread(exporter);
@@ -318,4 +320,19 @@ public class MainWindowController {
     dialog.setResizable(true);
     dialog.showAndWait();
   }
+
+  @Subscribe
+  public void onWarningEvent(WarningEvent e) {
+    if (Platform.isFxApplicationThread()) {
+      showWarningAlert(e);
+    } else {
+      Platform.runLater(() -> showWarningAlert(e));
+    }
+  }
+
+  private void showWarningAlert(WarningEvent e) {
+    Alert alert = new WarningAlert(e.getHeader(), e.getBody(), root.getScene().getWindow());
+    alert.showAndWait();
+  }
+
 }
