@@ -4,11 +4,11 @@ import edu.wpi.grip.core.Palette;
 import edu.wpi.grip.core.Pipeline;
 import edu.wpi.grip.core.PipelineRunner;
 import edu.wpi.grip.core.events.ExceptionClearedEvent;
-import edu.wpi.grip.core.events.ExceptionEvent;
 import edu.wpi.grip.core.events.ProjectSettingsChangedEvent;
-import edu.wpi.grip.core.events.UnexpectedThrowableEvent;
 import edu.wpi.grip.core.events.WarningEvent;
+import edu.wpi.grip.core.exception.IncompatibleVersionException;
 import edu.wpi.grip.core.exception.InvalidSaveException;
+import edu.wpi.grip.core.exception.UnknownSaveFormatException;
 import edu.wpi.grip.core.serialization.Project;
 import edu.wpi.grip.core.settings.ProjectSettings;
 import edu.wpi.grip.core.settings.SettingsProvider;
@@ -16,7 +16,6 @@ import edu.wpi.grip.core.util.SafeShutdown;
 import edu.wpi.grip.core.util.service.SingleActionListener;
 import edu.wpi.grip.ui.codegeneration.Exporter;
 import edu.wpi.grip.ui.codegeneration.Language;
-import edu.wpi.grip.ui.components.ExceptionWitnessResponderButton;
 import edu.wpi.grip.ui.components.StartStoppableButton;
 import edu.wpi.grip.ui.util.DPIUtility;
 
@@ -28,6 +27,7 @@ import com.google.common.util.concurrent.Service;
 import org.controlsfx.control.StatusBar;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Optional;
 import java.util.Set;
@@ -88,8 +88,6 @@ public class MainWindowController {
   private Palette palette;
   @Inject
   private Project project;
-  @Inject
-  private ExceptionWitnessResponderButton.Factory ewrbFactory;
 
   private Stage aboutDialogStage;
 
@@ -97,7 +95,6 @@ public class MainWindowController {
   protected void initialize() {
     pipelineView.prefHeightProperty().bind(bottomPane.heightProperty());
     statusBar.getLeftItems().add(startStoppableButtonFactory.create(pipelineRunner));
-    statusBar.getRightItems().add(ewrbFactory.create(project, "Incompatible save file"));
     pipelineRunner.addListener(new SingleActionListener(() -> {
       final Service.State state = pipelineRunner.state();
       final String stateMessage =
@@ -178,11 +175,27 @@ public class MainWindowController {
           try {
             project.open(file);
             eventBus.post(new ExceptionClearedEvent(project));
+          } catch (FileNotFoundException e) {
+            eventBus.post(new WarningEvent(
+                "File does not exist",
+                "The file at " + file.getAbsolutePath() + " does not exist.\n\n"
+                    + "It may have been deleted by another program."
+            ));
           } catch (IOException e) {
-            eventBus.post(new UnexpectedThrowableEvent(e, "Failed to load save file"));
+            eventBus.post(new WarningEvent(
+                "Could not read file",
+                "The file at " + file.getAbsolutePath() + " could not be read.\n\n"
+                    + "Caused by: " + e.getMessage()
+            ));
+          } catch (UnknownSaveFormatException e) {
+            pipeline.clear();
+            eventBus.post(new WarningEvent("Unknown save format", e.getMessage()));
+          } catch (IncompatibleVersionException e) {
+            pipeline.clear();
+            eventBus.post(new WarningEvent("Incompatible saved version", e.getLoaded().toString()));
           } catch (InvalidSaveException e) {
             pipeline.clear();
-            eventBus.post(new ExceptionEvent(project, e.getMessage()));
+            eventBus.post(new WarningEvent("Invalid save file", e.getMessage()));
           }
         }, "Project Open Thread");
         fileOpenThread.setDaemon(true);

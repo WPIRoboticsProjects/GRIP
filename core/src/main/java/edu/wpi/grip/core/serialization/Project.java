@@ -4,8 +4,8 @@ import edu.wpi.grip.core.Pipeline;
 import edu.wpi.grip.core.PipelineRunner;
 import edu.wpi.grip.core.VersionManager;
 import edu.wpi.grip.core.events.DirtiesSaveEvent;
-import edu.wpi.grip.core.exception.IncompatibleVersionException;
 import edu.wpi.grip.core.exception.InvalidSaveException;
+import edu.wpi.grip.core.exception.UnknownSaveFormatException;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.eventbus.Subscribe;
@@ -14,6 +14,7 @@ import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.converters.ConversionException;
 import com.thoughtworks.xstream.converters.reflection.PureJavaReflectionProvider;
+import com.thoughtworks.xstream.io.StreamException;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -118,7 +119,7 @@ public class Project {
   }
 
   @VisibleForTesting
-  void open(Reader reader) throws IncompatibleVersionException {
+  void open(Reader reader) throws InvalidSaveException {
     pipelineRunner.stopAndAwait();
     this.pipeline.clear();
     try {
@@ -135,13 +136,16 @@ public class Project {
         model = new ProjectModel(pipeline, VersionManager.CURRENT_VERSION);
       } else {
         // Uhh... probably a future version
-        throw new InvalidSaveException(
+        throw new UnknownSaveFormatException(
             String.format("Unknown save format (loaded a %s)", loaded.getClass().getName())
         );
       }
     } catch (ConversionException e) {
       // Incompatible save, or a bug with de/serialization
       throw new InvalidSaveException("Incompatible operations in save file", e);
+    } catch (StreamException e) {
+      // Invalid XML
+      throw new InvalidSaveException("Invalid XML", e);
     }
     pipelineRunner.startAsync();
     saveIsDirty.set(false);

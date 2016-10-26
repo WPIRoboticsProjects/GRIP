@@ -31,7 +31,7 @@ public final class VersionManager {
       throws IncompatibleVersionException {
     if (check.getMajorVersion() > current.getMajorVersion()
         || check.getMinorVersion() > current.getMinorVersion()) {
-      throw new IncompatibleVersionException("Incompatible future version: " + check);
+      throw new IncompatibleVersionException(check);
     }
   }
 
