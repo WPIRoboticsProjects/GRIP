@@ -5,6 +5,7 @@ import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.core.sockets.Socket;
 import edu.wpi.grip.core.util.ExceptionWitness;
 
+import com.fasterxml.uuid.NoArgGenerator;
 import com.google.common.collect.ImmutableList;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
@@ -12,6 +13,7 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -32,6 +34,7 @@ public class Step {
   private final OperationDescription description;
   private final List<InputSocket> inputSockets;
   private final List<OutputSocket> outputSockets;
+  private final UUID uuid;
   private final Object removedLock = new Object();
   private boolean removed = false;
 
@@ -41,16 +44,19 @@ public class Step {
    * @param inputSockets            The input sockets from the operation.
    * @param outputSockets           The output sockets provided by the operation.
    * @param exceptionWitnessFactory A factory used to create an {@link ExceptionWitness}.
+   * @param uuid                    A UUID for this step.
    */
   Step(Operation operation,
        OperationDescription description,
        List<InputSocket> inputSockets,
        List<OutputSocket> outputSockets,
-       ExceptionWitness.Factory exceptionWitnessFactory) {
+       ExceptionWitness.Factory exceptionWitnessFactory,
+       UUID uuid) {
     this.operation = operation;
     this.description = description;
     this.inputSockets = inputSockets;
     this.outputSockets = outputSockets;
+    this.uuid = uuid;
     this.witness = exceptionWitnessFactory.create(this);
   }
 
@@ -73,6 +79,13 @@ public class Step {
    */
   public ImmutableList<OutputSocket> getOutputSockets() {
     return ImmutableList.copyOf(outputSockets);
+  }
+
+  /**
+   * @return A UUID to distinguish this class.
+   */
+  public UUID getUuid() {
+    return uuid;
   }
 
   /**
@@ -157,10 +170,12 @@ public class Step {
 
   @Singleton
   public static class Factory {
+    private final NoArgGenerator uuidGenerator;
     private final ExceptionWitness.Factory exceptionWitnessFactory;
 
     @Inject
-    public Factory(ExceptionWitness.Factory exceptionWitnessFactory) {
+    Factory(NoArgGenerator uuidGenerator, ExceptionWitness.Factory exceptionWitnessFactory) {
+      this.uuidGenerator = uuidGenerator;
       this.exceptionWitnessFactory = exceptionWitnessFactory;
     }
 
@@ -180,7 +195,8 @@ public class Step {
           operationData.getDescription(),
           inputSockets,
           outputSockets,
-          exceptionWitnessFactory
+          exceptionWitnessFactory,
+          uuidGenerator.generate()
       );
 
       for (Socket<?> socket : inputSockets) {

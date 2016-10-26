@@ -10,6 +10,7 @@ import com.google.inject.assistedinject.Assisted;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.annotation.Nullable;
+import javax.inject.Provider;
 
 /**
  * Witnesses and reports exception. <b>This class is not suitable to handle {@link Error
@@ -31,12 +32,12 @@ import javax.annotation.Nullable;
  * </blockquote>
  */
 public class ExceptionWitness {
-  private final EventBus eventBus;
+  private final Provider<EventBus> eventBus;
   private final Object origin;
   private final AtomicBoolean isExceptionState = new AtomicBoolean(false);
 
   @Inject
-  ExceptionWitness(final EventBus eventBus, @Assisted final Object origin) {
+  ExceptionWitness(final Provider<EventBus> eventBus, @Assisted final Object origin) {
     this.eventBus = eventBus;
     this.origin = origin;
   }
@@ -56,7 +57,7 @@ public class ExceptionWitness {
       return;
     }
     isExceptionState.set(true);
-    this.eventBus.post(new ExceptionEvent(origin, exception, message));
+    this.eventBus.get().post(new ExceptionEvent(origin, exception, message));
   }
 
   /**
@@ -74,7 +75,7 @@ public class ExceptionWitness {
    */
   public final void flagWarning(final String warningMessage) {
     isExceptionState.set(true);
-    this.eventBus.post(new ExceptionEvent(origin, warningMessage));
+    this.eventBus.get().post(new ExceptionEvent(origin, warningMessage));
   }
 
   /**
@@ -86,7 +87,7 @@ public class ExceptionWitness {
   public final void clearException() {
     // Only post an ExceptionClearedEvent if there was an exception before
     if (isExceptionState.compareAndSet(true, false)) {
-      this.eventBus.post(new ExceptionClearedEvent(origin));
+      this.eventBus.get().post(new ExceptionClearedEvent(origin));
     }
   }
 

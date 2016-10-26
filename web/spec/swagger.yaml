@@ -1,0 +1,235 @@
+# Example YAML to get you started quickly.
+# Be aware that YAML has indentation based scoping.
+# Code completion support is available so start typing for available options.
+swagger: '2.0'
+
+# This is your document metadata
+info:
+  title: GRIP Rest API
+  description: GRIP as a Service
+  version: "0.1.0"
+
+schemes:
+  - http
+  - https
+
+produces:
+  - application/json
+#  - text/html
+
+# Describe your paths here
+paths:
+  # This is a path endpoint. Change it.
+  /persons:
+    # This is a HTTP operation
+    get:
+      # Describe this verb here. Note: you can use markdown
+      description: |
+        Gets `Person` objects.
+        Optional query param of **size** determines
+        size of returned array
+      # This is array of GET operation parameters:
+      parameters:
+        # An example parameter that is in query and is required
+        -
+          name: size
+          in: query
+          description: Size of array
+          required: true
+          type: number
+          format: double
+      # Expected responses for this operation:
+      responses:
+        # Response code
+        200:
+          description: Successful response
+          # A schema describing your response object.
+          # Use JSON Schema format
+          schema:
+            title: ArrayOfPersons
+            type: array
+            $ref: '#/definitions/Person'
+  /operations:
+    get:
+      description: |
+        Gets all of the currently loaded `OperationDescriptions` that can be used to create
+        steps in a pipeline.
+      responses:
+        200:
+          description: Successful response
+          schema:
+            title: ArrayOfOperationDescriptions
+            type: array
+            uniqueItems: true
+            items:
+              $ref: '#/definitions/OperationDescription'
+  /sources:
+    put:
+      description: |
+        Adds a `Source` to this sessions pipeline.
+      responses:
+        200:
+          description: Source added to pipeline.
+          schema:
+            $ref: '#/definitions/Source'
+    get:
+      description: |
+        Returns all `Sources` in this sessions pipeline.
+      responses:
+        200:
+          description: List of sources
+          schema:
+            title: ArrayOfSources
+            type: array
+            uniqueItems: true
+            items:
+              $ref: '#/definitions/Step'
+  /steps:
+    put:
+      description: |
+        Creates a `Step` and adds it to the pipeline.
+      parameters:
+        -
+          name: operation-name
+          in: query
+          required: true
+          type: string
+      responses:
+        200:
+          description: Step added to the pipeline
+          schema:
+            $ref: '#/definitions/Step'
+    get:
+      description: |
+        Gets `Step` objects
+      parameters:
+        -
+          name: index
+          in: query
+          required: false
+          type: number
+          format: integer
+      responses:
+        200:
+          description: Successful response
+          schema:
+            title: ArrayOfSteps
+            type: array
+            items:
+              $ref: '#/definitions/Step'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+  /sockets/images:
+    get:
+      description: |
+        Gets an image MJPG stream to test with
+      produces:
+        - multipart/x-mixed-replace
+      responses:
+        200:
+          description: Streaming MJPG
+  /sockets/{uuid}/images:
+    get:
+      description: |
+        Gets an image MJPG stream for the given socket.
+      parameters:
+        -
+          name: uuid
+          in: path
+          description: The UUID of the socket to get an image stream from.
+          required: true
+          type: string
+          format: uuid
+      produces:
+        - multipart/x-mixed-replace
+      responses:
+        200:
+          description: The resulting stream from the output of the value from this Socket.
+
+
+definitions:
+  Person:
+    type: object
+    properties:
+      name:
+        type: string
+      single:
+        type: boolean
+  Source:
+    type: object
+    properties:
+      name:
+        type: string
+      outputSockets:
+        type: array
+        items:
+          $ref: '#/definitions/Socket'
+  Step:
+    type: object
+    properties:
+      name:
+        type: string
+      uuid:
+        type: string
+        format: uuid
+      operation:
+        type: object
+        $ref: '#/definitions/OperationDescription'
+      inputSockets:
+        type: array
+        items:
+          $ref: '#/definitions/Socket'
+      outputSockets:
+        type: array
+        items:
+          $ref: '#/definitions/Socket'
+  Socket:
+    type: object
+    properties:
+      uuid:
+        type: string
+        format: uuid
+      socketHint:
+        type: object
+        $ref: '#/definitions/SocketHint'
+  SocketHint:
+    type: object
+    properties:
+      identifier:
+        type: string
+      type:
+        type: string
+  OperationDescription:
+    description: |
+      Describes an `Operation` that can be added to a `Pipeline`
+    type: object
+    properties:
+      name:
+        type: string
+      summary:
+        type: string
+      aliases:
+        type: array
+        items:
+          type: string
+      category:
+        type: string
+        enum:
+          - IMAGE_PROCESSING
+          - FEATURE_DETECTION
+          - NETWORK
+          - LOGICAL
+          - OPENCV
+          - MISCELLANEOUS
+  Error:
+    type: object
+    properties:
+      code:
+        type: integer
+        format: int32
+      message:
+        type: string
+      fields:
+        type: string

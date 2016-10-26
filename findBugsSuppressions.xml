@@ -8,4 +8,7 @@
     <Match>
         <Bug pattern="NP_METHOD_PARAMETER_TIGHTENS_ANNOTATION" />
     </Match>
+    <Match>
+        <Source name="~.*\.kt"/>
+    </Match>
 </FindBugsFilter>

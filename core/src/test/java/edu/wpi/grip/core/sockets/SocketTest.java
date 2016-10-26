@@ -3,6 +3,7 @@ package edu.wpi.grip.core.sockets;
 import edu.wpi.grip.core.events.SocketChangedEvent;
 import edu.wpi.grip.core.events.SocketPreviewChangedEvent;
 
+import com.fasterxml.uuid.Generators;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 
@@ -10,6 +11,8 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 import org.junit.Before;
 import org.junit.Test;
+
+import java.util.UUID;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -24,7 +27,7 @@ public class SocketTest {
   @Before
   public void initialize() {
     sh = SocketHints.Inputs.createNumberSliderSocketHint("foo", 0.0, 0.0, 1.0);
-    socket = new OutputSocketImpl<>(eventBus, sh);
+    socket = new OutputSocketImpl<>(() -> eventBus, sh, Generators.timeBasedGenerator().generate());
     eventBus.register(socket);
   }
 
@@ -44,7 +47,7 @@ public class SocketTest {
   @Test
   public void testDefaultValue() throws Exception {
     sh = SocketHints.Inputs.createNumberSliderSocketHint("foo", TEST_VALUE, 0.0, 1.0);
-    socket = new OutputSocketImpl<>(eventBus, sh);
+    socket = new OutputSocketImpl<>(() -> eventBus, sh, Generators.timeBasedGenerator().generate());
     assertEquals(TEST_VALUE, socket.getValue().get());
 
   }
@@ -74,7 +77,7 @@ public class SocketTest {
   @Test
   public void testSocketPreview() {
     SocketHint<Number> sh = SocketHints.createNumberSocketHint("foo", 0);
-    OutputSocket<Number> socket = new OutputSocketImpl<>(eventBus, sh);
+    OutputSocket<Number> socket = new OutputSocketImpl<>(() -> eventBus, sh, UUID.randomUUID());
 
     final boolean[] handled = new boolean[]{false};
     Object eventHandler = new Object() {
@@ -98,28 +101,28 @@ public class SocketTest {
 
   @Test(expected = NullPointerException.class)
   public void testSocketHintNotNullInput() throws Exception {
-    new InputSocketImpl<>(eventBus, null);
+    new InputSocketImpl<>(() -> eventBus, null, UUID.randomUUID());
   }
 
   @Test(expected = NullPointerException.class)
   public void testSocketHintNotNullOutput() throws Exception {
-    new OutputSocketImpl<>(eventBus, null);
+    new OutputSocketImpl<>(() -> eventBus, null, UUID.randomUUID());
   }
 
   @Test(expected = NullPointerException.class)
   public void testSocketEventBusNotNullInput() throws Exception {
-    new InputSocketImpl<>(null, sh);
+    new InputSocketImpl<>(null, sh, UUID.randomUUID());
   }
 
   @Test(expected = NullPointerException.class)
   public void testSocketEventBusNotNullOutput() throws Exception {
-    new OutputSocketImpl<>(null, sh);
+    new OutputSocketImpl<>(null, sh, UUID.randomUUID());
   }
 
   @Test(expected = ClassCastException.class)
   @SuppressWarnings("unchecked")
   public void testSocketValueWrongType() throws Exception {
-    InputSocket socket = new InputSocketImpl(eventBus, sh);
+    InputSocket socket = new InputSocketImpl(() -> eventBus, sh, UUID.randomUUID());
 
     socket.setValue("I am not a Double");
   }

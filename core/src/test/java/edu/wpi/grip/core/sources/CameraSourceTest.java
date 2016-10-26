@@ -1,6 +1,7 @@
 package edu.wpi.grip.core.sources;
 
 
+import edu.wpi.grip.core.GripBasicModule;
 import edu.wpi.grip.core.events.UnexpectedThrowableEvent;
 import edu.wpi.grip.core.operations.network.MockGripNetworkModule;
 import edu.wpi.grip.core.sockets.OutputSocket;
@@ -63,8 +64,10 @@ public class CameraSourceTest {
   public void setUp() throws Exception {
     this.testModule = new GripCoreTestModule();
     testModule.setUp();
-    final Injector injector = Guice.createInjector(Modules.override(testModule)
-        .with(new MockGripNetworkModule()));
+    final Injector injector = Guice.createInjector(
+        new GripBasicModule(),
+        Modules.override(testModule)
+            .with(new MockGripNetworkModule()));
     this.cameraSourceFactory = injector.getInstance(CameraSource.Factory.class);
     this.osf = injector.getInstance(OutputSocket.Factory.class);
 
@@ -273,7 +276,7 @@ public class CameraSourceTest {
       for (int y = 0; y < frameIdx.rows(); y++) {
         for (int x = 0; x < frameIdx.cols(); x++) {
           for (int z = 0; z < frameIdx.channels(); z++) {
-            frameIdx.putDouble(new int[]{y, x, z}, y + x + z);
+            frameIdx.putDouble(new int[] {y, x, z}, y + x + z);
           }
         }
       }

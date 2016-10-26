@@ -1,13 +1,13 @@
 package edu.wpi.grip.ui.codegeneration.tools;
 
 import edu.wpi.grip.core.Connection;
+import edu.wpi.grip.core.MockStep;
 import edu.wpi.grip.core.OperationMetaData;
 import edu.wpi.grip.core.Pipeline;
 import edu.wpi.grip.core.Step;
 import edu.wpi.grip.core.events.ConnectionAddedEvent;
 import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.sockets.OutputSocket;
-import edu.wpi.grip.core.util.MockExceptionWitness;
 import edu.wpi.grip.ui.codegeneration.Exporter;
 import edu.wpi.grip.ui.codegeneration.Language;
 
@@ -48,7 +48,7 @@ public class PipelineGenerator {
   }
 
   public Step addStep(OperationMetaData data) {
-    Step step = new Step.Factory(MockExceptionWitness.MOCK_FACTORY).create(data);
+    Step step = MockStep.createStepFactory().create(data);
     pipeline.addStep(step);
     return step;
   }

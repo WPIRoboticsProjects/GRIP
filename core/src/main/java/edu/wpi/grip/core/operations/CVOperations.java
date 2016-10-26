@@ -2,7 +2,6 @@ package edu.wpi.grip.core.operations;
 
 
 import edu.wpi.grip.core.OperationMetaData;
-import edu.wpi.grip.core.events.OperationAddedEvent;
 import edu.wpi.grip.core.operations.opencv.CVOperation;
 import edu.wpi.grip.core.operations.opencv.enumeration.FlipCode;
 import edu.wpi.grip.core.operations.templated.TemplateFactory;
@@ -21,7 +20,6 @@ import edu.wpi.grip.generated.opencv_imgproc.enumeration.ThresholdTypesEnum;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.ImmutableList;
-import com.google.common.eventbus.EventBus;
 import com.google.inject.Inject;
 
 import org.bytedeco.javacpp.opencv_core;
@@ -34,15 +32,13 @@ import org.bytedeco.javacpp.opencv_imgproc;
  * A list of all of the raw opencv operations.
  */
 @SuppressWarnings("PMD.AvoidDuplicateLiterals")
-public class CVOperations {
+public class CVOperations implements Operations {
 
-  private final EventBus eventBus;
   private final ImmutableList<OperationMetaData> coreOperations;
   private final ImmutableList<OperationMetaData> imgprocOperation;
 
   @Inject
-  CVOperations(EventBus eventBus, InputSocket.Factory isf, OutputSocket.Factory osf) {
-    this.eventBus = eventBus;
+  CVOperations(InputSocket.Factory isf, OutputSocket.Factory osf) {
     final TemplateFactory templateFactory = new TemplateFactory(isf, osf);
     this.coreOperations = ImmutableList.of(
         new OperationMetaData(CVOperation.defaults("CV absdiff",
@@ -430,20 +426,8 @@ public class CVOperations {
    * All of the operations that this list supplies.
    */
   @VisibleForTesting
-  ImmutableList<OperationMetaData> operations() {
+  public ImmutableList<OperationMetaData> operations() {
     return ImmutableList.<OperationMetaData>builder().addAll(coreOperations)
         .addAll(imgprocOperation).build();
-  }
-
-  /**
-   * Submits all operations for addition on the {@link EventBus}.
-   */
-  public void addOperations() {
-    coreOperations.stream()
-        .map(OperationAddedEvent::new)
-        .forEach(eventBus::post);
-    imgprocOperation.stream()
-        .map(OperationAddedEvent::new)
-        .forEach(eventBus::post);
   }
 }

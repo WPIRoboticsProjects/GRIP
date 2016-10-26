@@ -1,5 +1,6 @@
 package edu.wpi.grip.ui;
 
+import edu.wpi.grip.core.GripBasicModule;
 import edu.wpi.grip.core.Operation;
 import edu.wpi.grip.core.OperationDescription;
 import edu.wpi.grip.core.OperationMetaData;
@@ -26,6 +27,7 @@ import org.testfx.util.WaitForAsyncUtils;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
+
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
@@ -42,8 +44,11 @@ public class PaletteTest extends ApplicationTest {
   public void start(Stage stage) throws IOException {
     testModule.setUp();
 
-    Injector injector = Guice.createInjector(Modules.override(testModule)
-        .with(new GripUiModule(), new MockGripNetworkModule()));
+    Injector injector = Guice.createInjector(
+        Modules.override(
+            new GripBasicModule(),
+            testModule)
+            .with(new GripUiModule(), new MockGripNetworkModule()));
     eventBus = injector.getInstance(EventBus.class);
 
     FXMLLoader loader = new FXMLLoader(getClass().getResource("Palette.fxml"));
@@ -65,7 +70,7 @@ public class PaletteTest extends ApplicationTest {
         operation)));
 
     // Record when a a StepAddedEvent happens
-    Step[] step = new Step[]{null};
+    Step[] step = new Step[] {null};
     eventBus.register(new Object() {
       @SuppressFBWarnings(value = "UMAC_UNCALLABLE_METHOD_OF_ANONYMOUS_CLASS",
           justification = "This method is called by Guava's EventBus")

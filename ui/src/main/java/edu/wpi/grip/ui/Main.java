@@ -1,13 +1,16 @@
 package edu.wpi.grip.ui;
 
+import edu.wpi.grip.core.GripBasicModule;
 import edu.wpi.grip.core.GripCoreModule;
 import edu.wpi.grip.core.GripFileModule;
+import edu.wpi.grip.core.Palette;
 import edu.wpi.grip.core.PipelineRunner;
 import edu.wpi.grip.core.events.UnexpectedThrowableEvent;
 import edu.wpi.grip.core.http.GripServer;
 import edu.wpi.grip.core.http.HttpPipelineSwitcher;
+import edu.wpi.grip.core.operations.BasicOperations;
 import edu.wpi.grip.core.operations.CVOperations;
-import edu.wpi.grip.core.operations.Operations;
+import edu.wpi.grip.core.operations.NetworkOperations;
 import edu.wpi.grip.core.operations.network.GripNetworkModule;
 import edu.wpi.grip.core.serialization.Project;
 import edu.wpi.grip.core.sources.GripSourcesHardwareModule;
@@ -28,6 +31,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.application.Preloader;
@@ -37,6 +41,7 @@ import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
+
 import javax.inject.Inject;
 
 public class Main extends Application {
@@ -55,8 +60,10 @@ public class Main extends Application {
   @Inject private EventBus eventBus;
   @Inject private PipelineRunner pipelineRunner;
   @Inject private Project project;
-  @Inject private Operations operations;
+  @Inject private Palette palette;
+  @Inject private BasicOperations basicOperations;
   @Inject private CVOperations cvOperations;
+  @Inject private NetworkOperations networkOperations;
   @Inject private GripServer server;
   @Inject private HttpPipelineSwitcher pipelineSwitcher;
   private Parent root;
@@ -74,7 +81,10 @@ public class Main extends Application {
     if (parameters.contains("--headless")) {
       // If --headless was specified on the command line, run in headless mode (only use the core
       // module)
-      injector = Guice.createInjector(Modules.override(new GripCoreModule(), new GripFileModule(),
+      injector = Guice.createInjector(Modules.override(
+          new GripBasicModule(),
+          new GripCoreModule(),
+          new GripFileModule(),
           new GripSourcesHardwareModule()).with(new GripNetworkModule()));
       injector.injectMembers(this);
 
@@ -82,7 +92,10 @@ public class Main extends Application {
       headless = true;
     } else {
       // Otherwise, run with both the core and UI modules, and show the JavaFX stage
-      injector = Guice.createInjector(Modules.override(new GripCoreModule(), new GripFileModule(),
+      injector = Guice.createInjector(Modules.override(
+          new GripBasicModule(),
+          new GripCoreModule(),
+          new GripFileModule(),
           new GripSourcesHardwareModule()).with(new GripNetworkModule(), new GripUiModule()));
       injector.injectMembers(this);
       notifyPreloader(new Preloader.ProgressNotification(0.15));
@@ -111,8 +124,9 @@ public class Main extends Application {
           injector::getInstance);
       root.setStyle("-fx-font-size: " + DPIUtility.FONT_SIZE + "px");
 
-      operations.addOperations();
-      cvOperations.addOperations();
+      palette.addOperations(basicOperations);
+      palette.addOperations(cvOperations);
+      palette.addOperations(networkOperations);
       notifyPreloader(new Preloader.ProgressNotification(0.9));
 
       // If there was a file specified on the command line, open it immediately

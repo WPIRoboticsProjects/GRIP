@@ -2,18 +2,11 @@ package edu.wpi.grip.core;
 
 import edu.wpi.grip.core.events.UnexpectedThrowableEvent;
 import edu.wpi.grip.core.serialization.Project;
-import edu.wpi.grip.core.settings.SettingsProvider;
-import edu.wpi.grip.core.sockets.InputSocket;
-import edu.wpi.grip.core.sockets.InputSocketImpl;
-import edu.wpi.grip.core.sockets.OutputSocket;
-import edu.wpi.grip.core.sockets.OutputSocketImpl;
 import edu.wpi.grip.core.sources.CameraSource;
 import edu.wpi.grip.core.sources.HttpSource;
 import edu.wpi.grip.core.sources.ImageFileSource;
 import edu.wpi.grip.core.sources.MultiImageFileSource;
 import edu.wpi.grip.core.sources.NetworkTableEntrySource;
-import edu.wpi.grip.core.util.ExceptionWitness;
-import edu.wpi.grip.core.util.GripMode;
 
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.SubscriberExceptionContext;
@@ -110,7 +103,6 @@ public class GripCoreModule extends AbstractModule {
 
   @Override
   protected void configure() {
-    bind(GripMode.class).toInstance(GripMode.HEADLESS);
 
     // Register any injected object on the event bus
     bindListener(Matchers.any(), new TypeListener() {
@@ -122,17 +114,8 @@ public class GripCoreModule extends AbstractModule {
 
     bind(EventBus.class).toInstance(eventBus);
 
-    // Allow for just injecting the settings provider, instead of the whole pipeline
-    bind(SettingsProvider.class).to(Pipeline.class);
-
-    install(new FactoryModuleBuilder().build(new TypeLiteral<Connection.Factory<Object>>() {
-    }));
-
-    bind(ConnectionValidator.class).to(Pipeline.class);
     bind(Source.SourceFactory.class).to(Source.SourceFactoryImpl.class);
 
-    bind(InputSocket.Factory.class).to(InputSocketImpl.FactoryImpl.class);
-    bind(OutputSocket.Factory.class).to(OutputSocketImpl.FactoryImpl.class);
     install(new FactoryModuleBuilder()
         .implement(CameraSource.class, CameraSource.class)
         .build(CameraSource.Factory.class));
@@ -148,8 +131,6 @@ public class GripCoreModule extends AbstractModule {
     install(new FactoryModuleBuilder()
         .implement(NetworkTableEntrySource.class, NetworkTableEntrySource.class)
         .build(NetworkTableEntrySource.Factory.class));
-
-    install(new FactoryModuleBuilder().build(ExceptionWitness.Factory.class));
   }
 
   protected void onSubscriberException(Throwable exception, @Nullable SubscriberExceptionContext

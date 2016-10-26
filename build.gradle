@@ -99,6 +99,23 @@ def getVersionSimple = { ->
     }
 }
 
+subprojects {
+    repositories {
+        flatDir {
+            dirs "${rootDir.path}/core/libs"
+        }
+        maven {
+            url = "http://first.wpi.edu/FRC/roborio/maven/development"
+        }
+        maven {
+            url = "https://github.com/WPIRoboticsProjects/rosjava_mvn_repo/raw/master"
+        }
+        maven {
+            url = "https://jitpack.io"
+        }
+    }
+}
+
 configure(subprojects - project(':ui:linuxLauncher')) {
     apply plugin: 'java'
     apply plugin: 'application'
@@ -127,6 +144,8 @@ configure(subprojects - project(':ui:linuxLauncher')) {
     }
 
     pmd {
+        // Remove InvalidSlf4jMessageFormat exclusion after bumped to version 5.5.2
+        toolVersion = '5.5.1'
         consoleOutput = true
         sourceSets = [sourceSets.main, sourceSets.test]
         reportsDir = file("$project.buildDir/reports/pmd")
@@ -231,18 +250,6 @@ project(":core") {
         shadow
     }
 
-    repositories {
-        flatDir {
-            dirs 'libs'
-        }
-        maven {
-            url = "http://first.wpi.edu/FRC/roborio/maven/development"
-        }
-        maven {
-            url = "https://github.com/WPIRoboticsProjects/rosjava_mvn_repo/raw/master"
-        }
-    }
-
     dependencies {
         compile group: 'com.google.code.findbugs', name: 'jsr305', version: '3.0.1'
         compile group: 'org.bytedeco', name: 'javacv', version: '1.1'
@@ -257,6 +264,7 @@ project(":core") {
         compile group: 'com.google.auto.value', name: 'auto-value', version: '1.2'
         compile group: 'com.google.code.gson', name: 'gson', version: '2.6.2'
         compile group: 'org.eclipse.jetty', name:'jetty-server', version:'9.3.8.v20160314'
+        compile group: 'com.fasterxml.uuid', name: 'java-uuid-generator', version: '3.1.4'
         testCompile group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.5.2'
         testCompile group: 'org.apache.httpcomponents', name: 'httpcore', version: '4.2.2'
         testCompile group: 'org.apache.httpcomponents', name: 'httpmime', version: '4.5.2'
@@ -307,38 +315,21 @@ project(":core") {
     }
 
     sourceSets {
-        generated {
+        main {
             java {
                 /* Note: When referencing this it becomes `srcDirs` */
-                srcDir 'src/generated/java'
+                srcDir file("${project.projectDir.path}/src/generated/java")
             }
         }
     }
 
     task generateCodeFromSource(type: CodeGenerator) {
         description 'Generates the Operation Wrappers for the OpenCV methods.\n To skip run with parm `-PskipGenerate`'
-        dest sourceSets.generated.java.srcDirs
+        dest "${project(':core').projectDir}/src/generated/java"
         removeExisting true
     }
     generateCodeFromSource.onlyIf { !project.hasProperty('skipGenerate') }
-    compileJava.source sourceSets.generated.java, sourceSets.main.java
     compileJava.dependsOn generateCodeFromSource
-
-    // IDE setup
-    eclipse.classpath {
-        file.whenMerged { cp ->
-            sourceSets.generated.java.srcDirs.forEach { srcDir ->
-                def source_folder = new org.gradle.plugins.ide.eclipse.model.SourceFolder(srcDir.getAbsolutePath(), "build/classes/merged")
-                if (cp.entries.find() { it.path == source_folder.path } == null)
-                    cp.entries.add(source_folder)
-            }
-        }
-    }
-
-    idea.module {
-        sourceDirs += sourceSets.generated.java.srcDirs
-        sourceDirs += file('generated')
-    }
 }
 
 project (":ui:linuxLauncher") {

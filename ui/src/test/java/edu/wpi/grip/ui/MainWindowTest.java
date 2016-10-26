@@ -3,6 +3,7 @@ package edu.wpi.grip.ui;
 
 import edu.wpi.grip.core.AddOperation;
 import edu.wpi.grip.core.AdditionOperation;
+import edu.wpi.grip.core.GripBasicModule;
 import edu.wpi.grip.core.OperationMetaData;
 import edu.wpi.grip.core.Pipeline;
 import edu.wpi.grip.core.PipelineRunner;
@@ -48,7 +49,9 @@ public class MainWindowTest extends ApplicationTest {
     testModule.setUp();
 
     Injector injector = Guice.createInjector(
-        Modules.override(testModule, new MockGripNetworkModule()).with(new GripUiModule()));
+        Modules.override(
+            new GripBasicModule(),
+            testModule, new MockGripNetworkModule()).with(new GripUiModule()));
 
     final Parent root =
         FXMLLoader.load(Main.class.getResource("MainWindow.fxml"), null, null,

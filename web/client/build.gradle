@@ -1,0 +1,10 @@
+apply plugin: 'com.moowork.node'
+
+
+task installGlobalDependencies(type: NpmTask) {
+    args = ['install', '-g', 'typescript', 'webpack']
+}
+
+npm_install.dependsOn(
+        tasks.getByPath(':web:swagger'),
+        installGlobalDependencies)

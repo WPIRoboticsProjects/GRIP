@@ -7,6 +7,7 @@ import edu.wpi.grip.core.Step;
 
 import java.util.Optional;
 import java.util.Set;
+import java.util.UUID;
 
 import javax.annotation.Nullable;
 
@@ -68,6 +69,11 @@ public interface Socket<T> {
    * @param step The step that this socket is part of, if it's in a step.
    */
   void setStep(Optional<Step> step);
+
+  /**
+   * @return A UUID representing this socket.
+   */
+  UUID getUUID();
 
   /**
    * If this socket is in a source return it.

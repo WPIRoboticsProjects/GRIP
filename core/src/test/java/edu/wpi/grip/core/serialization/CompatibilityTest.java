@@ -1,5 +1,7 @@
 package edu.wpi.grip.core.serialization;
 
+import edu.wpi.grip.core.GripBasicModule;
+import edu.wpi.grip.core.Palette;
 import edu.wpi.grip.core.Pipeline;
 import edu.wpi.grip.core.operations.OperationsFactory;
 import edu.wpi.grip.util.Files;
@@ -47,15 +49,17 @@ public class CompatibilityTest {
     testModule = new GripCoreTestModule();
     testModule.setUp();
     //Set up the stuff we need for the core functionality for GRIP
-    final Injector injector = Guice.createInjector(testModule);
+    final Injector injector = Guice.createInjector(
+        new GripBasicModule(),
+        testModule);
 
     final EventBus eventBus = injector.getInstance(EventBus.class);
     pipeline = injector.getInstance(Pipeline.class);
     final Project project = injector.getInstance(Project.class);
+    final Palette palette = injector.getInstance(Palette.class);
 
     //Add the operations so that GRIP will recognize them
-    OperationsFactory.create(eventBus).addOperations();
-    //CVOperations.addOperations(eventBus);
+    palette.addOperations(OperationsFactory.create(eventBus));
 
     //Set up the test project file to work with this machine
     String fileName = testprojectURI.toString().substring(5);

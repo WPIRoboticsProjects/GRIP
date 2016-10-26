@@ -3,6 +3,7 @@
          xmlns="http://pmd.sourceforge.net/ruleset/2.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0 http://pmd.sourceforge.net/ruleset_2_0_0.xsd">
+    <exclude-pattern>.*/build/swagger/.*</exclude-pattern>
     <rule ref="rulesets/java/basic.xml" />
     <rule ref="rulesets/java/braces.xml" />
     <rule ref="rulesets/java/design.xml">
@@ -23,6 +24,8 @@
     </rule>
     <rule ref="rulesets/java/logging-java.xml">
         <exclude name="GuardLogStatementJavaUtil" />
+        <!-- This can be removed after PMD is updated to 5.5.2 -->
+        <exclude name="InvalidSlf4jMessageFormat" />
     </rule>
     <rule ref="rulesets/java/migrating.xml" />
     <rule ref="rulesets/java/optimizations.xml">

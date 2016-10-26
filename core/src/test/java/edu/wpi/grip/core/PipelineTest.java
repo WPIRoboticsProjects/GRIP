@@ -45,8 +45,9 @@ public class PipelineTest {
   public void setUp() {
     testModule = new GripCoreTestModule();
     testModule.setUp();
-    final Injector injector = Guice.createInjector(Modules.override(testModule)
-        .with(new MockGripNetworkModule()));
+    final Injector injector = Guice.createInjector(
+        Modules.override(new GripBasicModule(), testModule)
+            .with(new MockGripNetworkModule()));
     stepFactory = injector.getInstance(Step.Factory.class);
     eventBus = injector.getInstance(EventBus.class);
     pipeline = injector.getInstance(Pipeline.class);

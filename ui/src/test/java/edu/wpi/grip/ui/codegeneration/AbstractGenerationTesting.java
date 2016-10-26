@@ -1,5 +1,6 @@
 package edu.wpi.grip.ui.codegeneration;
 
+import edu.wpi.grip.core.GripBasicModule;
 import edu.wpi.grip.core.Pipeline;
 import edu.wpi.grip.core.events.SourceAddedEvent;
 import edu.wpi.grip.core.operations.OperationsUtil;
@@ -7,7 +8,6 @@ import edu.wpi.grip.core.operations.network.MockGripNetworkModule;
 import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.core.sources.ImageFileSource;
-//import edu.wpi.grip.ui.codegeneration.tools.CppPipelineInterfacer;
 import edu.wpi.grip.ui.codegeneration.tools.HelperTools;
 import edu.wpi.grip.ui.codegeneration.tools.JavaPipelineInterfacer;
 import edu.wpi.grip.ui.codegeneration.tools.PipelineCreator;
@@ -42,6 +42,8 @@ import javax.inject.Inject;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+//import edu.wpi.grip.ui.codegeneration.tools.CppPipelineInterfacer;
+
 @Category(GenerationTesting.class)
 @SuppressWarnings("PMD.JUnit4TestShouldUseTestAnnotation")
 public class AbstractGenerationTesting {
@@ -70,7 +72,9 @@ public class AbstractGenerationTesting {
   public void setUp() {
     testModule = new GripCoreTestModule();
     testModule.setUp();
-    final Injector injector = Guice.createInjector(Modules.override(testModule)
+    final Injector injector = Guice.createInjector(
+        new GripBasicModule(),
+        Modules.override(testModule)
             .with(new MockGripNetworkModule()));
     injector.injectMembers(this);
     injector.injectMembers(gen);

@@ -2,6 +2,7 @@ package edu.wpi.grip.ui.pipeline;
 
 import edu.wpi.grip.core.AdditionOperation;
 import edu.wpi.grip.core.Connection;
+import edu.wpi.grip.core.GripBasicModule;
 import edu.wpi.grip.core.MockStep;
 import edu.wpi.grip.core.OperationMetaData;
 import edu.wpi.grip.core.Pipeline;
@@ -12,7 +13,6 @@ import edu.wpi.grip.core.operations.composite.DesaturateOperation;
 import edu.wpi.grip.core.operations.network.MockGripNetworkModule;
 import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.sockets.OutputSocket;
-import edu.wpi.grip.core.util.MockExceptionWitness;
 import edu.wpi.grip.ui.GripUiModule;
 import edu.wpi.grip.ui.util.StyleClassNameUtility;
 import edu.wpi.grip.ui.util.TestAnnotationFXMLLoader;
@@ -62,8 +62,9 @@ public class PipelineUITest extends ApplicationTest {
   public void start(Stage stage) {
     testModule = new GripCoreTestModule();
     testModule.setUp();
-    final Injector injector = Guice.createInjector(Modules.override(testModule)
-        .with(new GripUiModule(), new MockGripNetworkModule()));
+    final Injector injector = Guice.createInjector(
+        Modules.override(new GripBasicModule(), testModule)
+            .with(new GripUiModule(), new MockGripNetworkModule()));
     eventBus = injector.getInstance(EventBus.class);
     pipeline = injector.getInstance(Pipeline.class);
     InputSocket.Factory isf = injector.getInstance(InputSocket.Factory.class);
@@ -119,7 +120,7 @@ public class PipelineUITest extends ApplicationTest {
     assertTrue("blur input socket size is:" + blurStep.getInputSockets().size(),
         blurStep.getInputSockets().size() > 0);
 
-    drag(StyleClassNameUtility.cssSelectorForOutputSocketHandleOn(desaturateStep),  MouseButton
+    drag(StyleClassNameUtility.cssSelectorForOutputSocketHandleOn(desaturateStep), MouseButton
         .PRIMARY).dropTo(StyleClassNameUtility.cssSelectorForInputSocketHandleOn(blurStep));
 
     clickOn(".pipeline .blur-step .expand", MouseButton.PRIMARY);
@@ -186,7 +187,7 @@ public class PipelineUITest extends ApplicationTest {
   }
 
   private Step addOperation(int count, OperationMetaData operationMetaData) {
-    final Step step = new Step.Factory(origin -> new MockExceptionWitness(eventBus, origin))
+    final Step step = MockStep.createStepFactory(eventBus)
         .create(operationMetaData);
     pipeline.addStep(step);
 

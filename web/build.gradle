@@ -1,0 +1,20 @@
+plugins {
+    id 'org.detoeuf.swagger-codegen' version '1.6.3'
+    id 'com.moowork.node' version '0.13'
+}
+
+subprojects {
+    apply plugin: 'org.detoeuf.swagger-codegen'
+}
+
+swagger {
+    inputSpec = "${project(':web').projectDir.path}/spec/swagger.yaml"
+
+    output = 'build/grip-swagger'
+    language = 'typescript-fetch'
+
+    additionalProperties = [
+            'npmName'          : 'grip-swagger',
+            'templateDir'      : "${project.projectDir.path}/swagger-template".toString()
+    ]
+}

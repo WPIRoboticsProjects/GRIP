@@ -1,7 +1,7 @@
 package edu.wpi.grip.core.operations;
 
 
-import edu.wpi.grip.core.FileManager;
+import edu.wpi.grip.core.OperationMetaData;
 import edu.wpi.grip.core.operations.network.MapNetworkPublisherFactory;
 import edu.wpi.grip.core.operations.network.MockMapNetworkPublisher;
 import edu.wpi.grip.core.operations.network.ros.JavaToMessageConverter;
@@ -10,9 +10,9 @@ import edu.wpi.grip.core.operations.network.ros.ROSNetworkPublisherFactory;
 import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.sockets.MockInputSocketFactory;
 import edu.wpi.grip.core.sockets.MockOutputSocketFactory;
-import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.core.util.MockFileManager;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.eventbus.EventBus;
 
 import java.util.Optional;
@@ -20,28 +20,40 @@ import java.util.Optional;
 public class OperationsFactory {
 
   public static Operations create(EventBus eventBus) {
-    return create(eventBus,
+    return () ->
+        ImmutableList.<OperationMetaData>builder()
+            .addAll(createBasic(eventBus).operations())
+            .addAll(createNetwork(eventBus).operations())
+            .addAll(createCV(eventBus).operations())
+            .build();
+  }
+
+  public static NetworkOperations createNetwork(EventBus eventBus) {
+    return createNetwork(
         MockMapNetworkPublisher::new,
         MockMapNetworkPublisher::new,
         MockROSMessagePublisher::new,
+        new MockInputSocketFactory(eventBus));
+  }
+
+  public static NetworkOperations createNetwork(MapNetworkPublisherFactory mapFactory,
+                                                MapNetworkPublisherFactory httpFactory,
+                                                ROSNetworkPublisherFactory rosFactory,
+                                                InputSocket.Factory isf) {
+    return new NetworkOperations(mapFactory, httpFactory, rosFactory, isf);
+  }
+
+  public static BasicOperations createBasic(EventBus eventBus) {
+    return new BasicOperations(
         new MockFileManager(),
         new MockInputSocketFactory(eventBus),
         new MockOutputSocketFactory(eventBus));
   }
 
-  public static Operations create(EventBus eventBus,
-                                  MapNetworkPublisherFactory mapFactory,
-                                  MapNetworkPublisherFactory httpFactory,
-                                  ROSNetworkPublisherFactory rosFactory,
-                                  FileManager fileManager,
-                                  InputSocket.Factory isf,
-                                  OutputSocket.Factory osf) {
-    return new Operations(eventBus, mapFactory, httpFactory, rosFactory, fileManager, isf, osf);
-  }
-
   public static CVOperations createCV(EventBus eventBus) {
-    return new CVOperations(eventBus, new MockInputSocketFactory(eventBus), new
-        MockOutputSocketFactory(eventBus));
+    return new CVOperations(
+        new MockInputSocketFactory(eventBus),
+        new MockOutputSocketFactory(eventBus));
   }
 
   private static class MockROSMessagePublisher<C extends JavaToMessageConverter> extends

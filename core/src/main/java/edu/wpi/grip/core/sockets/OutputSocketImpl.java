@@ -3,10 +3,15 @@ package edu.wpi.grip.core.sockets;
 
 import edu.wpi.grip.core.events.SocketPreviewChangedEvent;
 
+import com.fasterxml.uuid.NoArgGenerator;
 import com.google.common.base.MoreObjects;
 import com.google.common.eventbus.EventBus;
 import com.google.inject.Inject;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
+
+import java.util.UUID;
+
+import javax.inject.Provider;
 
 /**
  * A concrete implementation of the {@link OutputSocket}.
@@ -15,7 +20,7 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
  */
 @XStreamAlias("grip:Output")
 public class OutputSocketImpl<T> extends SocketImpl<T> implements OutputSocket<T> {
-  private final EventBus eventBus;
+  private final Provider<EventBus> eventBus;
   /**
    * Indicates if the socket is being previewed.
    */
@@ -24,9 +29,10 @@ public class OutputSocketImpl<T> extends SocketImpl<T> implements OutputSocket<T
   /**
    * @param eventBus   The Guava {@link EventBus} used by the application.
    * @param socketHint {@link #getSocketHint}
+   * @param uuid       A UUID for this object.
    */
-  OutputSocketImpl(EventBus eventBus, SocketHint<T> socketHint) {
-    super(eventBus, socketHint, Direction.OUTPUT);
+  OutputSocketImpl(Provider<EventBus> eventBus, SocketHint<T> socketHint, UUID uuid) {
+    super(eventBus, socketHint, Direction.OUTPUT, uuid);
     this.eventBus = eventBus;
   }
 
@@ -42,7 +48,7 @@ public class OutputSocketImpl<T> extends SocketImpl<T> implements OutputSocket<T
 
     // Only send an event if the field was actually changed
     if (changed) {
-      eventBus.post(new SocketPreviewChangedEvent(this));
+      eventBus.get().post(new SocketPreviewChangedEvent(this));
     }
   }
 
@@ -64,16 +70,18 @@ public class OutputSocketImpl<T> extends SocketImpl<T> implements OutputSocket<T
   }
 
   public static class FactoryImpl implements OutputSocket.Factory {
-    private final EventBus eventBus;
+    private final Provider<EventBus> eventBus;
+    private final NoArgGenerator uuidGenerator;
 
     @Inject
-    FactoryImpl(EventBus eventBus) {
+    FactoryImpl(Provider<EventBus> eventBus, NoArgGenerator uuidGenerator) {
       this.eventBus = eventBus;
+      this.uuidGenerator = uuidGenerator;
     }
 
     @Override
     public <T> OutputSocket<T> create(SocketHint<T> hint) {
-      return new OutputSocketImpl<>(eventBus, hint);
+      return new OutputSocketImpl<>(eventBus, hint, uuidGenerator.generate());
     }
   }
 }

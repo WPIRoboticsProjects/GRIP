@@ -23,7 +23,7 @@ public final class ExceptionWitnessTest {
   public void setUp() {
     final EventBus eventBus = new EventBus();
     this.witnessObserver = new Object();
-    this.errorWitness = new ExceptionWitness(eventBus, witnessObserver);
+    this.errorWitness = new ExceptionWitness(() -> eventBus, witnessObserver);
     this.testWitnessListener = new TestWitnessListener();
     eventBus.register(testWitnessListener);
   }
