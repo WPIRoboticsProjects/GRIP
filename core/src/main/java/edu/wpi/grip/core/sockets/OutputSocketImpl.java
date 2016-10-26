@@ -3,6 +3,7 @@ package edu.wpi.grip.core.sockets;
 
 import edu.wpi.grip.core.events.SocketPreviewChangedEvent;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.MoreObjects;
 import com.google.common.eventbus.EventBus;
 import com.google.inject.Inject;
@@ -21,12 +22,18 @@ public class OutputSocketImpl<T> extends SocketImpl<T> implements OutputSocket<T
    */
   private boolean previewed = false;
 
+  @VisibleForTesting
+  OutputSocketImpl(EventBus eventBus, SocketHint<T> socketHint) {
+    this(eventBus, socketHint, socketHint.getIdentifier());
+  }
+
   /**
    * @param eventBus   The Guava {@link EventBus} used by the application.
    * @param socketHint {@link #getSocketHint}
+   * @param uid        a unique string for identifying this socket
    */
-  OutputSocketImpl(EventBus eventBus, SocketHint<T> socketHint) {
-    super(eventBus, socketHint, Direction.OUTPUT);
+  OutputSocketImpl(EventBus eventBus, SocketHint<T> socketHint, String uid) {
+    super(eventBus, socketHint, Direction.OUTPUT, uid);
     this.eventBus = eventBus;
   }
 
@@ -72,8 +79,8 @@ public class OutputSocketImpl<T> extends SocketImpl<T> implements OutputSocket<T
     }
 
     @Override
-    public <T> OutputSocket<T> create(SocketHint<T> hint) {
-      return new OutputSocketImpl<>(eventBus, hint);
+    public <T> OutputSocket<T> create(SocketHint<T> hint, String uid) {
+      return new OutputSocketImpl<>(eventBus, hint, uid);
     }
   }
 }

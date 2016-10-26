@@ -1,5 +1,6 @@
 package edu.wpi.grip.core.http;
 
+import edu.wpi.grip.core.exception.InvalidSaveException;
 import edu.wpi.grip.core.serialization.Project;
 import edu.wpi.grip.core.util.GripMode;
 
@@ -43,9 +44,15 @@ public class HttpPipelineSwitcher extends PedanticHandler {
     }
     switch (mode) {
       case HEADLESS:
-        project.open(new String(IOUtils.toByteArray(request.getInputStream()), "UTF-8"));
-        response.setStatus(HttpServletResponse.SC_CREATED);
-        baseRequest.setHandled(true);
+        try {
+          project.open(new String(IOUtils.toByteArray(request.getInputStream()), "UTF-8"));
+          response.setStatus(HttpServletResponse.SC_CREATED);
+          baseRequest.setHandled(true);
+        } catch (InvalidSaveException e) {
+          // 403 - Forbidden if given an invalid save
+          response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+          baseRequest.setHandled(true);
+        }
         break;
       case GUI:
         // Don't run in GUI mode, it doesn't make much sense and can easily deadlock if pipelines

@@ -3,6 +3,7 @@ package edu.wpi.grip.core.sockets;
 
 import edu.wpi.grip.core.Connection;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.eventbus.EventBus;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
@@ -19,12 +20,18 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class InputSocketImpl<T> extends SocketImpl<T> implements InputSocket<T> {
   private final AtomicBoolean dirty = new AtomicBoolean(false);
 
+  @VisibleForTesting
+  InputSocketImpl(EventBus eventBus, SocketHint<T> socketHint) {
+    this(eventBus, socketHint, socketHint.getIdentifier());
+  }
+
   /**
    * @param eventBus   The Guava {@link EventBus} used by the application.
    * @param socketHint {@link #getSocketHint}
+   * @param uid        a unique string for identifying this socket
    */
-  InputSocketImpl(EventBus eventBus, SocketHint<T> socketHint) {
-    super(eventBus, socketHint, Socket.Direction.INPUT);
+  InputSocketImpl(EventBus eventBus, SocketHint<T> socketHint, String uid) {
+    super(eventBus, socketHint, Socket.Direction.INPUT, uid);
   }
 
   /**
@@ -63,8 +70,8 @@ public class InputSocketImpl<T> extends SocketImpl<T> implements InputSocket<T> 
     }
 
     @Override
-    public <T> InputSocket<T> create(SocketHint<T> hint) {
-      return new InputSocketImpl<>(eventBus, hint);
+    public <T> InputSocket<T> create(SocketHint<T> hint, String uid) {
+      return new InputSocketImpl<>(eventBus, hint, uid);
     }
   }
 

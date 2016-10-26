@@ -39,8 +39,8 @@ public class DesaturateOperation implements Operation {
   @SuppressWarnings("JavadocMethod")
   public DesaturateOperation(InputSocket.Factory inputSocketFactory, OutputSocket.Factory
       outputSocketFactory) {
-    this.inputSocket = inputSocketFactory.create(inputHint);
-    this.outputSocket = outputSocketFactory.create(outputHint);
+    this.inputSocket = inputSocketFactory.create(inputHint, "source-image");
+    this.outputSocket = outputSocketFactory.create(outputHint, "result");
   }
 
 

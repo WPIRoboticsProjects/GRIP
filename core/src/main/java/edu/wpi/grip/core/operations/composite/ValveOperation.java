@@ -35,7 +35,7 @@ public class ValveOperation implements Operation {
         outputSocketFactory);
     final SocketHint<Boolean> switcherHint = SocketHints.createBooleanSocketHint("valve", true);
 
-    this.switcherSocket = inputSocketFactory.create(switcherHint);
+    this.switcherSocket = inputSocketFactory.create(switcherHint, "switcher");
     this.inputSocket = linkedSocketHint.linkedInputSocket("Input");
 
     this.outputSocket = linkedSocketHint.linkedOutputSocket("Output");

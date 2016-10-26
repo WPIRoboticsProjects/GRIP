@@ -47,11 +47,11 @@ public class BlurOperation implements Operation {
   @SuppressWarnings("JavadocMethod")
   public BlurOperation(InputSocket.Factory inputSocketFactory, OutputSocket.Factory
       outputSocketFactory) {
-    this.inputSocket = inputSocketFactory.create(inputHint);
-    this.typeSocket = inputSocketFactory.create(typeHint);
-    this.radiusSocket = inputSocketFactory.create(radiusHint);
+    this.inputSocket = inputSocketFactory.create(inputHint, "source-image");
+    this.typeSocket = inputSocketFactory.create(typeHint, "blur-type");
+    this.radiusSocket = inputSocketFactory.create(radiusHint, "blur-radius");
 
-    this.outputSocket = outputSocketFactory.create(outputHint);
+    this.outputSocket = outputSocketFactory.create(outputHint, "result");
   }
 
   @Override

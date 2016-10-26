@@ -107,7 +107,7 @@ public class NetworkTableEntrySource extends Source {
     this.path = path;
     this.type = type;
     networkReceiver = networkReceiverFactory.create(path);
-    output = osf.create(type.createSocketHint());
+    output = osf.create(type.createSocketHint(), "data-output");
   }
 
   @Override

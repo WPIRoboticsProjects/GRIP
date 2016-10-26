@@ -72,7 +72,7 @@ public final class ImageFileSource extends Source {
     super(exceptionWitnessFactory);
     this.path = checkNotNull(path, "Path can not be null");
     this.name = Files.getNameWithoutExtension(this.path);
-    this.outputSocket = outputSocketFactory.create(imageOutputHint);
+    this.outputSocket = outputSocketFactory.create(imageOutputHint, "image-output");
   }
 
   /**

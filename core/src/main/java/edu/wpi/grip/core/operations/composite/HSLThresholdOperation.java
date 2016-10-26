@@ -56,12 +56,12 @@ public class HSLThresholdOperation extends ThresholdOperation {
   @SuppressWarnings("JavadocMethod")
   public HSLThresholdOperation(InputSocket.Factory inputSocketFactory, OutputSocket.Factory
       outputSocketFactory) {
-    this.inputSocket = inputSocketFactory.create(inputHint);
-    this.hueSocket = inputSocketFactory.create(hueHint);
-    this.saturationSocket = inputSocketFactory.create(saturationHint);
-    this.luminanceSocket = inputSocketFactory.create(luminanceHint);
+    this.inputSocket = inputSocketFactory.create(inputHint, "source-image");
+    this.hueSocket = inputSocketFactory.create(hueHint, "hue");
+    this.saturationSocket = inputSocketFactory.create(saturationHint, "saturation");
+    this.luminanceSocket = inputSocketFactory.create(luminanceHint, "luminance");
 
-    this.outputSocket = outputSocketFactory.create(outputHint);
+    this.outputSocket = outputSocketFactory.create(outputHint, "result");
   }
 
   @Override

@@ -135,8 +135,8 @@ public class CameraSource extends Source implements RestartableService {
       @Assisted final Properties properties) throws MalformedURLException {
     super(exceptionWitnessFactory);
     this.eventBus = eventBus;
-    this.frameOutputSocket = outputSocketFactory.create(imageOutputHint);
-    this.frameRateOutputSocket = outputSocketFactory.create(frameRateOutputHint);
+    this.frameOutputSocket = outputSocketFactory.create(imageOutputHint, "image-output");
+    this.frameRateOutputSocket = outputSocketFactory.create(frameRateOutputHint, "fps-output");
     this.properties = properties;
 
     final String deviceNumberProperty = properties.getProperty(DEVICE_NUMBER_PROPERTY);

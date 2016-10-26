@@ -2,13 +2,17 @@ package edu.wpi.grip.core.serialization;
 
 import edu.wpi.grip.core.Pipeline;
 import edu.wpi.grip.core.PipelineRunner;
+import edu.wpi.grip.core.VersionManager;
 import edu.wpi.grip.core.events.DirtiesSaveEvent;
+import edu.wpi.grip.core.exception.IncompatibleVersionException;
+import edu.wpi.grip.core.exception.InvalidSaveException;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.eventbus.Subscribe;
 import com.google.common.reflect.ClassPath;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
+import com.thoughtworks.xstream.converters.ConversionException;
 import com.thoughtworks.xstream.converters.reflection.PureJavaReflectionProvider;
 
 import java.io.File;
@@ -25,6 +29,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
+
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
@@ -37,6 +42,7 @@ public class Project {
   protected final XStream xstream = new XStream(new PureJavaReflectionProvider());
   @Inject
   private Pipeline pipeline;
+  private ProjectModel model;
   @Inject
   private PipelineRunner pipelineRunner;
   private Optional<File> file = Optional.empty();
@@ -47,13 +53,16 @@ public class Project {
                          SourceConverter sourceConverter,
                          SocketConverter socketConverter,
                          ConnectionConverter connectionConverter,
-                         ProjectSettingsConverter projectSettingsConverter) {
+                         ProjectSettingsConverter projectSettingsConverter,
+                         VersionConverter versionConverter) {
+    model = new ProjectModel(pipeline, VersionManager.CURRENT_VERSION);
     xstream.setMode(XStream.NO_REFERENCES);
     xstream.registerConverter(stepConverter);
     xstream.registerConverter(sourceConverter);
     xstream.registerConverter(socketConverter);
     xstream.registerConverter(connectionConverter);
     xstream.registerConverter(projectSettingsConverter);
+    xstream.registerConverter(versionConverter);
     try {
       ClassPath cp = ClassPath.from(getClass().getClassLoader());
       cp.getAllClasses()
@@ -109,10 +118,31 @@ public class Project {
   }
 
   @VisibleForTesting
-  void open(Reader reader) {
+  void open(Reader reader) throws IncompatibleVersionException {
     pipelineRunner.stopAndAwait();
     this.pipeline.clear();
-    this.xstream.fromXML(reader);
+    try {
+      Object loaded = xstream.fromXML(reader);
+      if (loaded instanceof Pipeline) {
+        // Unversioned pre-2.0.0 save.
+        // It's compatible with the current version because it loaded without exceptions.
+        // When saved, the old save file will be upgraded to the current version.
+        model = new ProjectModel(pipeline, VersionManager.CURRENT_VERSION);
+      } else if (loaded instanceof ProjectModel) {
+        // Version 2.0.0 or above. Since we got to this point, we know it's compatible
+        // (otherwise a ConversionException would have been thrown).
+        // Saves from different versions of GRIP will be upgraded/downgraded to the current version
+        model = new ProjectModel(pipeline, VersionManager.CURRENT_VERSION);
+      } else {
+        // Uhh... probably a future version
+        throw new InvalidSaveException(
+            String.format("Unknown save format (loaded a %s)", loaded.getClass().getName())
+        );
+      }
+    } catch (ConversionException e) {
+      // Incompatible save, or a bug with de/serialization
+      throw new InvalidSaveException("Incompatible operations in save file", e);
+    }
     pipelineRunner.startAsync();
     saveIsDirty.set(false);
   }
@@ -129,7 +159,7 @@ public class Project {
   }
 
   public void save(Writer writer) {
-    this.xstream.toXML(this.pipeline, writer);
+    this.xstream.toXML(model, writer);
     saveIsDirty.set(false);
   }
 

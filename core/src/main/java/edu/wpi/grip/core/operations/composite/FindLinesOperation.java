@@ -44,8 +44,8 @@ public class FindLinesOperation implements Operation {
 
   public FindLinesOperation(InputSocket.Factory inputSocketFactory, OutputSocket.Factory
       outputSocketFactory) {
-    this.inputSocket = inputSocketFactory.create(inputHint);
-    this.linesReportSocket = outputSocketFactory.create(linesHint);
+    this.inputSocket = inputSocketFactory.create(inputHint, "source-image");
+    this.linesReportSocket = outputSocketFactory.create(linesHint, "found-lines");
   }
 
   @Override

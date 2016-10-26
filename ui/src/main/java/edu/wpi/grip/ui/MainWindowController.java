@@ -3,8 +3,11 @@ package edu.wpi.grip.ui;
 import edu.wpi.grip.core.Palette;
 import edu.wpi.grip.core.Pipeline;
 import edu.wpi.grip.core.PipelineRunner;
+import edu.wpi.grip.core.events.ExceptionClearedEvent;
+import edu.wpi.grip.core.events.ExceptionEvent;
 import edu.wpi.grip.core.events.ProjectSettingsChangedEvent;
 import edu.wpi.grip.core.events.UnexpectedThrowableEvent;
+import edu.wpi.grip.core.exception.InvalidSaveException;
 import edu.wpi.grip.core.serialization.Project;
 import edu.wpi.grip.core.settings.ProjectSettings;
 import edu.wpi.grip.core.settings.SettingsProvider;
@@ -12,6 +15,7 @@ import edu.wpi.grip.core.util.SafeShutdown;
 import edu.wpi.grip.core.util.service.SingleActionListener;
 import edu.wpi.grip.ui.codegeneration.Exporter;
 import edu.wpi.grip.ui.codegeneration.Language;
+import edu.wpi.grip.ui.components.ExceptionWitnessResponderButton;
 import edu.wpi.grip.ui.components.StartStoppableButton;
 import edu.wpi.grip.ui.util.DPIUtility;
 
@@ -83,6 +87,8 @@ public class MainWindowController {
   private Palette palette;
   @Inject
   private Project project;
+  @Inject
+  private ExceptionWitnessResponderButton.Factory ewrbFactory;
 
   private Stage aboutDialogStage;
 
@@ -90,6 +96,7 @@ public class MainWindowController {
   protected void initialize() {
     pipelineView.prefHeightProperty().bind(bottomPane.heightProperty());
     statusBar.getLeftItems().add(startStoppableButtonFactory.create(pipelineRunner));
+    statusBar.getRightItems().add(ewrbFactory.create(project, "Incompatible save file"));
     pipelineRunner.addListener(new SingleActionListener(() -> {
       final Service.State state = pipelineRunner.state();
       final String stateMessage =
@@ -169,8 +176,12 @@ public class MainWindowController {
         Thread fileOpenThread = new Thread(() -> {
           try {
             project.open(file);
+            eventBus.post(new ExceptionClearedEvent(project));
           } catch (IOException e) {
             eventBus.post(new UnexpectedThrowableEvent(e, "Failed to load save file"));
+          } catch (InvalidSaveException e) {
+            pipeline.clear();
+            eventBus.post(new ExceptionEvent(project, e.getMessage()));
           }
         }, "Project Open Thread");
         fileOpenThread.setDaemon(true);
@@ -254,10 +265,11 @@ public class MainWindowController {
       SafeShutdown.exit(0);
     }
   }
-  
+
   /**
    * Controls the export button in the main menu. Opens a filechooser with language selection.
    * The user can select the language to export to, save location and file name.
+   *
    * @param actionEvent Unused event passed by the controller.
    */
   public void generate(ActionEvent actionEvent) {

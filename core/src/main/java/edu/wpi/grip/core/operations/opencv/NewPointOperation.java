@@ -38,10 +38,10 @@ public class NewPointOperation implements CVOperation {
   @SuppressWarnings("JavadocMethod")
   public NewPointOperation(InputSocket.Factory inputSocketFactory, OutputSocket.Factory
       outputSocketFactory) {
-    this.xSocket = inputSocketFactory.create(xHint);
-    this.ySocket = inputSocketFactory.create(yHint);
+    this.xSocket = inputSocketFactory.create(xHint, "x");
+    this.ySocket = inputSocketFactory.create(yHint, "y");
 
-    this.outputSocket = outputSocketFactory.create(outputHint);
+    this.outputSocket = outputSocketFactory.create(outputHint, "result");
   }
 
   @Override

@@ -79,13 +79,13 @@ public class SaveImageOperation implements Operation {
                             FileManager fileManager) {
     this.fileManager = fileManager;
 
-    inputSocket = inputSocketFactory.create(inputHint);
-    fileTypesSocket = inputSocketFactory.create(fileTypeHint);
-    qualitySocket = inputSocketFactory.create(qualityHint);
-    periodSocket = inputSocketFactory.create(periodHint);
-    activeSocket = inputSocketFactory.create(activeHint);
+    inputSocket = inputSocketFactory.create(inputHint, "source-image");
+    fileTypesSocket = inputSocketFactory.create(fileTypeHint, "file-type");
+    qualitySocket = inputSocketFactory.create(qualityHint, "compression-quality");
+    periodSocket = inputSocketFactory.create(periodHint, "period");
+    activeSocket = inputSocketFactory.create(activeHint, "enable-saving");
 
-    outputSocket = outputSocketFactory.create(outputHint);
+    outputSocket = outputSocketFactory.create(outputHint, "passthrough");
   }
 
   @Override

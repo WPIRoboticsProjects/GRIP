@@ -12,6 +12,7 @@ public interface OutputSocket<T> extends Socket<T> {
 
   /**
    * @return Whether or not this socket is shown in a preview in the GUI.
+   *
    * @see #setPreviewed(boolean) d(boolean)
    */
   boolean isPreviewed();
@@ -27,6 +28,15 @@ public interface OutputSocket<T> extends Socket<T> {
   void resetValueToInitial();
 
   interface Factory {
-    <T> OutputSocket<T> create(SocketHint<T> hint);
+    /**
+     * Creates a new output socket from a socket hint. This should <i>only</i> be used for
+     * generated sockets (like for Python operations) or for templated operations. For <i>
+     * everything else</i>, use {@link #create(SocketHint, String)}.
+     */
+    default <T> OutputSocket<T> create(SocketHint<T> hint) {
+      return create(hint, hint.getIdentifier().toLowerCase().replaceAll("\\s+", "-"));
+    }
+
+    <T> OutputSocket<T> create(SocketHint<T> hint, String uid);
   }
 }

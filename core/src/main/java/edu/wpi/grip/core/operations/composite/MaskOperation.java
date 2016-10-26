@@ -42,10 +42,10 @@ public class MaskOperation implements Operation {
   @SuppressWarnings("JavadocMethod")
   public MaskOperation(InputSocket.Factory inputSocketFactory,
                        OutputSocket.Factory outputSocketFactory) {
-    this.inputSocket = inputSocketFactory.create(inputHint);
-    this.maskSocket = inputSocketFactory.create(maskHint);
+    this.inputSocket = inputSocketFactory.create(inputHint, "source-image");
+    this.maskSocket = inputSocketFactory.create(maskHint, "mask-image");
 
-    this.outputSocket = outputSocketFactory.create(outputHint);
+    this.outputSocket = outputSocketFactory.create(outputHint, "result");
   }
 
   @Override

@@ -54,12 +54,12 @@ public class RGBThresholdOperation extends ThresholdOperation {
   @SuppressWarnings("JavadocMethod")
   public RGBThresholdOperation(InputSocket.Factory inputSocketFactory, OutputSocket.Factory
       outputSocketFactory) {
-    this.inputSocket = inputSocketFactory.create(inputHint);
-    this.redSocket = inputSocketFactory.create(redHint);
-    this.greenSocket = inputSocketFactory.create(greenHint);
-    this.blueSocket = inputSocketFactory.create(blueHint);
+    this.inputSocket = inputSocketFactory.create(inputHint, "source-image");
+    this.redSocket = inputSocketFactory.create(redHint, "red");
+    this.greenSocket = inputSocketFactory.create(greenHint, "green");
+    this.blueSocket = inputSocketFactory.create(blueHint, "blue");
 
-    this.outputSocket = outputSocketFactory.create(outputHint);
+    this.outputSocket = outputSocketFactory.create(outputHint, "result");
   }
 
   @Override

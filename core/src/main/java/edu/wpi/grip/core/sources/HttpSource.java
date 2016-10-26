@@ -90,7 +90,7 @@ public class HttpSource extends Source {
     super(exceptionWitnessFactory);
     this.path = path;
     this.imageHandler = handlers.computeIfAbsent(path, p -> new HttpImageHandler(store, p));
-    this.imageOutput = osf.create(outputHint);
+    this.imageOutput = osf.create(outputHint, "image-output");
     this.eventBus = eventBus;
     // Will add the handler only when the first HttpSource is created -- no-op every subsequent time
     // (Otherwise, multiple handlers would be getting called and it'd be a mess)

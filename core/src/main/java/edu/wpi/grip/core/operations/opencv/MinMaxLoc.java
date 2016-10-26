@@ -51,13 +51,13 @@ public class MinMaxLoc implements CVOperation {
   @SuppressWarnings("JavadocMethod")
   public MinMaxLoc(InputSocket.Factory inputSocketFactory, OutputSocket.Factory
       outputSocketFactory) {
-    this.srcSocket = inputSocketFactory.create(srcInputHint);
-    this.maskSocket = inputSocketFactory.create(maskInputHint);
+    this.srcSocket = inputSocketFactory.create(srcInputHint, "source-image");
+    this.maskSocket = inputSocketFactory.create(maskInputHint, "mask-image");
 
-    this.minValSocket = outputSocketFactory.create(minValOutputHint);
-    this.maxValSocket = outputSocketFactory.create(maxValOutputHint);
-    this.minLocSocket = outputSocketFactory.create(minLocOutputHint);
-    this.maxLocSocket = outputSocketFactory.create(maxLocOutputHint);
+    this.minValSocket = outputSocketFactory.create(minValOutputHint, "min-value");
+    this.maxValSocket = outputSocketFactory.create(maxValOutputHint, "max-value");
+    this.minLocSocket = outputSocketFactory.create(minLocOutputHint, "min-value-location");
+    this.maxLocSocket = outputSocketFactory.create(maxLocOutputHint, "max-value-location");
   }
 
   @Override

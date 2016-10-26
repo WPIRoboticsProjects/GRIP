@@ -95,20 +95,20 @@ public class FilterContoursOperation implements Operation {
   @SuppressWarnings("JavadocMethod")
   public FilterContoursOperation(InputSocket.Factory inputSocketFactory, OutputSocket.Factory
       outputSocketFactory) {
-    this.contoursSocket = inputSocketFactory.create(contoursHint);
-    this.minAreaSocket = inputSocketFactory.create(minAreaHint);
-    this.minPerimeterSocket = inputSocketFactory.create(minPerimeterHint);
-    this.minWidthSocket = inputSocketFactory.create(minWidthHint);
-    this.maxWidthSocket = inputSocketFactory.create(maxWidthHint);
-    this.minHeightSocket = inputSocketFactory.create(minHeightHint);
-    this.maxHeightSocket = inputSocketFactory.create(maxHeightHint);
-    this.soliditySocket = inputSocketFactory.create(solidityHint);
-    this.minVertexSocket = inputSocketFactory.create(minVertexHint);
-    this.maxVertexSocket = inputSocketFactory.create(maxVertexHint);
-    this.minRatioSocket = inputSocketFactory.create(minRatioHint);
-    this.maxRatioSocket = inputSocketFactory.create(maxRatioHint);
+    this.contoursSocket = inputSocketFactory.create(contoursHint, "contours");
+    this.minAreaSocket = inputSocketFactory.create(minAreaHint, "min-area");
+    this.minPerimeterSocket = inputSocketFactory.create(minPerimeterHint, "min-perimeter");
+    this.minWidthSocket = inputSocketFactory.create(minWidthHint, "min-width");
+    this.maxWidthSocket = inputSocketFactory.create(maxWidthHint, "max-width");
+    this.minHeightSocket = inputSocketFactory.create(minHeightHint, "min-height");
+    this.maxHeightSocket = inputSocketFactory.create(maxHeightHint, "max-height");
+    this.soliditySocket = inputSocketFactory.create(solidityHint, "solidity");
+    this.minVertexSocket = inputSocketFactory.create(minVertexHint, "min-vertices");
+    this.maxVertexSocket = inputSocketFactory.create(maxVertexHint, "max-vertices");
+    this.minRatioSocket = inputSocketFactory.create(minRatioHint, "min-ratio");
+    this.maxRatioSocket = inputSocketFactory.create(maxRatioHint, "max-ratio");
 
-    this.outputSocket = outputSocketFactory.create(contoursHint);
+    this.outputSocket = outputSocketFactory.create(contoursHint, "filtered-contours");
   }
 
   @Override

@@ -46,16 +46,17 @@ public class ResizeOperation implements Operation {
   public ResizeOperation(InputSocket.Factory inputSocketFactory, OutputSocket.Factory
       outputSocketFactory) {
     this.inputSocket = inputSocketFactory.create(SocketHints.Inputs
-        .createMatSocketHint("Input", false));
+        .createMatSocketHint("Input", false), "source-image");
     this.widthSocket = inputSocketFactory.create(SocketHints.Inputs
-        .createNumberSpinnerSocketHint("Width", 640));
+        .createNumberSpinnerSocketHint("Width", 640), "new-width");
     this.heightSocket = inputSocketFactory.create(SocketHints.Inputs
-        .createNumberSpinnerSocketHint("Height", 480));
-    this.interpolationSocket = inputSocketFactory
-        .create(SocketHints.createEnumSocketHint("Interpolation", Interpolation.CUBIC));
+        .createNumberSpinnerSocketHint("Height", 480), "new-height");
+    this.interpolationSocket = inputSocketFactory.create(
+        SocketHints.createEnumSocketHint("Interpolation", Interpolation.CUBIC), "interp-type"
+    );
 
     this.outputSocket = outputSocketFactory.create(SocketHints.Outputs
-        .createMatSocketHint("Output"));
+        .createMatSocketHint("Output"), "resized-image");
   }
 
   @Override

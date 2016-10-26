@@ -28,6 +28,7 @@ public class SocketImpl<T> implements Socket<T> {
   private final Direction direction;
   private final Set<Connection> connections = new HashSet<>();
   private final SocketHint<T> socketHint;
+  private final String uid;
   private Optional<Step> step = Optional.empty();
   private Optional<Source> source = Optional.empty();
   private Optional<? extends T> value = Optional.empty();
@@ -38,15 +39,21 @@ public class SocketImpl<T> implements Socket<T> {
    * @param socketHint {@link #getSocketHint}
    * @param direction  The direction that this socket represents
    */
-  SocketImpl(EventBus eventBus, SocketHint<T> socketHint, Direction direction) {
+  SocketImpl(EventBus eventBus, SocketHint<T> socketHint, Direction direction, String uid) {
     this.eventBus = checkNotNull(eventBus, "EventBus can not be null");
     this.socketHint = checkNotNull(socketHint, "Socket Hint can not be null");
     this.direction = checkNotNull(direction, "Direction can not be null");
+    this.uid = checkNotNull(uid, "UID cannot be null");
   }
 
   @Override
   public SocketHint<T> getSocketHint() {
     return socketHint;
+  }
+
+  @Override
+  public String getUid() {
+    return uid;
   }
 
   @Override
@@ -127,6 +134,7 @@ public class SocketImpl<T> implements Socket<T> {
   @Override
   public String toString() {
     return MoreObjects.toStringHelper(this)
+        .add("UID", getUid())
         .add("socketHint", getSocketHint())
         .add("value", getValue())
         .add("direction", getDirection())

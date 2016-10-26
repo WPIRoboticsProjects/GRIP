@@ -54,12 +54,12 @@ public class FindBlobsOperation implements Operation {
   @SuppressWarnings("JavadocMethod")
   public FindBlobsOperation(InputSocket.Factory inputSocketFactory, OutputSocket.Factory
       outputSocketFactory) {
-    this.inputSocket = inputSocketFactory.create(inputHint);
-    this.minAreaSocket = inputSocketFactory.create(minAreaHint);
-    this.circularitySocket = inputSocketFactory.create(circularityHint);
-    this.colorSocket = inputSocketFactory.create(colorHint);
+    this.inputSocket = inputSocketFactory.create(inputHint, "source-image");
+    this.minAreaSocket = inputSocketFactory.create(minAreaHint, "min-area");
+    this.circularitySocket = inputSocketFactory.create(circularityHint, "circularity");
+    this.colorSocket = inputSocketFactory.create(colorHint, "find-dark-blobs");
 
-    this.outputSocket = outputSocketFactory.create(blobsHint);
+    this.outputSocket = outputSocketFactory.create(blobsHint, "found-blobs");
   }
 
   @Override

@@ -37,10 +37,10 @@ public class NewSizeOperation implements CVOperation {
   @SuppressWarnings("JavadocMethod")
   public NewSizeOperation(InputSocket.Factory inputSocketFactory,
                           OutputSocket.Factory outputSocketFactory) {
-    this.widthSocket = inputSocketFactory.create(widthHint);
-    this.heightSocket = inputSocketFactory.create(heightHint);
+    this.widthSocket = inputSocketFactory.create(widthHint, "width");
+    this.heightSocket = inputSocketFactory.create(heightHint, "height");
 
-    this.outputSocket = outputSocketFactory.create(outputHint);
+    this.outputSocket = outputSocketFactory.create(outputHint, "result");
   }
 
   @Override

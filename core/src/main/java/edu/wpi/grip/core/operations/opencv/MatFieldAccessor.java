@@ -48,14 +48,14 @@ public class MatFieldAccessor implements CVOperation {
   @SuppressWarnings("JavadocMethod")
   public MatFieldAccessor(InputSocket.Factory inputSocketFactory, OutputSocket.Factory
       outputSocketFactory) {
-    this.inputSocket = inputSocketFactory.create(matHint);
+    this.inputSocket = inputSocketFactory.create(matHint, "mat");
 
-    this.sizeSocket = outputSocketFactory.create(sizeHint);
-    this.emptySocket = outputSocketFactory.create(emptyHint);
-    this.channelsSocket = outputSocketFactory.create(channelsHint);
-    this.colsSocket = outputSocketFactory.create(colsHint);
-    this.rowsSocket = outputSocketFactory.create(rowsHint);
-    this.highValueSocket = outputSocketFactory.create(highValueHint);
+    this.sizeSocket = outputSocketFactory.create(sizeHint, "size");
+    this.emptySocket = outputSocketFactory.create(emptyHint, "empty");
+    this.channelsSocket = outputSocketFactory.create(channelsHint, "channels");
+    this.colsSocket = outputSocketFactory.create(colsHint, "columns");
+    this.rowsSocket = outputSocketFactory.create(rowsHint, "rows");
+    this.highValueSocket = outputSocketFactory.create(highValueHint, "largest-value");
   }
 
   @Override
