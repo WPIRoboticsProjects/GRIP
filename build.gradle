@@ -411,7 +411,6 @@ project(":ui") {
         compile group: 'org.controlsfx', name: 'controlsfx', version: '8.40.11'
         compile group: 'com.hierynomus', name: 'sshj', version: '0.16.0'
         compile group: 'org.apache.velocity', name: 'velocity', version: '1.7'
-        compile group: 'org.pegdown', name: 'pegdown', version: '1.6.0'
         testCompile files(project(':core').sourceSets.test.output.classesDir)
         testCompile files(project(':core').sourceSets.test.output.resourcesDir)
         testCompile group: 'org.testfx', name: 'testfx-core', version: '4.0.+'
