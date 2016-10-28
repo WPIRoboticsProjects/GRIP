@@ -50,7 +50,8 @@ public class Project {
   private final ObservableBoolean saveIsDirty = new ObservableBoolean();
 
   @Inject
-  public void initialize(StepConverter stepConverter,
+  public void initialize(ProjectConverter projectConverter,
+                         StepConverter stepConverter,
                          SourceConverter sourceConverter,
                          SocketConverter socketConverter,
                          ConnectionConverter connectionConverter,
@@ -58,6 +59,7 @@ public class Project {
                          VersionConverter versionConverter) {
     model = new ProjectModel(pipeline, VersionManager.CURRENT_VERSION);
     xstream.setMode(XStream.NO_REFERENCES);
+    xstream.registerConverter(projectConverter);
     xstream.registerConverter(stepConverter);
     xstream.registerConverter(sourceConverter);
     xstream.registerConverter(socketConverter);
@@ -142,7 +144,7 @@ public class Project {
       }
     } catch (ConversionException e) {
       // Incompatible save, or a bug with de/serialization
-      throw new InvalidSaveException("Incompatible operations in save file", e);
+      throw new InvalidSaveException("There are incompatible operations in the pipeline", e);
     } catch (StreamException e) {
       // Invalid XML
       throw new InvalidSaveException("Invalid XML", e);

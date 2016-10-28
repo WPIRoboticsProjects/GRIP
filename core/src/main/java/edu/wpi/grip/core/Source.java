@@ -1,5 +1,7 @@
 package edu.wpi.grip.core;
 
+import edu.wpi.grip.core.events.SourceRemovedEvent;
+import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.core.sources.CameraSource;
 import edu.wpi.grip.core.sources.HttpSource;
@@ -9,6 +11,7 @@ import edu.wpi.grip.core.sources.NetworkTableEntrySource;
 import edu.wpi.grip.core.util.ExceptionWitness;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.eventbus.Subscribe;
 import com.google.inject.Inject;
 
 import java.io.IOException;
@@ -21,15 +24,21 @@ import java.util.logging.Logger;
 /**
  * Base class for an input into the pipeline.
  */
-public abstract class Source {
+public abstract class Source extends AbstractPipelineEntry {
   private static final Logger logger = Logger.getLogger(Source.class.getName());
   private final ExceptionWitness exceptionWitness;
 
   /**
    * @param exceptionWitnessFactory Factory to create the exceptionWitness.
    */
-  protected Source(ExceptionWitness.Factory exceptionWitnessFactory) {
+  protected Source(String id, ExceptionWitness.Factory exceptionWitnessFactory) {
+    super(id);
     this.exceptionWitness = exceptionWitnessFactory.create(this);
+  }
+
+  @Override
+  public final List<InputSocket> getInputSockets() {
+    return ImmutableList.of();
   }
 
   /**
@@ -45,6 +54,7 @@ public abstract class Source {
    *
    * @return @return An array of {@link OutputSocket}s for the outputs that the source produces.
    */
+  @Override
   public final ImmutableList<OutputSocket> getOutputSockets() {
     final List<OutputSocket> outputSockets = createOutputSockets();
     for (OutputSocket socket : outputSockets) {
@@ -97,6 +107,28 @@ public abstract class Source {
       logger.log(Level.WARNING, message, e);
       getExceptionWitness().flagException(e, message);
     }
+  }
+
+  /**
+   * Sets this source as removed if an event is posted to clean it up.
+   * Subclasses that need additional functionality should subscribe to the event bus.
+   */
+  @Subscribe
+  public void onSourceRemoved(SourceRemovedEvent event) {
+    if (event.getSource() == this) {
+      setRemoved();
+    }
+  }
+
+  /**
+   * Cleans up this source when it gets removed from the pipeline. The default implementation is a
+   * NOP, but subclasses should override this method if they need to free any resources or
+   * de-register callbacks.
+   */
+  @Override
+  @SuppressWarnings("PMD")
+  protected void cleanUp() {
+    // Default to NOP
   }
 
   public interface SourceFactory {

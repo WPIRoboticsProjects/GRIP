@@ -51,13 +51,12 @@ public class SocketConverter implements Converter {
 
       // Save the location of the socket in the pipeline.
       socket.getStep().ifPresent(step -> {
-        writer.addAttribute(STEP_ATTRIBUTE, String.valueOf(pipeline.getSteps().indexOf(step)));
+        writer.addAttribute(STEP_ATTRIBUTE, step.getId());
         writer.addAttribute(SOCKET_ATTRIBUTE, socket.getUid());
       });
 
       socket.getSource().ifPresent(source -> {
-        writer.addAttribute(SOURCE_ATTRIBUTE, String.valueOf(pipeline.getSources()
-            .indexOf(source)));
+        writer.addAttribute(SOURCE_ATTRIBUTE, source.getId());
         writer.addAttribute(SOCKET_ATTRIBUTE, socket.getUid());
       });
 
@@ -110,16 +109,12 @@ public class SocketConverter implements Converter {
       // (such as connections) can reference sockets in the pipeline.
       Socket socket;
       if (reader.getAttribute(STEP_ATTRIBUTE) != null) {
-        final int stepIndex = Integer.parseInt(reader.getAttribute(STEP_ATTRIBUTE));
-
-        final Step step = pipeline.getSteps().get(stepIndex);
+        final Step step = stepFor(reader.getAttribute(STEP_ATTRIBUTE));
         socket = (direction == Socket.Direction.INPUT)
             ? socketFor(step.getInputSockets(), reader.getAttribute(SOCKET_ATTRIBUTE))
             : socketFor(step.getOutputSockets(), reader.getAttribute(SOCKET_ATTRIBUTE));
       } else if (reader.getAttribute(SOURCE_ATTRIBUTE) != null) {
-        final int sourceIndex = Integer.parseInt(reader.getAttribute(SOURCE_ATTRIBUTE));
-
-        final Source source = pipeline.getSources().get(sourceIndex);
+        final Source source = sourceFor(reader.getAttribute(SOURCE_ATTRIBUTE));
         socket = socketFor(source.getOutputSockets(), reader.getAttribute(SOCKET_ATTRIBUTE));
       } else {
         throw new ConversionException("Sockets must have either a step or source attribute");
@@ -167,6 +162,32 @@ public class SocketConverter implements Converter {
 
     throw new ConversionException("Not sure what concrete class to use for socket with type "
         + socketType);
+  }
+
+  private Source sourceFor(String attributeValue) {
+    if (attributeValue.matches("\\d+")) {
+      // All numbers, it's an index
+      return pipeline.getSources().get(Integer.parseInt(attributeValue));
+    } else {
+      // Alphanumeric
+      return pipeline.getSources().stream()
+          .filter(s -> s.getId().equals(attributeValue))
+          .findAny()
+          .get();
+    }
+  }
+
+  private Step stepFor(String attributeValue) {
+    if (attributeValue.matches("\\d+")) {
+      // All numbers, it's an index
+      return pipeline.getSteps().get(Integer.parseInt(attributeValue));
+    } else {
+      // Alphanumeric
+      return pipeline.getSteps().stream()
+          .filter(s -> s.getId().equals(attributeValue))
+          .findAny()
+          .get();
+    }
   }
 
   private <S extends Socket> S socketFor(List<? extends S> sockets, String attributeValue) {

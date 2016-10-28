@@ -133,7 +133,7 @@ public class CameraSource extends Source implements RestartableService {
       final FrameGrabberFactory grabberFactory,
       final ExceptionWitness.Factory exceptionWitnessFactory,
       @Assisted final Properties properties) throws MalformedURLException {
-    super(exceptionWitnessFactory);
+    super(makeId(CameraSource.class), exceptionWitnessFactory);
     this.eventBus = eventBus;
     this.frameOutputSocket = outputSocketFactory.create(imageOutputHint, "image-output");
     this.frameRateOutputSocket = outputSocketFactory.create(frameRateOutputHint, "fps-output");
@@ -329,20 +329,24 @@ public class CameraSource extends Source implements RestartableService {
   }
 
   @Subscribe
-  public void onSourceRemovedEvent(SourceRemovedEvent event) throws InterruptedException,
-      TimeoutException, IOException {
+  public void onSourceRemoved(SourceRemovedEvent event) {
     if (event.getSource() == this) {
       try {
-        // Stop the camera service and wait for it to terminate.
-        // If we just use stopAsync(), the camera service won't always have terminated by the time
-        // a new camera source is added. For webcam sources, this means that the video stream
-        // won't be freed and new sources won't be able to connect to the webcam until the
-        // application is closed.
-        this.stopAndAwait();
+        setRemoved();
       } finally {
         this.eventBus.unregister(this);
       }
     }
+  }
+
+  @Override
+  protected void cleanUp() {
+    // Stop the camera service and wait for it to terminate.
+    // If we just use stopAsync(), the camera service won't always have terminated by the time
+    // a new camera source is added. For webcam sources, this means that the video stream
+    // won't be freed and new sources won't be able to connect to the webcam until the
+    // application is closed.
+    stopAndAwait();
   }
 
   public interface Factory {

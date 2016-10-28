@@ -12,6 +12,7 @@ import org.controlsfx.control.RangeSlider;
 
 import java.util.List;
 
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
@@ -105,8 +106,11 @@ public class RangeInputSocketController extends InputSocketController<List<Numbe
   @Subscribe
   public void updateSliderValue(SocketChangedEvent event) {
     if (event.isRegarding(this.getSocket())) {
-      this.slider.setLowValue(this.getSocket().getValue().get().get(0).doubleValue());
-      this.slider.setHighValue(this.getSocket().getValue().get().get(1).doubleValue());
+      // There's no guarantee that the event was fired from the FX thread
+      Platform.runLater(() -> {
+        this.slider.setLowValue(this.getSocket().getValue().get().get(0).doubleValue());
+        this.slider.setHighValue(this.getSocket().getValue().get().get(1).doubleValue());
+      });
     }
   }
 

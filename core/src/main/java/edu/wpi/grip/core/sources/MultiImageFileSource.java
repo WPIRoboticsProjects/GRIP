@@ -104,7 +104,7 @@ public final class MultiImageFileSource extends Source implements PreviousNext {
       final ExceptionWitness.Factory exceptionWitnessFactory,
       final String[] paths,
       final int index) {
-    super(exceptionWitnessFactory);
+    super(makeId(MultiImageFileSource.class), exceptionWitnessFactory);
     this.eventBus = eventBus;
     this.outputSocket = outputSocketFactory.create(imageOutputHint, "image-output");
     this.index = new AtomicInteger(checkElementIndex(index, paths.length, "File List Index"));

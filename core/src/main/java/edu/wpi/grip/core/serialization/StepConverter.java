@@ -28,6 +28,7 @@ import javax.inject.Inject;
 public class StepConverter implements Converter {
 
   private static final String NAME_ATTRIBUTE = "name";
+  private static final String ID_ATTRIBUTE = "id";
 
   @Inject
   private EventBus eventBus;
@@ -43,6 +44,7 @@ public class StepConverter implements Converter {
     final Step step = ((Step) source);
 
     writer.addAttribute(NAME_ATTRIBUTE, step.getOperationDescription().name());
+    writer.addAttribute(ID_ATTRIBUTE, step.getId());
 
     // Also save any sockets in the step
     for (InputSocket<?> socket : step.getInputSockets()) {
@@ -64,11 +66,12 @@ public class StepConverter implements Converter {
       throw new ConversionException("Unknown operation: " + operationName);
     }
 
-    // Instead of simply returning the step and having XStream insert it into the pipeline using
-    // reflection, send a
-    // StepAddedEvent.  This allows other interested classes (such as PipelineView) to also know
-    // when steps are added.
-    pipeline.addStep(stepFactory.create(operationMetaData.get()));
+    final String id = reader.getAttribute(ID_ATTRIBUTE);
+    Step step = stepFactory.create(operationMetaData.get());
+    if (id != null) {
+      step.setId(id);
+    }
+    pipeline.addStep(step);
 
     while (reader.hasMoreChildren()) {
       context.convertAnother(this, Socket.class);
