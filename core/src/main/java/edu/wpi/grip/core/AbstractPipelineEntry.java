@@ -4,6 +4,7 @@ import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.core.sockets.Socket;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.CaseFormat;
 
 import org.apache.commons.lang.RandomStringUtils;
@@ -21,7 +22,8 @@ import static com.google.common.base.Preconditions.checkNotNull;
  */
 public abstract class AbstractPipelineEntry implements PipelineEntry {
 
-  private static final IdPool idPool = IdPool.INSTANCE;
+  @VisibleForTesting
+  static final IdPool idPool = IdPool.INSTANCE;
 
   protected final Object removedLock = new Object();
   private boolean removed = false;
@@ -120,7 +122,8 @@ public abstract class AbstractPipelineEntry implements PipelineEntry {
   /**
    * Pool of used IDs.
    */
-  private static class IdPool extends HashMap<Class<? extends PipelineEntry>, Set<String>> {
+  @VisibleForTesting
+  static class IdPool extends HashMap<Class<? extends PipelineEntry>, Set<String>> {
     private static final IdPool INSTANCE = new IdPool();
 
     /**

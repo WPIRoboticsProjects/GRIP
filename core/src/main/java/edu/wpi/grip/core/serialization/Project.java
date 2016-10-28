@@ -144,7 +144,7 @@ public class Project {
       }
     } catch (ConversionException e) {
       // Incompatible save, or a bug with de/serialization
-      throw new InvalidSaveException("There are incompatible operations in the pipeline", e);
+      throw new InvalidSaveException("There are incompatible sources or steps in the pipeline", e);
     } catch (StreamException e) {
       // Invalid XML
       throw new InvalidSaveException("Invalid XML", e);
