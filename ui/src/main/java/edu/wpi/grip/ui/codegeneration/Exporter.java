@@ -77,7 +77,7 @@ public class Exporter implements Runnable {
     context.put("vmLoc", templateDir);
     VelocityEngine ve = new VelocityEngine();
     Properties props = new Properties();
-    props.put("velocimacro.library", templateDir + File.separator + "macros.vm");
+    props.put("velocimacro.library", templateDir + "/macros.vm");
     props.put(RuntimeConstants.RESOURCE_LOADER, "classpath");
     props.put("classpath.resource.loader.class", ClasspathResourceLoader.class.getName());
     ve.init(props);
@@ -136,7 +136,7 @@ public class Exporter implements Runnable {
    */
   private void generateCode(VelocityEngine ve, String templateDir, File file,
       VelocityContext context) {
-    Template tm = ve.getTemplate(templateDir + File.separator + PIPELINE_TEMPLATE);
+    Template tm = ve.getTemplate(templateDir + "/" + PIPELINE_TEMPLATE);
     StringWriter sw = new StringWriter();
     tm.merge(context, sw);
     try (PrintWriter writer = new PrintWriter(file.getAbsolutePath(), "UTF-8")) {
@@ -157,11 +157,11 @@ public class Exporter implements Runnable {
    */
   private void generateH(VelocityEngine ve, String templateDir, File file,
       VelocityContext context) {
-    Template tm = ve.getTemplate(templateDir + File.separator + PIPELINE_HTEMPLATE);
+    Template tm = ve.getTemplate(templateDir + "/" + PIPELINE_HTEMPLATE);
     StringWriter sw = new StringWriter();
     tm.merge(context, sw);
     try (PrintWriter writer = new PrintWriter(file.getParentFile().getAbsolutePath()
-        + File.separator + file.getName().replace(".cpp", ".h"), "UTF-8")) {
+        + "/" + file.getName().replace(".cpp", ".h"), "UTF-8")) {
       writer.println(sw);
     } catch (UnsupportedEncodingException | FileNotFoundException e) {
       logger.log(Level.SEVERE, "Unable to write to file", e);
