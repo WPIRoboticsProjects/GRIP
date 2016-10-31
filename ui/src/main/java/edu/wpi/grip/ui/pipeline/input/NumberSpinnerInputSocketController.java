@@ -59,7 +59,6 @@ public class NumberSpinnerInputSocketController extends InputSocketController<Nu
     final Spinner<Double> spinner = new Spinner<>(this.valueFactory);
     Spinners.makeEditableSafely(spinner, NumberFormat.getNumberInstance(),
         getSocket().getSocketHint().createInitialValue().get().doubleValue());
-    spinner.disableProperty().bind(this.getHandle().connectedProperty());
 
     this.setContent(spinner);
   }

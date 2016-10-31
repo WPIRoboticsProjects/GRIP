@@ -1,6 +1,8 @@
 package edu.wpi.grip.core;
 
 import edu.wpi.grip.core.events.UnexpectedThrowableEvent;
+import edu.wpi.grip.core.metrics.BenchmarkRunner;
+import edu.wpi.grip.core.metrics.Timer;
 import edu.wpi.grip.core.serialization.Project;
 import edu.wpi.grip.core.settings.SettingsProvider;
 import edu.wpi.grip.core.sockets.InputSocket;
@@ -128,6 +130,7 @@ public class GripCoreModule extends AbstractModule {
     install(new FactoryModuleBuilder().build(new TypeLiteral<Connection.Factory<Object>>() {
     }));
 
+    bind(StepIndexer.class).to(Pipeline.class);
     bind(ConnectionValidator.class).to(Pipeline.class);
     bind(Source.SourceFactory.class).to(Source.SourceFactoryImpl.class);
 
@@ -150,6 +153,9 @@ public class GripCoreModule extends AbstractModule {
         .build(NetworkTableEntrySource.Factory.class));
 
     install(new FactoryModuleBuilder().build(ExceptionWitness.Factory.class));
+    install(new FactoryModuleBuilder().build(Timer.Factory.class));
+
+    bind(BenchmarkRunner.class).asEagerSingleton();
   }
 
   protected void onSubscriberException(Throwable exception, @Nullable SubscriberExceptionContext

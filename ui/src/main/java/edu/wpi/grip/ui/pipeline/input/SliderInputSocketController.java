@@ -65,7 +65,6 @@ public class SliderInputSocketController extends InputSocketController<Number> {
   @FXML
   public void initialize() {
     super.initialize();
-    this.slider.disableProperty().bind(this.getHandle().connectedProperty());
     this.setContent(new VBox(this.slider, label));
   }
 

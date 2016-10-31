@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
@@ -47,7 +48,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
  */
 @Singleton
 @XStreamAlias(value = "grip:Pipeline")
-public class Pipeline implements ConnectionValidator, SettingsProvider {
+public class Pipeline implements ConnectionValidator, SettingsProvider, StepIndexer {
 
   private final transient ReadWriteLock sourceLock = new ReentrantReadWriteLock();
 
@@ -359,7 +360,18 @@ public class Pipeline implements ConnectionValidator, SettingsProvider {
 
     // Do not lock while posting the event
     eventBus.post(new StepMovedEvent(step, delta));
+  }
 
+  @Override
+  public int indexOf(Step step) {
+    checkNotNull(step, "step");
+    return readStepsSafely(steps -> {
+      int index = steps.indexOf(step);
+      if (index == -1) {
+        throw new NoSuchElementException("Step " + step + " is not in the pipeline");
+      }
+      return index;
+    });
   }
 
   @Subscribe

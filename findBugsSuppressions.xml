@@ -8,4 +8,13 @@
     <Match>
         <Bug pattern="NP_METHOD_PARAMETER_TIGHTENS_ANNOTATION" />
     </Match>
+    <Match>
+        <Class name="edu.wpi.grip.core.metrics.BenchmarkRunnerTest$1" />
+        <Method name="onBenchmarkEvent" />
+        <Bug pattern="UMAC_UNCALLABLE_METHOD_OF_ANONYMOUS_CLASS" />
+    </Match>
+    <Match>
+        <Class name="edu.wpi.grip.core.ConnectionTest$MockPipeline" />
+        <Bug pattern="SE_COMPARATOR_SHOULD_BE_SERIALIZABLE" />
+    </Match>
 </FindBugsFilter>

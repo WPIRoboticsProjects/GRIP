@@ -1,5 +1,6 @@
 package edu.wpi.grip.ui.pipeline;
 
+import edu.wpi.grip.core.events.BenchmarkEvent;
 import edu.wpi.grip.core.events.SocketPreviewChangedEvent;
 import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.core.sockets.Socket;
@@ -12,6 +13,7 @@ import com.google.common.eventbus.Subscribe;
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 
+import javafx.application.Platform;
 import javafx.beans.InvalidationListener;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
@@ -94,6 +96,14 @@ public class OutputSocketController implements Controller {
       preview.setSelected(socket.isPreviewed());
       preview.selectedProperty().addListener(previewListener);
     }
+  }
+
+  /**
+   * Disable user input while benchmarking.
+   */
+  @Subscribe
+  private void onBenchmarkEvent(BenchmarkEvent e) {
+    Platform.runLater(() -> handle.setDisable(e.isStart()));
   }
 
   @VisibleForTesting

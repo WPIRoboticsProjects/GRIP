@@ -3,7 +3,9 @@ package edu.wpi.grip.ui;
 import edu.wpi.grip.core.Palette;
 import edu.wpi.grip.core.Pipeline;
 import edu.wpi.grip.core.PipelineRunner;
+import edu.wpi.grip.core.events.BenchmarkEvent;
 import edu.wpi.grip.core.events.ProjectSettingsChangedEvent;
+import edu.wpi.grip.core.events.TimerEvent;
 import edu.wpi.grip.core.events.UnexpectedThrowableEvent;
 import edu.wpi.grip.core.serialization.Project;
 import edu.wpi.grip.core.settings.ProjectSettings;
@@ -15,11 +17,9 @@ import edu.wpi.grip.ui.codegeneration.Language;
 import edu.wpi.grip.ui.components.StartStoppableButton;
 import edu.wpi.grip.ui.util.DPIUtility;
 
-import com.google.common.base.CaseFormat;
 import com.google.common.eventbus.EventBus;
+import com.google.common.eventbus.Subscribe;
 import com.google.common.util.concurrent.Service;
-
-import org.controlsfx.control.StatusBar;
 
 import java.io.File;
 import java.io.IOException;
@@ -36,9 +36,12 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Dialog;
+import javafx.scene.control.Label;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.SplitPane;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
 import javafx.stage.FileChooser;
@@ -68,7 +71,15 @@ public class MainWindowController {
   @FXML
   private Pane aboutPane;
   @FXML
-  private StatusBar statusBar;
+  private Pane analysisPane;
+  @FXML
+  private MenuItem analyzeMenuItem;
+  @FXML
+  private HBox statusBar;
+  @FXML
+  private Label statusLabel;
+  @FXML
+  private Label elapsedTimeLabel;
   @Inject
   private EventBus eventBus;
   @Inject
@@ -85,19 +96,20 @@ public class MainWindowController {
   private Project project;
 
   private Stage aboutDialogStage;
+  private Stage analysisStage;
 
   @FXML
   protected void initialize() {
     pipelineView.prefHeightProperty().bind(bottomPane.heightProperty());
-    statusBar.getLeftItems().add(startStoppableButtonFactory.create(pipelineRunner));
+    statusBar.getChildren().add(0, startStoppableButtonFactory.create(pipelineRunner));
     pipelineRunner.addListener(new SingleActionListener(() -> {
       final Service.State state = pipelineRunner.state();
       final String stateMessage =
           state.equals(Service.State.TERMINATED)
-              ? "Stopped"
-              : CaseFormat.UPPER_UNDERSCORE.converterTo(CaseFormat.UPPER_CAMEL).convert(state
-              .toString());
-      statusBar.setText(" Pipeline " + stateMessage);
+              ? "disabled "
+              : "enabled  ";
+      statusLabel.setText("Pipeline " + stateMessage);
+      analyzeMenuItem.setDisable(state.equals(Service.State.TERMINATED));
     }), Platform::runLater);
   }
 
@@ -254,7 +266,7 @@ public class MainWindowController {
       SafeShutdown.exit(0);
     }
   }
-  
+
   /**
    * Controls the export button in the main menu. Opens a filechooser with language selection.
    * The user can select the language to export to, save location and file name.
@@ -305,5 +317,34 @@ public class MainWindowController {
     dialog.getDialogPane().setContent(deployPane);
     dialog.setResizable(true);
     dialog.showAndWait();
+  }
+
+  @Subscribe
+  @SuppressWarnings( {"PMD.UnusedPrivateMethod", "PMD.UnusedFormalParameter"})
+  private void runStopped(TimerEvent event) {
+    if (event.getTarget() instanceof PipelineRunner) {
+      Platform.runLater(() -> updateElapsedTimeLabel(event.getElapsedTime()));
+    }
+  }
+
+  private void updateElapsedTimeLabel(long elapsed) {
+    elapsedTimeLabel.setText(
+        String.format("Ran in %.1f ms (%.1f fps)",
+            elapsed / 1e3,
+            elapsed != 0 ? (1e6 / elapsed) : Double.NaN));
+  }
+
+  @FXML
+  @SuppressWarnings("PMD.UnusedPrivateMethod")
+  private void showAnalysis() {
+    if (analysisStage == null) {
+      analysisStage = new Stage();
+      analysisStage.setScene(new Scene(analysisPane));
+      analysisStage.initOwner(root.getScene().getWindow());
+      analysisStage.setTitle("Pipeline Analysis");
+      analysisStage.getIcons().add(new Image("/edu/wpi/grip/ui/icons/grip.png"));
+      analysisStage.setOnCloseRequest(event -> eventBus.post(BenchmarkEvent.finished()));
+    }
+    analysisStage.showAndWait();
   }
 }

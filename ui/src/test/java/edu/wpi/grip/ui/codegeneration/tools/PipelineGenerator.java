@@ -5,6 +5,7 @@ import edu.wpi.grip.core.OperationMetaData;
 import edu.wpi.grip.core.Pipeline;
 import edu.wpi.grip.core.Step;
 import edu.wpi.grip.core.events.ConnectionAddedEvent;
+import edu.wpi.grip.core.metrics.MockTimer;
 import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.core.util.MockExceptionWitness;
@@ -48,7 +49,8 @@ public class PipelineGenerator {
   }
 
   public Step addStep(OperationMetaData data) {
-    Step step = new Step.Factory(MockExceptionWitness.MOCK_FACTORY).create(data);
+    Step step = new Step.Factory(MockExceptionWitness.MOCK_FACTORY, MockTimer.MOCK_FACTORY)
+        .create(data);
     pipeline.addStep(step);
     return step;
   }

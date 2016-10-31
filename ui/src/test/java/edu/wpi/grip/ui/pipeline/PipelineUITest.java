@@ -7,6 +7,7 @@ import edu.wpi.grip.core.OperationMetaData;
 import edu.wpi.grip.core.Pipeline;
 import edu.wpi.grip.core.Step;
 import edu.wpi.grip.core.SubtractionOperation;
+import edu.wpi.grip.core.metrics.MockTimer;
 import edu.wpi.grip.core.operations.composite.BlurOperation;
 import edu.wpi.grip.core.operations.composite.DesaturateOperation;
 import edu.wpi.grip.core.operations.network.MockGripNetworkModule;
@@ -119,7 +120,7 @@ public class PipelineUITest extends ApplicationTest {
     assertTrue("blur input socket size is:" + blurStep.getInputSockets().size(),
         blurStep.getInputSockets().size() > 0);
 
-    drag(StyleClassNameUtility.cssSelectorForOutputSocketHandleOn(desaturateStep),  MouseButton
+    drag(StyleClassNameUtility.cssSelectorForOutputSocketHandleOn(desaturateStep), MouseButton
         .PRIMARY).dropTo(StyleClassNameUtility.cssSelectorForInputSocketHandleOn(blurStep));
 
     clickOn(".pipeline .blur-step .expand", MouseButton.PRIMARY);
@@ -186,7 +187,8 @@ public class PipelineUITest extends ApplicationTest {
   }
 
   private Step addOperation(int count, OperationMetaData operationMetaData) {
-    final Step step = new Step.Factory(origin -> new MockExceptionWitness(eventBus, origin))
+    final Step step = new Step.Factory(origin -> new MockExceptionWitness(eventBus, origin),
+        MockTimer.MOCK_FACTORY)
         .create(operationMetaData);
     pipeline.addStep(step);
 

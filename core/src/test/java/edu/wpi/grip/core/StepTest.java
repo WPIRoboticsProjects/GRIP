@@ -1,5 +1,6 @@
 package edu.wpi.grip.core;
 
+import edu.wpi.grip.core.metrics.MockTimer;
 import edu.wpi.grip.core.operations.network.MockGripNetworkModule;
 import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.sockets.OutputSocket;
@@ -42,12 +43,13 @@ public class StepTest {
 
   @Test(expected = NullPointerException.class)
   public void testOperationNotNull() {
-    new Step.Factory((origin) -> null).create(null);
+    new Step.Factory((origin) -> null, MockTimer.MOCK_FACTORY).create(null);
   }
 
   @Test
   public void testStep() {
-    Step step = new Step.Factory((origin) -> new MockExceptionWitness(eventBus, origin))
+    Step step = new Step.Factory((origin) -> new MockExceptionWitness(eventBus, origin),
+        MockTimer.MOCK_FACTORY)
         .create(additionMeta);
     Socket<Double> a = (Socket<Double>) step.getInputSockets().get(0);
     Socket<Double> b = (Socket<Double>) step.getInputSockets().get(1);
@@ -63,7 +65,8 @@ public class StepTest {
 
   @Test
   public void testSocketDirection() {
-    Step step = new Step.Factory((origin) -> new MockExceptionWitness(eventBus, origin))
+    Step step = new Step.Factory((origin) -> new MockExceptionWitness(eventBus, origin),
+        MockTimer.MOCK_FACTORY)
         .create(additionMeta);
     Socket<Double> a = (Socket<Double>) step.getInputSockets().get(0);
     Socket<Double> b = (Socket<Double>) step.getInputSockets().get(1);
@@ -76,7 +79,8 @@ public class StepTest {
 
   @Test
   public void testGetOperation() {
-    Step step = new Step.Factory((origin) -> new MockExceptionWitness(eventBus, origin))
+    Step step = new Step.Factory((origin) -> new MockExceptionWitness(eventBus, origin),
+        MockTimer.MOCK_FACTORY)
         .create(additionMeta);
 
     assertEquals("Operation descriptions were not the same", additionMeta.getDescription(),
