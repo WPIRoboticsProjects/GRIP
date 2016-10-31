@@ -40,6 +40,8 @@ import edu.wpi.grip.core.operations.opencv.MatFieldAccessor;
 import edu.wpi.grip.core.operations.opencv.MinMaxLoc;
 import edu.wpi.grip.core.operations.opencv.NewPointOperation;
 import edu.wpi.grip.core.operations.opencv.NewSizeOperation;
+import edu.wpi.grip.core.operations.python.PythonOperationUtils;
+import edu.wpi.grip.core.operations.python.PythonScriptOperation;
 import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.sockets.OutputSocket;
 
@@ -52,6 +54,10 @@ import com.google.inject.name.Named;
 
 import org.bytedeco.javacpp.opencv_core.Point;
 import org.bytedeco.javacpp.opencv_core.Size;
+
+import java.util.Arrays;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -75,7 +81,8 @@ public class Operations {
     checkNotNull(httpPublishFactory, "httpPublisherFactory cannot be null");
     checkNotNull(rosPublishFactory, "rosPublishFactory cannot be null");
     checkNotNull(fileManager, "fileManager cannot be null");
-    this.operations = ImmutableList.of(
+    PythonOperationUtils.checkDirExists();
+    this.operations = new ImmutableList.Builder<OperationMetaData>().addAll(Arrays.asList(
         // Composite operations
         new OperationMetaData(BlurOperation.DESCRIPTION,
             () -> new BlurOperation(isf, osf)),
@@ -186,7 +193,16 @@ public class Operations {
         new OperationMetaData(HttpPublishOperation.descriptionFor(Boolean.class),
             () -> new HttpPublishOperation<>(isf, Boolean.class, BooleanPublishable.class,
                 BooleanPublishable::new, httpPublishFactory))
-    );
+    )).addAll(
+        Stream.of(PythonOperationUtils.DIRECTORY.listFiles((dir, name) -> name.endsWith(".py")))
+            .map(PythonOperationUtils::read)
+            .filter(code -> code != null) // read() returns null if the file couldn't be read
+            .map(PythonOperationUtils::tryCreate)
+            .filter(script -> script != null) // create() returns null if the code has errors
+            .map(psf -> new OperationMetaData(PythonScriptOperation.descriptionFor(psf),
+                () -> new PythonScriptOperation(isf, osf, psf)))
+            .collect(Collectors.toList())
+    ).build();
   }
 
   @VisibleForTesting

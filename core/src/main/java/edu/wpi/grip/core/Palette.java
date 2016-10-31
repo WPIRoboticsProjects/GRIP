@@ -1,8 +1,11 @@
 package edu.wpi.grip.core;
 
 import edu.wpi.grip.core.events.OperationAddedEvent;
+import edu.wpi.grip.core.events.OperationRemovedEvent;
 
+import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
+import com.google.inject.Inject;
 
 import java.util.Collection;
 import java.util.LinkedHashMap;
@@ -11,7 +14,6 @@ import java.util.Optional;
 
 import javax.inject.Singleton;
 
-import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
@@ -20,7 +22,13 @@ import static com.google.common.base.Preconditions.checkNotNull;
 @Singleton
 public class Palette {
 
+  private final EventBus eventBus;
   private final Map<String, OperationMetaData> operations = new LinkedHashMap<>();
+
+  @Inject
+  Palette(EventBus eventBus) {
+    this.eventBus = eventBus;
+  }
 
   @Subscribe
   public void onOperationAdded(OperationAddedEvent event) {
@@ -39,7 +47,20 @@ public class Palette {
    * @throws IllegalArgumentException if the key is already in the {@link #operations} map.
    */
   private void map(String key, OperationMetaData operation) {
-    checkArgument(!operations.containsKey(key), "Operation name or alias already exists: " + key);
+    if (operations.containsKey(key)) {
+      OperationDescription existing = operations.get(key).getDescription();
+      if (existing.category() == operation.getDescription().category()
+          && existing.category() == OperationDescription.Category.CUSTOM) {
+        // It's a custom operation that can be changed at runtime, allow it
+        // (But first remove the existing operation)
+        operations.remove(key);
+        eventBus.post(new OperationRemovedEvent(existing));
+      } else {
+        // Not a custom operation, this should only happen if someone
+        // adds a new operation and uses an already-taken name
+        throw new IllegalArgumentException("Operation name or alias already exists: " + key);
+      }
+    }
     operations.put(key, operation);
   }
 

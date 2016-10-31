@@ -1,7 +1,9 @@
 package edu.wpi.grip.ui;
 
+import edu.wpi.grip.core.OperationDescription;
 import edu.wpi.grip.core.OperationMetaData;
 import edu.wpi.grip.core.events.OperationAddedEvent;
+import edu.wpi.grip.core.events.OperationRemovedEvent;
 import edu.wpi.grip.ui.annotations.ParametrizedController;
 import edu.wpi.grip.ui.util.ControllerMap;
 import edu.wpi.grip.ui.util.SearchUtility;
@@ -17,7 +19,7 @@ import javafx.beans.property.StringProperty;
 import javafx.collections.MapChangeListener;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
-import javafx.scene.control.Tab;
+import javafx.scene.control.TitledPane;
 import javafx.scene.layout.VBox;
 
 /**
@@ -31,7 +33,7 @@ public class OperationListController {
 
   protected static final String FILTER_TEXT = "filterText";
   private final StringProperty filterText = new SimpleStringProperty(this, FILTER_TEXT, "");
-  @FXML private Tab root;
+  @FXML private TitledPane root;
   @FXML private VBox operations;
   @Inject private OperationController.Factory operationControllerFactory;
   @SuppressWarnings("PMD.SingularField") private String baseText = null;
@@ -43,7 +45,7 @@ public class OperationListController {
     baseText = root.getText();
 
     InvalidationListener filterOperations = observable -> {
-      if (baseText == null) {
+      if (baseText == null || baseText.isEmpty()) {
         baseText = root.getText();
       }
 
@@ -60,10 +62,8 @@ public class OperationListController {
 
       if (!filter.isEmpty() && numMatches > 0) {
         // If we're filtering some operations and there's at least one match, set the title to
-        // bold and show the
-        // number of matches.  This lets the user quickly see which tabs have matching operations
-        // when
-        // searching.
+        // bold and show the number of matches.
+        // This lets the user quickly see which tabs have matching operations when searching.
         root.setText(baseText + " (" + numMatches + ")");
         root.styleProperty().setValue("-fx-font-weight: bold");
       } else {
@@ -90,6 +90,18 @@ public class OperationListController {
         .getUserData()) {
       PlatformImpl.runAndWait(() ->
           operationsMapManager.add(operationControllerFactory.create(operationMetaData)));
+    }
+  }
+
+  @Subscribe
+  public void onOperationRemoved(OperationRemovedEvent event) {
+    OperationDescription removedOperation = event.getRemovedOperation();
+    if (root.getUserData() == null || removedOperation.category() == root.getUserData()) {
+      PlatformImpl.runAndWait(() -> operationsMapManager.remove(operationsMapManager.keySet()
+          .stream()
+          .filter(c -> c.getOperationDescription().equals(removedOperation))
+          .findFirst()
+          .orElse(null)));
     }
   }
 
