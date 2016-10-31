@@ -1,0 +1,8 @@
+	/**
+	 * Computes the transpose of a Mat.
+	 * @param src the source Mat.
+	 * @param dst the transpose of src.
+	 */
+	private void $tMeth.name($step.name())(Mat src, Mat dst) {
+		Core.transpose(src, dst);
+	}

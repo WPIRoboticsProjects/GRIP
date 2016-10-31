@@ -1,0 +1,10 @@
+	/**
+	 * Adds two images where one is multiplied by a number.
+	 * @param src1 first image.
+	 * @param scale scale for the first image.
+	 * @param src2 second image.
+	 * @param dst output image
+	 */
+	private void $tMeth.name($step.name())(Mat src1, double scale, Mat src2, Mat dst) {
+		Core.scaleAdd(src1, scale, src2, dst);
+	}

@@ -1,5 +1,6 @@
 package edu.wpi.grip.core;
 
+import edu.wpi.grip.core.operations.network.MockGripNetworkModule;
 import edu.wpi.grip.core.operations.python.PythonScriptFile;
 import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.sockets.OutputSocket;
@@ -10,6 +11,7 @@ import edu.wpi.grip.util.GripCoreTestModule;
 import com.google.common.eventbus.EventBus;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
+import com.google.inject.util.Modules;
 
 import org.junit.After;
 import org.junit.Before;
@@ -31,7 +33,8 @@ public class PythonTest {
   public void setUp() {
     testModule = new GripCoreTestModule();
     testModule.setUp();
-    final Injector injector = Guice.createInjector(testModule);
+    final Injector injector = Guice.createInjector(Modules.override(testModule)
+        .with(new MockGripNetworkModule()));
     eventBus = injector.getInstance(EventBus.class);
     isf = injector.getInstance(InputSocket.Factory.class);
     osf = injector.getInstance(OutputSocket.Factory.class);

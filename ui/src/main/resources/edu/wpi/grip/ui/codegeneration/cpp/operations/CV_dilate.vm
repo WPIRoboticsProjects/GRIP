@@ -1,0 +1,13 @@
+	/**
+	 * Expands area of higher value in an image.
+	 * @param src the Image to dilate.
+	 * @param kernel the kernel for dilation.
+	 * @param anchor the center of the kernel.
+	 * @param iterations the number of times to perform the dilation.
+	 * @param borderType pixel extrapolation method.
+	 * @param borderValue value to be used for a constant border.
+	 * @param dst Output Image.
+	 */
+	void $fileName::#func($step ["src", "kernel", "anchor", "iterations", "borderType", "borderValue", "dst"]) {
+		dilate(src, dst, kernel, anchor, (int)iterations, borderType, borderValue);
+	}

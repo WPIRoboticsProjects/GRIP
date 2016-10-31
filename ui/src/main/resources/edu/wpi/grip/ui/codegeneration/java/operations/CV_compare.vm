@@ -1,0 +1,10 @@
+	/**
+	 * Compares two Mats using designated method.
+	 * @param src1 first Mat to compare.
+	 * @param src2 second Mat to compare.
+	 * @param cmpop Type of comparison to use.
+	 * @param dst output Mat from the comparison.
+	 */
+	private void $tMeth.name($step.name())(Mat src1, Mat src2, int cmpop, Mat dst) {
+		Core.compare(src1,src2, dst, cmpop);
+	}

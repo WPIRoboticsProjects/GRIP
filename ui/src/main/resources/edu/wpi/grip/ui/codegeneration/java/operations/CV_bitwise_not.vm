@@ -1,0 +1,8 @@
+	/**
+	 * Computes the per element inverse of an image.
+	 * @param src the image to invert.
+	 * @param dst the inversion of the input image.
+	 */
+	private void $tMeth.name($step.name())(Mat src, Mat dst) {
+		Core.bitwise_not(src, dst);
+	}

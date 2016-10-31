@@ -1,0 +1,78 @@
+#set($enums = [])
+#set($lines = false)
+import cv2
+import numpy
+import math
+from enum import Enum
+
+class $fileName:
+    """This is a generated class from GRIP.
+    To use the pipeline first create a $fileName instance and set the sources,
+    next call the process method,
+    finally get and use the outputs.
+    """
+    
+    def __init__(self):
+        """initializes all values to presets or None if need to be set
+        """
+#foreach($moving in $pipeline.getMovingThresholds())
+        self.__lastImage$moving.num() = numpy.ndarray([])
+#end
+#foreach($src in $pipeline.getSources())
+        self.__$src.value() = None
+#end
+#foreach($step in $pipeline.getSteps())
+#foreach($input in $step.getInputs())
+        #newInput($input)
+
+#end
+#foreach($output in $step.getOutputs())
+        #output($output) = None
+#end
+
+#end
+    
+    def process(self):
+        """Runs the pipeline.
+        Sets outputs to new values.
+        Requires all sources to be set.
+        """
+#foreach($step in $pipeline.getSteps())
+#parse("$vmLoc/step.vm")
+
+
+#end
+#foreach($step in $pipeline.getSteps())
+#if($step.name() == "Switch" || $step.name() == "Valve")
+#set($boolInp = $step.getInput(0))
+#set($boolName = "$tMeth.pyName($boolInp.name())")
+#if($boolInp.hasValue())
+    def set$tMeth.pyName($step.name())$step.num()(self, value):
+        'This method is a generated setter for the condition of $step.name()'
+        assert isinstance(value, bool) , "Source must be of type bool"
+        self.__$tMeth.pyName($boolName) = value
+#end
+
+#end
+#end
+#foreach($source in $pipeline.getSources())
+#setter($source)
+
+#end
+
+#foreach($step in $pipeline.getUniqueSteps())
+#set($toParse = "$vmLoc/operations/" + $step.name())
+#set($toParse = $toParse + ".vm")
+#parse($toParse)
+
+
+#end
+
+#set($addedEnums = [])
+#foreach($enum in $enums)
+#if(!$addedEnums.contains($enum))
+#parse("$vmLoc/enums/${enum}.vm")
+#addToList($addedEnums $enum)
+#end
+
+#end

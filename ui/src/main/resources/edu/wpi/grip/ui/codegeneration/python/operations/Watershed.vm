@@ -1,0 +1,16 @@
+    @staticmethod
+    def $tMeth.name($step.name())(input, contours):
+        """Isolates overlapping objects from the background and each other.
+        This is getting redone in grip.
+        """
+        h, w = input.shape[:2]
+        markers = numpy.zeros((h, w), numpy.int32)
+        consize = len(contours[1])
+        for i in range(0,consize):
+             cv2.drawContours(markers, contours[1],i, ((i + 1) * (255 / consize),0,0))
+        cv2.circle(markers, (5, 5), 3, (255,255,255), -1, cv2.LINE_8, 0)
+        print (markers.dtype)
+        cv2.watershed(image = input, markers = markers)
+        markers = numpy.uint8(markers)
+        markers = cv2.bitwise_not(markers)
+        return markers

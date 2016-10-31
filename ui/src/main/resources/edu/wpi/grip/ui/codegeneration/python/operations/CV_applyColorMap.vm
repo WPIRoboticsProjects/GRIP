@@ -1,0 +1,10 @@
+    @staticmethod
+    def $tMeth.name($step.name())(src, color_map):
+        """Applies a color Map to given Image.
+        Args:
+            src: A numpy.ndarray.
+            color_map: An opencv enum.
+        Returns:
+            A numpy.ndarray in the new color space.
+        """
+        return cv2.applyColorMap(src, color_map)

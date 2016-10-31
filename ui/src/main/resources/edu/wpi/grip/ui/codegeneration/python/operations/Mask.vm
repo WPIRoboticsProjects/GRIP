@@ -1,0 +1,10 @@
+    @staticmethod
+    def $tMeth.name($step.name())(input, mask):
+        """Filter out an area of an image using a binary mask.
+        Args:
+            input: A three channel numpy.ndarray.
+            mask: A black and white numpy.ndarray.
+        Returns:
+            A three channel numpy.ndarray.
+        """
+        return cv2.bitwise_and(input, input, mask=mask)

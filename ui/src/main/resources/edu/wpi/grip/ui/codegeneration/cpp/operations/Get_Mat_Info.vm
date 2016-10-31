@@ -1,0 +1,21 @@
+	/**
+	 * Gets information about given Mat.
+	 * @param src Mat to get info about.
+	 * @param size the size of the Mat.
+	 * @param empty if the Mat is empty.
+	 * @param channels number of channels in the Mat.
+	 * @param cols number of rows in the Mat.
+	 * @param rows number of columns in the Mat.
+	 * @param highestValue highest value contained in the Mat.
+	 */
+	void $fileName::#func($step ["src", "size", "empty", "channels", "cols", "rows", "highestValue"]) {
+		empty = src.empty();
+		channels = src.channels();
+		cols = src.cols;
+		rows = src.rows;
+		double lowestValue;
+		minMaxLoc(src, &lowestValue, &highestValue);
+		Size matSize = src.size();
+		size.height = matSize.height;
+		size.width = matSize.width;
+	}

@@ -1,0 +1,16 @@
+	/**
+	 * Resizes an image.
+	 * @param src The image to resize.
+	 * @param dSize size to set the image.
+	 * @param fx scale factor along X axis.
+	 * @param fy scale factor along Y axis.
+	 * @param interpolation type of interpolation to use.
+	 * @param dst output image.
+	 */
+	private void $tMeth.name($step.name())(Mat src, Size dSize, double fx, double fy, int interpolation,
+		Mat dst) {
+		if (dSize==null) {
+			dSize = new Size(0,0);
+		}
+		Imgproc.resize(src, dst, dSize, fx, fy, interpolation);
+	}

@@ -1,0 +1,19 @@
+	/**
+	 * Draws a rectangle on an image.
+	 * @param src Image to draw rectangle on.
+	 * @param pt1 one corner of the rectangle.
+	 * @param pt2 opposite corner of the rectangle.
+	 * @param color Scalar indicating color to make the rectangle.
+	 * @param thickness Thickness of the lines of the rectangle.
+	 * @param lineType Type of line for the rectangle.
+	 * @param shift Number of decimal places in the points.
+	 * @param dst output image.
+	 */
+	private void $tMeth.name($step.name())(Mat src, Point pt1, Point pt2, Scalar color,
+		double thickness, int lineType, double shift, Mat dst) {
+		src.copyTo(dst);
+		if (color == null) {
+			color = Scalar.all(1.0);
+		}
+		Imgproc.rectangle(dst, pt1, pt2, color, (int)thickness, lineType, (int)shift);
+	}

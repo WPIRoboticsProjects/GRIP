@@ -1,0 +1,23 @@
+	/**
+	 * Gets information about given mat.
+	 * @param src Mat to get info about.
+	 * @param size the size of the Mat.
+	 * @param empty if the Mat is empty.
+	 * @param channels number of channels in the Mat.
+	 * @param cols number of rows in the Mat.
+	 * @param rows number of columns in the Mat.
+	 * @param highestValue highest value contained in the Mat.
+	 */
+	#set( $Num = "Number" )
+	#set( $bool = "Boolean" )
+	private void $tMeth.name($step.name())(Mat src, Size size, #RefOf($bool) empty,
+	#RefOf($Num) channels, #RefOf($Num) cols, #RefOf($Num) rows, #RefOf($Num) highestValue) {
+		empty.set(Boolean.valueOf(src.empty()));
+		channels.set(Integer.valueOf(src.channels()));
+		cols.set(Integer.valueOf(src.cols()));
+		rows.set(Integer.valueOf(src.rows()));
+		highestValue.set(Integer.valueOf((int)(Core.minMaxLoc(src.reshape(1)).maxVal)));
+		Size matSize = src.size();
+		size.height = matSize.height;
+		size.width = matSize.width;
+	}

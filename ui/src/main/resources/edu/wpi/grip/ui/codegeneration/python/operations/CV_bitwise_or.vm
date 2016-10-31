@@ -1,0 +1,10 @@
+    @staticmethod
+    def $tMeth.name($step.name())(src1, src2):
+        """Computes the per channel or of two images.
+        Args:
+            src1: A numpy.ndarray.
+            src2: A numpy.ndarray.
+        Returns:
+            A numpy.ndarray the or of the two mats.
+        """
+        return cv2.bitwise_or(src1, src2)

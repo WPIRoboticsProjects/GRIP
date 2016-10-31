@@ -1,0 +1,10 @@
+	/**
+	 * Divides one image by another with given scale.
+	 * @param src1 Numerator image.
+	 * @param src2 Denominator image.
+	 * @param scale Scale for division.
+	 * @param dst Result image.
+	 */
+	private void $tMeth.name($step.name())(Mat src1, Mat src2, double scale, Mat dst) {
+		Core.divide(src1, src2, dst, scale);
+	}

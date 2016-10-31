@@ -50,13 +50,15 @@ public class SocketImpl<T> implements Socket<T> {
   }
 
   @Override
-  public synchronized void setValueOptional(Optional<? extends T> optionalValue) {
+  public void setValueOptional(Optional<? extends T> optionalValue) {
     checkNotNull(optionalValue, "The optional value can not be null");
     if (optionalValue.isPresent()) {
       getSocketHint().getType().cast(optionalValue.get());
     }
-    this.value = optionalValue;
-    onValueChanged();
+    synchronized (this) {
+      this.value = optionalValue;
+      onValueChanged();
+    }
     eventBus.post(new SocketChangedEvent(this));
   }
 

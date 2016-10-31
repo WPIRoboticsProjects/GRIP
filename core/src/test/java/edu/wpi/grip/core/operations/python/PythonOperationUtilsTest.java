@@ -19,12 +19,12 @@ public class PythonOperationUtilsTest {
 
   @Test(expected = IllegalArgumentException.class)
   public void testNotCorrectFile() {
-    PythonOperationUtils.read(new File(System.getProperty("user.home")));
+    read(new File(System.getProperty("user.home")));
   }
 
   @Test(expected = IllegalArgumentException.class)
   public void testNotPythonFile() {
-    PythonOperationUtils.read(new File(DIRECTORY, "not-a-python-file.txt"));
+    read(new File(DIRECTORY, "not-a-python-file.txt"));
   }
 
   @Test
@@ -33,7 +33,7 @@ public class PythonOperationUtilsTest {
     file.deleteOnExit();
     checkDirExists();
     file.createNewFile();
-    Files.write(file.toPath(), TEMPLATE.getBytes());
+    Files.write(file.toPath(), TEMPLATE.getBytes("UTF-8"));
     String read = read(file);
     assertEquals(TEMPLATE, read);
   }

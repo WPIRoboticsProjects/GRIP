@@ -1,0 +1,14 @@
+    @staticmethod
+    def $tMeth.name($step.name())(input, type, mask_size):
+        """Sets the values of pixels in a binary image to their distance to the nearest black pixel.
+        Args:
+            input: A numpy.array.
+            type: Opencv enum.
+            mask_size: The size of the mask. Either 0, 3, or 5.
+        Returns:
+            A black and white numpy.ndarray.
+        """
+        h, w = input.shape[:2]
+        dst = numpy.zeros((h, w), numpy.float32)
+        cv2.distanceTransform(input, type, mask_size, dst = dst)
+        return numpy.uint8(dst)

@@ -1,0 +1,14 @@
+    @staticmethod
+    def $tMeth.name($step.name())(image, thres1, thres2, aperture_size, gradient):
+        """Applies a canny edge detection to the image.
+        Args:
+           image: A numpy.ndarray as the input.
+           thres1: First threshold for the canny algorithm. (number)
+           thres2: Second threshold for the canny algorithm. (number)
+           aperture_size: Aperture size for the canny operation. (number)
+           gradient: If the L2 norm should be used. (boolean)
+        Returns:
+            The edges as a numpy.ndarray.
+        """
+        return cv2.Canny(image, thres1, thres2, apertureSize=(int)(aperture_size),
+            L2gradient=gradient)

@@ -1,0 +1,14 @@
+	/**
+	 * Find edges by calculating the requested derivative order for the given image.
+	 * @param src the Image to perform Sobel on.
+	 * @param dx order of x derivative.
+	 * @param dy order of y derivative.
+	 * @param kSize size of kernel.
+	 * @param scale scale factor for derivatives.
+	 * @param delta delta that is added to derivatives.
+	 * @param borderType pixel extrapolation method.
+	 * @param dst Image that is output of Sobel.
+	 */
+	void $fileName::#func($step ["src", "dx", "dy", "kSize", "scale", "delta", "borderType", "dst"]) {
+		Sobel(src, dst, 0, (int)dx, (int)dy, (int)kSize, scale, delta, borderType);
+	}

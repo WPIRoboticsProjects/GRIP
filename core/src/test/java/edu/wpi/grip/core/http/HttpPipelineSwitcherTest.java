@@ -17,6 +17,7 @@ import org.junit.Test;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -121,7 +122,7 @@ public class HttpPipelineSwitcherTest {
   private HttpResponse doPost(String path, String text) throws IOException {
     HttpPost post = new HttpPost("http://localhost:" + server.getPort() + path);
     BasicHttpEntity httpEntity = new BasicHttpEntity();
-    httpEntity.setContent(new ByteArrayInputStream(text.getBytes()));
+    httpEntity.setContent(new ByteArrayInputStream(text.getBytes(StandardCharsets.UTF_8)));
     post.setEntity(httpEntity);
     return client.execute(post);
   }

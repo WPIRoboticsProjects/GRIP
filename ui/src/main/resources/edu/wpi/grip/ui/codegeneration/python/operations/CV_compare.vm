@@ -1,0 +1,11 @@
+    @staticmethod
+    def $tMeth.name($step.name())(src1, src2, compare):
+        """Compares two Mats using designated method.
+        Args:
+            src1: A numpy.ndarray.
+            src2: A numpy.ndarray.
+            compare: Type of comparison to use. (opencv enum)
+        Returns:
+            A numpy.ndarray that is the result.
+        """
+        return cv2.compare(src1, src2, compare)

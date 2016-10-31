@@ -1,0 +1,21 @@
+    @staticmethod
+    def $tMeth.name($step.name())(src, pt1, pt2, color, thickness, line_type, shift):
+        """Draws a rectangle on an image.
+        Args:
+            src: The numpy.ndarray the will have a rectangle drawn on it.
+            pt1: A list of two numbers that represent one corner of the rectangle.
+            pt2: The opposite corner.
+            color: A list of three numbers that represent the color of the image.
+            thickness: A number.
+            line_type: Opencv enum for the type of line.
+            Shift: Number of decimal places in the points.
+        Returns:
+            A numpy.ndarray with a rectangle on it.
+        """
+        if(color == None):
+            color = (1.0,1.0,1.0)
+        shift_int = (int) (shift+0.5)
+        pt1_int = ((int)(pt1[0]),(int)(pt1[1]))
+        pt2_int = ((int)(pt2[0]),(int)(pt2[1]))
+        return cv2.rectangle(src, pt1_int, pt2_int, color, thickness=(int)(thickness+0.5),
+                            lineType=line_type, shift=shift_int)

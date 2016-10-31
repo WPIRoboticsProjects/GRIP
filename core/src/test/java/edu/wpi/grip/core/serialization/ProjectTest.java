@@ -12,6 +12,7 @@ import edu.wpi.grip.core.events.ConnectionAddedEvent;
 import edu.wpi.grip.core.events.OperationAddedEvent;
 import edu.wpi.grip.core.events.ProjectSettingsChangedEvent;
 import edu.wpi.grip.core.events.SourceAddedEvent;
+import edu.wpi.grip.core.operations.network.MockGripNetworkModule;
 import edu.wpi.grip.core.operations.python.PythonScriptFile;
 import edu.wpi.grip.core.settings.ProjectSettings;
 import edu.wpi.grip.core.sockets.InputSocket;
@@ -25,6 +26,7 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Key;
 import com.google.inject.TypeLiteral;
+import com.google.inject.util.Modules;
 
 import org.junit.After;
 import org.junit.Before;
@@ -64,7 +66,8 @@ public class ProjectTest {
   public void setUp() throws Exception {
     testModule = new GripCoreTestModule();
     testModule.setUp();
-    final Injector injector = Guice.createInjector(testModule);
+    final Injector injector = Guice.createInjector(Modules.override(testModule)
+        .with(new MockGripNetworkModule()));
     connectionFactory = injector
         .getInstance(Key.get(new TypeLiteral<Connection.Factory<Object>>() {
         }));
@@ -154,7 +157,6 @@ public class ProjectTest {
     final Step step2 = stepFactory.create(pythonAdditionOperationFromURL);
     final InputSocket<Number> a2 = (InputSocket<Number>) step2.getInputSockets().get(0);
     final InputSocket<Number> b2 = (InputSocket<Number>) step2.getInputSockets().get(1);
-    final OutputSocket<Number> sum2 = (OutputSocket<Number>) step2.getOutputSockets().get(0);
 
     a1.setValue(12);
     b1.setValue(34);

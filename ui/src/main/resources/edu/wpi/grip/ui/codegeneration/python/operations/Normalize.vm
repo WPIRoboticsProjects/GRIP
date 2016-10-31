@@ -1,0 +1,12 @@
+    @staticmethod
+    def $tMeth.name($step.name())(input, type, a, b):
+        """Normalizes or remaps the values of pixels in an image.
+        Args:
+            input: A numpy.ndarray.
+            type: Opencv enum.
+            a: The minimum value.
+            b: The maximum value.
+        Returns:
+            A numpy.ndarray of the same type as the input.
+        """
+        return cv2.normalize(input, None, a, b, type)

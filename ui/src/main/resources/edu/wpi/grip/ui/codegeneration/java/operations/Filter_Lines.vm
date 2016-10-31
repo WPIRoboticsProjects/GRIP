@@ -1,0 +1,16 @@
+#parse("$vmLoc/operations/Lines.vm")
+	/**
+	 * Filters out lines that do not meet certain criteria.
+	 * @param inputs The lines that will be filtered.
+	 * @param minLength The minimum length of a line to be kept.
+	 * @param angle The minimum and maximum angle of a line to be kept.
+	 * @param outputs The output lines after the filter.
+	 */
+	private void $tMeth.name($step.name())(List<Line> inputs,double minLength,double[] angle,
+		List<Line> outputs) {
+		outputs = inputs.stream()
+				.filter(line -> line.lengthSquared() >= Math.pow(minLength,2))
+				.filter(line -> (line.angle() >= angle[0] && line.angle() <= angle[1])
+				|| (line.angle() + 180.0 >= angle[0] && line.angle() + 180.0 <= angle[1]))
+				.collect(Collectors.toList());
+	}

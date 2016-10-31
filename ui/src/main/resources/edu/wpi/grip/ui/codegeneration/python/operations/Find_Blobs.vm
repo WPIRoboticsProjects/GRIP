@@ -1,0 +1,25 @@
+    @staticmethod
+    def $tMeth.name($step.name())(input, min_area, circularity, dark_blobs):
+        """Detects groups of pixels in an image.
+        Args:
+            input: A numpy.ndarray.
+            min_area: The minimum blob size to be found.
+            circularity: The min and max circularity as a list of two numbers.
+            dark_blobs: A boolean. If true looks for black. Otherwise it looks for white.
+        Returns:
+            A list of KeyPoint.
+        """
+        params = cv2.SimpleBlobDetector_Params()
+        params.filterByColor = 1
+        params.blobColor = (0 if dark_blobs else 255)
+        params.minThreshold = 10
+        params.maxThreshold = 220
+        params.filterByArea = True
+        params.minArea = min_area
+        params.filterByCircularity = True
+        params.minCircularity = circularity[0]
+        params.maxCircularity = circularity[1]
+        params.filterByConvexity = False
+        params.filterByInertia = False
+        detector = cv2.SimpleBlobDetector_create(params)
+        return detector.detect(input)

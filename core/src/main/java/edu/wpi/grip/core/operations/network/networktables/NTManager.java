@@ -5,6 +5,8 @@ import edu.wpi.grip.core.events.ProjectSettingsChangedEvent;
 import edu.wpi.grip.core.operations.network.Manager;
 import edu.wpi.grip.core.operations.network.MapNetworkPublisher;
 import edu.wpi.grip.core.operations.network.MapNetworkPublisherFactory;
+import edu.wpi.grip.core.operations.network.MapNetworkReceiverFactory;
+import edu.wpi.grip.core.operations.network.NetworkReceiver;
 import edu.wpi.grip.core.settings.ProjectSettings;
 import edu.wpi.grip.core.util.GripMode;
 
@@ -19,13 +21,15 @@ import edu.wpi.first.wpilibj.networktables.NetworkTablesJNI;
 import edu.wpi.first.wpilibj.tables.ITable;
 
 import java.io.File;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Consumer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import javax.inject.Inject;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -34,18 +38,18 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * This class encapsulates the way we map various settings to the global NetworkTables state.
  */
 @Singleton
-public class NTManager implements Manager, MapNetworkPublisherFactory {
+public class NTManager implements Manager, MapNetworkPublisherFactory, MapNetworkReceiverFactory {
   /*
    * Nasty hack that is unavoidable because of how NetworkTables works.
    */
-  private static final AtomicInteger publisherCount = new AtomicInteger(0);
+  private static final AtomicInteger count = new AtomicInteger(0);
 
   /**
    * Information from: https://github.com/PeterJohnson/ntcore/blob/master/src/Log.h and
    * https://github.com/PeterJohnson/ntcore/blob/e6054f543a6ab10aa27af6cace855da66d67ee44
    * /include/ntcore_c.h#L39
    */
-  private static final Map<Integer, Level> ntLogLevels = ImmutableMap.<Integer, Level>builder()
+  protected static final Map<Integer, Level> ntLogLevels = ImmutableMap.<Integer, Level>builder()
       .put(40, Level.SEVERE)
       .put(30, Level.WARNING)
       .put(20, Level.INFO)
@@ -120,9 +124,67 @@ public class NTManager implements Manager, MapNetworkPublisherFactory {
 
   @Override
   public <P> MapNetworkPublisher<P> create(Set<String> keys) {
-    // Keep track of ever publisher created.
-    publisherCount.getAndAdd(1);
+    // Keep track of every publisher created.
+    count.getAndAdd(1);
     return new NTPublisher<>(keys);
+  }
+
+  @Override
+  public NetworkReceiver create(String path) {
+    count.getAndAdd(1);
+    return new NTReceiver(path);
+  }
+
+  private static final class NTReceiver extends NetworkReceiver {
+
+    private int entryListenerFunctionUid;
+    private Object object = false;
+    private final List<Consumer<Object>> listeners = new LinkedList<>();
+
+    protected NTReceiver(String path) {
+      super(path);
+      addListener();
+
+      synchronized (NetworkTable.class) {
+        NetworkTable.initialize();
+      }
+    }
+
+    private void addListener() {
+      entryListenerFunctionUid = NetworkTablesJNI.addEntryListener(path,
+          (uid, key, value, flags) -> {
+            object = value;
+            listeners.forEach(c -> c.accept(object));
+          },
+          ITable.NOTIFY_IMMEDIATE
+              | ITable.NOTIFY_NEW
+              | ITable.NOTIFY_UPDATE
+              | ITable.NOTIFY_DELETE
+              | ITable.NOTIFY_LOCAL);
+    }
+
+    @Override
+    public void addListener(Consumer<Object> consumer) {
+      listeners.add(consumer);
+    }
+
+    @Override
+    public Object getValue() {
+      return object;
+    }
+
+    @Override
+    public void close() {
+      NetworkTablesJNI.removeEntryListener(entryListenerFunctionUid);
+
+      synchronized (NetworkTable.class) {
+        // This receiver is no longer used.
+        if (NTManager.count.addAndGet(-1) == 0) {
+          // We are the last resource using NetworkTables so shut it down
+          NetworkTable.shutdown();
+        }
+      }
+    }
   }
 
   private static final class NTPublisher<P> extends MapNetworkPublisher<P> {
@@ -184,8 +246,8 @@ public class NTManager implements Manager, MapNetworkPublisherFactory {
       }
       synchronized (NetworkTable.class) {
         // This publisher is no longer used.
-        if (NTManager.publisherCount.addAndGet(-1) == 0) {
-          // We are the last publisher so shut it down
+        if (NTManager.count.addAndGet(-1) == 0) {
+          // We are the last resource using NetworkTables so shut it down
           NetworkTable.shutdown();
         }
       }

@@ -1,0 +1,10 @@
+    @staticmethod
+    def $tMeth.name($step.name())(src, k_size):
+        """Performs a median blur on the image.
+        Args:
+            src: A numpy.ndarray.
+            k_size: the scaling factor for the blur as a number.
+        Returns:
+            The result as a numpy.ndarray.
+        """
+        return cv2.medianBlur(src, (int)(k_size))

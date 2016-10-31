@@ -1,0 +1,9 @@
+	/**
+	 * Performs a median blur on the image.
+	 * @param src image to blur.
+	 * @param kSize size of blur.
+	 * @param dst output of blur.
+	 */
+	private void $tMeth.name($step.name())(Mat src, double kSize, Mat dst) {
+		Imgproc.medianBlur(src, dst, (int)kSize);
+	}

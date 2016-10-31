@@ -1,0 +1,12 @@
+    @staticmethod
+    def $tMeth.name($step.name())(src, thresh, max_val, type):
+        """Apply a fixed-level threshold to each array element in an image
+        Args:
+            src: A numpy.ndarray.
+            thresh: Threshold value.
+            max_val: Maximum value for THRES_BINARY and THRES_BINARY_INV.
+            type: Opencv enum.
+        Returns:
+            A black and white numpy.ndarray.
+        """
+        return cv2.threshold(src, thresh, max_val, type)[1]

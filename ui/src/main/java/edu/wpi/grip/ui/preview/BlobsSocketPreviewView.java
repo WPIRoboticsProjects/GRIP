@@ -8,6 +8,8 @@ import edu.wpi.grip.ui.util.ImageConverter;
 
 import com.google.common.eventbus.Subscribe;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 import javafx.application.Platform;
 import javafx.geometry.Orientation;
 import javafx.scene.control.CheckBox;
@@ -36,9 +38,12 @@ public class BlobsSocketPreviewView extends SocketPreviewView<BlobsReport> {
   private final ImageView imageView = new ImageView();
   private final Label infoLabel = new Label();
   private final Mat tmp = new Mat();
+  private final Point point = new Point();
   private final GripPlatform platform;
   @SuppressWarnings("PMD.ImmutableField")
-  private boolean showInputImage;
+  @SuppressFBWarnings(value = "IS2_INCONSISTENT_SYNC",
+      justification = "Do not need to synchronize inside of a constructor")
+  private boolean showInputImage = false;
 
   /**
    * @param socket An output socket to preview.
@@ -87,7 +92,8 @@ public class BlobsSocketPreviewView extends SocketPreviewView<BlobsReport> {
       if (!blobsReport.getBlobs().isEmpty()) {
         // For each line in the report, draw a line along with the starting and ending points
         for (BlobsReport.Blob blob : blobsReport.getBlobs()) {
-          final Point point = new Point((int) blob.x, (int) blob.y);
+          point.x((int) blob.x);
+          point.y((int) blob.y);
           circle(tmp, point, (int) (blob.size / 2), Scalar.WHITE, 2, LINE_8, 0);
         }
       }

@@ -1,0 +1,18 @@
+#parse("$vmLoc/operations/Lines.vm")
+    @staticmethod
+    def $tMeth.name($step.name())(inputs, min_length, angle):
+        """Filters out lines that do not meet certain criteria.
+        Args:
+            inputs: A list of Lines.
+            min_Lenght: The minimum lenght that will be kept.
+            angle: The minimum and maximum angles in degrees as a list of two numbers.
+        Returns:
+            A filtered list of Lines.
+        """
+        outputs = []
+        for line in inputs:
+            if (line.length() > min_length):
+                if ((line.angle() >= angle[0] and line.angle() <= angle[1]) or
+                        (line.angle() + 180.0 >= angle[0] and line.angle() + 180.0 <= angle[1])):
+                    outputs.append(line)
+        return outputs
