@@ -2,6 +2,8 @@ package edu.wpi.grip.core.sockets;
 
 import com.google.common.base.MoreObjects;
 
+import org.bytedeco.javacpp.opencv_objdetect.CascadeClassifier;
+
 import java.util.Arrays;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -122,6 +124,9 @@ public interface SocketHint<T> {
       } else if (Mat.class.equals(type)) {
         // "Mats" represent images
         return "Image";
+      } else if (CascadeClassifier.class.equals(type)) {
+        // "CascadeClassifier" is too long and the name is already on the operation
+        return "Classifier";
       } else {
         // For any other type, just use the name of the class
         return type.getSimpleName();

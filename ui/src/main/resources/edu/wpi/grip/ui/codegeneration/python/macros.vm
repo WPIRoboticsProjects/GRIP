@@ -51,6 +51,10 @@ $type#end
         assert isinstance(value, list)
         for element in value:
             assert isinstance(element, self.Line)
+#elseif($src.type().equals("RectsReport"))
+        assert isinstance(value, list)
+        for element in value:
+            assert isInstance(element, Rect)
 #else
         assert isinstance(value, #type($src)) , "Source must be of type #type($src)"
 #end
