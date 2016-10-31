@@ -5,6 +5,7 @@ import edu.wpi.grip.core.Step;
 import edu.wpi.grip.core.StepIndexer;
 import edu.wpi.grip.core.events.BenchmarkEvent;
 import edu.wpi.grip.core.events.RunStoppedEvent;
+import edu.wpi.grip.core.events.StepRemovedEvent;
 import edu.wpi.grip.core.events.TimerEvent;
 import edu.wpi.grip.core.metrics.BenchmarkRunner;
 import edu.wpi.grip.core.metrics.CsvExporter;
@@ -67,7 +68,7 @@ public class AnalysisController {
   private BenchmarkRunner benchmarker;
 
   private final Callback<StepStatisticsEntry, Observable[]> extractor =
-      entry -> new Observable[] {entry.stepProperty(), entry.analysisProperty()};
+      entry -> new Observable[]{entry.stepProperty(), entry.analysisProperty()};
   private final ObservableList<StepStatisticsEntry> tableItems
       = FXCollections.observableArrayList(extractor);
 
@@ -142,7 +143,13 @@ public class AnalysisController {
   }
 
   @Subscribe
-  @SuppressWarnings( {"PMD.UnusedPrivateMethod", "PMD.UnusedFormalParameter"})
+  @SuppressWarnings("PMD.UnusedPrivateMethod")
+  private void onStepRemoved(StepRemovedEvent e) {
+    sampleMap.remove(e.getStep());
+  }
+
+  @Subscribe
+  @SuppressWarnings({"PMD.UnusedPrivateMethod", "PMD.UnusedFormalParameter"})
   private void onPipelineFinish(@Nullable RunStoppedEvent event) {
     double[] averageRunTimes = sortedStream(sampleMap)
         .parallel()
