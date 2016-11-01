@@ -24,6 +24,8 @@ public class SourceControllerFactory {
   private SourceController.BaseSourceControllerFactory<Source> baseSourceControllerFactory;
   @Inject
   private ClassifierSourceController.Factory fileSourceControllerFactory;
+  @Inject
+  private VideoFileSourceController.Factory videoFileSourceControllerFactory;
 
   SourceControllerFactory() { /* no-op */ }
 

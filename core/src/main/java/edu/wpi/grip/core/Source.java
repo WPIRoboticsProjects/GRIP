@@ -7,6 +7,7 @@ import edu.wpi.grip.core.sources.HttpSource;
 import edu.wpi.grip.core.sources.ImageFileSource;
 import edu.wpi.grip.core.sources.MultiImageFileSource;
 import edu.wpi.grip.core.sources.NetworkTableEntrySource;
+import edu.wpi.grip.core.sources.VideoFileSource;
 import edu.wpi.grip.core.util.ExceptionWitness;
 
 import com.google.common.collect.ImmutableList;
@@ -117,6 +118,8 @@ public abstract class Source {
     NetworkTableEntrySource.Factory networkTableEntryFactory;
     @Inject
     ClassifierSource.Factory fileSourceFactory;
+    @Inject
+    VideoFileSource.Factory videoFileSourceFactory;
 
     @Override
     public Source create(Class<?> type, Properties properties) throws IOException {
@@ -132,6 +135,8 @@ public abstract class Source {
         return networkTableEntryFactory.create(properties);
       } else if (type.isAssignableFrom(ClassifierSource.class)) {
         return fileSourceFactory.create(properties);
+      } else if (type.isAssignableFrom(VideoFileSource.class)) {
+        return videoFileSourceFactory.create(properties);
       } else {
         throw new IllegalArgumentException(type + " was not a valid type");
       }
