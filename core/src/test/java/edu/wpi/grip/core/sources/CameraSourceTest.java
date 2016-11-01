@@ -286,7 +286,7 @@ public class CameraSourceTest {
       for (int y = 0; y < frameIdx.rows(); y++) {
         for (int x = 0; x < frameIdx.cols(); x++) {
           for (int z = 0; z < frameIdx.channels(); z++) {
-            frameIdx.putDouble(new int[] {y, x, z}, y + x + z);
+            frameIdx.putDouble(new int[]{y, x, z}, y + x + z);
           }
         }
       }
