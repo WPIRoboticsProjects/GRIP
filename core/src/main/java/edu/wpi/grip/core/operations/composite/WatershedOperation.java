@@ -136,7 +136,7 @@ public class WatershedOperation implements Operation {
         output.copyTo(dst, opencv_core.equals(markers, i).asMat());
         findContours(dst, contour, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_TC89_KCOS);
         dst.release();
-        contourList.add(contour.get(0));
+        contourList.add(contour.get(0).clone());
       }
       MatVector foundContours = new MatVector(contourList.toArray(new Mat[contourList.size()]));
       outputSocket.setValue(new ContoursReport(foundContours, output.rows(), output.cols()));

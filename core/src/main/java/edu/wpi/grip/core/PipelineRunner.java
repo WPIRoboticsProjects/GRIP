@@ -117,7 +117,6 @@ public class PipelineRunner implements RestartableService {
   @Override
   public PipelineRunner startAsync() {
     pipelineService.startAsync();
-    Cleaner.get().start();
     return this;
   }
 

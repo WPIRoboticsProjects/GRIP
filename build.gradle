@@ -428,6 +428,12 @@ project(":ui") {
         scopes.PROVIDED.plus += [configurations.ideProvider]
     }
 
+    if (project.hasProperty('jvmArgs')) {
+        run {
+            jvmArgs = (project.jvmArgs.split("\\s+") as List)
+        }
+    }
+
     /*
      * Allows you to run the UI tests in headless mode by calling gradle with the -Pheadless=true argument
      */
@@ -535,12 +541,14 @@ project(":ui") {
 
         jfxMainAppJarName = "${jfx.appName}-${jfx.nativeReleaseVersion}.jar"
 
-        // This prevents the JIT from eating stack traces that get thrown a lot
+        // -XX:-OmitStackTraceInFastThrow prevents the JIT from eating stack traces that get thrown a lot
         // This is slower but means we actually get the stack traces instead of
         // having them become one line like `java.lang.ArrayIndexOutOfBoundsException`
         // and as such, would be useless.
         // See: https://plumbr.eu/blog/java/on-a-quest-for-missing-stacktraces
-        jvmArgs = ["-XX:-OmitStackTraceInFastThrow"]
+        // -Xmx limits the heap size. This prevents memory use from ballooning with a lot
+        // of JavaCV native objects being allocated hanging around waiting to get GC'd
+        jvmArgs = ["-XX:-OmitStackTraceInFastThrow", "-Xmx200m"]
 
         bundleArguments = [
                 "linux.launcher.url": file('linuxLauncher/build/exe/linuxLauncher/linuxLauncher').toURI().toURL()
