@@ -24,6 +24,7 @@ import static org.bytedeco.javacpp.opencv_core.MatVector;
 import static org.bytedeco.javacpp.opencv_core.Point;
 import static org.bytedeco.javacpp.opencv_core.Point2f;
 import static org.bytedeco.javacpp.opencv_core.Scalar;
+import static org.bytedeco.javacpp.opencv_core.bitwise_xor;
 import static org.bytedeco.javacpp.opencv_imgproc.CV_CHAIN_APPROX_TC89_KCOS;
 import static org.bytedeco.javacpp.opencv_imgproc.CV_FILLED;
 import static org.bytedeco.javacpp.opencv_imgproc.CV_RETR_EXTERNAL;
@@ -63,6 +64,11 @@ public class WatershedOperation implements Operation {
   private final InputSocket<Mat> srcSocket;
   private final InputSocket<ContoursReport> contoursSocket;
   private final OutputSocket<ContoursReport> outputSocket;
+
+  private final MatVector contour = new MatVector(); // vector with a single element
+  private final Mat markers = new Mat();
+  private final Mat output = new Mat();
+  private final Point backgroundLabel = new Point();
 
   @SuppressWarnings("JavadocMethod")
   public WatershedOperation(InputSocket.Factory inputSocketFactory,
@@ -105,8 +111,10 @@ public class WatershedOperation implements Operation {
               + " The contours must also all be external; nested contours will not work");
     }
 
-    final Mat markers = new Mat(input.size(), CV_32SC1, new Scalar(0.0));
-    final Mat output = new Mat(markers.size(), CV_8UC1, new Scalar(0.0));
+    markers.create(input.size(), CV_32SC1);
+    output.create(input.size(), CV_8UC1);
+    bitwise_xor(markers, markers, markers);
+    bitwise_xor(output, output, output);
 
     try {
       // draw foreground markers (these have to be different colors)
@@ -115,7 +123,7 @@ public class WatershedOperation implements Operation {
       }
 
       // draw background marker a different color from the foreground markers
-      Point backgroundLabel = fromPoint2f(findBackgroundMarker(markers, contours));
+      findBackgroundMarker(markers, contours);
       circle(markers, backgroundLabel, 1, Scalar.WHITE, -1, LINE_8, 0);
 
       // Perform watershed
@@ -126,12 +134,9 @@ public class WatershedOperation implements Operation {
       for (int i = 1; i < contours.size(); i++) {
         Mat dst = new Mat();
         output.copyTo(dst, opencv_core.equals(markers, i).asMat());
-        MatVector contour = new MatVector(); // vector with a single element
         findContours(dst, contour, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_TC89_KCOS);
-        assert contour.size() == 1;
-        contourList.add(contour.get(0).clone());
-        contour.get(0).deallocate();
-        contour.deallocate();
+        dst.release();
+        contourList.add(contour.get(0));
       }
       MatVector foundContours = new MatVector(contourList.toArray(new Mat[contourList.size()]));
       outputSocket.setValue(new ContoursReport(foundContours, output.rows(), output.cols()));
@@ -144,7 +149,7 @@ public class WatershedOperation implements Operation {
   /**
    * Finds the first available point to place a background marker for the watershed operation.
    */
-  private static Point2f findBackgroundMarker(Mat markers, MatVector contours) {
+  private void findBackgroundMarker(Mat markers, MatVector contours) {
     final int cols = markers.cols();
     final int rows = markers.rows();
     final int minDist = 5;
@@ -169,13 +174,16 @@ public class WatershedOperation implements Operation {
     }
     if (!found) {
       // Should only happen if the image is clogged with contours
+      backgroundLabel.deallocate();
       throw new IllegalStateException("Could not find a point for the background label");
     }
-    return backgroundLabel;
+    setBackgroundLabel(backgroundLabel);
+    backgroundLabel.deallocate();
   }
 
-  private static Point fromPoint2f(Point2f p) {
-    return new Point((int) p.x(), (int) p.y());
+  private void setBackgroundLabel(Point2f p) {
+    this.backgroundLabel.x((int) p.x());
+    this.backgroundLabel.y((int) p.y());
   }
 
 }
