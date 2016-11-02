@@ -136,6 +136,9 @@ public class WatershedOperation implements Operation {
         output.copyTo(dst, opencv_core.equals(markers, i).asMat());
         findContours(dst, contour, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_TC89_KCOS);
         dst.release();
+        if (contour.size() != 1) {
+          throw new IllegalArgumentException("Contours must be external only");
+        }
         contourList.add(contour.get(0).clone());
       }
       MatVector foundContours = new MatVector(contourList.toArray(new Mat[contourList.size()]));
