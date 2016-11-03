@@ -65,6 +65,8 @@ public class WatershedOperation implements Operation {
   private final InputSocket<ContoursReport> contoursSocket;
   private final OutputSocket<ContoursReport> outputSocket;
 
+  private static final int maxMarkers = 253;
+  private final List<Mat> markerPool = new ArrayList<>(maxMarkers);
   private final MatVector contour = new MatVector(); // vector with a single element
   private final Mat markers = new Mat();
   private final Mat output = new Mat();
@@ -76,6 +78,9 @@ public class WatershedOperation implements Operation {
     srcSocket = inputSocketFactory.create(srcHint);
     contoursSocket = inputSocketFactory.create(contoursHint);
     outputSocket = outputSocketFactory.create(outputHint);
+    for (int i = 0; i < maxMarkers; i++) {
+      markerPool.add(new Mat());
+    }
   }
 
   @Override
@@ -103,7 +108,6 @@ public class WatershedOperation implements Operation {
     final ContoursReport contourReport = contoursSocket.getValue().get();
     final MatVector contours = contourReport.getContours();
 
-    final int maxMarkers = 253;
     if (contours.size() > maxMarkers) {
       throw new IllegalArgumentException(
           "A maximum of " + maxMarkers + " contours can be used as markers."
@@ -116,37 +120,32 @@ public class WatershedOperation implements Operation {
     bitwise_xor(markers, markers, markers);
     bitwise_xor(output, output, output);
 
-    try {
-      // draw foreground markers (these have to be different colors)
-      for (int i = 0; i < contours.size(); i++) {
-        drawContours(markers, contours, i, Scalar.all(i + 1), CV_FILLED, LINE_8, null, 2, null);
-      }
-
-      // draw background marker a different color from the foreground markers
-      findBackgroundMarker(markers, contours);
-      circle(markers, backgroundLabel, 1, Scalar.WHITE, -1, LINE_8, 0);
-
-      // Perform watershed
-      watershed(input, markers);
-      markers.convertTo(output, CV_8UC1);
-
-      List<Mat> contourList = new ArrayList<>();
-      for (int i = 1; i < contours.size(); i++) {
-        Mat dst = new Mat();
-        output.copyTo(dst, opencv_core.equals(markers, i).asMat());
-        findContours(dst, contour, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_TC89_KCOS);
-        dst.release();
-        if (contour.size() != 1) {
-          throw new IllegalArgumentException("Contours must be external only");
-        }
-        contourList.add(contour.get(0).clone());
-      }
-      MatVector foundContours = new MatVector(contourList.toArray(new Mat[contourList.size()]));
-      outputSocket.setValue(new ContoursReport(foundContours, output.rows(), output.cols()));
-    } finally {
-      // make sure that the working mat is freed to avoid a memory leak
-      markers.release();
+    // draw foreground markers (these have to be different colors)
+    for (int i = 0; i < contours.size(); i++) {
+      drawContours(markers, contours, i, Scalar.all(i + 1), CV_FILLED, LINE_8, null, 2, null);
     }
+
+    // draw background marker a different color from the foreground markers
+    findBackgroundMarker(markers, contours);
+    circle(markers, backgroundLabel, 1, Scalar.WHITE, -1, LINE_8, 0);
+
+    // Perform watershed
+    watershed(input, markers);
+    markers.convertTo(output, CV_8UC1);
+
+    List<Mat> contourList = new ArrayList<>((int) contours.size());
+    for (int i = 1; i < contours.size(); i++) {
+      Mat dst = markerPool.get(i - 1);
+      bitwise_xor(dst, dst, dst);
+      output.copyTo(dst, opencv_core.equals(markers, i).asMat());
+      findContours(dst, contour, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_TC89_KCOS);
+      if (contour.size() < 1) {
+        throw new IllegalArgumentException("No contours for marker");
+      }
+      contourList.add(contour.get(0).clone());
+    }
+    MatVector foundContours = new MatVector(contourList.toArray(new Mat[contourList.size()]));
+    outputSocket.setValue(new ContoursReport(foundContours, output.rows(), output.cols()));
   }
 
   /**
