@@ -6,7 +6,7 @@ import static org.junit.Assert.assertTrue;
 
 public class CoreCommandLineHelperTest {
 
-  private static class Mock extends CoreCommandLineHelper {
+  private static class MockHelper extends CoreCommandLineHelper {
     @Override
     void exit() {
       // NOP
@@ -17,7 +17,7 @@ public class CoreCommandLineHelperTest {
   public void testHelp() {
     boolean[] printed = {false};
     boolean[] exited = {false};
-    Mock m = new Mock() {
+    MockHelper m = new MockHelper() {
       @Override
       void printHelpAndExit() {
         printed[0] = true;
@@ -37,17 +37,22 @@ public class CoreCommandLineHelperTest {
     m.parse("--help");
     assertTrue("Help text was not printed", printed[0]);
     assertTrue("The application didn't exit", exited[0]);
+    printed[0] = false;
+    exited[0] = false;
+    m.parse("--port"); // No value given, should print help text and exit
+    assertTrue("Help text was not printed", printed[0]);
+    assertTrue("The application didn't exit", exited[0]);
   }
 
   @Test
   public void testVersion() {
     boolean[] printed = {false};
     boolean[] exited = {false};
-    Mock m = new Mock() {
+    MockHelper m = new MockHelper() {
       @Override
       void printVersionAndExit() {
         printed[0] = true;
-        super.printHelpAndExit();
+        super.printVersionAndExit();
       }
 
       @Override

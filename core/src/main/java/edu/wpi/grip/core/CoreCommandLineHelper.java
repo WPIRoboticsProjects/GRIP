@@ -90,7 +90,7 @@ public class CoreCommandLineHelper {
       System.out.println("Incorrect command line arguments: " + e.getMessage());
       printHelpAndExit();
     }
-    throw new AssertionError("This should never be reached");
+    return null; // This is OK -- will only happen in tests
   }
 
   /**
