@@ -75,7 +75,7 @@ public class CoreCommandLineHelper {
    *
    * @return a CommandLine object that can be queried for command line options and their values
    */
-  @SuppressWarnings({"checkstyle:regexp", "PMD"})
+  @SuppressWarnings({"checkstyle:regexp", "PMD.SystemPrintln"})
   public CommandLine parse(String... args) {
     try {
       DefaultParser parser = new DefaultParser();
@@ -117,7 +117,7 @@ public class CoreCommandLineHelper {
    * Prints the app version and exits the application.
    */
   @VisibleForTesting
-  @SuppressWarnings({"checkstyle:regexp", "PMD"})
+  @SuppressWarnings({"checkstyle:regexp", "PMD.SystemPrintln"})
   void printVersionAndExit() {
     System.out.printf(
         "GRIP version %s%n",

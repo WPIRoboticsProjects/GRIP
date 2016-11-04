@@ -11,10 +11,11 @@ public class UICommandLineHelper extends CoreCommandLineHelper {
 
   public static final String HEADLESS_OPTION = "headless";
 
-  private static final Option headlessOption = Option.builder()
-      .longOpt(HEADLESS_OPTION)
-      .desc("Run in headless mode")
-      .build();
+  private static final Option headlessOption =
+      Option.builder()
+          .longOpt(HEADLESS_OPTION)
+          .desc("Run in headless mode")
+          .build();
 
   public UICommandLineHelper() {
     super(headlessOption);
