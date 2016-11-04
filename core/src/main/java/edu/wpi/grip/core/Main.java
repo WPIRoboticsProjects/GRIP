@@ -91,10 +91,10 @@ public class Main {
       }
     }
 
-    // This will thrown an exception if the port specified by the save file is already taken.
-    // Since we have to have the server running to handle remotely loading pipelines and uploading
-    // images, as well as potential HTTP publishing operations, this will cause the program
-    // to exit.
+    // This will throw an exception if the port specified by the save file or command line
+    // argument is already taken. Since we have to have the server running to handle remotely
+    // loading pipelines and uploading images, as well as potential HTTP publishing operations,
+    // this will cause the program to exit.
     gripServer.start();
 
     if (pipelineRunner.state() == Service.State.NEW) {

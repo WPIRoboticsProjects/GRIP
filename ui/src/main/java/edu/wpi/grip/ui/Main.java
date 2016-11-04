@@ -100,7 +100,6 @@ public class Main extends Application {
 
     notifyPreloader(new Preloader.ProgressNotification(0.45));
     server.addHandler(pipelineSwitcher);
-    server.start();
     notifyPreloader(new Preloader.ProgressNotification(0.6));
 
     pipelineRunner.startAsync();
@@ -109,42 +108,13 @@ public class Main extends Application {
 
   @Override
   public void start(Stage stage) throws IOException {
+    // Load UI elements if we're not in headless mode
     if (!headless) {
       root = FXMLLoader.load(Main.class.getResource("MainWindow.fxml"), null, null,
           injector::getInstance);
       root.setStyle("-fx-font-size: " + DPIUtility.FONT_SIZE + "px");
 
-      operations.addOperations();
-      cvOperations.addOperations();
       notifyPreloader(new Preloader.ProgressNotification(0.9));
-
-      // If there was a file specified on the command line, open it immediately
-      if (parsedArgs.hasOption(CoreCommandLineHelper.FILE_OPTION)) {
-        String file = parsedArgs.getOptionValue(CoreCommandLineHelper.FILE_OPTION);
-        try {
-          project.open(new File(file));
-        } catch (IOException e) {
-          logger.log(Level.SEVERE, "Error loading file: " + file);
-          throw e;
-        }
-      }
-
-      // Set the port AFTER loading the project to override the setting in the file
-      if (parsedArgs.hasOption(CoreCommandLineHelper.PORT_OPTION)) {
-        try {
-          int port = Integer.parseInt(parsedArgs.getOptionValue(CoreCommandLineHelper.PORT_OPTION));
-          if (port < 1024 || port > 65535) {
-            logger.warning("Not a valid port: " + port);
-          } else {
-            // Valid port; set it (Note: this doesn't check to see if the port is available)
-            logger.info("Running server on port " + port);
-            server.setPort(port);
-          }
-        } catch (NumberFormatException e) {
-          logger.warning(
-              "Not a valid port: " + parsedArgs.getOptionValue(CoreCommandLineHelper.PORT_OPTION));
-        }
-      }
 
       project.addIsSaveDirtyConsumer(newValue -> {
         if (newValue) {
@@ -164,6 +134,43 @@ public class Main extends Application {
           Preloader.StateChangeNotification.Type.BEFORE_START));
       stage.show();
     }
+
+    operations.addOperations();
+    cvOperations.addOperations();
+
+    // If there was a file specified on the command line, open it immediately
+    if (parsedArgs.hasOption(CoreCommandLineHelper.FILE_OPTION)) {
+      String file = parsedArgs.getOptionValue(CoreCommandLineHelper.FILE_OPTION);
+      try {
+        project.open(new File(file));
+      } catch (IOException e) {
+        logger.log(Level.SEVERE, "Error loading file: " + file);
+        throw e;
+      }
+    }
+
+    // Set the port AFTER loading the project to override the setting in the file
+    if (parsedArgs.hasOption(CoreCommandLineHelper.PORT_OPTION)) {
+      try {
+        int port = Integer.parseInt(parsedArgs.getOptionValue(CoreCommandLineHelper.PORT_OPTION));
+        if (port < 1024 || port > 65535) {
+          logger.warning("Not a valid port: " + port);
+        } else {
+          // Valid port; set it (Note: this doesn't check to see if the port is available)
+          logger.info("Running server on port " + port);
+          server.setPort(port);
+        }
+      } catch (NumberFormatException e) {
+        logger.warning(
+            "Not a valid port: " + parsedArgs.getOptionValue(CoreCommandLineHelper.PORT_OPTION));
+      }
+    }
+
+    // This will throw an exception if the port specified by the save file or command line
+    // argument is already taken. Since we have to have the server running to handle remotely
+    // loading pipelines and uploading images, as well as potential HTTP publishing operations,
+    // this will cause the program to exit.
+    server.start();
   }
 
   public void stop() {
