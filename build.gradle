@@ -275,6 +275,12 @@ project(":core") {
 
     mainClassName = 'edu.wpi.grip.core.Main'
 
+    if (project.hasProperty('jvmArgs')) {
+        run {
+            jvmArgs = (project.jvmArgs.split("\\s+") as List)
+        }
+    }
+
     jar {
         manifest {
             attributes 'Implementation-Version': version, 'Main-Class': mainClassName
