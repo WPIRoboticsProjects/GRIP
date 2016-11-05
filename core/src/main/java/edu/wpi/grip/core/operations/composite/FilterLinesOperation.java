@@ -2,6 +2,7 @@ package edu.wpi.grip.core.operations.composite;
 
 import edu.wpi.grip.core.Operation;
 import edu.wpi.grip.core.OperationDescription;
+import edu.wpi.grip.core.Range;
 import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.core.sockets.SocketHint;
@@ -33,8 +34,8 @@ public class FilterLinesOperation implements Operation {
   private final SocketHint<Number> minLengthHint = SocketHints.Inputs
       .createNumberSpinnerSocketHint("Min Length", 20);
 
-  private final SocketHint<List<Number>> angleHint = SocketHints.Inputs
-      .createNumberListRangeSocketHint("Angle", 0, 360);
+  private final SocketHint<Range> angleHint = SocketHints.Inputs
+      .createNumberRangeSocketHint("Angle", 0, 360);
 
   private final SocketHint<LinesReport> outputHint =
       new SocketHint.Builder<>(LinesReport.class)
@@ -43,7 +44,7 @@ public class FilterLinesOperation implements Operation {
 
   private final InputSocket<LinesReport> inputSocket;
   private final InputSocket<Number> minLengthSocket;
-  private final InputSocket<List<Number>> angleSocket;
+  private final InputSocket<Range> angleSocket;
 
   private final OutputSocket<LinesReport> linesOutputSocket;
 
@@ -78,8 +79,8 @@ public class FilterLinesOperation implements Operation {
   public void perform() {
     final LinesReport inputLines = inputSocket.getValue().get();
     final double minLengthSquared = Math.pow(minLengthSocket.getValue().get().doubleValue(), 2);
-    final double minAngle = angleSocket.getValue().get().get(0).doubleValue();
-    final double maxAngle = angleSocket.getValue().get().get(1).doubleValue();
+    final double minAngle = angleSocket.getValue().get().getMin();
+    final double maxAngle = angleSocket.getValue().get().getMax();
 
     List<LinesReport.Line> lines = inputLines.getLines().stream()
         .filter(line -> line.lengthSquared() >= minLengthSquared)

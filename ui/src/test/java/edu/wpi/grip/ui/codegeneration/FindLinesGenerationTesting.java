@@ -2,6 +2,7 @@ package edu.wpi.grip.ui.codegeneration;
 
 import edu.wpi.grip.core.ManualPipelineRunner;
 import edu.wpi.grip.core.OperationMetaData;
+import edu.wpi.grip.core.Range;
 import edu.wpi.grip.core.Step;
 import edu.wpi.grip.core.operations.composite.FindLinesOperation;
 import edu.wpi.grip.core.operations.composite.HSLThresholdOperation;
@@ -18,7 +19,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.logging.Logger;
@@ -30,17 +30,11 @@ import static org.junit.Assume.assumeFalse;
 public class FindLinesGenerationTesting extends AbstractGenerationTesting {
   private static final Logger logger = Logger.getLogger(FindLinesGenerationTesting.class.getName());
 
-  private final List<Number> hVal = new ArrayList<Number>();
-  private final List<Number> sVal = new ArrayList<Number>();
-  private final List<Number> lVal = new ArrayList<Number>();
+  private final Range hVal = new Range(1.2, 51);
+  private final Range sVal = new Range(2.2, 83.2);
+  private final Range lVal = new Range(1, 101);
 
   public FindLinesGenerationTesting() {
-    hVal.add(new Double(1.2));
-    hVal.add(new Double(51.0));
-    sVal.add(new Double(2.2));
-    sVal.add(new Double(83.2));
-    lVal.add(new Double(1.0));
-    lVal.add(new Double(101.0));
   }
 
   @Before

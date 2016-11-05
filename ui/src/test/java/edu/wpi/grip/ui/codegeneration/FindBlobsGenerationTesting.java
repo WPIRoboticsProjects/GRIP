@@ -2,6 +2,7 @@ package edu.wpi.grip.ui.codegeneration;
 
 import edu.wpi.grip.core.ManualPipelineRunner;
 import edu.wpi.grip.core.OperationMetaData;
+import edu.wpi.grip.core.Range;
 import edu.wpi.grip.core.Step;
 import edu.wpi.grip.core.operations.composite.BlobsReport;
 import edu.wpi.grip.core.operations.composite.FindBlobsOperation;
@@ -17,8 +18,6 @@ import org.junit.experimental.categories.Category;
 import org.opencv.core.KeyPoint;
 import org.opencv.core.MatOfKeyPoint;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -26,20 +25,14 @@ import static org.junit.Assert.assertTrue;
 
 @Category(GenerationTesting.class)
 public class FindBlobsGenerationTesting extends AbstractGenerationTesting {
-  private final List<Number> hVal = new ArrayList<Number>();
-  private final List<Number> sVal = new ArrayList<Number>();
-  private final List<Number> lVal = new ArrayList<Number>();
+  private final Range hVal = new Range(1.2, 51);
+  private final Range sVal = new Range(2.2, 83.2);
+  private final Range lVal = new Range(1, 101);
 
   public FindBlobsGenerationTesting() {
-    hVal.add(new Double(1.2));
-    hVal.add(new Double(51.0));
-    sVal.add(new Double(2.2));
-    sVal.add(new Double(83.2));
-    lVal.add(new Double(1.0));
-    lVal.add(new Double(101.0));
   }
 
-  void generatePipeline(boolean darkBool, double minArea, List<Double> circularity) {
+  void generatePipeline(boolean darkBool, double minArea, Range circularity) {
     Step step0 = gen.addStep(new OperationMetaData(HSLThresholdOperation.DESCRIPTION,
         () -> new HSLThresholdOperation(isf, osf)));
     loadImage(Files.imageFile);
@@ -76,7 +69,7 @@ public class FindBlobsGenerationTesting extends AbstractGenerationTesting {
   @Test
   public void findBlobsTest() {
     test(() -> {
-      generatePipeline(false, 0, Arrays.asList(0.0, 1.0));
+      generatePipeline(false, 0, new Range(0.0, 1.0));
       return true;
     }, (pip) -> pipelineTest(pip), "FindBlobsTest");
   }
@@ -84,7 +77,7 @@ public class FindBlobsGenerationTesting extends AbstractGenerationTesting {
   @Test
   public void findBlackBlobsTest() {
     test(() -> {
-      generatePipeline(true, 0, Arrays.asList(0.0, 1.0));
+      generatePipeline(true, 0, new Range(0.0, 1.0));
       return true;
     }, (pip) -> pipelineTest(pip), "FindBlackBlobsTest");
   }
@@ -92,7 +85,7 @@ public class FindBlobsGenerationTesting extends AbstractGenerationTesting {
   @Test
   public void findSomeBlobsTest() {
     test(() -> {
-      generatePipeline(false, 9, Arrays.asList(0.0, 0.9));
+      generatePipeline(false, 9, new Range(0.0, 0.9));
       return true;
     }, (pip) -> pipelineTest(pip), "FindSomeBlobsTest");
   }

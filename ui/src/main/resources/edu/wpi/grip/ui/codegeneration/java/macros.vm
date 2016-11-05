@@ -32,7 +32,7 @@ Ref<$obj>#end
 		$input.type() ${tMeth.name($input.name())} = "$input.value()";
 #elseif ($input.type().equals("Scalar") || $input.type().equals("Size") || $input.type().equals("Point"))
 		$input.type() ${tMeth.name($input.name())} = new $input.type()$input.value();
-#elseif ($input.type().equals("List"))
+#elseif ($input.type().equals("Range"))
 #set($inputEndValue = $input.value().length() - 1)
 		double[] ${tMeth.name($input.name())} = {$input.value().substring(1,$inputEndValue)};
 #elseif ($input.type().equals("Mat") && ! ($input.value().toLowerCase().contains("source") || $input.value().toLowerCase().contains("output")))

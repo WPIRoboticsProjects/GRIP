@@ -1,15 +1,12 @@
 package edu.wpi.grip.core.sockets;
 
 
-import com.google.common.reflect.TypeToken;
+import edu.wpi.grip.core.Range;
 
 import org.bytedeco.javacpp.opencv_core.Mat;
 import org.bytedeco.javacpp.opencv_core.Point;
 import org.bytedeco.javacpp.opencv_core.Size;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import java.util.function.Supplier;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -62,13 +59,13 @@ public final class SocketHints {
   }
 
   @SuppressWarnings("unchecked")
-  private static SocketHint.Builder<List<Number>> createNumberListSocketHintBuilder(
+  private static SocketHint.Builder<Range> createNumberRangeListSocketHintBuilder(
       final String identifier,
-      final Number[] domain) {
-    return new SocketHint.Builder<>((Class<List<Number>>) new TypeToken<List<Number>>() {
-    }.getRawType()).identifier(identifier)
-        .initialValueSupplier(() -> new ArrayList<>(Arrays.asList(domain)))
-        .domain(new List[]{Arrays.asList(domain)});
+      final double[] domain) {
+    return new SocketHint.Builder<>(Range.class)
+        .identifier(identifier)
+        .initialValueSupplier(() -> new Range(domain[0], domain[1]))
+        .domain(new Range[] {new Range(domain[0], domain[1])});
   }
 
 
@@ -135,10 +132,10 @@ public final class SocketHints {
       return createNumberSocketHintBuilder(identifier, number).view(SocketHint.View.TEXT).build();
     }
 
-    public static SocketHint<List<Number>> createNumberListRangeSocketHint(final String identifier,
-                                                                           final Number low,
-                                                                           final Number high) {
-      return createNumberListSocketHintBuilder(identifier, new Number[]{low, high})
+    public static SocketHint<Range> createNumberRangeSocketHint(final String identifier,
+                                                                final double low,
+                                                                final double high) {
+      return createNumberRangeListSocketHintBuilder(identifier, new double[] {low, high})
           .view(SocketHint.View.RANGE)
           .build();
     }

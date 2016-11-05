@@ -2,6 +2,7 @@ package edu.wpi.grip.ui.codegeneration;
 
 import edu.wpi.grip.core.ManualPipelineRunner;
 import edu.wpi.grip.core.OperationMetaData;
+import edu.wpi.grip.core.Range;
 import edu.wpi.grip.core.Step;
 import edu.wpi.grip.core.operations.composite.DistanceTransformOperation;
 import edu.wpi.grip.core.sockets.InputSocket;
@@ -16,7 +17,6 @@ import org.junit.experimental.categories.Category;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 
-import java.util.ArrayList;
 import java.util.Optional;
 
 import static org.junit.Assert.assertFalse;
@@ -41,9 +41,7 @@ public class DistanceTransformGenerationTesting extends AbstractGenerationTestin
   }
 
   public boolean init() {
-    ArrayList<Number> lVal = new ArrayList<Number>();
-    lVal.add(new Double(0.0));
-    lVal.add(new Double(250.0));
+    Range lVal = new Range(0, 250);
     GripIconHSLSetup.setup(this, GripIconHSLSetup.getHVal(), GripIconHSLSetup.getSVal(), lVal);
     Step dist = gen.addStep(new OperationMetaData(DistanceTransformOperation.DESCRIPTION,
         () -> new DistanceTransformOperation(isf, osf)));

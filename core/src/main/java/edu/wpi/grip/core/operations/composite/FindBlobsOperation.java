@@ -2,6 +2,7 @@ package edu.wpi.grip.core.operations.composite;
 
 import edu.wpi.grip.core.Operation;
 import edu.wpi.grip.core.OperationDescription;
+import edu.wpi.grip.core.Range;
 import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.core.sockets.SocketHint;
@@ -34,8 +35,8 @@ public class FindBlobsOperation implements Operation {
   private final SocketHint<Mat> inputHint = SocketHints.Inputs.createMatSocketHint("Input", false);
   private final SocketHint<Number> minAreaHint = SocketHints.Inputs
       .createNumberSpinnerSocketHint("Min Area", 1);
-  private final SocketHint<List<Number>> circularityHint = SocketHints.Inputs
-      .createNumberListRangeSocketHint("Circularity", 0.0, 1.0);
+  private final SocketHint<Range> circularityHint = SocketHints.Inputs
+      .createNumberRangeSocketHint("Circularity", 0.0, 1.0);
   private final SocketHint<Boolean> colorHint = SocketHints
       .createBooleanSocketHint("Dark Blobs", false);
 
@@ -46,7 +47,7 @@ public class FindBlobsOperation implements Operation {
 
   private final InputSocket<Mat> inputSocket;
   private final InputSocket<Number> minAreaSocket;
-  private final InputSocket<List<Number>> circularitySocket;
+  private final InputSocket<Range> circularitySocket;
   private final InputSocket<Boolean> colorSocket;
 
   private final OutputSocket<BlobsReport> outputSocket;
@@ -84,7 +85,7 @@ public class FindBlobsOperation implements Operation {
   public void perform() {
     final Mat input = inputSocket.getValue().get();
     final Number minArea = minAreaSocket.getValue().get();
-    final List<Number> circularity = circularitySocket.getValue().get();
+    final Range circularity = circularitySocket.getValue().get();
     final Boolean darkBlobs = colorSocket.getValue().get();
 
 
@@ -98,8 +99,8 @@ public class FindBlobsOperation implements Operation {
         .blobColor(darkBlobs ? (byte) 0 : (byte) 255)
 
         .filterByCircularity(true)
-        .minCircularity(circularity.get(0).floatValue())
-        .maxCircularity(circularity.get(1).floatValue()));
+        .minCircularity((float) circularity.getMin())
+        .maxCircularity((float) circularity.getMax()));
 
     // Detect the blobs and store them in the output BlobsReport
     final KeyPointVector keyPointVector = new KeyPointVector();

@@ -1,32 +1,24 @@
 package edu.wpi.grip.ui.codegeneration;
 
 import edu.wpi.grip.core.OperationMetaData;
+import edu.wpi.grip.core.Range;
 import edu.wpi.grip.core.Step;
 import edu.wpi.grip.core.operations.composite.HSLThresholdOperation;
 import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.util.Files;
 
-import java.util.Arrays;
-import java.util.List;
-
 public class GripIconHSLSetup {
-  private static final List<Number> defaultHVal;
-  private static final List<Number> defaultSVal;
-  private static final List<Number> defaultLVal;
-
-  static {
-    defaultHVal = Arrays.asList(0.0d, 49.0d);
-    defaultSVal = Arrays.asList(0.0d, 41.0d);
-    defaultLVal = Arrays.asList(0.0d, 67.0d);
-  }
+  private static final Range defaultHVal = new Range(0, 49);
+  private static final Range defaultSVal = new Range(0, 41);
+  private static final Range defaultLVal = new Range(0, 67);
 
   public static void setup(AbstractGenerationTesting caller) {
     setup(caller, defaultHVal, defaultSVal, defaultLVal);
   }
 
-  public static void setup(AbstractGenerationTesting caller, List<Number> hVal, List<Number> sVal,
-                           List<Number> lVal) {
+  public static void setup(AbstractGenerationTesting caller, Range hVal, Range sVal,
+                           Range lVal) {
     Step hsl = caller.gen.addStep(new OperationMetaData(HSLThresholdOperation.DESCRIPTION,
         () -> new HSLThresholdOperation(caller.isf, caller.osf)));
     caller.loadImage(Files.imageFile);
@@ -44,15 +36,15 @@ public class GripIconHSLSetup {
     }
   }
 
-  public static List<Number> getHVal() {
+  public static Range getHVal() {
     return defaultHVal;
   }
 
-  public static List<Number> getSVal() {
+  public static Range getSVal() {
     return defaultSVal;
   }
 
-  public static List<Number> getLVal() {
+  public static Range getLVal() {
     return defaultLVal;
   }
 
