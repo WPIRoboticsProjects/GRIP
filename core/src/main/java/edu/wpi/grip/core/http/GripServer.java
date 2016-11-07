@@ -212,10 +212,12 @@ public class GripServer {
    *
    * @param port the new port to run on.
    */
-  private void setPort(int port) {
+  public void setPort(int port) {
     stop();
     server = serverFactory.create(port);
+    server.setHandler(handlers);
     state = State.PRE_RUN;
+    start();
   }
 
   /**
@@ -230,7 +232,6 @@ public class GripServer {
     int port = event.getProjectSettings().getServerPort();
     if (port != getPort()) {
       setPort(port);
-      server.setHandler(handlers);
       start();
     }
   }
