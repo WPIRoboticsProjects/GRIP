@@ -553,8 +553,11 @@ project(":ui") {
         // and as such, would be useless.
         // See: https://plumbr.eu/blog/java/on-a-quest-for-missing-stacktraces
         // -Xmx limits the heap size. This prevents memory use from ballooning with a lot
-        // of JavaCV native objects being allocated hanging around waiting to get GC'd
-        jvmArgs = ["-XX:-OmitStackTraceInFastThrow", "-Xmx200m"]
+        // of JavaCV native objects being allocated hanging around waiting to get GC'd.
+        // -XX:MaxNewSize limits the size of the eden space to force minor GCs to run more often.
+        // This causes old mats (which take up little space on the heap but a lot of native memory) to get deallocated
+        // and free up native memory quicker, limiting the memory the app takes up.
+        jvmArgs = ["-XX:-OmitStackTraceInFastThrow", "-Xmx200m", "-XX:MaxNewSize=16m"]
 
         bundleArguments = [
                 "linux.launcher.url": file('linuxLauncher/build/exe/linuxLauncher/linuxLauncher').toURI().toURL()

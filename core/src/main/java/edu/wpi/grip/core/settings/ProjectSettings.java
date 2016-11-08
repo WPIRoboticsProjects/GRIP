@@ -41,7 +41,7 @@ public class ProjectSettings implements Cloneable {
   @Setting(label = "Deploy JVM options", description = "Command line options passed to the "
       + "roboRIO JVM")
   private String deployJvmOptions = "-Xmx50m -XX:-OmitStackTraceInFastThrow "
-      + "-XX:+HeapDumpOnOutOfMemoryError";
+      + "-XX:+HeapDumpOnOutOfMemoryError -XX:MaxNewSize=8m";
 
   @Setting(label = "Internal server port",
       description = "The port that the internal server should run on.")
