@@ -42,7 +42,6 @@ import java.util.concurrent.TimeoutException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import static com.google.common.truth.Truth.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
@@ -121,20 +120,18 @@ public class CameraSourceTest {
   @Test
   public void testStartRethrowsIfFailure() throws Exception {
     mockFrameGrabberFactory.frameGrabber.setShouldThrowAtStart(true);
+    Waiter failWaiter = new Waiter();
     // Problems starting should be restarted
     cameraSourceWithMockGrabber.addListener(new Service.Listener() {
       @Override
       public void failed(Service.State from, Throwable failure) {
-        assertThat(failure).isNotNull();
-        assertThat(failure).isInstanceOf(GrabberService.GrabberServiceException.class);
-      }
-
-      @Override
-      public void stopping(Service.State from) {
-        assertThat(from).isSameAs(Service.State.STARTING);
+        failWaiter.assertNotNull(failure);
+        failWaiter.assertTrue(failure instanceof GrabberService.GrabberServiceException);
+        failWaiter.resume();
       }
     }, MoreExecutors.directExecutor());
     cameraSourceWithMockGrabber.startAsync().stopAndAwait();
+    failWaiter.await();
 
     assertFalse("Camera service has stopped completely", cameraSourceWithMockGrabber.isRunning());
   }
@@ -200,17 +197,14 @@ public class CameraSourceTest {
       }
     }, MockExceptionWitness.MOCK_FACTORY, 0);
 
+    Waiter failedWaiter = new Waiter();
     source.addListener(new Service.Listener() {
       @Override
       public void failed(Service.State from, Throwable failure) {
-        assertThat(failure).isNotNull();
-        assertThat(failure.getCause()).isNotNull();
-        assertThat(failure.getCause()).hasMessage(GRABBER_START_MESSAGE);
-      }
-
-      @Override
-      public void stopping(Service.State from) {
-        assertThat(from).isSameAs(Service.State.STARTING);
+        failedWaiter.assertNotNull(failure);
+        failedWaiter.assertNotNull(failure.getCause());
+        failedWaiter.assertEquals(GRABBER_START_MESSAGE, failure.getCause().getMessage());
+        failedWaiter.resume();
       }
     }, MoreExecutors.directExecutor());
     source.startAsync();
@@ -218,6 +212,7 @@ public class CameraSourceTest {
     waiter2.await();
     waiter3.await();
     source.stopAndAwait();
+    failedWaiter.await();
   }
 
   @Test
