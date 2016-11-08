@@ -135,7 +135,9 @@ public class IPCameraFrameGrabber extends FrameGrabber {
       if (decoded != null) {
         cvReleaseImage(decoded);
       }
-      return converter.convert(decoded = cvDecodeImage(mat));
+      decoded = cvDecodeImage(mat);
+      mat.release();
+      return converter.convert(decoded);
     } catch (IOException e) {
       throw new Exception(e.getMessage(), e);
     }

@@ -178,6 +178,7 @@ public class CameraSource extends Source implements RestartableService {
                     synchronized (CameraSource.this.currentFrameTransferMat) {
                       matToCopy.copyTo(CameraSource.this.currentFrameTransferMat);
                     }
+                    matToCopy.release(); // The original mat isn't used anymore; free it
                     isNewFrame.set(true);
                   }
 
