@@ -12,6 +12,7 @@ import edu.wpi.grip.util.GripCoreTestModule;
 import com.google.common.base.Throwables;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
+import com.google.common.util.concurrent.MoreExecutors;
 import com.google.common.util.concurrent.Service;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
@@ -41,7 +42,6 @@ import java.util.concurrent.TimeoutException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import static com.google.common.truth.Truth.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
@@ -71,7 +71,7 @@ public class CameraSourceTest {
     final EventBus eventBus = new EventBus();
     class UnhandledExceptionWitness {
       @SuppressFBWarnings(value = "UMAC_UNCALLABLE_METHOD_OF_ANONYMOUS_CLASS",
-          justification = "This method is called by Guava's EventBus")
+                          justification = "This method is called by Guava's EventBus")
       @Subscribe
       public void onUnexpectedThrowableEvent(UnexpectedThrowableEvent event) {
         event.handleSafely((throwable, message, isFatal) -> {
@@ -120,14 +120,18 @@ public class CameraSourceTest {
   @Test
   public void testStartRethrowsIfFailure() throws Exception {
     mockFrameGrabberFactory.frameGrabber.setShouldThrowAtStart(true);
+    Waiter failWaiter = new Waiter();
     // Problems starting should be restarted
-    try {
-      cameraSourceWithMockGrabber.startAsync().stopAndAwait();
-      fail("Should have thrown an exception");
-    } catch (IllegalStateException e) {
-      assertThat(e.getCause()).isNotNull();
-      assertThat(e.getCause()).isInstanceOf(GrabberService.GrabberServiceException.class);
-    }
+    cameraSourceWithMockGrabber.addListener(new Service.Listener() {
+      @Override
+      public void failed(Service.State from, Throwable failure) {
+        failWaiter.assertNotNull(failure);
+        failWaiter.assertTrue(failure instanceof GrabberService.GrabberServiceException);
+        failWaiter.resume();
+      }
+    }, MoreExecutors.directExecutor());
+    cameraSourceWithMockGrabber.startAsync().stopAndAwait();
+    failWaiter.await();
 
     assertFalse("Camera service has stopped completely", cameraSourceWithMockGrabber.isRunning());
   }
@@ -193,18 +197,22 @@ public class CameraSourceTest {
       }
     }, MockExceptionWitness.MOCK_FACTORY, 0);
 
+    Waiter failedWaiter = new Waiter();
+    source.addListener(new Service.Listener() {
+      @Override
+      public void failed(Service.State from, Throwable failure) {
+        failedWaiter.assertNotNull(failure);
+        failedWaiter.assertNotNull(failure.getCause());
+        failedWaiter.assertEquals(GRABBER_START_MESSAGE, failure.getCause().getMessage());
+        failedWaiter.resume();
+      }
+    }, MoreExecutors.directExecutor());
     source.startAsync();
     waiter1.await();
     waiter2.await();
     waiter3.await();
-    try {
-      source.stopAndAwait();
-      fail("This should have failed");
-    } catch (IllegalStateException e) {
-      assertThat(e.getCause()).isNotNull();
-      assertThat(e.getCause().getCause()).isNotNull();
-      assertThat(e.getCause().getCause()).hasMessage(GRABBER_START_MESSAGE);
-    }
+    source.stopAndAwait();
+    failedWaiter.await();
   }
 
   @Test
