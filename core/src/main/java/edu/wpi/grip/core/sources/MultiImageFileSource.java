@@ -9,7 +9,6 @@ import edu.wpi.grip.core.sockets.SocketHints;
 import edu.wpi.grip.core.util.ExceptionWitness;
 import edu.wpi.grip.core.util.ImageLoadingUtility;
 
-import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableList;
 import com.google.common.eventbus.EventBus;
 import com.google.common.math.IntMath;
@@ -22,15 +21,11 @@ import org.bytedeco.javacpp.opencv_core.Mat;
 import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.Properties;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collectors;
 
 import static com.google.common.base.Preconditions.checkElementIndex;
 
@@ -66,15 +61,15 @@ public final class MultiImageFileSource extends Source implements PreviousNext {
       final ExceptionWitness.Factory exceptionWitnessFactory,
       @Assisted final List<File> files,
       @Assisted final int index) throws UnsupportedEncodingException {
-    this(eventBus, outputSocketFactory, exceptionWitnessFactory, files.stream()
-        .map(file -> {
-          try {
-            return URLDecoder.decode(Paths.get(file.toURI()).toString(),
-                StandardCharsets.UTF_8.name());
-          } catch (UnsupportedEncodingException e) {
-            throw Throwables.propagate(e);
-          }
-        }).collect(Collectors.toList()).toArray(new String[files.size()]), index);
+    this(
+        eventBus,
+        outputSocketFactory,
+        exceptionWitnessFactory,
+        files.stream()
+            .map(File::getAbsolutePath)
+            .toArray(String[]::new),
+        index
+    );
   }
 
   @AssistedInject

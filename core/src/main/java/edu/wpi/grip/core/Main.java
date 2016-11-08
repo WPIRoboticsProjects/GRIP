@@ -12,9 +12,12 @@ import edu.wpi.grip.core.sources.GripSourcesHardwareModule;
 
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
+import com.google.common.util.concurrent.Service;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.util.Modules;
+
+import org.apache.commons.cli.CommandLine;
 
 import java.io.File;
 import java.io.IOException;
@@ -47,6 +50,7 @@ public class Main {
 
   @SuppressWarnings("JavadocMethod")
   public static void main(String[] args) throws IOException, InterruptedException {
+    new CoreCommandLineHelper().parse(args); // Check for help or version before doing anything else
     final Injector injector = Guice.createInjector(Modules.override(new GripCoreModule(),
         new GripFileModule(), new GripSourcesHardwareModule()).with(new GripNetworkModule()));
     injector.getInstance(Main.class).start(args);
@@ -54,23 +58,50 @@ public class Main {
 
   @SuppressWarnings("JavadocMethod")
   public void start(String[] args) throws IOException, InterruptedException {
-    String projectPath = null;
-    if (args.length == 1) {
-      logger.log(Level.INFO, "Loading file " + args[0]);
-      projectPath = args[0];
-    }
 
     operations.addOperations();
     cvOperations.addOperations();
     gripServer.addHandler(pipelineSwitcher);
-    gripServer.start();
 
-    // Open a project from a .grip file specified on the command line
-    if (projectPath != null) {
-      project.open(new File(projectPath));
+    CoreCommandLineHelper commandLineHelper = new CoreCommandLineHelper();
+    CommandLine parsedArgs = commandLineHelper.parse(args);
+
+    // Parse the save file option
+    if (parsedArgs.hasOption(CoreCommandLineHelper.FILE_OPTION)) {
+      // Open a project from a .grip file specified on the command line
+      String file = parsedArgs.getOptionValue(CoreCommandLineHelper.FILE_OPTION);
+      logger.log(Level.INFO, "Loading file " + file);
+      project.open(new File(file));
     }
 
-    pipelineRunner.startAsync();
+    // Set the port AFTER loading the project to override the saved port number
+    if (parsedArgs.hasOption(CoreCommandLineHelper.PORT_OPTION)) {
+      try {
+        int port = Integer.parseInt(parsedArgs.getOptionValue(CoreCommandLineHelper.PORT_OPTION));
+        if (port < 1024 || port > 65535) {
+          logger.warning("Not a valid port: " + port);
+        } else {
+          // Valid port; set it (Note: this doesn't check to see if the port is available)
+          logger.info("Running server on port " + port);
+          gripServer.setPort(port);
+        }
+      } catch (NumberFormatException e) {
+        logger.warning(
+            "Not a valid port: " + parsedArgs.getOptionValue(CoreCommandLineHelper.PORT_OPTION));
+      }
+    }
+
+    // This will throw an exception if the port specified by the save file or command line
+    // argument is already taken. Since we have to have the server running to handle remotely
+    // loading pipelines and uploading images, as well as potential HTTP publishing operations,
+    // this will cause the program to exit.
+    gripServer.start();
+
+    if (pipelineRunner.state() == Service.State.NEW) {
+      // Loading a project will start the pipeline, so only start it if a project wasn't specified
+      // as a command line argument.
+      pipelineRunner.startAsync();
+    }
 
     // This is done in order to indicate to the user using the deployment UI that this is running
     logger.log(Level.INFO, "SUCCESS! The project is running in headless mode!");
