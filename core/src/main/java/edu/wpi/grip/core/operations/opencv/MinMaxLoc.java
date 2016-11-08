@@ -91,9 +91,6 @@ public class MinMaxLoc implements CVOperation {
     final Point maxLoc = maxLocSocket.getValue().get();
 
     opencv_core.minMaxLoc(src, minVal, maxVal, minLoc, maxLoc, mask);
-    if (mask != null) {
-      mask.release();
-    }
     minValSocket.setValue(minVal[0]);
     maxValSocket.setValue(maxVal[0]);
     minLocSocket.setValue(minLocSocket.getValue().get());

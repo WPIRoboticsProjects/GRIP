@@ -125,7 +125,6 @@ public final class MultiImageFileSource extends Source implements PreviousNext {
       final Mat image = new Mat();
       ImageLoadingUtility.loadImage(paths.get(i), image);
       images[i] = image;
-      image.release();
     }
     return images;
   }
