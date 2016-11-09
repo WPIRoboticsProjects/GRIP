@@ -232,7 +232,6 @@ public class GripServer {
     int port = event.getProjectSettings().getServerPort();
     if (port != getPort()) {
       setPort(port);
-      start();
     }
   }
 

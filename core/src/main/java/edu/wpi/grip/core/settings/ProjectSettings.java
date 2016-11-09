@@ -43,9 +43,10 @@ public class ProjectSettings implements Cloneable {
   private String deployJvmOptions = "-Xmx50m -XX:-OmitStackTraceInFastThrow "
       + "-XX:+HeapDumpOnOutOfMemoryError";
 
+  // Transient because save files shouldn't be responsible for knowing the server port
   @Setting(label = "Internal server port",
       description = "The port that the internal server should run on.")
-  private int serverPort = 8080;
+  private transient int serverPort = 8080;
 
   public int getTeamNumber() {
     return teamNumber;

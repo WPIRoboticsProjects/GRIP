@@ -4,6 +4,7 @@ import edu.wpi.grip.core.CoreCommandLineHelper;
 import edu.wpi.grip.core.GripCoreModule;
 import edu.wpi.grip.core.GripFileModule;
 import edu.wpi.grip.core.PipelineRunner;
+import edu.wpi.grip.core.events.ProjectSettingsChangedEvent;
 import edu.wpi.grip.core.events.UnexpectedThrowableEvent;
 import edu.wpi.grip.core.http.GripServer;
 import edu.wpi.grip.core.http.HttpPipelineSwitcher;
@@ -11,6 +12,8 @@ import edu.wpi.grip.core.operations.CVOperations;
 import edu.wpi.grip.core.operations.Operations;
 import edu.wpi.grip.core.operations.network.GripNetworkModule;
 import edu.wpi.grip.core.serialization.Project;
+import edu.wpi.grip.core.settings.ProjectSettings;
+import edu.wpi.grip.core.settings.SettingsProvider;
 import edu.wpi.grip.core.sources.GripSourcesHardwareModule;
 import edu.wpi.grip.core.util.SafeShutdown;
 import edu.wpi.grip.ui.util.DPIUtility;
@@ -58,6 +61,7 @@ public class Main extends Application {
   @Inject private EventBus eventBus;
   @Inject private PipelineRunner pipelineRunner;
   @Inject private Project project;
+  @Inject private SettingsProvider settingsProvider;
   @Inject private Operations operations;
   @Inject private CVOperations cvOperations;
   @Inject private GripServer server;
@@ -158,7 +162,9 @@ public class Main extends Application {
         } else {
           // Valid port; set it (Note: this doesn't check to see if the port is available)
           logger.info("Running server on port " + port);
-          server.setPort(port);
+          ProjectSettings settings = settingsProvider.getProjectSettings().clone();
+          settings.setServerPort(port);
+          eventBus.post(new ProjectSettingsChangedEvent(settings));
         }
       } catch (NumberFormatException e) {
         logger.warning(

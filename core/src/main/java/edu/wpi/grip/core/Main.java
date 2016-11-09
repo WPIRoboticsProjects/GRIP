@@ -2,12 +2,15 @@ package edu.wpi.grip.core;
 
 import edu.wpi.grip.core.events.ExceptionClearedEvent;
 import edu.wpi.grip.core.events.ExceptionEvent;
+import edu.wpi.grip.core.events.ProjectSettingsChangedEvent;
 import edu.wpi.grip.core.http.GripServer;
 import edu.wpi.grip.core.http.HttpPipelineSwitcher;
 import edu.wpi.grip.core.operations.CVOperations;
 import edu.wpi.grip.core.operations.Operations;
 import edu.wpi.grip.core.operations.network.GripNetworkModule;
 import edu.wpi.grip.core.serialization.Project;
+import edu.wpi.grip.core.settings.ProjectSettings;
+import edu.wpi.grip.core.settings.SettingsProvider;
 import edu.wpi.grip.core.sources.GripSourcesHardwareModule;
 
 import com.google.common.eventbus.EventBus;
@@ -37,6 +40,8 @@ public class Main {
   private Project project;
   @Inject
   private PipelineRunner pipelineRunner;
+  @Inject
+  private SettingsProvider settingsProvider;
   @Inject
   private EventBus eventBus;
   @Inject
@@ -83,7 +88,9 @@ public class Main {
         } else {
           // Valid port; set it (Note: this doesn't check to see if the port is available)
           logger.info("Running server on port " + port);
-          gripServer.setPort(port);
+          ProjectSettings settings = settingsProvider.getProjectSettings().clone();
+          settings.setServerPort(port);
+          eventBus.post(new ProjectSettingsChangedEvent(settings));
         }
       } catch (NumberFormatException e) {
         logger.warning(
