@@ -18,6 +18,7 @@ import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.HBox;
 
 import javax.inject.Inject;
@@ -33,6 +34,8 @@ import javax.inject.Singleton;
 public class PreviewsController {
 
   @FXML
+  private ScrollPane scrollPane;
+  @FXML
   private HBox previewBox;
 
   @Inject
@@ -41,6 +44,13 @@ public class PreviewsController {
   private Pipeline pipeline;
   @Inject
   private SocketPreviewViewFactory previewViewFactory;
+
+  private static final int PREVIEW_PADDING = 50;
+
+  @FXML
+  void initialize() {
+    scrollPane.heightProperty().addListener((obs, o, n) -> resizePreviews(n.intValue()));
+  }
 
   /**
    * Given two sockets, determine which comes first in the pipeline.  This is used to sort the
@@ -119,7 +129,11 @@ public class PreviewsController {
       final ObservableList<SocketPreviewView<?>> previews = getPreviews();
       if (socket.isPreviewed()) {
         // When a socket previewed, add a new view, then sort all of the views so they stay ordered
-        previews.add(previewViewFactory.create(socket));
+        SocketPreviewView<?> view = previewViewFactory.create(socket);
+        if (view instanceof ImageBasedPreviewView) {
+          ((ImageBasedPreviewView) view).resize((int) (previewBox.getHeight()) - PREVIEW_PADDING);
+        }
+        previews.add(view);
         sortPreviews(previews);
       } else {
         // When a socket is no longer marked as previewed, find and remove the view associated
@@ -160,4 +174,12 @@ public class PreviewsController {
             (OutputSocket<?> a, OutputSocket<?> b) -> compareSockets(a, b, steps, sources));
     FXCollections.sort(previews, comparePreviews);
   }
+
+  private void resizePreviews(int height) {
+    getPreviews().stream()
+        .filter(p -> p instanceof ImageBasedPreviewView)
+        .map(p -> (ImageBasedPreviewView) p)
+        .forEach(p -> p.resize(height - PREVIEW_PADDING));
+  }
+
 }

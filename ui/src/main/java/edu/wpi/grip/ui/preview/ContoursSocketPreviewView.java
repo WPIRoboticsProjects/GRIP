@@ -1,14 +1,10 @@
 package edu.wpi.grip.ui.preview;
 
-import edu.wpi.grip.core.events.RenderEvent;
 import edu.wpi.grip.core.operations.composite.ContoursReport;
 import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.ui.util.GripPlatform;
 import edu.wpi.grip.ui.util.ImageConverter;
 
-import com.google.common.eventbus.Subscribe;
-
-import javafx.application.Platform;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
@@ -26,7 +22,7 @@ import static org.bytedeco.javacpp.opencv_imgproc.drawContours;
  * outline (so they can be individually distinguished), as well as a count of the total number of
  * contours found.
  */
-public final class ContoursSocketPreviewView extends SocketPreviewView<ContoursReport> {
+public final class ContoursSocketPreviewView extends ImageBasedPreviewView<ContoursReport> {
 
   private static final Scalar[] CONTOUR_COLORS = new Scalar[]{
       Scalar.RED,
@@ -54,19 +50,13 @@ public final class ContoursSocketPreviewView extends SocketPreviewView<ContoursR
 
     this.setContent(new VBox(this.imageView, this.infoLabel, this.colorContours));
 
-    this.colorContours.selectedProperty().addListener(observable -> this.render());
+    this.colorContours.selectedProperty().addListener(observable -> this.convertImage());
 
-    assert Platform.isFxApplicationThread() : "Must be in FX Thread to create this or you will be"
-        + " exposing constructor to another thread!";
-    render();
+    convertImage();
   }
 
-  @Subscribe
-  public void onRender(RenderEvent event) {
-    this.render();
-  }
-
-  private void render() {
+  @Override
+  protected void convertImage() {
     synchronized (this) {
       final ContoursReport contours = this.getSocket().getValue().get();
       long numContours = 0;
@@ -93,7 +83,7 @@ public final class ContoursSocketPreviewView extends SocketPreviewView<ContoursR
       final long finalNumContours = numContours;
       final Mat convertInput = tmp;
       platform.runAsSoonAsPossible(() -> {
-        final Image image = this.imageConverter.convert(convertInput);
+        final Image image = this.imageConverter.convert(convertInput, getImageHeight());
         this.imageView.setImage(image);
         this.infoLabel.setText("Found " + finalNumContours + " contours");
       });
