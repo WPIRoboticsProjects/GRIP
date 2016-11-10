@@ -7,7 +7,6 @@ import edu.wpi.grip.ui.util.ImageConverter;
 
 import java.util.List;
 
-import javafx.application.Platform;
 import javafx.geometry.Orientation;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
@@ -63,10 +62,6 @@ public final class LinesSocketPreviewView extends ImageBasedPreviewView<LinesRep
         .infoLabel, show);
     content.getStyleClass().add("preview-box");
     this.setContent(content);
-
-    assert Platform.isFxApplicationThread() : "Must be in FX Thread to create this or you will be"
-        + " exposing constructor to another thread!";
-    convertImage();
   }
 
   @Override

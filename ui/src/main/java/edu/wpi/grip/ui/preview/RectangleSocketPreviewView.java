@@ -13,6 +13,7 @@ import javafx.scene.control.Separator;
 import javafx.scene.image.Image;
 import javafx.scene.layout.VBox;
 
+import static org.bytedeco.javacpp.opencv_core.LINE_8;
 import static org.bytedeco.javacpp.opencv_core.Mat;
 import static org.bytedeco.javacpp.opencv_core.Rect;
 import static org.bytedeco.javacpp.opencv_core.Scalar;
@@ -67,18 +68,16 @@ public final class RectangleSocketPreviewView extends ImageBasedPreviewView<Rect
           cvtColor(input, tmp, CV_GRAY2BGR);
         }
 
-        input = tmp;
-
         // If we don't want to see the background image, set it to black
         if (!this.showInputImage) {
           bitwise_xor(tmp, tmp, tmp);
         }
 
         for (Rect r : rectangles) {
-          rectangle(input, r, Scalar.WHITE);
+          rectangle(tmp, r, Scalar.WHITE, 3, LINE_8, 0);
         }
       }
-      final Mat convertInput = input;
+      final Mat convertInput = tmp;
       final int numRegions = rectangles.size();
       platform.runAsSoonAsPossible(() -> {
         final Image image = this.imageConverter.convert(convertInput, getImageHeight());

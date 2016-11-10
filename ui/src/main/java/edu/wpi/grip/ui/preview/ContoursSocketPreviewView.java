@@ -51,8 +51,6 @@ public final class ContoursSocketPreviewView extends ImageBasedPreviewView<Conto
     this.setContent(new VBox(this.imageView, this.infoLabel, this.colorContours));
 
     this.colorContours.selectedProperty().addListener(observable -> this.convertImage());
-
-    convertImage();
   }
 
   @Override
