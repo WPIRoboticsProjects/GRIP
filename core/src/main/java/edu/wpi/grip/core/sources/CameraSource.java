@@ -350,7 +350,23 @@ public class CameraSource extends Source implements RestartableService {
         // a new camera source is added. For webcam sources, this means that the video stream
         // won't be freed and new sources won't be able to connect to the webcam until the
         // application is closed.
-        this.stopAndAwait();
+        if (StandardSystemProperty.OS_NAME.value().toLowerCase().contains("mac")) {
+          // There's a bug with the OS X camera capture that makes the deallocator not return
+          // properly. Use only stopAsync() to avoid blocking. Since we have no way of knowing when
+          // the webcam has actually been freed, we use a dumb delay to try to make sure the webcam
+          // is freed before returning. THIS IS NOT A GOOD SOLUTION. But it's the best one we have
+          // until the bug is fixed.
+          // The bugged native method: https://github.com/opencv/opencv/blob/master/modules/videoio/src/cap_qtkit.mm#L313-L329
+          stopAsync();
+          try {
+            Thread.sleep(100);
+          } catch (InterruptedException ignore) {
+            // We did our best. Hopefully, the webcam has been freed at this point.
+            Thread.currentThread().interrupt();
+          }
+        } else {
+          this.stopAndAwait();
+        }
       } finally {
         this.eventBus.unregister(this);
       }
