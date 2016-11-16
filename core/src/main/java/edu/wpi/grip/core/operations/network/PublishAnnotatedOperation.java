@@ -162,4 +162,8 @@ public abstract class PublishAnnotatedOperation<D, P extends Publishable> extend
     }
   }
 
+  @Override
+  public void cleanUp() {
+    publisher.close();
+  }
 }
