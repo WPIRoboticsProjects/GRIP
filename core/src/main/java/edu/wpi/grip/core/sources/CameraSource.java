@@ -285,12 +285,24 @@ public class CameraSource extends Source implements RestartableService {
 
   @Override
   public void stopAndAwait() {
-    stopAsync().cameraService.stopAndAwait();
+    try {
+      stopAsync().cameraService.stopAndAwait();
+    } catch (IllegalStateException e) {
+      if (!cameraService.state().equals(State.FAILED)) {
+        throw e;
+      }
+    }
   }
 
   @Override
   public void stopAndAwait(long timeout, TimeUnit unit) throws TimeoutException {
-    stopAsync().cameraService.stopAndAwait(timeout, unit);
+    try {
+      stopAsync().cameraService.stopAndAwait(timeout, unit);
+    } catch (IllegalStateException e) {
+      if (!cameraService.state().equals(State.FAILED)) {
+        throw e;
+      }
+    }
   }
 
   @Override
