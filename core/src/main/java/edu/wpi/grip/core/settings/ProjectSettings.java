@@ -1,5 +1,7 @@
 package edu.wpi.grip.core.settings;
 
+import edu.wpi.grip.core.http.GripServer;
+
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Throwables;
 
@@ -145,7 +147,7 @@ public class ProjectSettings implements Cloneable {
   }
 
   public void setServerPort(@Nonnegative int serverPort) {
-    checkArgument(serverPort >= 1024 && serverPort <= 65535,
+    checkArgument(GripServer.isPortValid(serverPort),
         "Server port must be in the range 1024..65535");
     this.serverPort = serverPort;
   }

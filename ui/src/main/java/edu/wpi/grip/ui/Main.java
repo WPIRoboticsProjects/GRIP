@@ -1,10 +1,8 @@
 package edu.wpi.grip.ui;
 
-import edu.wpi.grip.core.CoreCommandLineHelper;
 import edu.wpi.grip.core.GripCoreModule;
 import edu.wpi.grip.core.GripFileModule;
 import edu.wpi.grip.core.PipelineRunner;
-import edu.wpi.grip.core.events.ProjectSettingsChangedEvent;
 import edu.wpi.grip.core.events.UnexpectedThrowableEvent;
 import edu.wpi.grip.core.http.GripServer;
 import edu.wpi.grip.core.http.HttpPipelineSwitcher;
@@ -12,7 +10,6 @@ import edu.wpi.grip.core.operations.CVOperations;
 import edu.wpi.grip.core.operations.Operations;
 import edu.wpi.grip.core.operations.network.GripNetworkModule;
 import edu.wpi.grip.core.serialization.Project;
-import edu.wpi.grip.core.settings.ProjectSettings;
 import edu.wpi.grip.core.settings.SettingsProvider;
 import edu.wpi.grip.core.sources.GripSourcesHardwareModule;
 import edu.wpi.grip.core.util.SafeShutdown;
@@ -28,7 +25,6 @@ import com.sun.javafx.application.PlatformImpl;
 
 import org.apache.commons.cli.CommandLine;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -68,6 +64,7 @@ public class Main extends Application {
   @Inject private HttpPipelineSwitcher pipelineSwitcher;
   private Parent root;
   private boolean headless;
+  private final UICommandLineHelper commandLineHelper = new UICommandLineHelper();
   private CommandLine parsedArgs;
 
   public static void main(String[] args) {
@@ -76,7 +73,6 @@ public class Main extends Application {
 
   @Override
   public void init() throws IOException {
-    UICommandLineHelper commandLineHelper = new UICommandLineHelper();
     parsedArgs = commandLineHelper.parse(getParameters().getRaw());
 
     if (parsedArgs.hasOption(UICommandLineHelper.HEADLESS_OPTION)) {
@@ -142,35 +138,8 @@ public class Main extends Application {
     operations.addOperations();
     cvOperations.addOperations();
 
-    // If there was a file specified on the command line, open it immediately
-    if (parsedArgs.hasOption(CoreCommandLineHelper.FILE_OPTION)) {
-      String file = parsedArgs.getOptionValue(CoreCommandLineHelper.FILE_OPTION);
-      try {
-        project.open(new File(file));
-      } catch (IOException e) {
-        logger.log(Level.SEVERE, "Error loading file: " + file);
-        throw e;
-      }
-    }
-
-    // Set the port AFTER loading the project to override the setting in the file
-    if (parsedArgs.hasOption(CoreCommandLineHelper.PORT_OPTION)) {
-      try {
-        int port = Integer.parseInt(parsedArgs.getOptionValue(CoreCommandLineHelper.PORT_OPTION));
-        if (port < 1024 || port > 65535) {
-          logger.warning("Not a valid port: " + port);
-        } else {
-          // Valid port; set it (Note: this doesn't check to see if the port is available)
-          logger.info("Running server on port " + port);
-          ProjectSettings settings = settingsProvider.getProjectSettings().clone();
-          settings.setServerPort(port);
-          eventBus.post(new ProjectSettingsChangedEvent(settings));
-        }
-      } catch (NumberFormatException e) {
-        logger.warning(
-            "Not a valid port: " + parsedArgs.getOptionValue(CoreCommandLineHelper.PORT_OPTION));
-      }
-    }
+    commandLineHelper.loadFile(parsedArgs, project);
+    commandLineHelper.setServerPort(parsedArgs, settingsProvider, eventBus);
 
     // This will throw an exception if the port specified by the save file or command line
     // argument is already taken. Since we have to have the server running to handle remotely
