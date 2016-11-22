@@ -160,6 +160,8 @@ public class GripCoreModule extends AbstractModule {
     install(new FactoryModuleBuilder().build(Timer.Factory.class));
 
     bind(BenchmarkRunner.class).asEagerSingleton();
+
+    bind(Cleaner.class).asEagerSingleton();
   }
 
   protected void onSubscriberException(Throwable exception, @Nullable SubscriberExceptionContext

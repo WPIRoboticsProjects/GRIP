@@ -570,7 +570,7 @@ project(":ui") {
         // -XX:MaxNewSize limits the size of the eden space to force minor GCs to run more often.
         // This causes old mats (which take up little space on the heap but a lot of native memory) to get deallocated
         // and free up native memory quicker, limiting the memory the app takes up.
-        jvmArgs = ["-XX:-OmitStackTraceInFastThrow", "-Xmx200m", "-XX:MaxNewSize=16m"]
+        jvmArgs = ["-XX:-OmitStackTraceInFastThrow", "-Xmx200m", "-XX:MaxNewSize=32m"]
 
         bundleArguments = [
                 "linux.launcher.url": file('linuxLauncher/build/exe/linuxLauncher/linuxLauncher').toURI().toURL()
