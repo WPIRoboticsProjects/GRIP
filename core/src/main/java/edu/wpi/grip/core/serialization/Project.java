@@ -59,6 +59,7 @@ public class Project {
       cp.getAllClasses()
           .stream()
           .filter(ci -> ci.getPackageName().startsWith("edu.wpi.grip"))
+          .filter(ci -> !ci.getName().contains("BeanInfo")) // No BeanInfo classes in embedded JREs
           .map(ClassPath.ClassInfo::load)
           .filter(clazz -> clazz.isAnnotationPresent(XStreamAlias.class))
           .forEach(clazz -> {
