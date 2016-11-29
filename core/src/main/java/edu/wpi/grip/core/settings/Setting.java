@@ -12,6 +12,7 @@ import java.lang.annotation.Target;
  * JEP 256: http://openjdk.java.net/jeps/256
  *
  * @see ProjectSettingsBeanInfo
+ * @see AppSettingsBeanInfo
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)

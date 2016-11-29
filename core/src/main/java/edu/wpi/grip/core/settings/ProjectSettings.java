@@ -13,7 +13,12 @@ import static com.google.common.base.Preconditions.checkArgument;
  * numbers, which need to be preserved when deploying the project.
  */
 @SuppressWarnings("JavadocMethod")
-public class ProjectSettings implements Cloneable {
+public class ProjectSettings implements Settings, Cloneable {
+
+  /*
+   * Note: if a setting is only for the app (e.g. the HTTP server port), it should be marked as
+   * transient so it won't get serialized to the save file.
+   */
 
   @Setting(label = "FRC team number", description = "The team number, if used for FRC")
   private int teamNumber = 0;
@@ -43,10 +48,6 @@ public class ProjectSettings implements Cloneable {
   private String deployJvmOptions = "-Xmx50m -XX:-OmitStackTraceInFastThrow "
       + "-XX:+HeapDumpOnOutOfMemoryError";
 
-  @Setting(label = "Internal server port",
-      description = "The port that the internal server should run on.")
-  private int serverPort = 8080;
-
   public int getTeamNumber() {
     return teamNumber;
   }
@@ -64,8 +65,7 @@ public class ProjectSettings implements Cloneable {
     this.teamNumber = teamNumber;
 
     // If the deploy address and/or NetworkTables server address was previously the default for
-    // the old team
-    // number (ie: it was roborio-xxx-frc.local), update it with the new team number
+    // the old team number (ie: it was roborio-xxx-frc.local), update it with the new team number
     if (oldFrcAddress.equals(getDeployAddress())) {
       setDeployAddress(newFrcAddress);
     }
@@ -139,16 +139,6 @@ public class ProjectSettings implements Cloneable {
     return "roboRIO-" + teamNumber + "-FRC.local";
   }
 
-  public int getServerPort() {
-    return serverPort;
-  }
-
-  public void setServerPort(@Nonnegative int serverPort) {
-    checkArgument(serverPort >= 1024 && serverPort <= 65535,
-        "Server port must be in the range 1024..65535");
-    this.serverPort = serverPort;
-  }
-
   @Override
   public String toString() {
     return MoreObjects.toStringHelper(this)
@@ -159,7 +149,6 @@ public class ProjectSettings implements Cloneable {
         .add("deployJvmOptions", deployJvmOptions)
         .add("publishAddress", publishAddress)
         .add("teamNumber", teamNumber)
-        .add("serverPort", serverPort)
         .toString();
   }
 

@@ -1,8 +1,8 @@
 package edu.wpi.grip.core.settings;
 
 /**
- * BeanInfo class for {@link ProjectSettings}.  This inspects annotations on the properties in
- * ProjectSettings to produce PropertyDescriptors with proper display names and descriptions.
+ * BeanInfo class for {@link AppSettings}.  This inspects annotations on the properties in
+ * AppSettings to produce PropertyDescriptors with proper display names and descriptions.
  * ControlsFX's PropertySheet control uses JavaBean properties to generate the settings editor, so
  * we need this class in order to make the properties have user-presentable names and descriptions.
  * Another way to do this without annotations would be to hardcode a bunch of PropertyDescriptors
@@ -10,10 +10,10 @@ package edu.wpi.grip.core.settings;
  * to add a descriptor here). This class is never run in headless mode, so the nonexistance of the
  * JavaBeans API and the slowness of reflection on the roboRIO is not an issue.
  */
-public class ProjectSettingsBeanInfo extends SimpleSettingsBeanInfo {
+public class AppSettingsBeanInfo extends SimpleSettingsBeanInfo {
 
-  public ProjectSettingsBeanInfo() {
-    super(ProjectSettings.class);
+  public AppSettingsBeanInfo() {
+    super(AppSettings.class);
   }
 
 }

@@ -3,11 +3,13 @@ package edu.wpi.grip.ui;
 import edu.wpi.grip.core.Palette;
 import edu.wpi.grip.core.Pipeline;
 import edu.wpi.grip.core.PipelineRunner;
+import edu.wpi.grip.core.events.AppSettingsChangedEvent;
 import edu.wpi.grip.core.events.BenchmarkEvent;
 import edu.wpi.grip.core.events.ProjectSettingsChangedEvent;
 import edu.wpi.grip.core.events.TimerEvent;
 import edu.wpi.grip.core.events.UnexpectedThrowableEvent;
 import edu.wpi.grip.core.serialization.Project;
+import edu.wpi.grip.core.settings.AppSettings;
 import edu.wpi.grip.core.settings.ProjectSettings;
 import edu.wpi.grip.core.settings.SettingsProvider;
 import edu.wpi.grip.core.util.SafeShutdown;
@@ -235,11 +237,14 @@ public class MainWindowController {
   @FXML
   protected void showProjectSettingsEditor() {
     final ProjectSettings projectSettings = settingsProvider.getProjectSettings().clone();
+    final AppSettings appSettings = settingsProvider.getAppSettings().clone();
 
-    ProjectSettingsEditor projectSettingsEditor = new ProjectSettingsEditor(root, projectSettings);
+    ProjectSettingsEditor projectSettingsEditor
+        = new ProjectSettingsEditor(root, projectSettings, appSettings);
     projectSettingsEditor.showAndWait().ifPresent(buttonType -> {
       if (buttonType == ButtonType.OK) {
         eventBus.post(new ProjectSettingsChangedEvent(projectSettings));
+        eventBus.post(new AppSettingsChangedEvent(appSettings));
       }
     });
   }
