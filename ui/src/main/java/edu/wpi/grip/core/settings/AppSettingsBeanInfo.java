@@ -7,8 +7,7 @@ package edu.wpi.grip.core.settings;
  * we need this class in order to make the properties have user-presentable names and descriptions.
  * Another way to do this without annotations would be to hardcode a bunch of PropertyDescriptors
  * here, but that would be error-prone (we would get no warning if we add a new setting and forget
- * to add a descriptor here). This class is never run in headless mode, so the nonexistance of the
- * JavaBeans API and the slowness of reflection on the roboRIO is not an issue.
+ * to add a descriptor here).
  */
 public class AppSettingsBeanInfo extends SimpleSettingsBeanInfo {
 
