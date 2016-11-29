@@ -146,6 +146,8 @@ public class AnalysisController {
   @SuppressWarnings("PMD.UnusedPrivateMethod")
   private void onStepRemoved(StepRemovedEvent e) {
     sampleMap.remove(e.getStep());
+    timeViewMap.remove(e.getStep());
+    tableItems.removeIf(entry -> entry.getStep() == e.getStep());
   }
 
   @Subscribe
