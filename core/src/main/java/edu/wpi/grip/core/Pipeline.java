@@ -61,7 +61,7 @@ public class Pipeline implements ConnectionValidator, SettingsProvider, StepInde
   private final Set<Connection> connections = new HashSet<>();
   @Inject
   @XStreamOmitField
-  private EventBus eventBus;
+  private transient EventBus eventBus;
   private final transient ReadWriteLock stepLock = new ReentrantReadWriteLock();
   private ProjectSettings settings = new ProjectSettings();
 
