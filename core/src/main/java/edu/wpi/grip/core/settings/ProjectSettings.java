@@ -15,11 +15,6 @@ import static com.google.common.base.Preconditions.checkArgument;
 @SuppressWarnings("JavadocMethod")
 public class ProjectSettings implements Settings, Cloneable {
 
-  /*
-   * Note: if a setting is only for the app (e.g. the HTTP server port), it should be marked as
-   * transient so it won't get serialized to the save file.
-   */
-
   @Setting(label = "FRC team number", description = "The team number, if used for FRC")
   private int teamNumber = 0;
 
