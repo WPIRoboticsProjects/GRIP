@@ -276,18 +276,6 @@ project(":core") {
 
     mainClassName = 'edu.wpi.grip.core.Main'
 
-    if (project.hasProperty('args')) {
-        run {
-            args = (project.args.split("\\s+") as List)
-        }
-    }
-
-    if (project.hasProperty('jvmArgs')) {
-        run {
-            jvmArgs = (project.jvmArgs.split("\\s+") as List)
-        }
-    }
-
     jar {
         manifest {
             attributes 'Implementation-Version': version, 'Main-Class': mainClassName
@@ -441,12 +429,6 @@ project(":ui") {
         scopes.PROVIDED.plus += [configurations.ideProvider]
     }
 
-    if (project.hasProperty('jvmArgs')) {
-        run {
-            jvmArgs = (project.jvmArgs.split("\\s+") as List)
-        }
-    }
-
     /*
      * Allows you to run the UI tests in headless mode by calling gradle with the -Pheadless=true argument
      */
@@ -454,12 +436,6 @@ project(":ui") {
         println "Running UI Tests Headless"
         test {
             jvmArgs = ['-Djava.awt.headless=true', '-Dtestfx.robot=glass', '-Dtestfx.headless=true', '-Dprism.order=sw', '-Dprism.text=t2k']
-        }
-    }
-
-    if (project.hasProperty('args')) {
-        run {
-            args = (project.args.split("\\s+") as List)
         }
     }
 
@@ -577,6 +553,24 @@ project(":ui") {
         ]
     }
     mainClassName = jfx.mainClass
+}
+
+
+configure([
+        project(":core"),
+        project(":ui"),
+        project(":ui:preloader")
+]) {
+    if (project.hasProperty('jvmArgs')) {
+        run {
+            jvmArgs = (project.jvmArgs.split("\\s+") as List)
+        }
+    }
+    if (project.hasProperty('args')) {
+        run {
+            args = (project.args.split("\\s+") as List)
+        }
+    }
 }
 
 /*
