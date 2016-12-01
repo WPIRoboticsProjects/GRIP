@@ -48,11 +48,17 @@ public class GripServer {
    * Possible lifecycle states of the server.
    */
   public enum State {
-    /** The server has not been started yet. */
+    /**
+     * The server has not been started yet.
+     */
     PRE_RUN,
-    /** The server is currently running. */
+    /**
+     * The server is currently running.
+     */
     RUNNING,
-    /** The server was running and has been stopped. */
+    /**
+     * The server was running and has been stopped.
+     */
     STOPPED
   }
 
@@ -99,6 +105,27 @@ public class GripServer {
    * </pre></code>
    */
   public static final String DATA_PATH = ROOT_PATH + "/data";
+
+  /**
+   * The lowest valid TCP port number.
+   */
+  private static final int MIN_PORT = 1024;
+
+  /**
+   * The highest valid TCP port number.
+   */
+  private static final int MAX_PORT = 65535;
+
+  /**
+   * Checks if the given TCP port is valid for a server to run on. This doesn't check availability.
+   *
+   * @param port the port to check
+   *
+   * @return true if the port is valid, false if not
+   */
+  public static boolean isPortValid(int port) {
+    return port >= MIN_PORT && port <= MAX_PORT;
+  }
 
   public interface JettyServerFactory {
     Server create(int port);
@@ -213,6 +240,9 @@ public class GripServer {
    * @param port the new port to run on.
    */
   public void setPort(int port) {
+    if (!isPortValid(port)) {
+      throw new IllegalArgumentException("Invalid port: " + port);
+    }
     stop();
     server = serverFactory.create(port);
     server.setHandler(handlers);
@@ -232,7 +262,6 @@ public class GripServer {
     int port = event.getProjectSettings().getServerPort();
     if (port != getPort()) {
       setPort(port);
-      start();
     }
   }
 

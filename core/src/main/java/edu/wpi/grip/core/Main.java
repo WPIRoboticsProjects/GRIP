@@ -8,6 +8,7 @@ import edu.wpi.grip.core.operations.CVOperations;
 import edu.wpi.grip.core.operations.Operations;
 import edu.wpi.grip.core.operations.network.GripNetworkModule;
 import edu.wpi.grip.core.serialization.Project;
+import edu.wpi.grip.core.settings.SettingsProvider;
 import edu.wpi.grip.core.sources.GripSourcesHardwareModule;
 
 import com.google.common.eventbus.EventBus;
@@ -19,7 +20,6 @@ import com.google.inject.util.Modules;
 
 import org.apache.commons.cli.CommandLine;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -37,6 +37,8 @@ public class Main {
   private Project project;
   @Inject
   private PipelineRunner pipelineRunner;
+  @Inject
+  private SettingsProvider settingsProvider;
   @Inject
   private EventBus eventBus;
   @Inject
@@ -66,30 +68,8 @@ public class Main {
     CoreCommandLineHelper commandLineHelper = new CoreCommandLineHelper();
     CommandLine parsedArgs = commandLineHelper.parse(args);
 
-    // Parse the save file option
-    if (parsedArgs.hasOption(CoreCommandLineHelper.FILE_OPTION)) {
-      // Open a project from a .grip file specified on the command line
-      String file = parsedArgs.getOptionValue(CoreCommandLineHelper.FILE_OPTION);
-      logger.log(Level.INFO, "Loading file " + file);
-      project.open(new File(file));
-    }
-
-    // Set the port AFTER loading the project to override the saved port number
-    if (parsedArgs.hasOption(CoreCommandLineHelper.PORT_OPTION)) {
-      try {
-        int port = Integer.parseInt(parsedArgs.getOptionValue(CoreCommandLineHelper.PORT_OPTION));
-        if (port < 1024 || port > 65535) {
-          logger.warning("Not a valid port: " + port);
-        } else {
-          // Valid port; set it (Note: this doesn't check to see if the port is available)
-          logger.info("Running server on port " + port);
-          gripServer.setPort(port);
-        }
-      } catch (NumberFormatException e) {
-        logger.warning(
-            "Not a valid port: " + parsedArgs.getOptionValue(CoreCommandLineHelper.PORT_OPTION));
-      }
-    }
+    commandLineHelper.loadFile(parsedArgs, project);
+    commandLineHelper.setServerPort(parsedArgs, settingsProvider, eventBus);
 
     // This will throw an exception if the port specified by the save file or command line
     // argument is already taken. Since we have to have the server running to handle remotely
