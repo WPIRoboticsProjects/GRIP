@@ -44,9 +44,9 @@ public class Cleaner {
   private final Stopwatch stopwatch = Stopwatch.createUnstarted();
 
   /**
-   * The maximum number of runs allowed before calling System.gc().
+   * The minimum number of runs allowed before calling System.gc().
    */
-  private static final int MAX_RUNS_BEFORE_GC = 5;
+  private static final int MIN_RUNS_BEFORE_GC = 5;
 
   /**
    * The number of runs since the last gc call.
@@ -60,7 +60,7 @@ public class Cleaner {
     if (!stopwatch.isRunning()) {
       stopwatch.start();
     }
-    if (runsSinceLastGc >= MAX_RUNS_BEFORE_GC && stopwatch.elapsed(MILLISECONDS) >= MIN_DELAY) {
+    if (runsSinceLastGc >= MIN_RUNS_BEFORE_GC && stopwatch.elapsed(MILLISECONDS) >= MIN_DELAY) {
       runsSinceLastGc = 0;
       stopwatch.reset();
       System.gc();
