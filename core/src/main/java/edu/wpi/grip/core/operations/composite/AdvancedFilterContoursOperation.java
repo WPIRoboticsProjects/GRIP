@@ -14,11 +14,14 @@ import java.util.List;
 
 import static org.bytedeco.javacpp.opencv_core.Mat;
 import static org.bytedeco.javacpp.opencv_core.MatVector;
+import static org.bytedeco.javacpp.opencv_core.Point2f;
 import static org.bytedeco.javacpp.opencv_core.Rect;
+import static org.bytedeco.javacpp.opencv_core.RotatedRect;
 import static org.bytedeco.javacpp.opencv_imgproc.arcLength;
 import static org.bytedeco.javacpp.opencv_imgproc.boundingRect;
 import static org.bytedeco.javacpp.opencv_imgproc.contourArea;
 import static org.bytedeco.javacpp.opencv_imgproc.convexHull;
+import static org.bytedeco.javacpp.opencv_imgproc.minAreaRect;
 
 /**
  * An {@link Operation} that takes in a list of contours and outputs a list of any contours in the
@@ -28,14 +31,15 @@ import static org.bytedeco.javacpp.opencv_imgproc.convexHull;
  * small objects, as well as contours that do not meet the expected characteristics of the feature
  * we're actually looking for.  So, this operation can help narrow them down.
  */
-public class FilterContoursOperation implements Operation {
+public class AdvancedFilterContoursOperation implements Operation {
 
   public static final OperationDescription DESCRIPTION =
       OperationDescription.builder()
-          .name("Filter Contours")
+          .name("Advanced Filter Contours")
           .summary("Find contours matching certain criteria")
           .category(OperationDescription.Category.FEATURE_DETECTION)
           .icon(Icon.iconStream("find-contours"))
+          .aliases("Filter Contours")
           .build();
 
   private final SocketHint<ContoursReport> contoursHint = new SocketHint.Builder<>(ContoursReport
@@ -45,8 +49,18 @@ public class FilterContoursOperation implements Operation {
   private final SocketHint<Number> minAreaHint =
       SocketHints.Inputs.createNumberSpinnerSocketHint("Min Area", 0, 0, Integer.MAX_VALUE);
 
+  private final SocketHint<Number> maxAreaHint =
+      SocketHints.Inputs.createNumberSpinnerSocketHint("Max Area", 10000, 0, Integer.MAX_VALUE);
+
   private final SocketHint<Number> minPerimeterHint =
       SocketHints.Inputs.createNumberSpinnerSocketHint("Min Perimeter", 0, 0, Integer.MAX_VALUE);
+
+  private final SocketHint<Number> maxPerimeterHint =
+      SocketHints.Inputs.createNumberSpinnerSocketHint("Max Perimeter", 10000, 0,
+          Integer.MAX_VALUE);
+
+  private final SocketHint<Boolean> rotatedRectHint =
+      SocketHints.createBooleanSocketHint("Rotated Rectangles", false);
 
   private final SocketHint<Number> minWidthHint =
       SocketHints.Inputs.createNumberSpinnerSocketHint("Min Width", 0, 0, Integer.MAX_VALUE);
@@ -79,34 +93,40 @@ public class FilterContoursOperation implements Operation {
 
   private final InputSocket<ContoursReport> contoursSocket;
   private final InputSocket<Number> minAreaSocket;
+  private final InputSocket<Number> maxAreaSocket;
   private final InputSocket<Number> minPerimeterSocket;
+  private final InputSocket<Number> maxPerimeterSocket;
+  private final InputSocket<Boolean> rotatedRectSocket;
   private final InputSocket<Number> minWidthSocket;
   private final InputSocket<Number> maxWidthSocket;
   private final InputSocket<Number> minHeightSocket;
   private final InputSocket<Number> maxHeightSocket;
-  private final InputSocket<List<Number>> soliditySocket;
   private final InputSocket<Number> minVertexSocket;
   private final InputSocket<Number> maxVertexSocket;
   private final InputSocket<Number> minRatioSocket;
   private final InputSocket<Number> maxRatioSocket;
+  private final InputSocket<List<Number>> soliditySocket;
 
   private final OutputSocket<ContoursReport> outputSocket;
 
   @SuppressWarnings("JavadocMethod")
-  public FilterContoursOperation(InputSocket.Factory inputSocketFactory, OutputSocket.Factory
-      outputSocketFactory) {
+  public AdvancedFilterContoursOperation(InputSocket.Factory inputSocketFactory,
+                                         OutputSocket.Factory outputSocketFactory) {
     this.contoursSocket = inputSocketFactory.create(contoursHint);
     this.minAreaSocket = inputSocketFactory.create(minAreaHint);
+    this.maxAreaSocket = inputSocketFactory.create(maxAreaHint);
     this.minPerimeterSocket = inputSocketFactory.create(minPerimeterHint);
+    this.maxPerimeterSocket = inputSocketFactory.create(maxPerimeterHint);
+    this.rotatedRectSocket = inputSocketFactory.create(rotatedRectHint);
     this.minWidthSocket = inputSocketFactory.create(minWidthHint);
     this.maxWidthSocket = inputSocketFactory.create(maxWidthHint);
     this.minHeightSocket = inputSocketFactory.create(minHeightHint);
     this.maxHeightSocket = inputSocketFactory.create(maxHeightHint);
-    this.soliditySocket = inputSocketFactory.create(solidityHint);
     this.minVertexSocket = inputSocketFactory.create(minVertexHint);
     this.maxVertexSocket = inputSocketFactory.create(maxVertexHint);
     this.minRatioSocket = inputSocketFactory.create(minRatioHint);
     this.maxRatioSocket = inputSocketFactory.create(maxRatioHint);
+    this.soliditySocket = inputSocketFactory.create(solidityHint);
 
     this.outputSocket = outputSocketFactory.create(contoursHint);
   }
@@ -116,16 +136,19 @@ public class FilterContoursOperation implements Operation {
     return ImmutableList.of(
         contoursSocket,
         minAreaSocket,
+        maxAreaSocket,
         minPerimeterSocket,
+        maxPerimeterSocket,
+        rotatedRectSocket,
         minWidthSocket,
         maxWidthSocket,
         minHeightSocket,
         maxHeightSocket,
-        soliditySocket,
-        maxVertexSocket,
         minVertexSocket,
+        maxVertexSocket,
         minRatioSocket,
-        maxRatioSocket
+        maxRatioSocket,
+        soliditySocket
     );
   }
 
@@ -141,7 +164,10 @@ public class FilterContoursOperation implements Operation {
   public void perform() {
     final InputSocket<ContoursReport> inputSocket = contoursSocket;
     final double minArea = minAreaSocket.getValue().get().doubleValue();
+    final double maxArea = maxAreaSocket.getValue().get().doubleValue();
     final double minPerimeter = minPerimeterSocket.getValue().get().doubleValue();
+    final double maxPerimeter = maxPerimeterSocket.getValue().get().doubleValue();
+    final boolean rotatedRect = rotatedRectSocket.getValue().get().booleanValue();
     final double minWidth = minWidthSocket.getValue().get().doubleValue();
     final double maxWidth = maxWidthSocket.getValue().get().doubleValue();
     final double minHeight = minHeightSocket.getValue().get().doubleValue();
@@ -165,19 +191,43 @@ public class FilterContoursOperation implements Operation {
     for (int i = 0; i < inputContours.size(); i++) {
       final Mat contour = inputContours.get(i);
 
-      final Rect bb = boundingRect(contour);
-      if (bb.width() < minWidth || bb.width() > maxWidth) {
+      double width;
+      double height;
+      if (rotatedRect) {
+        final RotatedRect bb = minAreaRect(contour);
+        Point2f points = new Point2f(4);
+        bb.points(points);
+        final double rotatedWidth = Math.sqrt(Math.pow(points.position(0).x()
+            - points.position(1).x(), 2)
+            + Math.pow(points.position(0).y() - points.position(1).y(), 2));
+        final double rotatedHeight = Math.sqrt( Math.pow(points.position(1).x()
+            - points.position(2).x(), 2)
+            + Math.pow(points.position(1).y() - points.position(2).y(), 2));
+        if (Math.abs(bb.angle()) >= 45) {
+          width = rotatedWidth;
+          height = rotatedHeight;
+        } else {
+          width = rotatedHeight;
+          height = rotatedWidth;
+        }
+      } else {
+        final Rect normbb = boundingRect(contour);
+        width = normbb.width();
+        height = normbb.height();
+      }
+
+      if (width < minWidth || width > maxWidth) {
         continue;
       }
-      if (bb.height() < minHeight || bb.height() > maxHeight) {
+      if (width < minHeight || width > maxHeight) {
         continue;
       }
 
       final double area = contourArea(contour);
-      if (area < minArea) {
+      if (area < minArea || area > maxArea) {
         continue;
       }
-      if (arcLength(contour, true) < minPerimeter) {
+      if (arcLength(contour, true) < minPerimeter || arcLength(contour, true) > maxPerimeter) {
         continue;
       }
 
@@ -191,7 +241,7 @@ public class FilterContoursOperation implements Operation {
         continue;
       }
 
-      final double ratio = (double) bb.width() / (double) bb.height();
+      final double ratio = width / height;
       if (ratio < minRatio || ratio > maxRatio) {
         continue;
       }

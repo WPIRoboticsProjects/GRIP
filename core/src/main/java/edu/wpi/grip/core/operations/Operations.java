@@ -3,6 +3,7 @@ package edu.wpi.grip.core.operations;
 import edu.wpi.grip.core.FileManager;
 import edu.wpi.grip.core.OperationMetaData;
 import edu.wpi.grip.core.events.OperationAddedEvent;
+import edu.wpi.grip.core.operations.composite.AdvancedFilterContoursOperation;
 import edu.wpi.grip.core.operations.composite.BlobsReport;
 import edu.wpi.grip.core.operations.composite.BlurOperation;
 import edu.wpi.grip.core.operations.composite.CascadeClassifierOperation;
@@ -10,7 +11,6 @@ import edu.wpi.grip.core.operations.composite.ContoursReport;
 import edu.wpi.grip.core.operations.composite.ConvexHullsOperation;
 import edu.wpi.grip.core.operations.composite.DesaturateOperation;
 import edu.wpi.grip.core.operations.composite.DistanceTransformOperation;
-import edu.wpi.grip.core.operations.composite.FilterContoursOperation;
 import edu.wpi.grip.core.operations.composite.FilterLinesOperation;
 import edu.wpi.grip.core.operations.composite.FindBlobsOperation;
 import edu.wpi.grip.core.operations.composite.FindContoursOperation;
@@ -25,6 +25,7 @@ import edu.wpi.grip.core.operations.composite.RGBThresholdOperation;
 import edu.wpi.grip.core.operations.composite.RectsReport;
 import edu.wpi.grip.core.operations.composite.ResizeOperation;
 import edu.wpi.grip.core.operations.composite.SaveImageOperation;
+import edu.wpi.grip.core.operations.composite.SimpleFilterContoursOperation;
 import edu.wpi.grip.core.operations.composite.SwitchOperation;
 import edu.wpi.grip.core.operations.composite.ThresholdMoving;
 import edu.wpi.grip.core.operations.composite.ValveOperation;
@@ -87,8 +88,10 @@ public class Operations {
             () -> new DesaturateOperation(isf, osf)),
         new OperationMetaData(DistanceTransformOperation.DESCRIPTION,
             () -> new DistanceTransformOperation(isf, osf)),
-        new OperationMetaData(FilterContoursOperation.DESCRIPTION,
-            () -> new FilterContoursOperation(isf, osf)),
+        new OperationMetaData(SimpleFilterContoursOperation.DESCRIPTION,
+            () -> new SimpleFilterContoursOperation(isf, osf)),
+        new OperationMetaData(AdvancedFilterContoursOperation.DESCRIPTION,
+            () -> new AdvancedFilterContoursOperation(isf, osf)),
         new OperationMetaData(FilterLinesOperation.DESCRIPTION,
             () -> new FilterLinesOperation(isf, osf)),
         new OperationMetaData(FindBlobsOperation.DESCRIPTION,
