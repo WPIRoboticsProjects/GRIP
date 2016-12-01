@@ -65,8 +65,8 @@ public class WatershedOperation implements Operation {
   private final InputSocket<ContoursReport> contoursSocket;
   private final OutputSocket<ContoursReport> outputSocket;
 
-  private static final int maxMarkers = 253;
-  private final List<Mat> markerPool = new ArrayList<>(maxMarkers);
+  private static final int MAX_MARKERS = 253;
+  private final List<Mat> markerPool;
   private final MatVector contour = new MatVector(); // vector with a single element
   private final Mat markers = new Mat();
   private final Mat output = new Mat();
@@ -78,9 +78,11 @@ public class WatershedOperation implements Operation {
     srcSocket = inputSocketFactory.create(srcHint);
     contoursSocket = inputSocketFactory.create(contoursHint);
     outputSocket = outputSocketFactory.create(outputHint);
-    for (int i = 0; i < maxMarkers; i++) {
-      markerPool.add(new Mat());
+    List<Mat> tmpPool = new ArrayList<>();
+    for (int i = 0; i < MAX_MARKERS; i++) {
+      tmpPool.add(new Mat());
     }
+    markerPool = ImmutableList.copyOf(tmpPool);
   }
 
   @Override
@@ -108,9 +110,9 @@ public class WatershedOperation implements Operation {
     final ContoursReport contourReport = contoursSocket.getValue().get();
     final MatVector contours = contourReport.getContours();
 
-    if (contours.size() > maxMarkers) {
+    if (contours.size() > MAX_MARKERS) {
       throw new IllegalArgumentException(
-          "A maximum of " + maxMarkers + " contours can be used as markers."
+          "A maximum of " + MAX_MARKERS + " contours can be used as markers."
               + " Filter contours before connecting them to this operation if this keeps happening."
               + " The contours must also all be external; nested contours will not work");
     }

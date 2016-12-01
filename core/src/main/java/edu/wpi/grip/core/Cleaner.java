@@ -2,12 +2,15 @@ package edu.wpi.grip.core;
 
 import edu.wpi.grip.core.events.RunStoppedEvent;
 
+import com.google.common.base.Stopwatch;
 import com.google.common.eventbus.Subscribe;
 import com.google.inject.Singleton;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 import javax.annotation.Nullable;
+
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
 
 /**
  * Cleans up unused objects by periodically calling {@link System#gc()} to nudge the
@@ -36,6 +39,11 @@ public class Cleaner {
   private static final long MIN_DELAY = 1000;
 
   /**
+   * Stopwatch to keep track of the elapsed time since the last gc call.
+   */
+  private final Stopwatch stopwatch = Stopwatch.createUnstarted();
+
+  /**
    * The maximum number of runs allowed before calling System.gc().
    */
   private static final int MAX_RUNS_BEFORE_GC = 5;
@@ -45,22 +53,16 @@ public class Cleaner {
    */
   private int runsSinceLastGc = 0;
 
-  /**
-   * Timestamp of the last gc call.
-   */
-  private long lastRun = 0;
-
   @Subscribe
   @SuppressFBWarnings(value = "DM_GC", justification = "GC is called infrequently")
   public void onRunFinished(@Nullable RunStoppedEvent e) {
     runsSinceLastGc++;
-    if (lastRun == 0) {
-      lastRun = System.nanoTime();
+    if (!stopwatch.isRunning()) {
+      stopwatch.start();
     }
-    if (runsSinceLastGc >= MAX_RUNS_BEFORE_GC
-        && System.nanoTime() - lastRun >= MIN_DELAY * 1e6) {
+    if (runsSinceLastGc >= MAX_RUNS_BEFORE_GC && stopwatch.elapsed(MILLISECONDS) >= MIN_DELAY) {
       runsSinceLastGc = 0;
-      lastRun = System.nanoTime();
+      stopwatch.reset();
       System.gc();
     }
   }

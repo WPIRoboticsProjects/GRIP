@@ -132,6 +132,9 @@ public class IPCameraFrameGrabber extends FrameGrabber {
     try {
       byte[] b = readImage();
       CvMat mat = cvMat(1, b.length, CV_8UC1, new BytePointer(b));
+      if (decoded != null) {
+        cvReleaseImage(decoded);
+      }
       return converter.convert(decoded = cvDecodeImage(mat));
     } catch (IOException e) {
       throw new Exception(e.getMessage(), e);
