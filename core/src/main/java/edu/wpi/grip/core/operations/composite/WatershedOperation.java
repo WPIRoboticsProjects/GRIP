@@ -14,6 +14,8 @@ import org.bytedeco.javacpp.opencv_core;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static org.bytedeco.javacpp.opencv_core.CV_32SC1;
 import static org.bytedeco.javacpp.opencv_core.CV_8UC1;
@@ -78,11 +80,9 @@ public class WatershedOperation implements Operation {
     srcSocket = inputSocketFactory.create(srcHint);
     contoursSocket = inputSocketFactory.create(contoursHint);
     outputSocket = outputSocketFactory.create(outputHint);
-    List<Mat> tmpPool = new ArrayList<>();
-    for (int i = 0; i < MAX_MARKERS; i++) {
-      tmpPool.add(new Mat());
-    }
-    markerPool = ImmutableList.copyOf(tmpPool);
+    markerPool = ImmutableList.copyOf(
+        Stream.generate(Mat::new).limit(MAX_MARKERS).collect(Collectors.toList())
+    );
   }
 
   @Override
