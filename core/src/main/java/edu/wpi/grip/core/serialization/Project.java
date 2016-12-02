@@ -49,6 +49,7 @@ public class Project {
                          ConnectionConverter connectionConverter,
                          ProjectSettingsConverter projectSettingsConverter) {
     xstream.setMode(XStream.NO_REFERENCES);
+    xstream.ignoreUnknownElements(); // ignores all unknown tags
     xstream.registerConverter(stepConverter);
     xstream.registerConverter(sourceConverter);
     xstream.registerConverter(socketConverter);
