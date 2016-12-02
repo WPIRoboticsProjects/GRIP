@@ -118,10 +118,10 @@ void $fileName::set$step.name()${step.num()}(bool value){
 
 #end
 
-} // end grip namespace
-
 #if($testing)
 extern "C" AbsPipeline * makePipeline(){
     return new ${fileName}();
 }
 #end
+
+} // end grip namespace

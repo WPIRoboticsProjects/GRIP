@@ -92,8 +92,9 @@ class $fileName #if($testing): public AbsPipeline #end{
 #end
 };
 
-} // end namespace grip
-
 #if($testing)
 extern "C" DLL_TYPE AbsPipeline * makePipeline();
 #end
+
+} // end namespace grip
+
