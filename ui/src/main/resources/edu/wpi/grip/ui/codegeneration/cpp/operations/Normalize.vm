@@ -8,5 +8,5 @@
 	 * @param output The image in which to store the output.
 	 */
 	void $fileName::#func($step, ["input", "type", "min", "max", "output"]) {
-	   normalize(input, output, min, max, type);
+	   cv::normalize(input, output, min, max, type);
 	}

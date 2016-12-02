@@ -4,5 +4,5 @@
 	 * @param dst the transpose of src.
 	 */
 	void $fileName::#func($step ["src", "dst"]) {
-		transpose(src, dst);
+		cv::transpose(src, dst);
 	}

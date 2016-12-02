@@ -8,6 +8,6 @@
 	 * @param output The image in which to store the output.
 	 */
 	void $fileName::#func($step ["input", "red", "green", "blue", "output"]) {
-		cvtColor(input, out, COLOR_BGR2RGB);
-		inRange(out, Scalar(red[0], green[0], blue[0]), Scalar(red[1], green[1], blue[1]), out);
+		cv::cvtColor(input, output, cv::COLOR_BGR2RGB);
+		cv::inRange(output, cv::Scalar(red[0], green[0], blue[0]), cv::Scalar(red[1], green[1], blue[1]), output);
 	}

@@ -8,5 +8,5 @@
 	 * @param dst the output Mat.
 	 */
 	void $fileName::#func($step ["src1", "alpha", "src2", "beta", "gamma", "dst"]) {
-		addWeighted(src1, alpha, src2, beta, gamma, dst);
+		cv::addWeighted(src1, alpha, src2, beta, gamma, dst);
 	}

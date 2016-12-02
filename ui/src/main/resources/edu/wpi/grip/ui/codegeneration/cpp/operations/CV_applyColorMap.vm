@@ -5,5 +5,5 @@
 	 * @param dst Output after Color Map is applied.
 	 */
 	void $fileName::#func($step ["src", "colorMap", "dst"]) {
-		applyColorMap(src, dst, colorMap);
+		cv::applyColorMap(src, dst, colorMap);
 	}

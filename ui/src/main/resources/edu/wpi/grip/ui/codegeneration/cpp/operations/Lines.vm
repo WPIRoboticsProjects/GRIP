@@ -42,16 +42,16 @@ class Line {
 };
 
 #if($testing)
-vector<Vec6d> getLinesHelper(string name, AbsPipeline* obj) {
-	vector<Line> *lines = (vector<Line> *) (obj->*(obj->getOutputs()[name]))();
-	vector<Vec6d> out;
+std::vector<cv::Vec6d> getLinesHelper(std::string name, cv::AbsPipeline* obj) {
+	std::vector<Line> *lines = (std::vector<Line> *) (obj->*(obj->getOutputs()[name]))();
+	std::vector<cv::Vec6d> out;
 	for (int idx = 0; idx<lines->size(); idx++) {
 		Line l = (*lines)[idx];
-		out.push_back(Vec6d(l.x1, l.y1, l.x2, l.y2, l.length(), l.angle()));
+		out.push_back(cv::Vec6d(l.x1, l.y1, l.x2, l.y2, l.length(), l.angle()));
 	}
 	return out;
 }
-extern "C" DLL_TYPE vector<Vec6d> getLines(string name, AbsPipeline* obj){
+extern "C" DLL_TYPE std::vector<Vec6d> getLines(std::string name, cv::AbsPipeline* obj){
     return getLinesHelper(name, obj);
 }
 
