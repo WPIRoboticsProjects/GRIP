@@ -276,12 +276,6 @@ project(":core") {
 
     mainClassName = 'edu.wpi.grip.core.Main'
 
-    if (project.hasProperty('args')) {
-        run {
-            args = (project.args.split("\\s+") as List)
-        }
-    }
-
     jar {
         manifest {
             attributes 'Implementation-Version': version, 'Main-Class': mainClassName
@@ -445,12 +439,6 @@ project(":ui") {
         }
     }
 
-    if (project.hasProperty('args')) {
-        run {
-            args = (project.args.split("\\s+") as List)
-        }
-    }
-
     task testSharedLib() {
         description 'Compiles the shared library used by c++ generation testing.'
         doLast {
@@ -548,18 +536,41 @@ project(":ui") {
 
         jfxMainAppJarName = "${jfx.appName}-${jfx.nativeReleaseVersion}.jar"
 
-        // This prevents the JIT from eating stack traces that get thrown a lot
+        // -XX:-OmitStackTraceInFastThrow prevents the JIT from eating stack traces that get thrown a lot
         // This is slower but means we actually get the stack traces instead of
         // having them become one line like `java.lang.ArrayIndexOutOfBoundsException`
         // and as such, would be useless.
         // See: https://plumbr.eu/blog/java/on-a-quest-for-missing-stacktraces
-        jvmArgs = ["-XX:-OmitStackTraceInFastThrow"]
+        // -Xmx limits the heap size. This prevents memory use from ballooning with a lot
+        // of JavaCV native objects being allocated hanging around waiting to get GC'd.
+        // -XX:MaxNewSize limits the size of the eden space to force minor GCs to run more often.
+        // This causes old mats (which take up little space on the heap but a lot of native memory) to get deallocated
+        // and free up native memory quicker, limiting the memory the app takes up.
+        jvmArgs = ["-XX:-OmitStackTraceInFastThrow", "-Xmx200m", "-XX:MaxNewSize=32m"]
 
         bundleArguments = [
                 "linux.launcher.url": file('linuxLauncher/build/exe/linuxLauncher/linuxLauncher').toURI().toURL()
         ]
     }
     mainClassName = jfx.mainClass
+}
+
+
+configure([
+        project(":core"),
+        project(":ui"),
+        project(":ui:preloader")
+]) {
+    if (project.hasProperty('jvmArgs')) {
+        run {
+            jvmArgs = (project.jvmArgs.split("\\s+") as List)
+        }
+    }
+    if (project.hasProperty('args')) {
+        run {
+            args = (project.args.split("\\s+") as List)
+        }
+    }
 }
 
 /*

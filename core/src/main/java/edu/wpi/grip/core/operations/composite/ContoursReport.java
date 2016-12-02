@@ -150,6 +150,7 @@ public final class ContoursReport implements Publishable {
       convexHull(contours.get(i), hull);
       solidities[i] = contourArea(contours.get(i)) / contourArea(hull);
     }
+    hull.release();
     return solidities;
   }
 
