@@ -16,6 +16,8 @@
 \#include <map>
 \#include <math.h>
 
+namespace grip {
+
 #foreach($step in $pipeline.getUniqueSteps())
 #if($step.name().equals("Find_Lines") || $step.name().equals("Filter_Lines"))
 #parse("$vmLoc/operations/Lines.vm")
@@ -89,6 +91,9 @@ class $fileName #if($testing): public AbsPipeline #end{
 #end
 #end
 };
+
+} // end namespace grip
+
 #if($testing)
 extern "C" DLL_TYPE AbsPipeline * makePipeline();
 #end
