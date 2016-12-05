@@ -236,7 +236,7 @@ project(":core") {
             dirs 'libs'
         }
         maven {
-            url = "http://first.wpi.edu/FRC/roborio/maven/development"
+            url = "http://first.wpi.edu/FRC/roborio/maven/release"
         }
         maven {
             url = "https://github.com/WPIRoboticsProjects/rosjava_mvn_repo/raw/master"
@@ -270,8 +270,8 @@ project(":core") {
         // Network publishing dependencies
         compile group: 'org.ros.rosjava_core', name: 'rosjava', version: '[0.2,0.3)'
         compile group: 'org.ros.rosjava_messages', name: 'grip_msgs', version: '0.0.1'
-        compile group: 'edu.wpi.first.wpilib.networktables.java', name: 'NetworkTables', version: '3.0.0-SNAPSHOT', classifier: 'desktop'
-        compile group: 'edu.wpi.first.wpilib.networktables.java', name: 'NetworkTables', version: '3.0.0-SNAPSHOT', classifier: 'arm'
+        compile group: 'edu.wpi.first.wpilib.networktables.java', name: 'NetworkTables', version: '3.1.2', classifier: 'desktop'
+        compile group: 'edu.wpi.first.wpilib.networktables.java', name: 'NetworkTables', version: '3.1.2', classifier: 'arm'
     }
 
     mainClassName = 'edu.wpi.grip.core.Main'
