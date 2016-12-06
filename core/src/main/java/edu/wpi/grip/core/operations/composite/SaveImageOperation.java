@@ -123,9 +123,9 @@ public class SaveImageOperation implements Operation {
     imencode("." + fileTypesSocket.getValue().get(), inputSocket.getValue().get(), imagePointer,
         new IntPointer(CV_IMWRITE_JPEG_QUALITY, qualitySocket.getValue().get().intValue()));
     byte[] buffer = new byte[128 * 1024];
-    int bufferSize = imagePointer.limit();
+    int bufferSize = (int) imagePointer.limit();
     if (bufferSize > buffer.length) {
-      buffer = new byte[imagePointer.limit()];
+      buffer = new byte[(int) imagePointer.limit()];
     }
     imagePointer.get(buffer, 0, bufferSize);
 

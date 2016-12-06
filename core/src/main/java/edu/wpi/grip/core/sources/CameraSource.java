@@ -400,9 +400,8 @@ public class CameraSource extends Source implements RestartableService {
       // grabber class works fine.
       if (StandardSystemProperty.OS_NAME.value().contains("Windows")) {
         return new VideoInputFrameGrabber(deviceNumber);
-      } else {
-        return new OpenCVFrameGrabber(deviceNumber);
       }
+      return new OpenCVFrameGrabber(deviceNumber);
     }
 
     @Override

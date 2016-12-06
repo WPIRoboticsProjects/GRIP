@@ -98,9 +98,9 @@ public class PublishVideoOperation implements Operation {
               imageLock.wait();
 
               // Copy the image data into a pre-allocated buffer, growing it if necessary
-              bufferSize = imagePointer.limit();
+              bufferSize = (int) (imagePointer.limit());
               if (bufferSize > buffer.length) {
-                buffer = new byte[imagePointer.limit()];
+                buffer = new byte[(int) (imagePointer.limit())];
               }
               imagePointer.get(buffer, 0, bufferSize);
             }
