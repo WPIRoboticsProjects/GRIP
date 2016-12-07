@@ -1,9 +1,9 @@
 package edu.wpi.grip.core.sources;
 
+import edu.wpi.grip.core.Pipeline;
 import edu.wpi.grip.core.http.ContextStore;
 import edu.wpi.grip.core.http.GripServer;
 import edu.wpi.grip.core.http.GripServerTest;
-import edu.wpi.grip.core.settings.ProjectSettings;
 import edu.wpi.grip.core.sockets.MockOutputSocketFactory;
 import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.core.util.MockExceptionWitness;
@@ -45,7 +45,7 @@ public class HttpSourceTest {
   public void setUp() throws URIException, URISyntaxException {
     GripServer.JettyServerFactory f = new GripServerTest.TestServerFactory();
     ContextStore contextStore = new ContextStore();
-    server = GripServerTest.makeServer(contextStore, f, ProjectSettings::new);
+    server = GripServerTest.makeServer(contextStore, f, new Pipeline());
     server.start();
     EventBus eventBus = new EventBus();
     OutputSocket.Factory osf = new MockOutputSocketFactory(eventBus);

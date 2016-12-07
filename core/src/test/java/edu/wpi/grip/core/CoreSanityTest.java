@@ -26,7 +26,8 @@ public class CoreSanityTest extends AbstractPackageSanityTests {
         AddOperation.class,
         ManualPipelineRunner.class,
         SubtractionOperation.class,
-        Main.class
+        Main.class,
+        CoreCommandLineHelper.class
     ).contains(c));
     setDefault(OutputSocket.class, new MockOutputSocket("Mock Out"));
     setDefault(InputSocket.class, new MockInputSocket("Mock In"));

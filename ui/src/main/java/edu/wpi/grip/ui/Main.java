@@ -10,6 +10,7 @@ import edu.wpi.grip.core.operations.CVOperations;
 import edu.wpi.grip.core.operations.Operations;
 import edu.wpi.grip.core.operations.network.GripNetworkModule;
 import edu.wpi.grip.core.serialization.Project;
+import edu.wpi.grip.core.settings.SettingsProvider;
 import edu.wpi.grip.core.sources.GripSourcesHardwareModule;
 import edu.wpi.grip.core.util.SafeShutdown;
 import edu.wpi.grip.ui.util.DPIUtility;
@@ -22,12 +23,12 @@ import com.google.inject.Injector;
 import com.google.inject.util.Modules;
 import com.sun.javafx.application.PlatformImpl;
 
-import java.io.File;
+import org.apache.commons.cli.CommandLine;
+
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.application.Preloader;
@@ -37,6 +38,7 @@ import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
+
 import javax.inject.Inject;
 
 public class Main extends Application {
@@ -55,13 +57,15 @@ public class Main extends Application {
   @Inject private EventBus eventBus;
   @Inject private PipelineRunner pipelineRunner;
   @Inject private Project project;
+  @Inject private SettingsProvider settingsProvider;
   @Inject private Operations operations;
   @Inject private CVOperations cvOperations;
   @Inject private GripServer server;
   @Inject private HttpPipelineSwitcher pipelineSwitcher;
   private Parent root;
   private boolean headless;
-  private List<String> parameters;
+  private final UICommandLineHelper commandLineHelper = new UICommandLineHelper();
+  private CommandLine parsedArgs;
 
   public static void main(String[] args) {
     launch(args);
@@ -69,16 +73,15 @@ public class Main extends Application {
 
   @Override
   public void init() throws IOException {
-    parameters = new ArrayList<>(getParameters().getRaw());
+    parsedArgs = commandLineHelper.parse(getParameters().getRaw());
 
-    if (parameters.contains("--headless")) {
-      // If --headless was specified on the command line, run in headless mode (only use the core
-      // module)
+    if (parsedArgs.hasOption(UICommandLineHelper.HEADLESS_OPTION)) {
+      // If --headless was specified on the command line,
+      // run in headless mode (only use the core module)
       injector = Guice.createInjector(Modules.override(new GripCoreModule(), new GripFileModule(),
           new GripSourcesHardwareModule()).with(new GripNetworkModule()));
       injector.injectMembers(this);
 
-      parameters.remove("--headless");
       headless = true;
     } else {
       // Otherwise, run with both the core and UI modules, and show the JavaFX stage
@@ -97,7 +100,6 @@ public class Main extends Application {
 
     notifyPreloader(new Preloader.ProgressNotification(0.45));
     server.addHandler(pipelineSwitcher);
-    server.start();
     notifyPreloader(new Preloader.ProgressNotification(0.6));
 
     pipelineRunner.startAsync();
@@ -106,24 +108,13 @@ public class Main extends Application {
 
   @Override
   public void start(Stage stage) throws IOException {
+    // Load UI elements if we're not in headless mode
     if (!headless) {
       root = FXMLLoader.load(Main.class.getResource("MainWindow.fxml"), null, null,
           injector::getInstance);
       root.setStyle("-fx-font-size: " + DPIUtility.FONT_SIZE + "px");
 
-      operations.addOperations();
-      cvOperations.addOperations();
       notifyPreloader(new Preloader.ProgressNotification(0.9));
-
-      // If there was a file specified on the command line, open it immediately
-      if (!parameters.isEmpty()) {
-        try {
-          project.open(new File(parameters.get(0)));
-        } catch (IOException e) {
-          logger.log(Level.SEVERE, "Error loading file: " + parameters.get(0));
-          throw e;
-        }
-      }
 
       project.addIsSaveDirtyConsumer(newValue -> {
         if (newValue) {
@@ -143,6 +134,18 @@ public class Main extends Application {
           Preloader.StateChangeNotification.Type.BEFORE_START));
       stage.show();
     }
+
+    operations.addOperations();
+    cvOperations.addOperations();
+
+    commandLineHelper.loadFile(parsedArgs, project);
+    commandLineHelper.setServerPort(parsedArgs, settingsProvider, eventBus);
+
+    // This will throw an exception if the port specified by the save file or command line
+    // argument is already taken. Since we have to have the server running to handle remotely
+    // loading pipelines and uploading images, as well as potential HTTP publishing operations,
+    // this will cause the program to exit.
+    server.start();
   }
 
   public void stop() {

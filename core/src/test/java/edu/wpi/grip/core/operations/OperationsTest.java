@@ -2,6 +2,7 @@ package edu.wpi.grip.core.operations;
 
 import edu.wpi.grip.core.OperationMetaData;
 import edu.wpi.grip.core.Step;
+import edu.wpi.grip.core.metrics.MockTimer;
 import edu.wpi.grip.core.util.MockExceptionWitness;
 
 import com.google.common.collect.ImmutableList;
@@ -51,7 +52,8 @@ public class OperationsTest {
   @Test
   public void testCreateAllSteps() {
     final Step step =
-        new Step.Factory((origin) -> new MockExceptionWitness(new EventBus(), origin))
+        new Step.Factory((origin) -> new MockExceptionWitness(new EventBus(), origin),
+            MockTimer.MOCK_FACTORY)
             .create(operationMetaData);
     step.setRemoved();
   }

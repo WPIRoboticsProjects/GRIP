@@ -73,11 +73,11 @@ public class FindLinesOperation implements Operation {
       lsd.detect(input, lines);
     } else {
       // The line detector works on a single channel.  If the input is a color image, we can just
-      // give the line
-      // detector a grayscale version of it
+      // give the line  detector a grayscale version of it
       final Mat tmp = new Mat();
       cvtColor(input, tmp, COLOR_BGR2GRAY);
       lsd.detect(tmp, lines);
+      tmp.release();
     }
 
     // Store the lines in the LinesReport object
@@ -90,6 +90,7 @@ public class FindLinesOperation implements Operation {
         lineList.add(new LinesReport.Line(tmp[0], tmp[1], tmp[2], tmp[3]));
       }
     }
+    lines.release();
 
     linesReportSocket.setValue(new LinesReport(lsd, input, lineList));
   }

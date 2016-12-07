@@ -5,6 +5,7 @@ import edu.wpi.grip.core.OperationMetaData;
 import edu.wpi.grip.core.events.OperationAddedEvent;
 import edu.wpi.grip.core.operations.composite.BlobsReport;
 import edu.wpi.grip.core.operations.composite.BlurOperation;
+import edu.wpi.grip.core.operations.composite.CascadeClassifierOperation;
 import edu.wpi.grip.core.operations.composite.ContoursReport;
 import edu.wpi.grip.core.operations.composite.ConvexHullsOperation;
 import edu.wpi.grip.core.operations.composite.DesaturateOperation;
@@ -21,6 +22,7 @@ import edu.wpi.grip.core.operations.composite.MaskOperation;
 import edu.wpi.grip.core.operations.composite.NormalizeOperation;
 import edu.wpi.grip.core.operations.composite.PublishVideoOperation;
 import edu.wpi.grip.core.operations.composite.RGBThresholdOperation;
+import edu.wpi.grip.core.operations.composite.RectsReport;
 import edu.wpi.grip.core.operations.composite.ResizeOperation;
 import edu.wpi.grip.core.operations.composite.SaveImageOperation;
 import edu.wpi.grip.core.operations.composite.SwitchOperation;
@@ -119,6 +121,8 @@ public class Operations {
             () -> new WatershedOperation(isf, osf)),
         new OperationMetaData(ThresholdMoving.DESCRIPTION,
             () -> new ThresholdMoving(isf, osf)),
+        new OperationMetaData(CascadeClassifierOperation.DESCRIPTION,
+            () -> new CascadeClassifierOperation(isf, osf)),
 
         // OpenCV operations
         new OperationMetaData(MatFieldAccessor.DESCRIPTION,
@@ -149,6 +153,8 @@ public class Operations {
         new OperationMetaData(NTPublishAnnotatedOperation.descriptionFor(Boolean.class),
             () -> new NTPublishAnnotatedOperation<>(isf, Boolean.class, BooleanPublishable.class,
                 BooleanPublishable::new, ntPublisherFactory)),
+        new OperationMetaData(NTPublishAnnotatedOperation.descriptionFor(RectsReport.class),
+            () -> new NTPublishAnnotatedOperation<>(isf, RectsReport.class, ntPublisherFactory)),
 
         // ROS publishing operations
         new OperationMetaData(ROSPublishOperation.descriptionFor(Number.class),
@@ -185,7 +191,9 @@ public class Operations {
                 NumberPublishable::new, httpPublishFactory)),
         new OperationMetaData(HttpPublishOperation.descriptionFor(Boolean.class),
             () -> new HttpPublishOperation<>(isf, Boolean.class, BooleanPublishable.class,
-                BooleanPublishable::new, httpPublishFactory))
+                BooleanPublishable::new, httpPublishFactory)),
+        new OperationMetaData(HttpPublishOperation.descriptionFor(RectsReport.class),
+            () -> new HttpPublishOperation<>(isf, RectsReport.class, httpPublishFactory))
     );
   }
 

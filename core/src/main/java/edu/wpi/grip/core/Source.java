@@ -2,6 +2,7 @@ package edu.wpi.grip.core;
 
 import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.core.sources.CameraSource;
+import edu.wpi.grip.core.sources.ClassifierSource;
 import edu.wpi.grip.core.sources.HttpSource;
 import edu.wpi.grip.core.sources.ImageFileSource;
 import edu.wpi.grip.core.sources.MultiImageFileSource;
@@ -114,6 +115,8 @@ public abstract class Source {
     HttpSource.Factory httpFactory;
     @Inject
     NetworkTableEntrySource.Factory networkTableEntryFactory;
+    @Inject
+    ClassifierSource.Factory fileSourceFactory;
 
     @Override
     public Source create(Class<?> type, Properties properties) throws IOException {
@@ -127,6 +130,8 @@ public abstract class Source {
         return httpFactory.create(properties);
       } else if (type.isAssignableFrom(NetworkTableEntrySource.class)) {
         return networkTableEntryFactory.create(properties);
+      } else if (type.isAssignableFrom(ClassifierSource.class)) {
+        return fileSourceFactory.create(properties);
       } else {
         throw new IllegalArgumentException(type + " was not a valid type");
       }

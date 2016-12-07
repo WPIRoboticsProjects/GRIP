@@ -10,7 +10,9 @@ Ref<$obj>#end
 		$input.baseType() ${tMeth.name($input.name())} = ${input.value()}.get().$input.baseType()Value();
 #end##end Has a set value
 #else##Not Mutable
-#if ($input.value().contains("null"))
+#if ($input.value().toLowerCase().contains("source"))
+		#socketType($input.type()) ${tMeth.name($input.name())} = $input.value();
+#elseif ($input.value().contains("null"))
 		#socketType($input.type()) ${tMeth.name($input.name())} = $input.value();
 #elseif($input.value().contains("Output"))
 		#socketType($input.type()) ${tMeth.name($input.name())} = ${tMeth.name($input.value())};
@@ -44,7 +46,8 @@ Ref<$obj>#end
 #macro (socketType $type)#if ($type.equals("ContoursReport"))
 ArrayList<MatOfPoint>#elseif ($type.equals("BlobsReport"))
 MatOfKeyPoint#elseif ($type.equals("LinesReport"))
-ArrayList<Line>#else
+ArrayList<Line>#elseif ($type.equals("RectsReport"))
+MatOfRect#else
 $type#end#end
 
 #macro (enum $val)#if($val.equals("CV_DIST_L1"))

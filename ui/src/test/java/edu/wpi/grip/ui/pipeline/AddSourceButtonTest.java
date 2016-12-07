@@ -43,7 +43,7 @@ public class AddSourceButtonTest {
 
 
       addSourceView
-          = new AddSourceButton(eventBus, null, null, mockCameraSourceFactory, null, null);
+          = new AddSourceButton(eventBus, null, null, mockCameraSourceFactory, null, null, null);
 
       final Scene scene = new Scene(addSourceView, 800, 600);
       stage.setScene(scene);
@@ -149,7 +149,7 @@ public class AddSourceButtonTest {
       this.mockCameraSourceFactory = new MockCameraSourceFactory(eventBus);
 
       addSourceView
-          = new AddSourceButton(eventBus, null, null, mockCameraSourceFactory, null, null);
+          = new AddSourceButton(eventBus, null, null, mockCameraSourceFactory, null, null, null);
 
       final Scene scene = new Scene(addSourceView, 800, 600);
       stage.setScene(scene);
