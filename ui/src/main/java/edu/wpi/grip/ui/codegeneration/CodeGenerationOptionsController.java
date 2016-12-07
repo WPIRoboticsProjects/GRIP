@@ -1,6 +1,8 @@
 package edu.wpi.grip.ui.codegeneration;
 
 import edu.wpi.grip.core.Pipeline;
+import edu.wpi.grip.core.events.ConnectionAddedEvent;
+import edu.wpi.grip.core.events.ConnectionRemovedEvent;
 import edu.wpi.grip.core.events.ProjectSettingsChangedEvent;
 import edu.wpi.grip.core.settings.ProjectSettings;
 import edu.wpi.grip.core.settings.SettingsProvider;
@@ -71,24 +73,36 @@ public class CodeGenerationOptionsController {
     languageSelector.setItems(FXCollections.observableArrayList(Language.values()));
     extrasPane.setVisible(false);
     root.getProperties().put("controller", this);
-    canImplementPipeline = canImplementVisionPipeline();
-    implementVisionPipeline.setDisable(!canImplementPipeline);
-    if (!canImplementPipeline) {
-      implementVisionPipeline.setSelected(false);
-    }
+    updateImplementButton();
+  }
+
+  private void updateImplementButton() {
+    // Use runLater because pipeline change events are fired before the pipeline actually updates
+    Platform.runLater(() -> {
+      canImplementPipeline = canImplementVisionPipeline();
+      implementVisionPipeline.setDisable(!canImplementPipeline);
+      if (!canImplementPipeline) {
+        implementVisionPipeline.setSelected(false);
+      }
+    });
   }
 
   private boolean canImplementVisionPipeline() {
-    // Only a single source of type Mat is allowed
-    return pipeline.getSources().stream()
+    // - Currently, only Java and C++ support this
+    // - Only a single source of type Mat is allowed
+    // - No non-image inputs may be used (OK if they're not connected)
+    boolean supportedLanguage = language != Language.PYTHON;
+    boolean onlyOneImageInput = pipeline.getSources().stream()
         .flatMap(s -> s.getOutputSockets().stream())
         .filter(s -> Mat.class.equals(s.getSocketHint().getType()))
         .filter(s -> !s.getConnections().isEmpty())
-        .count() == 1
-        && pipeline.getSources().stream()
+        .count() == 1;
+    boolean noConnectedNonImageInputs = pipeline.getSources().stream()
         .flatMap(s -> s.getOutputSockets().stream())
         .filter(s -> !Mat.class.equals(s.getSocketHint().getType()))
-        .allMatch(s -> s.getConnections().isEmpty());
+        .filter(s -> !s.getConnections().isEmpty())
+        .count() == 0;
+    return supportedLanguage && onlyOneImageInput && noConnectedNonImageInputs;
   }
 
   @FXML
@@ -96,22 +110,15 @@ public class CodeGenerationOptionsController {
     this.language = languageSelector.getSelectionModel().getSelectedItem();
     saveLocationField.setDisable(false);
     browseButton.setDisable(false);
+    updateImplementButton();
     switch (language) {
       case JAVA:
-        if (canImplementPipeline) {
-          implementVisionPipeline.setDisable(false);
-        }
         loadJavaControls();
         break;
       case CPP:
-        if (canImplementPipeline) {
-          implementVisionPipeline.setDisable(false);
-        }
         loadCppControls();
         break;
       case PYTHON:
-        implementVisionPipeline.setSelected(false);
-        implementVisionPipeline.setDisable(true);
         loadPythonControls();
         break;
       default:
@@ -191,6 +198,20 @@ public class CodeGenerationOptionsController {
         setLanguage();
       }
     });
+  }
+
+  @Subscribe
+  public void onConnectionAdded(ConnectionAddedEvent e) {
+    if (e.getConnection().getOutputSocket().getSource().isPresent()) {
+      updateImplementButton();
+    }
+  }
+
+  @Subscribe
+  public void onConnectionRemoved(ConnectionRemovedEvent e) {
+    if (e.getConnection().getOutputSocket().getSource().isPresent()) {
+      updateImplementButton();
+    }
   }
 
 }

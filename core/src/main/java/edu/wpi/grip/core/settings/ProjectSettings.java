@@ -161,8 +161,8 @@ public class ProjectSettings implements Settings, Cloneable {
   }
 
   public void setPreferredGeneratedLanguage(String lang) {
-    checkArgument(lang.toLowerCase().matches("java|(c\\+\\+|cpp)|(python|py)"),
-        "Unsupported language: " + lang );
+    checkArgument(lang.matches("Java|C\\+\\+|Python"),
+        "Unsupported language: " + lang);
     this.preferredGeneratedLanguage = lang;
   }
 
@@ -201,6 +201,8 @@ public class ProjectSettings implements Settings, Cloneable {
   }
 
   public void setCodegenDestDir(File codegenDestDir) {
+    checkArgument(codegenDestDir.exists() && codegenDestDir.isDirectory(),
+        "Directory does not exist");
     this.codegenDestDir = codegenDestDir;
   }
 
