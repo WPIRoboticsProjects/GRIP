@@ -66,7 +66,6 @@ public class CodeGenerationOptionsController {
   private TextField moduleNameField;
 
   private Language language;
-  private boolean canImplementPipeline = true;
 
   @FXML
   private void initialize() {
@@ -79,7 +78,7 @@ public class CodeGenerationOptionsController {
   private void updateImplementButton() {
     // Use runLater because pipeline change events are fired before the pipeline actually updates
     Platform.runLater(() -> {
-      canImplementPipeline = canImplementVisionPipeline();
+      boolean canImplementPipeline = canImplementVisionPipeline();
       implementVisionPipeline.setDisable(!canImplementPipeline);
       if (!canImplementPipeline) {
         implementVisionPipeline.setSelected(false);

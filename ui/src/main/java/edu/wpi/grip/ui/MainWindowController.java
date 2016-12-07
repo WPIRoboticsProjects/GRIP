@@ -12,6 +12,7 @@ import edu.wpi.grip.core.serialization.Project;
 import edu.wpi.grip.core.settings.AppSettings;
 import edu.wpi.grip.core.settings.ProjectSettings;
 import edu.wpi.grip.core.settings.SettingsProvider;
+import edu.wpi.grip.core.sockets.SocketHint;
 import edu.wpi.grip.core.util.SafeShutdown;
 import edu.wpi.grip.core.util.service.SingleActionListener;
 import edu.wpi.grip.ui.codegeneration.CodeGenerationOptions;
@@ -298,6 +299,13 @@ public class MainWindowController {
       return;
     } else if (pipeline.getConnections().isEmpty()) {
       // Sources and steps, but no connections
+      // TODO show warning alert (#693)
+      return;
+    } else if (pipeline.getSteps().stream()
+        .flatMap(s -> s.getInputSockets().stream())
+        .filter(s -> SocketHint.View.NONE.equals(s.getSocketHint().getView()))
+        .anyMatch(s -> !s.getValue().isPresent())) {
+      // Some sockets aren't connected
       // TODO show warning alert (#693)
       return;
     }
