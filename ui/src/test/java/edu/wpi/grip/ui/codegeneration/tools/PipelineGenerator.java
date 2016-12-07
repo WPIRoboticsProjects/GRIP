@@ -9,6 +9,7 @@ import edu.wpi.grip.core.metrics.MockTimer;
 import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.core.util.MockExceptionWitness;
+import edu.wpi.grip.ui.codegeneration.CodeGenerationOptions;
 import edu.wpi.grip.ui.codegeneration.Exporter;
 import edu.wpi.grip.ui.codegeneration.Language;
 
@@ -60,15 +61,31 @@ public class PipelineGenerator {
   }
 
   public void export(String fileName) {
-    
-    new Exporter(pipeline.getSteps(), Language.JAVA, 
-        codeDir.toPath().resolve(fileName + ".java").toFile(),
+    new Exporter(pipeline.getSteps(),
+        CodeGenerationOptions.builder()
+            .language(Language.JAVA)
+            .className(fileName)
+            .saveDir(codeDir.getAbsolutePath())
+            .implementVisionPipeline(false)
+            .packageName("")
+            .build(),
         true).run();
-    new Exporter(pipeline.getSteps(), Language.PYTHON, 
-        codeDir.toPath().resolve(fileName + ".py").toFile(),
+    new Exporter(pipeline.getSteps(),
+        CodeGenerationOptions.builder()
+            .language(Language.PYTHON)
+            .className(fileName)
+            .saveDir(codeDir.getAbsolutePath())
+            .implementVisionPipeline(false)
+            .moduleName(fileName)
+            .build(),
         true).run();
-    new Exporter(pipeline.getSteps(), Language.CPP, 
-        codeDir.toPath().resolve(fileName + ".cpp").toFile(),
+    new Exporter(pipeline.getSteps(),
+        CodeGenerationOptions.builder()
+            .language(Language.CPP)
+            .className(fileName)
+            .saveDir(codeDir.getAbsolutePath())
+            .implementVisionPipeline(false)
+            .build(),
         true).run();
   }
 

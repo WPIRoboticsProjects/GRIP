@@ -3,6 +3,8 @@ package edu.wpi.grip.core.settings;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Throwables;
 
+import java.io.File;
+
 import javax.annotation.Nonnegative;
 import javax.annotation.Nullable;
 
@@ -42,6 +44,30 @@ public class ProjectSettings implements Settings, Cloneable {
       + "roboRIO JVM")
   private String deployJvmOptions = "-Xmx50m -XX:-OmitStackTraceInFastThrow "
       + "-XX:+HeapDumpOnOutOfMemoryError -XX:MaxNewSize=16m";
+
+  @Setting(label = "Preferred generated language",
+           description = "The preferred language to generate code for")
+  private String preferredGeneratedLanguage = "";
+
+  @Setting(label = "Generated pipeline name",
+           description = "The name of the generated pipeline class")
+  private String generatedPipelineName = "Pipeline";
+
+  @Setting(label = "Generated Python module name",
+           description = "The name of the generated Python module")
+  private String generatedPythonModuleName = "grip";
+
+  @Setting(label = "Generated Java package name",
+           description = "The name of the package the generated Java file is in")
+  private String generatedJavaPackage = "";
+
+  @Setting(label = "Code generation destination directory",
+           description = "The directory where generated code should be saved")
+  private File codegenDestDir = new File(System.getProperty("user.home") + "/GRIP");
+
+
+  // Getters and setters
+
 
   public int getTeamNumber() {
     return teamNumber;
@@ -134,6 +160,54 @@ public class ProjectSettings implements Settings, Cloneable {
     return "roboRIO-" + teamNumber + "-FRC.local";
   }
 
+  public void setPreferredGeneratedLanguage(String lang) {
+    checkArgument(lang.toLowerCase().matches("java|(c\\+\\+|cpp)|(python|py)"),
+        "Unsupported language: " + lang );
+    this.preferredGeneratedLanguage = lang;
+  }
+
+  public String getPreferredGeneratedLanguage() {
+    return preferredGeneratedLanguage;
+  }
+
+  public void setGeneratedPipelineName(String generatedPipelineName) {
+    checkArgument(generatedPipelineName.matches("^[a-zA-Z]+?[\\w]+$"),
+        "Illegal pipeline name: " + generatedPipelineName);
+    this.generatedPipelineName = generatedPipelineName;
+  }
+
+  public String getGeneratedPipelineName() {
+    return generatedPipelineName;
+  }
+
+  public void setGeneratedPythonModuleName(String generatedPythonModuleName) {
+    checkArgument(generatedPythonModuleName.matches("^[a-z]+[a-z_]+[a-z]+$"),
+        "Illegal module name: " + generatedPythonModuleName);
+    this.generatedPythonModuleName = generatedPythonModuleName;
+  }
+
+  public String getGeneratedPythonModuleName() {
+    return generatedPythonModuleName;
+  }
+
+  public void setGeneratedJavaPackage(String generatedJavaPackage) {
+    checkArgument(generatedJavaPackage.matches("^([a-zA-Z][\\w]*)+(\\.[a-zA-Z][\\w]*)*$"),
+        "Illegal package name: " + generatedJavaPackage);
+    this.generatedJavaPackage = generatedJavaPackage;
+  }
+
+  public String getGeneratedJavaPackage() {
+    return generatedJavaPackage;
+  }
+
+  public void setCodegenDestDir(File codegenDestDir) {
+    this.codegenDestDir = codegenDestDir;
+  }
+
+  public File getCodegenDestDir() {
+    return codegenDestDir;
+  }
+
   @Override
   public String toString() {
     return MoreObjects.toStringHelper(this)
@@ -144,6 +218,9 @@ public class ProjectSettings implements Settings, Cloneable {
         .add("deployJvmOptions", deployJvmOptions)
         .add("publishAddress", publishAddress)
         .add("teamNumber", teamNumber)
+        .add("generatedPipelineName", generatedPipelineName)
+        .add("generatedJavaPackage", generatedJavaPackage)
+        .add("generatedPythonModuleName", generatedPythonModuleName)
         .toString();
   }
 

@@ -32,46 +32,57 @@ public class Exporter implements Runnable {
   private static final String PIPELINE_TEMPLATE = "Pipeline.vm";
   private static final String PIPELINE_HTEMPLATE = "Pipeline.h.vm";
   private final ImmutableList<Step> steps;
+  private final CodeGenerationOptions settings;
   private final Language lang;
-  private final File dir;
   private final boolean testing;
 
   /**
    * Constructor for an exporter with testing option.
-   * In general for non grip testing, the version of the constructor 
-   * without testing boolean should be called. 
-   * 
-   * @param steps an Immutable List of the steps in the pipeline to generate.
-   * @param lang the language to generate code for.
-   * @param dir the file to generate the main code to.
-   * @param testing if true enables features that allow for junit run tests for generated code.
+   * In general for non grip testing, the version of the constructor
+   * without testing boolean should be called.
+   *
+   * @param steps    an Immutable List of the steps in the pipeline to generate.
+   * @param settings the settings to use for this export
+   * @param testing  if true enables features that allow for junit run tests for generated code.
    */
-  public Exporter(ImmutableList<Step> steps, Language lang, File dir, boolean testing) {
+  public Exporter(ImmutableList<Step> steps, CodeGenerationOptions settings, boolean testing) {
     this.steps = steps;
-    this.lang = lang;
-    this.dir = dir;
+    this.settings = settings;
     this.testing = testing;
+    this.lang = settings.getLanguage();
   }
-  
+
   /**
    * Constructor for an exporter for use when not testing.
-   * 
-   * @param steps an Immutable List of the steps in the pipeline to generate.
-   * @param lang the language to generate code for.
-   * @param dir the file to generate the main code to.
+   *
+   * @param steps    an Immutable List of the steps in the pipeline to generate.
+   * @param settings the settings to use for this export
    */
-  public Exporter(ImmutableList<Step> steps, Language lang, File dir) {
-    this(steps, lang, dir, false);
+  public Exporter(ImmutableList<Step> steps, CodeGenerationOptions settings) {
+    this(steps, settings, false);
   }
-  
+
   @Override
   public void run() {
     TPipeline tPipeline = new TPipeline(steps);
+    File dir = new File(settings.getSaveDir());
+    File saveFile;
+    switch (lang) {
+      case PYTHON:
+        saveFile = new File(dir, settings.getModuleName() + "." + lang.extension);
+        break;
+      case JAVA:
+      case CPP:
+      default:
+        // default to having the class name be the file name
+        saveFile = new File(dir, settings.getClassName() + "." + lang.extension);
+        break;
+    }
     TemplateMethods tempMeth = TemplateMethods.get(lang);
     VelocityContext context = new VelocityContext();
+    settings.forEach(context::put);
     context.put("pipeline", tPipeline);
     context.put("tMeth", tempMeth);
-    context.put("fileName", dir.getName().substring(0, dir.getName().lastIndexOf(".")));
     context.put("testing", testing);
     String templateDir = "/edu/wpi/grip/ui/codegeneration/" + lang.filePath;
     context.put("vmLoc", templateDir);
@@ -82,9 +93,9 @@ public class Exporter implements Runnable {
     props.put("classpath.resource.loader.class", ClasspathResourceLoader.class.getName());
     ve.init(props);
     try {
-      generateCode(ve, templateDir, dir, context);
+      generateCode(ve, templateDir, saveFile, context);
       if (lang.equals(Language.CPP)) {
-        generateH(ve, templateDir, dir, context);
+        generateH(ve, templateDir, saveFile, context);
       }
     } catch (ResourceNotFoundException e) {
       String error = e.getMessage();
@@ -113,6 +124,7 @@ public class Exporter implements Runnable {
    * Checks if a step is exportable to this exporter's language.
    *
    * @param step the step to check
+   *
    * @return true if the given step can be exported to the current language; false if it can't
    */
   private boolean isExportable(Step step) {
@@ -128,14 +140,16 @@ public class Exporter implements Runnable {
   /**
    * Creates a file and generates code in it using templates.
    *
-   * @param ve The velocity engine used with the desired properties.
+   * @param ve          The velocity engine used with the desired properties.
    * @param templateDir The directory of the velocity templates that will be used.
-   * @param file The location to put the file.
-   * @param context The velocity context including the java files that will be used by the
-   *        templates.
+   * @param file        The location to put the file.
+   * @param context     The velocity context including the java files that will be used by the
+   *                    templates.
    */
-  private void generateCode(VelocityEngine ve, String templateDir, File file,
-      VelocityContext context) {
+  private void generateCode(VelocityEngine ve,
+                            String templateDir,
+                            File file,
+                            VelocityContext context) {
     Template tm = ve.getTemplate(templateDir + "/" + PIPELINE_TEMPLATE);
     StringWriter sw = new StringWriter();
     tm.merge(context, sw);
@@ -149,14 +163,16 @@ public class Exporter implements Runnable {
   /**
    * Code to generate the .h file if the export type is c++
    *
-   * @param ve The velocity engine used with the desired properties.
+   * @param ve          The velocity engine used with the desired properties.
    * @param templateDir The directory of the velocity templates that will be used.
-   * @param file The location to put the file.
-   * @param context The velocity context including the java files that will be used by the
-   *        templates.
+   * @param file        The location to put the file.
+   * @param context     The velocity context including the java files that will be used by the
+   *                    templates.
    */
-  private void generateH(VelocityEngine ve, String templateDir, File file,
-      VelocityContext context) {
+  private void generateH(VelocityEngine ve,
+                         String templateDir,
+                         File file,
+                         VelocityContext context) {
     Template tm = ve.getTemplate(templateDir + "/" + PIPELINE_HTEMPLATE);
     StringWriter sw = new StringWriter();
     tm.merge(context, sw);

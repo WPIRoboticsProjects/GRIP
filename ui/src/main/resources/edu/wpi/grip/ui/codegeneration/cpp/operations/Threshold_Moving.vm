@@ -5,7 +5,7 @@
 	 * @param lastImage The mat where the previous image is stored.
 	 * @param output The image in which to store the output.
 	 */
-	void $fileName::#func($step ["input", "output"]) {
+	void $className::#func($step ["input", "output"]) {
 		Size lastSize = lastImage.size();
 		Size inputSize = input.size();
 		if (!lastImage.empty() && lastSize.height == inputSize.height &&

@@ -8,6 +8,6 @@
 	 * @param c Constant to subtract from the mean.
 	 * @param dst Output of threshold.
 	 */
-	void $fileName::#func($step, ["src", "maxValue", "adaptiveMethod", "thresholdType", "blockSize", "c", "dst"]) {
+	void $className::#func($step, ["src", "maxValue", "adaptiveMethod", "thresholdType", "blockSize", "c", "dst"]) {
 		adaptiveThreshold(src, dst, maxValue, adaptiveMethod, thresholdType, (int)blockSize, c);
 	}

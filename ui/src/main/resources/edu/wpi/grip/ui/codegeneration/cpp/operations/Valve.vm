@@ -6,7 +6,7 @@
 	 * @param output The output which is equal to the input or null.
 	 */
 	template<typename T>
-	void $fileName::#func($step ["sw", "input", "output"]) {
+	void $className::#func($step ["sw", "input", "output"]) {
 		if (sw) {
 			output = input;
 		}

@@ -6,7 +6,7 @@
 	 * @param angle The minimum and maximum angle of a line to be kept.
 	 * @param outputs The output lines after the filter.
 	 */
-	void $fileName::#func($step ["inputs", "minLength", "angle", "outputs"]) {
+	void $className::#func($step ["inputs", "minLength", "angle", "outputs"]) {
 	outputs.clear();
 	for (Line line: inputs) {
 		if (line.length()>abs(minLength)) {

@@ -1,8 +1,8 @@
-\#include "${fileName}.h"
+\#include "${className}.h"
 /**
-* Initializes a ${fileName}.
+* Initializes a ${className}.
 */
-$fileName::$fileName() {
+$className::$className() {
 #foreach($source in $pipeline.getSources())
 ##	this->$source.value() = new #cType($source.type())();
 #end
@@ -26,15 +26,15 @@ $fileName::$fileName() {
 #foreach($source in $pipeline.getSources())
 #set($num = $velocityCount - 1)
 #if($source.type().equalsIgnoreCase("Mat"))
-	matSources.insert(make_pair($num, (AbsPipeline::MatSource)&$fileName::set$source.value()));
+	matSources.insert(make_pair($num, (AbsPipeline::MatSource)&$className::set$source.value()));
 #elseif($source.type().equalsIgnoreCase("Number") || $source.type().equalsIgnoreCase("double"))
-	numSources.insert(make_pair($num, (AbsPipeline::NumSource)&$fileName::set$source.value()));
+	numSources.insert(make_pair($num, (AbsPipeline::NumSource)&$className::set$source.value()));
 #end
 #end
 #set($outCnt = 0)
 #foreach($step in $pipeline.getSteps())
 #foreach($out in $step.getOutputs())
-	outputs.insert(make_pair(string("$out.name().toLowerCase().replaceAll("_", "")"), (AbsPipeline::Output)&$fileName::get${out.name()}));
+	outputs.insert(make_pair(string("$out.name().toLowerCase().replaceAll("_", "")"), (AbsPipeline::Output)&$className::get${out.name()}));
 #set($outCnt = $outCnt + 1)
 #end
 #end
@@ -43,7 +43,7 @@ $fileName::$fileName() {
 #set($boolInp = $step.getInput(0))
 #set($boolName = "$boolInp.name()")
 #if($boolInp.hasValue())
-	conditions.insert(make_pair("$step.name().toLowerCase()$step.num()", (AbsPipeline::Condition)&$fileName::set$step.name()${step.num()}));
+	conditions.insert(make_pair("$step.name().toLowerCase()$step.num()", (AbsPipeline::Condition)&$className::set$step.name()${step.num()}));
 #end
 #end
 #end
@@ -55,7 +55,7 @@ $fileName::$fileName() {
 * Sources need to be set before calling this method. 
 *
 */
-void $fileName::Process(){
+void $className::process(#foreach($source in $pipeline.getSources())#cType($source.type()) $source.value()#if($pipeline.getSources().indexof($source) lt $pipeline.getSources().size() - 1), #end#end){
 #foreach($step in $pipeline.getSteps())
 	//Step $step.name()$step.num():
 #parse("$vmLoc/Step.vm")
@@ -68,7 +68,7 @@ void $fileName::Process(){
  * This method is a generated setter for $source.value().
  * @param source the $source.type() to set
  */
-void $fileName::set${source.value()}(#cType(${source.type()}) #funPassType($source.type())${source.value()}){
+void $className::set${source.value()}(#cType(${source.type()}) #funPassType($source.type())${source.value()}){
 #if($source.type().equals("Mat"))
 	${source.value()}.copyTo(this->${source.value()});
 #else
@@ -85,7 +85,7 @@ void $fileName::set${source.value()}(#cType(${source.type()}) #funPassType($sour
  * This method is a generated setter for the condition of $step.name() ${step.num()}
  * @param the condition to set
  */
-void $fileName::set$step.name()${step.num()}(bool value){
+void $className::set$step.name()${step.num()}(bool value){
 	$tMeth.name($boolName) = value;
 }
 #end
@@ -103,7 +103,7 @@ void $fileName::set$step.name()${step.num()}(bool value){
  * This method is a generated getter for the output of a $step.name().
  * @return ${output.baseType()} output from $step.name().
  */
-#cType($output.type())#if($ptr)*#end $fileName::${tMeth.getterName($output.name())}(){
+#cType($output.type())#if($ptr)*#end $className::${tMeth.getterName($output.name())}(){
 	return #if($ptr)&#end(this->${tMeth.name($output.name())});
 }
 #end
@@ -116,6 +116,6 @@ void $fileName::set$step.name()${step.num()}(bool value){
 #end
 #if($testing)
 extern "C" AbsPipeline * makePipeline(){
-    return new ${fileName}();
+    return new ${className}();
 }
 #end

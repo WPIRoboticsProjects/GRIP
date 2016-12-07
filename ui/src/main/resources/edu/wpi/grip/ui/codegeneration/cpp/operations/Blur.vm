@@ -6,7 +6,7 @@
 	 * @param doubleRadius The radius for the blur.
 	 * @param output The image in which to store the output.
 	 */
-	void $fileName::#func($step, ["input", "type", "doubleRadius", "output"]) {
+	void $className::#func($step, ["input", "type", "doubleRadius", "output"]) {
 		int radius = (int)(doubleRadius + 0.5);
 		int kernelSize;
 		switch(type) {

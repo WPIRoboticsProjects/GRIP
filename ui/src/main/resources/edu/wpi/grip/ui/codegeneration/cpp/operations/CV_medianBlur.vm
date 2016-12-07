@@ -4,6 +4,6 @@
 	 * @param kSize size of blur.
 	 * @param dst output of blur.
 	 */
-	void $fileName::#func($step ["src", "kSize", "dst"]) {
+	void $className::#func($step ["src", "kSize", "dst"]) {
 		medianBlur(src, dst, (int)kSize);
 	}

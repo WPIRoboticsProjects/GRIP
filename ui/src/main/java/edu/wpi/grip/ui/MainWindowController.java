@@ -14,8 +14,9 @@ import edu.wpi.grip.core.settings.ProjectSettings;
 import edu.wpi.grip.core.settings.SettingsProvider;
 import edu.wpi.grip.core.util.SafeShutdown;
 import edu.wpi.grip.core.util.service.SingleActionListener;
+import edu.wpi.grip.ui.codegeneration.CodeGenerationOptions;
+import edu.wpi.grip.ui.codegeneration.CodeGenerationOptionsController;
 import edu.wpi.grip.ui.codegeneration.Exporter;
-import edu.wpi.grip.ui.codegeneration.Language;
 import edu.wpi.grip.ui.components.StartStoppableButton;
 import edu.wpi.grip.ui.util.DPIUtility;
 
@@ -31,12 +32,13 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javafx.application.Platform;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.ChoiceDialog;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
@@ -74,6 +76,8 @@ public class MainWindowController {
   private Pane aboutPane;
   @FXML
   private Pane analysisPane;
+  @FXML
+  private Pane codegenOptionsPane;
   @FXML
   private MenuItem analyzeMenuItem;
   @FXML
@@ -158,8 +162,10 @@ public class MainWindowController {
   @FXML
   public void newProject() {
     if (showConfirmationDialogAndWait()) {
+      pipelineRunner.stopAndAwait();
       pipeline.clear();
       project.setFile(Optional.empty());
+      pipelineRunner.startAsync();
     }
   }
 
@@ -275,33 +281,53 @@ public class MainWindowController {
   /**
    * Controls the export button in the main menu. Opens a filechooser with language selection.
    * The user can select the language to export to, save location and file name.
-   * @param actionEvent Unused event passed by the controller.
    */
-  public void generate(ActionEvent actionEvent) {
-    final FileChooser fileChooser = new FileChooser();
-    fileChooser.setTitle("Export to");
-    fileChooser.getExtensionFilters().add(new ExtensionFilter(Language.JAVA.name, "*.java"));
-    fileChooser.getExtensionFilters().add(new ExtensionFilter(Language.CPP.name, "*.cpp"));
-    fileChooser.getExtensionFilters().add(new ExtensionFilter(Language.PYTHON.name, "*.py"));
-    fileChooser.setInitialFileName("Pipeline.java");
-    final File file = fileChooser.showSaveDialog(root.getScene().getWindow());
-    if (file == null) {
+  @FXML
+  protected void generate() {
+    if (pipeline.getSources().isEmpty()) {
+      // No sources
+      return;
+    } else if (pipeline.getSteps().isEmpty()) {
+      // Sources, but no steps
+      return;
+    } else if (pipeline.getConnections().isEmpty()) {
+      // Sources and steps, but no connections
       return;
     }
-    Language lang = Language.get(fileChooser.getSelectedExtensionFilter().getDescription());
-    Exporter exporter = new Exporter(pipeline.getSteps(), lang, file);
-    final Set<String> nonExportableSteps = exporter.getNonExportableSteps();
-    if (!nonExportableSteps.isEmpty()) {
-      StringBuilder b = new StringBuilder("The following steps cannot be exported:\n");
-      nonExportableSteps.forEach(n -> b.append("  ").append(n).append('\n'));
-      Alert alert = new Alert(Alert.AlertType.WARNING);
-      alert.setContentText(b.toString());
-      alert.showAndWait();
-      return;
+    Dialog<CodeGenerationOptions> optionsDialog = new ChoiceDialog<>();
+    optionsDialog.setTitle("Code Generation Options");
+    optionsDialog.setHeaderText(null);
+    optionsDialog.setGraphic(null);
+    optionsDialog.getDialogPane().setContent(codegenOptionsPane);
+    CodeGenerationOptionsController c =
+        (CodeGenerationOptionsController) codegenOptionsPane.getProperties().get("controller");
+    optionsDialog.setResultConverter(bt -> bt.getButtonData() == null ? null
+        : bt.getButtonData() == ButtonBar.ButtonData.OK_DONE
+        ? c.getOptions() : null);
+    Optional<CodeGenerationOptions> o = optionsDialog.showAndWait();
+    if (o.isPresent()) {
+      CodeGenerationOptions options = o.get();
+      ProjectSettings s = settingsProvider.getProjectSettings();
+      s.setCodegenDestDir(new File(options.getSaveDir()));
+      s.setGeneratedJavaPackage(options.getPackageName());
+      s.setGeneratedPipelineName(options.getClassName());
+      s.setGeneratedPythonModuleName(options.getModuleName());
+      s.setPreferredGeneratedLanguage(options.getLanguage().name);
+      eventBus.post(new ProjectSettingsChangedEvent(s));
+      Exporter exporter = new Exporter(pipeline.getSteps(), options);
+      final Set<String> nonExportableSteps = exporter.getNonExportableSteps();
+      if (!nonExportableSteps.isEmpty()) {
+        StringBuilder b = new StringBuilder("The following steps cannot be exported:\n");
+        nonExportableSteps.forEach(n -> b.append("  ").append(n).append('\n'));
+        Alert alert = new Alert(Alert.AlertType.WARNING);
+        alert.setContentText(b.toString());
+        alert.showAndWait();
+        return;
+      }
+      Thread exportRunner = new Thread(exporter);
+      exportRunner.setDaemon(true);
+      exportRunner.start();
     }
-    Thread exportRunner = new Thread(exporter);
-    exportRunner.setDaemon(true);
-    exportRunner.start();
   }
 
   @FXML
@@ -325,7 +351,7 @@ public class MainWindowController {
   }
 
   @Subscribe
-  @SuppressWarnings( {"PMD.UnusedPrivateMethod", "PMD.UnusedFormalParameter"})
+  @SuppressWarnings({"PMD.UnusedPrivateMethod", "PMD.UnusedFormalParameter"})
   private void runStopped(TimerEvent event) {
     if (event.getTarget() instanceof PipelineRunner) {
       Platform.runLater(() -> updateElapsedTimeLabel(event.getElapsedTime()));

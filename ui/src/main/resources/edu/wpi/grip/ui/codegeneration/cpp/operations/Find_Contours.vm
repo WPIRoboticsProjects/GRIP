@@ -5,7 +5,7 @@
 	 * @param externalOnly if only external contours are to be found.
 	 * @param contours vector of contours to put contours in.
 	 */
-	void $fileName::#func($step ["input", "externalOnly", "contours"]) {
+	void $className::#func($step ["input", "externalOnly", "contours"]) {
 		vector<Vec4i> hierarchy;
 		contours.clear();
 		int mode = externalOnly ? RETR_EXTERNAL : RETR_LIST;

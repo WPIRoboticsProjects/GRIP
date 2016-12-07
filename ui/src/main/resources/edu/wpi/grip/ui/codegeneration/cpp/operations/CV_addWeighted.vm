@@ -7,6 +7,6 @@
 	 * @param gamma Constant to add to each sum.
 	 * @param dst the output Mat.
 	 */
-	void $fileName::#func($step ["src1", "alpha", "src2", "beta", "gamma", "dst"]) {
+	void $className::#func($step ["src1", "alpha", "src2", "beta", "gamma", "dst"]) {
 		addWeighted(src1, alpha, src2, beta, gamma, dst);
 	}

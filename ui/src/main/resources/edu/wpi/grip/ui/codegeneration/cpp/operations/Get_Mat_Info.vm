@@ -8,7 +8,7 @@
 	 * @param rows number of columns in the Mat.
 	 * @param highestValue highest value contained in the Mat.
 	 */
-	void $fileName::#func($step ["src", "size", "empty", "channels", "cols", "rows", "highestValue"]) {
+	void $className::#func($step ["src", "size", "empty", "channels", "cols", "rows", "highestValue"]) {
 		empty = src.empty();
 		channels = src.channels();
 		cols = src.cols;

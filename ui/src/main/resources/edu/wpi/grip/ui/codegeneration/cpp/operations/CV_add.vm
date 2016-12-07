@@ -4,6 +4,6 @@
 	 * @param src2 the second Mat.
 	 * @param out the Mat that is the sum of the two Mats.
 	 */
-	void $fileName::#func($step ["src1", "src2", "out"]) {
+	void $className::#func($step ["src1", "src2", "out"]) {
 		add(src1, src2, out);
 	}

@@ -4,6 +4,6 @@
 	 * @param src2 second image to use.
 	 * @param dst the per element max of two images.
 	 */
-	void $fileName::#func($step ["src1", "src2", "dst"]) {
+	void $className::#func($step ["src1", "src2", "dst"]) {
 		max(src1, src2, dst);
 	}

@@ -5,9 +5,9 @@ import numpy
 import math
 from enum import Enum
 
-class $fileName:
+class $className:
     """This is a generated class from GRIP.
-    To use the pipeline first create a $fileName instance and set the sources,
+    To use the pipeline first create a $className instance and set the sources,
     next call the process method,
     finally get and use the outputs.
     """
@@ -18,21 +18,19 @@ class $fileName:
 #foreach($moving in $pipeline.getMovingThresholds())
         self.__lastImage$moving.num() = numpy.ndarray([])
 #end
-#foreach($src in $pipeline.getSources())
-        self.__$src.value() = None
-#end
 #foreach($step in $pipeline.getSteps())
 #foreach($input in $step.getInputs())
         #newInput($input)
 
 #end
+
 #foreach($output in $step.getOutputs())
         #output($output) = None
-#end
 
 #end
-    
-    def process(self):
+#end
+
+    def process(self#foreach($source in $pipeline.getSources()), $source.value()#end):
         """Runs the pipeline.
         Sets outputs to new values.
         Requires all sources to be set.
@@ -54,10 +52,6 @@ class $fileName:
 #end
 
 #end
-#end
-#foreach($source in $pipeline.getSources())
-#setter($source)
-
 #end
 
 #foreach($step in $pipeline.getUniqueSteps())

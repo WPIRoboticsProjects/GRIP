@@ -4,7 +4,7 @@
 	 * @param y the y value to put in the point.
 	 * @param point the point to fill.
 	 */
-	void $fileName::#func($step ["x", "y", "point"]) {
+	void $className::#func($step ["x", "y", "point"]) {
 		point.x = x;
 		point.y = y;
 	}
