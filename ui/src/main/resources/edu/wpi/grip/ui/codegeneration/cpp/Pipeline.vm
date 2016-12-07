@@ -2,6 +2,9 @@
 /**
 * Initializes a ${fileName}.
 */
+
+namespace grip {
+
 $fileName::$fileName() {
 #foreach($source in $pipeline.getSources())
 ##	this->$source.value() = new #cType($source.type())();
@@ -114,8 +117,11 @@ void $fileName::set$step.name()${step.num()}(bool value){
 #parse($toParse)
 
 #end
+
 #if($testing)
 extern "C" AbsPipeline * makePipeline(){
     return new ${fileName}();
 }
 #end
+
+} // end grip namespace

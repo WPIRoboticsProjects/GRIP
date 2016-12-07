@@ -5,5 +5,5 @@
 	 * @param out the Mat that is the sum of the two Mats.
 	 */
 	void $fileName::#func($step ["src1", "src2", "out"]) {
-		add(src1, src2, out);
+		cv::add(src1, src2, out);
 	}

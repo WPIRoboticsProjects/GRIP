@@ -6,5 +6,5 @@
 	 * @param dst output image
 	 */
 	void $fileName::#func($step ["src1", "scale", "src2", "dst"]) {
-		scaleAdd(src1, scale, src2, dst);
+		cv::scaleAdd(src1, scale, src2, dst);
 	}

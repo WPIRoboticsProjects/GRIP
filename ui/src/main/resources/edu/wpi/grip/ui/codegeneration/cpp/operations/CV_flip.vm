@@ -5,5 +5,5 @@
 	 * @param dst flipped version of the Image.
 	 */
 	void $fileName::#func($step ["src", "flipcode", "dst"]) {
-		flip(src, dst, flipcode);
+		cv::flip(src, dst, flipcode);
 	}

@@ -8,5 +8,5 @@
 	 * @param dst Ouput of Laplacian. 
 	 */
 	void $fileName::#func($step ["src", "size", "scale", "delta", "borderType", "dst"]) {
-		Laplacian(src, dst, 0, (int)size, scale, delta, borderType);
+		cv::Laplacian(src, dst, 0, (int)size, scale, delta, borderType);
 	}

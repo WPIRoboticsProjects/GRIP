@@ -11,7 +11,7 @@
 		//bool *darkBlobs, vector<KeyPoint> *blobList) {
 	void $fileName::#func($step ["input", "minArea", "circularity", "darkBlobs", "blobList"]) {
 		blobList.clear();
-		SimpleBlobDetector::Params params;
+		cv::SimpleBlobDetector::Params params;
 		params.filterByColor = 1;
 		params.blobColor = (darkBlobs ? 0 : 255);
 		params.minThreshold = 10;
@@ -23,6 +23,6 @@
 		params.maxCircularity = circularity[1];
 		params.filterByConvexity = false;
 		params.filterByInertia = false;
-		Ptr<SimpleBlobDetector> detector = SimpleBlobDetector::create(params);
+		cv::Ptr<cv::SimpleBlobDetector> detector = SimpleBlobDetector::create(params);
 		detector->detect(input, blobList);
 	}

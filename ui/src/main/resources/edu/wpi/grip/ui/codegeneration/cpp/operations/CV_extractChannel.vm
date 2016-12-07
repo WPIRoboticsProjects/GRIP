@@ -5,5 +5,5 @@
 	 * @param dst output image.
 	 */
 	void $fileName::#func($step ["src", "channel", "dst"]) {
-		extractChannel(src, dst, (int)channel);
+		cv::extractChannel(src, dst, (int)channel);
 	}
