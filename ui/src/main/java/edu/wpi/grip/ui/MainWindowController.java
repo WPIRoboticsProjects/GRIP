@@ -162,10 +162,14 @@ public class MainWindowController {
   @FXML
   public void newProject() {
     if (showConfirmationDialogAndWait()) {
-      pipelineRunner.stopAndAwait();
-      pipeline.clear();
-      project.setFile(Optional.empty());
-      pipelineRunner.startAsync();
+      Thread clearThread = new Thread(() -> {
+        pipelineRunner.stopAndAwait();
+        pipeline.clear();
+        project.setFile(Optional.empty());
+        pipelineRunner.startAsync();
+      }, "Pipeline Clear Thread");
+      clearThread.setDaemon(true);
+      clearThread.start();
     }
   }
 
@@ -286,12 +290,15 @@ public class MainWindowController {
   protected void generate() {
     if (pipeline.getSources().isEmpty()) {
       // No sources
+      // TODO show warning alert (#693)
       return;
     } else if (pipeline.getSteps().isEmpty()) {
       // Sources, but no steps
+      // TODO show warning alert (#693)
       return;
     } else if (pipeline.getConnections().isEmpty()) {
       // Sources and steps, but no connections
+      // TODO show warning alert (#693)
       return;
     }
     Dialog<CodeGenerationOptions> optionsDialog = new ChoiceDialog<>();
@@ -317,6 +324,7 @@ public class MainWindowController {
       Exporter exporter = new Exporter(pipeline.getSteps(), options);
       final Set<String> nonExportableSteps = exporter.getNonExportableSteps();
       if (!nonExportableSteps.isEmpty()) {
+        // TODO show warning alert (#693)
         StringBuilder b = new StringBuilder("The following steps cannot be exported:\n");
         nonExportableSteps.forEach(n -> b.append("  ").append(n).append('\n'));
         Alert alert = new Alert(Alert.AlertType.WARNING);
