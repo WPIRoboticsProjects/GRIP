@@ -4,5 +4,5 @@
 	 * @param dst the inversion of the input image.
 	 */
 	void $className::#func($step ["src", "dst"]) {
-		bitwise_not(src, dst);
+		cv::bitwise_not(src, dst);
 	}

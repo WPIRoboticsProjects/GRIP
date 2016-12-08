@@ -5,5 +5,5 @@
 	 * @param dst the per element max of two images.
 	 */
 	void $className::#func($step ["src1", "src2", "dst"]) {
-		max(src1, src2, dst);
+		cv::max(src1, src2, dst);
 	}

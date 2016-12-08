@@ -5,10 +5,10 @@
 	 * @param outputContours The contours where the output will be stored.
 	 */
 	void $className::#func($step, ["inputContours", "outputContours"]) {
-		vector<vector<Point> > hull (inputContours.size());
+		std::vector<vector<cv::Point> > hull (inputContours.size());
 		outputContours.clear();
 		for (int i = 0; i < inputContours.size(); i++ ) {
-			convexHull(Mat((inputContours)[i]), hull[i], false);
+			cv::convexHull(cv::Mat((inputContours)[i]), hull[i], false);
 		}
 		outputContours = hull;
 	}

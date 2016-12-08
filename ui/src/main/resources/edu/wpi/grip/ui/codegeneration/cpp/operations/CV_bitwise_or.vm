@@ -5,5 +5,5 @@
 	 * @param dst the result image when the or is performed.
 	 */
 	void $className::#func($step ["src1", "src2", "dst"]) {
-		bitwise_or(src1, src2, dst);
+		cv::bitwise_or(src1, src2, dst);
 	}

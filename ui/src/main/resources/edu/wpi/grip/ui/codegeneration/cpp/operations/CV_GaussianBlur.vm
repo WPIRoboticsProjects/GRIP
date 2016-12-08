@@ -8,5 +8,5 @@
 	 * @param dst the output image.
 	 */
 	void $className::#func($step ["src", "kSize", "sigmaX", "sigmaY", "borderType", "dst"]) {
-		GaussianBlur(src, dst, kSize, sigmaX, sigmaY, borderType);
+		cv::GaussianBlur(src, dst, kSize, sigmaX, sigmaY, borderType);
 	}

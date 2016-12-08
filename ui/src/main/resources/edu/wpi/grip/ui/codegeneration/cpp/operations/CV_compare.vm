@@ -6,5 +6,5 @@
 	 * @param dst output Mat from the comparison.
 	 */
 	void $className::#func($step ["src1", "src2", "cmpop", "dst"]) {
-		compare(src1, src2, dst, cmpop);
+		cv::compare(src1, src2, dst, cmpop);
 	}

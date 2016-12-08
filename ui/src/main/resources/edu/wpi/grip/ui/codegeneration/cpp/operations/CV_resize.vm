@@ -8,5 +8,5 @@
 	 * @param dst output image.
 	 */
 	void $className::#func($step ["src", "dSize", "fx", "fy", "interpolation", "dst"]) {
-		resize(src, dst, dSize, fx, fy, interpolation);
+		cv::resize(src, dst, dSize, fx, fy, interpolation);
 	}

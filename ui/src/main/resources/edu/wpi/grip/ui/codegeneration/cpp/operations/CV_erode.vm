@@ -9,5 +9,5 @@
 	 * @param dst Output Image.
 	 */
 	void $className::#func($step ["src", "kernel", "anchor", "iterations", "borderType", "borderValue", "dst"]) {
-		erode(src, dst, kernel, anchor, (int)iterations, borderType, borderValue);
+		cv::erode(src, dst, kernel, anchor, (int)iterations, borderType, borderValue);
 	}

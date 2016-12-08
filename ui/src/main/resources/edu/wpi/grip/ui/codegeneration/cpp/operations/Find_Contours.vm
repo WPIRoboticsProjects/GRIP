@@ -6,9 +6,9 @@
 	 * @param contours vector of contours to put contours in.
 	 */
 	void $className::#func($step ["input", "externalOnly", "contours"]) {
-		vector<Vec4i> hierarchy;
+		std::vector<cv::Vec4i> hierarchy;
 		contours.clear();
 		int mode = externalOnly ? RETR_EXTERNAL : RETR_LIST;
 		int method = CHAIN_APPROX_SIMPLE;
-		findContours(input, contours, hierarchy, mode, method);
+		cv::findContours(input, contours, hierarchy, mode, method);
 	}

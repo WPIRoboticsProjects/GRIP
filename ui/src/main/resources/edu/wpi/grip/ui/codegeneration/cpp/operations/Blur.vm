@@ -12,18 +12,18 @@
 		switch(type) {
 			case BOX:
 				kernelSize = 2 * radius + 1;
-				blur(input,output,Size(kernelSize, kernelSize));
+				cv::blur(input,output,cv::Size(kernelSize, kernelSize));
 				break;
 			case GAUSSIAN:
 				kernelSize = 6 * radius + 1;
-				GaussianBlur(input, output, Size(kernelSize, kernelSize), radius);
+				cv::GaussianBlur(input, output, cv::Size(kernelSize, kernelSize), radius);
 				break;
 			case MEDIAN:
 				kernelSize = 2 * radius + 1;
-				medianBlur(input, output, kernelSize);
+				cv::medianBlur(input, output, kernelSize);
 				break;
 			case BILATERAL:
-				bilateralFilter(input, output, -1, radius, radius);
+				cv::bilateralFilter(input, output, -1, radius, radius);
 				break;
         }
 	}

@@ -15,6 +15,6 @@
 		} else {
 			mask = 5;
 		}
-		distanceTransform(input, output, type, mask);
+		cv::distanceTransform(input, output, type, mask);
 		output.convertTo(output, -1);
 	}
