@@ -1,17 +1,17 @@
 #macro(cType $type)#if($type.equals("Double") || $type.equals("Number"))
 double#elseif($type.equals("Object"))
 void#elseif ($type.equals("ContoursReport"))
-vector<vector<Point> >#elseif ($type.equals("BlobsReport"))
-vector<KeyPoint>#elseif ($type.equals("LinesReport"))
-vector<Line>#elseif ($type.equals("RectsReport"))
-vector<Rect>#elseif($type == "Integer" )
+std::vector<std::vector<cv::Point> >#elseif ($type.equals("BlobsReport"))
+std::vector<cv::KeyPoint>#elseif ($type.equals("LinesReport"))
+std::vector<Line>#elseif ($type.equals("RectsReport"))
+std::vector<cv::Rect>#elseif($type == "Integer" )
 int#elseif($type == "Boolean" || "boolean")
 bool#elseif($type.equals("String"))
-string#elseif($type.contains("Enum"))
+std::string#elseif($type.contains("Enum"))
 int#elseif($type.equalsIgnoreCase("BlurType"))
 BlurType#elseif($type.contains("Type"))
 int#elseif($type.equalsIgnoreCase("MaskSize"))
-string#elseif($type.equalsIgnoreCase("Interpolation"))
+std::string#elseif($type.equalsIgnoreCase("Interpolation"))
 int#elseif($type.equalsIgnoreCase("FlipCode"))
 FlipCode#elseif($type.equalsIgnoreCase("List"))
 List#else
@@ -19,7 +19,7 @@ cv::$type#end#end
 
 #macro(funPassType $baseType)
 #set($type = "#cType($baseType)")
-#if($type.equals("double") || $type.equals("int") || $type.equals("bool") || $type.equals("string"))
+#if($type.equals("double") || $type.equals("int") || $type.equals("bool") || $type.equals("std::string"))
 #else
 &#end#end
 
@@ -67,13 +67,13 @@ $name(#foreach($inp in $step.getInputs())#param($inp $names[$count])#set($count 
 #elseif ($input.type().contains("Enum"))
 	int ${tMeth.name($input.name())} = $input.value();  // ENUM $input.type()
 #elseif ($input.type().equals("MaskSize") )
-    string ${tMeth.name($input.name())} = "$input.value()";
+    std::string ${tMeth.name($input.name())} = "$input.value()";
 #elseif ($input.type().equals("FlipCode") || $input.type().equals("BlurType") )
 	$input.type() ${tMeth.name($input.name())} = $input.type()::#cvVal($input.value());
 #elseif ($input.type().contains("Type") || $input.type().equals("Interpolation"))
 	int ${tMeth.name($input.name())} = #cvVal($input.value());
 #elseif ($input.type().equals("String"))
-	string ${tMeth.name($input.name())} = "$input.value()";
+	std::string ${tMeth.name($input.name())} = "$input.value()";
 #elseif ($input.type().equals("List"))
 #set($inputEndValue = $input.value().length() - 1)
 	double ${tMeth.name($input.name())}[] = {$input.value().substring(1,$inputEndValue)};
