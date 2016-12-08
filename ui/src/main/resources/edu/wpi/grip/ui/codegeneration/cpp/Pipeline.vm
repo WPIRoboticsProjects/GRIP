@@ -37,7 +37,7 @@ $fileName::$fileName() {
 #set($outCnt = 0)
 #foreach($step in $pipeline.getSteps())
 #foreach($out in $step.getOutputs())
-	outputs.insert(make_pair(string("$out.name().toLowerCase().replaceAll("_", "")"), (AbsPipeline::Output)&$fileName::get${out.name()}));
+	outputs.insert(make_pair(std::string("$out.name().toLowerCase().replaceAll("_", "")"), (AbsPipeline::Output)&$fileName::get${out.name()}));
 #set($outCnt = $outCnt + 1)
 #end
 #end
