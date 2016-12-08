@@ -39,6 +39,8 @@ public class PythonPipelineInterfacer implements PipelineInterfacer {
   private static final String outputFile = "output.txt";
   private static final Logger logger = Logger.getLogger(PythonPipelineInterfacer.class.getName());
 
+  private final List<String> sourceNames = new ArrayList<>();
+
   static {
     try {
       codeDir = new File(
@@ -59,8 +61,9 @@ public class PythonPipelineInterfacer implements PipelineInterfacer {
     str = new StringBuilder();
     str.append("import sys").append(newLine).append("import cv2").append(newLine)
         .append("import os").append(newLine).append("sys.path.insert(0, ")
-        .append(pyPath(codeDir.getAbsolutePath())).append(')').append(newLine).append("import ")
-        .append(className).append(newLine).append("pipe = ").append(className).append('.')
+        .append(pyPath(codeDir.getAbsolutePath())).append(')').append(newLine)
+        .append("import ").append(className).append(newLine)
+        .append("pipe = ").append(className).append('.')
         .append(className).append("()").append(newLine);
     try {
       out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream("testing.py"), "UTF-8"));
@@ -72,19 +75,30 @@ public class PythonPipelineInterfacer implements PipelineInterfacer {
 
   @Override
   public void setNumSource(int num, Number value) {
-    str.append("source = ").append(value.doubleValue()).append(newLine).append("pipe.set_source")
-        .append(num).append("(source)").append(newLine);
+    sourceNames.add("source" + num);
+    str.append("source").append(num).append(" = ").append(value.doubleValue())
+        .append(newLine);
   }
 
   @Override
   public void setMatSource(int num, File img) {
-    str.append("source = cv2.imread(").append(pyPath(img.getAbsolutePath())).append(')')
-        .append(newLine).append("pipe.set_source").append(num).append("(source)").append(newLine);
+    sourceNames.add("source" + num);
+    str.append("source").append(num)
+        .append(" = cv2.imread(").append(pyPath(img.getAbsolutePath())).append(')')
+        .append(newLine);
   }
 
   @Override
   public void process() {
-    str.append("pipe.process()").append(newLine);
+    str.append("pipe.process(");
+    for (int i = 0; i < sourceNames.size(); i++) {
+      str.append(sourceNames.get(i));
+      if (i < sourceNames.size() - 1) {
+        str.append(", ");
+      }
+    }
+    str.append(')');
+    str.append(newLine);
   }
 
   @Override

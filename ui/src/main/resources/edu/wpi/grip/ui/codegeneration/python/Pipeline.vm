@@ -20,7 +20,9 @@ class $className:
 #end
 #foreach($step in $pipeline.getSteps())
 #foreach($input in $step.getInputs())
+#if (!$input.value().matches("source[0-9]+"))
         #newInput($input)
+#end
 
 #end
 
