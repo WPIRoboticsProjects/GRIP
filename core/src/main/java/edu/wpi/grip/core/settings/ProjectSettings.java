@@ -178,7 +178,7 @@ public class ProjectSettings implements Settings, Cloneable {
     this.implementWpilibPipeline = implementWpilibPipeline;
   }
 
-  public boolean shouldImplementWpilibPipeline() {
+  public boolean getImplementWpilibPipeline() {
     return implementWpilibPipeline;
   }
 

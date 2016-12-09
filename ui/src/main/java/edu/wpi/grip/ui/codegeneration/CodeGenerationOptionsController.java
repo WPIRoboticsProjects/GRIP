@@ -206,7 +206,7 @@ public class CodeGenerationOptionsController {
       classNameField.setText(settings.getGeneratedPipelineName());
       packageNameField.setText(settings.getGeneratedJavaPackage());
       moduleNameField.setText(settings.getGeneratedPythonModuleName());
-      implementVisionPipeline.setSelected(settings.shouldImplementWpilibPipeline());
+      implementVisionPipeline.setSelected(settings.getImplementWpilibPipeline());
       Language language = Language.get(settings.getPreferredGeneratedLanguage());
       if (language != null) {
         languageSelector.getSelectionModel().select(language);
