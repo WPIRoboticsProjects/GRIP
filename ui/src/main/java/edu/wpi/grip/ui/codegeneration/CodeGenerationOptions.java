@@ -3,14 +3,20 @@ package edu.wpi.grip.ui.codegeneration;
 import edu.wpi.grip.core.settings.ProjectSettings;
 
 import java.io.File;
-import java.util.HashMap;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * Holds options for code generation.
  */
-public class CodeGenerationOptions extends HashMap<String, Object> {
+public class CodeGenerationOptions {
+
+  private final Language language;
+  private final String className;
+  private final boolean implementWpilibPipeline;
+  private final String saveDir;
+  private final String packageName;
+  private final String moduleName;
 
   public static final String LANGUAGE = "language";
   public static final String CLASS_NAME = "className";
@@ -19,32 +25,53 @@ public class CodeGenerationOptions extends HashMap<String, Object> {
   public static final String PACKAGE_NAME = "packageName";
   public static final String MODULE_NAME = "moduleName";
 
-  private CodeGenerationOptions() {
-    // Use builder() instead
+  /**
+   * Private constructor; use a builder.
+   *
+   * @param language                the language to generate to
+   * @param className               the name of the class to generate
+   * @param implementWpilibPipeline if the generated class should implement the
+   *                                WPILib VisionPipeline interface
+   * @param saveDir                 the directory to save the generated file to
+   * @param packageName             the name of the Java package to place the file in
+   * @param moduleName              the name of the Python module
+   */
+  private CodeGenerationOptions(Language language,
+                                String className,
+                                boolean implementWpilibPipeline,
+                                String saveDir,
+                                String packageName,
+                                String moduleName) {
+    this.language = language;
+    this.className = className;
+    this.implementWpilibPipeline = implementWpilibPipeline;
+    this.saveDir = saveDir;
+    this.packageName = packageName;
+    this.moduleName = moduleName;
   }
 
   public Language getLanguage() {
-    return (Language) get(LANGUAGE);
+    return language;
   }
 
   public String getClassName() {
-    return (String) get(CLASS_NAME);
+    return className;
   }
 
-  public boolean implementWpilibPipeline() {
-    return (boolean) get(IMPLEMENT_WPILIB_PIPELINE);
+  public boolean shouldImplementWpilibPipeline() {
+    return implementWpilibPipeline;
   }
 
   public String getSaveDir() {
-    return (String) get(SAVE_DIR);
+    return saveDir;
   }
 
   public String getPackageName() {
-    return (String) get(PACKAGE_NAME);
+    return packageName;
   }
 
   public String getModuleName() {
-    return (String) get(MODULE_NAME);
+    return moduleName;
   }
 
   /**
@@ -53,12 +80,12 @@ public class CodeGenerationOptions extends HashMap<String, Object> {
    * @param projectSettings the project settings to copy into
    */
   public void copyTo(ProjectSettings projectSettings) {
-    projectSettings.setPreferredGeneratedLanguage(getLanguage().name);
-    projectSettings.setGeneratedPipelineName(getClassName());
-    projectSettings.setCodegenDestDir(new File(getSaveDir()));
-    projectSettings.setGeneratedJavaPackage(getPackageName());
-    projectSettings.setGeneratedPythonModuleName(getModuleName());
-    projectSettings.setImplementWpilibPipeline(implementWpilibPipeline());
+    projectSettings.setPreferredGeneratedLanguage(language.name);
+    projectSettings.setGeneratedPipelineName(className);
+    projectSettings.setCodegenDestDir(new File(saveDir));
+    projectSettings.setGeneratedJavaPackage(packageName);
+    projectSettings.setGeneratedPythonModuleName(moduleName);
+    projectSettings.setImplementWpilibPipeline(implementWpilibPipeline);
   }
 
   public static Builder builder() {
@@ -74,7 +101,7 @@ public class CodeGenerationOptions extends HashMap<String, Object> {
     private String packageName;
     private String moduleName;
 
-    public Builder() {
+    private Builder() {
     }
 
     public Builder language(Language language) {
@@ -112,15 +139,14 @@ public class CodeGenerationOptions extends HashMap<String, Object> {
      * option has been set.
      */
     public CodeGenerationOptions build() {
-      CodeGenerationOptions options = new CodeGenerationOptions();
-      options.put(LANGUAGE, checkNotNull(language, LANGUAGE));
-      options.put(CLASS_NAME, checkNotNull(className, CLASS_NAME));
-      options.put(IMPLEMENT_WPILIB_PIPELINE,
-          checkNotNull(implementVisionPipeline, IMPLEMENT_WPILIB_PIPELINE));
-      options.put(SAVE_DIR, checkNotNull(saveDir, SAVE_DIR));
-      options.put(PACKAGE_NAME, checkNotNull(packageName, PACKAGE_NAME));
-      options.put(MODULE_NAME, checkNotNull(moduleName, MODULE_NAME));
-      return options;
+      return new CodeGenerationOptions(
+          checkNotNull(language, LANGUAGE),
+          checkNotNull(className, CLASS_NAME),
+          checkNotNull(implementVisionPipeline, IMPLEMENT_WPILIB_PIPELINE),
+          checkNotNull(saveDir, SAVE_DIR),
+          checkNotNull(packageName, PACKAGE_NAME),
+          checkNotNull(moduleName, MODULE_NAME)
+      );
     }
 
   }

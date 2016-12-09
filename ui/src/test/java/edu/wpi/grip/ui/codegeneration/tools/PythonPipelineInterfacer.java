@@ -2,6 +2,7 @@ package edu.wpi.grip.ui.codegeneration.tools;
 
 import edu.wpi.grip.ui.codegeneration.PythonTMethods;
 
+import org.apache.commons.lang.StringUtils;
 import org.opencv.core.KeyPoint;
 import org.opencv.core.MatOfKeyPoint;
 import org.opencv.core.MatOfPoint;
@@ -91,12 +92,7 @@ public class PythonPipelineInterfacer implements PipelineInterfacer {
   @Override
   public void process() {
     str.append("pipe.process(");
-    for (int i = 0; i < sourceNames.size(); i++) {
-      str.append(sourceNames.get(i));
-      if (i < sourceNames.size() - 1) {
-        str.append(", ");
-      }
-    }
+    str.append(StringUtils.join(sourceNames, ", "));
     str.append(')');
     str.append(newLine);
   }

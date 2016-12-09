@@ -80,7 +80,12 @@ public class Exporter implements Runnable {
     }
     TemplateMethods tempMeth = TemplateMethods.get(lang);
     VelocityContext context = new VelocityContext();
-    settings.forEach(context::put);
+    context.put(CodeGenerationOptions.LANGUAGE, settings.getLanguage());
+    context.put(CodeGenerationOptions.CLASS_NAME, settings.getClassName());
+    context.put(CodeGenerationOptions.SAVE_DIR, settings.getSaveDir());
+    context.put(CodeGenerationOptions.IMPLEMENT_WPILIB_PIPELINE, settings.shouldImplementWpilibPipeline());
+    context.put(CodeGenerationOptions.PACKAGE_NAME, settings.getPackageName());
+    context.put(CodeGenerationOptions.MODULE_NAME, settings.getModuleName());
     context.put("pipeline", tPipeline);
     context.put("tMeth", tempMeth);
     context.put("testing", testing);
