@@ -322,12 +322,8 @@ public class MainWindowController {
     Optional<CodeGenerationOptions> o = optionsDialog.showAndWait();
     if (o.isPresent()) {
       CodeGenerationOptions options = o.get();
-      ProjectSettings s = settingsProvider.getProjectSettings();
-      s.setCodegenDestDir(new File(options.getSaveDir()));
-      s.setGeneratedJavaPackage(options.getPackageName());
-      s.setGeneratedPipelineName(options.getClassName());
-      s.setGeneratedPythonModuleName(options.getModuleName());
-      s.setPreferredGeneratedLanguage(options.getLanguage().name);
+      ProjectSettings s = settingsProvider.getProjectSettings().clone();
+      options.copyTo(s);
       eventBus.post(new ProjectSettingsChangedEvent(s));
       Exporter exporter = new Exporter(pipeline.getSteps(), options);
       final Set<String> nonExportableSteps = exporter.getNonExportableSteps();

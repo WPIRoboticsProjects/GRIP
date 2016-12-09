@@ -51,7 +51,7 @@ public class CodeGenerationOptionsController {
   @FXML
   private TextField classNameField;
   @FXML
-  private Label saveLocationField;
+  private Label saveLocationLabel;
   @FXML
   private Button browseButton;
   @FXML
@@ -67,12 +67,27 @@ public class CodeGenerationOptionsController {
 
   private Language language;
 
+  private static final String CLASS_NAME_REGEX = "^|([A-Z][a-z]*)+$";
+  private static final String PACKAGE_REGEX = "^|([a-z]+\\.?)+$";
+  private static final String MODULE_REGEX = "^|([a-z]+_?)+$";
+
   @FXML
   private void initialize() {
     languageSelector.setItems(FXCollections.observableArrayList(Language.values()));
     extrasPane.setVisible(false);
     root.getProperties().put("controller", this);
     updateImplementButton();
+    setTextFilter(classNameField, CLASS_NAME_REGEX);
+    setTextFilter(packageNameField, PACKAGE_REGEX);
+    setTextFilter(moduleNameField, MODULE_REGEX);
+  }
+
+  private static void setTextFilter(TextField f, String regex) {
+    f.textProperty().addListener((obs, oldValue, newValue) -> {
+      if (!newValue.matches(regex)) {
+        f.setText(oldValue);
+      }
+    });
   }
 
   private void updateImplementButton() {
@@ -107,7 +122,7 @@ public class CodeGenerationOptionsController {
   @FXML
   private void setLanguage() {
     this.language = languageSelector.getSelectionModel().getSelectedItem();
-    saveLocationField.setDisable(false);
+    saveLocationLabel.setDisable(false);
     browseButton.setDisable(false);
     updateImplementButton();
     switch (language) {
@@ -166,7 +181,7 @@ public class CodeGenerationOptionsController {
     if (save == null) {
       return;
     }
-    saveLocationField.setText(save.getAbsolutePath());
+    saveLocationLabel.setText(save.getAbsolutePath());
   }
 
   /**
@@ -177,7 +192,7 @@ public class CodeGenerationOptionsController {
         .language(language)
         .className(classNameField.getText())
         .implementVisionPipeline(implementVisionPipeline.isSelected())
-        .saveDir(saveLocationField.getText())
+        .saveDir(saveLocationLabel.getText())
         .packageName(packageNameField.getText())
         .moduleName(moduleNameField.getText())
         .build();
@@ -187,10 +202,11 @@ public class CodeGenerationOptionsController {
   public void onProjectSettingsChanged(ProjectSettingsChangedEvent event) {
     Platform.runLater(() -> {
       final ProjectSettings settings = event.getProjectSettings();
-      saveLocationField.setText(settings.getCodegenDestDir().getAbsolutePath());
+      saveLocationLabel.setText(settings.getCodegenDestDir().getAbsolutePath());
       classNameField.setText(settings.getGeneratedPipelineName());
       packageNameField.setText(settings.getGeneratedJavaPackage());
       moduleNameField.setText(settings.getGeneratedPythonModuleName());
+      implementVisionPipeline.setSelected(settings.shouldImplementWpilibPipeline());
       Language language = Language.get(settings.getPreferredGeneratedLanguage());
       if (language != null) {
         languageSelector.getSelectionModel().select(language);

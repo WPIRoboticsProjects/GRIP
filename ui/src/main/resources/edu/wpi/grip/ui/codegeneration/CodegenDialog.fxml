@@ -35,7 +35,7 @@
                 <Label text="Save location" GridPane.rowIndex="3" />
                 <HBox nodeOrientation="LEFT_TO_RIGHT" GridPane.columnIndex="1" GridPane.rowIndex="3" GridPane.vgrow="NEVER">
                     <children>
-                        <Label fx:id="saveLocationField" disable="true" maxHeight="-Infinity" minHeight="26.0" prefHeight="30.0" prefWidth="105.0" HBox.hgrow="ALWAYS" />
+                        <Label fx:id="saveLocationLabel" disable="true" maxHeight="-Infinity" minHeight="26.0" prefHeight="30.0" prefWidth="105.0" HBox.hgrow="ALWAYS" />
                         <Button fx:id="browseButton" alignment="CENTER" disable="true" mnemonicParsing="false" onAction="#browseForSave" prefHeight="26.0" prefWidth="82.0" text="Browse" />
                     </children>
                 </HBox>

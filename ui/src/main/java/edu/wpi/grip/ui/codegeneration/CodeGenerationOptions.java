@@ -1,9 +1,15 @@
 package edu.wpi.grip.ui.codegeneration;
 
+import edu.wpi.grip.core.settings.ProjectSettings;
+
+import java.io.File;
 import java.util.HashMap;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+/**
+ * Holds options for code generation.
+ */
 public class CodeGenerationOptions extends HashMap<String, Object> {
 
   public static final String LANGUAGE = "language";
@@ -39,6 +45,20 @@ public class CodeGenerationOptions extends HashMap<String, Object> {
 
   public String getModuleName() {
     return (String) get(MODULE_NAME);
+  }
+
+  /**
+   * Copies these options to project settings.
+   *
+   * @param projectSettings the project settings to copy into
+   */
+  public void copyTo(ProjectSettings projectSettings) {
+    projectSettings.setPreferredGeneratedLanguage(getLanguage().name);
+    projectSettings.setGeneratedPipelineName(getClassName());
+    projectSettings.setCodegenDestDir(new File(getSaveDir()));
+    projectSettings.setGeneratedJavaPackage(getPackageName());
+    projectSettings.setGeneratedPythonModuleName(getModuleName());
+    projectSettings.setImplementWpilibPipeline(implementWpilibPipeline());
   }
 
   public static Builder builder() {

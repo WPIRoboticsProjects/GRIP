@@ -49,6 +49,10 @@ public class ProjectSettings implements Settings, Cloneable {
            description = "The preferred language to generate code for")
   private String preferredGeneratedLanguage = "";
 
+  @Setting(label = "Generate WPILib vision API",
+           description = "")
+  private boolean implementWpilibPipeline = false;
+
   @Setting(label = "Generated pipeline name",
            description = "The name of the generated pipeline class")
   private String generatedPipelineName = "Pipeline";
@@ -168,6 +172,14 @@ public class ProjectSettings implements Settings, Cloneable {
 
   public String getPreferredGeneratedLanguage() {
     return preferredGeneratedLanguage;
+  }
+
+  public void setImplementWpilibPipeline(boolean implementWpilibPipeline) {
+    this.implementWpilibPipeline = implementWpilibPipeline;
+  }
+
+  public boolean shouldImplementWpilibPipeline() {
+    return implementWpilibPipeline;
   }
 
   public void setGeneratedPipelineName(String generatedPipelineName) {
