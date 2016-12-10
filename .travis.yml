@@ -31,15 +31,15 @@ before_install:
     fi
 # Only do an assemble when we aren't building a pull request
 install:
-  - '[ "${TRAVIS_PULL_REQUEST}" = "false" ] && ./gradlew jfxNative --no-daemon --stacktrace || ./gradlew --stacktrace '
+  - '[ "${TRAVIS_PULL_REQUEST}" = "false" ] && ./gradlew jfxNative --no-daemon --stacktrace -Dscan || ./gradlew --stacktrace -Dscan '
 
 script:
   # Only run code generation tests on OSX -- linux requires sudo to install OpenCV dependencies, and that environment
   # will not be able to run MainWindowTest.testDragOperationFromPaletteToPipeline
   - |
     if [[ "$TRAVIS_OS_NAME" == "osx" ]];
-    then ./gradlew check jacocoTestReport jacocoRootReport --stacktrace -Pheadless=true -PlogTests -Pgeneration -PjniLocation=$HOME/opencv/jni;
-    else ./gradlew check jacocoTestReport jacocoRootReport --stacktrace -Pheadless=true -PlogTests;
+    then ./gradlew check jacocoTestReport jacocoRootReport --stacktrace -Pheadless=true -PlogTests -Dscan -Pgeneration -PjniLocation=$HOME/opencv/jni;
+    else ./gradlew check jacocoTestReport jacocoRootReport --stacktrace -Pheadless=true -PlogTests -Dscan;
     fi
 
 after_success:
