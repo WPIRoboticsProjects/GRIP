@@ -27,6 +27,8 @@ import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import com.google.common.util.concurrent.Service;
 
+import org.apache.commons.lang3.tuple.Pair;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.Optional;
@@ -293,22 +295,35 @@ public class MainWindowController {
   protected void generate() {
     if (pipeline.getSources().isEmpty()) {
       // No sources
-      // TODO show warning alert (#693)
+      eventBus.post(new WarningEvent("Cannot generate code",
+          "There are no sources in the pipeline"));
       return;
     } else if (pipeline.getSteps().isEmpty()) {
       // Sources, but no steps
-      // TODO show warning alert (#693)
+      eventBus.post(new WarningEvent("Cannot generate code",
+          "There are no steps in the pipeline"));
       return;
     } else if (pipeline.getConnections().isEmpty()) {
       // Sources and steps, but no connections
-      // TODO show warning alert (#693)
+      eventBus.post(new WarningEvent("Cannot generate code",
+          "There are no connections in the pipeline"));
       return;
     } else if (pipeline.getSteps().stream()
         .flatMap(s -> s.getInputSockets().stream())
         .filter(s -> SocketHint.View.NONE.equals(s.getSocketHint().getView()))
         .anyMatch(s -> !s.getValue().isPresent())) {
       // Some sockets aren't connected
-      // TODO show warning alert (#693)
+      StringBuilder sb = new StringBuilder("The following steps are missing inputs:\n\n"); //NOPMD
+      pipeline.getSteps().stream()
+          .filter(step -> step.getInputSockets().stream().anyMatch(s ->
+              SocketHint.View.NONE.equals(s.getSocketHint().getView())
+                  && !s.getValue().isPresent()))
+          .map(s -> Pair.of(pipeline.indexOf(s) + 1, s.getOperationDescription().name()))
+          .forEach(p -> {
+            sb.append(" - ").append(p.getRight());
+            sb.append(" (at position ").append(p.getLeft()).append(")\n");
+          });
+      eventBus.post(new WarningEvent("Cannot generate code", sb.toString()));
       return;
     }
     Dialog<CodeGenerationSettings> optionsDialog = new ChoiceDialog<>();
