@@ -22,6 +22,18 @@ public class CodeGenerationSettings {
   public static final String PACKAGE_NAME = "packageName";
   public static final String MODULE_NAME = "moduleName";
 
+  /**
+   * Creates the default code generation settings.
+   * <br>
+   * <table>
+   * <tr><td>Language</td><td>Java</td></tr>
+   * <tr><td>Class name</td><td>GripPipeline</td></tr>
+   * <tr><td>Implement WPILib API</td><td>false</td></tr>
+   * <tr><td>Save directory</td><td>User home</td></tr>
+   * <tr><td>Java package</td><td>Default package</td></tr>
+   * <tr><td>Python module</td><td>grip</td></tr>
+   * </table>
+   */
   public CodeGenerationSettings() {
     this("Java", "GripPipeline", false, System.getProperty("user.home"), "", "grip");
   }
