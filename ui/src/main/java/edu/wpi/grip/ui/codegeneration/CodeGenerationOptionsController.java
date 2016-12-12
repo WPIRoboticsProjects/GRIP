@@ -7,7 +7,6 @@ import edu.wpi.grip.core.events.ConnectionRemovedEvent;
 import edu.wpi.grip.core.settings.CodeGenerationSettings;
 import edu.wpi.grip.core.settings.SettingsProvider;
 
-import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import com.google.inject.Inject;
 
@@ -35,8 +34,6 @@ public class CodeGenerationOptionsController {
 
   @Inject
   private SettingsProvider settingsProvider;
-  @Inject
-  private EventBus eventBus;
   @Inject
   private Pipeline pipeline;
 
