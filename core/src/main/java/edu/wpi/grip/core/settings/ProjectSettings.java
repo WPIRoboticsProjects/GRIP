@@ -203,7 +203,7 @@ public class ProjectSettings implements Settings, Cloneable {
   }
 
   public void setGeneratedJavaPackage(String generatedJavaPackage) {
-    checkArgument(generatedJavaPackage.matches("^([a-zA-Z][\\w]*)+(\\.[a-zA-Z][\\w]*)*$"),
+    checkArgument(generatedJavaPackage.matches("^|([a-zA-Z][\\w]*)+(\\.[a-zA-Z][\\w]*)*$"),
         "Illegal package name: " + generatedJavaPackage);
     this.generatedJavaPackage = generatedJavaPackage;
   }
