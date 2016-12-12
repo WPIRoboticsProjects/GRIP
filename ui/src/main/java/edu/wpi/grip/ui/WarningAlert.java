@@ -34,6 +34,7 @@ public class WarningAlert extends Alert {
     getDialogPane().setMinHeight(Region.USE_PREF_SIZE); // expand to fit content
     getDialogPane().setMinWidth(Region.USE_PREF_SIZE);
 
+    setTitle("Warning | " + header);
     setHeaderText(header);
     setContentText(body);
   }
