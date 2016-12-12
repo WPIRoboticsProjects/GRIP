@@ -118,7 +118,7 @@ public class Exporter implements Runnable {
    *
    * @return a set of the names of the non-exportable operations in the pipeline
    */
-  public Set<String> getNonExportableSteps() {
+  public Set<String> getNonExportableStepNames() {
     return steps.stream()
         .filter(s -> {
           return s.getOperationDescription().category() != OperationDescription.Category.NETWORK;

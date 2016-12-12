@@ -1,3 +1,5 @@
+import static org.gradle.api.tasks.wrapper.Wrapper.DistributionType
+
 import groovy.xml.XmlUtil
 
 buildscript {
@@ -23,6 +25,7 @@ import edu.wpi.first.wpilib.opencv.installer.Installer
 import edu.wpi.first.wpilib.opencv.installer.platform.Platform
 
 plugins {
+    id 'com.gradle.build-scan' version '1.3'
     id 'java'
     id 'idea'
     id 'eclipse'
@@ -32,6 +35,18 @@ plugins {
     id "com.dorongold.task-tree" version "1.2.2"
 }
 apply plugin: 'nebula-aggregate-javadocs'
+
+buildScan {
+    licenseAgreementUrl = 'https://gradle.com/terms-of-service'
+    licenseAgree = 'yes'
+}
+
+allprojects {
+    // Hacky fix to make the build work
+    tasks.withType(CreateStartScripts) {
+        mainClassName = "someRandomGiberish" + Math.random()
+    }
+}
 
 def getGitCommit = { ->
     def stdout = new ByteArrayOutputStream()
@@ -109,7 +124,7 @@ configure(subprojects - project(':ui:linuxLauncher')) {
     apply plugin: 'findbugs'
 
     configurations.errorprone {
-        resolutionStrategy.force 'com.google.errorprone:error_prone_core:2.0.14'
+        resolutionStrategy.force 'com.google.errorprone:error_prone_core:2.0.15'
     }
 
     checkstyle {
@@ -370,9 +385,11 @@ project (":ui:preloader") {
     apply plugin: 'jacoco'
     apply plugin: 'application'
 
+    mainClassName = "edu.wpi.grip.preloader.GripPreloader"
+
     task run(overwrite: true, type: JavaExec) {
         classpath = sourceSets.main.runtimeClasspath
-        main = 'edu.wpi.grip.preloader.GripPreloader'
+        main = mainClassName
         args 'windowed'
     }
 }
@@ -599,5 +616,7 @@ task jacocoRootReport(type: JacocoReport, group: 'Coverage reports') {
 }
 
 task wrapper(type: Wrapper) {
-    gradleVersion = '3.0'
+    gradleVersion = '3.2.1'
+    // We want the sources with the wrapper.
+    distributionType = DistributionType.ALL
 }

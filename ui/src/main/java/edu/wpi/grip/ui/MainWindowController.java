@@ -9,6 +9,7 @@ import edu.wpi.grip.core.events.CodeGenerationSettingsChangedEvent;
 import edu.wpi.grip.core.events.ProjectSettingsChangedEvent;
 import edu.wpi.grip.core.events.TimerEvent;
 import edu.wpi.grip.core.events.UnexpectedThrowableEvent;
+import edu.wpi.grip.core.events.WarningEvent;
 import edu.wpi.grip.core.serialization.Project;
 import edu.wpi.grip.core.settings.AppSettings;
 import edu.wpi.grip.core.settings.CodeGenerationSettings;
@@ -325,14 +326,15 @@ public class MainWindowController {
       CodeGenerationSettings settings = o.get();
       eventBus.post(new CodeGenerationSettingsChangedEvent(settings));
       Exporter exporter = new Exporter(pipeline.getSteps(), settings);
-      final Set<String> nonExportableSteps = exporter.getNonExportableSteps();
+      final Set<String> nonExportableSteps = exporter.getNonExportableStepNames();
       if (!nonExportableSteps.isEmpty()) {
-        // TODO show warning alert (#693)
-        StringBuilder b = new StringBuilder("The following steps cannot be exported:\n");
-        nonExportableSteps.forEach(n -> b.append("  ").append(n).append('\n'));
-        Alert alert = new Alert(Alert.AlertType.WARNING);
-        alert.setContentText(b.toString());
-        alert.showAndWait();
+        StringBuilder b = new StringBuilder(
+            "The following steps do not support code generation:\n\n"
+        );
+        nonExportableSteps.stream()
+            .sorted()
+            .forEach(n -> b.append(" - ").append(n).append("\n"));
+        eventBus.post(new WarningEvent("Cannot generate code", b.toString()));
         return;
       }
       Thread exportRunner = new Thread(exporter);
@@ -359,6 +361,20 @@ public class MainWindowController {
     dialog.getDialogPane().setContent(deployPane);
     dialog.setResizable(true);
     dialog.showAndWait();
+  }
+
+  @Subscribe
+  public void onWarningEvent(WarningEvent e) {
+    if (Platform.isFxApplicationThread()) {
+      showWarningAlert(e);
+    } else {
+      Platform.runLater(() -> showWarningAlert(e));
+    }
+  }
+
+  private void showWarningAlert(WarningEvent e) {
+    Alert alert = new WarningAlert(e.getHeader(), e.getBody(), root.getScene().getWindow());
+    alert.showAndWait();
   }
 
   @Subscribe
