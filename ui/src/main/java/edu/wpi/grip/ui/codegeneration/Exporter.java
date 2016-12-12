@@ -2,6 +2,7 @@ package edu.wpi.grip.ui.codegeneration;
 
 import edu.wpi.grip.core.OperationDescription;
 import edu.wpi.grip.core.Step;
+import edu.wpi.grip.core.settings.CodeGenerationSettings;
 import edu.wpi.grip.ui.codegeneration.data.TPipeline;
 
 import com.google.common.collect.ImmutableList;
@@ -32,7 +33,7 @@ public class Exporter implements Runnable {
   private static final String PIPELINE_TEMPLATE = "Pipeline.vm";
   private static final String PIPELINE_HTEMPLATE = "Pipeline.h.vm";
   private final ImmutableList<Step> steps;
-  private final CodeGenerationOptions settings;
+  private final CodeGenerationSettings settings;
   private final Language lang;
   private final boolean testing;
 
@@ -45,11 +46,11 @@ public class Exporter implements Runnable {
    * @param settings the settings to use for this export
    * @param testing  if true enables features that allow for junit run tests for generated code.
    */
-  public Exporter(ImmutableList<Step> steps, CodeGenerationOptions settings, boolean testing) {
+  public Exporter(ImmutableList<Step> steps, CodeGenerationSettings settings, boolean testing) {
     this.steps = steps;
     this.settings = settings;
     this.testing = testing;
-    this.lang = settings.getLanguage();
+    this.lang = Language.get(settings.getLanguage());
   }
 
   /**
@@ -58,13 +59,12 @@ public class Exporter implements Runnable {
    * @param steps    an Immutable List of the steps in the pipeline to generate.
    * @param settings the settings to use for this export
    */
-  public Exporter(ImmutableList<Step> steps, CodeGenerationOptions settings) {
+  public Exporter(ImmutableList<Step> steps, CodeGenerationSettings settings) {
     this(steps, settings, false);
   }
 
   @Override
   public void run() {
-    TPipeline tPipeline = new TPipeline(steps);
     File dir = new File(settings.getSaveDir());
     File saveFile;
     switch (lang) {
@@ -80,13 +80,14 @@ public class Exporter implements Runnable {
     }
     TemplateMethods tempMeth = TemplateMethods.get(lang);
     VelocityContext context = new VelocityContext();
-    context.put(CodeGenerationOptions.LANGUAGE, settings.getLanguage());
-    context.put(CodeGenerationOptions.CLASS_NAME, settings.getClassName());
-    context.put(CodeGenerationOptions.SAVE_DIR, settings.getSaveDir());
-    context.put(CodeGenerationOptions.IMPLEMENT_WPILIB_PIPELINE, settings.shouldImplementWpilibPipeline());
-    context.put(CodeGenerationOptions.PACKAGE_NAME, settings.getPackageName());
-    context.put(CodeGenerationOptions.MODULE_NAME, settings.getModuleName());
-    context.put("pipeline", tPipeline);
+    context.put(CodeGenerationSettings.LANGUAGE, settings.getLanguage());
+    context.put(CodeGenerationSettings.CLASS_NAME, settings.getClassName());
+    context.put(CodeGenerationSettings.SAVE_DIR, settings.getSaveDir());
+    context.put(CodeGenerationSettings.IMPLEMENT_WPILIB_PIPELINE,
+        settings.shouldImplementWpilibPipeline());
+    context.put(CodeGenerationSettings.PACKAGE_NAME, settings.getPackageName());
+    context.put(CodeGenerationSettings.MODULE_NAME, settings.getModuleName());
+    context.put("pipeline", new TPipeline(steps));
     context.put("tMeth", tempMeth);
     context.put("testing", testing);
     String templateDir = "/edu/wpi/grip/ui/codegeneration/" + lang.filePath;

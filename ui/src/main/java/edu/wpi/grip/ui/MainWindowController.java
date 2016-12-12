@@ -5,17 +5,18 @@ import edu.wpi.grip.core.Pipeline;
 import edu.wpi.grip.core.PipelineRunner;
 import edu.wpi.grip.core.events.AppSettingsChangedEvent;
 import edu.wpi.grip.core.events.BenchmarkEvent;
+import edu.wpi.grip.core.events.CodeGenerationSettingsChangedEvent;
 import edu.wpi.grip.core.events.ProjectSettingsChangedEvent;
 import edu.wpi.grip.core.events.TimerEvent;
 import edu.wpi.grip.core.events.UnexpectedThrowableEvent;
 import edu.wpi.grip.core.serialization.Project;
 import edu.wpi.grip.core.settings.AppSettings;
+import edu.wpi.grip.core.settings.CodeGenerationSettings;
 import edu.wpi.grip.core.settings.ProjectSettings;
 import edu.wpi.grip.core.settings.SettingsProvider;
 import edu.wpi.grip.core.sockets.SocketHint;
 import edu.wpi.grip.core.util.SafeShutdown;
 import edu.wpi.grip.core.util.service.SingleActionListener;
-import edu.wpi.grip.ui.codegeneration.CodeGenerationOptions;
 import edu.wpi.grip.ui.codegeneration.CodeGenerationOptionsController;
 import edu.wpi.grip.ui.codegeneration.Exporter;
 import edu.wpi.grip.ui.components.StartStoppableButton;
@@ -309,7 +310,7 @@ public class MainWindowController {
       // TODO show warning alert (#693)
       return;
     }
-    Dialog<CodeGenerationOptions> optionsDialog = new ChoiceDialog<>();
+    Dialog<CodeGenerationSettings> optionsDialog = new ChoiceDialog<>();
     optionsDialog.setTitle("Code Generation Options");
     optionsDialog.setHeaderText(null);
     optionsDialog.setGraphic(null);
@@ -319,13 +320,11 @@ public class MainWindowController {
     optionsDialog.setResultConverter(bt -> bt.getButtonData() == null ? null
         : bt.getButtonData() == ButtonBar.ButtonData.OK_DONE
         ? c.getOptions() : null);
-    Optional<CodeGenerationOptions> o = optionsDialog.showAndWait();
+    Optional<CodeGenerationSettings> o = optionsDialog.showAndWait();
     if (o.isPresent()) {
-      CodeGenerationOptions options = o.get();
-      ProjectSettings s = settingsProvider.getProjectSettings().clone();
-      options.copyTo(s);
-      eventBus.post(new ProjectSettingsChangedEvent(s));
-      Exporter exporter = new Exporter(pipeline.getSteps(), options);
+      CodeGenerationSettings settings = o.get();
+      eventBus.post(new CodeGenerationSettingsChangedEvent(settings));
+      Exporter exporter = new Exporter(pipeline.getSteps(), settings);
       final Set<String> nonExportableSteps = exporter.getNonExportableSteps();
       if (!nonExportableSteps.isEmpty()) {
         // TODO show warning alert (#693)

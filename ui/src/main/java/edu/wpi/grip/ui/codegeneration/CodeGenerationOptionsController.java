@@ -1,10 +1,10 @@
 package edu.wpi.grip.ui.codegeneration;
 
 import edu.wpi.grip.core.Pipeline;
+import edu.wpi.grip.core.events.CodeGenerationSettingsChangedEvent;
 import edu.wpi.grip.core.events.ConnectionAddedEvent;
 import edu.wpi.grip.core.events.ConnectionRemovedEvent;
-import edu.wpi.grip.core.events.ProjectSettingsChangedEvent;
-import edu.wpi.grip.core.settings.ProjectSettings;
+import edu.wpi.grip.core.settings.CodeGenerationSettings;
 import edu.wpi.grip.core.settings.SettingsProvider;
 
 import com.google.common.eventbus.EventBus;
@@ -171,10 +171,7 @@ public class CodeGenerationOptionsController {
   @FXML
   private void browseForSave() {
     DirectoryChooser dc = new DirectoryChooser();
-    File destDir = settingsProvider.getProjectSettings().getCodegenDestDir();
-    if (destDir == null) {
-      destDir = new File(System.getProperty("user.home")).getAbsoluteFile();
-    }
+    File destDir = new File(settingsProvider.getCodeGenerationSettings().getSaveDir());
     dc.setInitialDirectory(destDir);
     dc.setTitle("Choose save location");
     File save = dc.showDialog(optionsGrid.getScene().getWindow());
@@ -187,9 +184,9 @@ public class CodeGenerationOptionsController {
   /**
    * Gets the code generation options specified in the UI.
    */
-  public CodeGenerationOptions getOptions() {
-    return CodeGenerationOptions.builder()
-        .language(language)
+  public CodeGenerationSettings getOptions() {
+    return CodeGenerationSettings.builder()
+        .language(language.name)
         .className(classNameField.getText())
         .implementVisionPipeline(implementVisionPipeline.isSelected())
         .saveDir(saveLocationLabel.getText())
@@ -199,15 +196,15 @@ public class CodeGenerationOptionsController {
   }
 
   @Subscribe
-  public void onProjectSettingsChanged(ProjectSettingsChangedEvent event) {
+  public void onProjectSettingsChanged(CodeGenerationSettingsChangedEvent event) {
     Platform.runLater(() -> {
-      final ProjectSettings settings = event.getProjectSettings();
-      saveLocationLabel.setText(settings.getCodegenDestDir().getAbsolutePath());
-      classNameField.setText(settings.getGeneratedPipelineName());
-      packageNameField.setText(settings.getGeneratedJavaPackage());
-      moduleNameField.setText(settings.getGeneratedPythonModuleName());
-      implementVisionPipeline.setSelected(settings.getImplementWpilibPipeline());
-      Language language = Language.get(settings.getPreferredGeneratedLanguage());
+      final CodeGenerationSettings settings = event.getCodeGenerationSettings();
+      saveLocationLabel.setText(settings.getSaveDir());
+      classNameField.setText(settings.getClassName());
+      packageNameField.setText(settings.getPackageName());
+      moduleNameField.setText(settings.getModuleName());
+      implementVisionPipeline.setSelected(settings.shouldImplementWpilibPipeline());
+      Language language = Language.get(settings.getLanguage());
       if (language != null) {
         languageSelector.getSelectionModel().select(language);
         setLanguage();

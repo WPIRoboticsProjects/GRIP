@@ -1,17 +1,14 @@
-package edu.wpi.grip.ui.codegeneration;
+package edu.wpi.grip.core.settings;
 
-import edu.wpi.grip.core.settings.ProjectSettings;
-
-import java.io.File;
-
+import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * Holds options for code generation.
  */
-public class CodeGenerationOptions {
+public class CodeGenerationSettings {
 
-  private final Language language;
+  private final String language;
   private final String className;
   private final boolean implementWpilibPipeline;
   private final String saveDir;
@@ -25,6 +22,10 @@ public class CodeGenerationOptions {
   public static final String PACKAGE_NAME = "packageName";
   public static final String MODULE_NAME = "moduleName";
 
+  public CodeGenerationSettings() {
+    this("Java", "GripPipeline", false, System.getProperty("user.home"), "", "grip");
+  }
+
   /**
    * Private constructor; use a builder.
    *
@@ -36,12 +37,12 @@ public class CodeGenerationOptions {
    * @param packageName             the name of the Java package to place the file in
    * @param moduleName              the name of the Python module
    */
-  private CodeGenerationOptions(Language language,
-                                String className,
-                                boolean implementWpilibPipeline,
-                                String saveDir,
-                                String packageName,
-                                String moduleName) {
+  private CodeGenerationSettings(String language,
+                                 String className,
+                                 boolean implementWpilibPipeline,
+                                 String saveDir,
+                                 String packageName,
+                                 String moduleName) {
     this.language = language;
     this.className = className;
     this.implementWpilibPipeline = implementWpilibPipeline;
@@ -50,7 +51,7 @@ public class CodeGenerationOptions {
     this.moduleName = moduleName;
   }
 
-  public Language getLanguage() {
+  public String getLanguage() {
     return language;
   }
 
@@ -74,27 +75,13 @@ public class CodeGenerationOptions {
     return moduleName;
   }
 
-  /**
-   * Copies these options to project settings.
-   *
-   * @param projectSettings the project settings to copy into
-   */
-  public void copyTo(ProjectSettings projectSettings) {
-    projectSettings.setPreferredGeneratedLanguage(language.name);
-    projectSettings.setGeneratedPipelineName(className);
-    projectSettings.setCodegenDestDir(new File(saveDir));
-    projectSettings.setGeneratedJavaPackage(packageName);
-    projectSettings.setGeneratedPythonModuleName(moduleName);
-    projectSettings.setImplementWpilibPipeline(implementWpilibPipeline);
-  }
-
   public static Builder builder() {
     return new Builder();
   }
 
   public static final class Builder {
 
-    private Language language;
+    private String language;
     private String className;
     private Boolean implementVisionPipeline;
     private String saveDir;
@@ -104,42 +91,61 @@ public class CodeGenerationOptions {
     private Builder() {
     }
 
-    public Builder language(Language language) {
-      this.language = checkNotNull(language);
+    /**
+     * Sets the language. Must be one of "Java", "C++", "Python.
+     */
+    public Builder language(String language) {
+      checkArgument(language.matches("Java|C\\+\\+|Python"));
+      this.language = language;
       return this;
     }
 
+    /**
+     * Sets the generated class name.
+     */
     public Builder className(String className) {
       this.className = checkNotNull(className);
       return this;
     }
 
+    /**
+     * Sets the directory code should be generated in.
+     */
     public Builder saveDir(String saveDir) {
       this.saveDir = checkNotNull(saveDir);
       return this;
     }
 
+    /**
+     * Sets if the generated pipeline should implement the WPILib API.
+     */
     public Builder implementVisionPipeline(boolean implementVisionPipeline) {
       this.implementVisionPipeline = implementVisionPipeline;
       return this;
     }
 
+    /**
+     * Sets the package of the generated Java class.
+     */
     public Builder packageName(String packageName) {
       this.packageName = checkNotNull(packageName);
       return this;
     }
 
+    /**
+     * Sets the module name (also file name) of the generated Python class.
+     */
     public Builder moduleName(String moduleName) {
       this.moduleName = checkNotNull(moduleName);
       return this;
     }
 
     /**
-     * Builds a new {@code CodeGenerationOptions} object. This ensures that every required
+     * Builds a new {@code CodeGenerationSettings} object. This ensures that every required
      * option has been set.
      */
-    public CodeGenerationOptions build() {
-      return new CodeGenerationOptions(
+    public CodeGenerationSettings build() {
+      return new CodeGenerationSettings(
           checkNotNull(language, LANGUAGE),
           checkNotNull(className, CLASS_NAME),
           checkNotNull(implementVisionPipeline, IMPLEMENT_WPILIB_PIPELINE),
