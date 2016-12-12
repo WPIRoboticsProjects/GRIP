@@ -29,7 +29,7 @@ public class WarningAlert extends Alert {
     checkNotNull(body, "The body text cannot be null");
     checkNotNull(owner, "The owner window cannot be null");
 
-    initStyle(StageStyle.UNDECORATED);
+    initStyle(StageStyle.UTILITY);
     initOwner(owner);
     getDialogPane().setMinHeight(Region.USE_PREF_SIZE); // expand to fit content
     getDialogPane().setMinWidth(Region.USE_PREF_SIZE);
