@@ -8,6 +8,7 @@ import edu.wpi.grip.core.events.BenchmarkEvent;
 import edu.wpi.grip.core.events.ProjectSettingsChangedEvent;
 import edu.wpi.grip.core.events.TimerEvent;
 import edu.wpi.grip.core.events.UnexpectedThrowableEvent;
+import edu.wpi.grip.core.events.WarningEvent;
 import edu.wpi.grip.core.serialization.Project;
 import edu.wpi.grip.core.settings.AppSettings;
 import edu.wpi.grip.core.settings.ProjectSettings;
@@ -31,7 +32,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javafx.application.Platform;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -275,9 +275,9 @@ public class MainWindowController {
   /**
    * Controls the export button in the main menu. Opens a filechooser with language selection.
    * The user can select the language to export to, save location and file name.
-   * @param actionEvent Unused event passed by the controller.
    */
-  public void generate(ActionEvent actionEvent) {
+  @FXML
+  public void generate() {
     final FileChooser fileChooser = new FileChooser();
     fileChooser.setTitle("Export to");
     fileChooser.getExtensionFilters().add(new ExtensionFilter(Language.JAVA.name, "*.java"));
@@ -290,13 +290,15 @@ public class MainWindowController {
     }
     Language lang = Language.get(fileChooser.getSelectedExtensionFilter().getDescription());
     Exporter exporter = new Exporter(pipeline.getSteps(), lang, file);
-    final Set<String> nonExportableSteps = exporter.getNonExportableSteps();
+    final Set<String> nonExportableSteps = exporter.getNonExportableStepNames();
     if (!nonExportableSteps.isEmpty()) {
-      StringBuilder b = new StringBuilder("The following steps cannot be exported:\n");
-      nonExportableSteps.forEach(n -> b.append("  ").append(n).append('\n'));
-      Alert alert = new Alert(Alert.AlertType.WARNING);
-      alert.setContentText(b.toString());
-      alert.showAndWait();
+      StringBuilder b = new StringBuilder(
+          "The following steps do not support code generation:\n\n"
+      );
+      nonExportableSteps.stream()
+          .sorted()
+          .forEach(n -> b.append(" - ").append(n).append("\n"));
+      eventBus.post(new WarningEvent("Cannot generate code", b.toString()));
       return;
     }
     Thread exportRunner = new Thread(exporter);
@@ -325,7 +327,20 @@ public class MainWindowController {
   }
 
   @Subscribe
-  @SuppressWarnings( {"PMD.UnusedPrivateMethod", "PMD.UnusedFormalParameter"})
+  public void onWarningEvent(WarningEvent e) {
+    if (Platform.isFxApplicationThread()) {
+      showWarningAlert(e);
+    } else {
+      Platform.runLater(() -> showWarningAlert(e));
+    }
+  }
+
+  private void showWarningAlert(WarningEvent e) {
+    Alert alert = new WarningAlert(e.getHeader(), e.getBody(), root.getScene().getWindow());
+    alert.showAndWait();
+  }
+
+  @SuppressWarnings({"PMD.UnusedPrivateMethod", "PMD.UnusedFormalParameter"})
   private void runStopped(TimerEvent event) {
     if (event.getTarget() instanceof PipelineRunner) {
       Platform.runLater(() -> updateElapsedTimeLabel(event.getElapsedTime()));
