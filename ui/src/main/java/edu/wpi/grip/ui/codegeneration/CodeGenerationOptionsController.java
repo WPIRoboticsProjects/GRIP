@@ -77,6 +77,20 @@ public class CodeGenerationOptionsController {
     setTextFilter(classNameField, CLASS_NAME_REGEX);
     setTextFilter(packageNameField, PACKAGE_REGEX);
     setTextFilter(moduleNameField, MODULE_REGEX);
+    loadSettings(CodeGenerationSettings.DEFAULT_SETTINGS); // load the default settings
+  }
+
+  private void loadSettings(CodeGenerationSettings settings) {
+    saveLocationLabel.setText(settings.getSaveDir());
+    classNameField.setText(settings.getClassName());
+    packageNameField.setText(settings.getPackageName());
+    moduleNameField.setText(settings.getModuleName());
+    implementVisionPipeline.setSelected(settings.shouldImplementWpilibPipeline());
+    Language language = Language.get(settings.getLanguage());
+    if (language != null) {
+      languageSelector.getSelectionModel().select(language);
+      setLanguage();
+    }
   }
 
   private static void setTextFilter(TextField f, String regex) {
@@ -194,19 +208,7 @@ public class CodeGenerationOptionsController {
 
   @Subscribe
   public void onProjectSettingsChanged(CodeGenerationSettingsChangedEvent event) {
-    Platform.runLater(() -> {
-      final CodeGenerationSettings settings = event.getCodeGenerationSettings();
-      saveLocationLabel.setText(settings.getSaveDir());
-      classNameField.setText(settings.getClassName());
-      packageNameField.setText(settings.getPackageName());
-      moduleNameField.setText(settings.getModuleName());
-      implementVisionPipeline.setSelected(settings.shouldImplementWpilibPipeline());
-      Language language = Language.get(settings.getLanguage());
-      if (language != null) {
-        languageSelector.getSelectionModel().select(language);
-        setLanguage();
-      }
-    });
+    Platform.runLater(() -> loadSettings(event.getCodeGenerationSettings()));
   }
 
   @Subscribe

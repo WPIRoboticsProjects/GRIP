@@ -70,7 +70,7 @@ public class Pipeline implements ConnectionValidator, SettingsProvider, StepInde
   private ProjectSettings settings = new ProjectSettings();
   @XStreamOmitField
   private transient AppSettings appSettings = new AppSettings(); // Do not serialize this field
-  private CodeGenerationSettings codeGenerationSettings = new CodeGenerationSettings();
+  private CodeGenerationSettings codeGenerationSettings = CodeGenerationSettings.DEFAULT_SETTINGS;
 
   /**
    * Locks the resource with the specified lock and performs the function. When the function is
