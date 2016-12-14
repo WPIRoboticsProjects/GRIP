@@ -18,6 +18,8 @@
 \#include <stdio.h>
 \#include <stdlib.h>
 \#include <map>
+\#include <vector>
+\#include <string>
 \#include <math.h>
 
 namespace grip {
