@@ -77,24 +77,22 @@ public class RectangleSocketPreviewView extends SocketPreviewView<RectsReport> {
       final List<Rect> rectangles = report.getRectangles();
       Mat input = report.getImage();
 
+      if (input.channels() == 3) {
+        input.copyTo(tmp);
+      } else {
+        cvtColor(input, tmp, CV_GRAY2BGR);
+      }
+
+      input = tmp;
+
+      // If we don't want to see the background image, set it to black
+      if (!this.showInputImage) {
+        bitwise_xor(tmp, tmp, tmp);
+      }
+
       // If rectangles were found, draw them on the image before displaying it
-      if (!rectangles.isEmpty()) {
-        if (input.channels() == 3) {
-          input.copyTo(tmp);
-        } else {
-          cvtColor(input, tmp, CV_GRAY2BGR);
-        }
-
-        input = tmp;
-
-        // If we don't want to see the background image, set it to black
-        if (!this.showInputImage) {
-          bitwise_xor(tmp, tmp, tmp);
-        }
-
-        for (Rect r : rectangles) {
-          rectangle(input, r, Scalar.WHITE);
-        }
+      for (Rect r : rectangles) {
+        rectangle(input, r, Scalar.WHITE);
       }
       final Mat convertInput = input;
       final int numRegions = rectangles.size();
