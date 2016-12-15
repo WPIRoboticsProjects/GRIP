@@ -36,7 +36,7 @@ public enum Language {
     } else if (name.equals(PYTHON.name)) {
       return PYTHON;
     } else {
-      return null;
+      throw new IllegalArgumentException(name + " is not a valid name");
     }
   }
 
