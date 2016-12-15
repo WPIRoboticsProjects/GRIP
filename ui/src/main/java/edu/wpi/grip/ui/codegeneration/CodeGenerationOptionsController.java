@@ -22,6 +22,7 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.control.Tooltip;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
@@ -71,6 +72,10 @@ public class CodeGenerationOptionsController {
   @FXML
   private void initialize() {
     languageSelector.setItems(FXCollections.observableArrayList(Language.values()));
+    saveLocationLabel.setTooltip(new Tooltip());
+    saveLocationLabel.textProperty().addListener((obs, oldValue, newValue) -> {
+      saveLocationLabel.getTooltip().setText(newValue);
+    });
     extrasPane.setVisible(false);
     root.getProperties().put("controller", this);
     updateImplementButton();
