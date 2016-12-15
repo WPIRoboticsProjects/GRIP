@@ -1,7 +1,7 @@
 package edu.wpi.grip.core.http;
 
+import edu.wpi.grip.core.Pipeline;
 import edu.wpi.grip.core.exception.GripServerException;
-import edu.wpi.grip.core.settings.ProjectSettings;
 import edu.wpi.grip.core.settings.SettingsProvider;
 
 import org.apache.http.HttpResponse;
@@ -20,6 +20,7 @@ import org.junit.Test;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -56,7 +57,7 @@ public class GripServerTest {
   }
 
   public GripServerTest() {
-    instance = new GripServer(new ContextStore(), new TestServerFactory(), ProjectSettings::new);
+    instance = new GripServer(new ContextStore(), new TestServerFactory(), new Pipeline());
     instance.start();
 
     client = new DefaultHttpClient();

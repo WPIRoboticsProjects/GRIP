@@ -5,5 +5,5 @@
 	 * @param dst output of blur.
 	 */
 	void $fileName::#func($step ["src", "kSize", "dst"]) {
-		medianBlur(src, dst, (int)kSize);
+		cv::medianBlur(src, dst, (int)kSize);
 	}

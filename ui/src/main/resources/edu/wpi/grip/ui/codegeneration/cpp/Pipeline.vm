@@ -2,6 +2,9 @@
 /**
 * Initializes a ${fileName}.
 */
+
+namespace grip {
+
 $fileName::$fileName() {
 #foreach($source in $pipeline.getSources())
 ##	this->$source.value() = new #cType($source.type())();
@@ -34,7 +37,7 @@ $fileName::$fileName() {
 #set($outCnt = 0)
 #foreach($step in $pipeline.getSteps())
 #foreach($out in $step.getOutputs())
-	outputs.insert(make_pair(string("$out.name().toLowerCase().replaceAll("_", "")"), (AbsPipeline::Output)&$fileName::get${out.name()}));
+	outputs.insert(make_pair(std::string("$out.name().toLowerCase().replaceAll("_", "")"), (AbsPipeline::Output)&$fileName::get${out.name()}));
 #set($outCnt = $outCnt + 1)
 #end
 #end
@@ -114,8 +117,11 @@ void $fileName::set$step.name()${step.num()}(bool value){
 #parse($toParse)
 
 #end
+
 #if($testing)
 extern "C" AbsPipeline * makePipeline(){
     return new ${fileName}();
 }
 #end
+
+} // end grip namespace

@@ -8,5 +8,5 @@
 	 * @param maxLoc the location of the maximum value.
 	 */
 	void $fileName::#func($step ["src", "mask", "minVal", "maxVal", "minLoc", "maxLoc"]) {
-		minMaxLoc(src, &minVal, &maxVal, &minLoc, &maxLoc, mask);
+		cv::minMaxLoc(src, &minVal, &maxVal, &minLoc, &maxLoc, mask);
 	}

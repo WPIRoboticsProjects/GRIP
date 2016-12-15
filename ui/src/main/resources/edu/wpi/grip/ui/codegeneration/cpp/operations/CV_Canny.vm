@@ -8,5 +8,5 @@
 	 * @param edges output of the canny.
 	 */
 	void $fileName::#func($step ["image", "thres1", "thres2", "apertureSize", "gradient", "edges"]) {
-		Canny(image, edges, thres1, thres2, (int)apertureSize, gradient);
+		cv::Canny(image, edges, thres1, thres2, (int)apertureSize, gradient);
 	}

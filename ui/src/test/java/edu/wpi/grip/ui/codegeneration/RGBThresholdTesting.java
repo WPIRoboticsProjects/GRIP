@@ -11,15 +11,17 @@ import edu.wpi.grip.ui.codegeneration.tools.HelperTools;
 import edu.wpi.grip.ui.codegeneration.tools.PipelineInterfacer;
 import edu.wpi.grip.util.Files;
 
+import org.junit.Test;
 import org.opencv.core.Mat;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+@SuppressWarnings("PMD.JUnitSpelling")
 public class RGBThresholdTesting extends AbstractGenerationTesting {
 
   boolean setup() {
@@ -27,15 +29,9 @@ public class RGBThresholdTesting extends AbstractGenerationTesting {
         () -> new RGBThresholdOperation(isf, osf)));
     loadImage(Files.gompeiJpegFile);
     OutputSocket imgOut = pipeline.getSources().get(0).getOutputSockets().get(0);
-    List<Double> rVal = new ArrayList<Double>();
-    List<Double> gVal = new ArrayList<Double>();
-    List<Double> bVal = new ArrayList<Double>();
-    rVal.add(new Double(46));
-    rVal.add(new Double(188));
-    gVal.add(new Double(0));
-    gVal.add(new Double(110));
-    bVal.add(new Double(0));
-    bVal.add(new Double(110));
+    List<Double> rVal = Arrays.asList(46d, 188d);
+    List<Double> gVal = Arrays.asList(0d, 110d);
+    List<Double> bVal = Arrays.asList(0d, 110d);
     for (InputSocket sock : rgb.getInputSockets()) {
       String sockHint = sock.getSocketHint().getIdentifier();
       if ("Input".equals(sockHint)) {
@@ -64,4 +60,10 @@ public class RGBThresholdTesting extends AbstractGenerationTesting {
     Mat gripMat = HelperTools.bytedecoMatToCVMat((org.bytedeco.javacpp.opencv_core.Mat) out.get());
     assertMatWithin(genMat, gripMat, 2.0);
   }
+
+  @Test
+  public void test() {
+    test(this::setup, this::pipelineTest, "RGBThresholdTesting");
+  }
+
 }

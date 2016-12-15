@@ -7,15 +7,18 @@
 \#include <opencv2/objdetect/objdetect.hpp>
 \#include <opencv2/highgui/highgui.hpp>
 \#include <opencv2/imgproc/imgproc.hpp>
+\#include <opencv2/contrib/contrib.hpp>
 \#include <opencv2/core/core.hpp>
 \#include <opencv2/features2d.hpp>
 \#include <iostream>
 \#include <stdio.h>
 \#include <stdlib.h>
 \#include <map>
+\#include <vector>
+\#include <string>
 \#include <math.h>
-using namespace cv;
-using namespace std;
+
+namespace grip {
 
 #foreach($step in $pipeline.getUniqueSteps())
 #if($step.name().equals("Find_Lines") || $step.name().equals("Filter_Lines"))
@@ -50,7 +53,7 @@ class $fileName #if($testing): public AbsPipeline #end{
 #end
 #end
 #foreach($moving in $pipeline.getMovingThresholds())
-		Mat lastImage$moving.num();
+		cv::Mat lastImage$moving.num();
 #end
 #foreach($step in $pipeline.getUniqueSteps())
 #if($step.name() == "Switch" || $step.name() == "Valve")
@@ -77,7 +80,11 @@ class $fileName #if($testing): public AbsPipeline #end{
 #foreach($step in $pipeline.getSteps())
 #foreach($out in $step.getOutputs())
 #set($outSym = "#funPassType($output.type())")
-#if($outSym.equals("&") || $testing)
+#if($out.type().equals("Boolean"))
+#set($ptr = false)
+#elseif($out.type().equals("Number"))
+#set($ptr = false)
+#elseif($outSym.equals("&") || $testing)
 #set($ptr = true)
 #else
 #set($ptr = false)
@@ -86,6 +93,10 @@ class $fileName #if($testing): public AbsPipeline #end{
 #end
 #end
 };
+
 #if($testing)
 extern "C" DLL_TYPE AbsPipeline * makePipeline();
 #end
+
+} // end namespace grip
+

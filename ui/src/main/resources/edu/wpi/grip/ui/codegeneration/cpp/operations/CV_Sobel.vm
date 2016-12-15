@@ -10,5 +10,5 @@
 	 * @param dst Image that is output of Sobel.
 	 */
 	void $fileName::#func($step ["src", "dx", "dy", "kSize", "scale", "delta", "borderType", "dst"]) {
-		Sobel(src, dst, 0, (int)dx, (int)dy, (int)kSize, scale, delta, borderType);
+		cv::Sobel(src, dst, 0, (int)dx, (int)dy, (int)kSize, scale, delta, borderType);
 	}

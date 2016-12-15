@@ -5,5 +5,5 @@
 	 * @param dst converted Image.
 	 */
 	void $fileName::#func($step ["src", "code", "dst"]) {
-		cvtColor(src, dst, code);
+		cv::cvtColor(src, dst, code);
 	}

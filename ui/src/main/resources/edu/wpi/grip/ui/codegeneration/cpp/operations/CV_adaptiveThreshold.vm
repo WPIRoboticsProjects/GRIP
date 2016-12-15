@@ -9,5 +9,5 @@
 	 * @param dst Output of threshold.
 	 */
 	void $fileName::#func($step, ["src", "maxValue", "adaptiveMethod", "thresholdType", "blockSize", "c", "dst"]) {
-		adaptiveThreshold(src, dst, maxValue, adaptiveMethod, thresholdType, (int)blockSize, c);
+		cv::adaptiveThreshold(src, dst, maxValue, adaptiveMethod, thresholdType, (int)blockSize, c);
 	}

@@ -5,5 +5,5 @@
 	 * @param out the Mat that is the absolute difference between the two Mats.
 	 */
 	void $fileName::#func($step, ["src1", "src2", "out"]) {
-		absdiff(src1, src2, out);
+		cv::absdiff(src1, src2, out);
 	}

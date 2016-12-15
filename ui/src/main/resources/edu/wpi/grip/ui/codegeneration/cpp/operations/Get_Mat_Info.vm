@@ -14,8 +14,8 @@
 		cols = src.cols;
 		rows = src.rows;
 		double lowestValue;
-		minMaxLoc(src, &lowestValue, &highestValue);
-		Size matSize = src.size();
+		cv::minMaxLoc(src, &lowestValue, &highestValue);
+		cv::Size matSize = src.size();
 		size.height = matSize.height;
 		size.width = matSize.width;
 	}
