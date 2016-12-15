@@ -18,7 +18,7 @@ import edu.wpi.grip.core.settings.SettingsProvider;
 import edu.wpi.grip.core.sockets.SocketHint;
 import edu.wpi.grip.core.util.SafeShutdown;
 import edu.wpi.grip.core.util.service.SingleActionListener;
-import edu.wpi.grip.ui.codegeneration.CodeGenerationOptionsController;
+import edu.wpi.grip.ui.codegeneration.CodeGenerationSettingsDialog;
 import edu.wpi.grip.ui.codegeneration.Exporter;
 import edu.wpi.grip.ui.components.StartStoppableButton;
 import edu.wpi.grip.ui.util.DPIUtility;
@@ -41,9 +41,7 @@ import javafx.fxml.FXML;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
-import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
-import javafx.scene.control.ChoiceDialog;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
@@ -82,7 +80,7 @@ public class MainWindowController {
   @FXML
   private Pane analysisPane;
   @FXML
-  private Pane codegenOptionsPane;
+  private Pane codegenPane;
   @FXML
   private MenuItem analyzeMenuItem;
   @FXML
@@ -326,19 +324,8 @@ public class MainWindowController {
       eventBus.post(new WarningEvent("Cannot generate code", sb.toString()));
       return;
     }
-    Dialog<CodeGenerationSettings> optionsDialog = new ChoiceDialog<>();
-    optionsDialog.setTitle("Code Generation Options");
-    optionsDialog.setHeaderText(null);
-    optionsDialog.setGraphic(null);
-    optionsDialog.getDialogPane().setContent(codegenOptionsPane);
-    CodeGenerationOptionsController c =
-        (CodeGenerationOptionsController) codegenOptionsPane.getProperties().get("controller");
-    optionsDialog.setResultConverter(bt -> bt.getButtonData() == null ? null
-        : bt.getButtonData() == ButtonBar.ButtonData.OK_DONE
-        ? c.getOptions() : null);
-    Optional<CodeGenerationSettings> o = optionsDialog.showAndWait();
-    if (o.isPresent()) {
-      CodeGenerationSettings settings = o.get();
+    Dialog<CodeGenerationSettings> optionsDialog = new CodeGenerationSettingsDialog(codegenPane);
+    optionsDialog.showAndWait().ifPresent(settings -> {
       eventBus.post(new CodeGenerationSettingsChangedEvent(settings));
       Exporter exporter = new Exporter(pipeline.getSteps(), settings);
       final Set<String> nonExportableSteps = exporter.getNonExportableStepNames();
@@ -355,7 +342,7 @@ public class MainWindowController {
       Thread exportRunner = new Thread(exporter);
       exportRunner.setDaemon(true);
       exportRunner.start();
-    }
+    });
   }
 
   @FXML
