@@ -6,7 +6,7 @@
 	 * @param maskSize the size of the mask.
 	 * @param output The image in which to store the output.
 	 */
-	void $fileName::#func($step ["input", "type", "maskSize", "output"]) {
+	void $className::#func($step ["input", "type", "maskSize", "output"]) {
 		int mask;
 		if (maskSize.compare("0x0") == 0) {
 			mask = 0;

@@ -5,6 +5,6 @@
 	 * @param scale Scale for division.
 	 * @param dst Result image.
 	 */
-	void $fileName::#func($step ["src1", "src2", "scale", "dst"]) {
+	void $className::#func($step ["src1", "src2", "scale", "dst"]) {
 		cv::divide(src1, src2, dst, scale);
 	}

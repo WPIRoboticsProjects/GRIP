@@ -5,24 +5,29 @@ import edu.wpi.grip.core.Pipeline;
 import edu.wpi.grip.core.PipelineRunner;
 import edu.wpi.grip.core.events.AppSettingsChangedEvent;
 import edu.wpi.grip.core.events.BenchmarkEvent;
+import edu.wpi.grip.core.events.CodeGenerationSettingsChangedEvent;
 import edu.wpi.grip.core.events.ProjectSettingsChangedEvent;
 import edu.wpi.grip.core.events.TimerEvent;
 import edu.wpi.grip.core.events.UnexpectedThrowableEvent;
 import edu.wpi.grip.core.events.WarningEvent;
 import edu.wpi.grip.core.serialization.Project;
 import edu.wpi.grip.core.settings.AppSettings;
+import edu.wpi.grip.core.settings.CodeGenerationSettings;
 import edu.wpi.grip.core.settings.ProjectSettings;
 import edu.wpi.grip.core.settings.SettingsProvider;
+import edu.wpi.grip.core.sockets.SocketHint;
 import edu.wpi.grip.core.util.SafeShutdown;
 import edu.wpi.grip.core.util.service.SingleActionListener;
+import edu.wpi.grip.ui.codegeneration.CodeGenerationSettingsDialog;
 import edu.wpi.grip.ui.codegeneration.Exporter;
-import edu.wpi.grip.ui.codegeneration.Language;
 import edu.wpi.grip.ui.components.StartStoppableButton;
 import edu.wpi.grip.ui.util.DPIUtility;
 
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import com.google.common.util.concurrent.Service;
+
+import org.apache.commons.lang3.tuple.Pair;
 
 import java.io.File;
 import java.io.IOException;
@@ -74,6 +79,8 @@ public class MainWindowController {
   private Pane aboutPane;
   @FXML
   private Pane analysisPane;
+  @FXML
+  private Pane codegenPane;
   @FXML
   private MenuItem analyzeMenuItem;
   @FXML
@@ -158,8 +165,14 @@ public class MainWindowController {
   @FXML
   public void newProject() {
     if (showConfirmationDialogAndWait()) {
-      pipeline.clear();
-      project.setFile(Optional.empty());
+      Thread clearThread = new Thread(() -> {
+        pipelineRunner.stopAndAwait();
+        pipeline.clear();
+        project.setFile(Optional.empty());
+        pipelineRunner.startAsync();
+      }, "Pipeline Clear Thread");
+      clearThread.setDaemon(true);
+      clearThread.start();
     }
   }
 
@@ -277,33 +290,59 @@ public class MainWindowController {
    * The user can select the language to export to, save location and file name.
    */
   @FXML
-  public void generate() {
-    final FileChooser fileChooser = new FileChooser();
-    fileChooser.setTitle("Export to");
-    fileChooser.getExtensionFilters().add(new ExtensionFilter(Language.JAVA.name, "*.java"));
-    fileChooser.getExtensionFilters().add(new ExtensionFilter(Language.CPP.name, "*.cpp"));
-    fileChooser.getExtensionFilters().add(new ExtensionFilter(Language.PYTHON.name, "*.py"));
-    fileChooser.setInitialFileName("Pipeline.java");
-    final File file = fileChooser.showSaveDialog(root.getScene().getWindow());
-    if (file == null) {
+  protected void generate() {
+    if (pipeline.getSources().isEmpty()) {
+      // No sources
+      eventBus.post(new WarningEvent("Cannot generate code",
+          "There are no sources in the pipeline"));
+      return;
+    } else if (pipeline.getSteps().isEmpty()) {
+      // Sources, but no steps
+      eventBus.post(new WarningEvent("Cannot generate code",
+          "There are no steps in the pipeline"));
+      return;
+    } else if (pipeline.getConnections().isEmpty()) {
+      // Sources and steps, but no connections
+      eventBus.post(new WarningEvent("Cannot generate code",
+          "There are no connections in the pipeline"));
+      return;
+    } else if (pipeline.getSteps().stream()
+        .flatMap(s -> s.getInputSockets().stream())
+        .filter(s -> SocketHint.View.NONE.equals(s.getSocketHint().getView()))
+        .anyMatch(s -> !s.getValue().isPresent())) {
+      // Some sockets aren't connected
+      StringBuilder sb = new StringBuilder("The following steps are missing inputs:\n\n"); //NOPMD
+      pipeline.getSteps().stream()
+          .filter(step -> step.getInputSockets().stream().anyMatch(s ->
+              SocketHint.View.NONE.equals(s.getSocketHint().getView())
+                  && !s.getValue().isPresent()))
+          .map(s -> Pair.of(pipeline.indexOf(s) + 1, s.getOperationDescription().name()))
+          .forEach(p -> {
+            sb.append(" - ").append(p.getRight());
+            sb.append(" (at position ").append(p.getLeft()).append(")\n");
+          });
+      eventBus.post(new WarningEvent("Cannot generate code", sb.toString()));
       return;
     }
-    Language lang = Language.get(fileChooser.getSelectedExtensionFilter().getDescription());
-    Exporter exporter = new Exporter(pipeline.getSteps(), lang, file);
-    final Set<String> nonExportableSteps = exporter.getNonExportableStepNames();
-    if (!nonExportableSteps.isEmpty()) {
-      StringBuilder b = new StringBuilder(
-          "The following steps do not support code generation:\n\n"
-      );
-      nonExportableSteps.stream()
-          .sorted()
-          .forEach(n -> b.append(" - ").append(n).append("\n"));
-      eventBus.post(new WarningEvent("Cannot generate code", b.toString()));
-      return;
-    }
-    Thread exportRunner = new Thread(exporter);
-    exportRunner.setDaemon(true);
-    exportRunner.start();
+    Dialog<CodeGenerationSettings> optionsDialog = new CodeGenerationSettingsDialog(codegenPane);
+    optionsDialog.showAndWait().ifPresent(settings -> {
+      eventBus.post(new CodeGenerationSettingsChangedEvent(settings));
+      Exporter exporter = new Exporter(pipeline.getSteps(), settings);
+      final Set<String> nonExportableSteps = exporter.getNonExportableStepNames();
+      if (!nonExportableSteps.isEmpty()) {
+        StringBuilder b = new StringBuilder(
+            "The following steps do not support code generation:\n\n"
+        );
+        nonExportableSteps.stream()
+            .sorted()
+            .forEach(n -> b.append(" - ").append(n).append("\n"));
+        eventBus.post(new WarningEvent("Cannot generate code", b.toString()));
+        return;
+      }
+      Thread exportRunner = new Thread(exporter);
+      exportRunner.setDaemon(true);
+      exportRunner.start();
+    });
   }
 
   @FXML
@@ -340,6 +379,7 @@ public class MainWindowController {
     alert.showAndWait();
   }
 
+  @Subscribe
   @SuppressWarnings({"PMD.UnusedPrivateMethod", "PMD.UnusedFormalParameter"})
   private void runStopped(TimerEvent event) {
     if (event.getTarget() instanceof PipelineRunner) {

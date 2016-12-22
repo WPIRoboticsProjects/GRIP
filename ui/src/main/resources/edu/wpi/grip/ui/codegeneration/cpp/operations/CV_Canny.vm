@@ -7,6 +7,6 @@
 	 * @param gradient if the L2 norm should be used.
 	 * @param edges output of the canny.
 	 */
-	void $fileName::#func($step ["image", "thres1", "thres2", "apertureSize", "gradient", "edges"]) {
+	void $className::#func($step ["image", "thres1", "thres2", "apertureSize", "gradient", "edges"]) {
 		cv::Canny(image, edges, thres1, thres2, (int)apertureSize, gradient);
 	}

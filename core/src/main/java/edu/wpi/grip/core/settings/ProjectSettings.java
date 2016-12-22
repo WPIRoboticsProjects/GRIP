@@ -43,6 +43,10 @@ public class ProjectSettings implements Settings, Cloneable {
   private String deployJvmOptions = "-Xmx50m -XX:-OmitStackTraceInFastThrow "
       + "-XX:+HeapDumpOnOutOfMemoryError -XX:MaxNewSize=16m";
 
+
+  // Getters and setters
+
+
   public int getTeamNumber() {
     return teamNumber;
   }

@@ -9,6 +9,6 @@
     * @param maxSize        the maximum possible object size. If (0, 0), it is assumed to be unbounded
     * @param detections     the vector of Rects to store the detected regions in
 	*/
-	void $fileName::#func($step ["input", "classifier", "scaleFactor", "minNeighbors", "minSize", "maxSize", "detections"]) {
+	void $className::#func($step ["input", "classifier", "scaleFactor", "minNeighbors", "minSize", "maxSize", "detections"]) {
 		classifier.detectMultiScale(input, detections, scaleFactor, minNeighbors, 0, minSize, maxSize);
 	}

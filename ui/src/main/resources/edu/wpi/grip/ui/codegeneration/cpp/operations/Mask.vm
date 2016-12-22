@@ -5,7 +5,7 @@
 		 * @param mask The binary image that is used to filter.
 		 * @param output The image in which to store the output.
 		 */
-		void $fileName::#func($step ["input", "mask", "output"]) {
+		void $className::#func($step ["input", "mask", "output"]) {
 			mask.convertTo(mask, CV_8UC1);
 			cv::bitwise_xor(output, output, output);
 			input.copyTo(output, mask);
