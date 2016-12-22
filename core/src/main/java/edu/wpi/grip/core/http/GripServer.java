@@ -109,7 +109,7 @@ public class GripServer {
   /**
    * The default port the server should run on.
    */
-  public static final int DEFAULT_PORT = 8080;
+  public static final int DEFAULT_PORT = 2084;
 
   /**
    * The lowest valid TCP port number.

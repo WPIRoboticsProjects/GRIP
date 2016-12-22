@@ -4,6 +4,8 @@ import edu.wpi.grip.core.GripCoreModule;
 import edu.wpi.grip.core.GripFileModule;
 import edu.wpi.grip.core.PipelineRunner;
 import edu.wpi.grip.core.events.UnexpectedThrowableEvent;
+import edu.wpi.grip.core.events.WarningEvent;
+import edu.wpi.grip.core.exception.GripServerException;
 import edu.wpi.grip.core.http.GripServer;
 import edu.wpi.grip.core.http.HttpPipelineSwitcher;
 import edu.wpi.grip.core.operations.CVOperations;
@@ -145,7 +147,17 @@ public class Main extends Application {
     // argument is already taken. Since we have to have the server running to handle remotely
     // loading pipelines and uploading images, as well as potential HTTP publishing operations,
     // this will cause the program to exit.
-    server.start();
+    try {
+      server.start();
+    } catch (GripServerException e) {
+      // OK since we're on the JavaFX thread.
+      // This post will block until the warning dialog is closed.
+      eventBus.post(new WarningEvent("The HTTP server could not be started",
+          "The port is probably in use by another application.\n\n"
+              + "Set the port with the '--port' command line option."));
+      logger.log(Level.SEVERE, "The HTTP server could not be started", e);
+      SafeShutdown.exit(1);
+    }
   }
 
   public void stop() {

@@ -2,6 +2,8 @@ package edu.wpi.grip.core.util;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
+import java.util.logging.Logger;
+
 import javax.annotation.Nullable;
 
 /**
@@ -45,6 +47,7 @@ public final class SafeShutdown {
         hook.run();
       }
     } finally {
+      Logger.getLogger(SafeShutdown.class.getName()).info("Exiting GRIP");
       System.exit(statusCode);
     }
 
