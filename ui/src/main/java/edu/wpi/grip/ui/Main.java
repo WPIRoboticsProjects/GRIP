@@ -4,7 +4,6 @@ import edu.wpi.grip.core.GripCoreModule;
 import edu.wpi.grip.core.GripFileModule;
 import edu.wpi.grip.core.PipelineRunner;
 import edu.wpi.grip.core.events.UnexpectedThrowableEvent;
-import edu.wpi.grip.core.events.WarningEvent;
 import edu.wpi.grip.core.exception.GripServerException;
 import edu.wpi.grip.core.http.GripServer;
 import edu.wpi.grip.core.http.HttpPipelineSwitcher;
@@ -37,6 +36,8 @@ import javafx.application.Preloader;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
 import javafx.scene.image.Image;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
@@ -150,13 +151,16 @@ public class Main extends Application {
     try {
       server.start();
     } catch (GripServerException e) {
-      // OK since we're on the JavaFX thread.
-      // This post will block until the warning dialog is closed.
-      eventBus.post(new WarningEvent("The HTTP server could not be started",
-          "The port is probably in use by another application.\n\n"
-              + "Set the port with the '--port' command line option."));
       logger.log(Level.SEVERE, "The HTTP server could not be started", e);
-      SafeShutdown.exit(1);
+      Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "", ButtonType.YES, ButtonType.NO);
+      alert.setTitle("The HTTP server could not be started");
+      alert.setHeaderText("The HTTP server could not be started");
+      alert.setContentText(
+          "This is normally caused by the network port being used by another process.\n\n"
+              + "HTTP sources and operations will not work until GRIP is restarted. "
+              + "Continue without HTTP functionality anyway?"
+      );
+      alert.showAndWait().filter(ButtonType.NO::equals).ifPresent(bt -> SafeShutdown.exit(1));
     }
   }
 
