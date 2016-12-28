@@ -12,6 +12,7 @@ import edu.wpi.grip.ui.codegeneration.tools.JavaPipelineInterfacer;
 import edu.wpi.grip.ui.codegeneration.tools.PipelineCreator;
 import edu.wpi.grip.ui.codegeneration.tools.PipelineGenerator;
 import edu.wpi.grip.ui.codegeneration.tools.PipelineInterfacer;
+import edu.wpi.grip.ui.codegeneration.tools.PythonPipelineInterfacer;
 import edu.wpi.grip.util.GripCoreTestModule;
 import edu.wpi.grip.util.ImageWithData;
 
@@ -81,13 +82,16 @@ public class AbstractGenerationTesting {
     gen.export(fileName);
     Language current = Language.JAVA;
     try {
-      JavaPipelineInterfacer jpip = new JavaPipelineInterfacer(fileName + ".java");
-      test.accept(jpip);
+      if (Boolean.valueOf(System.getProperty("codegen.java.disabled", "false"))) {
+        JavaPipelineInterfacer jpip = new JavaPipelineInterfacer(fileName + ".java");
+        test.accept(jpip);
+      }
 
-      // The opencv-python package is broken, so python tests won't work on Travis
-      //current = Language.PYTHON;
-      //PythonPipelineInterfacer ppip = new PythonPipelineInterfacer(fileName);
-      //test.accept(ppip);
+      if (Boolean.valueOf(System.getProperty("codegen.python.disabled", "false"))) {
+        current = Language.PYTHON;
+        PythonPipelineInterfacer ppip = new PythonPipelineInterfacer(fileName);
+        test.accept(ppip);
+      }
 
       // C++ is just plain broken
       //current = Language.CPP;
