@@ -4,7 +4,7 @@
 	 * @param input The image on which to perform the find lines.
 	 * @param lineList The output where the lines are stored.
 	 */
-	void $fileName::#func($step ["input", "lineList"]) {
+	void $className::#func($step ["input", "lineList"]) {
 		cv::Ptr<cv::LineSegmentDetector> lsd = cv::createLineSegmentDetector(LSD_REFINE_STD);
 		std::vector<cv::Vec4i> lines;
 		lineList.clear();

@@ -9,7 +9,7 @@
 	 * @param shift Number of decimal places in the points.
 	 * @param dst output image.
 	 */
-	void $fileName::#func($step ["src", "pt1", "pt2", "color", "thickness", "lineType", "shift", "dst"]) {
+	void $className::#func($step ["src", "pt1", "pt2", "color", "thickness", "lineType", "shift", "dst"]) {
 		src.copyTo(dst);
 		cv::rectangle(dst, pt1, pt2, color, (int)thickness, lineType, (int)shift);
 	}

@@ -1,6 +1,7 @@
 package edu.wpi.grip.core;
 
 import edu.wpi.grip.core.events.AppSettingsChangedEvent;
+import edu.wpi.grip.core.events.CodeGenerationSettingsChangedEvent;
 import edu.wpi.grip.core.events.ConnectionAddedEvent;
 import edu.wpi.grip.core.events.ConnectionRemovedEvent;
 import edu.wpi.grip.core.events.ProjectSettingsChangedEvent;
@@ -10,6 +11,7 @@ import edu.wpi.grip.core.events.StepAddedEvent;
 import edu.wpi.grip.core.events.StepMovedEvent;
 import edu.wpi.grip.core.events.StepRemovedEvent;
 import edu.wpi.grip.core.settings.AppSettings;
+import edu.wpi.grip.core.settings.CodeGenerationSettings;
 import edu.wpi.grip.core.settings.ProjectSettings;
 import edu.wpi.grip.core.settings.SettingsProvider;
 import edu.wpi.grip.core.sockets.InputSocket;
@@ -68,6 +70,7 @@ public class Pipeline implements ConnectionValidator, SettingsProvider, StepInde
   private ProjectSettings settings = new ProjectSettings();
   @XStreamOmitField
   private transient AppSettings appSettings = new AppSettings(); // Do not serialize this field
+  private CodeGenerationSettings codeGenerationSettings = CodeGenerationSettings.DEFAULT_SETTINGS;
 
   /**
    * Locks the resource with the specified lock and performs the function. When the function is
@@ -195,6 +198,11 @@ public class Pipeline implements ConnectionValidator, SettingsProvider, StepInde
   @Override
   public AppSettings getAppSettings() {
     return appSettings;
+  }
+
+  @Override
+  public CodeGenerationSettings getCodeGenerationSettings() {
+    return codeGenerationSettings;
   }
 
   @SuppressWarnings("unchecked")
@@ -404,6 +412,11 @@ public class Pipeline implements ConnectionValidator, SettingsProvider, StepInde
   @Subscribe
   public void onAppSettingsChanged(AppSettingsChangedEvent event) {
     this.appSettings = event.getAppSettings();
+  }
+
+  @Subscribe
+  public void onCodeGenerationSettingsChanged(CodeGenerationSettingsChangedEvent event) {
+    this.codeGenerationSettings = event.getCodeGenerationSettings();
   }
 
 }

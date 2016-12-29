@@ -7,6 +7,6 @@
 	 * @param max The maximum value.
 	 * @param output The image in which to store the output.
 	 */
-	void $fileName::#func($step, ["input", "type", "min", "max", "output"]) {
+	void $className::#func($step, ["input", "type", "min", "max", "output"]) {
 	   cv::normalize(input, output, min, max, type);
 	}

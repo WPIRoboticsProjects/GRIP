@@ -1,5 +1,5 @@
 #macro( input $inp)
-self.__$tMeth.pyName($inp.name())#end
+self.$tMeth.name($inp.name())#end
 
 
 #macro(newInput $inp)
@@ -7,7 +7,7 @@ self.__$tMeth.pyName($inp.name())#end
 #if($inp.type().equals("BlurType") || $inp.type().equals("FlipCode"))
 #input($inp) = ${inp.type()}.$inp.value().replaceAll(' ','_')#elseif($inp.type().equals("MaskSize"))
 #input($inp) = $inp.value().substring(0,1)#elseif($inp.value().contains("source"))
-#input($inp) = self.__$inp.value()#elseif ($inp.type().contains("Enum") ||
+#input($inp) = $inp.value()#elseif ($inp.type().contains("Enum") ||
 $input.type().contains("Type") || $input.type().equals("Interpolation"))
 #input($inp) = cv2.#enum($inp.value())#elseif($inp.value().equals("null") || $inp.type().equals("Mat"))
 #input($inp) = None#elseif($inp.value().equals("false"))

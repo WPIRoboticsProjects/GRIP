@@ -7,17 +7,22 @@ import org.opencv.imgcodecs.Imgcodecs;
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import static org.junit.Assert.fail;
 
 public class JavaPipelineInterfacer implements PipelineInterfacer {
-  private final Class pipeline;
+  private final Class<?> pipeline;
   private Object instance;
   private final JavaTMethods tMeth;
   private static final Logger logger = Logger.getLogger(JavaPipelineInterfacer.class.getName());
+
+  private final Map<String, Class<?>> sourceTypeMap = new LinkedHashMap<>();
+  private final Map<String, Object> sourceValueMap = new LinkedHashMap<>();
 
   public JavaPipelineInterfacer(String className) {
     tMeth = new JavaTMethods();
@@ -33,14 +38,8 @@ public class JavaPipelineInterfacer implements PipelineInterfacer {
   }
 
   public void setSource(int num, Object value) {
-    try {
-      pipeline.getMethod("setsource" + num, value.getClass()).invoke(instance, value);
-    } catch (NoSuchMethodException | SecurityException | IllegalAccessException
-        | IllegalArgumentException | InvocationTargetException e) {
-      fail("setsource" + num + " is not valid for class " + value.getClass().getSimpleName()
-          + " because there was a: ");
-      logger.log(Level.WARNING, e.getMessage(), e);
-    }
+    sourceTypeMap.put("source" + num, value.getClass());
+    sourceValueMap.put("source" + num, value);
   }
 
   @Override
@@ -56,7 +55,8 @@ public class JavaPipelineInterfacer implements PipelineInterfacer {
   @Override
   public void process() {
     try {
-      pipeline.getMethod("process").invoke(instance);
+      pipeline.getMethod("process", sourceTypeMap.values().toArray(new Class[0]))
+          .invoke(instance, sourceValueMap.values().toArray());
     } catch (IllegalAccessException | IllegalArgumentException
         | InvocationTargetException | NoSuchMethodException
         | SecurityException e) {

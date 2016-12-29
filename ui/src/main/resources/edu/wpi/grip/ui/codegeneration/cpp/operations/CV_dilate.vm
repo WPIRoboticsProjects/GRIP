@@ -8,6 +8,6 @@
 	 * @param borderValue value to be used for a constant border.
 	 * @param dst Output Image.
 	 */
-	void $fileName::#func($step ["src", "kernel", "anchor", "iterations", "borderType", "borderValue", "dst"]) {
+	void $className::#func($step ["src", "kernel", "anchor", "iterations", "borderType", "borderValue", "dst"]) {
 		cv::dilate(src, dst, kernel, anchor, (int)iterations, borderType, borderValue);
 	}
