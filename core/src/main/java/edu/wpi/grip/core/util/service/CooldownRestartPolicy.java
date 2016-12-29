@@ -46,8 +46,8 @@ public class CooldownRestartPolicy implements ServiceRestartPolicy {
   }
 
   @Override
-  public boolean shouldRestart() {
-    return stopwatch.elapsed(timeUnit) > interval;
+  public long restartDelay() {
+    return timeUnit.toNanos(interval) - stopwatch.elapsed(TimeUnit.NANOSECONDS);
   }
 
 }

@@ -2,6 +2,7 @@ package edu.wpi.grip.ui.components;
 
 import edu.wpi.grip.core.util.service.AutoRestartingService;
 import edu.wpi.grip.core.util.service.RestartableService;
+import edu.wpi.grip.core.util.service.ServiceRestartPolicy;
 
 import com.google.common.util.concurrent.AbstractIdleService;
 
@@ -37,7 +38,7 @@ public class StartStoppableButtonTest extends ApplicationTest {
       protected void shutDown() {
         /* no-op */
       }
-    }, () -> false);
+    }, ServiceRestartPolicy.IMMEDIATE);
     startStoppableButton = new StartStoppableButton(restartableService);
     Scene scene = new Scene(startStoppableButton, 800, 600);
     stage.setScene(scene);

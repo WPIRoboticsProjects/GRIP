@@ -9,6 +9,7 @@ import edu.wpi.grip.core.sockets.SocketHint;
 import edu.wpi.grip.core.sockets.SocketHints;
 import edu.wpi.grip.core.util.ExceptionWitness;
 import edu.wpi.grip.core.util.service.AutoRestartingService;
+import edu.wpi.grip.core.util.service.CooldownRestartPolicy;
 import edu.wpi.grip.core.util.service.LoggingListener;
 import edu.wpi.grip.core.util.service.RestartableService;
 
@@ -185,7 +186,8 @@ public class CameraSource extends Source implements RestartableService {
                   public void updatesComplete() {
                     eventBus.post(new SourceHasPendingUpdateEvent(CameraSource.this));
                   }
-                }, getExceptionWitness()::clearException));
+                }, getExceptionWitness()::clearException),
+            new CooldownRestartPolicy(20, TimeUnit.MILLISECONDS)); // 50Hz retry rate
 
     this.cameraService.addListener(new Listener() {
       @Override

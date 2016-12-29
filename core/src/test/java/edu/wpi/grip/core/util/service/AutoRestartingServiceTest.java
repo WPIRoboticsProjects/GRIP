@@ -77,9 +77,10 @@ public class AutoRestartingServiceTest {
 
   @Test
   public void testStartStopMultipleTimes() throws InterruptedException {
-    final RecordingSupplier recordingSupplier = new RecordingSupplier(WaitOnRunService::new);
+    final RecordingSupplier<WaitOnRunService> recordingSupplier =
+        new RecordingSupplier<>(WaitOnRunService::new);
     final AutoRestartingService<WaitOnRunService> restartingService =
-        new AutoRestartingService<>(recordingSupplier, () -> false);
+        new AutoRestartingService<>(recordingSupplier, ServiceRestartPolicy.IMMEDIATE);
 
     assertFalse("Start should not have been called", restartingService.getDelegate().startUpCalled);
 
@@ -117,9 +118,10 @@ public class AutoRestartingServiceTest {
 
   @Test
   public void testCallStartTwiceFails() throws InterruptedException {
-    final RecordingSupplier recordingSupplier = new RecordingSupplier<>(WaitOnRunService::new);
+    final RecordingSupplier<WaitOnRunService> recordingSupplier =
+        new RecordingSupplier<>(WaitOnRunService::new);
     final AutoRestartingService<WaitOnRunService> restartingService =
-        new AutoRestartingService<>(recordingSupplier, () -> false);
+        new AutoRestartingService<>(recordingSupplier, ServiceRestartPolicy.IMMEDIATE);
 
     restartingService.startAsync();
     try {
@@ -141,10 +143,10 @@ public class AutoRestartingServiceTest {
 
   @Test
   public void testServiceStaysRunningIfThrowOnRunning() throws InterruptedException {
-    final RecordingSupplier recordingSupplier =
+    final RecordingSupplier<WaitThenThrowOnRunService> recordingSupplier =
         new RecordingSupplier<>(WaitThenThrowOnRunService::new);
     final AutoRestartingService<WaitThenThrowOnRunService> restartingService =
-        new AutoRestartingService<>(recordingSupplier, () -> true);
+        new AutoRestartingService<>(recordingSupplier, ServiceRestartPolicy.IMMEDIATE);
 
     @SuppressWarnings("PMD.PrematureDeclaration")
     final Service initialDelegate = restartingService.getDelegate();
@@ -182,9 +184,10 @@ public class AutoRestartingServiceTest {
 
   @Test
   public void testListenerGetsAddedToRunningService() throws InterruptedException {
-    final RecordingSupplier recordingSupplier = new RecordingSupplier(() -> new WaitOnRunService());
+    final RecordingSupplier<WaitOnRunService> recordingSupplier =
+        new RecordingSupplier<>(WaitOnRunService::new);
     final AutoRestartingService<WaitOnRunService> restartingService =
-        new AutoRestartingService(recordingSupplier, () -> false);
+        new AutoRestartingService<>(recordingSupplier, ServiceRestartPolicy.IMMEDIATE);
     final boolean[] startingListener = {false};
     final boolean[] stoppingListener = {false};
 
