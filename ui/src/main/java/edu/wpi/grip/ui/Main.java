@@ -4,6 +4,7 @@ import edu.wpi.grip.core.GripCoreModule;
 import edu.wpi.grip.core.GripFileModule;
 import edu.wpi.grip.core.PipelineRunner;
 import edu.wpi.grip.core.events.UnexpectedThrowableEvent;
+import edu.wpi.grip.core.exception.GripServerException;
 import edu.wpi.grip.core.http.GripServer;
 import edu.wpi.grip.core.http.HttpPipelineSwitcher;
 import edu.wpi.grip.core.operations.CVOperations;
@@ -35,6 +36,8 @@ import javafx.application.Preloader;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
 import javafx.scene.image.Image;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
@@ -145,7 +148,20 @@ public class Main extends Application {
     // argument is already taken. Since we have to have the server running to handle remotely
     // loading pipelines and uploading images, as well as potential HTTP publishing operations,
     // this will cause the program to exit.
-    server.start();
+    try {
+      server.start();
+    } catch (GripServerException e) {
+      logger.log(Level.SEVERE, "The HTTP server could not be started", e);
+      Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "", ButtonType.YES, ButtonType.NO);
+      alert.setTitle("The HTTP server could not be started");
+      alert.setHeaderText("The HTTP server could not be started");
+      alert.setContentText(
+          "This is normally caused by the network port being used by another process.\n\n"
+              + "HTTP sources and operations will not work until GRIP is restarted. "
+              + "Continue without HTTP functionality anyway?"
+      );
+      alert.showAndWait().filter(ButtonType.NO::equals).ifPresent(bt -> SafeShutdown.exit(1));
+    }
   }
 
   public void stop() {

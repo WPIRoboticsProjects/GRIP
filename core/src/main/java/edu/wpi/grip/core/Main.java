@@ -2,6 +2,7 @@ package edu.wpi.grip.core;
 
 import edu.wpi.grip.core.events.ExceptionClearedEvent;
 import edu.wpi.grip.core.events.ExceptionEvent;
+import edu.wpi.grip.core.exception.GripServerException;
 import edu.wpi.grip.core.http.GripServer;
 import edu.wpi.grip.core.http.HttpPipelineSwitcher;
 import edu.wpi.grip.core.operations.CVOperations;
@@ -10,6 +11,7 @@ import edu.wpi.grip.core.operations.network.GripNetworkModule;
 import edu.wpi.grip.core.serialization.Project;
 import edu.wpi.grip.core.settings.SettingsProvider;
 import edu.wpi.grip.core.sources.GripSourcesHardwareModule;
+import edu.wpi.grip.core.util.SafeShutdown;
 
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
@@ -75,7 +77,12 @@ public class Main {
     // argument is already taken. Since we have to have the server running to handle remotely
     // loading pipelines and uploading images, as well as potential HTTP publishing operations,
     // this will cause the program to exit.
-    gripServer.start();
+    try {
+      gripServer.start();
+    } catch (GripServerException e) {
+      logger.log(Level.SEVERE, "The HTTP server could not be started", e);
+      SafeShutdown.exit(1);
+    }
 
     if (pipelineRunner.state() == Service.State.NEW) {
       // Loading a project will start the pipeline, so only start it if a project wasn't specified
