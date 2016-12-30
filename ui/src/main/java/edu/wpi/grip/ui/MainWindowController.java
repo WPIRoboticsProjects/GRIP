@@ -347,6 +347,13 @@ public class MainWindowController {
 
   @FXML
   protected void deploy() {
+    eventBus.post(new WarningEvent(
+        "Deploy has been deprecated",
+        "The deploy tool has been deprecated and is no longer supported. "
+            + "It will be removed in a future release.\n\n"
+            + "Instead, use code generation to create a Java, C++, or Python class that handles all"
+            + " the OpenCV code and can be easily integrated into a WPILib robot program."));
+
     ImageView graphic = new ImageView(new Image("/edu/wpi/grip/ui/icons/settings.png"));
     graphic.setFitWidth(DPIUtility.SMALL_ICON_SIZE);
     graphic.setFitHeight(DPIUtility.SMALL_ICON_SIZE);
