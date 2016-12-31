@@ -34,7 +34,6 @@ public class TextFieldInputSocketController extends InputSocketController<String
 
     textField = new TextField(getSocket().getValue().get());
     textField.setPromptText(getSocket().getSocketHint().getIdentifier());
-    textField.disableProperty().bind(this.getHandle().connectedProperty());
     textField.focusedProperty().addListener(observable -> {
       if (!textField.isFocused()) {
         getSocket().setValue(textField.getText());

@@ -4,6 +4,6 @@
 	 * @param src2 the second Mat.
 	 * @param dst the Mat that is the subtraction of the two Mats.
 	 */
-	void $fileName::#func($step ["src1", "src2", "dst"]) {
-		subtract(src1, src2, dst);
+	void $className::#func($step ["src1", "src2", "dst"]) {
+		cv::subtract(src1, src2, dst);
 	}

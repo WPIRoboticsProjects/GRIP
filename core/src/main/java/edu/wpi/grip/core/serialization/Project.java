@@ -47,13 +47,16 @@ public class Project {
                          SourceConverter sourceConverter,
                          SocketConverter socketConverter,
                          ConnectionConverter connectionConverter,
-                         ProjectSettingsConverter projectSettingsConverter) {
+                         ProjectSettingsConverter projectSettingsConverter,
+                         CodeGenerationSettingsConverter codeGenerationSettingsConverter) {
     xstream.setMode(XStream.NO_REFERENCES);
+    xstream.ignoreUnknownElements(); // ignores all unknown tags
     xstream.registerConverter(stepConverter);
     xstream.registerConverter(sourceConverter);
     xstream.registerConverter(socketConverter);
     xstream.registerConverter(connectionConverter);
     xstream.registerConverter(projectSettingsConverter);
+    xstream.registerConverter(codeGenerationSettingsConverter);
     try {
       ClassPath cp = ClassPath.from(getClass().getClassLoader());
       cp.getAllClasses()

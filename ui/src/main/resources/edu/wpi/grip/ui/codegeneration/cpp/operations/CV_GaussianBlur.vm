@@ -7,6 +7,6 @@
 	 * @param borderType pixel extrapolation method.
 	 * @param dst the output image.
 	 */
-	void $fileName::#func($step ["src", "kSize", "sigmaX", "sigmaY", "borderType", "dst"]) {
-		GaussianBlur(src, dst, kSize, sigmaX, sigmaY, borderType);
+	void $className::#func($step ["src", "kSize", "sigmaX", "sigmaY", "borderType", "dst"]) {
+		cv::GaussianBlur(src, dst, kSize, sigmaX, sigmaY, borderType);
 	}

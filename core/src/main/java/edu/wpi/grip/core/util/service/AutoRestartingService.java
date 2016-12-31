@@ -15,6 +15,8 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Supplier;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -67,7 +69,7 @@ public class AutoRestartingService<S extends Service> implements RestartableServ
    * @param factory This should always supply a new instance of the service that can be restarted.
    */
   public AutoRestartingService(final Supplier<S> factory) {
-    this(factory, () -> true);
+    this(factory, ServiceRestartPolicy.IMMEDIATE);
   }
 
   /**
@@ -203,8 +205,18 @@ public class AutoRestartingService<S extends Service> implements RestartableServ
 
     @Override
     public void failed(final State from, final Throwable failure) {
-      if (policy.shouldRestart()) {
+      final long delay = policy.restartDelay();
+      if (delay <= 0) {
         startAsync(false);
+      } else {
+        try {
+          Thread.sleep(TimeUnit.NANOSECONDS.toMillis(delay));
+          startAsync(false);
+        } catch (InterruptedException e) {
+          Logger.getLogger(AutoRestartingService.class.getName())
+              .log(Level.SEVERE, "Could not sleep for " + delay + "ns", e);
+          Thread.currentThread().interrupt();
+        }
       }
     }
   }

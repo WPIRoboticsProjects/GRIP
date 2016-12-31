@@ -52,8 +52,6 @@ public class SelectInputSocketController<T> extends InputSocketController<T> {
   @Override
   public void initialize() {
     super.initialize();
-    this.choiceBox.disableProperty().bind(this.getHandle().connectedProperty());
-
     this.choiceBox.valueProperty().addListener(this.updateSocketFromChoiceBox);
 
     this.setContent(this.choiceBox);

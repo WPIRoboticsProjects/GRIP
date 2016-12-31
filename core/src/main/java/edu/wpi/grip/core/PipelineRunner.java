@@ -1,11 +1,13 @@
 package edu.wpi.grip.core;
 
 
+import edu.wpi.grip.core.events.BenchmarkEvent;
 import edu.wpi.grip.core.events.RenderEvent;
 import edu.wpi.grip.core.events.RunPipelineEvent;
 import edu.wpi.grip.core.events.RunStartedEvent;
 import edu.wpi.grip.core.events.RunStoppedEvent;
 import edu.wpi.grip.core.events.StopPipelineEvent;
+import edu.wpi.grip.core.metrics.Timer;
 import edu.wpi.grip.core.util.SinglePermitSemaphore;
 import edu.wpi.grip.core.util.service.AutoRestartingService;
 import edu.wpi.grip.core.util.service.LoggingListener;
@@ -24,6 +26,7 @@ import com.google.inject.Singleton;
 import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Supplier;
 import java.util.logging.Logger;
 
@@ -47,17 +50,25 @@ public class PipelineRunner implements RestartableService {
   private final Supplier<ImmutableList<Step>> stepSupplier;
   private final AutoRestartingService pipelineService;
 
+  private final AtomicBoolean benchmarking = new AtomicBoolean(false);
 
   @Inject
-  PipelineRunner(EventBus eventBus, Provider<Pipeline> pipelineProvider) {
-    this(eventBus, () -> pipelineProvider.get().getSources(), () -> pipelineProvider.get()
-        .getSteps());
+  PipelineRunner(EventBus eventBus,
+                 Provider<Pipeline> pipelineProvider,
+                 Timer.Factory timerFactory) {
+    this(eventBus,
+        () -> pipelineProvider.get().getSources(),
+        () -> pipelineProvider.get().getSteps(),
+        timerFactory);
   }
 
-  PipelineRunner(EventBus eventBus, Supplier<ImmutableList<Source>> sourceSupplier,
-                 Supplier<ImmutableList<Step>> stepSupplier) {
+  PipelineRunner(EventBus eventBus,
+                 Supplier<ImmutableList<Source>> sourceSupplier,
+                 Supplier<ImmutableList<Step>> stepSupplier,
+                 Timer.Factory timerFactory) {
     this.sourceSupplier = sourceSupplier;
     this.stepSupplier = stepSupplier;
+    Timer timer = timerFactory.create(this);
     this.pipelineService = new AutoRestartingService<>(
         () -> new AbstractScheduledService() {
 
@@ -77,12 +88,12 @@ public class PipelineRunner implements RestartableService {
             if (!super.isRunning()) {
               return;
             }
-            runPipeline(super::isRunning);
+            timer.time(() -> runPipeline(super::isRunning));
             // This should not block access to the steps array
+            eventBus.post(new RunStoppedEvent());
             if (super.isRunning()) {
               eventBus.post(new RenderEvent());
             }
-            eventBus.post(new RunStoppedEvent());
           }
 
           @Override
@@ -182,20 +193,23 @@ public class PipelineRunner implements RestartableService {
     final ImmutableList<Step> steps = stepSupplier.get();
     // Now that we have a snapshot we can run the pipeline with our copy.
 
-    for (Source source : sources) {
-      // if we have been stopped then we need to exit as soon as possible.
-      // then don't continue to run the pipeline.
-      if (!isRunning.get()) {
-        break;
+    if (!benchmarking.get()) {
+      // Don't update sources if this run is being benchmarked
+      for (Source source : sources) {
+        // if we have been stopped then we need to exit as soon as possible.
+        // then don't continue to run the pipeline.
+        if (!isRunning.get()) {
+          break;
+        }
+        source.updateOutputSockets();
       }
-      source.updateOutputSockets();
     }
 
     for (Step step : steps) {
       if (!isRunning.get()) {
         break;
       }
-      step.runPerformIfPossible();
+      step.runPerform(benchmarking.get());
     }
   }
 
@@ -211,6 +225,11 @@ public class PipelineRunner implements RestartableService {
   @Subscribe
   public void onStopPipeline(@Nullable StopPipelineEvent event) {
     stopAsync();
+  }
+
+  @Subscribe
+  public void onBenchmarkEvent(BenchmarkEvent event) {
+    benchmarking.set(event.isStart());
   }
 
 }

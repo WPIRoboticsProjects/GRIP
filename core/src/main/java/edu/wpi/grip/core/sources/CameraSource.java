@@ -9,6 +9,7 @@ import edu.wpi.grip.core.sockets.SocketHint;
 import edu.wpi.grip.core.sockets.SocketHints;
 import edu.wpi.grip.core.util.ExceptionWitness;
 import edu.wpi.grip.core.util.service.AutoRestartingService;
+import edu.wpi.grip.core.util.service.CooldownRestartPolicy;
 import edu.wpi.grip.core.util.service.LoggingListener;
 import edu.wpi.grip.core.util.service.RestartableService;
 
@@ -185,7 +186,8 @@ public class CameraSource extends Source implements RestartableService {
                   public void updatesComplete() {
                     eventBus.post(new SourceHasPendingUpdateEvent(CameraSource.this));
                   }
-                }, getExceptionWitness()::clearException));
+                }, getExceptionWitness()::clearException),
+            new CooldownRestartPolicy(20, TimeUnit.MILLISECONDS)); // 50Hz retry rate
 
     this.cameraService.addListener(new Listener() {
       @Override
@@ -285,12 +287,24 @@ public class CameraSource extends Source implements RestartableService {
 
   @Override
   public void stopAndAwait() {
-    stopAsync().cameraService.stopAndAwait();
+    try {
+      stopAsync().cameraService.stopAndAwait();
+    } catch (IllegalStateException e) {
+      if (!cameraService.state().equals(State.FAILED)) {
+        throw e;
+      }
+    }
   }
 
   @Override
   public void stopAndAwait(long timeout, TimeUnit unit) throws TimeoutException {
-    stopAsync().cameraService.stopAndAwait(timeout, unit);
+    try {
+      stopAsync().cameraService.stopAndAwait(timeout, unit);
+    } catch (IllegalStateException e) {
+      if (!cameraService.state().equals(State.FAILED)) {
+        throw e;
+      }
+    }
   }
 
   @Override
@@ -338,7 +352,23 @@ public class CameraSource extends Source implements RestartableService {
         // a new camera source is added. For webcam sources, this means that the video stream
         // won't be freed and new sources won't be able to connect to the webcam until the
         // application is closed.
-        this.stopAndAwait();
+        if (StandardSystemProperty.OS_NAME.value().toLowerCase().contains("mac")) {
+          // Workaround for #716. This affects webcams as well as IP camera sources.
+          // Use only stopAsync() to avoid blocking. Since we have no way of knowing when
+          // the capture has actually been freed, we use a dumb delay to try to make sure it's
+          // freed before returning. THIS IS NOT A GOOD SOLUTION. But it's the best one we have
+          // until the bug is fixed.
+          stopAsync();
+          try {
+            // Wait a bit to try to make sure the capture is actually freed before returning
+            Thread.sleep(100);
+          } catch (InterruptedException ignore) {
+            // We did our best. Hopefully, the webcam has been freed at this point.
+            Thread.currentThread().interrupt();
+          }
+        } else {
+          this.stopAndAwait();
+        }
       } finally {
         this.eventBus.unregister(this);
       }

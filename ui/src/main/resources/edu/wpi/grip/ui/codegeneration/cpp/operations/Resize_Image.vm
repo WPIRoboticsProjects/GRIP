@@ -7,6 +7,6 @@
 	 * @param interpolation The type of interpolation.
 	 * @param output The image in which to store the output.
 	 */
-	void $fileName::#func($step, ["input", "width", "height", "interpolation", "output"]) {
-		resize(input, output, Size(width, height), 0.0, 0.0, interpolation);
+	void $className::#func($step, ["input", "width", "height", "interpolation", "output"]) {
+		cv::resize(input, output, cv::Size(width, height), 0.0, 0.0, interpolation);
 	}

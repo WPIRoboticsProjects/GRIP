@@ -3,6 +3,7 @@ package edu.wpi.grip.ui.pipeline.input;
 import edu.wpi.grip.core.events.SocketChangedEvent;
 import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.ui.pipeline.SocketHandleView;
+import edu.wpi.grip.ui.util.GripPlatform;
 
 import com.google.common.eventbus.Subscribe;
 import com.google.inject.Inject;
@@ -25,6 +26,7 @@ import static com.google.common.base.Preconditions.checkArgument;
  */
 public class RangeInputSocketController extends InputSocketController<List<Number>> {
 
+  private final GripPlatform platform;
   private final RangeSlider slider;
 
   /**
@@ -33,8 +35,10 @@ public class RangeInputSocketController extends InputSocketController<List<Numbe
    */
   @Inject
   RangeInputSocketController(SocketHandleView.Factory socketHandleViewFactory,
+                             GripPlatform platform,
                              @Assisted InputSocket<List<Number>> socket) {
     super(socketHandleViewFactory, socket);
+    this.platform = platform;
 
     final Object[] domain = socket.getSocketHint().getDomain().get();
     final List<Number> initialValue = socket.getValue().get();
@@ -94,8 +98,6 @@ public class RangeInputSocketController extends InputSocketController<List<Numbe
 
 
     this.setContent(new VBox(this.slider, label));
-
-    this.slider.disableProperty().bind(this.getHandle().connectedProperty());
   }
 
   private String getLowHighLabelText() {
@@ -105,8 +107,10 @@ public class RangeInputSocketController extends InputSocketController<List<Numbe
   @Subscribe
   public void updateSliderValue(SocketChangedEvent event) {
     if (event.isRegarding(this.getSocket())) {
-      this.slider.setLowValue(this.getSocket().getValue().get().get(0).doubleValue());
-      this.slider.setHighValue(this.getSocket().getValue().get().get(1).doubleValue());
+      platform.runAsSoonAsPossible(() -> {
+        this.slider.setLowValue(this.getSocket().getValue().get().get(0).doubleValue());
+        this.slider.setHighValue(this.getSocket().getValue().get().get(1).doubleValue());
+      });
     }
   }
 

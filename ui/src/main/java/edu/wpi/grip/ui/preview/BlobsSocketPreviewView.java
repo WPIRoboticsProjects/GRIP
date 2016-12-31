@@ -1,22 +1,14 @@
 package edu.wpi.grip.ui.preview;
 
-import edu.wpi.grip.core.events.RenderEvent;
 import edu.wpi.grip.core.operations.composite.BlobsReport;
 import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.ui.util.GripPlatform;
-import edu.wpi.grip.ui.util.ImageConverter;
 
-import com.google.common.eventbus.Subscribe;
-
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-
-import javafx.application.Platform;
 import javafx.geometry.Orientation;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.Separator;
 import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
 
 import static org.bytedeco.javacpp.opencv_core.LINE_8;
@@ -32,17 +24,13 @@ import static org.bytedeco.javacpp.opencv_imgproc.cvtColor;
  * A SocketPreviewView for BlobsReports that shows the original image with circles overlayed onto
  * it, showing the location and size of detected blobs.
  */
-public class BlobsSocketPreviewView extends SocketPreviewView<BlobsReport> {
+public final class BlobsSocketPreviewView extends ImageBasedPreviewView<BlobsReport> {
 
-  private final ImageConverter imageConverter = new ImageConverter();
-  private final ImageView imageView = new ImageView();
   private final Label infoLabel = new Label();
   private final Mat tmp = new Mat();
   private final Point point = new Point();
   private final GripPlatform platform;
   @SuppressWarnings("PMD.ImmutableField")
-  @SuppressFBWarnings(value = "IS2_INCONSISTENT_SYNC",
-      justification = "Do not need to synchronize inside of a constructor")
   private boolean showInputImage = false;
 
   /**
@@ -54,26 +42,20 @@ public class BlobsSocketPreviewView extends SocketPreviewView<BlobsReport> {
     final CheckBox show = new CheckBox("Show Input Image");
     show.setSelected(this.showInputImage);
     show.selectedProperty().addListener(observable -> {
-      this.showInputImage = show.isSelected();
-      this.convertImage();
+      synchronized (this) {
+        this.showInputImage = show.isSelected();
+        this.convertImage();
+      }
     });
 
     final VBox content = new VBox(this.imageView, new Separator(Orientation.HORIZONTAL), this
         .infoLabel, show);
     content.getStyleClass().add("preview-box");
     this.setContent(content);
-
-    assert Platform.isFxApplicationThread() : "Must be in FX Thread to create this or you will be"
-        + " exposing constructor to another thread!";
   }
 
-
-  @Subscribe
-  public void onRender(RenderEvent event) {
-    this.convertImage();
-  }
-
-  private void convertImage() {
+  @Override
+  protected void convertImage() {
     synchronized (this) {
       final BlobsReport blobsReport = this.getSocket().getValue().get();
       final Mat input = blobsReport.getInput();
@@ -101,7 +83,7 @@ public class BlobsSocketPreviewView extends SocketPreviewView<BlobsReport> {
       final Mat output = tmp;
       final int numBlobs = blobsReport.getBlobs().size();
       platform.runAsSoonAsPossible(() -> {
-        final Image image = this.imageConverter.convert(output);
+        final Image image = this.imageConverter.convert(output, getImageHeight());
         this.imageView.setImage(image);
         this.infoLabel.setText("Found " + numBlobs + " blobs");
       });

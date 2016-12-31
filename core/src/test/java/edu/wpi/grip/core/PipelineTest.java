@@ -26,10 +26,12 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.NoSuchElementException;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 public class PipelineTest {
 
@@ -382,6 +384,31 @@ public class PipelineTest {
 
     assertEquals("The step should have been moved within the pipeline",
         Arrays.asList(lowerStep, stepToMove, upperStep), pipeline.getSteps());
+  }
+
+  @Test
+  @SuppressWarnings("PMD.EmptyCatchBlock")
+  public void testIndexOf() {
+    Step step = MockStep.createMockStepWithOperation();
+    pipeline.addStep(step);
+    assertEquals("Index of step was not zero", 0, pipeline.indexOf(step));
+    pipeline.removeStep(step);
+    try {
+      pipeline.indexOf(step);
+      fail("NoSuchElementException should have been thrown");
+    } catch (NoSuchElementException expected) {
+      // This should happen
+    }
+  }
+
+  @Test
+  public void testCompareSteps() {
+    Step a = MockStep.createMockStepWithOperation();
+    Step b = MockStep.createMockStepWithOperation();
+    pipeline.addStep(a);
+    pipeline.addStep(b);
+    assertEquals("a should be 1 behind b", -1, pipeline.compare(a, b));
+    assertEquals("b should be 1 ahead of a", 1, pipeline.compare(b, a));
   }
 
   private static class MockConnection extends Connection {

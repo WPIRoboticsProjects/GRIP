@@ -1,0 +1,14 @@
+	/**
+	* Runs a cascade classifier on an image.
+	*
+	* @param input          the image to run the classifier on
+	* @param classifier     the classifier to use
+    * @param scaleFactor    the scale factor of each successive downsized image
+    * @param minNeighbors   how many neighbors each candidate rectangle should have to retain it
+    * @param minSize        the minimum possible object size
+    * @param maxSize        the maximum possible object size. If (0, 0), it is assumed to be unbounded
+    * @param detections     the vector of Rects to store the detected regions in
+	*/
+	void $className::#func($step ["input", "classifier", "scaleFactor", "minNeighbors", "minSize", "maxSize", "detections"]) {
+		classifier.detectMultiScale(input, detections, scaleFactor, minNeighbors, 0, minSize, maxSize);
+	}

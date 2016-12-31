@@ -1,14 +1,17 @@
 package edu.wpi.grip.ui.pipeline.input;
 
+import edu.wpi.grip.core.events.BenchmarkEvent;
 import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.sockets.Socket;
 import edu.wpi.grip.ui.Controller;
 import edu.wpi.grip.ui.annotations.ParametrizedController;
 import edu.wpi.grip.ui.pipeline.SocketHandleView;
 
+import com.google.common.eventbus.Subscribe;
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 
+import javafx.application.Platform;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.fxml.FXML;
@@ -59,6 +62,11 @@ public class InputSocketController<T> implements Controller {
     this.type.setText(this.socket.getSocketHint().getTypeLabel());
     this.handle = socketHandleViewFactory.create(this.socket);
     root.add(this.handle, 0, 0);
+    handle.connectedProperty().addListener((observable, oldValue, newValue) -> {
+      if (getContent() != null) {
+        getContent().setDisable(newValue);
+      }
+    });
   }
 
   public Socket<T> getSocket() {
@@ -96,6 +104,19 @@ public class InputSocketController<T> implements Controller {
     }
 
     return this.contentProperty;
+  }
+
+  /**
+   * Disable user input while benchmarking.
+   */
+  @Subscribe
+  private void onBenchmarkEvent(BenchmarkEvent e) {
+    Platform.runLater(() -> {
+      handle.setDisable(e.isStart());
+      if (getContent() != null) {
+        getContent().setDisable(e.isStart());
+      }
+    });
   }
 
   protected Label getIdentifier() {
