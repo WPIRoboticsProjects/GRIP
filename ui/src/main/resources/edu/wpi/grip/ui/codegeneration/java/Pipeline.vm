@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 import java.util.HashMap;
 
 #if($implementVisionPipeline)
-import edu.wpi.first.wpilib.vision.VisionPipeline;
+import edu.wpi.first.wpilibj.vision.VisionPipeline;
 
 #end
 import org.opencv.core.*;
