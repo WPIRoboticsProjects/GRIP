@@ -98,11 +98,7 @@
                     </graphic>
                 </MenuItem>
                 <SeparatorMenuItem />
-                <MenuItem text="Exit" onAction="#quit">
-                    <accelerator>
-                        <KeyCodeCombination alt="UP" code="Q" control="UP" meta="UP" shift="UP" shortcut="DOWN" />
-                    </accelerator>
-                </MenuItem>
+                <MenuItem text="Exit" onAction="#quit" />
             </Menu>
             <Menu text="Tools">
                 <MenuItem text="Deploy" onAction="#deploy">

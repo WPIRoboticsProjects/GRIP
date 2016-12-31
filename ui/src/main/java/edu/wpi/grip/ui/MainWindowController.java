@@ -120,6 +120,12 @@ public class MainWindowController {
       statusLabel.setText("Pipeline " + stateMessage);
       analyzeMenuItem.setDisable(state.equals(Service.State.TERMINATED));
     }), Platform::runLater);
+    Platform.runLater(() -> root.getScene().getWindow().setOnCloseRequest(e -> {
+      if (!quit()) {
+        // Asked to quit but cancelled, consume the event to avoid closing the window
+        e.consume();
+      }
+    }));
   }
 
   /**
@@ -278,11 +284,13 @@ public class MainWindowController {
   }
 
   @FXML
-  protected void quit() {
+  protected boolean quit() {
     if (showConfirmationDialogAndWait()) {
       pipelineRunner.stopAsync();
       SafeShutdown.exit(0);
+      return true;
     }
+    return false;
   }
 
   /**
