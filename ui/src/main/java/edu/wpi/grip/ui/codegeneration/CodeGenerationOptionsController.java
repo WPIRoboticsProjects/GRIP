@@ -13,6 +13,8 @@ import com.google.inject.Inject;
 import org.bytedeco.javacpp.opencv_core.Mat;
 
 import java.io.File;
+import java.nio.file.Files;
+import java.util.logging.Logger;
 
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
@@ -32,6 +34,9 @@ import javafx.stage.DirectoryChooser;
  * Controller for the code generation options pane.
  */
 public class CodeGenerationOptionsController {
+
+  private static final Logger logger =
+      Logger.getLogger(CodeGenerationOptionsController.class.getName());
 
   @Inject
   private SettingsProvider settingsProvider;
@@ -188,6 +193,10 @@ public class CodeGenerationOptionsController {
   private void browseForSave() {
     DirectoryChooser dc = new DirectoryChooser();
     File destDir = new File(settingsProvider.getCodeGenerationSettings().getSaveDir());
+    if (!Files.isDirectory(destDir.toPath())) {
+      logger.info("Loaded save directory does not exist, setting to default.");
+      destDir = new File(CodeGenerationSettings.DEFAULT_SETTINGS.getSaveDir());
+    }
     dc.setInitialDirectory(destDir);
     dc.setTitle("Choose save location");
     File save = dc.showDialog(optionsGrid.getScene().getWindow());
