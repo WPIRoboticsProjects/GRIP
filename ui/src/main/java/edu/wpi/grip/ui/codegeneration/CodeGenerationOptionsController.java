@@ -194,7 +194,7 @@ public class CodeGenerationOptionsController {
     DirectoryChooser dc = new DirectoryChooser();
     File destDir = new File(settingsProvider.getCodeGenerationSettings().getSaveDir());
     if (!Files.isDirectory(destDir.toPath())) {
-      logger.info("Loaded save directory does not exist, setting to default.");
+      logger.warning("Loaded save directory does not exist, setting to default.");
       destDir = new File(CodeGenerationSettings.DEFAULT_SETTINGS.getSaveDir());
     }
     dc.setInitialDirectory(destDir);

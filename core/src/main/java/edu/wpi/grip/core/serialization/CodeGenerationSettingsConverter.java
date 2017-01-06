@@ -36,7 +36,7 @@ public class CodeGenerationSettingsConverter extends ReflectionConverter {
                                           UnmarshallingContext context) {
     CodeGenerationSettings settings = (CodeGenerationSettings) super.unmarshal(reader, context);
     if (!Files.isDirectory(Paths.get(settings.getSaveDir()))) {
-      logger.info("Save dir '" + settings.getSaveDir() + "' does not exist; using default");
+      logger.warning("Save dir '" + settings.getSaveDir() + "' does not exist; using default");
       settings = CodeGenerationSettings.builder(settings)
           .saveDir(CodeGenerationSettings.DEFAULT_SETTINGS.getSaveDir())
           .build();
