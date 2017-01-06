@@ -66,7 +66,7 @@ public class CodeGenerationOptionsController {
   private Language language;
 
   private static final String CLASS_NAME_REGEX = "^|([A-Z][a-z]*)+$";
-  private static final String PACKAGE_REGEX = "^|([a-z]+\\.?)+$";
+  private static final String PACKAGE_REGEX = "^|([a-z]+[a-z0-9]*\\.?)+$";
   private static final String MODULE_REGEX = "^|([a-z]+_?)+$";
 
   @FXML
