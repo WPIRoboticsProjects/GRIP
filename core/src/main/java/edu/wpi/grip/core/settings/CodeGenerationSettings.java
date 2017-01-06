@@ -106,6 +106,22 @@ public class CodeGenerationSettings {
     return new Builder();
   }
 
+  /**
+   * Creates a builder with defaults from the given settings.
+   *
+   * @param defaultSettings the default settings for the builder to use
+   * @return a settings builder
+   */
+  public static Builder builder(CodeGenerationSettings defaultSettings) {
+    return new Builder()
+        .language(defaultSettings.getLanguage())
+        .className(defaultSettings.getClassName())
+        .implementVisionPipeline(defaultSettings.shouldImplementWpilibPipeline())
+        .saveDir(defaultSettings.getSaveDir())
+        .packageName(defaultSettings.getPackageName())
+        .moduleName(defaultSettings.getModuleName());
+  }
+
   public static final class Builder {
 
     private String language;
