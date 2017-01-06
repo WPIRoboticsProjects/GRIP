@@ -1,5 +1,7 @@
 package edu.wpi.grip.core.settings;
 
+import edu.wpi.grip.core.GripFileManager;
+
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -50,7 +52,12 @@ public class CodeGenerationSettings {
    * </table>
    */
   CodeGenerationSettings() {
-    this("Java", "GripPipeline", false, System.getProperty("user.home"), "", "grip");
+    this("Java",
+        "GripPipeline",
+        false,
+        GripFileManager.GRIP_DIRECTORY.getAbsolutePath(),
+        "",
+        "grip");
   }
 
   /**
