@@ -210,6 +210,7 @@ public class AnalysisController {
   private <E> Stream<Map.Entry<Step, E>> sortedStream(Map<Step, E> m) {
     return m.entrySet()
         .stream()
+        .filter(e -> stepIndexer.indexOf(e.getKey()) >= 0)
         .sorted((e1, e2) -> stepIndexer.compare(e1.getKey(), e2.getKey()));
   }
 
