@@ -9,6 +9,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * <p>The event contains a short header text describing the warning and a detailed body text
  * that lets the user know why what they attempted was not allowed.</p>
  */
+@LoggableEvent
 public class WarningEvent {
 
   private final String header;

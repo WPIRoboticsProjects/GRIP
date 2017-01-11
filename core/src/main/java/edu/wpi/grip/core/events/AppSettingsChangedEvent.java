@@ -7,6 +7,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 /**
  * An event fired when the app settings are changed.
  */
+@LoggableEvent
 public class AppSettingsChangedEvent {
 
   private final AppSettings appSettings;

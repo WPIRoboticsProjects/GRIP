@@ -1,5 +1,7 @@
 package edu.wpi.grip.core;
 
+import edu.wpi.grip.core.events.EventLogger;
+import edu.wpi.grip.core.events.LoggableEvent;
 import edu.wpi.grip.core.events.UnexpectedThrowableEvent;
 import edu.wpi.grip.core.metrics.BenchmarkRunner;
 import edu.wpi.grip.core.metrics.Timer;
@@ -19,6 +21,7 @@ import edu.wpi.grip.core.util.ExceptionWitness;
 import edu.wpi.grip.core.util.GripMode;
 
 import com.google.common.eventbus.EventBus;
+import com.google.common.eventbus.Subscribe;
 import com.google.common.eventbus.SubscriberExceptionContext;
 import com.google.inject.AbstractModule;
 import com.google.inject.TypeLiteral;
@@ -124,6 +127,7 @@ public class GripCoreModule extends AbstractModule {
     });
 
     bind(EventBus.class).toInstance(eventBus);
+    bind(EventLogger.class).asEagerSingleton();
 
     // Allow for just injecting the settings provider, instead of the whole pipeline
     bind(SettingsProvider.class).to(Pipeline.class);
@@ -172,7 +176,7 @@ public class GripCoreModule extends AbstractModule {
     } else {
       logger.log(Level.SEVERE, "An event subscriber threw an exception", exception);
       eventBus.post(new UnexpectedThrowableEvent(exception, "An event subscriber threw an "
-          + "exception"));
+          + "exception on thread '" + Thread.currentThread().getName() + "'"));
     }
   }
 

@@ -6,6 +6,7 @@ package edu.wpi.grip.core.events;
  * <p>These events ensure that anything that changes causes the save file to be flagged as dirty and
  * in need of being saved for the project to be deemed "clean" again.
  */
+@LoggableEvent
 public interface DirtiesSaveEvent {
 
   /**

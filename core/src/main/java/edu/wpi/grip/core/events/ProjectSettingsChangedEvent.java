@@ -8,6 +8,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * This event is posted after the {@link ProjectSettings} are changed so anything that relies on
  * them can immediately update without restarting the application.
  */
+@LoggableEvent
 public class ProjectSettingsChangedEvent implements DirtiesSaveEvent {
   private final ProjectSettings projectSettings;
 

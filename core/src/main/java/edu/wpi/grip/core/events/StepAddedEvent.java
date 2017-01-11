@@ -15,6 +15,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * An event that occurs when a new step is added to the pipeline.  This is triggered by the user
  * adding a step with the GUI.
  */
+@LoggableEvent
 public class StepAddedEvent implements DirtiesSaveEvent {
   private final Step step;
   private final OptionalInt index;
