@@ -6,9 +6,7 @@ import com.google.inject.Singleton;
 import java.util.logging.Logger;
 
 /**
- * Class for logging events as they're posted to the event bus. This should be the
- * <i>first</i> object registered to the event bus to avoid potential exceptions from being thrown
- * by other event subscribers.
+ * Class for logging events as they're posted to the event bus.
  */
 @Singleton
 public class EventLogger {
@@ -18,8 +16,10 @@ public class EventLogger {
   @Subscribe
   public void eventPosted(Object event) {
     final String threadName = Thread.currentThread().getName();
-    if (event.getClass().isAnnotationPresent(LoggableEvent.class)) {
-      logger.info("Event on thread '" + threadName + "': " + event);
+    LoggableEvent annotation = event.getClass().getAnnotation(LoggableEvent.class);
+    if (annotation != null) {
+      logger.log(annotation.level().getLogLevel(),
+          "Event on thread '" + threadName + "': " + event);
     }
   }
 

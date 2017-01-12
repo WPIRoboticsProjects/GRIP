@@ -158,6 +158,7 @@ public class Exporter implements Runnable {
                             String templateDir,
                             File file,
                             VelocityContext context) {
+    logger.info("Generating " + lang.name + " code to " + file.getAbsolutePath());
     Template tm = ve.getTemplate(templateDir + "/" + PIPELINE_TEMPLATE);
     StringWriter sw = new StringWriter();
     tm.merge(context, sw);
@@ -181,6 +182,7 @@ public class Exporter implements Runnable {
                          String templateDir,
                          File file,
                          VelocityContext context) {
+    logger.info("Generating C++ header to " + file.getAbsolutePath().replace(".cpp", ".h"));
     Template tm = ve.getTemplate(templateDir + "/" + PIPELINE_HTEMPLATE);
     StringWriter sw = new StringWriter();
     tm.merge(context, sw);
