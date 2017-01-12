@@ -71,8 +71,8 @@ public class GripCoreModule extends AbstractModule {
           = new FileHandler(GripFileManager.GRIP_DIRECTORY.getPath() + "/GRIP.log");
 
       //Set level to handler and logger
-      fileHandler.setLevel(Level.FINE);
-      globalLogger.setLevel(Level.FINE);
+      fileHandler.setLevel(Level.INFO);
+      globalLogger.setLevel(Level.INFO);
 
       // We need to stream to System.out instead of System.err
       final StreamHandler sh = new StreamHandler(System.out, new SimpleFormatter()) {
