@@ -9,6 +9,7 @@ import edu.wpi.grip.core.sources.MultiImageFileSource;
 import edu.wpi.grip.core.sources.NetworkTableEntrySource;
 import edu.wpi.grip.core.util.ExceptionWitness;
 
+import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableList;
 import com.google.inject.Inject;
 
@@ -98,6 +99,13 @@ public abstract class Source {
       logger.log(Level.WARNING, message, e);
       getExceptionWitness().flagException(e, message);
     }
+  }
+
+  @Override
+  public String toString() {
+    return MoreObjects.toStringHelper(this)
+        .add("name", getName())
+        .toString();
   }
 
   public interface SourceFactory {
