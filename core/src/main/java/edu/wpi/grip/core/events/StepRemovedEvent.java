@@ -10,8 +10,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * An event that occurs when a new step is removed from the pipeline.  This is triggered by the user
  * deleting a step from the GUI.
  */
-@LoggableEvent
-public class StepRemovedEvent implements DirtiesSaveEvent {
+public class StepRemovedEvent implements DirtiesSaveEvent, LoggableEvent {
   private final Step step;
 
   /**

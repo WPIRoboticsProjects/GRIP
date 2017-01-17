@@ -3,8 +3,7 @@ package edu.wpi.grip.core.events;
 /**
  * An event posted before and after a pipeline is benchmarked.
  */
-@LoggableEvent
-public final class BenchmarkEvent {
+public final class BenchmarkEvent implements LoggableEvent {
 
   private final boolean isStart;
 

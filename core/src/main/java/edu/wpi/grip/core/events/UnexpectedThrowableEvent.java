@@ -12,8 +12,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * Thread#uncaughtExceptionHandler}. This event may potentially only be handled once if the
  * exception is deemed fatal.
  */
-@LoggableEvent
-public final class UnexpectedThrowableEvent {
+public final class UnexpectedThrowableEvent implements LoggableEvent {
   private static final Logger logger = Logger.getLogger(UnexpectedThrowableEvent.class.getName());
 
   private final Throwable throwable;

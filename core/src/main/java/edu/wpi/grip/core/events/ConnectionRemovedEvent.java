@@ -10,8 +10,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * An event that occurs when a connection is removed from the pipeline.  This is triggered by the
  * user deleting a connection with the GUI.
  */
-@LoggableEvent
-public class ConnectionRemovedEvent implements DirtiesSaveEvent {
+public class ConnectionRemovedEvent implements DirtiesSaveEvent, LoggableEvent {
   private final Connection<?> connection;
 
   /**

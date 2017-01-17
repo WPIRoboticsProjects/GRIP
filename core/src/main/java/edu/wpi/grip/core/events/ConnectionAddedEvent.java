@@ -10,8 +10,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * An event that occurs when a new connection is added to the pipeline.  This is triggered by the
  * user adding a connection with the GUI.
  */
-@LoggableEvent
-public class ConnectionAddedEvent implements RunPipelineEvent, DirtiesSaveEvent {
+public class ConnectionAddedEvent implements RunPipelineEvent, DirtiesSaveEvent, LoggableEvent {
   private final Connection connection;
 
   /**

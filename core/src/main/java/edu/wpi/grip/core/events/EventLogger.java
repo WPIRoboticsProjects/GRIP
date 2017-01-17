@@ -11,16 +11,13 @@ import java.util.logging.Logger;
 @Singleton
 public class EventLogger {
 
-  private static final Logger logger = Logger.getLogger("EventLogger");
+  private static final Logger logger = Logger.getLogger(EventLogger.class.getName());
 
   @Subscribe
-  public void eventPosted(Object event) {
+  public void eventPosted(LoggableEvent event) {
     final String threadName = Thread.currentThread().getName();
-    LoggableEvent annotation = event.getClass().getAnnotation(LoggableEvent.class);
-    if (annotation != null) {
-      logger.log(annotation.level().getLogLevel(),
-          "Event on thread '" + threadName + "': " + event);
-    }
+    logger.log(event.logLevel(),
+        "Event on thread '" + threadName + "': " + event.asLoggableString());
   }
 
 }
