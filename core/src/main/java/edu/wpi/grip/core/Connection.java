@@ -7,7 +7,6 @@ import edu.wpi.grip.core.events.SourceRemovedEvent;
 import edu.wpi.grip.core.events.StepRemovedEvent;
 import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.sockets.OutputSocket;
-import edu.wpi.grip.core.sockets.Socket;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.eventbus.EventBus;
@@ -117,22 +116,9 @@ public class Connection<T> {
   @Override
   public String toString() {
     return MoreObjects.toStringHelper(this)
-        .add("src", simpleString(outputSocket))
-        .add("dst", simpleString(inputSocket))
+        .add("src", outputSocket.simpleString())
+        .add("dst", inputSocket.simpleString())
         .toString();
-  }
-
-  private static String simpleString(Socket<?> socket) {
-    String owner;
-    if (socket.getSource().isPresent()) {
-      owner = "Source/" + socket.getSource().get().getName();
-    } else if (socket.getStep().isPresent()) {
-      owner = "Step/" + socket.getStep().get().getOperationDescription().name();
-    } else {
-      owner = "?";
-    }
-    String identifier = socket.getSocketHint().getIdentifier();
-    return owner + "/" + identifier;
   }
 
   public interface Factory<T> {

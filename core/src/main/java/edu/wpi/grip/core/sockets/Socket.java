@@ -109,6 +109,26 @@ public interface Socket<T> {
    */
   void removeConnection(Connection connection);
 
+  /**
+   * Creates a simple text representation of this socket in the format
+   * {@code {owner type}/{owner name}/{identifier}}, e.g. {@code Step/Blur/Input} or
+   * {@code Source/Webcam 0/Image}.
+   *
+   * @return a simple string representation of this socket.
+   */
+  default String simpleString() {
+    String owner;
+    if (getSource().isPresent()) {
+      owner = "Source/" + getSource().get().getName();
+    } else if (getStep().isPresent()) {
+      owner = "Step/" + getStep().get().getOperationDescription().name();
+    } else {
+      owner = "?";
+    }
+    String identifier = getSocketHint().getIdentifier();
+    return owner + "/" + identifier;
+  }
+
   enum Direction {
     INPUT, OUTPUT
   }
