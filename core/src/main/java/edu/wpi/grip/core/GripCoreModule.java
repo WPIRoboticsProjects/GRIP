@@ -1,7 +1,6 @@
 package edu.wpi.grip.core;
 
 import edu.wpi.grip.core.events.EventLogger;
-import edu.wpi.grip.core.events.LoggableEvent;
 import edu.wpi.grip.core.events.UnexpectedThrowableEvent;
 import edu.wpi.grip.core.metrics.BenchmarkRunner;
 import edu.wpi.grip.core.metrics.Timer;
@@ -21,7 +20,6 @@ import edu.wpi.grip.core.util.ExceptionWitness;
 import edu.wpi.grip.core.util.GripMode;
 
 import com.google.common.eventbus.EventBus;
-import com.google.common.eventbus.Subscribe;
 import com.google.common.eventbus.SubscriberExceptionContext;
 import com.google.inject.AbstractModule;
 import com.google.inject.TypeLiteral;
