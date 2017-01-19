@@ -13,7 +13,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
  *
  * @see Source
  */
-public class SourceRemovedEvent implements DirtiesSaveEvent {
+public class SourceRemovedEvent implements DirtiesSaveEvent, LoggableEvent {
   private final Source source;
 
   /**

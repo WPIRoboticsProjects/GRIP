@@ -1,5 +1,9 @@
 package edu.wpi.grip.core.events;
 
+import com.google.common.base.MoreObjects;
+
+import java.util.logging.Level;
+
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
@@ -9,7 +13,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * <p>The event contains a short header text describing the warning and a detailed body text
  * that lets the user know why what they attempted was not allowed.</p>
  */
-public class WarningEvent {
+public class WarningEvent implements LoggableEvent {
 
   private final String header;
   private final String body;
@@ -41,6 +45,22 @@ public class WarningEvent {
    */
   public String getBody() {
     return body;
+  }
+
+  @Override
+  public Level logLevel() {
+    return Level.WARNING;
+  }
+
+  @Override
+  public String asLoggableString() {
+    MoreObjects.ToStringHelper toStringHelper = MoreObjects.toStringHelper(this);
+    toStringHelper.add("header", header);
+    if (body.length() <= 80 && !body.contains("\n")) {
+      // Only allow short single-line body text
+      toStringHelper.add("body", body);
+    }
+    return toStringHelper.toString();
   }
 
 }

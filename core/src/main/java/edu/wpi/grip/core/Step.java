@@ -6,6 +6,7 @@ import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.core.sockets.Socket;
 import edu.wpi.grip.core.util.ExceptionWitness;
 
+import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableList;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
@@ -172,6 +173,13 @@ public class Step {
    */
   protected boolean removed() {
     return removed;
+  }
+
+  @Override
+  public String toString() {
+    return MoreObjects.toStringHelper(this)
+        .add("operation", description.name())
+        .toString();
   }
 
   @Singleton

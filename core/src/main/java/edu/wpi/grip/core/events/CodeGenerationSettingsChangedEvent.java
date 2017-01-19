@@ -7,7 +7,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 /**
  * An event fired when code generation settings are changed.
  */
-public class CodeGenerationSettingsChangedEvent implements DirtiesSaveEvent {
+public class CodeGenerationSettingsChangedEvent implements DirtiesSaveEvent, LoggableEvent {
 
   private final CodeGenerationSettings settings;
 

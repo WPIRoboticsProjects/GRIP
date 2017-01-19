@@ -81,6 +81,7 @@ public class Main extends Application {
     if (parsedArgs.hasOption(UICommandLineHelper.HEADLESS_OPTION)) {
       // If --headless was specified on the command line,
       // run in headless mode (only use the core module)
+      logger.info("Launching GRIP in headless mode");
       injector = Guice.createInjector(Modules.override(new GripCoreModule(), new GripFileModule(),
           new GripSourcesHardwareModule()).with(new GripNetworkModule()));
       injector.injectMembers(this);
@@ -88,6 +89,7 @@ public class Main extends Application {
       headless = true;
     } else {
       // Otherwise, run with both the core and UI modules, and show the JavaFX stage
+      logger.info("Launching GRIP in UI mode");
       injector = Guice.createInjector(Modules.override(new GripCoreModule(), new GripFileModule(),
           new GripSourcesHardwareModule()).with(new GripNetworkModule(), new GripUiModule()));
       injector.injectMembers(this);

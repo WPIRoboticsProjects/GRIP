@@ -1,5 +1,6 @@
 package edu.wpi.grip.core;
 
+import edu.wpi.grip.core.events.EventLogger;
 import edu.wpi.grip.core.events.UnexpectedThrowableEvent;
 import edu.wpi.grip.core.metrics.BenchmarkRunner;
 import edu.wpi.grip.core.metrics.Timer;
@@ -68,8 +69,8 @@ public class GripCoreModule extends AbstractModule {
           = new FileHandler(GripFileManager.GRIP_DIRECTORY.getPath() + "/GRIP.log");
 
       //Set level to handler and logger
-      fileHandler.setLevel(Level.FINE);
-      globalLogger.setLevel(Level.FINE);
+      fileHandler.setLevel(Level.INFO);
+      globalLogger.setLevel(Level.INFO);
 
       // We need to stream to System.out instead of System.err
       final StreamHandler sh = new StreamHandler(System.out, new SimpleFormatter()) {
@@ -124,6 +125,7 @@ public class GripCoreModule extends AbstractModule {
     });
 
     bind(EventBus.class).toInstance(eventBus);
+    bind(EventLogger.class).asEagerSingleton();
 
     // Allow for just injecting the settings provider, instead of the whole pipeline
     bind(SettingsProvider.class).to(Pipeline.class);
@@ -172,7 +174,7 @@ public class GripCoreModule extends AbstractModule {
     } else {
       logger.log(Level.SEVERE, "An event subscriber threw an exception", exception);
       eventBus.post(new UnexpectedThrowableEvent(exception, "An event subscriber threw an "
-          + "exception"));
+          + "exception on thread '" + Thread.currentThread().getName() + "'"));
     }
   }
 
