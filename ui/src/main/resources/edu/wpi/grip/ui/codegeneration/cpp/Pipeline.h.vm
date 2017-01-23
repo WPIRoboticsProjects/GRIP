@@ -5,7 +5,7 @@
 \#include <String>
 #end
 #if($implementVisionPipeline)
-\#include "VisionPipeline.h"
+\#include "vision/VisionPipeline.h"
 
 #end
 \#include <opencv2/objdetect/objdetect.hpp>

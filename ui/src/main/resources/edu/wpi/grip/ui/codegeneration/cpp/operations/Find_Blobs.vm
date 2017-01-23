@@ -23,6 +23,6 @@
 		params.maxCircularity = circularity[1];
 		params.filterByConvexity = false;
 		params.filterByInertia = false;
-		cv::Ptr<cv::SimpleBlobDetector> detector = SimpleBlobDetector::create(params);
+		cv::Ptr<cv::SimpleBlobDetector> detector = cv::SimpleBlobDetector::create(params);
 		detector->detect(input, blobList);
 	}

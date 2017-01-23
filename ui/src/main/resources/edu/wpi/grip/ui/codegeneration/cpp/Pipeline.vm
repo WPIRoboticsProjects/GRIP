@@ -6,9 +6,6 @@
 namespace grip {
 
 $className::$className() {
-#foreach($source in $pipeline.getSources())
-##	this->$source.value() = new #cType($source.type())();
-#end
 #foreach($step in $pipeline.getSteps())
 #if($step.name() == "Switch" || $step.name() == "Valve")
 #set($boolInp = $step.getInput(0))
@@ -66,19 +63,6 @@ void $className::process(#foreach($source in $pipeline.getSources())#cType($sour
 #end
 }
 
-#foreach($source in $pipeline.getSources())
-/**
- * This method is a generated setter for $source.value().
- * @param source the $source.type() to set
- */
-void $className::set${source.value()}(#cType(${source.type()}) #funPassType($source.type())${source.value()}){
-#if($source.type().equals("Mat"))
-	${source.value()}.copyTo(this->${source.value()});
-#else
-	this->$source.value() = ${source.value()};
-#end
-}
-#end
 #foreach($step in $pipeline.getSteps())
 #if($step.name() == "Switch" || $step.name() == "Valve")
 #set($boolInp = $step.getInput(0))
