@@ -34,7 +34,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Optional;
 import java.util.Set;
-import java.util.logging.Logger;
 
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -62,8 +61,6 @@ import javax.inject.Inject;
  * The Controller for the application window.
  */
 public class MainWindowController {
-
-  private static final Logger logger = Logger.getLogger(MainWindowController.class.getName());
 
   @FXML
   private Parent root;
@@ -218,16 +215,7 @@ public class MainWindowController {
   public boolean saveProject() {
     if (project.getFile().isPresent()) {
       // Immediately save the project to whatever file it was loaded from or last saved to.
-      try {
-        project.save(project.getFile().get());
-      } catch (IOException e) {
-        eventBus.post(new WarningEvent("Could not save project",
-            "The project could not be saved to " + project.getFile().get().getAbsolutePath()
-                + ".\n\nCause: " + e.getMessage()
-        ));
-        return false;
-      }
-      return true;
+      return project.trySave(project.getFile().get());
     } else {
       return saveProjectAs();
     }
@@ -254,15 +242,7 @@ public class MainWindowController {
       return false;
     }
 
-    try {
-      project.save(file);
-    } catch (IOException e) {
-      eventBus.post(new WarningEvent("Could not save project",
-          "The project could not be saved to " + file.getAbsolutePath()
-              + ".\n\nCause: " + e.getMessage()));
-      return false;
-    }
-    return true;
+    return project.trySave(file);
   }
 
   @FXML
