@@ -1,5 +1,6 @@
 package edu.wpi.grip.ui;
 
+import edu.wpi.grip.core.GripFileManager;
 import edu.wpi.grip.core.Palette;
 import edu.wpi.grip.core.Pipeline;
 import edu.wpi.grip.core.PipelineRunner;
@@ -33,8 +34,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Optional;
 import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -62,8 +61,6 @@ import javax.inject.Inject;
  * The Controller for the application window.
  */
 public class MainWindowController {
-
-  private static final Logger logger = Logger.getLogger(MainWindowController.class.getName());
 
   @FXML
   private Parent root;
@@ -154,11 +151,7 @@ public class MainWindowController {
       } else if (dialog.getResult().equals(save)) {
         // If the user chose "Save", automatically show a save dialog and block until the user
         // has had a chance to save the project.
-        try {
-          return saveProject();
-        } catch (IOException e) {
-          logger.log(Level.SEVERE, e.getMessage(), e.getCause());
-        }
+        return saveProject();
       }
     }
     return true;
@@ -219,11 +212,10 @@ public class MainWindowController {
    * @return true if the user does not cancel the save
    */
   @FXML
-  public boolean saveProject() throws IOException {
+  public boolean saveProject() {
     if (project.getFile().isPresent()) {
       // Immediately save the project to whatever file it was loaded from or last saved to.
-      project.save(project.getFile().get());
-      return true;
+      return project.trySave(project.getFile().get());
     } else {
       return saveProjectAs();
     }
@@ -237,10 +229,11 @@ public class MainWindowController {
    * @return true if the user does not cancel the save
    */
   @FXML
-  public boolean saveProjectAs() throws IOException {
+  public boolean saveProjectAs() {
     final FileChooser fileChooser = new FileChooser();
     fileChooser.setTitle("Save Project As");
     fileChooser.getExtensionFilters().add(new ExtensionFilter("GRIP File", "*.grip"));
+    fileChooser.setInitialDirectory(GripFileManager.GRIP_DIRECTORY);
 
     project.getFile().ifPresent(file -> fileChooser.setInitialDirectory(file.getParentFile()));
 
@@ -249,8 +242,7 @@ public class MainWindowController {
       return false;
     }
 
-    project.save(file);
-    return true;
+    return project.trySave(file);
   }
 
   @FXML
