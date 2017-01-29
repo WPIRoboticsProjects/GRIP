@@ -1,7 +1,4 @@
 \#include "${className}.h"
-/**
-* Initializes a ${className}.
-*/
 
 namespace grip {
 
@@ -50,10 +47,7 @@ $className::$className() {
 #end
 }
 /**
-* Runs an iteration of the Pipeline and updates outputs.
-*
-* Sources need to be set before calling this method. 
-*
+* Runs an iteration of the pipeline and updates outputs.
 */
 void $className::Process(#foreach($source in $pipeline.getSources())#cType($source.type())& $source.value()#if($pipeline.getSources().indexOf($source) lt $pipeline.getSources().size() - 1), #end#end){
 #foreach($step in $pipeline.getSteps())
