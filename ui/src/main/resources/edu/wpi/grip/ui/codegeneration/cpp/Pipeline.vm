@@ -55,7 +55,7 @@ $className::$className() {
 * Sources need to be set before calling this method. 
 *
 */
-void $className::process(#foreach($source in $pipeline.getSources())#cType($source.type())& $source.value()#if($pipeline.getSources().indexOf($source) lt $pipeline.getSources().size() - 1), #end#end){
+void $className::Process(#foreach($source in $pipeline.getSources())#cType($source.type())& $source.value()#if($pipeline.getSources().indexOf($source) lt $pipeline.getSources().size() - 1), #end#end){
 #foreach($step in $pipeline.getSteps())
 	//Step $step.name()$step.num():
 #parse("$vmLoc/Step.vm")

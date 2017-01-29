@@ -63,7 +63,7 @@ class $className #if($testing or $implementVisionPipeline):#if($testing) public 
 
 	public:
 		$className();
-		void process(#foreach($source in $pipeline.getSources())#cType($source.type())& $source.value()#if($pipeline.getSources().indexOf($source) lt $pipeline.getSources().size() - 1), #end#end)#if($implementVisionPipeline) override#end;
+		void Process(#foreach($source in $pipeline.getSources())#cType($source.type())& $source.value()#if($pipeline.getSources().indexOf($source) lt $pipeline.getSources().size() - 1), #end#end)#if($implementVisionPipeline) override#end;
 #foreach($step in $pipeline.getSteps())
 #if($step.name() == "Switch" || $step.name() == "Valve")
 #set($boolInp = $step.getInput(0))
