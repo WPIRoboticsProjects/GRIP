@@ -136,7 +136,7 @@ public class AddSourceButton extends MenuButton {
           FileChooser fc = new FileChooser();
           fc.setTitle("Choose a video file");
           fc.getExtensionFilters().addAll(
-              new ExtensionFilter("Video files", "*.mp4"), // TODO add support for additional types
+              new ExtensionFilter("Video files", "*.avi", "*.mp4", "*.mpeg", "*.mov", "*.mkv"),
               new ExtensionFilter("All files", "*")
           );
           File file = fc.showOpenDialog(getScene().getWindow());

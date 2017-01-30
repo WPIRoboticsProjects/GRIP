@@ -40,7 +40,7 @@ public class VideoFileSource extends Source {
   private final OutputSocket<Number> fpsSocket;
   private final Mat workingMat = new Mat();
   private final AtomicBoolean isNewFrame = new AtomicBoolean(false);
-  private FrameGrabber frameGrabber;
+  private FFmpegFrameGrabber frameGrabber;
   private final OpenCVFrameConverter.ToMat converter = new OpenCVFrameConverter.ToMat();
   private final EventBus eventBus;
   private VideoCaptureThread captureThread;
@@ -107,15 +107,10 @@ public class VideoFileSource extends Source {
     return p;
   }
 
-  private static String getVideoFormat(String path) {
-    return path.substring(path.lastIndexOf('.') + 1, path.length());
-  }
-
   @Override
   public void initialize() throws IOException {
     try {
       frameGrabber = new FFmpegFrameGrabber(path);
-      frameGrabber.setFormat(getVideoFormat(path));
       frameGrabber.start();
       final double fps = frameGrabber.getFrameRate();
       fpsSocket.setValue(fps);
@@ -151,14 +146,12 @@ public class VideoFileSource extends Source {
   private class VideoCaptureThread extends Thread {
 
     private final double fps;
-    private final String path;
     private boolean doRun = true;
 
     private VideoCaptureThread(double fps, String path) {
       super("VideoFileCaptureThread-" + path);
       setDaemon(true);
       this.fps = fps;
-      this.path = path;
     }
 
     @Override
