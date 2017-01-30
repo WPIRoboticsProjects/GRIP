@@ -1,14 +1,8 @@
 \#include "${className}.h"
-/**
-* Initializes a ${className}.
-*/
 
 namespace grip {
 
 $className::$className() {
-#foreach($source in $pipeline.getSources())
-##	this->$source.value() = new #cType($source.type())();
-#end
 #foreach($step in $pipeline.getSteps())
 #if($step.name() == "Switch" || $step.name() == "Valve")
 #set($boolInp = $step.getInput(0))
@@ -53,12 +47,9 @@ $className::$className() {
 #end
 }
 /**
-* Runs an iteration of the Pipeline and updates outputs.
-*
-* Sources need to be set before calling this method. 
-*
+* Runs an iteration of the pipeline and updates outputs.
 */
-void $className::process(#foreach($source in $pipeline.getSources())#cType($source.type()) $source.value()#if($pipeline.getSources().indexOf($source) lt $pipeline.getSources().size() - 1), #end#end){
+void $className::Process(#foreach($source in $pipeline.getSources())#cType($source.type())& $source.value()#if($pipeline.getSources().indexOf($source) lt $pipeline.getSources().size() - 1), #end#end){
 #foreach($step in $pipeline.getSteps())
 	//Step $step.name()$step.num():
 #parse("$vmLoc/Step.vm")
@@ -66,19 +57,6 @@ void $className::process(#foreach($source in $pipeline.getSources())#cType($sour
 #end
 }
 
-#foreach($source in $pipeline.getSources())
-/**
- * This method is a generated setter for $source.value().
- * @param source the $source.type() to set
- */
-void $className::set${source.value()}(#cType(${source.type()}) #funPassType($source.type())${source.value()}){
-#if($source.type().equals("Mat"))
-	${source.value()}.copyTo(this->${source.value()});
-#else
-	this->$source.value() = ${source.value()};
-#end
-}
-#end
 #foreach($step in $pipeline.getSteps())
 #if($step.name() == "Switch" || $step.name() == "Valve")
 #set($boolInp = $step.getInput(0))

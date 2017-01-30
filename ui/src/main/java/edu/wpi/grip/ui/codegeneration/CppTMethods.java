@@ -5,6 +5,8 @@ import edu.wpi.grip.ui.codegeneration.data.TStep;
 
 import com.google.common.base.CaseFormat;
 
+import org.apache.commons.lang3.text.WordUtils;
+
 public class CppTMethods extends TemplateMethods {
   public CppTMethods() {
     super();
@@ -17,7 +19,7 @@ public class CppTMethods extends TemplateMethods {
 
   @Override
   public String getterName(String name) {
-    return "get" + name(name);
+    return "Get" + WordUtils.capitalize(name(name));
   }
 
   @Override
