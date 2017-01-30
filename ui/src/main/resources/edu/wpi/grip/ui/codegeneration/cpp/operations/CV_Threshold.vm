@@ -6,6 +6,6 @@
 	 * @param type Type of threshold to apply.
 	 * @param dst output Image.
 	 */
-	void $fileName::#func($step ["src", "thresh", "maxVal", "type", "dst"]) {
-		threshold(src, dst, thresh, maxVal, type);
+	void $className::#func($step ["src", "thresh", "maxVal", "type", "dst"]) {
+		cv::threshold(src, dst, thresh, maxVal, type);
 	}

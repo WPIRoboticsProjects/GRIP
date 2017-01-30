@@ -7,7 +7,6 @@ import edu.wpi.grip.core.operations.network.MockGripNetworkModule;
 import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.core.sources.ImageFileSource;
-//import edu.wpi.grip.ui.codegeneration.tools.CppPipelineInterfacer;
 import edu.wpi.grip.ui.codegeneration.tools.HelperTools;
 import edu.wpi.grip.ui.codegeneration.tools.JavaPipelineInterfacer;
 import edu.wpi.grip.ui.codegeneration.tools.PipelineCreator;
@@ -83,11 +82,18 @@ public class AbstractGenerationTesting {
     gen.export(fileName);
     Language current = Language.JAVA;
     try {
-      JavaPipelineInterfacer jpip = new JavaPipelineInterfacer(fileName + ".java");
-      test.accept(jpip);
-      current = Language.PYTHON;
-      PythonPipelineInterfacer ppip = new PythonPipelineInterfacer(fileName);
-      test.accept(ppip);
+      if (Boolean.valueOf(System.getProperty("codegen.java.disabled", "false"))) {
+        JavaPipelineInterfacer jpip = new JavaPipelineInterfacer(fileName + ".java");
+        test.accept(jpip);
+      }
+
+      if (Boolean.valueOf(System.getProperty("codegen.python.disabled", "false"))) {
+        current = Language.PYTHON;
+        PythonPipelineInterfacer ppip = new PythonPipelineInterfacer(fileName);
+        test.accept(ppip);
+      }
+
+      // C++ is just plain broken
       //current = Language.CPP;
       //CppPipelineInterfacer cpip = new CppPipelineInterfacer(fileName);
       //test.accept(cpip);

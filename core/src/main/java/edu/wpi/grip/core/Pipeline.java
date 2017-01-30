@@ -1,5 +1,7 @@
 package edu.wpi.grip.core;
 
+import edu.wpi.grip.core.events.AppSettingsChangedEvent;
+import edu.wpi.grip.core.events.CodeGenerationSettingsChangedEvent;
 import edu.wpi.grip.core.events.ConnectionAddedEvent;
 import edu.wpi.grip.core.events.ConnectionRemovedEvent;
 import edu.wpi.grip.core.events.ProjectSettingsChangedEvent;
@@ -8,6 +10,8 @@ import edu.wpi.grip.core.events.SourceRemovedEvent;
 import edu.wpi.grip.core.events.StepAddedEvent;
 import edu.wpi.grip.core.events.StepMovedEvent;
 import edu.wpi.grip.core.events.StepRemovedEvent;
+import edu.wpi.grip.core.settings.AppSettings;
+import edu.wpi.grip.core.settings.CodeGenerationSettings;
 import edu.wpi.grip.core.settings.ProjectSettings;
 import edu.wpi.grip.core.settings.SettingsProvider;
 import edu.wpi.grip.core.sockets.InputSocket;
@@ -26,7 +30,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
@@ -61,9 +64,12 @@ public class Pipeline implements ConnectionValidator, SettingsProvider, StepInde
   private final Set<Connection> connections = new HashSet<>();
   @Inject
   @XStreamOmitField
-  private EventBus eventBus;
+  private transient EventBus eventBus;
   private final transient ReadWriteLock stepLock = new ReentrantReadWriteLock();
   private ProjectSettings settings = new ProjectSettings();
+  @XStreamOmitField
+  private transient AppSettings appSettings = new AppSettings(); // Do not serialize this field
+  private CodeGenerationSettings codeGenerationSettings = CodeGenerationSettings.DEFAULT_SETTINGS;
 
   /**
    * Locks the resource with the specified lock and performs the function. When the function is
@@ -186,6 +192,16 @@ public class Pipeline implements ConnectionValidator, SettingsProvider, StepInde
   @Override
   public ProjectSettings getProjectSettings() {
     return settings;
+  }
+
+  @Override
+  public AppSettings getAppSettings() {
+    return appSettings;
+  }
+
+  @Override
+  public CodeGenerationSettings getCodeGenerationSettings() {
+    return codeGenerationSettings;
   }
 
   @SuppressWarnings("unchecked")
@@ -365,13 +381,7 @@ public class Pipeline implements ConnectionValidator, SettingsProvider, StepInde
   @Override
   public int indexOf(Step step) {
     checkNotNull(step, "step");
-    return readStepsSafely(steps -> {
-      int index = steps.indexOf(step);
-      if (index == -1) {
-        throw new NoSuchElementException("Step " + step + " is not in the pipeline");
-      }
-      return index;
-    });
+    return readStepsSafely(steps -> steps.indexOf(step));
   }
 
   @Subscribe
@@ -391,4 +401,15 @@ public class Pipeline implements ConnectionValidator, SettingsProvider, StepInde
   public void onProjectSettingsChanged(ProjectSettingsChangedEvent event) {
     this.settings = event.getProjectSettings();
   }
+
+  @Subscribe
+  public void onAppSettingsChanged(AppSettingsChangedEvent event) {
+    this.appSettings = event.getAppSettings();
+  }
+
+  @Subscribe
+  public void onCodeGenerationSettingsChanged(CodeGenerationSettingsChangedEvent event) {
+    this.codeGenerationSettings = event.getCodeGenerationSettings();
+  }
+
 }

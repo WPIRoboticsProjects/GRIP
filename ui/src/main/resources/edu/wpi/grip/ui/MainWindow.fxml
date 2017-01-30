@@ -98,11 +98,7 @@
                     </graphic>
                 </MenuItem>
                 <SeparatorMenuItem />
-                <MenuItem text="Exit" onAction="#quit">
-                    <accelerator>
-                        <KeyCodeCombination alt="UP" code="Q" control="UP" meta="UP" shift="UP" shortcut="DOWN" />
-                    </accelerator>
-                </MenuItem>
+                <MenuItem text="Exit" onAction="#quit" />
             </Menu>
             <Menu text="Tools">
                 <MenuItem text="Deploy" onAction="#deploy">
@@ -217,6 +213,7 @@
         <fx:include source="Deploy.fxml" fx:id="deployPane" />
         <fx:include source="AboutDialog.fxml" fx:id="aboutPane" />
         <fx:include source="analysis/Analysis.fxml" fx:id="analysisPane" />
+        <fx:include source="codegeneration/CodegenDialog.fxml" fx:id="codegenPane"/>
     </fx:define>
     <stylesheets>
         <URL value="@GRIP.css" />

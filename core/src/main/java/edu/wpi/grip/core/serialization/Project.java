@@ -3,8 +3,10 @@ package edu.wpi.grip.core.serialization;
 import edu.wpi.grip.core.Pipeline;
 import edu.wpi.grip.core.PipelineRunner;
 import edu.wpi.grip.core.events.DirtiesSaveEvent;
+import edu.wpi.grip.core.events.WarningEvent;
 
 import com.google.common.annotations.VisibleForTesting;
+import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import com.google.common.reflect.ClassPath;
 import com.thoughtworks.xstream.XStream;
@@ -36,6 +38,8 @@ public class Project {
 
   protected final XStream xstream = new XStream(new PureJavaReflectionProvider());
   @Inject
+  private EventBus eventBus;
+  @Inject
   private Pipeline pipeline;
   @Inject
   private PipelineRunner pipelineRunner;
@@ -47,13 +51,16 @@ public class Project {
                          SourceConverter sourceConverter,
                          SocketConverter socketConverter,
                          ConnectionConverter connectionConverter,
-                         ProjectSettingsConverter projectSettingsConverter) {
+                         ProjectSettingsConverter projectSettingsConverter,
+                         CodeGenerationSettingsConverter codeGenerationSettingsConverter) {
     xstream.setMode(XStream.NO_REFERENCES);
+    xstream.ignoreUnknownElements(); // ignores all unknown tags
     xstream.registerConverter(stepConverter);
     xstream.registerConverter(sourceConverter);
     xstream.registerConverter(socketConverter);
     xstream.registerConverter(connectionConverter);
     xstream.registerConverter(projectSettingsConverter);
+    xstream.registerConverter(codeGenerationSettingsConverter);
     try {
       ClassPath cp = ClassPath.from(getClass().getClassLoader());
       cp.getAllClasses()
@@ -115,6 +122,29 @@ public class Project {
     this.xstream.fromXML(reader);
     pipelineRunner.startAsync();
     saveIsDirty.set(false);
+  }
+
+  /**
+   * Tries to save this project to the given file. Unlike {@link #save(File)}, this will <i>not</i>
+   * throw an IOException and will instead post a warning event to the event bus.
+   *
+   * @param file the file to save to
+   *
+   * @return true if the project was successfully saved to the given file, or false if the file
+   *              could not be written to
+   */
+  public boolean trySave(File file) {
+    try {
+      save(file);
+      return true;
+    } catch (IOException e) {
+      eventBus.post(new WarningEvent(
+          "Could not save project",
+          "The project could not be saved to " + file.getAbsolutePath()
+              + ".\n\nCause: " + e.getMessage()
+      ));
+      return false;
+    }
   }
 
   /**

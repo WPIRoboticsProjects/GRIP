@@ -8,6 +8,7 @@ import edu.wpi.grip.core.events.StepRemovedEvent;
 import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.sockets.OutputSocket;
 
+import com.google.common.base.MoreObjects;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import com.google.inject.Inject;
@@ -110,6 +111,14 @@ public class Connection<T> {
    */
   public void remove() {
     eventBus.post(new ConnectionRemovedEvent(this));
+  }
+
+  @Override
+  public String toString() {
+    return MoreObjects.toStringHelper(this)
+        .add("src", outputSocket.simpleString())
+        .add("dst", inputSocket.simpleString())
+        .toString();
   }
 
   public interface Factory<T> {

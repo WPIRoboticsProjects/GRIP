@@ -1,19 +1,26 @@
 package edu.wpi.grip.ui;
 
+import edu.wpi.grip.core.GripFileManager;
 import edu.wpi.grip.core.Palette;
 import edu.wpi.grip.core.Pipeline;
 import edu.wpi.grip.core.PipelineRunner;
+import edu.wpi.grip.core.events.AppSettingsChangedEvent;
 import edu.wpi.grip.core.events.BenchmarkEvent;
+import edu.wpi.grip.core.events.CodeGenerationSettingsChangedEvent;
 import edu.wpi.grip.core.events.ProjectSettingsChangedEvent;
 import edu.wpi.grip.core.events.TimerEvent;
 import edu.wpi.grip.core.events.UnexpectedThrowableEvent;
+import edu.wpi.grip.core.events.WarningEvent;
 import edu.wpi.grip.core.serialization.Project;
+import edu.wpi.grip.core.settings.AppSettings;
+import edu.wpi.grip.core.settings.CodeGenerationSettings;
 import edu.wpi.grip.core.settings.ProjectSettings;
 import edu.wpi.grip.core.settings.SettingsProvider;
+import edu.wpi.grip.core.sockets.SocketHint;
 import edu.wpi.grip.core.util.SafeShutdown;
 import edu.wpi.grip.core.util.service.SingleActionListener;
+import edu.wpi.grip.ui.codegeneration.CodeGenerationSettingsDialog;
 import edu.wpi.grip.ui.codegeneration.Exporter;
-import edu.wpi.grip.ui.codegeneration.Language;
 import edu.wpi.grip.ui.components.StartStoppableButton;
 import edu.wpi.grip.ui.util.DPIUtility;
 
@@ -21,15 +28,14 @@ import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import com.google.common.util.concurrent.Service;
 
+import org.apache.commons.lang3.tuple.Pair;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.Optional;
 import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javafx.application.Platform;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -56,8 +62,6 @@ import javax.inject.Inject;
  */
 public class MainWindowController {
 
-  private static final Logger logger = Logger.getLogger(MainWindowController.class.getName());
-
   @FXML
   private Parent root;
   @FXML
@@ -72,6 +76,8 @@ public class MainWindowController {
   private Pane aboutPane;
   @FXML
   private Pane analysisPane;
+  @FXML
+  private Pane codegenPane;
   @FXML
   private MenuItem analyzeMenuItem;
   @FXML
@@ -111,6 +117,12 @@ public class MainWindowController {
       statusLabel.setText("Pipeline " + stateMessage);
       analyzeMenuItem.setDisable(state.equals(Service.State.TERMINATED));
     }), Platform::runLater);
+    Platform.runLater(() -> root.getScene().getWindow().setOnCloseRequest(e -> {
+      if (!quit()) {
+        // Asked to quit but cancelled, consume the event to avoid closing the window
+        e.consume();
+      }
+    }));
   }
 
   /**
@@ -139,11 +151,7 @@ public class MainWindowController {
       } else if (dialog.getResult().equals(save)) {
         // If the user chose "Save", automatically show a save dialog and block until the user
         // has had a chance to save the project.
-        try {
-          return saveProject();
-        } catch (IOException e) {
-          logger.log(Level.SEVERE, e.getMessage(), e.getCause());
-        }
+        return saveProject();
       }
     }
     return true;
@@ -156,8 +164,14 @@ public class MainWindowController {
   @FXML
   public void newProject() {
     if (showConfirmationDialogAndWait()) {
-      pipeline.clear();
-      project.setFile(Optional.empty());
+      Thread clearThread = new Thread(() -> {
+        pipelineRunner.stopAndAwait();
+        pipeline.clear();
+        project.setFile(Optional.empty());
+        pipelineRunner.startAsync();
+      }, "Pipeline Clear Thread");
+      clearThread.setDaemon(true);
+      clearThread.start();
     }
   }
 
@@ -198,11 +212,10 @@ public class MainWindowController {
    * @return true if the user does not cancel the save
    */
   @FXML
-  public boolean saveProject() throws IOException {
+  public boolean saveProject() {
     if (project.getFile().isPresent()) {
       // Immediately save the project to whatever file it was loaded from or last saved to.
-      project.save(project.getFile().get());
-      return true;
+      return project.trySave(project.getFile().get());
     } else {
       return saveProjectAs();
     }
@@ -216,10 +229,11 @@ public class MainWindowController {
    * @return true if the user does not cancel the save
    */
   @FXML
-  public boolean saveProjectAs() throws IOException {
+  public boolean saveProjectAs() {
     final FileChooser fileChooser = new FileChooser();
     fileChooser.setTitle("Save Project As");
     fileChooser.getExtensionFilters().add(new ExtensionFilter("GRIP File", "*.grip"));
+    fileChooser.setInitialDirectory(GripFileManager.GRIP_DIRECTORY);
 
     project.getFile().ifPresent(file -> fileChooser.setInitialDirectory(file.getParentFile()));
 
@@ -228,18 +242,20 @@ public class MainWindowController {
       return false;
     }
 
-    project.save(file);
-    return true;
+    return project.trySave(file);
   }
 
   @FXML
   protected void showProjectSettingsEditor() {
     final ProjectSettings projectSettings = settingsProvider.getProjectSettings().clone();
+    final AppSettings appSettings = settingsProvider.getAppSettings().clone();
 
-    ProjectSettingsEditor projectSettingsEditor = new ProjectSettingsEditor(root, projectSettings);
+    ProjectSettingsEditor projectSettingsEditor
+        = new ProjectSettingsEditor(root, projectSettings, appSettings);
     projectSettingsEditor.showAndWait().ifPresent(buttonType -> {
       if (buttonType == ButtonType.OK) {
         eventBus.post(new ProjectSettingsChangedEvent(projectSettings));
+        eventBus.post(new AppSettingsChangedEvent(appSettings));
       }
     });
   }
@@ -260,47 +276,84 @@ public class MainWindowController {
   }
 
   @FXML
-  protected void quit() {
+  protected boolean quit() {
     if (showConfirmationDialogAndWait()) {
       pipelineRunner.stopAsync();
       SafeShutdown.exit(0);
+      return true;
     }
+    return false;
   }
 
   /**
    * Controls the export button in the main menu. Opens a filechooser with language selection.
    * The user can select the language to export to, save location and file name.
-   * @param actionEvent Unused event passed by the controller.
    */
-  public void generate(ActionEvent actionEvent) {
-    final FileChooser fileChooser = new FileChooser();
-    fileChooser.setTitle("Export to");
-    fileChooser.getExtensionFilters().add(new ExtensionFilter(Language.JAVA.name, "*.java"));
-    fileChooser.getExtensionFilters().add(new ExtensionFilter(Language.CPP.name, "*.cpp"));
-    fileChooser.getExtensionFilters().add(new ExtensionFilter(Language.PYTHON.name, "*.py"));
-    fileChooser.setInitialFileName("Pipeline.java");
-    final File file = fileChooser.showSaveDialog(root.getScene().getWindow());
-    if (file == null) {
+  @FXML
+  protected void generate() {
+    if (pipeline.getSources().isEmpty()) {
+      // No sources
+      eventBus.post(new WarningEvent("Cannot generate code",
+          "There are no sources in the pipeline"));
+      return;
+    } else if (pipeline.getSteps().isEmpty()) {
+      // Sources, but no steps
+      eventBus.post(new WarningEvent("Cannot generate code",
+          "There are no steps in the pipeline"));
+      return;
+    } else if (pipeline.getConnections().isEmpty()) {
+      // Sources and steps, but no connections
+      eventBus.post(new WarningEvent("Cannot generate code",
+          "There are no connections in the pipeline"));
+      return;
+    } else if (pipeline.getSteps().stream()
+        .flatMap(s -> s.getInputSockets().stream())
+        .filter(s -> SocketHint.View.NONE.equals(s.getSocketHint().getView()))
+        .anyMatch(s -> !s.getValue().isPresent())) {
+      // Some sockets aren't connected
+      StringBuilder sb = new StringBuilder("The following steps are missing inputs:\n\n"); //NOPMD
+      pipeline.getSteps().stream()
+          .filter(step -> step.getInputSockets().stream().anyMatch(s ->
+              SocketHint.View.NONE.equals(s.getSocketHint().getView())
+                  && !s.getValue().isPresent()))
+          .map(s -> Pair.of(pipeline.indexOf(s) + 1, s.getOperationDescription().name()))
+          .forEach(p -> {
+            sb.append(" - ").append(p.getRight());
+            sb.append(" (at position ").append(p.getLeft()).append(")\n");
+          });
+      eventBus.post(new WarningEvent("Cannot generate code", sb.toString()));
       return;
     }
-    Language lang = Language.get(fileChooser.getSelectedExtensionFilter().getDescription());
-    Exporter exporter = new Exporter(pipeline.getSteps(), lang, file);
-    final Set<String> nonExportableSteps = exporter.getNonExportableSteps();
-    if (!nonExportableSteps.isEmpty()) {
-      StringBuilder b = new StringBuilder("The following steps cannot be exported:\n");
-      nonExportableSteps.forEach(n -> b.append("  ").append(n).append('\n'));
-      Alert alert = new Alert(Alert.AlertType.WARNING);
-      alert.setContentText(b.toString());
-      alert.showAndWait();
-      return;
-    }
-    Thread exportRunner = new Thread(exporter);
-    exportRunner.setDaemon(true);
-    exportRunner.start();
+    Dialog<CodeGenerationSettings> optionsDialog = new CodeGenerationSettingsDialog(codegenPane);
+    optionsDialog.showAndWait().ifPresent(settings -> {
+      eventBus.post(new CodeGenerationSettingsChangedEvent(settings));
+      Exporter exporter = new Exporter(pipeline.getSteps(), settings);
+      final Set<String> nonExportableSteps = exporter.getNonExportableStepNames();
+      if (!nonExportableSteps.isEmpty()) {
+        StringBuilder b = new StringBuilder(
+            "The following steps do not support code generation:\n\n"
+        );
+        nonExportableSteps.stream()
+            .sorted()
+            .forEach(n -> b.append(" - ").append(n).append("\n"));
+        eventBus.post(new WarningEvent("Cannot generate code", b.toString()));
+        return;
+      }
+      Thread exportRunner = new Thread(exporter);
+      exportRunner.setDaemon(true);
+      exportRunner.start();
+    });
   }
 
   @FXML
   protected void deploy() {
+    eventBus.post(new WarningEvent(
+        "Deploy has been deprecated",
+        "The deploy tool has been deprecated and is no longer supported. "
+            + "It will be removed in a future release.\n\n"
+            + "Instead, use code generation to create a Java, C++, or Python class that handles all"
+            + " the OpenCV code and can be easily integrated into a WPILib robot program."));
+
     ImageView graphic = new ImageView(new Image("/edu/wpi/grip/ui/icons/settings.png"));
     graphic.setFitWidth(DPIUtility.SMALL_ICON_SIZE);
     graphic.setFitHeight(DPIUtility.SMALL_ICON_SIZE);
@@ -320,7 +373,21 @@ public class MainWindowController {
   }
 
   @Subscribe
-  @SuppressWarnings( {"PMD.UnusedPrivateMethod", "PMD.UnusedFormalParameter"})
+  public void onWarningEvent(WarningEvent e) {
+    if (Platform.isFxApplicationThread()) {
+      showWarningAlert(e);
+    } else {
+      Platform.runLater(() -> showWarningAlert(e));
+    }
+  }
+
+  private void showWarningAlert(WarningEvent e) {
+    Alert alert = new WarningAlert(e.getHeader(), e.getBody(), root.getScene().getWindow());
+    alert.showAndWait();
+  }
+
+  @Subscribe
+  @SuppressWarnings({"PMD.UnusedPrivateMethod", "PMD.UnusedFormalParameter"})
   private void runStopped(TimerEvent event) {
     if (event.getTarget() instanceof PipelineRunner) {
       Platform.runLater(() -> updateElapsedTimeLabel(event.getElapsedTime()));

@@ -1,11 +1,11 @@
     @staticmethod
-    def $tMeth.name($step.name())(input, red, green, blue, out):
+    def $tMeth.name($step.name())(input, red, green, blue):
         """Segment an image based on color ranges.
         Args:
             input: A BGR numpy.ndarray.
-            hue: A list of two numbers the are the min and max red.
-            sat: A list of two numbers the are the min and max green.
-            lum: A list of two numbers the are the min and max blue.
+            red: A list of two numbers the are the min and max red.
+            green: A list of two numbers the are the min and max green.
+            blue: A list of two numbers the are the min and max blue.
         Returns:
             A black and white numpy.ndarray.
         """

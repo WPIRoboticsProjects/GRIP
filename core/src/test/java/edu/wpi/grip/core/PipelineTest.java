@@ -26,12 +26,10 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.NoSuchElementException;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 public class PipelineTest {
 
@@ -393,12 +391,7 @@ public class PipelineTest {
     pipeline.addStep(step);
     assertEquals("Index of step was not zero", 0, pipeline.indexOf(step));
     pipeline.removeStep(step);
-    try {
-      pipeline.indexOf(step);
-      fail("NoSuchElementException should have been thrown");
-    } catch (NoSuchElementException expected) {
-      // This should happen
-    }
+    assertEquals("Index was not -1", -1, pipeline.indexOf(step));
   }
 
   @Test

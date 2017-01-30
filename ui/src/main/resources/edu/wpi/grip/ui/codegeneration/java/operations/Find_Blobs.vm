@@ -39,8 +39,12 @@
 			config.append("<maxCircularity>");
 			config.append(circularity[1]);
 			config.append("</maxCircularity>\n");
-			config.append("<filterByInertia>0</filterByInertia>\n");
-			config.append("<filterByConvexity>0</filterByConvexity>\n");
+			config.append("<filterByInertia>1</filterByInertia>\n");
+			config.append("<minInertiaRatio>0.1</minInertiaRatio>\n");
+			config.append("<maxInertiaRatio>" + Integer.MAX_VALUE + "</maxInertiaRatio>\n");
+			config.append("<filterByConvexity>1</filterByConvexity>\n");
+			config.append("<minConvexity>0.95</minConvexity>\n");
+			config.append("<maxConvexity>" + Integer.MAX_VALUE + "</maxConvexity>\n");
 			config.append("</opencv_storage>\n");
 			FileWriter writer;
 			writer = new FileWriter(tempFile, false);

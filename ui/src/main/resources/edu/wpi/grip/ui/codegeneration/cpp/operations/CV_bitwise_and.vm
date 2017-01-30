@@ -4,6 +4,6 @@
 	 * @param src2 The second image to use.
 	 * @param dst the result image when the and is performed.
 	 */
-	void $fileName::#func($step ["src1", "src2", "dst"]) {
-		bitwise_and(src1, src2, dst);
+	void $className::#func($step ["src1", "src2", "dst"]) {
+		cv::bitwise_and(src1, src2, dst);
 	}

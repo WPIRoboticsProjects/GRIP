@@ -5,12 +5,12 @@
 	 * @param lastImage The mat where the previous image is stored.
 	 * @param output The image in which to store the output.
 	 */
-	void $fileName::#func($step ["input", "output"]) {
-		Size lastSize = lastImage.size();
-		Size inputSize = input.size();
+	void $className::#func($step ["input", "output"]) {
+		cv::Size lastSize = lastImage.size();
+		cv::Size inputSize = input.size();
 		if (!lastImage.empty() && lastSize.height == inputSize.height &&
 			lastSize.width == inputSize.width) {
-			absdiff(input, lastImage, output);
+			cv::absdiff(input, lastImage, output);
 		}
 		input.copyTo(lastImage);
 	}

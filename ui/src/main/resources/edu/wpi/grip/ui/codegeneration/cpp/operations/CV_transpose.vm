@@ -3,6 +3,6 @@
 	 * @param src the source Mat.
 	 * @param dst the transpose of src.
 	 */
-	void $fileName::#func($step ["src", "dst"]) {
-		transpose(src, dst);
+	void $className::#func($step ["src", "dst"]) {
+		cv::transpose(src, dst);
 	}
