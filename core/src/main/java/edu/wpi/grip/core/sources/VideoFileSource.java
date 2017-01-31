@@ -176,8 +176,11 @@ public class VideoFileSource extends Source {
           isNewFrame.set(true);
           eventBus.post(new SourceHasPendingUpdateEvent(VideoFileSource.this));
           Thread.sleep((long) (1e3 / fps));
-        } catch (InterruptedException | FrameGrabber.Exception e) {
+        } catch (FrameGrabber.Exception e) {
           getExceptionWitness().flagException(e);
+        } catch (InterruptedException e) {
+          Thread.currentThread().interrupt();
+          getExceptionWitness().flagException(e, "Interrupted while waiting for next frame");
         }
       }
     }
