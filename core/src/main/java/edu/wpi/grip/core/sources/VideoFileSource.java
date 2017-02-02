@@ -25,6 +25,9 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.Properties;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
@@ -43,7 +46,8 @@ public class VideoFileSource extends Source {
   private FFmpegFrameGrabber frameGrabber;
   private final OpenCVFrameConverter.ToMat converter = new OpenCVFrameConverter.ToMat();
   private final EventBus eventBus;
-  private VideoCaptureThread captureThread;
+  private ScheduledFuture<?> grabberFuture = null;
+  private final AtomicBoolean paused = new AtomicBoolean(false);
 
   @AssistedInject
   VideoFileSource(OutputSocket.Factory osf,
@@ -114,19 +118,85 @@ public class VideoFileSource extends Source {
       frameGrabber.start();
       final double fps = frameGrabber.getFrameRate();
       fpsSocket.setValue(fps);
-      captureThread = new VideoCaptureThread(fps, path);
-      captureThread.start();
+      grabberFuture = Executors.newSingleThreadScheduledExecutor().scheduleAtFixedRate(
+          this::grabNextFrame,
+          0L,
+          (long) (1e3 / fps),
+          TimeUnit.MILLISECONDS
+      );
     } catch (FrameGrabber.Exception e) {
       throw new IOException("Could not open video file " + path, e);
     }
+  }
+
+  /**
+   * Grabs the next frame from the video, or the first frame
+   * if the end of the file has been reached.
+   */
+  private void grabNextFrame() {
+    if (paused.get()) {
+      return;
+    }
+    try {
+      Frame frame = frameGrabber.grabFrame();
+      if (frame == null) {
+        // End of the video file, loop back to the first frame
+        frameGrabber.setFrameNumber(0);
+        return;
+      }
+      Mat m = converter.convert(frame);
+      if (m == null) {
+        // Try again (I have no idea why this happens)
+        grabNextFrame();
+        return;
+      }
+      synchronized (workingMat) {
+        m.copyTo(workingMat);
+      }
+      m.release();
+      isNewFrame.set(true);
+      eventBus.post(new SourceHasPendingUpdateEvent(this));
+    } catch (FrameGrabber.Exception e) {
+      getExceptionWitness().flagException(e);
+    }
+  }
+
+  /**
+   * Gets the current frame position as a fraction of the total number of frames.
+   *
+   * @return the current frame position. Will be in the range (0, 1) inclusive.
+   */
+  public double getFramePosition() {
+    return frameGrabber.getFrameNumber() / (double) frameGrabber.getLengthInFrames();
+  }
+
+  /**
+   * Pauses video playback until {@link #resume()} is called. NOP if playback is already paused.
+   */
+  public void pause() {
+    paused.set(true);
+  }
+
+  /**
+   * Resumes video playback. NOP if video playback was not paused.
+   */
+  public void resume() {
+    paused.set(false);
+  }
+
+  /**
+   * Checks if video playback is paused.
+   */
+  public boolean isPaused() {
+    return paused.get();
   }
 
   @Subscribe
   public void onSourceRemoved(SourceRemovedEvent sourceRemovedEvent) {
     if (sourceRemovedEvent.getSource() == this) {
       try {
-        if (captureThread != null) {
-          captureThread.quit();
+        if (grabberFuture != null && !grabberFuture.isCancelled()) {
+          grabberFuture.cancel(true);
         }
         frameGrabber.stop();
       } catch (FrameGrabber.Exception e) {
@@ -141,54 +211,6 @@ public class VideoFileSource extends Source {
     VideoFileSource create(File file);
 
     VideoFileSource create(Properties props);
-  }
-
-  private class VideoCaptureThread extends Thread {
-
-    private final double fps;
-    private boolean doRun = true;
-
-    private VideoCaptureThread(double fps, String path) {
-      super("VideoFileCaptureThread-" + path);
-      setDaemon(true);
-      this.fps = fps;
-    }
-
-    @Override
-    public void run() {
-      while (doRun) {
-        try {
-          Frame frame = frameGrabber.grabFrame();
-          if (frame == null) {
-            // End of the video file, loop back to the first frame
-            frameGrabber.setFrameNumber(0);
-            continue;
-          }
-          Mat m = converter.convert(frame);
-          if (m == null) {
-            // Try again (I have no idea why this happens)
-            continue;
-          }
-          synchronized (workingMat) {
-            m.copyTo(workingMat);
-          }
-          m.release();
-          isNewFrame.set(true);
-          eventBus.post(new SourceHasPendingUpdateEvent(VideoFileSource.this));
-          Thread.sleep((long) (1e3 / fps));
-        } catch (FrameGrabber.Exception e) {
-          getExceptionWitness().flagException(e);
-        } catch (InterruptedException e) {
-          Thread.currentThread().interrupt();
-          getExceptionWitness().flagException(e, "Interrupted while waiting for next frame");
-        }
-      }
-    }
-
-    public void quit() {
-      doRun = false;
-    }
-
   }
 
 }

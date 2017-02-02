@@ -5,6 +5,7 @@ import edu.wpi.grip.core.sources.CameraSource;
 import edu.wpi.grip.core.sources.ClassifierSource;
 import edu.wpi.grip.core.sources.HttpSource;
 import edu.wpi.grip.core.sources.MultiImageFileSource;
+import edu.wpi.grip.core.sources.VideoFileSource;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
@@ -34,8 +35,10 @@ public class SourceControllerFactory {
    *
    * @param source The source to create the view for
    * @param <S>    The type of the source
+   *
    * @return The appropriate SourceController.
    */
+  @SuppressWarnings("unchecked")
   public <S extends Source> SourceController<S> create(S source) {
     final SourceController<S> sourceController;
     if (source instanceof CameraSource) {
@@ -50,6 +53,9 @@ public class SourceControllerFactory {
     } else if (source instanceof ClassifierSource) {
       sourceController = (SourceController<S>) fileSourceControllerFactory.create(
           (ClassifierSource) source);
+    } else if (source instanceof VideoFileSource) {
+      sourceController = (SourceController<S>) videoFileSourceControllerFactory.create(
+          (VideoFileSource) source);
     } else {
       sourceController = (SourceController<S>) baseSourceControllerFactory.create(source);
     }
