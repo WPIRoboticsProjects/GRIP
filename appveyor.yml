@@ -13,6 +13,7 @@ platform:
 
 artifacts:
   - path: ui\build\jfx\native\*.exe
+  - path: core\build\libs\*.jar
 
 
 deploy:
@@ -20,7 +21,7 @@ deploy:
   description: ''
   auth_token:
       secure: k0uhlsYxGoZkHVNNm4E+WnOiBfzsv4yLS+htlplR7JwzARqiAC2RU0cVnsIg1UF0
-  artifact: /.*\.exe/           # upload all exe packages to release assets
+  artifact: /.*\.(exe|jar)/
   draft: true
   prerelease: true
   on:

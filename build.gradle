@@ -283,6 +283,8 @@ project(":core") {
         exclude 'org/bytedeco/javacpp/*/*superres*'
         exclude 'org/bytedeco/javacpp/*/*videostab*'
         exclude 'org/bytedeco/javacpp/*/*xfeatures2d*'
+
+        archiveName = "${baseName}-${version}-${classifier}-${osdetector.classifier}.${extension}"
     }
 
     sourceSets {
