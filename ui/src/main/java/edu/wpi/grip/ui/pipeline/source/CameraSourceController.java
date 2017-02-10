@@ -31,6 +31,7 @@ public final class CameraSourceController extends SourceController<CameraSource>
   }
 
   @FXML
+  @Override
   public void initialize() throws Exception {
     super.initialize();
     addControls(startStoppableButtonFactory.create(getSource()));

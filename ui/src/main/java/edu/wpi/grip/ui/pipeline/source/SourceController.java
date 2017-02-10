@@ -91,6 +91,7 @@ public class SourceController<S extends Source> implements Controller {
     return this.outputSocketMapManager.keySet();
   }
 
+  @Override
   public VBox getRoot() {
     return root;
   }

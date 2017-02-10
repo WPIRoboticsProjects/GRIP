@@ -39,7 +39,8 @@ public abstract class NetworkReceiver implements AutoCloseable {
   public abstract void addListener(Consumer<Object> consumer);
 
   /**
-   * Close the network reciever. This should not throw an exception.
+   * Close the network receiver. This should not throw an exception.
    */
+  @Override
   public abstract void close();
 }

@@ -86,6 +86,7 @@ public class OperationController implements Controller {
     this.pipeline.addStep(stepFactory.create(operationMetaData));
   }
 
+  @Override
   public GridPane getRoot() {
     return root;
   }

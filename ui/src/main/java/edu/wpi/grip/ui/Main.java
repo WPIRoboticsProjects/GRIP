@@ -164,6 +164,7 @@ public class Main extends Application {
     }
   }
 
+  @Override
   public void stop() {
     SafeShutdown.flagStopping();
   }

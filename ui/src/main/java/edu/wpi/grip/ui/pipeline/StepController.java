@@ -183,6 +183,7 @@ public class StepController implements Controller {
     return outputSocketMapManager.keySet();
   }
 
+  @Override
   public VBox getRoot() {
     return root;
   }
