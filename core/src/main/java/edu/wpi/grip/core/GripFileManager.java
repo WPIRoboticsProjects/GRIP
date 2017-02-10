@@ -22,6 +22,7 @@ public class GripFileManager implements FileManager {
   public static final File GRIP_DIRECTORY
       = new File(System.getProperty("user.home") + File.separator + "GRIP");
   public static final File IMAGE_DIRECTORY = new File(GRIP_DIRECTORY, "images");
+  public static final File BACKUP_FILE = new File(GRIP_DIRECTORY, ".backup.grip");
 
   @Override
   public void saveImage(byte[] image, String fileName) {

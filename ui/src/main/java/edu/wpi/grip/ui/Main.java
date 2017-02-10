@@ -1,6 +1,8 @@
 package edu.wpi.grip.ui;
 
+import edu.wpi.grip.core.CoreCommandLineHelper;
 import edu.wpi.grip.core.GripCoreModule;
+import edu.wpi.grip.core.GripFileManager;
 import edu.wpi.grip.core.GripFileModule;
 import edu.wpi.grip.core.PipelineRunner;
 import edu.wpi.grip.core.events.UnexpectedThrowableEvent;
@@ -27,6 +29,7 @@ import com.sun.javafx.application.PlatformImpl;
 import org.apache.commons.cli.CommandLine;
 
 import java.io.IOException;
+import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -128,6 +131,15 @@ public class Main extends Application {
           Platform.runLater(() -> stage.setTitle(MAIN_TITLE));
         }
       });
+      project.addIsSaveDirtyConsumer(dirty -> {
+        if (dirty) {
+          try {
+            project.save(GripFileManager.BACKUP_FILE);
+          } catch (IOException e) {
+            logger.log(Level.WARNING, "Could not save backup file", e);
+          }
+        }
+      });
 
       stage.setTitle(MAIN_TITLE);
       stage.getIcons().add(new Image("/edu/wpi/grip/ui/icons/grip.png"));
@@ -141,7 +153,12 @@ public class Main extends Application {
     operations.addOperations();
     cvOperations.addOperations();
 
-    commandLineHelper.loadFile(parsedArgs, project);
+    if (parsedArgs.hasOption(CoreCommandLineHelper.FILE_OPTION)) {
+      commandLineHelper.loadFile(parsedArgs, project);
+    } else if (GripFileManager.BACKUP_FILE.exists()) {
+      project.open(GripFileManager.BACKUP_FILE);
+      project.setFile(Optional.empty());
+    }
     commandLineHelper.setServerPort(parsedArgs, settingsProvider, eventBus);
 
     // This will throw an exception if the port specified by the save file or command line
