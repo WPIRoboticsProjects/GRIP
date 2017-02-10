@@ -65,5 +65,6 @@ public abstract class NetworkPublisher<T> implements AutoCloseable {
   /**
    * Close the network publisher. This should not throw an exception.
    */
+  @Override
   public abstract void close();
 }

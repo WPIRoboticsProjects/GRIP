@@ -26,10 +26,10 @@ public final class SocketHints {
   @SuppressWarnings("unchecked")
   public static <T extends Enum<T>> SocketHint<T> createEnumSocketHint(final String identifier,
                                                                        final T defaultValue) {
-    return new SocketHint.Builder(defaultValue.getClass())
+    return new SocketHint.Builder(defaultValue.getDeclaringClass())
         .identifier(identifier).initialValue(defaultValue)
         .view(SocketHint.View.SELECT)
-        .domain(defaultValue.getClass().getEnumConstants()).build();
+        .domain(defaultValue.getDeclaringClass().getEnumConstants()).build();
   }
 
   public static SocketHint<Number> createNumberSocketHint(
