@@ -5,6 +5,7 @@ import edu.wpi.grip.core.GripCoreModule;
 import edu.wpi.grip.core.GripFileManager;
 import edu.wpi.grip.core.GripFileModule;
 import edu.wpi.grip.core.PipelineRunner;
+import edu.wpi.grip.core.events.DirtiesSaveEvent;
 import edu.wpi.grip.core.events.UnexpectedThrowableEvent;
 import edu.wpi.grip.core.exception.GripServerException;
 import edu.wpi.grip.core.http.GripServer;
@@ -25,10 +26,16 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.util.Modules;
 import com.sun.javafx.application.PlatformImpl;
+import com.thoughtworks.xstream.XStreamException;
 
 import org.apache.commons.cli.CommandLine;
 
+import java.io.File;
 import java.io.IOException;
+import java.io.Writer;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.util.List;
 import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -133,8 +140,9 @@ public class Main extends Application {
       });
       project.addIsSaveDirtyConsumer(dirty -> {
         if (dirty) {
-          try {
-            project.save(GripFileManager.BACKUP_FILE);
+          try (Writer fw = Files.newBufferedWriter(
+              GripFileManager.BACKUP_FILE.toPath(), StandardCharsets.UTF_8)) {
+            project.saveRaw(fw);
           } catch (IOException e) {
             logger.log(Level.WARNING, "Could not save backup file", e);
           }
@@ -156,8 +164,44 @@ public class Main extends Application {
     if (parsedArgs.hasOption(CoreCommandLineHelper.FILE_OPTION)) {
       commandLineHelper.loadFile(parsedArgs, project);
     } else if (GripFileManager.BACKUP_FILE.exists()) {
-      project.open(GripFileManager.BACKUP_FILE);
-      project.setFile(Optional.empty());
+      try {
+        if (GripFileManager.LAST_SAVE_FILE.exists()) {
+          try {
+            List<String> lines = Files.readAllLines(GripFileManager.LAST_SAVE_FILE.toPath());
+            if (lines.size() == 1) {
+              final String lastSavePath = lines.get(0);
+              final File lastSaveFile = new File(lastSavePath);
+              logger.info("Last save file: " + lastSavePath);
+              List<String> backupLines = Files.readAllLines(GripFileManager.BACKUP_FILE.toPath());
+              List<String> lastSaveLines = Files.readAllLines(lastSaveFile.toPath());
+              if (backupLines.equals(lastSaveLines)) {
+                // No point in loading the backup since it's identical to the last save
+                logger.info("Backup is the same as the last save file");
+                project.open(new File(lastSavePath));
+              } else {
+                // Load backup, set the file to the last save file (instead of the backup),
+                // and post an event marking the save as dirty
+                logger.info("Backup is different from the last opened project, flagging as dirty");
+                project.open(GripFileManager.BACKUP_FILE);
+                project.setFile(Optional.of(lastSaveFile));
+                eventBus.post(new DirtiesSaveEvent() {
+                });
+              }
+            } else {
+              logger.warning("Unexpected data in last_save: " + lines);
+            }
+          } catch (IOException e) {
+            logger.log(Level.WARNING, "Could not set file to the last save", e);
+          }
+        } else {
+          project.open(GripFileManager.BACKUP_FILE);
+          project.setFile(Optional.empty());
+          eventBus.post(new DirtiesSaveEvent() {
+          });
+        }
+      } catch (XStreamException | IOException e) {
+        logger.log(Level.WARNING, "Could not open backup file", e);
+      }
     }
     commandLineHelper.setServerPort(parsedArgs, settingsProvider, eventBus);
 
