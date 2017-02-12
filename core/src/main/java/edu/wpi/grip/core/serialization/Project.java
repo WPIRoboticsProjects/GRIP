@@ -105,9 +105,14 @@ public class Project {
     file.ifPresent(f -> logger.info("Setting project file to: " + f.getAbsolutePath()));
     this.file = file;
     try {
-      Files.write(file.get().getAbsolutePath(),
-          GripFileManager.LAST_SAVE_FILE,
-          Charset.defaultCharset());
+      if (file.isPresent()) {
+        Files.write(file.get().getAbsolutePath(),
+            GripFileManager.LAST_SAVE_FILE,
+            Charset.defaultCharset());
+      } else {
+        // No project file, delete the last_save file
+        GripFileManager.LAST_SAVE_FILE.delete();
+      }
     } catch (IOException e) {
       logger.log(Level.WARNING, "Could not set last file", e);
     }

@@ -28,7 +28,7 @@ import com.thoughtworks.xstream.annotations.XStreamOmitField;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.locks.Lock;
@@ -61,7 +61,7 @@ public class Pipeline implements ConnectionValidator, SettingsProvider, StepInde
    */
   private final List<Source> sources = new ArrayList<>();
   private final List<Step> steps = new ArrayList<>();
-  private final Set<Connection> connections = new HashSet<>();
+  private final Set<Connection> connections = new LinkedHashSet<>();
   @Inject
   @XStreamOmitField
   private transient EventBus eventBus;
