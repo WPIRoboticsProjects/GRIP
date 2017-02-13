@@ -3,12 +3,10 @@ package edu.wpi.grip.ui.preview;
 import edu.wpi.grip.core.operations.composite.ContoursReport;
 import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.ui.util.GripPlatform;
-import edu.wpi.grip.ui.util.ImageConverter;
 
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
 
 import static org.bytedeco.javacpp.opencv_core.CV_8UC3;
@@ -32,8 +30,6 @@ public final class ContoursSocketPreviewView extends ImageBasedPreviewView<Conto
       Scalar.BLUE,
       Scalar.MAGENTA,
   };
-  private final ImageConverter imageConverter = new ImageConverter();
-  private final ImageView imageView = new ImageView();
   private final Label infoLabel = new Label();
   private final CheckBox colorContours;
   private final Mat tmp = new Mat();

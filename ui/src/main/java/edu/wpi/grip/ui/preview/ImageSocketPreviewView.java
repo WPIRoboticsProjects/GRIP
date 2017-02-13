@@ -26,12 +26,14 @@ public class ImageSocketPreviewView extends ImageBasedPreviewView<Mat> {
   @Override
   protected void convertImage() {
     synchronized (this) {
-      this.getSocket().getValue().ifPresent(mat -> {
-        platform.runAsSoonAsPossible(() -> {
-          Image image = imageConverter.convert(mat, getImageHeight());
-          imageView.setImage(image);
-        });
-      });
+      this.getSocket().getValue()
+          .filter(ImageBasedPreviewView::isPreviewable)
+          .ifPresent(mat -> {
+            platform.runAsSoonAsPossible(() -> {
+              Image image = imageConverter.convert(mat, getImageHeight());
+              imageView.setImage(image);
+            });
+          });
     }
   }
 }
