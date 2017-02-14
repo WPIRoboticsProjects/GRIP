@@ -184,11 +184,25 @@ public class Project {
     this.file = Optional.of(file);
   }
 
+  /**
+   * Save the project using a writer to write the data. This will clear the dirty flag.
+   *
+   * @param writer the writer to use to save the project
+   *
+   * @see #saveRaw(Writer)
+   */
   public void save(Writer writer) {
     this.xstream.toXML(this.pipeline, writer);
     saveIsDirty.set(false);
   }
 
+  /**
+   * Save the project using a writer to write the data. This has no other side effects.
+   *
+   * @param writer the writer to use to save the project
+   *
+   * @see #save(Writer)
+   */
   public void saveRaw(Writer writer) {
     xstream.toXML(pipeline, writer);
   }

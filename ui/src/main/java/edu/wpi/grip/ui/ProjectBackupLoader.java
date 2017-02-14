@@ -9,8 +9,6 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.thoughtworks.xstream.XStreamException;
 
-import org.apache.commons.lang3.StringUtils;
-
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -45,10 +43,8 @@ public class ProjectBackupLoader {
         File lastSaveFile = lastSaveFile();
         if (lastSaveFile != null) {
           // Compare last save to backup
-          String backupText = readFileText(GripFileManager.BACKUP_FILE);
-          String lastSaveText = readFileText(lastSaveFile);
-          if (backupText.equals(lastSaveText) || !GripFileManager.BACKUP_FILE.exists()) {
-            // No point in loading the backup since it's identical to the last save
+          if (lastSaveFile.lastModified() >= GripFileManager.BACKUP_FILE.lastModified()) {
+            // Last save is more recent, load that one
             logger.info("Loading the last save file");
             project.open(lastSaveFile);
           } else if (GripFileManager.BACKUP_FILE.exists()) {
@@ -91,13 +87,6 @@ public class ProjectBackupLoader {
       logger.log(Level.WARNING, "Could not load backup file", e);
     }
     eventBus.post(DirtiesSaveEvent.DIRTIES_SAVE_EVENT);
-  }
-
-  /**
-   * Reads all the text from the given file into a single string.
-   */
-  private static String readFileText(File file) throws IOException {
-    return StringUtils.join(Files.readAllLines(file.toPath()), '\n');
   }
 
 }
