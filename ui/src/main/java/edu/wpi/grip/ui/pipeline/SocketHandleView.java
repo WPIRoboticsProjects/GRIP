@@ -98,6 +98,7 @@ public class SocketHandleView extends Button {
     });
 
     this.setOnDragDone(dragEvent -> {
+      setPressed(false);
       this.connectingProperty.set(false);
       socketDragService.completeDrag();
     });

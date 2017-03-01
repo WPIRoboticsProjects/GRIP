@@ -17,5 +17,5 @@
         <fx:include source="OperationList.fxml" fx:id="opencvOperations" text="OpenCV" />
         <fx:include source="OperationList.fxml" fx:id="miscellaneousOperations" text="Misc." />
     </TabPane>
-    <CustomTextField fx:id="operationSearch" promptText="Search" />
+    <CustomTextField fx:id="operationSearch" styleClass="search-field" promptText="Search" />
 </VBox>

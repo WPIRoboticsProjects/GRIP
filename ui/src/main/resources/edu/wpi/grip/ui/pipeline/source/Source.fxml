@@ -42,7 +42,7 @@
             </top>
             <center>
                 <VBox>
-                    <Separator orientation="HORIZONTAL" />
+                    <Separator orientation="HORIZONTAL" styleClass="socket-separator"/>
                     <VBox fx:id="sockets" styleClass="sockets" BorderPane.alignment="CENTER" />
                 </VBox>
             </center>

@@ -1,0 +1,594 @@
+* {
+    /*-fx-background-color: derive(black, 30%);*/
+    -fx-text-fill: derive(white, -25%);
+    base: derive(black, 30%);
+    base-dark: derive(black, 20%);
+    base-light: derive(black, 40%);
+    gripgreen: #6C8058;
+}
+
+.root {
+    -fx-font-family: "Roboto";
+    -fx-background-color: base;
+    -fx-accent: derive(gripgreen, 75%);
+}
+
+.dialog-pane, .dialog-pane > * {
+    -fx-background-color: base;
+}
+
+.main-window {
+    -fx-pref-width: 100.0em;
+    -fx-pref-height: 70.0em;
+}
+
+.menu-bar {
+    -fx-background-color: base-dark;
+}
+
+.menu-box {
+    -fx-padding: 0.5em;
+    -fx-spacing: 0.5em;
+}
+
+.menu-button:hover {
+    -fx-background-color: base-light;
+}
+
+.menu-button {
+    -fx-background-color: base-dark;
+}
+
+.context-menu {
+    -fx-padding: 0;
+    -fx-border-color: base-dark;
+    -fx-border-width: 0.125em;
+}
+
+.menu-item {
+    -fx-background-color: base-light;
+}
+
+.menu-item > * {
+    -fx-background-color: transparent;
+}
+
+.menu-item:hover {
+    -fx-background-color: base;
+}
+
+.split-pane {
+    /*-fx-border-width: 0;*/
+    -fx-background-color: base;
+}
+
+.status-bar {
+    -fx-background-color: base-dark;
+}
+
+.status-label {
+    -fx-text-fill: white;
+}
+
+.status-bar > .separator {
+    -fx-padding: 0 1em 0 1em;
+}
+
+.pane-title {
+    -fx-font-weight: bold;
+    -fx-padding: 1.0em;
+    -fx-background-color: base-light;
+    -fx-text-fill: white;
+}
+
+.palette {
+    -fx-min-width: 30em;
+}
+
+.split-pane-divider {
+    -fx-background-color: derive(gripgreen, -35%);
+}
+
+.split-pane-divider:hover, .split-pane-divider:pressed {
+    -fx-background-color: derive(gripgreen, -30%);
+}
+
+.line {
+    -fx-background-color: gripgreen;
+    -fx-border-color: gripgreen;
+    -fx-border-width: 1;
+}
+
+.steps {
+    -fx-background-color: base;
+}
+
+.sources {
+    -fx-background-color: base;
+}
+
+.previews, .previews > .scroll-pane, .previews > .scroll-pane > .viewport {
+    -fx-background-color: base;
+}
+
+.viewport {
+    -fx-background-color: base-dark;
+}
+
+.operation {
+    -fx-cursor: hand;
+    -fx-hgap: 1em;
+    -fx-padding: 0.5em;
+    -fx-alignment: center-left;
+    -fx-background-color: base;
+    /*-fx-color: -fx-background;*/
+    /*-fx-background-color: -fx-color;*/
+}
+
+.operation > * {
+    -fx-background-color: transparent;
+}
+
+.operation:hover {
+    -fx-background-color: base-light;
+}
+
+.operation:hover > * {
+    /*-fx-text-fill: black;*/
+}
+
+.operation:pressed {
+    -fx-color: -fx-pressed-base;
+}
+
+Label.operation-name {
+    -fx-font-weight: bold;
+}
+
+Label.operation-description {
+    -fx-wrap-text: true;
+    -fx-alignment: top-left;
+}
+
+.previews, .palette {
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
+}
+
+.scroll-pane {
+    /*-fx-background-color: -fx-control-inner-background;*/
+
+}
+
+.scroll-pane .corner {
+    -fx-background-color: base-dark;
+}
+
+.palette {
+    -fx-pref-width: 40em;
+}
+
+.tab-header-background {
+    -fx-background-color: base-dark;
+}
+
+.tab {
+    -fx-background-color: base-light;
+    -fx-background-radius: 0;
+}
+
+.tab:selected {
+    -fx-background-color: derive(gripgreen, -25%);
+    -fx-text-fill: base-dark;
+}
+
+.tab-down-button {
+    -fx-background-radius: 0.25em;
+    -fx-background-color: base-light;
+}
+
+.tab-down-button:hover {
+    -fx-background-color: derive(black, 60%);
+}
+
+.tab-down-button:pressed {
+    -fx-background-color: derive(gripgreen, -50%);
+}
+
+.previews HBox {
+    -fx-spacing: 1em;
+    -fx-padding: 0.5em;
+}
+
+.socket-preview {
+    -fx-border-color: black;
+    -fx-border-width: 0.125em;
+    -fx-padding: 0;
+    -fx-background-radius: 0;
+}
+
+.socket-preview .title {
+    -fx-font-weight: bold;
+    -fx-padding: 0.5em;
+    -fx-background-color: base-light;
+    -fx-background-radius: 0;
+    -fx-border-color: black;
+    -fx-border-width: 0 0 0.125em 0;
+}
+
+.socket-preview content {
+    -fx-padding: 0;
+}
+
+.sources-box {
+    -fx-background-color: base;
+}
+
+.addSource {
+    -fx-padding: 0.5em;
+    -fx-spacing: 1em;
+}
+
+.arrow {
+    -fx-background-color: gripgreen;
+}
+
+.scroll-bar {
+    -fx-background-color: base-dark;
+}
+
+.scroll-bar .track {
+    -fx-background-color: transparent;
+}
+
+.thumb {
+    -fx-background-color: derive(gripgreen, -50%);
+}
+
+.increment, .decrement {
+    -fx-background-color: black;
+}
+
+.addSource * {
+    -fx-max-width: Infinity;
+}
+
+.sources {
+    -fx-padding: 0.5em;
+    -fx-spacing: 1em;
+}
+
+.source {
+    -fx-padding: 0.5em;
+    -fx-spacing: 1em;
+    -fx-border-width: 1px;
+    -fx-border-color: black;
+    -fx-background-color: base-light;
+    /*-fx-border-color: -fx-box-border;*/
+    /*-fx-background-color: -fx-background;*/
+}
+
+Label.source-name {
+    -fx-font-weight: bold;
+    -fx-graphic-text-gap: 0.5em;
+}
+
+Button.add-source {
+    -fx-padding: 0.5em;
+}
+
+.steps {
+    -fx-spacing: 1em;
+    -fx-padding: 0.5em;
+}
+
+.step {
+    -fx-pref-width: 15em;
+    -fx-background-color: base-light;
+    -fx-padding: 1.0em;
+    -fx-spacing: 0.5em;
+}
+
+Button.delete, Button.move-left, Button.move-right, .start-stoppable-button, .exception-witness-responder-button {
+    -fx-padding: 0.2em 0.8em;
+    -fx-pref-height: 2em;
+    -fx-pref-width: 2em;
+}
+
+.expand {
+    -fx-background-color: transparent;
+}
+
+VBox.sockets {
+    -fx-spacing: 0.5em;
+}
+
+.step .title {
+    -fx-font-weight: bold;
+}
+
+.socket {
+    -fx-hgap: 0.5em;
+    -fx-vgap: 0.5em;
+    -fx-spacing: 0.5em;
+}
+
+.socket .socket-control {
+    -fx-pref-width: 12em;
+}
+
+.small-icon-button {
+    -fx-padding: 0.5em;
+}
+
+.source-header-box {
+    -fx-padding: 0 0 0.5em 0;
+}
+
+.preview-box {
+    -fx-spacing: 0.5em;
+}
+
+.connection {
+    -fx-stroke: derive(gripgreen, 50%);
+    -fx-fill: none;
+}
+
+.error-pop-over {
+    -fx-padding: 0.5em;
+}
+
+.error-pop-over .titled-pane > .title {
+    -fx-border-color: lightgrey;
+    -fx-border-insets: 5 5 5 5;
+    -fx-border-width: 1 0 0 0;
+    -fx-border-style: dashed;
+    -fx-background-color: transparent;
+}
+
+.error-pop-over .titled-pane > .title > .arrow-button .arrow {
+    /*-fx-background-color: grey;*/
+}
+
+.property-sheet .property-pane {
+    -fx-hgap: 4em;
+    -fx-vgap: 1em;
+    -fx-padding: 0;
+}
+
+.exception-pane {
+    -fx-vgap: 1em;
+}
+
+.exception-text {
+    -fx-font-family: "Monospace";
+}
+
+.deploy-pane {
+    -fx-spacing: 1em;
+}
+
+.deploy-pane GridPane {
+    -fx-hgap: 1em;
+    -fx-vgap: 1em;
+    -fx-padding: 0;
+}
+
+.deploy-pane StackPane {
+    -fx-pref-height: 2em;
+}
+
+.console {
+    -fx-font-family: "Monospace";
+}
+
+.error-label {
+    -fx-text-fill: red;
+    -fx-font-weight: bold;
+}
+
+.info-label {
+    -fx-font-weight: bold;
+}
+
+.about-window Label {
+    -fx-font-size: 14;
+    -fx-background-color: transparent;
+}
+
+.about-button:hover {
+    -fx-background-color: gray;
+    -fx-background-radius: 12;
+    -fx-cursor: hand;
+}
+
+.about-button:hover Label {
+    -fx-text-fill: white;
+}
+
+/*
+ * Controls
+ */
+
+.text-field, .text-area, .button, .toggle-button, .spinner, .toggle-switch, .combo-box, .choice-box, .check-box > .box {
+    -fx-background-color: base-dark;
+}
+
+.button:hover, .toggle-button:hover {
+    -fx-background-color: derive(gripgreen, -50%)
+}
+
+.button:pressed, .toggle-button:selected {
+    -fx-background-color: base-light;
+}
+
+.toggle-button:pressed {
+    -fx-background-color: derive(black, 60%);
+}
+
+.text-area .content {
+    -fx-background-color: base-dark;
+}
+
+.text-field:focused, .text-area:focused .content {
+    -fx-background-color: derive(gripgreen, -80%);
+}
+
+/*
+ * Spinner
+ */
+
+.increment-arrow-button, .decrement-arrow-button {
+    -fx-background-color: base-dark;
+}
+
+.increment-arrow-button > *, .decrement-arrow-button > * {
+    -fx-background-color: transparent;
+}
+
+.increment-arrow-button > .increment-arrow, .decrement-arrow-button > .decrement-arrow {
+    -fx-background-color: gripgreen;
+}
+
+.increment-arrow-button:hover, .decrement-arrow-button:hover {
+    -fx-background-color: derive(black, 60%);
+}
+
+.increment-arrow-button:pressed, .decrement-arrow-button:pressed {
+    -fx-background-color: base-light;
+}
+
+/*
+ * Check box
+ */
+
+.check-box .box {
+    -fx-background-color: base-dark;
+}
+
+.check-box:hover .box {
+    -fx-background-color: gripgreen;
+}
+
+.check-box:selected .mark {
+    -fx-shape: none;
+    -fx-mark-color: black;
+    -fx-background-color: orange;
+}
+
+/*
+ * Range slider
+ */
+
+.range-slider .range-bar {
+    -fx-background-color: gripgreen;
+}
+
+.range-slider .track, .slider .track {
+    -fx-background-color: base-dark;
+}
+
+.range-slider .high-thumb, .range-slider .low-thumb, .slider .thumb {
+    -fx-background-color: base;
+}
+
+/*
+ * Dialog stuff
+ */
+
+.header-panel .label {
+    -fx-font-weight: bold;
+}
+
+.property-sheet .scroll-pane .viewport {
+    -fx-background-color: base;
+}
+
+.property-pane {
+    -fx-background-color: base;
+}
+
+/*
+ * Progress bars
+ */
+
+.progress-bar > .track {
+    -fx-background-color: base-dark;
+}
+
+.progress-bar:indeterminate > .track {
+    -fx-background-color: base-dark;
+}
+
+.progress-bar:indeterminate > .bar {
+    -fx-background-color: gripgreen;
+}
+
+/*
+ * List and table cells
+ */
+
+.indexed-cell {
+    -fx-background-color: base;
+}
+
+.indexed-cell:odd {
+    -fx-background-color: base-light;
+}
+
+.indexed-cell:selected, .indexed-cell:pressed {
+    -fx-background-color: derive(gripgreen, -25%);
+}
+
+.column-header {
+    -fx-background-color: base-dark;
+}
+
+.table-view .placeholder {
+    -fx-background-color: base;
+}
+
+.table-view {
+    -fx-padding: 0;
+}
+
+/*
+ * Socket handles. These MUST be declared after .button or the styles will be overwritten.
+ */
+
+.socket-handle {
+    -fx-background-radius: 1em;
+    -fx-min-width: 1em;
+    -fx-min-height: 1em;
+    -fx-max-width: 1em;
+    -fx-max-height: 1em;
+    -fx-cursor: hand;
+}
+
+.socket-handle:connecting {
+    -fx-background-color: derive(gripgreen, -30%);
+}
+
+.socket-handle:connected {
+    -fx-background-color: gripgreen;
+}
+
+.socket-handle:hover {
+    -fx-background-color: derive(white, -30%);
+}
+
+/*
+ * Preview buttons. These MUST be declared after .toggle-button or the styles will be overwritten.
+ */
+
+.preview-button {
+    -fx-background-color: base-dark;
+}
+
+.preview-button:hover {
+    -fx-background-color: derive(black, 50%);
+}
+
+.preview-button:selected {
+    -fx-background-color: derive(white, -30%);
+}

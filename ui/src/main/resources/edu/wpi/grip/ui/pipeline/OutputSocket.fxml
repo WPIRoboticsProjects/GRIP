@@ -14,7 +14,7 @@
       xmlns="http://javafx.com/javafx/null"
       xmlns:fx="http://javafx.com/fxml/1" alignment="CENTER_RIGHT">
     <children>
-        <ToggleButton fx:id="preview" styleClass="small-icon-button">
+        <ToggleButton fx:id="preview" styleClass="small-icon-button, preview-button">
             <graphic>
                 <ImageView>
                     <Image url="@../icons/preview.png" />

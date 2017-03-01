@@ -37,7 +37,6 @@ import java.util.Set;
 
 import javafx.application.Platform;
 import javafx.fxml.FXML;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
@@ -60,10 +59,11 @@ import javax.inject.Inject;
 /**
  * The Controller for the application window.
  */
+@SuppressWarnings("PMD.GodClass") // Temporary.
 public class MainWindowController {
 
   @FXML
-  private Parent root;
+  private Region root;
   @FXML
   private SplitPane topPane;
   @FXML
@@ -103,6 +103,8 @@ public class MainWindowController {
 
   private Stage aboutDialogStage;
   private Stage analysisStage;
+
+  private boolean darkTheme = false;
 
   @FXML
   protected void initialize() {
@@ -265,6 +267,7 @@ public class MainWindowController {
     if (aboutDialogStage == null) {
       aboutDialogStage = new Stage();
       aboutDialogStage.setScene(new Scene(aboutPane));
+      aboutDialogStage.getScene().getStylesheets().addAll(root.getStylesheets());
       aboutDialogStage.initStyle(StageStyle.UTILITY);
       aboutDialogStage.focusedProperty().addListener((observable, oldvalue, newvalue) -> {
         if (oldvalue) {
@@ -325,6 +328,7 @@ public class MainWindowController {
       return;
     }
     Dialog<CodeGenerationSettings> optionsDialog = new CodeGenerationSettingsDialog(codegenPane);
+    optionsDialog.getDialogPane().getStyleClass().addAll(root.getStylesheets());
     optionsDialog.showAndWait().ifPresent(settings -> {
       eventBus.post(new CodeGenerationSettingsChangedEvent(settings));
       Exporter exporter = new Exporter(pipeline.getSteps(), settings);
@@ -383,6 +387,7 @@ public class MainWindowController {
 
   private void showWarningAlert(WarningEvent e) {
     Alert alert = new WarningAlert(e.getHeader(), e.getBody(), root.getScene().getWindow());
+    alert.getDialogPane().getStylesheets().addAll(root.getStylesheets());
     alert.showAndWait();
   }
 
@@ -407,6 +412,7 @@ public class MainWindowController {
     if (analysisStage == null) {
       analysisStage = new Stage();
       analysisStage.setScene(new Scene(analysisPane));
+      analysisStage.getScene().getStylesheets().setAll(root.getStylesheets());
       analysisStage.initOwner(root.getScene().getWindow());
       analysisStage.setTitle("Pipeline Analysis");
       analysisStage.getIcons().add(new Image("/edu/wpi/grip/ui/icons/grip.png"));
@@ -414,4 +420,24 @@ public class MainWindowController {
     }
     analysisStage.showAndWait();
   }
+
+  @FXML
+  private void toggleTheme() {
+    // toggle flag
+    darkTheme = !darkTheme;
+
+    // update stylesheets
+    if (darkTheme) {
+      root.getStylesheets().setAll("/edu/wpi/grip/ui/GRIP-dark.css");
+    } else {
+      root.getStylesheets().setAll("/edu/wpi/grip/ui/GRIP.css");
+    }
+    if (aboutDialogStage != null) {
+      aboutDialogStage.getScene().getStylesheets().setAll(root.getStylesheets());
+    }
+    if (analysisStage != null) {
+      analysisStage.getScene().getStylesheets().setAll(root.getStylesheets());
+    }
+  }
+
 }

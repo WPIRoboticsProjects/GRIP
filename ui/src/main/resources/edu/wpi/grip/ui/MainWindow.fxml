@@ -4,20 +4,21 @@
 
 <?import edu.wpi.grip.ui.util.DPIUtility?>
 <?import java.net.URL?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.CheckMenuItem?>
+<?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Menu?>
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.SeparatorMenuItem?>
 <?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.input.KeyCodeCombination?>
-<?import javafx.scene.layout.VBox?>
 <?import javafx.scene.layout.HBox?>
-<?import javafx.scene.control.Label?>
-<?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Separator?>
+<?import javafx.scene.layout.VBox?>
 <VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"
       minWidth="-Infinity" styleClass="main-window"
       fx:controller="edu.wpi.grip.ui.MainWindowController"
@@ -100,6 +101,11 @@
                 <SeparatorMenuItem />
                 <MenuItem text="Exit" onAction="#quit" />
             </Menu>
+         <Menu mnemonicParsing="false" text="View">
+            <items>
+               <CheckMenuItem mnemonicParsing="false" onAction="#toggleTheme" text="Use dark theme"/>
+            </items>
+         </Menu>
             <Menu text="Tools">
                 <MenuItem text="Deploy" onAction="#deploy">
                     <accelerator>

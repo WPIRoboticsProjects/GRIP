@@ -30,6 +30,7 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.css.PseudoClass;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.scene.control.Alert;
@@ -42,6 +43,7 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
 import javafx.util.Callback;
 
 import javax.annotation.Nullable;
@@ -50,6 +52,9 @@ import javax.annotation.Nullable;
  * Controller for the analysis view.
  */
 public class AnalysisController {
+
+  @FXML
+  private Pane root;
 
   // Table
   @FXML
@@ -191,6 +196,7 @@ public class AnalysisController {
     // Show benchmarking results
     Platform.runLater(() -> {
       Alert a = new Alert(Alert.AlertType.INFORMATION);
+      a.getDialogPane().getStylesheets().add("/edu/wpi/grip/ui/GRIP.css");
       a.setHeaderText("Benchmarking results");
       TextArea resultArea = new TextArea(csvReport);
       a.getDialogPane().setContent(resultArea);
@@ -303,6 +309,9 @@ public class AnalysisController {
 
   private static class TimeView extends HBox {
 
+    private static final PseudoClass HOT = PseudoClass.getPseudoClass("hot");
+    private static final double MAX_HOTNESS = 3.0;
+
     private static final double BAR_LENGTH = 150; // pixels
 
     private final Label text = new Label("0.0ms");
@@ -310,6 +319,7 @@ public class AnalysisController {
 
     TimeView() {
       super();
+      getStyleClass().add("time-view");
       progressBar.setPrefWidth(BAR_LENGTH);
       progressBar.setPadding(new Insets(0, 10, 0, 5));
       progressBar.setStyle("-fx-accent: hsb(180, 100%, 75%);"); // blue-gray
@@ -319,8 +329,9 @@ public class AnalysisController {
     void update(double time, double relativeAmount, double hotness) {
       text.setText(String.format("%.1fms", time / 1e3));
       progressBar.setProgress(relativeAmount);
+      pseudoClassStateChanged(HOT, hotness > 0);
       if (hotness > 0) {
-        final double max = 3; // highest value before being clamped
+        final double max = MAX_HOTNESS; // highest value before being clamped
         double h = ((max - Math.min(hotness, max)) * 270 / max) - 45;
         final String formatStyle = "-fx-accent: hsb(%.2f, 100%%, 100%%);";
         progressBar.setStyle(String.format(formatStyle, h));
