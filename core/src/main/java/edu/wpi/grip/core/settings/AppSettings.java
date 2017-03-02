@@ -3,6 +3,10 @@ package edu.wpi.grip.core.settings;
 import edu.wpi.grip.core.http.GripServer;
 
 import com.google.common.base.MoreObjects;
+import com.google.inject.Inject;
+import com.google.inject.name.Named;
+
+import java.util.prefs.Preferences;
 
 import javax.annotation.Nonnegative;
 
@@ -14,6 +18,9 @@ import static com.google.common.base.Preconditions.checkArgument;
  */
 @SuppressWarnings("JavadocMethod")
 public class AppSettings implements Settings, Cloneable {
+
+  @Inject @Named("CorePreferences")
+  private Preferences preferences;
 
   @Setting(label = "Internal server port",
            description = "The port that the internal server should run on.")
@@ -27,6 +34,7 @@ public class AppSettings implements Settings, Cloneable {
     checkArgument(GripServer.isPortValid(serverPort),
         "Server port must be in the range 1024..65535");
     this.serverPort = serverPort;
+    preferences.putInt("serverPort", serverPort);
   }
 
   @Override

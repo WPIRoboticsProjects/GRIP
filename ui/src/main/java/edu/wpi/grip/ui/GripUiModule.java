@@ -26,11 +26,13 @@ import com.google.inject.AbstractModule;
 import com.google.inject.TypeLiteral;
 import com.google.inject.assistedinject.FactoryModuleBuilder;
 import com.google.inject.matcher.Matchers;
+import com.google.inject.name.Names;
 import com.google.inject.spi.InjectionListener;
 import com.google.inject.spi.TypeEncounter;
 import com.google.inject.spi.TypeListener;
 
 import java.io.IOException;
+import java.util.prefs.Preferences;
 
 import javafx.fxml.FXMLLoader;
 
@@ -103,5 +105,7 @@ public class GripUiModule extends AbstractModule {
     install(new FactoryModuleBuilder().build(TextFieldInputSocketController.Factory.class));
     // END Input Socket Controller Factories
 
+    bind(Preferences.class).annotatedWith(Names.named("AppPreferences"))
+        .toInstance(Preferences.userRoot().node("edu.wpi.grip.AppPreferences"));
   }
 }

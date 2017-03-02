@@ -25,6 +25,7 @@ import com.google.inject.AbstractModule;
 import com.google.inject.TypeLiteral;
 import com.google.inject.assistedinject.FactoryModuleBuilder;
 import com.google.inject.matcher.Matchers;
+import com.google.inject.name.Names;
 import com.google.inject.spi.InjectionListener;
 import com.google.inject.spi.TypeEncounter;
 import com.google.inject.spi.TypeListener;
@@ -38,6 +39,7 @@ import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
 import java.util.logging.StreamHandler;
+import java.util.prefs.Preferences;
 
 import javax.annotation.Nullable;
 
@@ -164,6 +166,9 @@ public class GripCoreModule extends AbstractModule {
     bind(BenchmarkRunner.class).asEagerSingleton();
 
     bind(Cleaner.class).asEagerSingleton();
+
+    bind(Preferences.class).annotatedWith(Names.named("CorePreferences"))
+        .toInstance(Preferences.userRoot().node("edu.wpi.grip.CorePreferences"));
   }
 
   protected void onSubscriberException(Throwable exception, @Nullable SubscriberExceptionContext

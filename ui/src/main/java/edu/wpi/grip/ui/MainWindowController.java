@@ -27,6 +27,7 @@ import edu.wpi.grip.ui.util.DPIUtility;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import com.google.common.util.concurrent.Service;
+import com.google.inject.name.Named;
 
 import org.apache.commons.lang3.tuple.Pair;
 
@@ -34,6 +35,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Optional;
 import java.util.Set;
+import java.util.prefs.Preferences;
 
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -100,6 +102,8 @@ public class MainWindowController {
   private Palette palette;
   @Inject
   private Project project;
+  @Inject @Named("AppPreferences")
+  private Preferences preferences;
 
   private Stage aboutDialogStage;
   private Stage analysisStage;
@@ -125,6 +129,9 @@ public class MainWindowController {
         e.consume();
       }
     }));
+
+    // Load the previous theme
+    Optional.ofNullable(preferences.get("theme", null)).ifPresent(root.getStylesheets()::setAll);
   }
 
   /**
@@ -440,6 +447,9 @@ public class MainWindowController {
     if (analysisStage != null) {
       analysisStage.getScene().getStylesheets().setAll(root.getStylesheets());
     }
+
+    // save the theme so it's loaded the next time GRIP is opened
+    preferences.put("theme", root.getStylesheets().get(0));
   }
 
 }
