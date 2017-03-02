@@ -30,14 +30,12 @@ import javafx.util.Duration;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 public final class StartStoppableButton extends ToggleButton {
-  @SuppressWarnings("PMD.AvoidProtectedFieldInFinalClass")
-  protected static final String BASE_STYLE_CLASS = "start-stoppable-button";
-  @SuppressWarnings("PMD.AvoidProtectedFieldInFinalClass")
-  protected static final String STARTED_STYLE_CLASS = "started";
-  @SuppressWarnings("PMD.AvoidProtectedFieldInFinalClass")
-  protected static final String STOPPED_STYLE_CLASS = "stopped";
-  protected static final PseudoClass RUNNING = PseudoClass.getPseudoClass("running");
-  protected static final PseudoClass STOPPED = PseudoClass.getPseudoClass("stopped");
+
+  static final String BASE_STYLE_CLASS = "start-stoppable-button";
+  static final String STARTED_STYLE_CLASS = "started";
+  static final String STOPPED_STYLE_CLASS = "stopped";
+  static final PseudoClass RUNNING = PseudoClass.getPseudoClass("running");
+  static final PseudoClass STOPPED = PseudoClass.getPseudoClass("stopped");
 
   private static final Image startImage =
       new Image(StartStoppableButton.class.getResourceAsStream("/edu/wpi/grip/ui/icons/start.png"));
