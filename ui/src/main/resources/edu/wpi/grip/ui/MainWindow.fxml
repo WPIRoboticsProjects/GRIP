@@ -203,7 +203,7 @@
                 </ScrollPane>
             </items>
         </SplitPane>
-        <HBox fx:id="statusBar" alignment="CENTER_LEFT" spacing="2">
+        <HBox fx:id="statusBar" styleClass="status-bar" alignment="CENTER_LEFT" spacing="2">
             <padding>
                 <Insets top="2" right="2" bottom="2" left="2" />
             </padding>

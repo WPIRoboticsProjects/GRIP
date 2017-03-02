@@ -16,6 +16,7 @@ import java.util.List;
 import javafx.animation.FadeTransition;
 import javafx.animation.Transition;
 import javafx.application.Platform;
+import javafx.css.PseudoClass;
 import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.Tooltip;
@@ -35,6 +36,8 @@ public final class StartStoppableButton extends ToggleButton {
   protected static final String STARTED_STYLE_CLASS = "started";
   @SuppressWarnings("PMD.AvoidProtectedFieldInFinalClass")
   protected static final String STOPPED_STYLE_CLASS = "stopped";
+  protected static final PseudoClass RUNNING = PseudoClass.getPseudoClass("running");
+  protected static final PseudoClass STOPPED = PseudoClass.getPseudoClass("stopped");
 
   private static final Image startImage =
       new Image(StartStoppableButton.class.getResourceAsStream("/edu/wpi/grip/ui/icons/start.png"));
@@ -100,6 +103,13 @@ public final class StartStoppableButton extends ToggleButton {
     setAccessibleText(getButtonActionString());
     setGraphic(pickGraphic(service));
     getStyleClass().addAll(getCurrentStyleClasses());
+    if (service.isRunning()) {
+      pseudoClassStateChanged(RUNNING, true);
+      pseudoClassStateChanged(STOPPED, false);
+    } else {
+      pseudoClassStateChanged(RUNNING, false);
+      pseudoClassStateChanged(STOPPED, true);
+    }
   }
 
   /**

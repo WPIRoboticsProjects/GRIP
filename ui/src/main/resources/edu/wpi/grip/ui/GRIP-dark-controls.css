@@ -1,0 +1,86 @@
+@import "GRIP-dark.css";
+
+/*
+ * Controls
+ */
+
+.text-field, .text-area, .button, .toggle-button, .spinner, .toggle-switch, .combo-box, .choice-box, .check-box > .box {
+    -fx-background-color: base-dark;
+}
+
+.button:hover, .toggle-button:hover {
+    -fx-background-color: darkgripgreen;
+}
+
+.button:pressed, .toggle-button:selected {
+    -fx-background-color: base-light;
+}
+
+.toggle-button:pressed {
+    -fx-background-color: derive(black, 60%);
+}
+
+.text-area .content {
+    -fx-background-color: base-dark;
+}
+
+.text-field:focused, .text-area:focused .content {
+    -fx-background-color: darkgripgreen;
+}
+
+/*
+ * Spinner
+ */
+
+.increment-arrow-button, .decrement-arrow-button {
+    -fx-background-color: base-dark;
+}
+
+.increment-arrow-button > *, .decrement-arrow-button > * {
+    -fx-background-color: transparent;
+}
+
+.increment-arrow-button > .increment-arrow, .decrement-arrow-button > .decrement-arrow {
+    -fx-background-color: gripgreen;
+}
+
+.increment-arrow-button:hover, .decrement-arrow-button:hover {
+    -fx-background-color: derive(black, 60%);
+}
+
+.increment-arrow-button:pressed, .decrement-arrow-button:pressed {
+    -fx-background-color: base-light;
+}
+
+/*
+ * Check box
+ */
+
+.check-box .box {
+    -fx-background-color: base-dark;
+}
+
+.check-box:hover .box {
+    -fx-background-color: gripgreen;
+}
+
+.check-box:selected .mark {
+    -fx-mark-color: gripgreen;
+    -fx-background-color: darkgripgreen;
+}
+
+/*
+ * Range slider and range bar
+ */
+
+.range-slider .range-bar {
+    -fx-background-color: gripgreen;
+}
+
+.range-slider .track, .slider .track {
+    -fx-background-color: base-dark;
+}
+
+.range-slider .high-thumb, .range-slider .low-thumb, .slider .thumb {
+    -fx-background-color: gripsandy;
+}

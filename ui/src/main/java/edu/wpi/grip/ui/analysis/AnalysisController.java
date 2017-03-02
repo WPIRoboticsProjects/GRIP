@@ -196,7 +196,7 @@ public class AnalysisController {
     // Show benchmarking results
     Platform.runLater(() -> {
       Alert a = new Alert(Alert.AlertType.INFORMATION);
-      a.getDialogPane().getStylesheets().add("/edu/wpi/grip/ui/GRIP.css");
+      a.getDialogPane().getStylesheets().setAll(root.getStylesheets());
       a.setHeaderText("Benchmarking results");
       TextArea resultArea = new TextArea(csvReport);
       a.getDialogPane().setContent(resultArea);

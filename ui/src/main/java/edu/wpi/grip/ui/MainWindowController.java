@@ -418,6 +418,7 @@ public class MainWindowController {
       analysisStage.getIcons().add(new Image("/edu/wpi/grip/ui/icons/grip.png"));
       analysisStage.setOnCloseRequest(event -> eventBus.post(BenchmarkEvent.finished()));
     }
+    analysisPane.getStylesheets().setAll(root.getStylesheets());
     analysisStage.showAndWait();
   }
 

@@ -1,10 +1,14 @@
+@import "GRIP-dark-controls.css";
+
 * {
-    /*-fx-background-color: derive(black, 30%);*/
-    -fx-text-fill: derive(white, -25%);
+    -fx-smooth: true; /* Have some meaningless -fx- property here or Intellij will freak out */
     base: derive(black, 30%);
     base-dark: derive(black, 20%);
     base-light: derive(black, 40%);
-    gripgreen: #6C8058;
+    gripgreen: #6C6E58;
+    darkgripgreen: #3E423A;
+    gripsandy: #A4CFBE;
+    -fx-text-fill: gripsandy;
 }
 
 .root {
@@ -21,6 +25,10 @@
     -fx-pref-width: 100.0em;
     -fx-pref-height: 70.0em;
 }
+
+/*
+ * Menus and menu bars
+ */
 
 .menu-bar {
     -fx-background-color: base-dark;
@@ -58,9 +66,12 @@
 }
 
 .split-pane {
-    /*-fx-border-width: 0;*/
     -fx-background-color: base;
 }
+
+/*
+ * Status bar
+ */
 
 .status-bar {
     -fx-background-color: base-dark;
@@ -72,6 +83,12 @@
 
 .status-bar > .separator {
     -fx-padding: 0 1em 0 1em;
+}
+
+.status-bar > .separator > .line {
+    -fx-background-color: darkgripgreen;
+    -fx-border-color: darkgripgreen;
+    -fx-border-width: 1;
 }
 
 .pane-title {
@@ -86,16 +103,16 @@
 }
 
 .split-pane-divider {
-    -fx-background-color: derive(gripgreen, -35%);
+    -fx-background-color: darkgripgreen;
 }
 
 .split-pane-divider:hover, .split-pane-divider:pressed {
-    -fx-background-color: derive(gripgreen, -30%);
+    -fx-background-color: derive(gripsandy, -20%);
 }
 
 .line {
-    -fx-background-color: gripgreen;
-    -fx-border-color: gripgreen;
+    -fx-background-color: rgba(0, 0, 0, 0.1);
+    -fx-border-color: rgba(0, 0, 0, 0.1);
     -fx-border-width: 1;
 }
 
@@ -115,26 +132,20 @@
     -fx-background-color: base-dark;
 }
 
+/*
+ * Operations in the palette
+ */
+
 .operation {
     -fx-cursor: hand;
     -fx-hgap: 1em;
     -fx-padding: 0.5em;
     -fx-alignment: center-left;
     -fx-background-color: base;
-    /*-fx-color: -fx-background;*/
-    /*-fx-background-color: -fx-color;*/
-}
-
-.operation > * {
-    -fx-background-color: transparent;
 }
 
 .operation:hover {
     -fx-background-color: base-light;
-}
-
-.operation:hover > * {
-    /*-fx-text-fill: black;*/
 }
 
 .operation:pressed {
@@ -157,12 +168,15 @@ Label.operation-description {
 
 .scroll-pane {
     /*-fx-background-color: -fx-control-inner-background;*/
-
 }
 
-.scroll-pane .corner {
+.scroll-pane > .corner {
     -fx-background-color: base-dark;
 }
+
+/*
+ * Palette and tabs
+ */
 
 .palette {
     -fx-pref-width: 40em;
@@ -178,7 +192,7 @@ Label.operation-description {
 }
 
 .tab:selected {
-    -fx-background-color: derive(gripgreen, -25%);
+    -fx-background-color: gripgreen;
     -fx-text-fill: base-dark;
 }
 
@@ -192,8 +206,12 @@ Label.operation-description {
 }
 
 .tab-down-button:pressed {
-    -fx-background-color: derive(gripgreen, -50%);
+    -fx-background-color: darkgripgreen;
 }
+
+/*
+ * Socket previews.
+ */
 
 .previews HBox {
     -fx-spacing: 1em;
@@ -216,9 +234,17 @@ Label.operation-description {
     -fx-border-width: 0 0 0.125em 0;
 }
 
-.socket-preview content {
-    -fx-padding: 0;
+.socket-preview * {
+    -fx-border-width: 0;
 }
+
+.socket-preview > * { /* Catch potentially anonymous first-level children */
+    -fx-background-color: base;
+}
+
+/*
+ * Sources
+ */
 
 .sources-box {
     -fx-background-color: base;
@@ -227,26 +253,6 @@ Label.operation-description {
 .addSource {
     -fx-padding: 0.5em;
     -fx-spacing: 1em;
-}
-
-.arrow {
-    -fx-background-color: gripgreen;
-}
-
-.scroll-bar {
-    -fx-background-color: base-dark;
-}
-
-.scroll-bar .track {
-    -fx-background-color: transparent;
-}
-
-.thumb {
-    -fx-background-color: derive(gripgreen, -50%);
-}
-
-.increment, .decrement {
-    -fx-background-color: black;
 }
 
 .addSource * {
@@ -264,8 +270,10 @@ Label.operation-description {
     -fx-border-width: 1px;
     -fx-border-color: black;
     -fx-background-color: base-light;
-    /*-fx-border-color: -fx-box-border;*/
-    /*-fx-background-color: -fx-background;*/
+}
+
+.socket-separator {
+    -fx-padding: 1em;
 }
 
 Label.source-name {
@@ -277,6 +285,31 @@ Button.add-source {
     -fx-padding: 0.5em;
 }
 
+.arrow {
+    -fx-mark-color: gripgreen;
+}
+
+/*
+ * Scroll bars
+ */
+
+.scroll-bar {
+    -fx-background-color: base-dark;
+    -fx-padding: 0;
+}
+
+.scroll-bar .track, .scroll-bar .track-background {
+    -fx-background-color: base-dark;
+}
+
+.scroll-bar > .thumb {
+    -fx-background-color: darkgripgreen;
+}
+
+/*
+ * Steps
+ */
+
 .steps {
     -fx-spacing: 1em;
     -fx-padding: 0.5em;
@@ -287,6 +320,8 @@ Button.add-source {
     -fx-background-color: base-light;
     -fx-padding: 1.0em;
     -fx-spacing: 0.5em;
+    -fx-border-width: 0.125em;
+    -fx-border-color: base-dark;
 }
 
 Button.delete, Button.move-left, Button.move-right, .start-stoppable-button, .exception-witness-responder-button {
@@ -295,7 +330,29 @@ Button.delete, Button.move-left, Button.move-right, .start-stoppable-button, .ex
     -fx-pref-width: 2em;
 }
 
-.expand {
+.exception-witness-responder-button,
+.exception-witness-responder-button:hover,
+.exception-witness-responder-button:selected {
+    -fx-background-color: transparent;
+}
+
+Button.delete:hover, Button.move-left:hover, Button.move-right:hover {
+    -fx-background-color: base;
+}
+
+Button.delete:pressed, Button.move-left:pressed, Button.move-right:pressed {
+    -fx-background-color: gripsandy;
+}
+
+.start-stoppable-button:running {
+    -fx-background-color: gripsandy;
+}
+
+.start-stoppable-button:stopped {
+    -fx-background-color: base;
+}
+
+.expand, .expand:hover, .expand:pressed {
     -fx-background-color: transparent;
 }
 
@@ -330,12 +387,23 @@ VBox.sockets {
 }
 
 .connection {
-    -fx-stroke: derive(gripgreen, 50%);
+    -fx-stroke: gripgreen;
     -fx-fill: none;
 }
 
 .error-pop-over {
     -fx-padding: 0.5em;
+}
+
+.popover .border {
+    -fx-stroke: orange !important;
+    -fx-stroke-width: 0.5;
+    -fx-fill: rgba(0, 0, 255.0, .95);
+    -fx-effect: dropshadow(gaussian, rgba(0, 255, 0, .2), 10.0, 0.5, 2.0, 2.0);
+}
+
+.error-pop-over .content {
+    -fx-background-color: base-light;
 }
 
 .error-pop-over .titled-pane > .title {
@@ -407,92 +475,6 @@ VBox.sockets {
 }
 
 /*
- * Controls
- */
-
-.text-field, .text-area, .button, .toggle-button, .spinner, .toggle-switch, .combo-box, .choice-box, .check-box > .box {
-    -fx-background-color: base-dark;
-}
-
-.button:hover, .toggle-button:hover {
-    -fx-background-color: derive(gripgreen, -50%)
-}
-
-.button:pressed, .toggle-button:selected {
-    -fx-background-color: base-light;
-}
-
-.toggle-button:pressed {
-    -fx-background-color: derive(black, 60%);
-}
-
-.text-area .content {
-    -fx-background-color: base-dark;
-}
-
-.text-field:focused, .text-area:focused .content {
-    -fx-background-color: derive(gripgreen, -80%);
-}
-
-/*
- * Spinner
- */
-
-.increment-arrow-button, .decrement-arrow-button {
-    -fx-background-color: base-dark;
-}
-
-.increment-arrow-button > *, .decrement-arrow-button > * {
-    -fx-background-color: transparent;
-}
-
-.increment-arrow-button > .increment-arrow, .decrement-arrow-button > .decrement-arrow {
-    -fx-background-color: gripgreen;
-}
-
-.increment-arrow-button:hover, .decrement-arrow-button:hover {
-    -fx-background-color: derive(black, 60%);
-}
-
-.increment-arrow-button:pressed, .decrement-arrow-button:pressed {
-    -fx-background-color: base-light;
-}
-
-/*
- * Check box
- */
-
-.check-box .box {
-    -fx-background-color: base-dark;
-}
-
-.check-box:hover .box {
-    -fx-background-color: gripgreen;
-}
-
-.check-box:selected .mark {
-    -fx-shape: none;
-    -fx-mark-color: black;
-    -fx-background-color: orange;
-}
-
-/*
- * Range slider
- */
-
-.range-slider .range-bar {
-    -fx-background-color: gripgreen;
-}
-
-.range-slider .track, .slider .track {
-    -fx-background-color: base-dark;
-}
-
-.range-slider .high-thumb, .range-slider .low-thumb, .slider .thumb {
-    -fx-background-color: base;
-}
-
-/*
  * Dialog stuff
  */
 
@@ -537,7 +519,7 @@ VBox.sockets {
 }
 
 .indexed-cell:selected, .indexed-cell:pressed {
-    -fx-background-color: derive(gripgreen, -25%);
+    -fx-background-color: darkgripgreen;
 }
 
 .column-header {
@@ -553,7 +535,7 @@ VBox.sockets {
 }
 
 /*
- * Socket handles. These MUST be declared after .button or the styles will be overwritten.
+ * Socket handles.
  */
 
 .socket-handle {
@@ -566,7 +548,7 @@ VBox.sockets {
 }
 
 .socket-handle:connecting {
-    -fx-background-color: derive(gripgreen, -30%);
+    -fx-background-color: derive(gripgreen, -20%)
 }
 
 .socket-handle:connected {
@@ -574,11 +556,11 @@ VBox.sockets {
 }
 
 .socket-handle:hover {
-    -fx-background-color: derive(white, -30%);
+    -fx-background-color: gripsandy;
 }
 
 /*
- * Preview buttons. These MUST be declared after .toggle-button or the styles will be overwritten.
+ * Preview buttons.
  */
 
 .preview-button {
@@ -586,9 +568,9 @@ VBox.sockets {
 }
 
 .preview-button:hover {
-    -fx-background-color: derive(black, 50%);
+    -fx-background-color: base;
 }
 
 .preview-button:selected {
-    -fx-background-color: derive(white, -30%);
+    -fx-background-color: gripsandy;
 }
