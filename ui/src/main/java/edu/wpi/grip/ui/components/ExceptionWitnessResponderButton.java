@@ -18,6 +18,7 @@ import java.util.Optional;
 import javafx.animation.FadeTransition;
 import javafx.animation.Transition;
 import javafx.application.Platform;
+import javafx.collections.ObservableList;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.VPos;
@@ -56,7 +57,7 @@ public final class ExceptionWitnessResponderButton extends Button {
 
   /**
    * @param origin The same origin that is passed to the
-   * {@link edu.wpi.grip.core.util.ExceptionWitness}
+   *               {@link edu.wpi.grip.core.util.ExceptionWitness}
    */
   @Inject
   ExceptionWitnessResponderButton(@Assisted Object origin, @Assisted String popOverTitle) {
@@ -164,6 +165,8 @@ public final class ExceptionWitnessResponderButton extends Button {
       setHeaderAlwaysVisible(true);
       setDetachable(false);
 
+      errorMessage.getStyleClass().add("error-message");
+
       GridPane.setHalignment(errorMessage, HPos.CENTER);
       GridPane.setValignment(errorMessage, VPos.CENTER);
       GridPane.setHgrow(errorMessage, Priority.ALWAYS);
@@ -215,5 +218,14 @@ public final class ExceptionWitnessResponderButton extends Button {
       }
     }
 
+    @Override
+    protected void show() {
+      super.show();
+
+      // Update the css
+      ObservableList<String> stylesheets = ((Parent) this.getSkin().getNode()).getStylesheets();
+      stylesheets.setAll("/org/controlsfx/control/popover.css");
+      stylesheets.addAll(getScene().getRoot().getStylesheets());
+    }
   }
 }

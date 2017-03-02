@@ -395,27 +395,36 @@ VBox.sockets {
     -fx-padding: 0.5em;
 }
 
-.popover .border {
-    -fx-stroke: orange !important;
-    -fx-stroke-width: 0.5;
-    -fx-fill: rgba(0, 0, 255.0, .95);
-    -fx-effect: dropshadow(gaussian, rgba(0, 255, 0, .2), 10.0, 0.5, 2.0, 2.0);
+.error-pop-over * {
+    -fx-text-fill: gripsandy !important;
+}
+
+.error-pop-over .error-message {
+    -fx-fill: gripsandy;
+}
+
+.error-pop-over .border {
+    -fx-stroke-width: 0.5em;
+    -fx-fill: gripsandy !important;
 }
 
 .error-pop-over .content {
-    -fx-background-color: base-light;
+    -fx-background-color: base;
 }
 
 .error-pop-over .titled-pane > .title {
-    -fx-border-color: lightgrey;
+    -fx-border-color: gripgreen;
     -fx-border-insets: 5 5 5 5;
     -fx-border-width: 1 0 0 0;
     -fx-border-style: dashed;
     -fx-background-color: transparent;
 }
 
-.error-pop-over .titled-pane > .title > .arrow-button .arrow {
-    /*-fx-background-color: grey;*/
+.error-pop-over .text-area {
+    -fx-background-color: base-dark !important;
+    -fx-color: white;
+    -fx-fill: orange;
+    -fx-border-width: 0;
 }
 
 .property-sheet .property-pane {
