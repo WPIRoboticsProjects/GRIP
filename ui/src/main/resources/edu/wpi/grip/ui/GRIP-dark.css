@@ -62,7 +62,7 @@
 }
 
 .menu-item:hover {
-    -fx-background-color: base;
+    -fx-background-color: gripgreen;
 }
 
 .split-pane {

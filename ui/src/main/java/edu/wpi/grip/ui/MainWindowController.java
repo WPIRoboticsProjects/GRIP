@@ -327,6 +327,7 @@ public class MainWindowController {
       eventBus.post(new WarningEvent("Cannot generate code", sb.toString()));
       return;
     }
+    codegenPane.getStylesheets().setAll(root.getStylesheets());
     Dialog<CodeGenerationSettings> optionsDialog = new CodeGenerationSettingsDialog(codegenPane);
     optionsDialog.getDialogPane().getStyleClass().addAll(root.getStylesheets());
     optionsDialog.showAndWait().ifPresent(settings -> {
