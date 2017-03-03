@@ -463,6 +463,7 @@ public class MainWindowController {
 
   private void updateTheme(Stage stage) {
     stage.getScene().getStylesheets().setAll(root.getStylesheets());
+    stage.getScene().getRoot().getStylesheets().setAll(root.getStylesheets());
   }
 
 }
