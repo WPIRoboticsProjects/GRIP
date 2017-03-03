@@ -8,7 +8,7 @@
     gripgreen: #6C6E58;
     darkgripgreen: #3E423A;
     gripsandy: #A4CFBE;
-    -fx-text-fill: gripsandy;
+    -fx-text-fill: derive(white, -5%);
 }
 
 .root {
@@ -49,8 +49,12 @@
 
 .context-menu {
     -fx-padding: 0;
-    -fx-border-color: base-dark;
-    -fx-border-width: 0.125em;
+    -fx-border-color: gray;
+    -fx-border-width: 1;
+}
+
+.context-menu * {
+    -fx-background-color: gray;
 }
 
 .menu-item {
@@ -102,8 +106,16 @@
     -fx-min-width: 30em;
 }
 
+.search-field {
+    -fx-background-radius: 0;
+}
+
+.search-field:focused, .search-field:focused .content {
+    -fx-background-color: derive(black, 15%);
+}
+
 .split-pane-divider {
-    -fx-background-color: darkgripgreen;
+    -fx-background-color: base-dark;
 }
 
 .split-pane-divider:hover, .split-pane-divider:pressed {
@@ -142,6 +154,7 @@
     -fx-padding: 0.5em;
     -fx-alignment: center-left;
     -fx-background-color: base;
+    -fx-border-color: base-dark;
 }
 
 .operation:hover {
@@ -250,9 +263,16 @@ Label.operation-description {
     -fx-background-color: base;
 }
 
+.sources-box .separator .line {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-border-width: 0;
+}
+
 .addSource {
     -fx-padding: 0.5em;
     -fx-spacing: 1em;
+    -fx-background-color: transparent;
 }
 
 .addSource * {
@@ -262,13 +282,14 @@ Label.operation-description {
 .sources {
     -fx-padding: 0.5em;
     -fx-spacing: 1em;
+    -fx-background-color: transparent;
 }
 
 .source {
     -fx-padding: 0.5em;
     -fx-spacing: 1em;
-    -fx-border-width: 1px;
-    -fx-border-color: black;
+    -fx-border-width: 0.125em;
+    -fx-border-color: base-dark;
     -fx-background-color: base-light;
 }
 
@@ -405,7 +426,7 @@ VBox.sockets {
 
 .error-pop-over .border {
     -fx-stroke-width: 0.5em;
-    -fx-fill: gripsandy !important;
+    -fx-fill: darkgripgreen !important;
 }
 
 .error-pop-over .content {

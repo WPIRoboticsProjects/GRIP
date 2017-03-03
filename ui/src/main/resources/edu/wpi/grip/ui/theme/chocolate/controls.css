@@ -74,12 +74,12 @@
  */
 
 .radio-button .dot {
-	-fx-mark-color: gripsandy;
-	-fx-mark-highlight-color: gripgreen;
+    -fx-mark-color: gripsandy;
+    -fx-mark-highlight-color: gripgreen;
 }
 
 .radio-button .radio:hover {
-	-fx-background-color: darkgripgreen;
+    -fx-background-color: darkgripgreen;
 }
 
 /*
@@ -96,4 +96,42 @@
 
 .range-slider .high-thumb, .range-slider .low-thumb, .slider .thumb {
     -fx-background-color: gripsandy;
+}
+
+/**
+ * Combo box
+ */
+
+.combo-box:selected {
+    -fx-background-color: orange;
+}
+
+.combo-box .list-cell {
+    -fx-background-color: base;
+    -fx-padding: 3 0 2 7;
+    -fx-cell-size: 1.66667em;
+}
+
+.combo-box .list-cell:filled:selected {
+    -fx-background-color: base-dark;
+}
+
+.combo-box-popup .list-view {
+    -fx-background-color: base-dark;
+    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.6), 8, 0.0, 0, 0);
+}
+
+.combo-box-popup .list-view .list-cell {
+    -fx-padding: 4 0 4 5;
+
+    /* No alternate highlighting */
+    -fx-background-color: base;
+}
+
+.combo-box-popup .list-view .list-cell:selected {
+    -fx-background-color: base-light;
+}
+
+.combo-box-popup .list-view .list-cell:filled:hover {
+    -fx-background-color: gripgreen;
 }

@@ -236,6 +236,7 @@ public class AddSourceButton extends MenuButton {
           type.setPromptText("Select a data type");
           type.getItems().setAll(NetworkTableEntrySource.Types.values());
           type.setMaxWidth(Double.MAX_VALUE);
+          fields.setSpacing(5);
           fields.getChildren().add(tablePath);
           fields.getChildren().add(type);
           tablePath.setPromptText("Ex: /GRIP/fps");

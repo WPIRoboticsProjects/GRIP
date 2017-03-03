@@ -30,7 +30,7 @@
             </tooltip>
         </Button>
         <Pane HBox.hgrow="ALWAYS" />
-        <HBox fx:id="buttons">
+        <HBox fx:id="buttons" spacing="2">
             <Button fx:id="moveLeftButton" onMouseClicked="#moveStepLeft" styleClass="move-left" HBox.hgrow="NEVER">
                 <graphic>
                     <ImageView>
