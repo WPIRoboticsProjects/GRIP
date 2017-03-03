@@ -108,9 +108,10 @@
 
 .search-field {
     -fx-background-radius: 0;
+    -fx-background-color: derive(black, 15%);
 }
 
-.search-field:focused, .search-field:focused .content {
+.search-field:focused {
     -fx-background-color: derive(black, 15%);
 }
 
