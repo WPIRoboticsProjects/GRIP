@@ -1,10 +1,10 @@
-@import "GRIP-dark.css";
+@import "theme.css";
 
 /*
  * Controls
  */
 
-.text-field, .text-area, .button, .toggle-button, .spinner, .toggle-switch, .combo-box, .choice-box, .check-box > .box {
+.text-field, .text-area, .button, .toggle-button, .spinner, .toggle-switch, .combo-box, .choice-box, .check-box > .box, .radio-button .radio {
     -fx-background-color: base-dark;
 }
 
@@ -67,6 +67,19 @@
 .check-box:selected .mark {
     -fx-mark-color: gripgreen;
     -fx-background-color: darkgripgreen;
+}
+
+/*
+ * Radio button
+ */
+
+.radio-button .dot {
+	-fx-mark-color: gripsandy;
+	-fx-mark-highlight-color: gripgreen;
+}
+
+.radio-button .radio:hover {
+	-fx-background-color: darkgripgreen;
 }
 
 /*

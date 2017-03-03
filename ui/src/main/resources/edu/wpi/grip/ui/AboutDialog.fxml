@@ -10,7 +10,7 @@
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
-<VBox fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="330.0" prefWidth="600.0" styleClass="about-window" stylesheets="@GRIP.css" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="edu.wpi.grip.ui.AboutDialogController">
+<VBox fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="330.0" prefWidth="600.0" styleClass="about-window" stylesheets="@theme/vanilla/theme.css" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="edu.wpi.grip.ui.AboutDialogController">
     <children>
         <Pane VBox.vgrow="ALWAYS" />
         <HBox>
@@ -87,6 +87,6 @@
         </HBox>
     </children>
     <stylesheets>
-        <URL value="@GRIP.css" />
+        <URL value="@theme/vanilla/theme.css" />
     </stylesheets>
 </VBox>

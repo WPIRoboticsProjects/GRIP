@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.layout.VBox?>
+
+
+<VBox fx:id="root" prefHeight="80.0" prefWidth="200.0" spacing="10.0"
+      xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8.0.112-ea"
+      fx:controller="edu.wpi.grip.ui.theme.ThemeController">
+    <padding>
+        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
+    </padding>
+</VBox>

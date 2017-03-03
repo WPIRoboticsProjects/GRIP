@@ -1,4 +1,4 @@
-@import "GRIP-dark-controls.css";
+@import "controls.css";
 
 * {
     -fx-smooth: true; /* Have some meaningless -fx- property here or Intellij will freak out */

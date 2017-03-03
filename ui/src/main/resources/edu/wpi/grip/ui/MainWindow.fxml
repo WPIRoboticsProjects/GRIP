@@ -1,11 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?language javascript?>
-
 <?import edu.wpi.grip.ui.util.DPIUtility?>
 <?import java.net.URL?>
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.control.CheckMenuItem?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Menu?>
 <?import javafx.scene.control.MenuBar?>
@@ -44,7 +42,7 @@
                         </ImageView>
                     </graphic>
                 </MenuItem>
-                <MenuItem text="Open" onAction="#openProject">
+                <MenuItem onAction="#openProject" text="Open">
                     <accelerator>
                         <KeyCodeCombination alt="UP" code="O" control="UP" meta="UP" shift="UP" shortcut="DOWN" />
                     </accelerator>
@@ -62,7 +60,7 @@
                         </ImageView>
                     </graphic>
                 </MenuItem>
-                <MenuItem text="Save" onAction="#saveProject">
+                <MenuItem onAction="#saveProject" text="Save">
                     <accelerator>
                         <KeyCodeCombination alt="UP" code="S" control="UP" meta="UP" shift="UP" shortcut="DOWN" />
                     </accelerator>
@@ -80,7 +78,7 @@
                         </ImageView>
                     </graphic>
                 </MenuItem>
-                <MenuItem text="Save As" onAction="#saveProjectAs">
+                <MenuItem onAction="#saveProjectAs" text="Save As">
                     <accelerator>
                         <KeyCodeCombination alt="UP" code="S" control="UP" meta="UP" shift="DOWN" shortcut="DOWN" />
                     </accelerator>
@@ -103,7 +101,7 @@
             </Menu>
          <Menu mnemonicParsing="false" text="View">
             <items>
-               <CheckMenuItem mnemonicParsing="false" onAction="#toggleTheme" text="Use dark theme"/>
+               <MenuItem mnemonicParsing="false" onAction="#showThemeDialog" text="Change theme" />
             </items>
          </Menu>
             <Menu text="Tools">
@@ -155,7 +153,7 @@
                         </ImageView>
                     </graphic>
                 </MenuItem>
-                <MenuItem text="Generate Code" onAction="#generate">
+                <MenuItem onAction="#generate" text="Generate Code">
                     <accelerator>
                         <KeyCodeCombination alt="UP" code="G" control="UP" meta="UP" shift="UP" shortcut="DOWN" />
                     </accelerator>
@@ -216,13 +214,13 @@
         </HBox>
     </children>
     <fx:define>
-        <fx:include source="Deploy.fxml" fx:id="deployPane" />
-        <fx:include source="AboutDialog.fxml" fx:id="aboutPane" />
-        <fx:include source="analysis/Analysis.fxml" fx:id="analysisPane" />
-        <fx:include source="codegeneration/CodegenDialog.fxml" fx:id="codegenPane"/>
+        <fx:include fx:id="deployPane" source="Deploy.fxml" />
+        <fx:include fx:id="aboutPane" source="AboutDialog.fxml" />
+        <fx:include fx:id="analysisPane" source="analysis/Analysis.fxml" />
+        <fx:include fx:id="codegenPane" source="codegeneration/CodegenDialog.fxml" />
+        <fx:include fx:id="themePane" source="theme/ThemeView.fxml" />
     </fx:define>
     <stylesheets>
-        <URL value="@GRIP.css" />
+        <URL value="@theme/vanilla/theme.css" />
     </stylesheets>
 </VBox>
-

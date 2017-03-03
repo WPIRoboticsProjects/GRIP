@@ -14,6 +14,7 @@ import edu.wpi.grip.core.serialization.Project;
 import edu.wpi.grip.core.settings.SettingsProvider;
 import edu.wpi.grip.core.sources.GripSourcesHardwareModule;
 import edu.wpi.grip.core.util.SafeShutdown;
+import edu.wpi.grip.ui.theme.ThemeExtractor;
 import edu.wpi.grip.ui.util.DPIUtility;
 
 import com.google.common.annotations.VisibleForTesting;
@@ -65,6 +66,7 @@ public class Main extends Application {
   @Inject private CVOperations cvOperations;
   @Inject private GripServer server;
   @Inject private HttpPipelineSwitcher pipelineSwitcher;
+  @Inject private ThemeExtractor themeExtractor;
   private Parent root;
   private boolean headless;
   private final UICommandLineHelper commandLineHelper = new UICommandLineHelper();
@@ -115,6 +117,9 @@ public class Main extends Application {
   public void start(Stage stage) throws IOException {
     // Load UI elements if we're not in headless mode
     if (!headless) {
+      // Extract the builtin themes before loading the FXML graph
+      themeExtractor.extractAll();
+
       root = FXMLLoader.load(Main.class.getResource("MainWindow.fxml"), null, null,
           injector::getInstance);
       root.setStyle("-fx-font-size: " + DPIUtility.FONT_SIZE + "px");

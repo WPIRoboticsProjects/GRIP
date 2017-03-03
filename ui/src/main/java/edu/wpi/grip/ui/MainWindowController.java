@@ -22,6 +22,7 @@ import edu.wpi.grip.core.util.service.SingleActionListener;
 import edu.wpi.grip.ui.codegeneration.CodeGenerationSettingsDialog;
 import edu.wpi.grip.ui.codegeneration.Exporter;
 import edu.wpi.grip.ui.components.StartStoppableButton;
+import edu.wpi.grip.ui.events.ThemeChangedEvent;
 import edu.wpi.grip.ui.util.DPIUtility;
 
 import com.google.common.eventbus.EventBus;
@@ -36,6 +37,7 @@ import java.io.IOException;
 import java.util.Optional;
 import java.util.Set;
 import java.util.prefs.Preferences;
+import java.util.stream.Stream;
 
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -81,6 +83,8 @@ public class MainWindowController {
   @FXML
   private Pane codegenPane;
   @FXML
+  private Pane themePane;
+  @FXML
   private MenuItem analyzeMenuItem;
   @FXML
   private HBox statusBar;
@@ -107,8 +111,7 @@ public class MainWindowController {
 
   private Stage aboutDialogStage;
   private Stage analysisStage;
-
-  private boolean darkTheme = false;
+  private Stage themeStage;
 
   @FXML
   protected void initialize() {
@@ -131,7 +134,13 @@ public class MainWindowController {
     }));
 
     // Load the previous theme
-    Optional.ofNullable(preferences.get("theme", null)).ifPresent(root.getStylesheets()::setAll);
+    String lastTheme = preferences.get("theme", null);
+    if (lastTheme == null || !new File(lastTheme.substring("file:".length())).exists()) {
+      // Last theme was either not set or no longer exists. Use the default.
+      eventBus.post(new ThemeChangedEvent("edu/wpi/grip/ui/theme/vanilla/theme.css"));
+    } else {
+      eventBus.post(new ThemeChangedEvent(lastTheme));
+    }
   }
 
   /**
@@ -426,30 +435,34 @@ public class MainWindowController {
       analysisStage.getIcons().add(new Image("/edu/wpi/grip/ui/icons/grip.png"));
       analysisStage.setOnCloseRequest(event -> eventBus.post(BenchmarkEvent.finished()));
     }
-    analysisPane.getStylesheets().setAll(root.getStylesheets());
+    updateTheme(analysisStage);
     analysisStage.showAndWait();
   }
 
   @FXML
-  private void toggleTheme() {
-    // toggle flag
-    darkTheme = !darkTheme;
+  private void showThemeDialog() {
+    if (themeStage == null) {
+      themeStage = new Stage();
+      themeStage.setResizable(false);
+      themeStage.setTitle("Choose a theme");
+      themeStage.setScene(new Scene(themePane));
+    }
+    updateTheme(themeStage);
+    themeStage.show();
+  }
 
-    // update stylesheets
-    if (darkTheme) {
-      root.getStylesheets().setAll("/edu/wpi/grip/ui/GRIP-dark.css");
-    } else {
-      root.getStylesheets().setAll("/edu/wpi/grip/ui/GRIP.css");
-    }
-    if (aboutDialogStage != null) {
-      aboutDialogStage.getScene().getStylesheets().setAll(root.getStylesheets());
-    }
-    if (analysisStage != null) {
-      analysisStage.getScene().getStylesheets().setAll(root.getStylesheets());
-    }
+  @Subscribe
+  private void onThemeChanged(ThemeChangedEvent e) {
+    String mainThemeFile = e.getMainThemeFile();
+    root.getStylesheets().setAll(mainThemeFile);
+    Stream.of(analysisStage, aboutDialogStage, themeStage)
+        .filter(s -> s != null)
+        .forEach(this::updateTheme);
+    preferences.put("theme", mainThemeFile);
+  }
 
-    // save the theme so it's loaded the next time GRIP is opened
-    preferences.put("theme", root.getStylesheets().get(0));
+  private void updateTheme(Stage stage) {
+    stage.getScene().getStylesheets().setAll(root.getStylesheets());
   }
 
 }
