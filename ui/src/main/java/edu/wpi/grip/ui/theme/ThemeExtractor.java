@@ -17,7 +17,7 @@ public class ThemeExtractor {
 
   private static final Logger logger = Logger.getLogger(ThemeExtractor.class.getName());
 
-  private static final String rootDir = ThemeController.THEME_ROOT.getAbsolutePath();
+  private static final String rootDir = ThemeManager.DEFAULT_THEME_DIR.getAbsolutePath();
 
   /**
    * Extracts all builtin themes.
