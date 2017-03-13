@@ -24,12 +24,12 @@ public class ThemeExtractor {
    */
   public void extractAll() {
     try {
-      FileUtils.copyURLToFile(getClass().getResource(toInternalPath("chocolate/theme.css")),
-          new File(rootDir, "chocolate/theme.css"));
-      FileUtils.copyURLToFile(getClass().getResource(toInternalPath("chocolate/controls.css")),
-          new File(rootDir, "chocolate/controls.css"));
-      FileUtils.copyURLToFile(getClass().getResource(toInternalPath("vanilla/theme.css")),
-          new File(rootDir, "vanilla/theme.css"));
+      FileUtils.copyURLToFile(getClass().getResource(toInternalPath("dark/theme.css")),
+          new File(rootDir, "dark/theme.css"));
+      FileUtils.copyURLToFile(getClass().getResource(toInternalPath("dark/controls.css")),
+          new File(rootDir, "dark/controls.css"));
+      FileUtils.copyURLToFile(getClass().getResource(toInternalPath("light/theme.css")),
+          new File(rootDir, "light/theme.css"));
     } catch (IOException e) {
       logger.log(Level.WARNING, "Could not extract themes", e);
     }

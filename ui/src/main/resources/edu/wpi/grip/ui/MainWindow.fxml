@@ -221,6 +221,6 @@
         <fx:include fx:id="themePane" source="theme/ThemeView.fxml" />
     </fx:define>
     <stylesheets>
-        <URL value="@theme/vanilla/theme.css" />
+        <URL value="@theme/light/theme.css" />
     </stylesheets>
 </VBox>
