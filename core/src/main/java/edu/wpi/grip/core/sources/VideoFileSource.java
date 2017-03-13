@@ -3,10 +3,13 @@ package edu.wpi.grip.core.sources;
 import edu.wpi.grip.core.Source;
 import edu.wpi.grip.core.events.SourceHasPendingUpdateEvent;
 import edu.wpi.grip.core.events.SourceRemovedEvent;
+import edu.wpi.grip.core.observables.Observable;
 import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.core.sockets.SocketHint;
 import edu.wpi.grip.core.sockets.SocketHints;
+import edu.wpi.grip.core.util.DaemonThread;
 import edu.wpi.grip.core.util.ExceptionWitness;
+import edu.wpi.grip.core.util.Pausable;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.eventbus.EventBus;
@@ -25,6 +28,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.Properties;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
@@ -34,7 +38,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * A source for a video file input.
  */
 @XStreamAlias("grip:VideoFile")
-public class VideoFileSource extends Source {
+public class VideoFileSource extends Source implements Pausable {
 
   private final String path;
   private final SocketHint<Mat> imageHint = SocketHints.Outputs.createMatSocketHint("Image");
@@ -46,8 +50,11 @@ public class VideoFileSource extends Source {
   private FFmpegFrameGrabber frameGrabber;
   private final OpenCVFrameConverter.ToMat converter = new OpenCVFrameConverter.ToMat();
   private final EventBus eventBus;
+  private final ExecutorService manualGrabberService; // only for manual frame control
   private ScheduledFuture<?> grabberFuture = null;
-  private final AtomicBoolean paused = new AtomicBoolean(false);
+  private final Observable<Integer> currentFrame = Observable.synchronizedOf(0);
+  private final Observable<Boolean> paused = Observable.synchronizedOf(false);
+  private volatile int frameCount = -1;
 
   @AssistedInject
   VideoFileSource(OutputSocket.Factory osf,
@@ -74,6 +81,7 @@ public class VideoFileSource extends Source {
     this.path = path;
     this.imageSocket = osf.create(imageHint);
     this.fpsSocket = osf.create(fpsHint);
+    this.manualGrabberService = Executors.newSingleThreadExecutor(DaemonThread::new);
   }
 
   @Override
@@ -118,12 +126,24 @@ public class VideoFileSource extends Source {
       frameGrabber.start();
       final double fps = frameGrabber.getFrameRate();
       fpsSocket.setValue(fps);
-      grabberFuture = Executors.newSingleThreadScheduledExecutor().scheduleAtFixedRate(
-          this::grabNextFrame,
-          0L,
-          (long) (1e3 / fps),
-          TimeUnit.MILLISECONDS
-      );
+      frameCount = frameGrabber.getLengthInFrames();
+      if (frameCount <= 1) {
+        // Only one frame, no point in scheduling automatic updates to grab the same
+        // image over and over
+        manualGrabberService.submit(this::grabNextFrame);
+      } else {
+        grabberFuture = Executors.newSingleThreadScheduledExecutor(DaemonThread::new)
+            .scheduleAtFixedRate(
+                () -> {
+                  if (!isPaused()) {
+                    grabNextFrame();
+                  }
+                },
+                0L,
+                (long) (1e3 / fps),
+                TimeUnit.MILLISECONDS
+            );
+      }
     } catch (FrameGrabber.Exception e) {
       throw new IOException("Could not open video file " + path, e);
     }
@@ -134,14 +154,12 @@ public class VideoFileSource extends Source {
    * if the end of the file has been reached.
    */
   private void grabNextFrame() {
-    if (paused.get()) {
-      return;
-    }
     try {
       Frame frame = frameGrabber.grabFrame();
       if (frame == null) {
         // End of the video file, loop back to the first frame
         frameGrabber.setFrameNumber(0);
+        grabNextFrame();
         return;
       }
       Mat m = converter.convert(frame);
@@ -154,6 +172,7 @@ public class VideoFileSource extends Source {
         m.copyTo(workingMat);
       }
       m.release();
+      currentFrame.set(frameGrabber.getFrameNumber()); // best guess
       isNewFrame.set(true);
       eventBus.post(new SourceHasPendingUpdateEvent(this));
     } catch (FrameGrabber.Exception e) {
@@ -162,33 +181,60 @@ public class VideoFileSource extends Source {
   }
 
   /**
-   * Gets the current frame position as a fraction of the total number of frames.
+   * Gets an observable value for the current frame number of the video file this source is
+   * providing.
+   */
+  public Observable<Integer> currentFrameProperty() {
+    return currentFrame;
+  }
+
+  /**
+   * Gets the number of frames in the video file. This is a <i>best guess</i> and may not
+   * always be accurate.
+   */
+  public int getFrameCount() {
+    return frameCount;
+  }
+
+  /**
+   * Sets the frame grabber to the given frame number. This will pause frame grabber from reading
+   * successive frames; it can be resumed with {@link #resume()}. This runs asynchronously and
+   * will complete at some point in the future after this method is called.
    *
-   * @return the current frame position. Will be in the range (0, 1) inclusive.
+   * @param frameNumber the number of the frame to grab
+   *
+   * @throws IllegalArgumentException if {@code frameNumber} is negative or exceeds the number of
+   *                                  frames in the video file
    */
-  public double getFramePosition() {
-    return frameGrabber.getFrameNumber() / (double) frameGrabber.getLengthInFrames();
+  public void setFrame(int frameNumber) {
+    if (frameNumber < 0) {
+      throw new IllegalArgumentException("Negative frame number " + frameNumber);
+    }
+    if (frameNumber > frameGrabber.getLengthInFrames()) {
+      throw new IllegalArgumentException(
+          "Frame number too high: " + frameNumber + " > " + frameGrabber.getLengthInFrames());
+    }
+    pause();
+    try {
+      frameGrabber.setFrameNumber(frameNumber);
+    } catch (FrameGrabber.Exception e) {
+      getExceptionWitness().flagException(e, "Could not set frame number");
+    }
+    manualGrabberService.submit(this::grabNextFrame);
   }
 
   /**
-   * Pauses video playback until {@link #resume()} is called. NOP if playback is already paused.
+   * Gets the current frame number.
+   *
+   * @return the current frame number
    */
-  public void pause() {
-    paused.set(true);
+  public int getFramePosition() {
+    return currentFrame.get();
   }
 
-  /**
-   * Resumes video playback. NOP if video playback was not paused.
-   */
-  public void resume() {
-    paused.set(false);
-  }
-
-  /**
-   * Checks if video playback is paused.
-   */
-  public boolean isPaused() {
-    return paused.get();
+  @Override
+  public Observable<Boolean> pausedProperty() {
+    return paused;
   }
 
   @Subscribe
