@@ -1,6 +1,7 @@
 package edu.wpi.grip.ui.codegeneration;
 
 import edu.wpi.grip.core.ManualPipelineRunner;
+import edu.wpi.grip.core.OperationDescription;
 import edu.wpi.grip.core.OperationMetaData;
 import edu.wpi.grip.core.Step;
 import edu.wpi.grip.core.operations.composite.BlurOperation;
@@ -27,6 +28,7 @@ public class ThresholdMovingTesting extends AbstractGenerationTesting {
    * Sets up the pipeline with given number of moving thresholds.
    *
    * @param num number of moving thresholds to put in pipeline, 1 indexed.
+   *
    * @return an array of the switch steps used to trigger the moving thresholds.
    */
   public ThresholdSwitch[] setupThreshold(int num) {
@@ -35,7 +37,8 @@ public class ThresholdMovingTesting extends AbstractGenerationTesting {
     OutputSocket imgOut = pipeline.getSources().get(0).getOutputSockets().get(0);
     for (int idx = 0; idx < num; idx++) {
       Step blur = gen.addStep(
-          new OperationMetaData(BlurOperation.DESCRIPTION, () -> new BlurOperation(isf, osf)));
+          new OperationMetaData(OperationDescription.from(BlurOperation.class),
+              () -> new BlurOperation(isf, osf)));
       for (InputSocket sock : blur.getInputSockets()) {
         String socketHint = sock.getSocketHint().getIdentifier();
         if ("Input".equals(socketHint)) {
@@ -45,7 +48,8 @@ public class ThresholdMovingTesting extends AbstractGenerationTesting {
         }
       } // end of blur
       Step swtch = gen.addStep(
-          new OperationMetaData(SwitchOperation.DESCRIPTION, () -> new SwitchOperation(isf, osf)));
+          new OperationMetaData(OperationDescription.from(SwitchOperation.class),
+              () -> new SwitchOperation(isf, osf)));
       for (InputSocket sock : swtch.getInputSockets()) {
         String sockHint = sock.getSocketHint().getIdentifier();
         if ("If True".equals(sockHint)) {
@@ -55,7 +59,8 @@ public class ThresholdMovingTesting extends AbstractGenerationTesting {
         }
       }
       Step move = gen.addStep(
-          new OperationMetaData(ThresholdMoving.DESCRIPTION, () -> new ThresholdMoving(isf, osf)));
+          new OperationMetaData(OperationDescription.from(ThresholdMoving.class),
+              () -> new ThresholdMoving(isf, osf)));
       for (InputSocket sock : move.getInputSockets()) {
         if (sock.getSocketHint().getIdentifier().equalsIgnoreCase("image")) {
           gen.connect(swtch.getOutputSockets().get(0), sock);

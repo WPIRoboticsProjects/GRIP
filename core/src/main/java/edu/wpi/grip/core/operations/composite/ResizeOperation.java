@@ -1,13 +1,14 @@
 package edu.wpi.grip.core.operations.composite;
 
+import edu.wpi.grip.core.Description;
 import edu.wpi.grip.core.Operation;
 import edu.wpi.grip.core.OperationDescription;
 import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.core.sockets.SocketHints;
-import edu.wpi.grip.core.util.Icon;
 
 import com.google.common.collect.ImmutableList;
+import com.google.inject.Inject;
 
 import java.util.List;
 
@@ -25,15 +26,11 @@ import static org.bytedeco.javacpp.opencv_imgproc.resize;
  * images down can be a useful optimization, and scaling them up might be necessary for combining
  * multiple images that are different sizes.
  */
+@Description(name = "Resize Image",
+             summary = "Scale an image to an exact size",
+             category = OperationDescription.Category.IMAGE_PROCESSING,
+             iconName = "resize")
 public class ResizeOperation implements Operation {
-
-  public static final OperationDescription DESCRIPTION =
-      OperationDescription.builder()
-          .name("Resize Image")
-          .summary("Scale an image to an exact size")
-          .category(OperationDescription.Category.IMAGE_PROCESSING)
-          .icon(Icon.iconStream("resize"))
-          .build();
 
   private final InputSocket<Mat> inputSocket;
   private final InputSocket<Number> widthSocket;
@@ -42,6 +39,7 @@ public class ResizeOperation implements Operation {
 
   private final OutputSocket<Mat> outputSocket;
 
+  @Inject
   @SuppressWarnings("JavadocMethod")
   public ResizeOperation(InputSocket.Factory inputSocketFactory, OutputSocket.Factory
       outputSocketFactory) {

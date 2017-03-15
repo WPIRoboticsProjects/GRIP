@@ -1,6 +1,7 @@
 package edu.wpi.grip.ui.codegeneration;
 
 import edu.wpi.grip.core.ManualPipelineRunner;
+import edu.wpi.grip.core.OperationDescription;
 import edu.wpi.grip.core.OperationMetaData;
 import edu.wpi.grip.core.Step;
 import edu.wpi.grip.core.operations.composite.BlurOperation;
@@ -27,7 +28,8 @@ public class BlurGenerationTesting extends AbstractGenerationTesting {
 
   void generatePipeline(String blurType) {
     Step step = gen.addStep(
-        new OperationMetaData(BlurOperation.DESCRIPTION, () -> new BlurOperation(isf, osf)));
+        new OperationMetaData(OperationDescription.from(BlurOperation.class),
+            () -> new BlurOperation(isf, osf)));
     loadImage(Files.gompeiJpegFile);
     OutputSocket imgOut = pipeline.getSources().get(0).getOutputSockets().get(0);
 

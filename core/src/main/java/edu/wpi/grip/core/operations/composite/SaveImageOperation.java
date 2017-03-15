@@ -1,16 +1,16 @@
 package edu.wpi.grip.core.operations.composite;
 
+import edu.wpi.grip.core.Description;
 import edu.wpi.grip.core.FileManager;
 import edu.wpi.grip.core.Operation;
-import edu.wpi.grip.core.OperationDescription;
 import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.core.sockets.SocketHint;
 import edu.wpi.grip.core.sockets.SocketHints;
-import edu.wpi.grip.core.util.Icon;
 
 import com.google.common.base.Stopwatch;
 import com.google.common.collect.ImmutableList;
+import com.google.inject.Inject;
 
 import org.bytedeco.javacpp.BytePointer;
 import org.bytedeco.javacpp.IntPointer;
@@ -27,15 +27,10 @@ import static org.bytedeco.javacpp.opencv_imgcodecs.imencode;
 /**
  * Save JPEG files periodically to the local disk.
  */
+@Description(name = "Save Images to Disk",
+             summary = "Save image periodically to local disk",
+             iconName = "publish-video")
 public class SaveImageOperation implements Operation {
-
-  public static final OperationDescription DESCRIPTION =
-      OperationDescription.builder()
-          .name("Save Images to Disk")
-          .summary("Save image periodically to local disk")
-          .category(OperationDescription.Category.MISCELLANEOUS)
-          .icon(Icon.iconStream("publish-video"))
-          .build();
 
   private final SocketHint<Mat> inputHint
       = SocketHints.Inputs.createMatSocketHint("Input", false);
@@ -73,6 +68,7 @@ public class SaveImageOperation implements Operation {
     }
   }
 
+  @Inject
   @SuppressWarnings("JavadocMethod")
   public SaveImageOperation(InputSocket.Factory inputSocketFactory,
                             OutputSocket.Factory outputSocketFactory,

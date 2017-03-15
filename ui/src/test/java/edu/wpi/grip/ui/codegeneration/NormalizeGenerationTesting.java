@@ -1,6 +1,7 @@
 package edu.wpi.grip.ui.codegeneration;
 
 import edu.wpi.grip.core.ManualPipelineRunner;
+import edu.wpi.grip.core.OperationDescription;
 import edu.wpi.grip.core.OperationMetaData;
 import edu.wpi.grip.core.Step;
 import edu.wpi.grip.core.operations.composite.NormalizeOperation;
@@ -24,7 +25,8 @@ import static org.junit.Assert.assertTrue;
 public class NormalizeGenerationTesting extends AbstractGenerationTesting {
 
   void generatePipeline(String type, double minVal, double maxVal) {
-    Step step = gen.addStep(new OperationMetaData(NormalizeOperation.DESCRIPTION,
+    Step step = gen.addStep(new OperationMetaData(
+        OperationDescription.from(NormalizeOperation.class),
         () -> new NormalizeOperation(isf, osf)));
     loadImage(Files.gompeiJpegFile);
     OutputSocket imgOut = pipeline.getSources().get(0).getOutputSockets().get(0);

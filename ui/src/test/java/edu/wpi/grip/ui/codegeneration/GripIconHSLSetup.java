@@ -1,5 +1,6 @@
 package edu.wpi.grip.ui.codegeneration;
 
+import edu.wpi.grip.core.OperationDescription;
 import edu.wpi.grip.core.OperationMetaData;
 import edu.wpi.grip.core.Step;
 import edu.wpi.grip.core.operations.composite.HSLThresholdOperation;
@@ -27,7 +28,8 @@ public class GripIconHSLSetup {
 
   public static void setup(AbstractGenerationTesting caller, List<Number> hVal, List<Number> sVal,
                            List<Number> lVal) {
-    Step hsl = caller.gen.addStep(new OperationMetaData(HSLThresholdOperation.DESCRIPTION,
+    Step hsl = caller.gen.addStep(new OperationMetaData(
+        OperationDescription.from(HSLThresholdOperation.class),
         () -> new HSLThresholdOperation(caller.isf, caller.osf)));
     caller.loadImage(Files.imageFile);
     OutputSocket imgOut = caller.pipeline.getSources().get(0).getOutputSockets().get(0);

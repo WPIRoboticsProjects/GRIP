@@ -61,7 +61,7 @@ public class InputSocketControllerFactoryTest extends ApplicationTest {
         .with(new MockGripNetworkModule()));
     final Palette palette = injector.getInstance(Palette.class);
     final EventBus eventBus = injector.getInstance(EventBus.class);
-    OperationsFactory.create(eventBus).addOperations();
+    OperationsFactory.create(eventBus, injector).addOperations();
     OperationsFactory.createCV(eventBus).addOperations();
     Collection<OperationMetaData> operationMetas = palette.getOperations();
 

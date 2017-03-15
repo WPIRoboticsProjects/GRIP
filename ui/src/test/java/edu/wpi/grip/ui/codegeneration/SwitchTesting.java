@@ -1,5 +1,6 @@
 package edu.wpi.grip.ui.codegeneration;
 
+import edu.wpi.grip.core.OperationDescription;
 import edu.wpi.grip.core.OperationMetaData;
 import edu.wpi.grip.core.Source;
 import edu.wpi.grip.core.Step;
@@ -31,7 +32,8 @@ public class SwitchTesting extends AbstractGenerationTesting {
 
   boolean setup(Source onTrue, Source onFalse, Boolean initVal) {
     Step step = gen.addStep(
-        new OperationMetaData(SwitchOperation.DESCRIPTION, () -> new SwitchOperation(isf, osf)));
+        new OperationMetaData(OperationDescription.from(SwitchOperation.class),
+            () -> new SwitchOperation(isf, osf)));
     for (InputSocket sock : step.getInputSockets()) {
       String sockHint = sock.getSocketHint().getIdentifier();
       if ("if True".equalsIgnoreCase(sockHint)) {

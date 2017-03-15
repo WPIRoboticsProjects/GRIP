@@ -405,9 +405,6 @@
       <grip:Input step="34" socket="1">
         <value>COLOR_BGR2GRAY</value>
       </grip:Input>
-      <grip:Input step="34" socket="2">
-        <value>0.0</value>
-      </grip:Input>
       <grip:Output step="34" socket="0" previewed="true"/>
     </grip:Step>
     <grip:Step name="CV dilate">

@@ -1,14 +1,15 @@
 package edu.wpi.grip.core.operations.composite;
 
+import edu.wpi.grip.core.Description;
 import edu.wpi.grip.core.Operation;
 import edu.wpi.grip.core.OperationDescription;
 import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.core.sockets.SocketHint;
 import edu.wpi.grip.core.sockets.SocketHints;
-import edu.wpi.grip.core.util.Icon;
 
 import com.google.common.collect.ImmutableList;
+import com.google.inject.Inject;
 
 import org.bytedeco.javacpp.opencv_core.Mat;
 
@@ -23,16 +24,13 @@ import static org.bytedeco.javacpp.opencv_imgproc.distanceTransform;
 /**
  * GRIP {@link Operation} for {@link org.bytedeco.javacpp.opencv_imgproc#distanceTransform}.
  */
+@Description(name = "Distance Transform",
+             summary = "Sets the values of pixels in a binary image to their distance to"
+                 + " the nearest black pixel",
+             category = OperationDescription.Category.IMAGE_PROCESSING,
+             iconName = "opencv")
 public class DistanceTransformOperation implements Operation {
 
-  public static final OperationDescription DESCRIPTION =
-      OperationDescription.builder()
-          .name("Distance Transform")
-          .summary("Sets the values of pixels in a binary image to their distance to the nearest "
-              + "black pixel.")
-          .category(OperationDescription.Category.IMAGE_PROCESSING)
-          .icon(Icon.iconStream("opencv"))
-          .build();
   private final SocketHint<Mat> srcHint = SocketHints.Inputs.createMatSocketHint("Input", false);
   private final SocketHint<Type> typeHint = SocketHints.createEnumSocketHint("Type", Type.DIST_L2);
   private final SocketHint<MaskSize> maskSizeHint = SocketHints.createEnumSocketHint("Mask size",
@@ -43,6 +41,7 @@ public class DistanceTransformOperation implements Operation {
   private final InputSocket<MaskSize> maskSizeSocket;
   private final OutputSocket<Mat> outputSocket;
 
+  @Inject
   @SuppressWarnings("JavadocMethod")
   public DistanceTransformOperation(InputSocket.Factory inputSocketFactory, OutputSocket.Factory
       outputSocketFactory) {

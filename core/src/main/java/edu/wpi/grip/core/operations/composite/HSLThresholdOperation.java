@@ -1,15 +1,16 @@
 package edu.wpi.grip.core.operations.composite;
 
 
+import edu.wpi.grip.core.Description;
 import edu.wpi.grip.core.Operation;
 import edu.wpi.grip.core.OperationDescription;
 import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.core.sockets.SocketHint;
 import edu.wpi.grip.core.sockets.SocketHints;
-import edu.wpi.grip.core.util.Icon;
 
 import com.google.common.collect.ImmutableList;
+import com.google.inject.Inject;
 
 import java.util.List;
 import java.util.logging.Level;
@@ -25,15 +26,11 @@ import static org.bytedeco.javacpp.opencv_imgproc.cvtColor;
  * An {@link Operation} that converts a color image into a binary image based on the HSL threshold
  * ranges.
  */
+@Description(name = "HSL Threshold",
+             summary = "Segment an image based on hue, saturation, and luminance ranges",
+             category = OperationDescription.Category.IMAGE_PROCESSING,
+             iconName = "threshold")
 public class HSLThresholdOperation extends ThresholdOperation {
-
-  public static final OperationDescription DESCRIPTION =
-      OperationDescription.builder()
-          .name("HSL Threshold")
-          .summary("Segment an image based on hue, saturation, and luminance ranges.")
-          .category(OperationDescription.Category.IMAGE_PROCESSING)
-          .icon(Icon.iconStream("threshold"))
-          .build();
 
   private static final Logger logger = Logger.getLogger(HSLThresholdOperation.class.getName());
   private final SocketHint<Mat> inputHint = SocketHints.Inputs.createMatSocketHint("Input", false);
@@ -53,6 +50,7 @@ public class HSLThresholdOperation extends ThresholdOperation {
 
   private final OutputSocket<Mat> outputSocket;
 
+  @Inject
   @SuppressWarnings("JavadocMethod")
   public HSLThresholdOperation(InputSocket.Factory inputSocketFactory, OutputSocket.Factory
       outputSocketFactory) {

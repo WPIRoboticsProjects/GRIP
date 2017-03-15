@@ -59,7 +59,7 @@ public abstract class PublishAnnotatedOperation<D, P extends Publishable> extend
     valueMethodStream()
         .findAny()
         .orElseThrow(() -> new IllegalArgumentException("A Publishable type must have at least "
-            + "one method annotated with @PublishValue"));
+            + "one method annotated with @PublishValue (at " + publishType.getName() + ")"));
 
     // Make sure keys and weights are distinct
     valueMethodStream()

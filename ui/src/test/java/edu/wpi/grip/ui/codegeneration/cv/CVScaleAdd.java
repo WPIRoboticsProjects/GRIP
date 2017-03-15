@@ -1,6 +1,7 @@
 package edu.wpi.grip.ui.codegeneration.cv;
 
 import edu.wpi.grip.core.ManualPipelineRunner;
+import edu.wpi.grip.core.OperationDescription;
 import edu.wpi.grip.core.OperationMetaData;
 import edu.wpi.grip.core.Step;
 import edu.wpi.grip.core.operations.composite.BlurOperation;
@@ -23,7 +24,8 @@ import static org.junit.Assert.assertTrue;
 public class CVScaleAdd extends AbstractGenerationTesting {
 
   boolean set() {
-    Step blur = gen.addStep(new OperationMetaData(BlurOperation.DESCRIPTION, () -> new
+    Step blur = gen.addStep(new OperationMetaData(
+        OperationDescription.from(BlurOperation.class), () -> new
         BlurOperation(isf, osf)));
     loadImage(Files.gompeiJpegFile);
     OutputSocket imgOut = pipeline.getSources().get(0).getOutputSockets().get(0);
@@ -43,12 +45,12 @@ public class CVScaleAdd extends AbstractGenerationTesting {
     sAdd.getInputSockets().get(1).setValue(new Double(1.23));
     return true;
   }
-  
+
   @Test
   public void cvScaleAddTest() {
     test(() -> set(), (pip) -> validate(pip), "CvScaleAddTest");
   }
-  
+
   void validate(PipelineInterfacer pip) {
     ManualPipelineRunner runner = new ManualPipelineRunner(eventBus, pipeline);
     runner.runPipeline();

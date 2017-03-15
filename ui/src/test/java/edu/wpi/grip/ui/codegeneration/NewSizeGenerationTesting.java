@@ -1,6 +1,7 @@
 package edu.wpi.grip.ui.codegeneration;
 
 import edu.wpi.grip.core.ManualPipelineRunner;
+import edu.wpi.grip.core.OperationDescription;
 import edu.wpi.grip.core.OperationMetaData;
 import edu.wpi.grip.core.Step;
 import edu.wpi.grip.core.operations.opencv.NewSizeOperation;
@@ -20,7 +21,8 @@ public class NewSizeGenerationTesting extends AbstractGenerationTesting {
 
   void generatePipeline(double width, double height) {
     Step desat = gen.addStep(
-        new OperationMetaData(NewSizeOperation.DESCRIPTION, () -> new NewSizeOperation(isf, osf)));
+        new OperationMetaData(OperationDescription.from(NewSizeOperation.class),
+            () -> new NewSizeOperation(isf, osf)));
     for (InputSocket sock : desat.getInputSockets()) {
       if (sock.getSocketHint().getIdentifier().equals("width")) {
         sock.setValue(width);

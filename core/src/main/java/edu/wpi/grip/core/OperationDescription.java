@@ -28,6 +28,33 @@ public class OperationDescription {
   private final ImmutableSet<String> aliases;
 
   /**
+   * Creates an operation description from a {@link Description @Description} annotation on
+   * an operation subclass.
+   */
+  public static OperationDescription from(Description description) {
+    checkNotNull(description, "The description annotation cannot be null");
+    String iconName = description.iconName();
+    return builder()
+        .name(description.name())
+        .summary(description.summary())
+        .category(description.category())
+        .aliases(description.aliases())
+        .icon(iconName.isEmpty() ? null : Icon.iconStream(iconName))
+        .build();
+  }
+
+  /**
+   * Creates an operation description from a {@link Description @Description} annotation on
+   * an operation subclass. The class is assumed to have the annotation; be careful when using this
+   * method.
+   *
+   * @param clazz the class to generate a description for
+   */
+  public static OperationDescription from(Class<? extends Operation> clazz) {
+    return from(clazz.getAnnotation(Description.class));
+  }
+
+  /**
    * Private constructor - use {@link #builder} to instantiate this class.
    */
   private OperationDescription(String name,
@@ -182,7 +209,7 @@ public class OperationDescription {
     }
 
     /**
-     * Sets the icon.
+     * Sets the icon. If {@code null}, the operation will have no icon.
      */
     public Builder icon(Icon icon) {
       this.icon = icon;

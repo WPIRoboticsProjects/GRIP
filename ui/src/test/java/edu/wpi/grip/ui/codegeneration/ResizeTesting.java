@@ -1,6 +1,7 @@
 package edu.wpi.grip.ui.codegeneration;
 
 import edu.wpi.grip.core.ManualPipelineRunner;
+import edu.wpi.grip.core.OperationDescription;
 import edu.wpi.grip.core.OperationMetaData;
 import edu.wpi.grip.core.Step;
 import edu.wpi.grip.core.operations.composite.ResizeOperation;
@@ -23,7 +24,8 @@ public class ResizeTesting extends AbstractGenerationTesting {
 
   void setup(String interp) {
     Step resize = gen.addStep(
-        new OperationMetaData(ResizeOperation.DESCRIPTION, () -> new ResizeOperation(isf, osf)));
+        new OperationMetaData(OperationDescription.from(ResizeOperation.class),
+            () -> new ResizeOperation(isf, osf)));
     loadImage(Files.gompeiJpegFile);
     OutputSocket imgOut = pipeline.getSources().get(0).getOutputSockets().get(0);
     for (InputSocket sock : resize.getInputSockets()) {

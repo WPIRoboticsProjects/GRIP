@@ -14,6 +14,7 @@ public abstract class ThresholdOperation<O extends ThresholdOperation<O>> implem
    * @param index     The index of the data array that should be inspected
    * @param value     The value that should be assigned to the mat regardless of being reallocated
    * @param input     The input matrix that the dataArray element should be compared against
+   *
    * @return Either the old mat with the value assigned or a newly created Matrix.
    */
   protected Mat reallocateMatIfInputSizeOrWidthChanged(final Mat[] dataArray, final int index,

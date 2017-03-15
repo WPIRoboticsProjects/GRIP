@@ -2,6 +2,7 @@ package edu.wpi.grip.ui.codegeneration.cv;
 
 
 import edu.wpi.grip.core.ManualPipelineRunner;
+import edu.wpi.grip.core.OperationDescription;
 import edu.wpi.grip.core.OperationMetaData;
 import edu.wpi.grip.core.Step;
 import edu.wpi.grip.core.operations.opencv.NewPointOperation;
@@ -31,7 +32,8 @@ public class CVRectangle extends AbstractGenerationTesting {
 
 
   boolean setup(String type) {
-    Step step0 = gen.addStep(new OperationMetaData(NewPointOperation.DESCRIPTION, () -> new
+    Step step0 = gen.addStep(new OperationMetaData(
+        OperationDescription.from(NewPointOperation.class), () -> new
         NewPointOperation(isf, osf)));
     for (InputSocket sock : step0.getInputSockets()) {
       if (sock.getSocketHint().getIdentifier().equals("x")) {
@@ -41,7 +43,8 @@ public class CVRectangle extends AbstractGenerationTesting {
       }
     }
 
-    Step step1 = gen.addStep(new OperationMetaData(NewPointOperation.DESCRIPTION, () -> new
+    Step step1 = gen.addStep(new OperationMetaData(
+        OperationDescription.from(NewPointOperation.class), () -> new
         NewPointOperation(isf, osf)));
     for (InputSocket sock : step1.getInputSockets()) {
       if (sock.getSocketHint().getIdentifier().equals("x")) {

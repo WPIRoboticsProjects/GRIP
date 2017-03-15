@@ -1,6 +1,7 @@
 package edu.wpi.grip.ui.codegeneration.cv;
 
 import edu.wpi.grip.core.ManualPipelineRunner;
+import edu.wpi.grip.core.OperationDescription;
 import edu.wpi.grip.core.OperationMetaData;
 import edu.wpi.grip.core.Step;
 import edu.wpi.grip.core.operations.opencv.NewSizeOperation;
@@ -27,8 +28,8 @@ public class CVGaussianBlur extends AbstractGenerationTesting {
   private static final double sigmay = 41;
 
   boolean setup(String type) {
-    Step step0 = gen.addStep(new OperationMetaData(NewSizeOperation.DESCRIPTION, () -> new
-        NewSizeOperation(isf, osf)));
+    Step step0 = gen.addStep(new OperationMetaData(
+        OperationDescription.from(NewSizeOperation.class), () -> new NewSizeOperation(isf, osf)));
     for (InputSocket sock : step0.getInputSockets()) {
       if (sock.getSocketHint().getIdentifier().equals("width")) {
         sock.setValue(width);
