@@ -64,6 +64,7 @@ import javax.inject.Inject;
 /**
  * The Controller for the application window.
  */
+@SuppressWarnings("PMD.GodClass") // temporary
 public class MainWindowController {
 
   @FXML
