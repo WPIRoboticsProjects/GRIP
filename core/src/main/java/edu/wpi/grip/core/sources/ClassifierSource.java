@@ -39,7 +39,7 @@ public class ClassifierSource extends Source {
                              OutputSocket.Factory osf,
                              ExceptionWitness.Factory exceptionWitnessFactory,
                              @Assisted String filePath) {
-    super(exceptionWitnessFactory);
+    super(makeId(ClassifierSource.class), exceptionWitnessFactory);
     this.classifierSocket = osf.create(classifierHint);
     this.filePath = filePath;
   }
