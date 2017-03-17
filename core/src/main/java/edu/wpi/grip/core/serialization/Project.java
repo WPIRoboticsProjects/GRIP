@@ -167,7 +167,7 @@ public class Project {
    * @param file the file to save to
    *
    * @return true if the project was successfully saved to the given file, or false if the file
-   * could not be written to
+   *              could not be written to
    */
   public boolean trySave(File file) {
     try {

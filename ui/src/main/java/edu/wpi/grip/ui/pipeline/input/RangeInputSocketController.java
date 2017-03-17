@@ -13,7 +13,6 @@ import org.controlsfx.control.RangeSlider;
 
 import java.util.List;
 
-import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
