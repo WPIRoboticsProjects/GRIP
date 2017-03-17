@@ -66,18 +66,21 @@
         </HBox>
     </HBox>
     <Separator orientation="HORIZONTAL" />
-    <Label fx:id="title" maxWidth="Infinity" styleClass="title">
-        <graphic>
-            <ImageView fx:id="icon">
-                <fitWidth>
-                    <DPIUtility fx:constant="SMALL_ICON_SIZE" />
-                </fitWidth>
-                <fitHeight>
-                    <DPIUtility fx:constant="SMALL_ICON_SIZE" />
-                </fitHeight>
-            </ImageView>
-        </graphic>
-    </Label>
+    <VBox>
+        <Label fx:id="title" maxWidth="Infinity" styleClass="title">
+            <graphic>
+                <ImageView fx:id="icon">
+                    <fitWidth>
+                        <DPIUtility fx:constant="SMALL_ICON_SIZE" />
+                    </fitWidth>
+                    <fitHeight>
+                        <DPIUtility fx:constant="SMALL_ICON_SIZE" />
+                    </fitHeight>
+                </ImageView>
+            </graphic>
+        </Label>
+        <Label fx:id="elapsedTime" maxWidth="Infinity" text="Did not run" />
+    </VBox>
     <Separator orientation="HORIZONTAL" />
     <Button fx:id="expand" onMouseClicked="#toggleExpand" styleClass="expand"
             maxWidth="Infinity" prefHeight="0" HBox.hgrow="ALWAYS">

@@ -384,6 +384,26 @@ public class PipelineTest {
         Arrays.asList(lowerStep, stepToMove, upperStep), pipeline.getSteps());
   }
 
+  @Test
+  @SuppressWarnings("PMD.EmptyCatchBlock")
+  public void testIndexOf() {
+    Step step = MockStep.createMockStepWithOperation();
+    pipeline.addStep(step);
+    assertEquals("Index of step was not zero", 0, pipeline.indexOf(step));
+    pipeline.removeStep(step);
+    assertEquals("Index was not -1", -1, pipeline.indexOf(step));
+  }
+
+  @Test
+  public void testCompareSteps() {
+    Step a = MockStep.createMockStepWithOperation();
+    Step b = MockStep.createMockStepWithOperation();
+    pipeline.addStep(a);
+    pipeline.addStep(b);
+    assertEquals("a should be 1 behind b", -1, pipeline.compare(a, b));
+    assertEquals("b should be 1 ahead of a", 1, pipeline.compare(b, a));
+  }
+
   private static class MockConnection extends Connection {
 
     /**

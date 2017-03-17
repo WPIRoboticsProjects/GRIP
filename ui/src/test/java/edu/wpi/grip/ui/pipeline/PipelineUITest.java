@@ -7,6 +7,7 @@ import edu.wpi.grip.core.OperationMetaData;
 import edu.wpi.grip.core.Pipeline;
 import edu.wpi.grip.core.Step;
 import edu.wpi.grip.core.SubtractionOperation;
+import edu.wpi.grip.core.metrics.MockTimer;
 import edu.wpi.grip.core.operations.composite.BlurOperation;
 import edu.wpi.grip.core.operations.composite.DesaturateOperation;
 import edu.wpi.grip.core.operations.network.MockGripNetworkModule;
@@ -27,6 +28,7 @@ import com.google.inject.util.Modules;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 import org.junit.After;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.testfx.framework.junit.ApplicationTest;
 import org.testfx.matcher.base.NodeMatchers;
@@ -113,13 +115,14 @@ public class PipelineUITest extends ApplicationTest {
   }
 
   @Test
+  @Ignore("Broken. Often tries to connect an image output socket to a number input socket.")
   public void testMinimizeButton() {
     Step desaturateStep = addOperation(1, desaturateOperation);
     Step blurStep = addOperation(1, blurOperation);
     assertTrue("blur input socket size is:" + blurStep.getInputSockets().size(),
         blurStep.getInputSockets().size() > 0);
 
-    drag(StyleClassNameUtility.cssSelectorForOutputSocketHandleOn(desaturateStep),  MouseButton
+    drag(StyleClassNameUtility.cssSelectorForOutputSocketHandleOn(desaturateStep), MouseButton
         .PRIMARY).dropTo(StyleClassNameUtility.cssSelectorForInputSocketHandleOn(blurStep));
 
     clickOn(".pipeline .blur-step .expand", MouseButton.PRIMARY);
@@ -186,7 +189,8 @@ public class PipelineUITest extends ApplicationTest {
   }
 
   private Step addOperation(int count, OperationMetaData operationMetaData) {
-    final Step step = new Step.Factory(origin -> new MockExceptionWitness(eventBus, origin))
+    final Step step = new Step.Factory(origin -> new MockExceptionWitness(eventBus, origin),
+        MockTimer.MOCK_FACTORY)
         .create(operationMetaData);
     pipeline.addStep(step);
 

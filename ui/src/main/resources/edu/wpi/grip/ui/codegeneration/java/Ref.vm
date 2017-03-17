@@ -7,11 +7,11 @@
 	 * </p>
 	 * @param <T> The type of object being referenced
 	 */
-	private class Ref<T> {
+	private static class Ref<T> {
 		private T value;
 
 		/**
-		 * Constructor for a MutableOf object.
+		 * Constructor for a Ref object.
 		 * @param initValue Type T initial value for the object.
 		 */
 		public Ref(T initValue) {
@@ -19,7 +19,7 @@
 		}
 
 		/**
-		 * Constructor for a Ref object without an initialCondition.
+		 * Constructor for a Ref object without an initial value.
 		 * Equivalent to calling Ref(null)
 		 */
 		public Ref() {

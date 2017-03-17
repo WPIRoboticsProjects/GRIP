@@ -1,12 +1,12 @@
 package edu.wpi.grip.core.operations.network.http;
 
+import edu.wpi.grip.core.Pipeline;
 import edu.wpi.grip.core.events.RunStartedEvent;
 import edu.wpi.grip.core.events.RunStoppedEvent;
 import edu.wpi.grip.core.http.ContextStore;
 import edu.wpi.grip.core.http.GripServer;
 import edu.wpi.grip.core.http.GripServerTest;
 import edu.wpi.grip.core.operations.network.NumberPublishable;
-import edu.wpi.grip.core.settings.ProjectSettings;
 import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.sockets.MockInputSocketFactory;
 
@@ -61,7 +61,7 @@ public class HttpPublisherTest {
     ContextStore contextStore = new ContextStore();
     InputSocket.Factory isf = new MockInputSocketFactory(eventBus);
     server = GripServerTest.makeServer(
-        contextStore, new GripServerTest.TestServerFactory(), ProjectSettings::new);
+        contextStore, new GripServerTest.TestServerFactory(), new Pipeline());
     dataHandler = new DataHandler(contextStore);
     eventBus.register(dataHandler);
 

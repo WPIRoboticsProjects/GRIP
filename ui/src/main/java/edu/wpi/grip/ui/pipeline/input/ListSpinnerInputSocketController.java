@@ -61,9 +61,7 @@ public class ListSpinnerInputSocketController extends InputSocketController<List
     spinner.setEditable(true);
     spinner.disableProperty().bind(this.getHandle().connectedProperty());
     spinner.focusedProperty().addListener((s, ov, nv) -> {
-      // Code found at http://stackoverflow
-      // .com/questions/32340476/manually-typing-in-text-in-javafx-spinner-is-not-updating-the
-      // -value-unless-user
+      // Code found at http://stackoverflow.com/questions/32340476/manually-typing-in-text-in-javafx-spinner-is-not-updating-the-value-unless-user
       if (nv) {
         return;
       }
@@ -77,10 +75,9 @@ public class ListSpinnerInputSocketController extends InputSocketController<List
     if (event.isRegarding(this.getSocket())) {
       platform.runAsSoonAsPossible(() -> {
         // Remove the invalidation listener when we set the value.  This listener is useful for
-        // updating the socket value
-        // when the user changes the spinner, but since we're setting the spinner value from the
-        // socket value, calling it
-        // here would not only be redundant, but would create an infinite loop.
+        // updating the socket value when the user changes the spinner, but since we're setting
+        // the spinner value from the socket value, calling it here would not only be redundant,
+        // but would create an infinite loop.
         synchronized (this.valueFactory) {
           this.valueFactory.valueProperty().removeListener(updateSocketFromSpinner);
           this.valueFactory.setValue(this.getSocket().getValue().get());
@@ -90,9 +87,7 @@ public class ListSpinnerInputSocketController extends InputSocketController<List
     }
   }
 
-  // Code found at http://stackoverflow
-  // .com/questions/32340476/manually-typing-in-text-in-javafx-spinner-is-not-updating-the-value
-  // -unless-user
+  // Code found at http://stackoverflow.com/questions/32340476/manually-typing-in-text-in-javafx-spinner-is-not-updating-the-value-unless-user
   private <T> void commitEditorText(Spinner<T> spinner) {
     if (!spinner.isEditable()) {
       return;

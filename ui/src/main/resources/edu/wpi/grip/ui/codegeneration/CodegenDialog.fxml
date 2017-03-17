@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox fx:id="root" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="edu.wpi.grip.ui.codegeneration.CodeGenerationOptionsController">
+    <children>
+        <GridPane fx:id="optionsGrid" alignment="CENTER_LEFT">
+            <columnConstraints>
+                <ColumnConstraints hgrow="ALWAYS" maxWidth="232.0" minWidth="10.0" prefWidth="221.0" />
+                <ColumnConstraints hgrow="ALWAYS" maxWidth="231.0" minWidth="10.0" prefWidth="169.0" />
+            </columnConstraints>
+            <rowConstraints>
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="NEVER" />
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="NEVER" />
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="NEVER" />
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="NEVER" />
+            </rowConstraints>
+            <children>
+                <Label text="Language" />
+                <ComboBox fx:id="languageSelector" maxWidth="1.7976931348623157E308" onAction="#setLanguage" GridPane.columnIndex="1" />
+                <Label text="Pipeline class name" GridPane.rowIndex="2" />
+                <TextField fx:id="classNameField" text="Pipeline" GridPane.columnIndex="1" GridPane.hgrow="NEVER" GridPane.rowIndex="2" />
+                <Label text="Save location" GridPane.rowIndex="3" />
+                <HBox nodeOrientation="LEFT_TO_RIGHT" GridPane.columnIndex="1" GridPane.rowIndex="3" GridPane.vgrow="NEVER">
+                    <children>
+                        <Label fx:id="saveLocationLabel" disable="true" maxHeight="-Infinity" minHeight="26.0" prefHeight="30.0" prefWidth="105.0" HBox.hgrow="ALWAYS" />
+                        <Button fx:id="browseButton" alignment="CENTER" disable="true" mnemonicParsing="false" onAction="#browseForSave" prefHeight="26.0" prefWidth="82.0" text="Browse" />
+                    </children>
+                </HBox>
+                <Label text="Implement WPILib VisionPipeline" GridPane.rowIndex="1" />
+                <CheckBox fx:id="implementVisionPipeline" mnemonicParsing="false" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+            </children>
+            <padding>
+                <Insets left="5.0" right="5.0" top="5.0" />
+            </padding>
+        </GridPane>
+        <StackPane fx:id="extrasPane">
+            <children>
+                <GridPane fx:id="javaControls">
+                    <columnConstraints>
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="1.7976931348623157E308" minWidth="10.0" prefWidth="218.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="1.7976931348623157E308" minWidth="10.0" prefWidth="172.0" />
+                    </columnConstraints>
+                    <rowConstraints>
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                    </rowConstraints>
+                    <children>
+                        <Label text="Package name" />
+                        <TextField fx:id="packageNameField" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" />
+                    </children>
+                    <padding>
+                        <Insets bottom="5.0" left="5.0" right="5.0" />
+                    </padding>
+                </GridPane>
+                <GridPane fx:id="pythonControls">
+                    <columnConstraints>
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="221.0" minWidth="10.0" prefWidth="221.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="280.0" minWidth="10.0" prefWidth="169.0" />
+                    </columnConstraints>
+                    <rowConstraints>
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                    </rowConstraints>
+                    <children>
+                        <Label text="Module name" />
+                        <TextField fx:id="moduleNameField" prefWidth="195.0" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" />
+                    </children>
+                    <padding>
+                        <Insets bottom="5.0" left="5.0" right="5.0" />
+                    </padding>
+                </GridPane>
+            </children>
+        </StackPane>
+      <Separator prefWidth="200.0" />
+    </children>
+</VBox>

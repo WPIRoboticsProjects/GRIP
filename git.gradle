@@ -1,0 +1,20 @@
+def git_provided = false
+if (rootProject.file(".git").exists()) {
+    git_provided = true
+    project.apply plugin: 'org.ajoberstar.grgit'
+}
+
+ext.getGitCommit = { ->
+    if (git_provided) return grgit.head().abbreviatedId
+    return "<no commit>"
+}
+
+ext.getGitDescribe = { ->
+    if (git_provided) return grgit.describe()
+    return "v0.0.0"
+}
+
+ext.getGitDescribeAbbrev = { ->
+    if (git_provided) return grgit.tag.list().last().getName()
+    return "v0.0.0"
+}

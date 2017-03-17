@@ -25,6 +25,7 @@ public interface InputSocket<T> extends Socket<T> {
   /**
    * Should be only called by parent classes.
    */
+  @Override
   void onValueChanged();
 
   interface Factory {

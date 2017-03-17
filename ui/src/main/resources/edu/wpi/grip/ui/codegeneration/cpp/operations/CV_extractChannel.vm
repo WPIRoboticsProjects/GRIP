@@ -4,6 +4,6 @@
 	 * @param channel zero indexed channel number to extract.
 	 * @param dst output image.
 	 */
-	void $fileName::#func($step ["src", "channel", "dst"]) {
-		extractChannel(src, dst, (int)channel);
+	void $className::#func($step ["src", "channel", "dst"]) {
+		cv::extractChannel(src, dst, (int)channel);
 	}

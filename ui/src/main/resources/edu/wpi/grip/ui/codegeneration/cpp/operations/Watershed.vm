@@ -5,13 +5,13 @@
 	 * @param contours The contours used to create the watershed.
 	 * @param output The image where the output is stored.
 	 */
-	void $fileName::#func($step ["input", "contours", "output"]) {
-		Mat markers(input->size(), CV_32SC1, Scalar(0.0));
+	void $className::#func($step ["input", "contours", "output"]) {
+		cv::Mat markers(input->size(), cv::CV_32SC1, cv::Scalar(0.0));
 		for (int i = 0; i < contours->size(); i++) {
-			drawContours(markers, contours, i, Scalar::all((i + 1) * (255/contours->size())));
+			cv::drawContours(markers, contours, i, cv::Scalar::all((i + 1) * (255/contours->size())));
 			}
-		circle(markers, Point(5, 5), 3, Scalar::all(255), -1, LINE_8, 0);
-		watershed(input, markers);
-		markers->convertTo(output, CV_8UC1);
-		bitwise_not(output, output);
+		cv::circle(markers, cv::Point(5, 5), 3, cv::Scalar::all(255), -1, LINE_8, 0);
+		cv::watershed(input, markers);
+		markers->convertTo(output, cv::CV_8UC1);
+		cv::bitwise_not(output, output);
 	}

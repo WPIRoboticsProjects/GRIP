@@ -7,7 +7,7 @@
 	 * @param output The output which is equal to either onTrue or onFalse.
 	 */
 	template<typename T>
-	void $fileName::#func($step ["sw", "onTrue", "onFalse", "output"]) {
+	void $className::#func($step ["sw", "onTrue", "onFalse", "output"]) {
 		if (sw) {
 			output = onTrue;
 		}

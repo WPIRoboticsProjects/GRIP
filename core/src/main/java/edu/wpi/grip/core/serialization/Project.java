@@ -4,10 +4,12 @@ import edu.wpi.grip.core.Pipeline;
 import edu.wpi.grip.core.PipelineRunner;
 import edu.wpi.grip.core.VersionManager;
 import edu.wpi.grip.core.events.DirtiesSaveEvent;
+import edu.wpi.grip.core.events.WarningEvent;
 import edu.wpi.grip.core.exception.InvalidSaveException;
 import edu.wpi.grip.core.exception.UnknownSaveFormatException;
 
 import com.google.common.annotations.VisibleForTesting;
+import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import com.google.common.reflect.ClassPath;
 import com.thoughtworks.xstream.XStream;
@@ -42,6 +44,8 @@ public class Project {
 
   protected final XStream xstream = new XStream(new PureJavaReflectionProvider());
   @Inject
+  private EventBus eventBus;
+  @Inject
   private Pipeline pipeline;
   private ProjectModel model;
   @Inject
@@ -56,16 +60,19 @@ public class Project {
                          SocketConverter socketConverter,
                          ConnectionConverter connectionConverter,
                          ProjectSettingsConverter projectSettingsConverter,
+                         CodeGenerationSettingsConverter codeGenerationSettingsConverter,
                          VersionConverter versionConverter) {
     model = new ProjectModel(pipeline, VersionManager.CURRENT_VERSION);
     xstream.setMode(XStream.NO_REFERENCES);
     xstream.registerConverter(projectConverter);
+    xstream.ignoreUnknownElements(); // ignores all unknown tags
     xstream.registerConverter(stepConverter);
     xstream.registerConverter(sourceConverter);
     xstream.registerConverter(socketConverter);
     xstream.registerConverter(connectionConverter);
     xstream.registerConverter(projectSettingsConverter);
     xstream.registerConverter(versionConverter);
+    xstream.registerConverter(codeGenerationSettingsConverter);
     try {
       ClassPath cp = ClassPath.from(getClass().getClassLoader());
       cp.getAllClasses()
@@ -151,6 +158,29 @@ public class Project {
     }
     pipelineRunner.startAsync();
     saveIsDirty.set(false);
+  }
+
+  /**
+   * Tries to save this project to the given file. Unlike {@link #save(File)}, this will <i>not</i>
+   * throw an IOException and will instead post a warning event to the event bus.
+   *
+   * @param file the file to save to
+   *
+   * @return true if the project was successfully saved to the given file, or false if the file
+   * could not be written to
+   */
+  public boolean trySave(File file) {
+    try {
+      save(file);
+      return true;
+    } catch (IOException e) {
+      eventBus.post(new WarningEvent(
+          "Could not save project",
+          "The project could not be saved to " + file.getAbsolutePath()
+              + ".\n\nCause: " + e.getMessage()
+      ));
+      return false;
+    }
   }
 
   /**

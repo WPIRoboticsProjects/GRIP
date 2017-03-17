@@ -4,6 +4,7 @@ import edu.wpi.grip.core.events.ExceptionEvent;
 import edu.wpi.grip.core.events.RenderEvent;
 import edu.wpi.grip.core.events.RunPipelineEvent;
 import edu.wpi.grip.core.events.StopPipelineEvent;
+import edu.wpi.grip.core.metrics.MockTimer;
 import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.sockets.MockInputSocket;
 import edu.wpi.grip.core.sockets.OutputSocket;
@@ -82,8 +83,10 @@ public class PipelineRunnerTest {
 
     @Test
     public void testRunEmptyPipelineSucceeds() {
-      PipelineRunner runner = new PipelineRunner(new EventBus(), () -> ImmutableList.of(), () ->
-          ImmutableList.of());
+      PipelineRunner runner = new PipelineRunner(new EventBus(),
+          () -> ImmutableList.of(),
+          () -> ImmutableList.of(),
+          MockTimer.MOCK_FACTORY);
       runner.addListener(failureListener, MoreExecutors.directExecutor());
       runner.startAsync().awaitRunning();
       assertEquals("Runner should be running", Service.State.RUNNING, runner.state());
@@ -100,7 +103,7 @@ public class PipelineRunnerTest {
       final MockStep step = new MockStep();
 
       final PipelineRunner runner = new PipelineRunner(eventBus, () -> ImmutableList.of(source),
-          () -> ImmutableList.of(step));
+          () -> ImmutableList.of(step), MockTimer.MOCK_FACTORY);
       runner.addListener(failureListener, MoreExecutors.directExecutor());
       runner.startAsync().awaitRunning();
       assertEquals("Runner should be running", Service.State.RUNNING, runner.state());
@@ -113,7 +116,7 @@ public class PipelineRunnerTest {
     @Test
     public void testStopPipelineEventStopsPipeline() throws TimeoutException {
       PipelineRunner runner = new PipelineRunner(new EventBus(), () -> ImmutableList.of(), () ->
-          ImmutableList.of());
+          ImmutableList.of(), MockTimer.MOCK_FACTORY);
       runner.addListener(failureListener, MoreExecutors.directExecutor());
       runner.startAsync().awaitRunning(3, TimeUnit.SECONDS);
       assertEquals("Runner should be running", Service.State.RUNNING, runner.state());
@@ -156,10 +159,12 @@ public class PipelineRunnerTest {
       eventBus.register(exceptionEventReceiver);
       eventBus.register(new RenderWaiterResumer(renderWaiter));
 
-      final Step throwingStep = new Step.Factory(MockExceptionWitness.simpleFactory(eventBus))
+      final Step throwingStep = new Step.Factory(
+          MockExceptionWitness.simpleFactory(eventBus),
+          MockTimer.MOCK_FACTORY)
           .create(operationMetaData);
       final PipelineRunner runner = new PipelineRunner(eventBus, () -> ImmutableList.of(), () ->
-          ImmutableList.of(throwingStep));
+          ImmutableList.of(throwingStep), MockTimer.MOCK_FACTORY);
       runner.addListener(failureListener, MoreExecutors.directExecutor());
 
       runner.startAsync().awaitRunning();
@@ -199,8 +204,8 @@ public class PipelineRunnerTest {
       renderWaiter = new Waiter();
       sourceCounter = new RunSourceCounter();
       operationCounter = new RunCounterOperation();
-      runCounterStep = new Step.Factory(MockExceptionWitness.MOCK_FACTORY).create(new
-          OperationMetaData(RunCounterOperation.DESCRIPTION, () -> operationCounter));
+      runCounterStep = new Step.Factory(MockExceptionWitness.MOCK_FACTORY, MockTimer.MOCK_FACTORY)
+          .create(new OperationMetaData(RunCounterOperation.DESCRIPTION, () -> operationCounter));
       failureListener = new FailureListener();
 
     }
@@ -215,7 +220,9 @@ public class PipelineRunnerTest {
     public void testOperationNormalMethodCallCount() throws TimeoutException {
       eventBus.register(new RenderWaiterResumer(renderWaiter));
       final PipelineRunner runner = new PipelineRunner(eventBus,
-          () -> ImmutableList.of(sourceCounter), () -> ImmutableList.of(runCounterStep));
+          () -> ImmutableList.of(sourceCounter),
+          () -> ImmutableList.of(runCounterStep),
+          MockTimer.MOCK_FACTORY);
       runner.addListener(failureListener, MoreExecutors.directExecutor());
 
       runner.startAsync().awaitRunning();
@@ -257,7 +264,8 @@ public class PipelineRunnerTest {
     public void testRemovedStepWillNotRun() {
       final PipelineRunner runner = new PipelineRunner(eventBus,
           () -> ImmutableList.of(),
-          () -> ImmutableList.of(runCounterStep));
+          () -> ImmutableList.of(runCounterStep),
+          MockTimer.MOCK_FACTORY);
       runner.addListener(failureListener, MoreExecutors.directExecutor());
 
       runner.startAsync().awaitRunning();
@@ -286,15 +294,18 @@ public class PipelineRunnerTest {
         TimeoutException {
       final Waiter sourceSupplierWaiter = new Waiter();
       final Waiter supplierBlockedWaiter = new Waiter();
-      final PipelineRunner runner = new PipelineRunner(eventBus, () -> {
-        try {
-          supplierBlockedWaiter.resume();
-          sourceSupplierWaiter.await();
-        } catch (TimeoutException e) {
-          throw new IllegalStateException(e);
-        }
-        return ImmutableList.of();
-      }, () -> ImmutableList.of(runCounterStep));
+      final PipelineRunner runner = new PipelineRunner(eventBus,
+          () -> {
+            try {
+              supplierBlockedWaiter.resume();
+              sourceSupplierWaiter.await();
+            } catch (TimeoutException e) {
+              throw new IllegalStateException(e);
+            }
+            return ImmutableList.of();
+          },
+          () -> ImmutableList.of(runCounterStep),
+          MockTimer.MOCK_FACTORY);
       runner.addListener(failureListener, MoreExecutors.directExecutor());
 
       runner.startAsync().awaitRunning(3, TimeUnit.SECONDS);
@@ -315,15 +326,18 @@ public class PipelineRunnerTest {
     public void testPipelineWontRunSourceIfStoppedAfterRunPipelineEvent() throws TimeoutException {
       final Waiter sourceSupplierWaiter = new Waiter();
       final Waiter supplierBlockedWaiter = new Waiter();
-      final PipelineRunner runner = new PipelineRunner(eventBus, () -> {
-        try {
-          supplierBlockedWaiter.resume();
-          sourceSupplierWaiter.await();
-        } catch (TimeoutException e) {
-          throw new IllegalStateException(e);
-        }
-        return ImmutableList.of(sourceCounter);
-      }, () -> ImmutableList.of());
+      final PipelineRunner runner = new PipelineRunner(eventBus,
+          () -> {
+            try {
+              supplierBlockedWaiter.resume();
+              sourceSupplierWaiter.await();
+            } catch (TimeoutException e) {
+              throw new IllegalStateException(e);
+            }
+            return ImmutableList.of(sourceCounter);
+          },
+          () -> ImmutableList.of(),
+          MockTimer.MOCK_FACTORY);
       runner.addListener(failureListener, MoreExecutors.directExecutor());
 
       runner.startAsync().awaitRunning(3, TimeUnit.SECONDS);

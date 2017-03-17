@@ -40,13 +40,12 @@ public class CheckboxInputSocketController extends InputSocketController<Boolean
     // instead of on a new row.
     this.getIdentifier().setGraphic(this.checkBox);
     this.getIdentifier().setContentDisplay(ContentDisplay.RIGHT);
-
+    this.setContent(checkBox);
 
     assignSocketValue(getSocket().getValue());
     // Add the listener after so that setting the initial value doesn't trigger it.
     this.checkBox.selectedProperty().addListener(o -> this.getSocket().setValue(this.checkBox
         .isSelected()));
-    this.checkBox.disableProperty().bind(this.getHandle().connectedProperty());
   }
 
   private void assignSocketValue(final Optional<Boolean> value) {

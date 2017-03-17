@@ -2,7 +2,6 @@ package edu.wpi.grip.core.http;
 
 import edu.wpi.grip.core.exception.InvalidSaveException;
 import edu.wpi.grip.core.serialization.Project;
-import edu.wpi.grip.core.util.GripMode;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
@@ -23,13 +22,11 @@ import javax.servlet.http.HttpServletResponse;
 public class HttpPipelineSwitcher extends PedanticHandler {
 
   private final Project project;
-  private final GripMode mode;
 
   @Inject
-  HttpPipelineSwitcher(ContextStore store, Project project, GripMode mode) {
+  HttpPipelineSwitcher(ContextStore store, Project project) {
     super(store, GripServer.PIPELINE_UPLOAD_PATH, true);
     this.project = project;
-    this.mode = mode;
   }
 
   @Override
@@ -42,30 +39,14 @@ public class HttpPipelineSwitcher extends PedanticHandler {
       baseRequest.setHandled(true);
       return;
     }
-    switch (mode) {
-      case HEADLESS:
-        try {
-          project.open(new String(IOUtils.toByteArray(request.getInputStream()), "UTF-8"));
-          response.setStatus(HttpServletResponse.SC_CREATED);
-          baseRequest.setHandled(true);
-        } catch (InvalidSaveException e) {
-          // 403 - Forbidden if given an invalid save
-          response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-          baseRequest.setHandled(true);
-        }
-        break;
-      case GUI:
-        // Don't run in GUI mode, it doesn't make much sense and can easily deadlock if pipelines
-        // are rapidly posted.
-        // Intentional fall-through to default
-      default:
-        // Don't know the mode or the mode is unsupported; let the client know
-        response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-        sendTextContent(response,
-            String.format("GRIP is not in the correct mode: should be HEADLESS, but is %s", mode),
-            CONTENT_TYPE_PLAIN_TEXT);
-        baseRequest.setHandled(true);
-        break;
+    try {
+      project.open(new String(IOUtils.toByteArray(request.getInputStream()), "UTF-8"));
+      response.setStatus(HttpServletResponse.SC_CREATED);
+      baseRequest.setHandled(true);
+    } catch (InvalidSaveException e) {
+      // 406 - Not Acceptable if given an invalid save
+      response.setStatus(HttpServletResponse.SC_NOT_ACCEPTABLE);
+      baseRequest.setHandled(true);
     }
   }
 }

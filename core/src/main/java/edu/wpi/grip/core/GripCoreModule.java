@@ -1,6 +1,9 @@
 package edu.wpi.grip.core;
 
+import edu.wpi.grip.core.events.EventLogger;
 import edu.wpi.grip.core.events.UnexpectedThrowableEvent;
+import edu.wpi.grip.core.metrics.BenchmarkRunner;
+import edu.wpi.grip.core.metrics.Timer;
 import edu.wpi.grip.core.serialization.Project;
 import edu.wpi.grip.core.settings.SettingsProvider;
 import edu.wpi.grip.core.sockets.InputSocket;
@@ -8,6 +11,7 @@ import edu.wpi.grip.core.sockets.InputSocketImpl;
 import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.core.sockets.OutputSocketImpl;
 import edu.wpi.grip.core.sources.CameraSource;
+import edu.wpi.grip.core.sources.ClassifierSource;
 import edu.wpi.grip.core.sources.HttpSource;
 import edu.wpi.grip.core.sources.ImageFileSource;
 import edu.wpi.grip.core.sources.MultiImageFileSource;
@@ -66,8 +70,8 @@ public class GripCoreModule extends AbstractModule {
           = new FileHandler(GripFileManager.GRIP_DIRECTORY.getPath() + "/GRIP.log");
 
       //Set level to handler and logger
-      fileHandler.setLevel(Level.FINE);
-      globalLogger.setLevel(Level.FINE);
+      fileHandler.setLevel(Level.INFO);
+      globalLogger.setLevel(Level.INFO);
 
       // We need to stream to System.out instead of System.err
       final StreamHandler sh = new StreamHandler(System.out, new SimpleFormatter()) {
@@ -122,6 +126,7 @@ public class GripCoreModule extends AbstractModule {
     });
 
     bind(EventBus.class).toInstance(eventBus);
+    bind(EventLogger.class).asEagerSingleton();
 
     // Allow for just injecting the settings provider, instead of the whole pipeline
     bind(SettingsProvider.class).to(Pipeline.class);
@@ -132,6 +137,7 @@ public class GripCoreModule extends AbstractModule {
     install(new FactoryModuleBuilder().build(new TypeLiteral<Connection.Factory<Object>>() {
     }));
 
+    bind(StepIndexer.class).to(Pipeline.class);
     bind(ConnectionValidator.class).to(Pipeline.class);
     bind(Source.SourceFactory.class).to(Source.SourceFactoryImpl.class);
 
@@ -152,8 +158,16 @@ public class GripCoreModule extends AbstractModule {
     install(new FactoryModuleBuilder()
         .implement(NetworkTableEntrySource.class, NetworkTableEntrySource.class)
         .build(NetworkTableEntrySource.Factory.class));
+    install(new FactoryModuleBuilder()
+        .implement(ClassifierSource.class, ClassifierSource.class)
+        .build(ClassifierSource.Factory.class));
 
     install(new FactoryModuleBuilder().build(ExceptionWitness.Factory.class));
+    install(new FactoryModuleBuilder().build(Timer.Factory.class));
+
+    bind(BenchmarkRunner.class).asEagerSingleton();
+
+    bind(Cleaner.class).asEagerSingleton();
   }
 
   protected void onSubscriberException(Throwable exception, @Nullable SubscriberExceptionContext
@@ -164,7 +178,7 @@ public class GripCoreModule extends AbstractModule {
     } else {
       logger.log(Level.SEVERE, "An event subscriber threw an exception", exception);
       eventBus.post(new UnexpectedThrowableEvent(exception, "An event subscriber threw an "
-          + "exception"));
+          + "exception on thread '" + Thread.currentThread().getName() + "'"));
     }
   }
 

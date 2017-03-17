@@ -94,6 +94,7 @@ public class FindContoursOperation implements Operation {
     MatVector contours = new MatVector();
     findContours(tmp, contours, externalOnly ? CV_RETR_EXTERNAL : CV_RETR_LIST,
         CV_CHAIN_APPROX_TC89_KCOS);
+    tmp.release();
 
     contoursSocket.setValue(new ContoursReport(contours, input.rows(), input.cols()));
   }

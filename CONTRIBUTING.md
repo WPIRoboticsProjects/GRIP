@@ -66,6 +66,7 @@ Include details about your configuration and environment:</br>
 ### Documentation Styleguide
 
 * Use JavaDocs
+* Do not use the `@author` tag
 
 ### Code Formatting
 

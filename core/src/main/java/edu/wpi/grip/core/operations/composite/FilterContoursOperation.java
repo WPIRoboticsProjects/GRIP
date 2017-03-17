@@ -183,6 +183,7 @@ public class FilterContoursOperation implements Operation {
 
       convexHull(contour, hull);
       final double solidity = 100 * area / contourArea(hull);
+      hull.release();
       if (solidity < minSolidity || solidity > maxSolidity) {
         continue;
       }

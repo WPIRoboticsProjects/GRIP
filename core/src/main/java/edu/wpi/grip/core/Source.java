@@ -4,12 +4,14 @@ import edu.wpi.grip.core.events.SourceRemovedEvent;
 import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.core.sources.CameraSource;
+import edu.wpi.grip.core.sources.ClassifierSource;
 import edu.wpi.grip.core.sources.HttpSource;
 import edu.wpi.grip.core.sources.ImageFileSource;
 import edu.wpi.grip.core.sources.MultiImageFileSource;
 import edu.wpi.grip.core.sources.NetworkTableEntrySource;
 import edu.wpi.grip.core.util.ExceptionWitness;
 
+import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableList;
 import com.google.common.eventbus.Subscribe;
 import com.google.inject.Inject;
@@ -131,6 +133,13 @@ public abstract class Source extends AbstractPipelineEntry {
     // Default to NOP
   }
 
+  @Override
+  public String toString() {
+    return MoreObjects.toStringHelper(this)
+        .add("name", getName())
+        .toString();
+  }
+
   public interface SourceFactory {
     Source create(Class<?> type, Properties properties) throws IOException;
   }
@@ -146,6 +155,8 @@ public abstract class Source extends AbstractPipelineEntry {
     HttpSource.Factory httpFactory;
     @Inject
     NetworkTableEntrySource.Factory networkTableEntryFactory;
+    @Inject
+    ClassifierSource.Factory fileSourceFactory;
 
     @Override
     public Source create(Class<?> type, Properties properties) throws IOException {
@@ -159,6 +170,8 @@ public abstract class Source extends AbstractPipelineEntry {
         return httpFactory.create(properties);
       } else if (type.isAssignableFrom(NetworkTableEntrySource.class)) {
         return networkTableEntryFactory.create(properties);
+      } else if (type.isAssignableFrom(ClassifierSource.class)) {
+        return fileSourceFactory.create(properties);
       } else {
         throw new IllegalArgumentException(type + " was not a valid type");
       }

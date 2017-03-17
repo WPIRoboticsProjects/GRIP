@@ -20,9 +20,6 @@ import org.bytedeco.javacpp.opencv_imgcodecs;
 import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Paths;
 import java.util.List;
 import java.util.Properties;
 
@@ -51,8 +48,7 @@ public final class ImageFileSource extends Source {
       final OutputSocket.Factory outputSocketFactory,
       final ExceptionWitness.Factory exceptionWitnessFactory,
       @Assisted final File file) throws UnsupportedEncodingException {
-    this(outputSocketFactory, exceptionWitnessFactory, URLDecoder.decode(Paths.get(file
-        .toURI()).toString(), StandardCharsets.UTF_8.name()));
+    this(outputSocketFactory, exceptionWitnessFactory, file.getAbsolutePath());
   }
 
   @AssistedInject

@@ -2,6 +2,8 @@ package edu.wpi.grip.ui.pipeline;
 
 import edu.wpi.grip.core.Pipeline;
 import edu.wpi.grip.core.Step;
+import edu.wpi.grip.core.events.BenchmarkEvent;
+import edu.wpi.grip.core.events.TimerEvent;
 import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.core.sockets.SocketHint;
@@ -22,15 +24,18 @@ import com.google.inject.assistedinject.Assisted;
 import java.io.InputStream;
 import java.util.Collection;
 import java.util.function.Predicate;
+
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
+import javafx.application.Platform;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.Labeled;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -39,6 +44,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.util.Duration;
+
 import javax.inject.Inject;
 
 /**
@@ -60,6 +66,14 @@ public class StepController implements Controller {
   private VBox root;
   @FXML
   private Labeled title;
+  @FXML
+  private Button deleteButton;
+  @FXML
+  private Button moveLeftButton;
+  @FXML
+  private Button moveRightButton;
+  @FXML
+  private Label elapsedTime;
   @FXML
   private ImageView icon;
   @FXML
@@ -169,6 +183,7 @@ public class StepController implements Controller {
     return outputSocketMapManager.keySet();
   }
 
+  @Override
   public VBox getRoot() {
     return root;
   }
@@ -190,6 +205,25 @@ public class StepController implements Controller {
   @FXML
   private void moveStepRight() {
     pipeline.moveStep(step, +1);
+  }
+
+  @Subscribe
+  @SuppressWarnings("PMD.UnusedPrivateMethod")
+  private void finished(TimerEvent event) {
+    if (event.getTarget() != this.step) {
+      return;
+    }
+    Platform.runLater(() ->
+        elapsedTime.setText(String.format("Ran in %.1f ms", event.getElapsedTime() / 1e3)));
+  }
+
+  @Subscribe
+  private void onBenchmark(BenchmarkEvent e) {
+    Platform.runLater(() -> {
+      deleteButton.setDisable(e.isStart());
+      moveLeftButton.setDisable(e.isStart());
+      moveRightButton.setDisable(e.isStart());
+    });
   }
 
   /**
