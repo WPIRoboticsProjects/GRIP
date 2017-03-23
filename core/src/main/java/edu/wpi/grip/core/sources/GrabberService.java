@@ -86,6 +86,7 @@ public class GrabberService extends AbstractExecutionThreadService {
     }
 
     updater.copyNewMat(frameMat);
+    frameMat.release();
 
     stopwatch.stop();
     final long elapsedTime = stopwatch.elapsed(TimeUnit.MILLISECONDS);
