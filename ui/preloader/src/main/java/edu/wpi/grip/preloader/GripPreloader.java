@@ -18,8 +18,8 @@ import javafx.util.Duration;
 
 public final class GripPreloader extends Preloader {
 
-  private static final Color primaryColor = Color.color(0.95, 1, 0.95);
-  private static final Color secondaryColor = Color.color(0.5, 1, 0.8);
+  private static final Color primaryColor = Color.color(0.5, 0.8, 0.5);
+  private static final Color secondaryColor = primaryColor.deriveColor(1, 1, 0.75, 1);
 
   // Animation timings
   private static final double minTime = 0.25;
