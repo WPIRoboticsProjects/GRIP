@@ -6,6 +6,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.stage.Screen?>
 <?import javafx.scene.layout.StackPane?>
+<?import javafx.geometry.Insets?>
 <StackPane id="root" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1">
     <children>
         <VBox alignment="CENTER">
@@ -17,6 +18,9 @@
                     <Screen fx:factory="getPrimary" fx:id="screen"/>
                 </fx:define>
             </ImageView>
+            <padding>
+                <Insets topRightBottomLeft="25"/>
+            </padding>
         </VBox>
     </children>
     <stylesheets>
