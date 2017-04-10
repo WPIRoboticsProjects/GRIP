@@ -395,8 +395,8 @@ project(":ui") {
         compile group: 'commons-io', name: 'commons-io', version: '2.5'
         testCompile files(project(':core').sourceSets.test.output.classesDir)
         testCompile files(project(':core').sourceSets.test.output.resourcesDir)
-        testCompile group: 'org.testfx', name: 'testfx-core', version: '4.0.+'
-        testCompile group: 'org.testfx', name: 'testfx-junit', version: '4.0.+'
+        testCompile group: 'org.testfx', name: 'testfx-core', version: '4.0.5-alpha'
+        testCompile group: 'org.testfx', name: 'testfx-junit', version: '4.0.5-alpha'
         testRuntime group: 'org.testfx', name: 'openjfx-monocle', version: '1.8.0_20'
         testCompile group: 'org.opencv', name: 'opencv-java', version: '3.1.0'
     }
