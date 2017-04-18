@@ -1,14 +1,12 @@
 @import "controls.css";
 
 * {
-    -fx-smooth: true; /* Have some meaningless -fx- property here or Intellij will freak out */
+    -fx-text-fill: derive(white, -5%);
     base: derive(black, 30%);
     base-dark: derive(black, 20%);
     base-light: derive(black, 40%);
     gripgreen: #6C6E58;
     darkgripgreen: #3E423A;
-    gripsandy: #A4CFBE;
-    -fx-text-fill: derive(white, -5%);
 }
 
 .root {
@@ -49,7 +47,7 @@
 
 .context-menu {
     -fx-padding: 0;
-    -fx-border-color: gray;
+    -fx-border-color: base-dark;
     -fx-border-width: 1;
 }
 
@@ -66,7 +64,7 @@
 }
 
 .menu-item:hover {
-    -fx-background-color: gripgreen;
+    -fx-background-color: base-dark;
 }
 
 .split-pane {
@@ -120,7 +118,7 @@
 }
 
 .split-pane-divider:hover, .split-pane-divider:pressed {
-    -fx-background-color: derive(gripsandy, -20%);
+    -fx-background-color: gray;
 }
 
 .line {
@@ -325,7 +323,7 @@ Button.add-source {
 }
 
 .scroll-bar > .thumb {
-    -fx-background-color: darkgripgreen;
+    -fx-background-color: base-light;
 }
 
 /*
@@ -363,11 +361,11 @@ Button.delete:hover, Button.move-left:hover, Button.move-right:hover {
 }
 
 Button.delete:pressed, Button.move-left:pressed, Button.move-right:pressed {
-    -fx-background-color: gripsandy;
+    -fx-background-color: gray;
 }
 
 .start-stoppable-button:running {
-    -fx-background-color: gripsandy;
+    -fx-background-color: gray;
 }
 
 .start-stoppable-button:stopped {
@@ -418,16 +416,16 @@ VBox.sockets {
 }
 
 .error-pop-over * {
-    -fx-text-fill: gripsandy !important;
+    -fx-text-fill: gray !important;
 }
 
 .error-pop-over .error-message {
-    -fx-fill: gripsandy;
+    -fx-fill: gray;
 }
 
 .error-pop-over .border {
     -fx-stroke-width: 0.5em;
-    -fx-fill: darkgripgreen !important;
+    -fx-fill: base-light !important;
 }
 
 .error-pop-over .content {
@@ -587,7 +585,7 @@ VBox.sockets {
 }
 
 .socket-handle:hover {
-    -fx-background-color: gripsandy;
+    -fx-background-color: gray;
 }
 
 /*
@@ -603,5 +601,5 @@ VBox.sockets {
 }
 
 .preview-button:selected {
-    -fx-background-color: gripsandy;
+    -fx-background-color: gray;
 }

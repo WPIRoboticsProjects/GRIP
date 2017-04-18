@@ -28,8 +28,12 @@ public class ThemeExtractor {
           new File(rootDir, "dark/theme.css"));
       FileUtils.copyURLToFile(getClass().getResource(toInternalPath("dark/controls.css")),
           new File(rootDir, "dark/controls.css"));
+      FileUtils.copyURLToFile(getClass().getResource(toInternalPath("dark/preview.png")),
+          new File(rootDir, "dark/preview.png"));
       FileUtils.copyURLToFile(getClass().getResource(toInternalPath("light/theme.css")),
           new File(rootDir, "light/theme.css"));
+      FileUtils.copyURLToFile(getClass().getResource(toInternalPath("light/preview.png")),
+          new File(rootDir, "light/preview.png"));
     } catch (IOException e) {
       logger.log(Level.WARNING, "Could not extract themes", e);
     }

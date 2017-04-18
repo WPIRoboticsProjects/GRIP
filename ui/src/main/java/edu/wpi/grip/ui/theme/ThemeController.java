@@ -6,12 +6,14 @@ import com.google.common.eventbus.EventBus;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
+import java.io.File;
 import java.util.Comparator;
 import java.util.prefs.Preferences;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.ToggleGroup;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
 
 /**
@@ -46,14 +48,24 @@ public class ThemeController {
         .forEach(t -> {
           RadioButton b = new RadioButton(t.getName());
           b.setToggleGroup(toggleGroup);
-          if (t.getLocation().toURI().toString().equals(preferences.get("theme", ""))) {
+          if (absolutePath(t).equals(preferences.get("theme", ""))) {
             b.setSelected(true);
           }
-          b.setOnAction(event -> {
-            eventBus.post(new ThemeChangedEvent(t.getLocation().toURI().toString()));
-          });
+          b.setOnAction(event -> eventBus.post(new ThemeChangedEvent(absolutePath(t))));
           root.getChildren().add(b);
+          File previewFile = findPreviewFile(t);
+          if (previewFile.exists()) {
+            b.setGraphic(new ImageView(previewFile.toURI().toString()));
+          }
         });
+  }
+
+  private static String absolutePath(Theme theme) {
+    return theme.getLocation().toURI().toString();
+  }
+
+  private static File findPreviewFile(Theme theme) {
+    return new File(theme.getLocation().getParentFile(), "preview.png");
   }
 
 }

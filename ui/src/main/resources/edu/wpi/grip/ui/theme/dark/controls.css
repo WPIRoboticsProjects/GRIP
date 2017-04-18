@@ -9,7 +9,7 @@
 }
 
 .button:hover, .toggle-button:hover {
-    -fx-background-color: darkgripgreen;
+    -fx-background-color: base-light;
 }
 
 .button:pressed, .toggle-button:selected {
@@ -25,7 +25,7 @@
 }
 
 .text-field:focused, .text-area:focused .content {
-    -fx-background-color: darkgripgreen;
+    -fx-background-color: gray;
 }
 
 /*
@@ -74,7 +74,7 @@
  */
 
 .radio-button .dot {
-    -fx-mark-color: gripsandy;
+    -fx-mark-color: lightgray;
     -fx-mark-highlight-color: gripgreen;
 }
 
@@ -95,7 +95,7 @@
 }
 
 .range-slider .high-thumb, .range-slider .low-thumb, .slider .thumb {
-    -fx-background-color: gripsandy;
+    -fx-background-color: lightgray;
 }
 
 /**
