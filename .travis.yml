@@ -38,7 +38,7 @@ script:
   # will not be able to run MainWindowTest.testDragOperationFromPaletteToPipeline
   - |
     if [[ "$TRAVIS_OS_NAME" == "osx" ]];
-    then ./gradlew check jacocoTestReport jacocoRootReport --stacktrace -Pheadless=true -PlogTests -Dscan -Pgeneration -PjniLocation=$HOME/opencv/jni -PjvmArgs=["-Dcodegen.python.disabled=true"];
+    then ./gradlew check jacocoTestReport jacocoRootReport --stacktrace -Pheadless=true -PlogTests -Dscan -Pgeneration -PjniLocation=$HOME/opencv/jni;
     else ./gradlew check jacocoTestReport jacocoRootReport --stacktrace -Pheadless=true -PlogTests -Dscan;
     fi
 
