@@ -29,6 +29,7 @@ import org.bytedeco.javacpp.opencv_core.Point;
 import org.bytedeco.javacpp.opencv_core.Scalar;
 import org.bytedeco.javacpp.opencv_core.Size;
 import org.bytedeco.javacpp.opencv_imgproc;
+import org.bytedeco.javacpp.opencv_photo;
 
 /**
  * A list of all of the raw opencv operations.
@@ -376,6 +377,21 @@ public class CVOperations {
                 (src, thresh, maxval, type, dst) -> {
                   opencv_imgproc.threshold(src, dst, thresh.doubleValue(), maxval.doubleValue(),
                       type.value);
+                }
+            )),
+        new OperationMetaData(CVOperation.defaults("CV fastNlMeansDenoisingColored",
+            "Modification of fastNlMeansDenoising function for colored images"),
+            templateFactory.create(
+                SocketHints.Inputs.createMatSocketHint("src", false),
+                SocketHints.Inputs.createNumberSpinnerSocketHint("h", 3),
+                SocketHints.Inputs.createNumberSpinnerSocketHint("hColor", 3),
+                SocketHints.Inputs.createNumberSpinnerSocketHint("templateWindowSize", 7),
+                SocketHints.Inputs.createNumberSpinnerSocketHint("searchWindowSize", 21),
+                SocketHints.Outputs.createMatSocketHint("dst"),
+                (src, h, hColor, templateWindowSize, searchWindowSize, dst) -> {
+                  opencv_photo.fastNlMeansDenoisingColored(src, dst, h.floatValue(), hColor
+                          .floatValue(),
+                      templateWindowSize.intValue(), searchWindowSize.intValue());
                 }
             ))
     );
