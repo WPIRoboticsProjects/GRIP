@@ -16,6 +16,7 @@ import org.testfx.util.WaitForAsyncUtils;
 import java.io.IOException;
 import java.util.Optional;
 import java.util.Properties;
+
 import javafx.application.Platform;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
@@ -42,8 +43,8 @@ public class AddSourceButtonTest {
       this.mockCameraSourceFactory = new MockCameraSourceFactory(eventBus);
 
 
-      addSourceView
-          = new AddSourceButton(eventBus, null, null, mockCameraSourceFactory, null, null, null);
+      addSourceView = new AddSourceButton(eventBus, null, null, mockCameraSourceFactory,
+          null, null, null, null);
 
       final Scene scene = new Scene(addSourceView, 800, 600);
       stage.setScene(scene);
@@ -148,8 +149,8 @@ public class AddSourceButtonTest {
       this.eventBus = new EventBus("Test Event Bus");
       this.mockCameraSourceFactory = new MockCameraSourceFactory(eventBus);
 
-      addSourceView
-          = new AddSourceButton(eventBus, null, null, mockCameraSourceFactory, null, null, null);
+      addSourceView = new AddSourceButton(eventBus, null, null, mockCameraSourceFactory,
+          null, null, null, null);
 
       final Scene scene = new Scene(addSourceView, 800, 600);
       stage.setScene(scene);
