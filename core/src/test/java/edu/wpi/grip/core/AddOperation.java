@@ -11,7 +11,6 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.eventbus.EventBus;
 
 import org.bytedeco.javacpp.opencv_core;
-import org.bytedeco.javacpp.opencv_core.Mat;
 
 import java.util.List;
 
@@ -56,6 +55,8 @@ public class AddOperation implements Operation {
 
   @Override
   public void perform() {
-    opencv_core.add(a.getValue().get(), b.getValue().get(), sum.getValue().get());
+    opencv_core.add(a.getValue().get().getCpu(),
+        b.getValue().get().getCpu(),
+        sum.getValue().get().rawCpu());
   }
 }

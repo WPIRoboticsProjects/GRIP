@@ -22,7 +22,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
-import static org.bytedeco.javacpp.opencv_core.Mat;
 import static org.bytedeco.javacpp.opencv_imgcodecs.CV_IMWRITE_JPEG_QUALITY;
 import static org.bytedeco.javacpp.opencv_imgcodecs.imencode;
 
@@ -62,7 +61,8 @@ public class SaveImageOperation implements Operation {
       = DateTimeFormatter.ofPattern("yyyy-MM-dd_HH-mm-ss-SSS");
 
   private enum FileTypes {
-    JPEG, PNG;
+    JPEG,
+    PNG;
 
     @Override
     public String toString() {
@@ -118,7 +118,9 @@ public class SaveImageOperation implements Operation {
     stopwatch.reset();
     stopwatch.start();
 
-    imencode("." + fileTypesSocket.getValue().get(), inputSocket.getValue().get().getCpu(), imagePointer,
+    imencode("." + fileTypesSocket.getValue().get(),
+        inputSocket.getValue().get().getCpu(),
+        imagePointer,
         new IntPointer(CV_IMWRITE_JPEG_QUALITY, qualitySocket.getValue().get().intValue()));
     byte[] buffer = new byte[128 * 1024];
     int bufferSize = (int) imagePointer.limit();

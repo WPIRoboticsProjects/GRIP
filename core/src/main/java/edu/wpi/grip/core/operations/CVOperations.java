@@ -60,7 +60,7 @@ import static org.bytedeco.javacpp.opencv_imgproc.threshold;
 /**
  * A list of all of the raw opencv operations.
  */
-@SuppressWarnings("PMD.AvoidDuplicateLiterals")
+@SuppressWarnings({"PMD.AvoidDuplicateLiterals", "CodeBlock2Expr"})
 public class CVOperations {
 
   private final EventBus eventBus;
@@ -294,8 +294,8 @@ public class CVOperations {
                     .initialValueSupplier(opencv_imgproc::morphologyDefaultBorderValue).build(),
                 SocketHints.createImageSocketHint("dst"),
                 (src, kernel, anchor, iterations, borderType, borderValue, dst) -> {
-                  opencv_imgproc.erode(src.getCpu(), dst.rawCpu(), kernel.getCpu(), anchor, iterations.intValue(),
-                      borderType.value, borderValue);
+                  opencv_imgproc.erode(src.getCpu(), dst.rawCpu(), kernel.getCpu(), anchor,
+                      iterations.intValue(), borderType.value, borderValue);
                 }
             )),
 
@@ -306,8 +306,8 @@ public class CVOperations {
                 new SocketHint.Builder<>(Size.class).identifier("ksize").initialValueSupplier(()
                     -> new Size(1, 1)).build(),
                 SocketHints.Inputs.createNumberSpinnerSocketHint("sigmaX", 0.0),
-                SocketHints.Inputs.createNumberSpinnerSocketHint("sigmaY", 0.0), SocketHints
-                    .createEnumSocketHint("borderType", CVBorderTypesEnum.BORDER_DEFAULT),
+                SocketHints.Inputs.createNumberSpinnerSocketHint("sigmaY", 0.0),
+                SocketHints.createEnumSocketHint("borderType", CVBorderTypesEnum.BORDER_DEFAULT),
                 SocketHints.createImageSocketHint("dst"),
                 (src, ksize, sigmaX, sigmaY, borderType, dst) -> {
                   GaussianBlur(src.getCpu(), dst.rawCpu(), ksize, sigmaX.doubleValue(), sigmaY

@@ -12,7 +12,6 @@ import javafx.scene.image.ImageView;
 
 import static org.bytedeco.javacpp.opencv_core.CV_8S;
 import static org.bytedeco.javacpp.opencv_core.CV_8U;
-import static org.bytedeco.javacpp.opencv_core.Mat;
 
 /**
  * Base class for image previews.

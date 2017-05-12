@@ -26,7 +26,6 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static org.bytedeco.javacpp.opencv_core.Mat;
 
 /**
  * A JavaFX control that renders an {@link OutputSocket} that is the output of a step.  It shows a

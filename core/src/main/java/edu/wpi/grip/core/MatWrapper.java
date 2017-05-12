@@ -28,7 +28,8 @@ import static org.bytedeco.javacpp.opencv_core.IPL_DEPTH_8U;
  * an image in GPU memory. A wrapper is used to minimize copies between host and GPU memory, which
  * may take longer than the time savings of using a GPU-accelerated operation.
  */
-public class MatWrapper {
+@SuppressWarnings("PMD")
+public final class MatWrapper {
 
   private final Mat cpuMat = new Mat();
   private final GpuMat gpuMat = new GpuMat();
@@ -276,6 +277,7 @@ public class MatWrapper {
   /**
    * Gets the maximum possible value able to be held as a single element in this image.
    */
+  @SuppressWarnings("PMD")
   public double highValue() {
     return extract(Mat::highValue, g -> {
       double highValue = 0.0;
@@ -327,32 +329,6 @@ public class MatWrapper {
         assert false;
     }
     return -1;
-  }
-
-  @Override
-  public boolean equals(Object o) {
-    if (this == o) {
-      return true;
-    }
-    if (o == null || getClass() != o.getClass()) {
-      return false;
-    }
-
-    MatWrapper that = (MatWrapper) o;
-    if (isCpu() && that.isCpu()) {
-      return this.cpuMat.equals(that.cpuMat);
-    }
-    if (isGpu() && that.isGpu()) {
-      return this.gpuMat.equals(that.gpuMat);
-    }
-    return false;
-  }
-
-  @Override
-  public int hashCode() {
-    int result = cpuMat != null ? cpuMat.hashCode() : 0;
-    result = 31 * result + (gpuMat != null ? gpuMat.hashCode() : 0);
-    return result;
   }
 
 }

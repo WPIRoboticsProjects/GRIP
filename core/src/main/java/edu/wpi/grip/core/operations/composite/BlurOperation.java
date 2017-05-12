@@ -48,7 +48,8 @@ public class BlurOperation extends CudaOperation {
   private final InputSocket<Number> radiusSocket;
 
   private int lastKernelSize = 0;
-  private final GpuMat upcast = new GpuMat(); // used to covert 3-channel images to 4-channel for CUDA
+  // used to covert 3-channel images to 4-channel for CUDA
+  private final GpuMat upcast = new GpuMat();
   private Filter gpuGaussianFilter;
   private Filter gpuMedianFilter;
 
@@ -129,12 +130,14 @@ public class BlurOperation extends CudaOperation {
         if (preferCuda() && kernelSize < 32) {
           // GPU gaussian blurs require kernel size in 0..31
           if (kernelChange || gpuGaussianFilter == null) {
-            gpuGaussianFilter = createGaussianFilter(imageType, imageType, new Size(kernelSize, kernelSize), radius.doubleValue());
+            gpuGaussianFilter = createGaussianFilter(imageType, imageType,
+                new Size(kernelSize, kernelSize), radius.doubleValue());
           }
           gpuGaussianFilter.apply(gpuIn, gpuOut);
           output.set(gpuOut);
         } else {
-          GaussianBlur(input.getCpu(), output.getCpu(), new Size(kernelSize, kernelSize), radius.doubleValue());
+          GaussianBlur(input.getCpu(), output.getCpu(), new Size(kernelSize, kernelSize),
+              radius.doubleValue());
         }
         break;
 
@@ -156,10 +159,12 @@ public class BlurOperation extends CudaOperation {
 
       case BILATERAL_FILTER:
         if (preferCuda()) {
-          opencv_cudaimgproc.bilateralFilter(gpuIn, gpuOut, -1, radius.floatValue(), radius.floatValue() / 6);
+          opencv_cudaimgproc.bilateralFilter(gpuIn, gpuOut,
+              -1, radius.floatValue(), radius.floatValue() / 6);
           output.set(gpuOut);
         } else {
-          bilateralFilter(input.getCpu(), output.rawCpu(), -1, radius.doubleValue(), radius.doubleValue() / 6);
+          bilateralFilter(input.getCpu(), output.rawCpu(),
+              -1, radius.doubleValue(), radius.doubleValue() / 6);
         }
         break;
 

@@ -1,5 +1,6 @@
 package edu.wpi.grip.core.sources;
 
+import edu.wpi.grip.core.MatWrapper;
 import edu.wpi.grip.core.sockets.MockOutputSocketFactory;
 import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.util.Files;
@@ -7,7 +8,6 @@ import edu.wpi.grip.util.ImageWithData;
 
 import com.google.common.eventbus.EventBus;
 
-import org.bytedeco.javacpp.opencv_core.Mat;
 import org.junit.Before;
 import org.junit.Test;
 

@@ -5,7 +5,6 @@ import edu.wpi.grip.core.MatWrapper;
 
 import com.google.common.reflect.TypeToken;
 
-import org.bytedeco.javacpp.opencv_core.Mat;
 import org.bytedeco.javacpp.opencv_core.Point;
 import org.bytedeco.javacpp.opencv_core.Size;
 

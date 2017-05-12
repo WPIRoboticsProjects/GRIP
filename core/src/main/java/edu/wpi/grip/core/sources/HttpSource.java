@@ -124,7 +124,8 @@ public class HttpSource extends Source {
       // No data, don't bother converting
       return false;
     }
-    imageOutput.getValue().get().set(imdecode(image.getCpu(), opencv_imgcodecs.CV_LOAD_IMAGE_COLOR));
+    imageOutput.getValue().get()
+        .set(imdecode(image.getCpu(), opencv_imgcodecs.CV_LOAD_IMAGE_COLOR));
     imageOutput.setValueOptional(imageOutput.getValue());
     return true;
   }

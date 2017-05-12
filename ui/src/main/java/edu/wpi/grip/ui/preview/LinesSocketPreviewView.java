@@ -1,6 +1,5 @@
 package edu.wpi.grip.ui.preview;
 
-import edu.wpi.grip.core.MatWrapper;
 import edu.wpi.grip.core.operations.composite.LinesReport;
 import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.ui.util.GripPlatform;

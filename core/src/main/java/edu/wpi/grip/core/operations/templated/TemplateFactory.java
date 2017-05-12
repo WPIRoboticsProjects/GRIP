@@ -10,8 +10,6 @@ import edu.wpi.grip.core.sockets.SocketHints;
 
 import com.google.inject.Singleton;
 
-import org.bytedeco.javacpp.opencv_core.Mat;
-
 import java.util.function.Supplier;
 
 /**
@@ -122,9 +120,10 @@ public final class TemplateFactory {
     return create(matSocketHint, matSocketHint2, matSocketHint3, performer);
   }
 
-  public Supplier<Operation> createAllMatTwoSource(TwoSourceOneDestinationOperation
-                                                       .Performer<MatWrapper, MatWrapper, MatWrapper> performer) {
-    return createAllMatTwoSource(srcSocketHint(MatWrapper.class, 1), srcSocketHint(MatWrapper.class, 2),
+  public Supplier<Operation> createAllMatTwoSource(
+      TwoSourceOneDestinationOperation.Performer<MatWrapper, MatWrapper, MatWrapper> performer) {
+    return createAllMatTwoSource(srcSocketHint(MatWrapper.class, 1),
+        srcSocketHint(MatWrapper.class, 2),
         dstMatSocketHint(), performer);
   }
 
@@ -135,9 +134,10 @@ public final class TemplateFactory {
     return create(matSocketHint, matSocketHint2, performer);
   }
 
-  public Supplier<Operation> createAllMatOneSource(OneSourceOneDestinationOperation
-                                                       .Performer<MatWrapper, MatWrapper> performer) {
-    return createAllMatOneSource(srcSocketHint(MatWrapper.class, 1), dstMatSocketHint(), performer);
+  public Supplier<Operation> createAllMatOneSource(
+      OneSourceOneDestinationOperation.Performer<MatWrapper, MatWrapper> performer) {
+    return createAllMatOneSource(srcSocketHint(MatWrapper.class, 1), dstMatSocketHint(),
+        performer);
   }
 
 

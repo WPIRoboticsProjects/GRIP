@@ -23,7 +23,8 @@ public class RectsReport implements Publishable {
   private final MatWrapper image;
   private final List<Rect> rectangles;
 
-  public static final RectsReport NIL = new RectsReport(MatWrapper.emptyWrapper(), new ArrayList<>());
+  public static final RectsReport NIL
+      = new RectsReport(MatWrapper.emptyWrapper(), new ArrayList<>());
 
   public RectsReport(MatWrapper image, List<Rect> rectangles) {
     this.image = image;
