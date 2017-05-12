@@ -2,6 +2,7 @@ package edu.wpi.grip.core.operations.composite;
 
 import edu.wpi.grip.annotation.operation.Description;
 import edu.wpi.grip.core.FileManager;
+import edu.wpi.grip.core.MatWrapper;
 import edu.wpi.grip.core.Operation;
 import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.sockets.OutputSocket;
@@ -33,8 +34,8 @@ import static org.bytedeco.javacpp.opencv_imgcodecs.imencode;
              iconName = "publish-video")
 public class SaveImageOperation implements Operation {
 
-  private final SocketHint<Mat> inputHint
-      = SocketHints.Inputs.createMatSocketHint("Input", false);
+  private final SocketHint<MatWrapper> inputHint
+      = SocketHints.createImageSocketHint("Input");
   private final SocketHint<FileTypes> fileTypeHint
       = SocketHints.createEnumSocketHint("File type", FileTypes.JPEG);
   private final SocketHint<Number> qualityHint
@@ -44,15 +45,15 @@ public class SaveImageOperation implements Operation {
   private final SocketHint<Boolean> activeHint
       = SocketHints.Inputs.createCheckboxSocketHint("Active", false);
 
-  private final SocketHint<Mat> outputHint = SocketHints.Outputs.createMatSocketHint("Output");
+  private final SocketHint<MatWrapper> outputHint = SocketHints.createImageSocketHint("Output");
 
-  private final InputSocket<Mat> inputSocket;
+  private final InputSocket<MatWrapper> inputSocket;
   private final InputSocket<FileTypes> fileTypesSocket;
   private final InputSocket<Number> qualitySocket;
   private final InputSocket<Number> periodSocket;
   private final InputSocket<Boolean> activeSocket;
 
-  private final OutputSocket<Mat> outputSocket;
+  private final OutputSocket<MatWrapper> outputSocket;
 
   private final FileManager fileManager;
   private final BytePointer imagePointer = new BytePointer();
@@ -117,12 +118,12 @@ public class SaveImageOperation implements Operation {
     stopwatch.reset();
     stopwatch.start();
 
-    imencode("." + fileTypesSocket.getValue().get(), inputSocket.getValue().get(), imagePointer,
+    imencode("." + fileTypesSocket.getValue().get(), inputSocket.getValue().get().getCpu(), imagePointer,
         new IntPointer(CV_IMWRITE_JPEG_QUALITY, qualitySocket.getValue().get().intValue()));
     byte[] buffer = new byte[128 * 1024];
-    int bufferSize = imagePointer.limit();
+    int bufferSize = (int) imagePointer.limit();
     if (bufferSize > buffer.length) {
-      buffer = new byte[imagePointer.limit()];
+      buffer = new byte[(int) imagePointer.limit()];
     }
     imagePointer.get(buffer, 0, bufferSize);
 

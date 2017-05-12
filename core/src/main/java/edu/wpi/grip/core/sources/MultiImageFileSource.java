@@ -1,5 +1,6 @@
 package edu.wpi.grip.core.sources;
 
+import edu.wpi.grip.core.MatWrapper;
 import edu.wpi.grip.core.PreviousNext;
 import edu.wpi.grip.core.Source;
 import edu.wpi.grip.core.events.SourceHasPendingUpdateEvent;
@@ -38,9 +39,8 @@ public final class MultiImageFileSource extends Source implements PreviousNext {
   private static final String INDEX_PROPERTY = "index";
   private static final String SIZE_PROPERTY = "numImages";
 
-  private final SocketHint<Mat> imageOutputHint = SocketHints.Inputs.createMatSocketHint("Image",
-      true);
-  private final OutputSocket<Mat> outputSocket;
+  private final SocketHint<MatWrapper> imageOutputHint = SocketHints.createImageSocketHint("Image");
+  private final OutputSocket<MatWrapper> outputSocket;
 
   private final EventBus eventBus;
   private final List<String> paths;
@@ -167,8 +167,8 @@ public final class MultiImageFileSource extends Source implements PreviousNext {
 
   @Override
   protected boolean updateOutputSockets() {
-    if (!currentImage.equals(outputSocket.getValue())) {
-      outputSocket.setValueOptional(currentImage);
+    if (outputSocket.getValue().map(m -> m.getCpu()).map(m -> currentImage.get().equals(m)).orElse(false)) {
+      outputSocket.setValue(MatWrapper.wrap(currentImage.get()));
       return true;
     } else {
       return false;

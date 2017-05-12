@@ -1,5 +1,6 @@
 package edu.wpi.grip.ui.preview;
 
+import edu.wpi.grip.core.MatWrapper;
 import edu.wpi.grip.core.operations.composite.LinesReport;
 import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.ui.util.GripPlatform;
@@ -69,7 +70,7 @@ public final class LinesSocketPreviewView extends ImageBasedPreviewView<LinesRep
     synchronized (this) {
       final LinesReport linesReport = this.getSocket().getValue().get();
       final List<LinesReport.Line> lines = linesReport.getLines();
-      Mat input = linesReport.getInput();
+      Mat input = linesReport.getInput().getCpu();
 
       // If there were lines found, draw them on the image before displaying it
       if (!linesReport.getLines().isEmpty()) {

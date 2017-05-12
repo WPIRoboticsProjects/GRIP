@@ -274,9 +274,9 @@ public class ProjectTest {
     serializeAndDeserialize();
 
     Step step1 = pipeline.getSteps().get(0);
-    InputSocket<Mat> a = (InputSocket<Mat>) step1.getInputSockets().get(0);
-    InputSocket<Mat> b = (InputSocket<Mat>) step1.getInputSockets().get(1);
-    OutputSocket<Mat> sum = (OutputSocket<Mat>) step1.getOutputSockets().get(0);
+    InputSocket<MatWrapper> a = (InputSocket<MatWrapper>) step1.getInputSockets().get(0);
+    InputSocket<MatWrapper> b = (InputSocket<MatWrapper>) step1.getInputSockets().get(1);
+    OutputSocket<MatWrapper> sum = (OutputSocket<MatWrapper>) step1.getOutputSockets().get(0);
 
 
     a.setValue(new Mat(1, 1, CV_32F, new Scalar(1234.5)));

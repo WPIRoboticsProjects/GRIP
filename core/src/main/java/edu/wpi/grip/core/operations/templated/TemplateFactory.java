@@ -1,6 +1,7 @@
 package edu.wpi.grip.core.operations.templated;
 
 
+import edu.wpi.grip.core.MatWrapper;
 import edu.wpi.grip.core.Operation;
 import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.sockets.OutputSocket;
@@ -114,29 +115,29 @@ public final class TemplateFactory {
   }
 
   public Supplier<Operation> createAllMatTwoSource(
-      SocketHint<Mat> matSocketHint,
-      SocketHint<Mat> matSocketHint2,
-      SocketHint<Mat> matSocketHint3,
-      TwoSourceOneDestinationOperation.Performer<Mat, Mat, Mat> performer) {
+      SocketHint<MatWrapper> matSocketHint,
+      SocketHint<MatWrapper> matSocketHint2,
+      SocketHint<MatWrapper> matSocketHint3,
+      TwoSourceOneDestinationOperation.Performer<MatWrapper, MatWrapper, MatWrapper> performer) {
     return create(matSocketHint, matSocketHint2, matSocketHint3, performer);
   }
 
   public Supplier<Operation> createAllMatTwoSource(TwoSourceOneDestinationOperation
-                                                       .Performer<Mat, Mat, Mat> performer) {
-    return createAllMatTwoSource(srcSocketHint(Mat.class, 1), srcSocketHint(Mat.class, 2),
+                                                       .Performer<MatWrapper, MatWrapper, MatWrapper> performer) {
+    return createAllMatTwoSource(srcSocketHint(MatWrapper.class, 1), srcSocketHint(MatWrapper.class, 2),
         dstMatSocketHint(), performer);
   }
 
   public Supplier<Operation> createAllMatOneSource(
-      SocketHint<Mat> matSocketHint,
-      SocketHint<Mat> matSocketHint2,
-      OneSourceOneDestinationOperation.Performer<Mat, Mat> performer) {
+      SocketHint<MatWrapper> matSocketHint,
+      SocketHint<MatWrapper> matSocketHint2,
+      OneSourceOneDestinationOperation.Performer<MatWrapper, MatWrapper> performer) {
     return create(matSocketHint, matSocketHint2, performer);
   }
 
   public Supplier<Operation> createAllMatOneSource(OneSourceOneDestinationOperation
-                                                       .Performer<Mat, Mat> performer) {
-    return createAllMatOneSource(srcSocketHint(Mat.class, 1), dstMatSocketHint(), performer);
+                                                       .Performer<MatWrapper, MatWrapper> performer) {
+    return createAllMatOneSource(srcSocketHint(MatWrapper.class, 1), dstMatSocketHint(), performer);
   }
 
 
@@ -144,7 +145,7 @@ public final class TemplateFactory {
     return new SocketHint.Builder<>(srcType).identifier("src" + index).build();
   }
 
-  private SocketHint<Mat> dstMatSocketHint() {
-    return SocketHints.Outputs.createMatSocketHint("dst");
+  private SocketHint<MatWrapper> dstMatSocketHint() {
+    return SocketHints.createImageSocketHint("dst");
   }
 }

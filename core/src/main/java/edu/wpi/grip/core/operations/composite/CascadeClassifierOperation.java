@@ -2,6 +2,7 @@ package edu.wpi.grip.core.operations.composite;
 
 import edu.wpi.grip.annotation.operation.Description;
 import edu.wpi.grip.annotation.operation.OperationCategory;
+import edu.wpi.grip.core.MatWrapper;
 import edu.wpi.grip.core.Operation;
 import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.sockets.OutputSocket;
@@ -29,8 +30,8 @@ import java.util.List;
              iconName = "opencv")
 public class CascadeClassifierOperation implements Operation {
 
-  private final SocketHint<Mat> imageHint =
-      SocketHints.Inputs.createMatSocketHint("Image", false);
+  private final SocketHint<MatWrapper> imageHint =
+      SocketHints.createImageSocketHint("Image");
   private final SocketHint<CascadeClassifier> classifierHint =
       new SocketHint.Builder<>(CascadeClassifier.class)
           .identifier("Classifier")
@@ -49,7 +50,7 @@ public class CascadeClassifierOperation implements Operation {
           .initialValue(RectsReport.NIL)
           .build();
 
-  private final InputSocket<Mat> imageSocket;
+  private final InputSocket<MatWrapper> imageSocket;
   private final InputSocket<CascadeClassifier> classifierSocket;
   private final InputSocket<Number> scaleSocket;
   private final InputSocket<Number> minNeighborsSocket;
@@ -93,7 +94,8 @@ public class CascadeClassifierOperation implements Operation {
     if (!imageSocket.getValue().isPresent() || !classifierSocket.getValue().isPresent()) {
       return;
     }
-    final Mat image = imageSocket.getValue().get();
+    final MatWrapper input = imageSocket.getValue().get();
+    final Mat image = input.getCpu();
     if (image.empty() || image.channels() != 3) {
       throw new IllegalArgumentException("A cascade classifier needs a three-channel input");
     }
@@ -108,7 +110,7 @@ public class CascadeClassifierOperation implements Operation {
     for (int i = 0; i < detections.size(); i++) {
       rects.add(detections.get(i));
     }
-    output.setValue(new RectsReport(image, rects));
+    output.setValue(new RectsReport(input, rects));
   }
 
 }

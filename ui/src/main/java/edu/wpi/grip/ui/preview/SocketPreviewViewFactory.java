@@ -1,5 +1,6 @@
 package edu.wpi.grip.ui.preview;
 
+import edu.wpi.grip.core.MatWrapper;
 import edu.wpi.grip.core.operations.composite.BlobsReport;
 import edu.wpi.grip.core.operations.composite.ContoursReport;
 import edu.wpi.grip.core.operations.composite.LinesReport;
@@ -39,9 +40,9 @@ public class SocketPreviewViewFactory {
   @SuppressWarnings("unchecked")
   public <T> SocketPreviewView<T> create(OutputSocket<T> socket) {
     final SocketPreviewView<T> previewView;
-    if (socket.getSocketHint().getType() == Mat.class) {
-      previewView = (SocketPreviewView) new ImageSocketPreviewView(platform, (OutputSocket<Mat>)
-          socket);
+    if (socket.getSocketHint().getType() == MatWrapper.class) {
+      previewView = (SocketPreviewView) new ImageSocketPreviewView(platform,
+          (OutputSocket<MatWrapper>) socket);
     } else if (socket.getSocketHint().getType() == Point.class
         || socket.getSocketHint().getType() == Size.class) {
       previewView = (SocketPreviewView) new PointSizeSocketPreviewView(platform, socket);

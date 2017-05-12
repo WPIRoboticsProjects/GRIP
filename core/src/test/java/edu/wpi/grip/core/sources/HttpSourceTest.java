@@ -62,7 +62,7 @@ public class HttpSourceTest {
 
   @Test
   public void testPostImage() throws IOException, InterruptedException {
-    OutputSocket<Mat> imageSource = source.getOutputSockets().get(0);
+    OutputSocket<MatWrapper> imageSource = source.getOutputSockets().get(0);
 
     // We have to manually update the output sockets to get the image
     source.updateOutputSockets();

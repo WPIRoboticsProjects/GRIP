@@ -3,6 +3,7 @@ package edu.wpi.grip.core.operations.composite;
 
 import edu.wpi.grip.annotation.operation.Description;
 import edu.wpi.grip.annotation.operation.OperationCategory;
+import edu.wpi.grip.core.MatWrapper;
 import edu.wpi.grip.core.Operation;
 import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.sockets.OutputSocket;
@@ -33,7 +34,7 @@ import static org.bytedeco.javacpp.opencv_imgproc.cvtColor;
 public class HSLThresholdOperation extends ThresholdOperation {
 
   private static final Logger logger = Logger.getLogger(HSLThresholdOperation.class.getName());
-  private final SocketHint<Mat> inputHint = SocketHints.Inputs.createMatSocketHint("Input", false);
+  private final SocketHint<MatWrapper> inputHint = SocketHints.createImageSocketHint("Input");
   private final SocketHint<List<Number>> hueHint = SocketHints.Inputs
       .createNumberListRangeSocketHint("Hue", 0.0, 180.0);
   private final SocketHint<List<Number>> saturationHint = SocketHints.Inputs
@@ -41,14 +42,14 @@ public class HSLThresholdOperation extends ThresholdOperation {
   private final SocketHint<List<Number>> luminanceHint = SocketHints.Inputs
       .createNumberListRangeSocketHint("Luminance", 0.0, 255.0);
 
-  private final SocketHint<Mat> outputHint = SocketHints.Outputs.createMatSocketHint("Output");
+  private final SocketHint<MatWrapper> outputHint = SocketHints.createImageSocketHint("Output");
 
-  private final InputSocket<Mat> inputSocket;
+  private final InputSocket<MatWrapper> inputSocket;
   private final InputSocket<List<Number>> hueSocket;
   private final InputSocket<List<Number>> saturationSocket;
   private final InputSocket<List<Number>> luminanceSocket;
 
-  private final OutputSocket<Mat> outputSocket;
+  private final OutputSocket<MatWrapper> outputSocket;
 
   @Inject
   @SuppressWarnings("JavadocMethod")
@@ -82,13 +83,13 @@ public class HSLThresholdOperation extends ThresholdOperation {
   @Override
   @SuppressWarnings("unchecked")
   public void perform() {
-    final Mat input = inputSocket.getValue().get();
+    final Mat input = inputSocket.getValue().get().getCpu();
 
     if (input.channels() != 3) {
       throw new IllegalArgumentException("HSL Threshold needs a 3-channel input");
     }
 
-    final Mat output = outputSocket.getValue().get();
+    final Mat output = outputSocket.getValue().get().rawCpu();
     final List<Number> channel1 = hueSocket.getValue().get();
     final List<Number> channel2 = saturationSocket.getValue().get();
     final List<Number> channel3 = luminanceSocket.getValue().get();
@@ -111,7 +112,7 @@ public class HSLThresholdOperation extends ThresholdOperation {
     try {
       cvtColor(input, hls, COLOR_BGR2HLS);
       inRange(hls, low, high, output);
-      outputSocket.setValue(output);
+      outputSocket.setValueOptional(outputSocket.getValue());
     } catch (RuntimeException e) {
       logger.log(Level.WARNING, e.getMessage(), e);
     }

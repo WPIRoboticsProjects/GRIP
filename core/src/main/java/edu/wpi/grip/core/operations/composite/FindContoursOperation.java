@@ -2,6 +2,7 @@ package edu.wpi.grip.core.operations.composite;
 
 import edu.wpi.grip.annotation.operation.Description;
 import edu.wpi.grip.annotation.operation.OperationCategory;
+import edu.wpi.grip.core.MatWrapper;
 import edu.wpi.grip.core.Operation;
 import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.sockets.OutputSocket;
@@ -30,8 +31,7 @@ import static org.bytedeco.javacpp.opencv_imgproc.findContours;
              iconName = "find-contours")
 public class FindContoursOperation implements Operation {
 
-  private final SocketHint<Mat> inputHint =
-      new SocketHint.Builder<>(Mat.class).identifier("Input").build();
+  private final SocketHint<MatWrapper> inputHint = SocketHints.createImageSocketHint("Input");
 
   private final SocketHint<Boolean> externalHint =
       SocketHints.createBooleanSocketHint("External Only", false);
@@ -41,7 +41,7 @@ public class FindContoursOperation implements Operation {
       .identifier("Contours").initialValueSupplier(ContoursReport::new).build();
 
 
-  private final InputSocket<Mat> inputSocket;
+  private final InputSocket<MatWrapper> inputSocket;
   private final InputSocket<Boolean> externalSocket;
 
   private final OutputSocket<ContoursReport> contoursSocket;
@@ -73,7 +73,7 @@ public class FindContoursOperation implements Operation {
 
   @Override
   public void perform() {
-    final Mat input = inputSocket.getValue().get();
+    final Mat input = inputSocket.getValue().get().getCpu();
     if (input.empty()) {
       return;
     }

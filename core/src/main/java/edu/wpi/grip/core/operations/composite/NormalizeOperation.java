@@ -2,6 +2,7 @@ package edu.wpi.grip.core.operations.composite;
 
 import edu.wpi.grip.annotation.operation.Description;
 import edu.wpi.grip.annotation.operation.OperationCategory;
+import edu.wpi.grip.core.MatWrapper;
 import edu.wpi.grip.core.Operation;
 import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.sockets.OutputSocket;
@@ -29,18 +30,18 @@ import static org.bytedeco.javacpp.opencv_core.normalize;
              iconName = "opencv")
 public class NormalizeOperation implements Operation {
 
-  private final SocketHint<Mat> srcHint = SocketHints.Inputs.createMatSocketHint("Input", false);
+  private final SocketHint<MatWrapper> srcHint = SocketHints.createImageSocketHint("Input");
   private final SocketHint<Type> typeHint = SocketHints.createEnumSocketHint("Type", Type.MINMAX);
   private final SocketHint<Number> aHint = SocketHints.Inputs
       .createNumberSpinnerSocketHint("Alpha", 0.0, 0, Double.MAX_VALUE);
   private final SocketHint<Number> bHint = SocketHints.Inputs
       .createNumberSpinnerSocketHint("Beta", 255, 0, Double.MAX_VALUE);
-  private final SocketHint<Mat> dstHint = SocketHints.Inputs.createMatSocketHint("Output", true);
-  private final InputSocket<Mat> srcSocket;
+  private final SocketHint<MatWrapper> dstHint = SocketHints.createImageSocketHint("Output");
+  private final InputSocket<MatWrapper> srcSocket;
   private final InputSocket<Type> typeSocket;
   private final InputSocket<Number> alphaSocket;
   private final InputSocket<Number> betaSocket;
-  private final OutputSocket<Mat> outputSocket;
+  private final OutputSocket<MatWrapper> outputSocket;
 
   @Inject
   @SuppressWarnings("JavadocMethod")
@@ -73,16 +74,16 @@ public class NormalizeOperation implements Operation {
 
   @Override
   public void perform() {
-    final Mat input = srcSocket.getValue().get();
+    final Mat input = srcSocket.getValue().get().getCpu();
     final Type type = typeSocket.getValue().get();
     final Number a = alphaSocket.getValue().get();
     final Number b = betaSocket.getValue().get();
 
-    final Mat output = outputSocket.getValue().get();
+    final Mat output = outputSocket.getValue().get().rawCpu();
 
     normalize(input, output, a.doubleValue(), b.doubleValue(), type.value, -1, null);
 
-    outputSocket.setValue(output);
+    outputSocket.setValueOptional(outputSocket.getValue());
   }
 
   private enum Type {

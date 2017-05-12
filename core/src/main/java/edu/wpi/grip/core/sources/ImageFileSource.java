@@ -1,5 +1,6 @@
 package edu.wpi.grip.core.sources;
 
+import edu.wpi.grip.core.MatWrapper;
 import edu.wpi.grip.core.Source;
 import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.core.sockets.SocketHint;
@@ -36,8 +37,8 @@ public final class ImageFileSource extends Source {
 
   private final String name;
   private final String path;
-  private final SocketHint<Mat> imageOutputHint = SocketHints.Outputs.createMatSocketHint("Image");
-  private final OutputSocket<Mat> outputSocket;
+  private final SocketHint<MatWrapper> imageOutputHint = SocketHints.createImageSocketHint("Image");
+  private final OutputSocket<MatWrapper> outputSocket;
 
   /**
    * @param exceptionWitnessFactory Factory to create the exceptionWitness
@@ -116,7 +117,7 @@ public final class ImageFileSource extends Source {
   }
 
   private void loadImage(String path, final int flags) throws IOException {
-    ImageLoadingUtility.loadImage(path, flags, this.outputSocket.getValue().get());
+    ImageLoadingUtility.loadImage(path, flags, this.outputSocket.getValue().get().rawCpu());
     this.outputSocket.setValue(this.outputSocket.getValue().get());
   }
 
