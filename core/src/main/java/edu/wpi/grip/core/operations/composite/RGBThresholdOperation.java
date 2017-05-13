@@ -107,7 +107,7 @@ public class RGBThresholdOperation extends ThresholdOperation {
     try {
       inRange(input, low, high, output);
 
-      outputSocket.setValueOptional(outputSocket.getValue());
+      outputSocket.flagChanged();
     } catch (RuntimeException e) {
       logger.log(Level.WARNING, e.getMessage(), e);
     }

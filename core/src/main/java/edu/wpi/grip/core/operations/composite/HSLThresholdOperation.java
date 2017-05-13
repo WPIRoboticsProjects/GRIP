@@ -112,7 +112,7 @@ public class HSLThresholdOperation extends ThresholdOperation {
     try {
       cvtColor(input, hls, COLOR_BGR2HLS);
       inRange(hls, low, high, output);
-      outputSocket.setValueOptional(outputSocket.getValue());
+      outputSocket.flagChanged();
     } catch (RuntimeException e) {
       logger.log(Level.WARNING, e.getMessage(), e);
     }

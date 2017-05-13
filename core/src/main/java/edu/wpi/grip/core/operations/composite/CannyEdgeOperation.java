@@ -84,5 +84,6 @@ public class CannyEdgeOperation extends CudaOperation {
       Canny(inputSocket.getValue().get().getCpu(), outputSocket.getValue().get().getCpu(),
           lowThresh, highThresh, apertureSize, l2gradient);
     }
+    outputSocket.flagChanged();
   }
 }

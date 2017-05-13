@@ -83,7 +83,7 @@ public class NormalizeOperation implements Operation {
 
     normalize(input, output, a.doubleValue(), b.doubleValue(), type.value, -1, null);
 
-    outputSocket.setValueOptional(outputSocket.getValue());
+    outputSocket.flagChanged();
   }
 
   private enum Type {

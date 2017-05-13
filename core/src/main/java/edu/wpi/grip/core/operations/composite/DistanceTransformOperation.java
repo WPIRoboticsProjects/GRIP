@@ -85,7 +85,7 @@ public class DistanceTransformOperation implements Operation {
     distanceTransform(input, output, type.value, maskSize.value);
     output.convertTo(output, CV_8U);
 
-    outputSocket.setValueOptional(outputSocket.getValue());
+    outputSocket.flagChanged();
   }
 
   private enum Type {

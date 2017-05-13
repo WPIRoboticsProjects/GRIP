@@ -84,7 +84,7 @@ public class ResizeOperation implements Operation {
     resize(input, output, new Size(width.intValue(), height.intValue()), 0.0, 0.0, interpolation
         .value);
 
-    outputSocket.setValueOptional(outputSocket.getValue());
+    outputSocket.flagChanged();
   }
 
   private enum Interpolation {

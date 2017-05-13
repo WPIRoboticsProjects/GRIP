@@ -72,6 +72,6 @@ public class MaskOperation implements Operation {
     // Clear the output to black, then copy the input to it with the mask
     bitwise_xor(output, output, output);
     input.copyTo(output, mask);
-    outputSocket.setValueOptional(outputSocket.getValue());
+    outputSocket.flagChanged();
   }
 }

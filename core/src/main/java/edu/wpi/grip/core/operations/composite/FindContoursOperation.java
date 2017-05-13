@@ -73,7 +73,7 @@ public class FindContoursOperation implements Operation {
 
   @Override
   public void perform() {
-    final Mat input = inputSocket.getValue().get().getCpu();
+    final MatWrapper input = inputSocket.getValue().get();
     if (input.empty()) {
       return;
     }

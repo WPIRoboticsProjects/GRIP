@@ -118,7 +118,7 @@ public final class ImageFileSource extends Source {
 
   private void loadImage(String path, final int flags) throws IOException {
     ImageLoadingUtility.loadImage(path, flags, this.outputSocket.getValue().get().rawCpu());
-    this.outputSocket.setValue(this.outputSocket.getValue().get());
+    this.outputSocket.flagChanged();
   }
 
 

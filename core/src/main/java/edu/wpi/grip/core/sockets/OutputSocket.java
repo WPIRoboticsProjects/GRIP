@@ -26,6 +26,15 @@ public interface OutputSocket<T> extends Socket<T> {
    */
   void resetValueToInitial();
 
+  /**
+   * Notifies this socket that the value changed. This is usually only needed for sockets that
+   * contain mutable data such as images or other native classes (Point, Size, etc) that are
+   * written to by OpenCV operations.
+   */
+  default void flagChanged() {
+    setValueOptional(getValue());
+  }
+
   interface Factory {
     <T> OutputSocket<T> create(SocketHint<T> hint);
   }

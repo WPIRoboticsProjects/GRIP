@@ -20,7 +20,6 @@ import com.google.inject.assistedinject.AssistedInject;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 
 import org.bytedeco.javacpp.opencv_core.Mat;
-import org.bytedeco.javacpp.opencv_imgcodecs;
 
 import java.util.HashMap;
 import java.util.List;
@@ -28,6 +27,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.function.Consumer;
 
+import static org.bytedeco.javacpp.opencv_imgcodecs.CV_LOAD_IMAGE_COLOR;
 import static org.bytedeco.javacpp.opencv_imgcodecs.imdecode;
 
 /**
@@ -124,9 +124,8 @@ public class HttpSource extends Source {
       // No data, don't bother converting
       return false;
     }
-    imageOutput.getValue().get()
-        .set(imdecode(image.getCpu(), opencv_imgcodecs.CV_LOAD_IMAGE_COLOR));
-    imageOutput.setValueOptional(imageOutput.getValue());
+    imageOutput.getValue().get().set(imdecode(image.getCpu(), CV_LOAD_IMAGE_COLOR));
+    imageOutput.flagChanged();
     return true;
   }
 

@@ -61,6 +61,6 @@ public class ThresholdMoving implements Operation {
       opencv_core.absdiff(input, lastImage, outputSocket.getValue().get().rawCpu());
     }
     input.copyTo(lastImage);
-    outputSocket.setValueOptional(outputSocket.getValue());
+    outputSocket.flagChanged();
   }
 }
