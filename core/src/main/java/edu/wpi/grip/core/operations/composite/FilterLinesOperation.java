@@ -50,11 +50,11 @@ public class FilterLinesOperation implements Operation {
   @SuppressWarnings("JavadocMethod")
   public FilterLinesOperation(InputSocket.Factory inputSocketFactory, OutputSocket.Factory
       outputSocketFactory) {
-    this.inputSocket = inputSocketFactory.create(inputHint);
-    this.minLengthSocket = inputSocketFactory.create(minLengthHint);
-    this.angleSocket = inputSocketFactory.create(angleHint);
+    this.inputSocket = inputSocketFactory.create(inputHint, "lines");
+    this.minLengthSocket = inputSocketFactory.create(minLengthHint, "min-length");
+    this.angleSocket = inputSocketFactory.create(angleHint, "angle");
 
-    this.linesOutputSocket = outputSocketFactory.create(outputHint);
+    this.linesOutputSocket = outputSocketFactory.create(outputHint, "filtered-lines");
   }
 
   @Override

@@ -15,17 +15,17 @@ import java.util.List;
 import java.util.Properties;
 
 public class MockNumberSource extends Source {
-  
+
   private static int numberOf = 0;
   private final int id;
   private final OutputSocket<Number> outputSocket;
-  private final SocketHint<Number> outputSocketHint = 
+  private final SocketHint<Number> outputSocketHint =
       SocketHints.Outputs.createNumberSocketHint("Num", Math.PI);
 
   @SuppressFBWarnings(value = "ST_WRITE_TO_STATIC_FROM_INSTANCE_METHOD",
       justification = "Do not need to synchronize inside of a constructor")
   public MockNumberSource(Factory exceptionWitnessFactory, double value, OutputSocket.Factory osf) {
-    super(exceptionWitnessFactory);
+    super(makeId(MockNumberSource.class), exceptionWitnessFactory);
     id = numberOf++;
     outputSocket = osf.create(outputSocketHint);
     outputSocket.setValue(new Double(value));

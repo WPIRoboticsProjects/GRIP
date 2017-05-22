@@ -30,8 +30,12 @@ public class ThresholdMoving implements Operation {
   @SuppressWarnings("JavadocMethod")
   public ThresholdMoving(InputSocket.Factory inputSocketFactory,
                          OutputSocket.Factory outputSocketFactory) {
-    imageSocket = inputSocketFactory.create(SocketHints.Inputs.createMatSocketHint("image", false));
-    outputSocket = outputSocketFactory.create(SocketHints.Outputs.createMatSocketHint("moved"));
+    imageSocket = inputSocketFactory.create(
+        SocketHints.Inputs.createMatSocketHint("image", false), "source-image"
+    );
+    outputSocket = outputSocketFactory.create(
+        SocketHints.Outputs.createMatSocketHint("moved"), "diff-image"
+    );
     lastImage = new Mat();
   }
 

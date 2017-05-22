@@ -24,7 +24,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * sockets, and it runs the operation whenever one of the input sockets changes.
  */
 @XStreamAlias(value = "grip:Step")
-public class Step {
+public class Step extends AbstractPipelineEntry {
   private static final Logger logger = Logger.getLogger(Step.class.getName());
   private static final String MISSING_SOCKET_MESSAGE_END = " must have a value to run this step.";
 
@@ -35,8 +35,6 @@ public class Step {
   private final OperationDescription description;
   private final List<InputSocket> inputSockets;
   private final List<OutputSocket> outputSockets;
-  private final Object removedLock = new Object();
-  private boolean removed = false;
 
   /**
    * @param operation               The operation that is performed at this step.
@@ -52,6 +50,7 @@ public class Step {
        List<OutputSocket> outputSockets,
        ExceptionWitness.Factory exceptionWitnessFactory,
        Timer.Factory timerFactory) {
+      super(makeId(Step.class));
     this.operation = operation;
     this.description = description;
     this.inputSockets = inputSockets;
@@ -70,6 +69,7 @@ public class Step {
   /**
    * @return An array of {@link InputSocket InputSockets} that hold the inputs to this step.
    */
+  @Override
   public ImmutableList<InputSocket> getInputSockets() {
     return ImmutableList.copyOf(inputSockets);
   }
@@ -77,6 +77,7 @@ public class Step {
   /**
    * @return A list of {@link OutputSocket OutputSockets} that hold the outputs of this step.
    */
+  @Override
   public ImmutableList<OutputSocket> getOutputSockets() {
     return ImmutableList.copyOf(outputSockets);
   }
@@ -134,7 +135,7 @@ public class Step {
       // We need to ensure that if perform disabled is switching states that we don't run the
       // perform method while that is happening.
       synchronized (removedLock) {
-        if (!removed) {
+        if (!removed()) {
           timer.time(this.operation::perform);
         }
       }
@@ -152,27 +153,9 @@ public class Step {
     witness.clearException();
   }
 
-  /**
-   * Sets this step as having been removed.
-   */
-  public final void setRemoved() {
-    // We need to wait for the perform method to complete before returning.
-    // if we don't wait then the perform method could end up being run concurrently with the
-    // perform methods execution
-    synchronized (removedLock) {
-      removed = true;
-      operation.cleanUp();
-    }
-  }
-
-  /**
-   * Allows checks to see if this step has had its perform method disabled. If this value ever
-   * returns false it will never return true again.
-   *
-   * @return true if runPerformIfPossible can run successfully
-   */
-  protected boolean removed() {
-    return removed;
+  @Override
+  protected void cleanUp() {
+    operation.cleanUp();
   }
 
   @Override
@@ -196,6 +179,7 @@ public class Step {
 
     /**
      * @param operationData The operation data to use to construct the step.
+     *
      * @return The constructed Step.
      */
     public Step create(OperationMetaData operationData) {

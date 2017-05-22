@@ -65,10 +65,10 @@ public final class ImageFileSource extends Source {
       final OutputSocket.Factory outputSocketFactory,
       final ExceptionWitness.Factory exceptionWitnessFactory,
       final String path) {
-    super(exceptionWitnessFactory);
+    super(makeId(ImageFileSource.class), exceptionWitnessFactory);
     this.path = checkNotNull(path, "Path can not be null");
     this.name = Files.getNameWithoutExtension(this.path);
-    this.outputSocket = outputSocketFactory.create(imageOutputHint);
+    this.outputSocket = outputSocketFactory.create(imageOutputHint, "image-output");
   }
 
   /**

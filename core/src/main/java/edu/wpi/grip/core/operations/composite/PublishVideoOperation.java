@@ -142,9 +142,9 @@ public class PublishVideoOperation implements Operation {
       throw new IllegalStateException("Only one instance of PublishVideoOperation may exist");
     }
     this.inputSocket = inputSocketFactory.create(SocketHints.Inputs.createMatSocketHint("Image",
-        false));
+        false), "source-image");
     this.qualitySocket = inputSocketFactory.create(SocketHints.Inputs
-        .createNumberSliderSocketHint("Quality", 80, 0, 100));
+        .createNumberSliderSocketHint("Quality", 80, 0, 100), "image-quality");
     numSteps++;
 
     serverThread = new Thread(runServer, "Camera Server");

@@ -26,6 +26,17 @@ public interface Socket<T> {
   SocketHint<T> getSocketHint();
 
   /**
+   * Gets a String that uniquely identifies this socket. This only needs to be unique for the set
+   * of sockets containing this one (e.g. only per-operation or per-source); it does not need to be
+   * <i>universally unique</i>. However, <strong>this is not allowed to change</strong>; even if
+   * the name, view, or even the type changes, the UID has to be constant in order for projects
+   * saved from different versions of GRIP to be compatible.
+   *
+   * @implSpec <strong>This value MAY NOT change</strong>
+   */
+  String getUid();
+
+  /**
    * Set the value of the socket using an {@link Optional}, and fire off a {@link
    * edu.wpi.grip.core.events.SocketChangedEvent}.
    *
@@ -60,6 +71,7 @@ public interface Socket<T> {
    * If this socket is in a step return it.
    *
    * @return The step that this socket is part of
+   *
    * @see #getSource()
    */
   Optional<Step> getStep();
@@ -73,6 +85,7 @@ public interface Socket<T> {
    * If this socket is in a source return it.
    *
    * @return The source that this socket is part of.
+   *
    * @see #getStep()
    */
   Optional<Source> getSource();

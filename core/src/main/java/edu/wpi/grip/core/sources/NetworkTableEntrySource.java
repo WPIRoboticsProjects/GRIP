@@ -102,12 +102,12 @@ public class NetworkTableEntrySource extends Source {
       @Named("ntManager") MapNetworkReceiverFactory networkReceiverFactory,
       @Assisted String path,
       @Assisted Types type) {
-    super(exceptionWitnessFactory);
+    super(makeId(NetworkTableEntrySource.class), exceptionWitnessFactory);
     this.eventBus = eventBus;
     this.path = path;
     this.type = type;
     networkReceiver = networkReceiverFactory.create(path);
-    output = osf.create(type.createSocketHint());
+    output = osf.create(type.createSocketHint(), "data-output");
   }
 
   @Override
@@ -150,7 +150,13 @@ public class NetworkTableEntrySource extends Source {
   @Subscribe
   public void onSourceRemovedEvent(SourceRemovedEvent event) {
     if (event.getSource() == this) {
-      networkReceiver.close();
+      setRemoved();
     }
   }
+
+  @Override
+  protected void cleanUp() {
+    networkReceiver.close();
+  }
+
 }

@@ -29,7 +29,16 @@ public interface InputSocket<T> extends Socket<T> {
   void onValueChanged();
 
   interface Factory {
-    <T> InputSocket<T> create(SocketHint<T> hint);
+    /**
+     * Creates a new input socket from a socket hint. This should <i>only</i> be used for
+     * generated sockets (like for Python operations) or for templated operations. For <i>
+     * everything else</i>, use {@link #create(SocketHint, String)}.
+     */
+    default <T> InputSocket<T> create(SocketHint<T> hint) {
+      return create(hint, hint.getIdentifier().toLowerCase().replaceAll("\\s+", "-"));
+    }
+
+    <T> InputSocket<T> create(SocketHint<T> hint, String uid);
   }
 
   /**
@@ -46,6 +55,11 @@ public interface InputSocket<T> extends Socket<T> {
      */
     public Decorator(InputSocket<T> socket) {
       this.decorated = socket;
+    }
+
+    @Override
+    public String getUid() {
+      return decorated.getUid();
     }
 
     @Override

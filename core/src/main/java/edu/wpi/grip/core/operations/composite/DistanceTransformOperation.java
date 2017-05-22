@@ -46,11 +46,11 @@ public class DistanceTransformOperation implements Operation {
   @SuppressWarnings("JavadocMethod")
   public DistanceTransformOperation(InputSocket.Factory inputSocketFactory, OutputSocket.Factory
       outputSocketFactory) {
-    this.srcSocket = inputSocketFactory.create(srcHint);
-    this.typeSocket = inputSocketFactory.create(typeHint);
-    this.maskSizeSocket = inputSocketFactory.create(maskSizeHint);
+    this.srcSocket = inputSocketFactory.create(srcHint, "source-image");
+    this.typeSocket = inputSocketFactory.create(typeHint, "transform-type");
+    this.maskSizeSocket = inputSocketFactory.create(maskSizeHint, "mask-size");
 
-    this.outputSocket = outputSocketFactory.create(outputHint);
+    this.outputSocket = outputSocketFactory.create(outputHint, "result");
   }
 
   @Override

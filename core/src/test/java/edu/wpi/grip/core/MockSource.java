@@ -12,7 +12,7 @@ import java.util.Properties;
 public class MockSource extends Source {
 
   protected MockSource() {
-    super(origin -> null);
+    super(makeId(MockSource.class), origin -> null);
   }
 
   @Override

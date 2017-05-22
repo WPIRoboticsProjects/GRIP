@@ -107,6 +107,7 @@ public class RangeInputSocketController extends InputSocketController<List<Numbe
   @Subscribe
   public void updateSliderValue(SocketChangedEvent event) {
     if (event.isRegarding(this.getSocket())) {
+      // There's no guarantee that the event was fired from the FX thread
       platform.runAsSoonAsPossible(() -> {
         this.slider.setLowValue(this.getSocket().getValue().get().get(0).doubleValue());
         this.slider.setHighValue(this.getSocket().getValue().get().get(1).doubleValue());

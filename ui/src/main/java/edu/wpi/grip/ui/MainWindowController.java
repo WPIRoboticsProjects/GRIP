@@ -7,10 +7,13 @@ import edu.wpi.grip.core.PipelineRunner;
 import edu.wpi.grip.core.events.AppSettingsChangedEvent;
 import edu.wpi.grip.core.events.BenchmarkEvent;
 import edu.wpi.grip.core.events.CodeGenerationSettingsChangedEvent;
+import edu.wpi.grip.core.events.ExceptionClearedEvent;
 import edu.wpi.grip.core.events.ProjectSettingsChangedEvent;
 import edu.wpi.grip.core.events.TimerEvent;
-import edu.wpi.grip.core.events.UnexpectedThrowableEvent;
 import edu.wpi.grip.core.events.WarningEvent;
+import edu.wpi.grip.core.exception.IncompatibleVersionException;
+import edu.wpi.grip.core.exception.InvalidSaveException;
+import edu.wpi.grip.core.exception.UnknownSaveFormatException;
 import edu.wpi.grip.core.serialization.Project;
 import edu.wpi.grip.core.settings.AppSettings;
 import edu.wpi.grip.core.settings.CodeGenerationSettings;
@@ -31,6 +34,7 @@ import com.google.common.util.concurrent.Service;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Optional;
 import java.util.Set;
@@ -60,6 +64,7 @@ import javax.inject.Inject;
 /**
  * The Controller for the application window.
  */
+@SuppressWarnings("PMD.GodClass") // temporary
 public class MainWindowController {
 
   @FXML
@@ -195,8 +200,28 @@ public class MainWindowController {
         Thread fileOpenThread = new Thread(() -> {
           try {
             project.open(file);
+            eventBus.post(new ExceptionClearedEvent(project));
+          } catch (FileNotFoundException e) {
+            eventBus.post(new WarningEvent(
+                "File does not exist",
+                "The file at " + file.getAbsolutePath() + " does not exist.\n\n"
+                    + "It may have been deleted by another program."
+            ));
           } catch (IOException e) {
-            eventBus.post(new UnexpectedThrowableEvent(e, "Failed to load save file"));
+            eventBus.post(new WarningEvent(
+                "Could not read file",
+                "The file at " + file.getAbsolutePath() + " could not be read.\n\n"
+                    + "Caused by: " + e.getMessage()
+            ));
+          } catch (UnknownSaveFormatException e) {
+            pipeline.clear();
+            eventBus.post(new WarningEvent("Unknown save format", e.getMessage()));
+          } catch (IncompatibleVersionException e) {
+            pipeline.clear();
+            eventBus.post(new WarningEvent("Incompatible saved version", e.getLoaded().toString()));
+          } catch (InvalidSaveException e) {
+            pipeline.clear();
+            eventBus.post(new WarningEvent("Invalid save file", e.getMessage()));
           }
         }, "Project Open Thread");
         fileOpenThread.setDaemon(true);
@@ -414,4 +439,5 @@ public class MainWindowController {
     }
     analysisStage.showAndWait();
   }
+
 }

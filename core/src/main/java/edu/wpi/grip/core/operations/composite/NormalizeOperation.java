@@ -47,12 +47,12 @@ public class NormalizeOperation implements Operation {
   @SuppressWarnings("JavadocMethod")
   public NormalizeOperation(InputSocket.Factory inputSocketFactory, OutputSocket.Factory
       outputSocketFactory) {
-    this.srcSocket = inputSocketFactory.create(srcHint);
-    this.typeSocket = inputSocketFactory.create(typeHint);
-    this.alphaSocket = inputSocketFactory.create(aHint);
-    this.betaSocket = inputSocketFactory.create(bHint);
+    this.srcSocket = inputSocketFactory.create(srcHint, "source-image");
+    this.typeSocket = inputSocketFactory.create(typeHint, "normalize-type");
+    this.alphaSocket = inputSocketFactory.create(aHint, "alpha");
+    this.betaSocket = inputSocketFactory.create(bHint, "beta");
 
-    this.outputSocket = outputSocketFactory.create(dstHint);
+    this.outputSocket = outputSocketFactory.create(dstHint, "result");
   }
 
   @Override

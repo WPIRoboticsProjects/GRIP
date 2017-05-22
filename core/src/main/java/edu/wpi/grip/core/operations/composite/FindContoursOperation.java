@@ -52,10 +52,10 @@ public class FindContoursOperation implements Operation {
   @SuppressWarnings("JavadocMethod")
   public FindContoursOperation(InputSocket.Factory inputSocketFactory, OutputSocket.Factory
       outputSocketFactory) {
-    this.inputSocket = inputSocketFactory.create(inputHint);
-    this.externalSocket = inputSocketFactory.create(externalHint);
+    this.inputSocket = inputSocketFactory.create(inputHint, "source-image");
+    this.externalSocket = inputSocketFactory.create(externalHint, "find-external-only");
 
-    this.contoursSocket = outputSocketFactory.create(contoursHint);
+    this.contoursSocket = outputSocketFactory.create(contoursHint, "found-contours");
   }
 
   @Override

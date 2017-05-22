@@ -233,6 +233,7 @@ project(":core") {
         compile group: 'org.bytedeco.javacpp-presets', name: 'ffmpeg', version: '0.200-1.1', classifier: os
         compile group: 'org.python', name: 'jython', version: '2.7.0'
         compile group: 'com.thoughtworks.xstream', name: 'xstream', version: '1.4.9'
+        compile group: 'com.github.zafarkhaja', name: 'java-semver', version: '0.9.0'
         compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.5'
         compile group: 'com.google.guava', name: 'guava', version: '20.0'
         compile group: 'com.google.auto.value', name: 'auto-value', version: '1.3'

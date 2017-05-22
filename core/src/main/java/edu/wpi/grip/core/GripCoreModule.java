@@ -20,6 +20,7 @@ import edu.wpi.grip.core.sources.VideoFileSource;
 import edu.wpi.grip.core.util.ExceptionWitness;
 import edu.wpi.grip.core.util.GripMode;
 
+import com.github.zafarkhaja.semver.Version;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.SubscriberExceptionContext;
 import com.google.inject.AbstractModule;
@@ -130,6 +131,9 @@ public class GripCoreModule extends AbstractModule {
 
     // Allow for just injecting the settings provider, instead of the whole pipeline
     bind(SettingsProvider.class).to(Pipeline.class);
+
+    // Bind the current GRIP version.
+    bind(Version.class).toInstance(VersionManager.CURRENT_VERSION);
 
     install(new FactoryModuleBuilder().build(new TypeLiteral<Connection.Factory<Object>>() {
     }));

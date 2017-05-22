@@ -26,9 +26,11 @@ public class ConvexHullsOperation implements Operation {
           .category(OperationDescription.Category.FEATURE_DETECTION)
           .build();
 
-  private final SocketHint<ContoursReport> contoursHint = new SocketHint.Builder<>(ContoursReport
-      .class)
-      .identifier("Contours").initialValueSupplier(ContoursReport::new).build();
+  private final SocketHint<ContoursReport> contoursHint =
+      new SocketHint.Builder<>(ContoursReport.class)
+          .identifier("Contours")
+          .initialValueSupplier(ContoursReport::new)
+          .build();
 
   private final InputSocket<ContoursReport> inputSocket;
   private final OutputSocket<ContoursReport> outputSocket;
@@ -36,9 +38,9 @@ public class ConvexHullsOperation implements Operation {
   @SuppressWarnings("JavadocMethod")
   public ConvexHullsOperation(InputSocket.Factory inputSocketFactory, OutputSocket.Factory
       outputSocketFactory) {
-    this.inputSocket = inputSocketFactory.create(contoursHint);
+    this.inputSocket = inputSocketFactory.create(contoursHint, "contours");
 
-    this.outputSocket = outputSocketFactory.create(contoursHint);
+    this.outputSocket = outputSocketFactory.create(contoursHint, "hulls");
   }
 
   @Override

@@ -42,8 +42,8 @@ public abstract class NetworkPublishOperation<D> implements Operation {
             .identifier("Data")
             .build();
     this.dataType = dataType;
-    this.dataSocket = isf.create(dataHint);
-    this.nameSocket = isf.create(nameHint);
+    this.dataSocket = isf.create(dataHint, "data-type");
+    this.nameSocket = isf.create(nameHint, "published-name");
   }
 
   @Override

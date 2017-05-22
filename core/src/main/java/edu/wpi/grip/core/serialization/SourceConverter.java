@@ -27,6 +27,8 @@ import javax.inject.Inject;
  */
 public class SourceConverter implements Converter {
 
+  private static final String ID_ATTRIBUTE = "id";
+
   @Inject
   private EventBus eventBus;
   @Inject
@@ -36,6 +38,7 @@ public class SourceConverter implements Converter {
 
   @Override
   public void marshal(Object obj, HierarchicalStreamWriter writer, MarshallingContext context) {
+    writer.addAttribute(ID_ATTRIBUTE, ((Source) obj).getId());
     context.convertAnother(((Source) obj).getProperties());
   }
 
@@ -45,6 +48,7 @@ public class SourceConverter implements Converter {
     try {
       final Class<Source> sourceClass = (Class<Source>) project.xstream.getMapper()
           .realClass(reader.getNodeName());
+      final String id = reader.getAttribute(ID_ATTRIBUTE);
       final Properties properties = (Properties) context.convertAnother(null, Properties.class);
 
       // Although sources may block briefly upon creation, we intentionally do this in one thread
@@ -53,6 +57,9 @@ public class SourceConverter implements Converter {
       // sources that
       // are in the process of loading.
       final Source source = sourceFactory.create(sourceClass, properties);
+      if (id != null) {
+        source.setId(id);
+      }
 
       // Instead of returning the source, post it to the event bus so both the core and GUI
       // classes know it

@@ -12,6 +12,7 @@ import edu.wpi.grip.core.events.ConnectionAddedEvent;
 import edu.wpi.grip.core.events.OperationAddedEvent;
 import edu.wpi.grip.core.events.ProjectSettingsChangedEvent;
 import edu.wpi.grip.core.events.SourceAddedEvent;
+import edu.wpi.grip.core.exception.InvalidSaveException;
 import edu.wpi.grip.core.operations.PythonScriptFile;
 import edu.wpi.grip.core.operations.network.MockGripNetworkModule;
 import edu.wpi.grip.core.settings.ProjectSettings;
@@ -128,6 +129,39 @@ public class ProjectTest {
 
     assertEquals("Serialized pipeline is not equal to pipeline before serialization",
         0, pipeline.getConnections().size());
+  }
+
+  @Test
+  public void testLoadInvalidXML() {
+    try {
+      project.open("");
+    } catch (InvalidSaveException e) {
+      if (!e.getMessage().equals("Invalid XML")) {
+        // Not the exception we were expecting, throw it
+        throw e;
+      }
+    }
+  }
+
+  @Test
+  public void testLoadIncompatibleEntries() {
+    String xml = "<grip:Project>\n"
+        + "  <grip:Pipeline>\n"
+        + "    <sources/>\n"
+        + "    <steps>\n"
+        + "      <grip:Step name=\"\"/>\n"
+        + "    </steps>\n"
+        + "    <connections/>\n"
+        + "    <settings/>\n"
+        + "  </grip:Pipeline>"
+        + "</grip:Project>";
+    try {
+      project.open(xml);
+    } catch (InvalidSaveException e) {
+      if (!e.getMessage().equals("There are incompatible sources or steps in the pipeline")) {
+        throw e;
+      }
+    }
   }
 
   @Test

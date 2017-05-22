@@ -3,7 +3,6 @@ package edu.wpi.grip.core.sources;
 
 import edu.wpi.grip.core.Source;
 import edu.wpi.grip.core.events.SourceHasPendingUpdateEvent;
-import edu.wpi.grip.core.events.SourceRemovedEvent;
 import edu.wpi.grip.core.http.ContextStore;
 import edu.wpi.grip.core.http.GripServer;
 import edu.wpi.grip.core.sockets.OutputSocket;
@@ -13,7 +12,6 @@ import edu.wpi.grip.core.util.ExceptionWitness;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.eventbus.EventBus;
-import com.google.common.eventbus.Subscribe;
 import com.google.inject.assistedinject.Assisted;
 import com.google.inject.assistedinject.AssistedInject;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
@@ -87,10 +85,10 @@ public class HttpSource extends Source {
       GripServer server,
       ContextStore store,
       @Assisted String path) {
-    super(exceptionWitnessFactory);
+    super(makeId(HttpSource.class), exceptionWitnessFactory);
     this.path = path;
     this.imageHandler = handlers.computeIfAbsent(path, p -> new HttpImageHandler(store, p));
-    this.imageOutput = osf.create(outputHint);
+    this.imageOutput = osf.create(outputHint, "image-output");
     this.eventBus = eventBus;
     // Will add the handler only when the first HttpSource is created -- no-op every subsequent time
     // (Otherwise, multiple handlers would be getting called and it'd be a mess)
@@ -138,11 +136,9 @@ public class HttpSource extends Source {
     imageHandler.getImage().ifPresent(this::setImage);
   }
 
-  @Subscribe
-  public void onSourceRemovedEvent(SourceRemovedEvent event) {
-    if (event.getSource() == this) {
-      imageHandler.removeCallback(callback);
-    }
+  @Override
+  protected void cleanUp() {
+    imageHandler.removeCallback(callback);
   }
 
 }

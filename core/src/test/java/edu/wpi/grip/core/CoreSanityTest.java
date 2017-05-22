@@ -9,6 +9,7 @@ import edu.wpi.grip.core.sockets.SocketHint;
 import edu.wpi.grip.core.sockets.SocketHints;
 import edu.wpi.grip.core.util.service.SingleActionListener;
 
+import com.github.zafarkhaja.semver.Version;
 import com.google.common.testing.AbstractPackageSanityTests;
 import com.google.common.util.concurrent.Service;
 
@@ -42,5 +43,6 @@ public class CoreSanityTest extends AbstractPackageSanityTests {
             () -> null));
     setDefault(OperationDescription.class, OperationDescription.builder().name("").summary("")
         .build());
+    setDefault(Version.class, VersionManager.CURRENT_VERSION);
   }
 }

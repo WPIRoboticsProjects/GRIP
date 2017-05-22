@@ -1,5 +1,6 @@
 package edu.wpi.grip.core.http;
 
+import edu.wpi.grip.core.exception.InvalidSaveException;
 import edu.wpi.grip.core.serialization.Project;
 
 import com.google.inject.Inject;
@@ -38,8 +39,14 @@ public class HttpPipelineSwitcher extends PedanticHandler {
       baseRequest.setHandled(true);
       return;
     }
-    project.open(new String(IOUtils.toByteArray(request.getInputStream()), "UTF-8"));
-    response.setStatus(HttpServletResponse.SC_CREATED);
-    baseRequest.setHandled(true);
+    try {
+      project.open(new String(IOUtils.toByteArray(request.getInputStream()), "UTF-8"));
+      response.setStatus(HttpServletResponse.SC_CREATED);
+      baseRequest.setHandled(true);
+    } catch (InvalidSaveException e) {
+      // 406 - Not Acceptable if given an invalid save
+      response.setStatus(HttpServletResponse.SC_NOT_ACCEPTABLE);
+      baseRequest.setHandled(true);
+    }
   }
 }

@@ -77,9 +77,9 @@ public class WatershedOperation implements Operation {
   @SuppressWarnings("JavadocMethod")
   public WatershedOperation(InputSocket.Factory inputSocketFactory,
                             OutputSocket.Factory outputSocketFactory) {
-    srcSocket = inputSocketFactory.create(srcHint);
-    contoursSocket = inputSocketFactory.create(contoursHint);
-    outputSocket = outputSocketFactory.create(outputHint);
+    srcSocket = inputSocketFactory.create(srcHint, "source-image");
+    contoursSocket = inputSocketFactory.create(contoursHint, "contours");
+    outputSocket = outputSocketFactory.create(outputHint, "feature-contours");
     markerPool = ImmutableList.copyOf(
         Stream.generate(Mat::new).limit(MAX_MARKERS).collect(Collectors.toList())
     );

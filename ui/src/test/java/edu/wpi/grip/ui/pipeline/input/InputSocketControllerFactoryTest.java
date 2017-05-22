@@ -111,6 +111,7 @@ public class InputSocketControllerFactoryTest extends ApplicationTest {
         verifyThat(controller.getHandle(), NodeMatchers.isEnabled());
         verifyThat(controller.getHandle(), NodeMatchers.isVisible());
       }
+      step.setRemoved();
     });
   }
 }

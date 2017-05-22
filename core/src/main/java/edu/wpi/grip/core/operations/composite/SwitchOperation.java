@@ -40,7 +40,7 @@ public class SwitchOperation implements Operation {
     final LinkedSocketHint linkedSocketHint = new LinkedSocketHint(inputSocketFactory,
         outputSocketFactory);
 
-    this.switcherSocket = inputSocketFactory.create(switcherHint);
+    this.switcherSocket = inputSocketFactory.create(switcherHint, "switch");
     this.inputSocket1 = linkedSocketHint.linkedInputSocket("If True");
     this.inputSocket2 = linkedSocketHint.linkedInputSocket("If False");
 
