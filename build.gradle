@@ -582,7 +582,7 @@ task jacocoRootReport(type: JacocoReport, group: 'Coverage reports') {
 }
 
 task wrapper(type: Wrapper) {
-    gradleVersion = '3.2.1'
+    gradleVersion = '3.4'
     // We want the sources with the wrapper.
     distributionType = DistributionType.ALL
 }
