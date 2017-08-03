@@ -20,6 +20,7 @@ import org.junit.experimental.categories.Category;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 import java.util.logging.Logger;
 
@@ -46,7 +47,7 @@ public class FindLinesGenerationTesting extends AbstractGenerationTesting {
   @Before
   public void ignoreIfWindows() {
     assumeFalse("OpenCV JNI bindings crash in Windows using Line segment detector",
-        System.getProperty("os.name").toLowerCase().contains("windows"));
+        System.getProperty("os.name").toLowerCase(Locale.ENGLISH).contains("windows"));
   }
 
   void generatePipeline() {

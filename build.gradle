@@ -14,9 +14,9 @@ buildscript {
     }
 
     dependencies {
-        classpath group: 'de.dynamicfiles.projects.gradle.plugins', name: 'javafx-gradle-plugin', version: '8.5.2'
-        classpath 'com.netflix.nebula:gradle-aggregate-javadocs-plugin:2.2.+'
-        classpath 'net.ltgt.gradle:gradle-errorprone-plugin:0.0.8'
+        classpath group: 'de.dynamicfiles.projects.gradle.plugins', name: 'javafx-gradle-plugin', version: '8.8.0'
+        classpath 'com.netflix.nebula:gradle-aggregate-javadocs-plugin:3.0.1'
+        classpath 'net.ltgt.gradle:gradle-errorprone-plugin:0.0.11'
         classpath group: 'edu.wpi.first.wpilib.opencv', name: 'opencv-installer', version: '2.0.0'
     }
 }
@@ -25,15 +25,15 @@ import edu.wpi.first.wpilib.opencv.installer.Installer
 import edu.wpi.first.wpilib.opencv.installer.platform.Platform
 
 plugins {
-    id 'com.gradle.build-scan' version '1.3'
+    id 'com.gradle.build-scan' version '1.8'
     id 'java'
     id 'idea'
     id 'eclipse'
     id 'jacoco'
     id 'com.google.osdetector' version '1.4.0'
-    id 'com.github.johnrengelman.shadow' version '1.2.3'
-    id "com.dorongold.task-tree" version "1.2.2"
-    id 'org.ajoberstar.grgit' version '1.6.0' apply false
+    id 'com.github.johnrengelman.shadow' version '1.2.4'
+    id 'com.dorongold.task-tree' version '1.3'
+    id 'org.ajoberstar.grgit' version '1.7.1' apply false
 }
 apply plugin: 'nebula-aggregate-javadocs'
 apply from: 'git.gradle'
@@ -89,7 +89,7 @@ configure(subprojects - project(':ui:linuxLauncher')) {
     apply plugin: 'findbugs'
 
     configurations.errorprone {
-        resolutionStrategy.force 'com.google.errorprone:error_prone_core:2.0.15'
+        resolutionStrategy.force 'com.google.errorprone:error_prone_core:2.0.21'
     }
 
     checkstyle {
@@ -127,12 +127,16 @@ configure(subprojects - project(':ui:linuxLauncher')) {
         }
     }
 
-    task findbugsMainReport << {
-        printReportSafe(findbugsMain.reports.getXml().destination)
+    task findbugsMainReport {
+        doLast {
+            printReportSafe(findbugsMain.reports.getXml().destination)
+        }
     }
 
-    task findbugsTestReport << {
-        printReportSafe(findbugsTest.reports.getXml().destination)
+    task findbugsTestReport {
+        doLast {
+            printReportSafe(findbugsTest.reports.getXml().destination)
+        }
     }
 
     findbugsMain.finalizedBy findbugsMainReport
@@ -142,18 +146,14 @@ configure(subprojects - project(':ui:linuxLauncher')) {
         mavenCentral()
         jcenter()
     }
-    jacoco {
-        toolVersion = "0.7.5.201505241946"
-    }
-
 
     dependencies {
         compile group: 'com.google.code.findbugs', name: 'annotations', version: '3.0.1'
         testCompile group: 'net.jodah', name: 'concurrentunit', version: '0.4.2'
         testCompile group: 'org.hamcrest', name: 'hamcrest-all', version: '1.3'
         testCompile group: 'junit', name: 'junit', version: '4.12'
-        testCompile group: 'com.google.truth', name: 'truth', version: '0.30'
-        testCompile group: 'com.google.guava', name: 'guava-testlib', version: '20.0'
+        testCompile group: 'com.google.truth', name: 'truth', version: '0.34'
+        testCompile group: 'com.google.guava', name: 'guava-testlib', version: '22.0'
     }
 
     version = getVersionName()
@@ -582,7 +582,7 @@ task jacocoRootReport(type: JacocoReport, group: 'Coverage reports') {
 }
 
 task wrapper(type: Wrapper) {
-    gradleVersion = '3.2.1'
+    gradleVersion = '4.0.2'
     // We want the sources with the wrapper.
     distributionType = DistributionType.ALL
 }

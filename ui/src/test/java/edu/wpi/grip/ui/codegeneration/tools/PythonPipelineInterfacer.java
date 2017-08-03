@@ -22,6 +22,7 @@ import java.io.OutputStreamWriter;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
@@ -50,7 +51,7 @@ public class PythonPipelineInterfacer implements PipelineInterfacer {
       fail("Could not load code directory");
       logger.log(Level.WARNING, e.getMessage(), e);
     }
-    if (System.getProperty("os.name").toLowerCase().contains("windows")) {
+    if (System.getProperty("os.name").toLowerCase(Locale.ENGLISH).contains("windows")) {
       pythonCmd = "python";
     } else {
       pythonCmd = "python3";

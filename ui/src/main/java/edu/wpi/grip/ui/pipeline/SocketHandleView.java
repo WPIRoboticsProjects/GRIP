@@ -16,6 +16,7 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.google.inject.assistedinject.Assisted;
 
+import java.util.Locale;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -54,7 +55,8 @@ public class SocketHandleView extends Button {
 
     this.setTooltip(new Tooltip("Drag to connect"));
 
-    this.getStyleClass().addAll("socket-handle", socket.getDirection().toString().toLowerCase());
+    this.getStyleClass().addAll("socket-handle",
+        socket.getDirection().toString().toLowerCase(Locale.ENGLISH));
 
     this.connectingProperty.addListener((observableValue, oldValue, isConnecting) ->
         this.pseudoClassStateChanged(CONNECTING_PSEUDO_CLASS, isConnecting));

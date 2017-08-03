@@ -31,6 +31,7 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 import java.util.Properties;
 import java.util.concurrent.Executor;
@@ -352,7 +353,7 @@ public class CameraSource extends Source implements RestartableService {
         // a new camera source is added. For webcam sources, this means that the video stream
         // won't be freed and new sources won't be able to connect to the webcam until the
         // application is closed.
-        if (StandardSystemProperty.OS_NAME.value().toLowerCase().contains("mac")) {
+        if (StandardSystemProperty.OS_NAME.value().toLowerCase(Locale.ENGLISH).contains("mac")) {
           // Workaround for #716. This affects webcams as well as IP camera sources.
           // Use only stopAsync() to avoid blocking. Since we have no way of knowing when
           // the capture has actually been freed, we use a dumb delay to try to make sure it's

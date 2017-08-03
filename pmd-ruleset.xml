@@ -7,6 +7,7 @@
     <rule ref="rulesets/java/braces.xml" />
     <rule ref="rulesets/java/design.xml">
         <exclude name="AccessorClassGeneration" />
+        <exclude name="AccessorMethodGeneration" />
         <exclude name="AvoidSynchronizedAtMethodLevel" />
         <exclude name="CloseResource" />
         <exclude name="ConfusingTernary" />
