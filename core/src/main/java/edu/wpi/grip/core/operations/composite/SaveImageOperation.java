@@ -18,6 +18,7 @@ import org.bytedeco.javacpp.IntPointer;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
 import static org.bytedeco.javacpp.opencv_core.Mat;
@@ -69,7 +70,7 @@ public class SaveImageOperation implements Operation {
 
     @Override
     public String toString() {
-      return super.toString().toLowerCase();
+      return super.toString().toLowerCase(Locale.ENGLISH);
     }
   }
 

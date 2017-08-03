@@ -38,8 +38,8 @@ script:
   # will not be able to run MainWindowTest.testDragOperationFromPaletteToPipeline
   - |
     if [[ "$TRAVIS_OS_NAME" == "osx" ]];
-    then ./gradlew check jacocoTestReport jacocoRootReport --stacktrace -Pheadless=true -PlogTests -Dscan -Pgeneration -PjniLocation=$HOME/opencv/jni;
-    else ./gradlew check jacocoTestReport jacocoRootReport --stacktrace -Pheadless=true -PlogTests -Dscan;
+    then ./gradlew check jacocoTestReport jacocoRootReport --stacktrace -Pheadless=true -PlogTests --scan -Pgeneration -PjniLocation=$HOME/opencv/jni;
+    else ./gradlew check jacocoTestReport jacocoRootReport --stacktrace -Pheadless=true -PlogTests --scan;
     fi
 
 after_success:
