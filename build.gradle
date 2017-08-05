@@ -373,77 +373,76 @@ project(":ui") {
     apply plugin: 'application'
     apply plugin: 'javafx-gradle-plugin'
 
-    task testSharedLib() {
-        description 'Compiles the shared library used by c++ generation testing.'
-        doLast {
-        def syst = osdetector.os
-        if(syst == "windows") {
-            exec {
-                ignoreExitValue true//if clean hasn't been called, directory already exists and mkdir fails.
-                workingDir 'build/classes/test'
-                commandLine 'cmd', '/c', 'mkdir', 'pipelib'
-            }
-            exec {
-                workingDir 'build/classes/test/pipelib'
-                commandLine '"C:\\Program Files (x86)\\Microsoft Visual Studio 14.0\\VC\\vcvarsall.bat"', 'amd64', '&', 'cmake', '-G', 'Visual Studio 14 2015 Win64', '..\\..\\..\\..\\src\\test\\resources\\edu\\wpi\\grip\\ui\\codegeneration\\tools\\'
-           }
-            exec {
-                workingDir 'build/classes/test/pipelib'
-                commandLine '"C:\\Program Files (x86)\\Microsoft Visual Studio 14.0\\VC\\vcvarsall.bat"', 'amd64', '&', 'cmake', '--build', '.', '--target', 'ALL_BUILD', '--config', 'Release'
-            }
-            exec {
-                workingDir 'build/classes/test'
-                commandLine 'cmd', '/C', 'copy /Y pipelib\\Release\\* .'
-            }
-            exec {
-                workingDir 'build/classes/test'
-                commandLine 'cmd', '/C', 'copy /Y pipelib\\pipe\\Release\\* .'
-            }
-            exec {
-                workingDir 'build/classes/test/pipelib'
-                commandLine 'cmd', '/C', 'copy /Y ..\\..\\..\\..\\src\\test\\resources\\edu\\wpi\\grip\\ui\\codegeneration\\tools\\pipe\\AbsPipeline.h pipe\\'
-            }
-            exec {
-                workingDir 'build/classes/test'
-                commandLine 'cmd', '/C', 'copy /Y ..\\..\\..\\src\\test\\resources\\edu\\wpi\\grip\\ui\\codegeneration\\tools\\realpipe\\CMakeLists.txt .'
-            }
-        } else {
-            exec {
-                ignoreExitValue true//if clean hasn't been called, directory already exists and mkdir fails.
-                workingDir 'build/classes/test'
-                commandLine 'mkdir', 'pipelib'
-            }
-            exec {
-                workingDir 'build/classes/test/pipelib'
-                commandLine 'cmake' , '../../../../src/test/resources/edu/wpi/grip/ui/codegeneration/tools/'
-           }
-            exec {
-                workingDir 'build/classes/test/pipelib'
-                commandLine 'make'
-            }
-            exec {
-                workingDir 'build/classes/test'
-                if(syst == "osx"){
-                    commandLine 'cp', 'pipelib/libgenJNI.dylib', '.'
-                }
-                if(syst == "linux"){
-                    commandLine 'cp' , 'pipelib/libgenJNI.so', '.'
-                }
-            }
-            exec {
-                workingDir 'build/classes/test/pipelib'
-                commandLine 'cp' , '../../../../src/test/resources/edu/wpi/grip/ui/codegeneration/tools/pipe/AbsPipeline.h', 'pipe/'
-            }
-            exec {
-                workingDir 'build/classes/test'
-                commandLine 'cp', '../../../src/test/resources/edu/wpi/grip/ui/codegeneration/tools/realpipe/CMakeLists.txt', '.'
-            }
-            }
-        }
-    }
+//    task testSharedLib() {
+//        description 'Compiles the shared library used by c++ generation testing.'
+//        doLast {
+//        def syst = osdetector.os
+//        if(syst == "windows") {
+//            exec {
+//                ignoreExitValue true//if clean hasn't been called, directory already exists and mkdir fails.
+//                workingDir 'build/classes/test'
+//                commandLine 'cmd', '/c', 'mkdir', 'pipelib'
+//            }
+//            exec {
+//                workingDir 'build/classes/test/pipelib'
+//                commandLine '"C:\\Program Files (x86)\\Microsoft Visual Studio 14.0\\VC\\vcvarsall.bat"', 'amd64', '&', 'cmake', '-G', 'Visual Studio 14 2015 Win64', '..\\..\\..\\..\\src\\test\\resources\\edu\\wpi\\grip\\ui\\codegeneration\\tools\\'
+//            }
+//            exec {
+//                workingDir 'build/classes/test/pipelib'
+//                commandLine '"C:\\Program Files (x86)\\Microsoft Visual Studio 14.0\\VC\\vcvarsall.bat"', 'amd64', '&', 'cmake', '--build', '.', '--target', 'ALL_BUILD', '--config', 'Release'
+//            }
+//            exec {
+//                workingDir 'build/classes/test'
+//                commandLine 'cmd', '/C', 'copy /Y pipelib\\Release\\* .'
+//            }
+//            exec {
+//                workingDir 'build/classes/test'
+//                commandLine 'cmd', '/C', 'copy /Y pipelib\\pipe\\Release\\* .'
+//            }
+//            exec {
+//                workingDir 'build/classes/test/pipelib'
+//                commandLine 'cmd', '/C', 'copy /Y ..\\..\\..\\..\\src\\test\\resources\\edu\\wpi\\grip\\ui\\codegeneration\\tools\\pipe\\AbsPipeline.h pipe\\'
+//            }
+//            exec {
+//                workingDir 'build/classes/test'
+//                commandLine 'cmd', '/C', 'copy /Y ..\\..\\..\\src\\test\\resources\\edu\\wpi\\grip\\ui\\codegeneration\\tools\\realpipe\\CMakeLists.txt .'
+//            }
+//        } else {
+//            exec {
+//                ignoreExitValue true//if clean hasn't been called, directory already exists and mkdir fails.
+//                workingDir 'build/classes/test'
+//                commandLine 'mkdir', 'pipelib'
+//            }
+//            exec {
+//                workingDir 'build/classes/test/pipelib'
+//                commandLine 'cmake' , '../../../../src/test/resources/edu/wpi/grip/ui/codegeneration/tools/'
+//           }
+//            exec {
+//                workingDir 'build/classes/test/pipelib'
+//                commandLine 'make'
+//            }
+//            exec {
+//                workingDir 'build/classes/test'
+//                if(syst == "osx"){
+//                    commandLine 'cp', 'pipelib/libgenJNI.dylib', '.'
+//                }
+//                if(syst == "linux"){
+//                    commandLine 'cp' , 'pipelib/libgenJNI.so', '.'
+//                }
+//            }
+//            exec {
+//                workingDir 'build/classes/test/pipelib'
+//                commandLine 'cp' , '../../../../src/test/resources/edu/wpi/grip/ui/codegeneration/tools/pipe/AbsPipeline.h', 'pipe/'
+//            }
+//            exec {
+//                workingDir 'build/classes/test'
+//                commandLine 'cp', '../../../src/test/resources/edu/wpi/grip/ui/codegeneration/tools/realpipe/CMakeLists.txt', '.'
+//            }
+//            }
+//        }
+//    }
 
     if(project.hasProperty('generation') || project.hasProperty('genonly')){
-        def syst = osdetector.os
         test {
             Platform platform = Installer.getPlatform()
             Installer.setOpenCvVersion('3.1.0')

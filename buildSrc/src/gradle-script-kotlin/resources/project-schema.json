@@ -1,0 +1,105 @@
+{
+    ":": {
+        "conventions": {
+            "base": "org.gradle.api.plugins.BasePluginConvention",
+            "java": "org.gradle.api.plugins.JavaPluginConvention"
+        },
+        "extensions": {
+            "ext": "org.gradle.api.plugins.ExtraPropertiesExtension",
+            "buildScan": "com.gradle.scan.plugin.internal.api.f",
+            "osdetector": "com.google.gradle.osdetector.OsDetector",
+            "shadow": "com.github.jengelman.gradle.plugins.shadow.ShadowExtension",
+            "defaultArtifacts": "org.gradle.api.internal.plugins.DefaultArtifactPublicationSet",
+            "reporting": "org.gradle.api.reporting.ReportingExtension",
+            "idea": "org.gradle.plugins.ide.idea.model.IdeaModel",
+            "eclipse": "org.gradle.plugins.ide.eclipse.model.EclipseModel",
+            "jacoco": "org.gradle.testing.jacoco.plugins.JacocoPluginExtension"
+        }
+    },
+    ":core": {
+        "conventions": {
+            "base": "org.gradle.api.plugins.BasePluginConvention",
+            "java": "org.gradle.api.plugins.JavaPluginConvention",
+            "application": "org.gradle.api.plugins.ApplicationPluginConvention"
+        },
+        "extensions": {
+            "ext": "org.gradle.api.plugins.ExtraPropertiesExtension",
+            "defaultArtifacts": "org.gradle.api.internal.plugins.DefaultArtifactPublicationSet",
+            "reporting": "org.gradle.api.reporting.ReportingExtension",
+            "distributions": "org.gradle.api.distribution.DistributionContainer",
+            "jacoco": "org.gradle.testing.jacoco.plugins.JacocoPluginExtension",
+            "checkstyle": "org.gradle.api.plugins.quality.CheckstyleExtension",
+            "pmd": "org.gradle.api.plugins.quality.PmdExtension",
+            "findbugs": "org.gradle.api.plugins.quality.FindBugsExtension",
+            "idea": "org.gradle.plugins.ide.idea.model.IdeaModel",
+            "shadow": "com.github.jengelman.gradle.plugins.shadow.ShadowExtension"
+        }
+    },
+    ":linuxLauncher": {
+        "conventions": {
+            "base": "org.gradle.api.plugins.BasePluginConvention",
+            "java": "org.gradle.api.plugins.JavaPluginConvention",
+            "application": "org.gradle.api.plugins.ApplicationPluginConvention"
+        },
+        "extensions": {
+            "ext": "org.gradle.api.plugins.ExtraPropertiesExtension",
+            "defaultArtifacts": "org.gradle.api.internal.plugins.DefaultArtifactPublicationSet",
+            "reporting": "org.gradle.api.reporting.ReportingExtension",
+            "distributions": "org.gradle.api.distribution.DistributionContainer",
+            "jacoco": "org.gradle.testing.jacoco.plugins.JacocoPluginExtension",
+            "checkstyle": "org.gradle.api.plugins.quality.CheckstyleExtension",
+            "pmd": "org.gradle.api.plugins.quality.PmdExtension",
+            "findbugs": "org.gradle.api.plugins.quality.FindBugsExtension"
+        }
+    },
+    ":ui": {
+        "conventions": {
+            "base": "org.gradle.api.plugins.BasePluginConvention",
+            "java": "org.gradle.api.plugins.JavaPluginConvention",
+            "application": "org.gradle.api.plugins.ApplicationPluginConvention"
+        },
+        "extensions": {
+            "ext": "org.gradle.api.plugins.ExtraPropertiesExtension",
+            "defaultArtifacts": "org.gradle.api.internal.plugins.DefaultArtifactPublicationSet",
+            "reporting": "org.gradle.api.reporting.ReportingExtension",
+            "distributions": "org.gradle.api.distribution.DistributionContainer",
+            "jacoco": "org.gradle.testing.jacoco.plugins.JacocoPluginExtension",
+            "checkstyle": "org.gradle.api.plugins.quality.CheckstyleExtension",
+            "pmd": "org.gradle.api.plugins.quality.PmdExtension",
+            "findbugs": "org.gradle.api.plugins.quality.FindBugsExtension",
+            "idea": "org.gradle.plugins.ide.idea.model.IdeaModel",
+            "jfx": "de.dynamicfiles.projects.gradle.plugins.javafx.JavaFXGradlePluginExtension",
+            "osdetector": "com.google.gradle.osdetector.OsDetector"
+        }
+    },
+    ":ui:linuxLauncher": {
+        "conventions": {
+            
+        },
+        "extensions": {
+            "ext": "org.gradle.api.plugins.ExtraPropertiesExtension",
+            "buildTypes": "org.gradle.nativeplatform.BuildTypeContainer",
+            "flavors": "org.gradle.nativeplatform.FlavorContainer",
+            "toolChains": "org.gradle.nativeplatform.toolchain.internal.NativeToolChainRegistryInternal",
+            "platforms": "org.gradle.platform.base.PlatformContainer"
+        }
+    },
+    ":ui:preloader": {
+        "conventions": {
+            "base": "org.gradle.api.plugins.BasePluginConvention",
+            "java": "org.gradle.api.plugins.JavaPluginConvention",
+            "application": "org.gradle.api.plugins.ApplicationPluginConvention"
+        },
+        "extensions": {
+            "ext": "org.gradle.api.plugins.ExtraPropertiesExtension",
+            "defaultArtifacts": "org.gradle.api.internal.plugins.DefaultArtifactPublicationSet",
+            "reporting": "org.gradle.api.reporting.ReportingExtension",
+            "distributions": "org.gradle.api.distribution.DistributionContainer",
+            "jacoco": "org.gradle.testing.jacoco.plugins.JacocoPluginExtension",
+            "checkstyle": "org.gradle.api.plugins.quality.CheckstyleExtension",
+            "pmd": "org.gradle.api.plugins.quality.PmdExtension",
+            "findbugs": "org.gradle.api.plugins.quality.FindBugsExtension",
+            "idea": "org.gradle.plugins.ide.idea.model.IdeaModel"
+        }
+    }
+}

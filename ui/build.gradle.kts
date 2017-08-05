@@ -4,6 +4,9 @@ plugins {
     jacoco
     application
 }
+apply {
+    plugin("com.google.osdetector")
+}
 
 val ideProviderConfiguration = configurations.maybeCreate("ideProvider")
 
@@ -68,8 +71,92 @@ tasks {
 
 idea {
     module {
-        scopes["PROVIDED"]?.get("")?.add(ideProviderConfiguration)
+        scopes["PROVIDED"]?.get("plus")?.add(ideProviderConfiguration)
     }
 }
+
+fun setupTestSharedLib() {
+    val syst = osdetector.os
+    val testClassesDir = file("$buildDir/classes/test")
+    val sharedLibWorkingDir = file("$testClassesDir/pipelib")
+    val testSharedLibStep1 = task<Exec>("testSharedLibStep1") {
+        doFirst {
+            GFileUtils.mkdirs(sharedLibWorkingDir)
+        }
+        workingDir = sharedLibWorkingDir
+        if (syst == "windows") {
+            commandLine(
+                    "\"C:\\Program Files (x86)\\Microsoft Visual Studio 14.0\\VC\\vcvarsall.bat\"",
+                    "amd64",
+                    "&",
+                    "cmake",
+                    "-G",
+                    "Visual Studio 14 2015 Win64",
+                    "..\\..\\..\\..\\src\\test\\resources\\edu\\wpi\\grip\\ui\\codegeneration\\tools\\"
+            )
+        } else {
+            commandLine(
+                    "cmake",
+                    "../../../../src/test/resources/edu/wpi/grip/ui/codegeneration/tools/"
+            )
+        }
+    }
+
+    val testSharedLibStep2 = task<Exec>("testSharedLibStep2") {
+        dependsOn(testSharedLibStep1)
+        workingDir = sharedLibWorkingDir
+        if (syst == "windows") {
+            commandLine(
+                    "\"C:\\\\Program Files (x86)\\\\Microsoft Visual Studio 14.0\\\\VC\\\\vcvarsall.bat\"",
+                    "amd64",
+                    "&",
+                    "cmake",
+                    "--build",
+                    ".",
+                    "--target",
+                    "ALL_BUILD",
+                    "--config",
+                    "Release"
+            )
+        } else {
+            commandLine("make")
+        }
+    }
+    val testSharedLib = task<Copy>("testSharedLib") {
+        dependsOn(testSharedLibStep2)
+        into(testClassesDir) {
+            if(syst == "osx") {
+                from("$testClassesDir/pipelib") {
+                    include("libgenJNI.dylib")
+                }
+            } else if(syst == "linux") {
+                from("$testClassesDir/pipelib") {
+                    include("libgenJNI.so")
+                }
+            } else if(syst == "windows") {
+                from("pipelib/Release") {
+                    include("**")
+                }
+                from("pipelib/pipe/Release") {
+                    include("**")
+                }
+            }
+        }
+        into(file("$sharedLibWorkingDir/pipe")) {
+            from("src/test/resources/edu/wpi/grip/ui/codegeneration/tools/pipe") {
+                include("AbsPipeline.h")
+            }
+        }
+        into(testClassesDir) {
+            from("src/test/resources/edu/wpi/grip/ui/codegeneration/tools/realpipe") {
+                include("CMakeLists.txt")
+            }
+        }
+    }
+}
+setupTestSharedLib()
+
+
+
 
 
