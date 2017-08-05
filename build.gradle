@@ -442,22 +442,6 @@ project(":ui") {
 //        }
 //    }
 
-    if(project.hasProperty('generation') || project.hasProperty('genonly')){
-        test {
-            Platform platform = Installer.getPlatform()
-            Installer.setOpenCvVersion('3.1.0')
-            def jniLocation = project.getProperties().getOrDefault('jniLocation', platform.defaultJniLocation())
-            Installer.installJni("${jniLocation}")
-            def defaultLibPath = System.getProperty('java.library.path');
-            jvmArgs = ["-Djava.library.path=${defaultLibPath}${System.getProperty('path.separator')}${jniLocation}"]
-            if(project.hasProperty('genonly')){
-                useJUnit {
-                    includeCategories 'edu.wpi.grip.ui.codegeneration.GenerationTesting'
-                }
-            }
-        }
-    }
-
     jfx {
         mainClass = "edu.wpi.grip.ui.Main"
         preLoader = "edu.wpi.grip.preloader.GripPreloader"
