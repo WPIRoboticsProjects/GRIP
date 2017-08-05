@@ -48,6 +48,12 @@ allprojects {
     tasks.withType(CreateStartScripts) {
         mainClassName = "someRandomGiberish" + Math.random()
     }
+
+    repositories {
+        maven {
+            url = "http://first.wpi.edu/FRC/roborio/maven/development"
+        }
+    }
 }
 
 idea.project {
@@ -366,61 +372,6 @@ project(":ui") {
     apply plugin: 'jacoco'
     apply plugin: 'application'
     apply plugin: 'javafx-gradle-plugin'
-
-    repositories {
-        maven {
-            url = "http://first.wpi.edu/FRC/roborio/maven/development"
-        }
-    }
-
-    configurations {
-        ideProvider
-    }
-	if(!(project.hasProperty('generation') || project.hasProperty('genonly'))){
-	    sourceSets {
-            test {
-                java {
-                    exclude "**/ui/codegeneration"
-                    exclude "**/ui/codegeneration/**"
-                }
-            }
-	    }
-	}
-    dependencies {
-        compile project(path: ':core', configuration: 'shadow')
-        compile project(path: ':ui:preloader')
-        ideProvider project(path: ':core', configuration: 'compile')
-        compile group: 'org.controlsfx', name: 'controlsfx', version: '8.40.11'
-        compile group: 'com.hierynomus', name: 'sshj', version: '0.16.0'
-        compile group: 'org.apache.velocity', name: 'velocity', version: '1.7'
-        testCompile files(project(':core').sourceSets.test.output.classesDir)
-        testCompile files(project(':core').sourceSets.test.output.resourcesDir)
-        testCompile group: 'org.testfx', name: 'testfx-core', version: '4.0.5-alpha'
-        testCompile group: 'org.testfx', name: 'testfx-junit', version: '4.0.5-alpha'
-        testRuntime group: 'org.testfx', name: 'openjfx-monocle', version: '1.8.0_20'
-        testCompile group: 'org.opencv', name: 'opencv-java', version: '3.1.0'
-    }
-
-    evaluationDependsOn(':core')
-    evaluationDependsOn(':ui:preloader')
-    if (System.getProperty("os.name").toLowerCase().contains("linux")) {
-        jfxNative.dependsOn tasks.getByPath(':ui:linuxLauncher:linuxLauncherExecutable')
-    }
-    compileTestJava.dependsOn tasks.getByPath(':core:testClasses')
-
-    idea.module {
-        scopes.PROVIDED.plus += [configurations.ideProvider]
-    }
-
-    /*
-     * Allows you to run the UI tests in headless mode by calling gradle with the -Pheadless=true argument
-     */
-    if (project.hasProperty('headless') && project.headless) {
-        println "Running UI Tests Headless"
-        test {
-            jvmArgs = ['-Djava.awt.headless=true', '-Dtestfx.robot=glass', '-Dtestfx.headless=true', '-Dprism.order=sw', '-Dprism.text=t2k']
-        }
-    }
 
     task testSharedLib() {
         description 'Compiles the shared library used by c++ generation testing.'
