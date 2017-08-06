@@ -1,5 +1,6 @@
 
 import edu.wpi.first.wpilib.opencv.installer.Installer
+import org.codehaus.groovy.runtime.MethodClosure
 import org.gradle.api.tasks.Copy
 import org.gradle.api.tasks.Exec
 import org.gradle.api.tasks.testing.Test
@@ -9,12 +10,14 @@ import org.gradle.util.GFileUtils
 
 buildscript {
     repositories {
+        jcenter()
         maven {
             setUrl("https://github.com/WPIRoboticsProjects/opencv-maven/raw/mvn-repo")
         }
     }
     dependencies {
         classpath(dependencyNotation = "edu.wpi.first.wpilib.opencv:opencv-installer:2.0.0")
+        classpath(dependencyNotation = "de.dynamicfiles.projects.gradle.plugins:javafx-gradle-plugin:8.8.0")
     }
 }
 
@@ -26,6 +29,7 @@ plugins {
 }
 apply {
     plugin("com.google.osdetector")
+    plugin("javafx-gradle-plugin")
 }
 
 val ideProviderConfiguration = configurations.maybeCreate("ideProvider")
@@ -208,7 +212,42 @@ if (project.hasProperty("generation") || project.hasProperty("genonly")) {
     setupGenerationTests()
 }
 
+fun getVersionSimple() : String {
+    val getGitDescribeAbbrev : MethodClosure by rootProject.extra
+    return if (project.hasProperty("vers")) properties["vers"].toString()
+    else getGitDescribeAbbrev.call() as String
+}
+val arch = osdetector.arch.replace("x86_64", "x64")
+jfx {
+    mainClass = "edu.wpi.grip.ui.Main"
+    preLoader = "edu.wpi.grip.preloader.GripPreloader"
 
+    identifier = "GRIP"
+    appName = "GRIP"
+    vendor = "Worcester Polytechnic Institute"
+    nativeReleaseVersion = "${getVersionSimple()}-${arch}"
 
+    jfxMainAppJarName = "${jfx.appName}-${jfx.nativeReleaseVersion}.jar"
 
+    // -XX:-OmitStackTraceInFastThrow prevents the JIT from eating stack traces that get thrown a lot
+    // This is slower but means we actually get the stack traces instead of
+    // having them become one line like `java.lang.ArrayIndexOutOfBoundsException`
+    // and as such, would be useless.
+    // See: https://plumbr.eu/blog/java/on-a-quest-for-missing-stacktraces
+    // -Xmx limits the heap size. This prevents memory use from ballooning with a lot
+    // of JavaCV native objects being allocated hanging around waiting to get GC'd.
+    // -XX:MaxNewSize limits the size of the eden space to force minor GCs to run more often.
+    // This causes old mats (which take up little space on the heap but a lot of native memory) to get deallocated
+    // and free up native memory quicker, limiting the memory the app takes up.
+    jvmArgs = listOf("-XX:-OmitStackTraceInFastThrow", "-Xmx200m", "-XX:MaxNewSize=32m")
 
+    bundleArguments = mapOf (
+            "linux.launcher.url" to file("linuxLauncher/build/exe/linuxLauncher/linuxLauncher")
+                    .toURI().toURL().toString()
+    )
+
+}
+
+application {
+    mainClassName = jfx.mainClass
+}

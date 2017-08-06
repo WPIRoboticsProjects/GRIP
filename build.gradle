@@ -1,6 +1,6 @@
-import static org.gradle.api.tasks.wrapper.Wrapper.DistributionType
-
 import groovy.xml.XmlUtil
+
+import static org.gradle.api.tasks.wrapper.Wrapper.DistributionType
 
 buildscript {
     repositories {
@@ -20,9 +20,6 @@ buildscript {
         classpath group: 'edu.wpi.first.wpilib.opencv', name: 'opencv-installer', version: '2.0.0'
     }
 }
-
-import edu.wpi.first.wpilib.opencv.installer.Installer
-import edu.wpi.first.wpilib.opencv.installer.platform.Platform
 
 plugins {
     id 'com.gradle.build-scan' version '1.8'
@@ -78,11 +75,6 @@ idea.project {
 def getVersionName = { ->
     if (project.hasProperty("vers")) return vers
     return getGitDescribe()
-}
-
-def getVersionSimple = { ->
-    if (project.hasProperty("vers")) return vers
-    return getGitDescribeAbbrev()
 }
 
 configure(subprojects - project(':ui:linuxLauncher')) {
@@ -441,35 +433,6 @@ project(":ui") {
 //            }
 //        }
 //    }
-
-    jfx {
-        mainClass = "edu.wpi.grip.ui.Main"
-        preLoader = "edu.wpi.grip.preloader.GripPreloader"
-
-        identifier = "GRIP"
-        appName = "GRIP"
-        vendor = "Worcester Polytechnic Institute"
-        nativeReleaseVersion = "${getVersionSimple()}-${arch}"
-
-        jfxMainAppJarName = "${jfx.appName}-${jfx.nativeReleaseVersion}.jar"
-
-        // -XX:-OmitStackTraceInFastThrow prevents the JIT from eating stack traces that get thrown a lot
-        // This is slower but means we actually get the stack traces instead of
-        // having them become one line like `java.lang.ArrayIndexOutOfBoundsException`
-        // and as such, would be useless.
-        // See: https://plumbr.eu/blog/java/on-a-quest-for-missing-stacktraces
-        // -Xmx limits the heap size. This prevents memory use from ballooning with a lot
-        // of JavaCV native objects being allocated hanging around waiting to get GC'd.
-        // -XX:MaxNewSize limits the size of the eden space to force minor GCs to run more often.
-        // This causes old mats (which take up little space on the heap but a lot of native memory) to get deallocated
-        // and free up native memory quicker, limiting the memory the app takes up.
-        jvmArgs = ["-XX:-OmitStackTraceInFastThrow", "-Xmx200m", "-XX:MaxNewSize=32m"]
-
-        bundleArguments = [
-                "linux.launcher.url": file('linuxLauncher/build/exe/linuxLauncher/linuxLauncher').toURI().toURL()
-        ]
-    }
-    mainClassName = jfx.mainClass
 }
 
 
