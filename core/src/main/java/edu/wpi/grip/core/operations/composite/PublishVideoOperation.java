@@ -20,9 +20,13 @@ import org.bytedeco.javacpp.opencv_core;
 import org.opencv.core.Mat;
 
 import java.lang.reflect.Field;
+import java.util.Deque;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static org.bytedeco.javacpp.opencv_core.CV_8S;
 import static org.bytedeco.javacpp.opencv_core.CV_8U;
@@ -57,7 +61,11 @@ public class PublishVideoOperation implements Operation {
 
   @SuppressWarnings("PMD.AssignmentToNonFinalStatic")
   private static int numSteps;
-  private static final int MAX_STEP_COUNT = 10;
+  private static final int MAX_STEP_COUNT = 10; // limit ports to 1180-1189
+  private static final Deque<Integer> availablePorts =
+      Stream.iterate(PORT, i -> i + 1)
+          .limit(MAX_STEP_COUNT)
+          .collect(Collectors.toCollection(LinkedList::new));
 
   private final InputSocket<opencv_core.Mat> inputSocket;
   private final InputSocket<Number> qualitySocket;
@@ -81,11 +89,13 @@ public class PublishVideoOperation implements Operation {
     this.qualitySocket = inputSocketFactory.create(SocketHints.Inputs
         .createNumberSliderSocketHint("Quality", 80, 0, 100));
 
-    server = new MjpegServer("GRIP server " + numSteps, PORT + numSteps);
-    serverSource = new CvSource("GRIP CvSource" + numSteps, VideoMode.PixelFormat.kMJPEG, 0, 0, 0);
+    int ourPort = availablePorts.removeFirst();
+
+    server = new MjpegServer("GRIP video publishing server " + ourPort, ourPort);
+    serverSource = new CvSource("GRIP CvSource:" + ourPort, VideoMode.PixelFormat.kMJPEG, 0, 0, 0);
     server.setSource(serverSource);
     cameraPublisherTable.putStringArray("streams",
-        new String[]{CameraServerJNI.getHostname() + ":" + server.getPort()});
+        new String[]{CameraServerJNI.getHostname() + ":" + ourPort});
 
     numSteps++;
   }
@@ -125,6 +135,7 @@ public class PublishVideoOperation implements Operation {
   public synchronized void cleanUp() {
     // Stop the video server if there are no Publish Video steps left
     numSteps--;
+    availablePorts.addFirst(server.getPort());
   }
 
   private void copyJavaCvToOpenCvMat(opencv_core.Mat javaCvMat, Mat openCvMat) {
