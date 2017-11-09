@@ -7,6 +7,7 @@ import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.core.sockets.SocketHints;
 import edu.wpi.grip.core.util.Icon;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.ImmutableList;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -17,15 +18,12 @@ import edu.wpi.cscore.VideoMode;
 import edu.wpi.first.wpilibj.networktables.NetworkTable;
 import edu.wpi.first.wpilibj.tables.ITable;
 
-import org.apache.commons.lang.SystemUtils;
 import org.bytedeco.javacpp.opencv_core;
 import org.opencv.core.Mat;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.lang.reflect.Field;
-import java.util.Arrays;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.Deque;
 import java.util.LinkedList;
 import java.util.List;
@@ -115,8 +113,16 @@ public class PublishVideoOperation implements Operation {
       server.setSource(serverSource);
 
       ourTable = cameraPublisherTable.getSubTable("GRIP-" + totalStepCount);
-      ourTable.putStringArray("streams",
-          new String[]{"mjpeg:http://" + getHostName() + ":" + ourPort + "/?action=stream"});
+      try {
+        InetAddress localHost = InetAddress.getLocalHost();
+        ourTable.putStringArray("streams",
+            new String[]{
+                generateStreamUrl(localHost.getHostName(), ourPort),
+                generateStreamUrl(localHost.getHostAddress(), ourPort)
+            });
+      } catch (UnknownHostException e) {
+        ourTable.putStringArray("streams", new String[0]);
+      }
     } else {
       server = null;
       serverSource = null;
@@ -177,6 +183,10 @@ public class PublishVideoOperation implements Operation {
     }
   }
 
+  private static String generateStreamUrl(String host, int port) {
+    return String.format("mjpeg:http://%s:%d/?action=stream", host, port);
+  }
+
   /**
    * Copies the data from a JavaCV Mat wrapper object into an OpenCV Mat wrapper object so it's
    * usable by the {@link CvSource} for this operation.
@@ -195,7 +205,8 @@ public class PublishVideoOperation implements Operation {
    * @param openCvMat the OpenCV Mat wrapper object to copy into
    * @throws RuntimeException if the OpenCV native pointer could not be set
    */
-  private static void copyJavaCvToOpenCvMat(opencv_core.Mat javaCvMat, Mat openCvMat)
+  @VisibleForTesting
+  static void copyJavaCvToOpenCvMat(opencv_core.Mat javaCvMat, Mat openCvMat)
       throws RuntimeException {
     // Make the OpenCV Mat object point to the same block of memory as the JavaCV object.
     // This requires no data transfers or copies and is O(1) instead of O(n)
@@ -208,42 +219,6 @@ public class PublishVideoOperation implements Operation {
         logger.log(Level.WARNING, "Could not set native object pointer", e);
         throw new RuntimeException("Could not copy the image", e);
       }
-    }
-  }
-
-  /**
-   * Multi platform method for getting the hostname of the local computer. cscore's
-   * {@link CameraServerJNI#getHostname() getHostName() function} only works on Linux, so we need to
-   * implement the method for Windows and Mac ourselves.
-   */
-  private static String getHostName() {
-    if (SystemUtils.IS_OS_WINDOWS) {
-      // Use the Windows `hostname` command-line utility
-      // This will return a single line of text containing the hostname, no parsing required
-      ProcessBuilder builder = new ProcessBuilder("hostname");
-      Process hostname;
-      try {
-        hostname = builder.start();
-      } catch (IOException e) {
-        logger.log(Level.WARNING, "Could not start hostname process", e);
-        return "";
-      }
-      try (BufferedReader in =
-               new BufferedReader(new InputStreamReader(hostname.getInputStream()))) {
-        return in.readLine() + ".local";
-      } catch (IOException e) {
-        logger.log(Level.WARNING, "Could not read the hostname process output", e);
-        return "";
-      }
-    } else if (SystemUtils.IS_OS_LINUX) {
-      // cscore already defines it for linux
-      return CameraServerJNI.getHostname();
-    } else if (SystemUtils.IS_OS_MAC) {
-      // todo
-      return "TODO-MAC";
-    } else {
-      throw new UnsupportedOperationException(
-          "Unsupported operating system " + System.getProperty("os.name"));
     }
   }
 
