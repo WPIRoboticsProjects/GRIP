@@ -8,6 +8,7 @@ import edu.wpi.grip.core.sockets.SocketHints;
 
 import com.google.common.collect.ImmutableList;
 
+import org.bytedeco.javacpp.DoublePointer;
 import org.bytedeco.javacpp.opencv_core;
 import org.bytedeco.javacpp.opencv_core.Mat;
 import org.bytedeco.javacpp.opencv_core.Point;
@@ -85,14 +86,14 @@ public class MinMaxLoc implements CVOperation {
     if (mask.empty()) {
       mask = null;
     }
-    final double[] minVal = new double[1];
-    final double[] maxVal = new double[1];
+    DoublePointer minVal = new DoublePointer(0.0);
+    DoublePointer maxVal = new DoublePointer(0.0);
     final Point minLoc = minLocSocket.getValue().get();
     final Point maxLoc = maxLocSocket.getValue().get();
 
     opencv_core.minMaxLoc(src, minVal, maxVal, minLoc, maxLoc, mask);
-    minValSocket.setValue(minVal[0]);
-    maxValSocket.setValue(maxVal[0]);
+    minValSocket.setValue(minVal.get(0));
+    maxValSocket.setValue(maxVal.get(0));
     minLocSocket.setValue(minLocSocket.getValue().get());
     maxLocSocket.setValue(maxLocSocket.getValue().get());
   }
