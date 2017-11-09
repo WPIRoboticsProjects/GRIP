@@ -15,6 +15,7 @@ import edu.wpi.cscore.CvSource;
 import edu.wpi.cscore.MjpegServer;
 import edu.wpi.cscore.VideoMode;
 import edu.wpi.first.wpilibj.networktables.NetworkTable;
+import edu.wpi.first.wpilibj.tables.ITable;
 
 import org.bytedeco.javacpp.opencv_core;
 import org.opencv.core.Mat;
@@ -60,6 +61,8 @@ public class PublishVideoOperation implements Operation {
   private static final int PORT = 1180;
 
   @SuppressWarnings("PMD.AssignmentToNonFinalStatic")
+  private static int totalStepCount;
+  @SuppressWarnings("PMD.AssignmentToNonFinalStatic")
   private static int numSteps;
   private static final int MAX_STEP_COUNT = 10; // limit ports to 1180-1189
   private static final Deque<Integer> availablePorts =
@@ -71,8 +74,11 @@ public class PublishVideoOperation implements Operation {
   private final InputSocket<Number> qualitySocket;
   private final MjpegServer server;
   private final CvSource serverSource;
-  private static final NetworkTable cameraPublisherTable =
-      NetworkTable.getTable("/CameraPublisher");
+
+  // Write to the /CameraPublisher table so the MJPEG streams are discoverable by other
+  // applications connected to the same NetworkTable server (eg Shuffleboard)
+  private static final ITable cameraPublisherTable = NetworkTable.getTable("/CameraPublisher");
+  private final ITable ourTable;
   private final Mat publishMat = new Mat();
   private long lastFrame = -1;
 
@@ -91,13 +97,17 @@ public class PublishVideoOperation implements Operation {
 
     int ourPort = availablePorts.removeFirst();
 
-    server = new MjpegServer("GRIP video publishing server " + ourPort, ourPort);
-    serverSource = new CvSource("GRIP CvSource:" + ourPort, VideoMode.PixelFormat.kMJPEG, 0, 0, 0);
+    server = new MjpegServer("GRIP video publishing server " + totalStepCount, ourPort);
+    serverSource = new CvSource("GRIP CvSource " + totalStepCount,
+        VideoMode.PixelFormat.kMJPEG, 0, 0, 0);
     server.setSource(serverSource);
-    cameraPublisherTable.putStringArray("streams",
-        new String[]{CameraServerJNI.getHostname() + ":" + ourPort});
+
+    ourTable = cameraPublisherTable.getSubTable("GRIP-" + totalStepCount);
+    ourTable.putStringArray("streams",
+        new String[]{CameraServerJNI.getHostname() + ":" + ourPort + "/?action=stream"});
 
     numSteps++;
+    totalStepCount++;
   }
 
   @Override
@@ -115,7 +125,7 @@ public class PublishVideoOperation implements Operation {
 
   @Override
   public void perform() {
-    final long now = System.nanoTime();
+    final long now = System.nanoTime(); // NOPMD
     opencv_core.Mat input = inputSocket.getValue().get();
     if (input.empty() || input.isNull()) {
       throw new IllegalArgumentException("Input image must not be empty");
@@ -136,6 +146,7 @@ public class PublishVideoOperation implements Operation {
     // Stop the video server if there are no Publish Video steps left
     numSteps--;
     availablePorts.addFirst(server.getPort());
+    ourTable.getKeys().forEach(ourTable::delete);
   }
 
   private void copyJavaCvToOpenCvMat(opencv_core.Mat javaCvMat, Mat openCvMat) {
