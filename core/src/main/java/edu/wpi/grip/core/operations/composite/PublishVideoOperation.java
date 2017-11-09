@@ -17,10 +17,15 @@ import edu.wpi.cscore.VideoMode;
 import edu.wpi.first.wpilibj.networktables.NetworkTable;
 import edu.wpi.first.wpilibj.tables.ITable;
 
+import org.apache.commons.lang.SystemUtils;
 import org.bytedeco.javacpp.opencv_core;
 import org.opencv.core.Mat;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.lang.reflect.Field;
+import java.util.Arrays;
 import java.util.Deque;
 import java.util.LinkedList;
 import java.util.List;
@@ -28,9 +33,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-import static org.bytedeco.javacpp.opencv_core.CV_8S;
-import static org.bytedeco.javacpp.opencv_core.CV_8U;
 
 /**
  * Publish an M-JPEG stream with the protocol used by SmartDashboard and the FRC Dashboard.  This
@@ -41,14 +43,23 @@ public class PublishVideoOperation implements Operation {
 
   private static final Logger logger = Logger.getLogger(PublishVideoOperation.class.getName());
 
+  /**
+   * Flags whether or not cscore was loaded. If it could not be loaded, the MJPEG streaming server
+   * can't be started, preventing this operation from running.
+   */
+  private static final boolean cscoreLoaded;
+
   static {
+    boolean loaded;
     try {
       // Loading the CameraServerJNI class will load the appropriate platform-specific OpenCV JNI
       CameraServerJNI.getHostname();
+      loaded = true;
     } catch (Throwable e) {
-      logger.log(Level.SEVERE, "CameraServerJNI load failed! Exiting", e);
-      System.exit(31);
+      logger.log(Level.SEVERE, "CameraServerJNI load failed!", e);
+      loaded = false;
     }
+    cscoreLoaded = loaded;
   }
 
   public static final OperationDescription DESCRIPTION =
@@ -58,15 +69,15 @@ public class PublishVideoOperation implements Operation {
           .category(OperationDescription.Category.NETWORK)
           .icon(Icon.iconStream("publish-video"))
           .build();
-  private static final int PORT = 1180;
+  private static final int INITIAL_PORT = 1180;
+  private static final int MAX_STEP_COUNT = 10; // limit ports to 1180-1189
 
   @SuppressWarnings("PMD.AssignmentToNonFinalStatic")
   private static int totalStepCount;
   @SuppressWarnings("PMD.AssignmentToNonFinalStatic")
   private static int numSteps;
-  private static final int MAX_STEP_COUNT = 10; // limit ports to 1180-1189
   private static final Deque<Integer> availablePorts =
-      Stream.iterate(PORT, i -> i + 1)
+      Stream.iterate(INITIAL_PORT, i -> i + 1)
           .limit(MAX_STEP_COUNT)
           .collect(Collectors.toCollection(LinkedList::new));
 
@@ -77,7 +88,7 @@ public class PublishVideoOperation implements Operation {
 
   // Write to the /CameraPublisher table so the MJPEG streams are discoverable by other
   // applications connected to the same NetworkTable server (eg Shuffleboard)
-  private static final ITable cameraPublisherTable = NetworkTable.getTable("/CameraPublisher");
+  private final ITable cameraPublisherTable = NetworkTable.getTable("/CameraPublisher"); // NOPMD
   private final ITable ourTable;
   private final Mat publishMat = new Mat();
   private long lastFrame = -1;
@@ -95,16 +106,22 @@ public class PublishVideoOperation implements Operation {
     this.qualitySocket = inputSocketFactory.create(SocketHints.Inputs
         .createNumberSliderSocketHint("Quality", 80, 0, 100));
 
-    int ourPort = availablePorts.removeFirst();
+    if (cscoreLoaded) {
+      int ourPort = availablePorts.removeFirst();
 
-    server = new MjpegServer("GRIP video publishing server " + totalStepCount, ourPort);
-    serverSource = new CvSource("GRIP CvSource " + totalStepCount,
-        VideoMode.PixelFormat.kMJPEG, 0, 0, 0);
-    server.setSource(serverSource);
+      server = new MjpegServer("GRIP video publishing server " + totalStepCount, ourPort);
+      serverSource = new CvSource("GRIP CvSource " + totalStepCount,
+          VideoMode.PixelFormat.kMJPEG, 0, 0, 0);
+      server.setSource(serverSource);
 
-    ourTable = cameraPublisherTable.getSubTable("GRIP-" + totalStepCount);
-    ourTable.putStringArray("streams",
-        new String[]{CameraServerJNI.getHostname() + ":" + ourPort + "/?action=stream"});
+      ourTable = cameraPublisherTable.getSubTable("GRIP-" + totalStepCount);
+      ourTable.putStringArray("streams",
+          new String[]{"mjpeg:http://" + getHostName() + ":" + ourPort + "/?action=stream"});
+    } else {
+      server = null;
+      serverSource = null;
+      ourTable = null;
+    }
 
     numSteps++;
     totalStepCount++;
@@ -126,39 +143,60 @@ public class PublishVideoOperation implements Operation {
   @Override
   public void perform() {
     final long now = System.nanoTime(); // NOPMD
+
+    if (!cscoreLoaded) {
+      throw new IllegalStateException(
+          "cscore could not be loaded. The image streaming server cannot be started.");
+    }
+
     opencv_core.Mat input = inputSocket.getValue().get();
     if (input.empty() || input.isNull()) {
       throw new IllegalArgumentException("Input image must not be empty");
     }
 
     copyJavaCvToOpenCvMat(input, publishMat);
+    // Make sure the output resolution is up to date. Might not be needed, depends on cscore updates
+    serverSource.setResolution(input.size().width(), input.size().height());
     serverSource.putFrame(publishMat);
     if (lastFrame != -1) {
       long dt = now - lastFrame;
       serverSource.setFPS((int) (1e9 / dt));
     }
     lastFrame = now;
-    server.setSource(serverSource);
   }
 
   @Override
   public synchronized void cleanUp() {
-    // Stop the video server if there are no Publish Video steps left
     numSteps--;
-    availablePorts.addFirst(server.getPort());
-    ourTable.getKeys().forEach(ourTable::delete);
+    if (cscoreLoaded) {
+      availablePorts.addFirst(server.getPort());
+      ourTable.getKeys().forEach(ourTable::delete);
+      serverSource.setConnected(false);
+      serverSource.free();
+      server.free();
+    }
   }
 
-  private void copyJavaCvToOpenCvMat(opencv_core.Mat javaCvMat, Mat openCvMat) {
-    if (javaCvMat.depth() != CV_8U && javaCvMat.depth() != CV_8S) {
-      throw new IllegalArgumentException("Only 8-bit depth images are supported");
-    }
-
-    final opencv_core.Size size = javaCvMat.size();
-
-    // Make sure the output resolution is up to date
-    serverSource.setResolution(size.width(), size.height());
-
+  /**
+   * Copies the data from a JavaCV Mat wrapper object into an OpenCV Mat wrapper object so it's
+   * usable by the {@link CvSource} for this operation.
+   *
+   * <p>Since the JavaCV and OpenCV bindings both target the same native version of OpenCV, this is
+   * implemented by simply changing the OpenCV Mat's native pointer to be the same as the one for
+   * the JavaCV Mat. This prevents memory copies and resizing/reallocating memory for the OpenCV
+   * wrapper to fit the source image. Updating the pointer is a simple field write (albeit via
+   * reflection), which is much faster and easier than allocating and copying byte buffers.</p>
+   *
+   * <p>A caveat to this approach is that the memory layout used by the OpenCV binaries bundled with
+   * both wrapper libraries <i>must</i> be identical. Using the same OpenCV version for both
+   * libraries should be enough.</p>
+   *
+   * @param javaCvMat the JavaCV Mat wrapper object to copy from
+   * @param openCvMat the OpenCV Mat wrapper object to copy into
+   * @throws RuntimeException if the OpenCV native pointer could not be set
+   */
+  private static void copyJavaCvToOpenCvMat(opencv_core.Mat javaCvMat, Mat openCvMat)
+      throws RuntimeException {
     // Make the OpenCV Mat object point to the same block of memory as the JavaCV object.
     // This requires no data transfers or copies and is O(1) instead of O(n)
     if (javaCvMat.address() != openCvMat.nativeObj) {
@@ -168,7 +206,44 @@ public class PublishVideoOperation implements Operation {
         nativeObjField.setLong(openCvMat, javaCvMat.address());
       } catch (ReflectiveOperationException e) {
         logger.log(Level.WARNING, "Could not set native object pointer", e);
+        throw new RuntimeException("Could not copy the image", e);
       }
+    }
+  }
+
+  /**
+   * Multi platform method for getting the hostname of the local computer. cscore's
+   * {@link CameraServerJNI#getHostname() getHostName() function} only works on Linux, so we need to
+   * implement the method for Windows and Mac ourselves.
+   */
+  private static String getHostName() {
+    if (SystemUtils.IS_OS_WINDOWS) {
+      // Use the Windows `hostname` command-line utility
+      // This will return a single line of text containing the hostname, no parsing required
+      ProcessBuilder builder = new ProcessBuilder("hostname");
+      Process hostname;
+      try {
+        hostname = builder.start();
+      } catch (IOException e) {
+        logger.log(Level.WARNING, "Could not start hostname process", e);
+        return "";
+      }
+      try (BufferedReader in =
+               new BufferedReader(new InputStreamReader(hostname.getInputStream()))) {
+        return in.readLine() + ".local";
+      } catch (IOException e) {
+        logger.log(Level.WARNING, "Could not read the hostname process output", e);
+        return "";
+      }
+    } else if (SystemUtils.IS_OS_LINUX) {
+      // cscore already defines it for linux
+      return CameraServerJNI.getHostname();
+    } else if (SystemUtils.IS_OS_MAC) {
+      // todo
+      return "TODO-MAC";
+    } else {
+      throw new UnsupportedOperationException(
+          "Unsupported operating system " + System.getProperty("os.name"));
     }
   }
 
