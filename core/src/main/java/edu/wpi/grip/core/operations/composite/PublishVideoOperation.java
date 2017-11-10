@@ -21,9 +21,11 @@ import edu.wpi.first.wpilibj.tables.ITable;
 import org.bytedeco.javacpp.opencv_core;
 import org.opencv.core.Mat;
 
-import java.lang.reflect.Field;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
+import java.net.Inet4Address;
+import java.net.NetworkInterface;
+import java.net.SocketException;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Deque;
 import java.util.LinkedList;
 import java.util.List;
@@ -47,6 +49,8 @@ public class PublishVideoOperation implements Operation {
    */
   private static final boolean cscoreLoaded;
 
+  private static final List<NetworkInterface> networkInterfaces;
+
   static {
     boolean loaded;
     try {
@@ -58,6 +62,15 @@ public class PublishVideoOperation implements Operation {
       loaded = false;
     }
     cscoreLoaded = loaded;
+
+    List<NetworkInterface> interfaces;
+    try {
+      interfaces = Collections.list(NetworkInterface.getNetworkInterfaces());
+    } catch (SocketException e) {
+      logger.log(Level.SEVERE, "Could not get the local network interfaces", e);
+      interfaces = Collections.emptyList();
+    }
+    networkInterfaces = interfaces;
   }
 
   public static final OperationDescription DESCRIPTION =
@@ -88,7 +101,7 @@ public class PublishVideoOperation implements Operation {
   // applications connected to the same NetworkTable server (eg Shuffleboard)
   private final ITable cameraPublisherTable = NetworkTable.getTable("/CameraPublisher"); // NOPMD
   private final ITable ourTable;
-  private final Mat publishMat = new Mat();
+  private Mat publishMat = null;
   private long lastFrame = -1;
 
   @SuppressWarnings("JavadocMethod")
@@ -114,13 +127,11 @@ public class PublishVideoOperation implements Operation {
 
       ourTable = cameraPublisherTable.getSubTable("GRIP-" + totalStepCount);
       try {
-        InetAddress localHost = InetAddress.getLocalHost();
-        ourTable.putStringArray("streams",
-            new String[]{
-                generateStreamUrl(localHost.getHostName(), ourPort),
-                generateStreamUrl(localHost.getHostAddress(), ourPort)
-            });
-      } catch (UnknownHostException e) {
+        List<NetworkInterface> networkInterfaces =
+            Collections.list(NetworkInterface.getNetworkInterfaces());
+        ourTable.putStringArray("streams", generateStreams(networkInterfaces, ourPort));
+      } catch (SocketException e) {
+        logger.log(Level.WARNING, "Could not enumerate the local network interfaces", e);
         ourTable.putStringArray("streams", new String[0]);
       }
     } else {
@@ -160,7 +171,16 @@ public class PublishVideoOperation implements Operation {
       throw new IllegalArgumentException("Input image must not be empty");
     }
 
-    copyJavaCvToOpenCvMat(input, publishMat);
+    // "copy" the input data to an OpenCV mat for cscore to use
+    // This basically just wraps the mat pointer in a different wrapper object
+    // No copies are performed, but it means we have to be careful about making sure we use the
+    // same version of JavaCV and OpenCV to minimize the risk of binary incompatibility.
+    // This copy only needs to happen once, since the operation input image is always the same
+    // object that gets copied into.  The data address will change, however, if the image is resized
+    // or changes type.
+    if (publishMat == null || publishMat.nativeObj != input.address()) {
+      publishMat = new Mat(input.address());
+    }
     // Make sure the output resolution is up to date. Might not be needed, depends on cscore updates
     serverSource.setResolution(input.size().width(), input.size().height());
     serverSource.putFrame(publishMat);
@@ -180,46 +200,46 @@ public class PublishVideoOperation implements Operation {
       serverSource.setConnected(false);
       serverSource.free();
       server.free();
+      if (publishMat != null) {
+        publishMat.release();
+      }
     }
-  }
-
-  private static String generateStreamUrl(String host, int port) {
-    return String.format("mjpeg:http://%s:%d/?action=stream", host, port);
   }
 
   /**
-   * Copies the data from a JavaCV Mat wrapper object into an OpenCV Mat wrapper object so it's
-   * usable by the {@link CvSource} for this operation.
+   * Generates an array of stream URLs that allow third-party applications to discover the
+   * appropriate URLs that can stream MJPEG. The URLs will all point to the same physical machine,
+   * but may use different network interfaces (eg WiFi and ethernet).
    *
-   * <p>Since the JavaCV and OpenCV bindings both target the same native version of OpenCV, this is
-   * implemented by simply changing the OpenCV Mat's native pointer to be the same as the one for
-   * the JavaCV Mat. This prevents memory copies and resizing/reallocating memory for the OpenCV
-   * wrapper to fit the source image. Updating the pointer is a simple field write (albeit via
-   * reflection), which is much faster and easier than allocating and copying byte buffers.</p>
-   *
-   * <p>A caveat to this approach is that the memory layout used by the OpenCV binaries bundled with
-   * both wrapper libraries <i>must</i> be identical. Using the same OpenCV version for both
-   * libraries should be enough.</p>
-   *
-   * @param javaCvMat the JavaCV Mat wrapper object to copy from
-   * @param openCvMat the OpenCV Mat wrapper object to copy into
-   * @throws RuntimeException if the OpenCV native pointer could not be set
+   * @param networkInterfaces the local network interfaces
+   * @param serverPort        the port the mjpeg streaming server is running on
+   * @return an array of URLs that can be used to connect to the MJPEG streaming server
    */
   @VisibleForTesting
-  static void copyJavaCvToOpenCvMat(opencv_core.Mat javaCvMat, Mat openCvMat)
-      throws RuntimeException {
-    // Make the OpenCV Mat object point to the same block of memory as the JavaCV object.
-    // This requires no data transfers or copies and is O(1) instead of O(n)
-    if (javaCvMat.address() != openCvMat.nativeObj) {
-      try {
-        Field nativeObjField = Mat.class.getField("nativeObj");
-        nativeObjField.setAccessible(true);
-        nativeObjField.setLong(openCvMat, javaCvMat.address());
-      } catch (ReflectiveOperationException e) {
-        logger.log(Level.WARNING, "Could not set native object pointer", e);
-        throw new RuntimeException("Could not copy the image", e);
-      }
-    }
+  static String[] generateStreams(Collection<NetworkInterface> networkInterfaces, int serverPort) {
+    return networkInterfaces.stream()
+        .flatMap(i -> Collections.list(i.getInetAddresses()).stream())
+        .filter(a -> a instanceof Inet4Address) // IPv6 isn't well supported, stick to IPv4
+        .filter(a -> !a.isLoopbackAddress())    // loopback addresses only work for local processes
+        .distinct()
+        .flatMap(a -> Stream.of(
+            generateStreamUrl(a.getHostName(), serverPort),
+            generateStreamUrl(a.getHostAddress(), serverPort)))
+        .distinct()
+        .toArray(String[]::new);
+  }
+
+  /**
+   * Generates a URL that can be used to connect to an MJPEG stream provided by cscore. The host
+   * should be a non-loopback IPv4 address that is resolvable by applications running on non-local
+   * machines.
+   *
+   * @param host the server host
+   * @param port the port the server is running on
+   */
+  @VisibleForTesting
+  static String generateStreamUrl(String host, int port) {
+    return String.format("mjpeg:http://%s:%d/?action=stream", host, port);
   }
 
 }
