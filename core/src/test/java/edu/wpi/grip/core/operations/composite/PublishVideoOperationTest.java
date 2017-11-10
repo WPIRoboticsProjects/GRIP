@@ -1,18 +1,33 @@
 package edu.wpi.grip.core.operations.composite;
 
+import edu.wpi.grip.util.Files;
+
+import org.bytedeco.javacpp.opencv_core;
+import org.junit.BeforeClass;
 import org.junit.Test;
+import org.opencv.core.Mat;
 
 import java.lang.reflect.Constructor;
 import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
+import java.nio.ByteBuffer;
 import java.util.Arrays;
 import java.util.List;
 
 import static edu.wpi.grip.core.operations.composite.PublishVideoOperation.generateStreamUrl;
+import static org.hamcrest.Matchers.greaterThanOrEqualTo;
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
 
 public class PublishVideoOperationTest {
+
+  @BeforeClass
+  public static void loadOpenCvJni() {
+    // Make sure the OpenCV JNI is loaded
+    blackHole(PublishVideoOperation.DESCRIPTION);
+  }
 
   @Test
   public void testGenerateStreams() {
@@ -87,6 +102,51 @@ public class PublishVideoOperationTest {
     } catch (ReflectiveOperationException e) {
       throw new AssertionError(e);
     }
+  }
+
+  /**
+   * Make sure that the JavaCV Mat is compatible with the OpenCV Mat. This should check regressions
+   * from having different or otherwise incompatible versions of the OpenCV binaries bundled with
+   * JavaCV and the OpenCV library built by WPILib.
+   */
+  @Test
+  public void testCopyJavaCvToOpenCvMatByRawPointer() {
+    // Test the GRIP logo
+    opencv_core.Mat javaCvMat = Files.imageFile.createMat();
+
+    // when
+    Mat openCvMat = new Mat(javaCvMat.address());
+
+    // then
+
+    // test the basic properties (same size, type, etc.)
+    assertEquals("Wrong width", javaCvMat.cols(), openCvMat.cols());
+    assertEquals("Wrong height", javaCvMat.rows(), openCvMat.rows());
+    assertEquals("Wrong type", javaCvMat.type(), openCvMat.type());
+    assertEquals("Wrong channel amount", javaCvMat.channels(), openCvMat.channels());
+    assertEquals("Wrong bit depth", javaCvMat.depth(), openCvMat.depth());
+
+    // test the raw data bytes - they should be identical
+    final int width = javaCvMat.cols();
+    final int height = javaCvMat.rows();
+    final int channels = javaCvMat.channels();
+
+    final ByteBuffer buffer = javaCvMat.createBuffer();
+    assertThat("JavaCV byte buffer is smaller than expected!",
+        buffer.capacity(), greaterThanOrEqualTo(width * height * channels));
+
+    final byte[] javaCvData = new byte[width * height * channels];
+    buffer.get(javaCvData);
+
+    final byte[] openCvData = new byte[width * height * channels];
+    openCvMat.get(0, 0, openCvData);
+
+    assertArrayEquals("Wrong data bytes", javaCvData, openCvData);
+  }
+
+  // workaround for FindBugs reporting unused variables
+  private static void blackHole(Object ignore) {
+    // nop
   }
 
 }
