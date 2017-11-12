@@ -49,8 +49,6 @@ public class PublishVideoOperation implements Operation {
    */
   private static final boolean cscoreLoaded;
 
-  private static final List<NetworkInterface> networkInterfaces;
-
   static {
     boolean loaded;
     try {
@@ -62,15 +60,6 @@ public class PublishVideoOperation implements Operation {
       loaded = false;
     }
     cscoreLoaded = loaded;
-
-    List<NetworkInterface> interfaces;
-    try {
-      interfaces = Collections.list(NetworkInterface.getNetworkInterfaces());
-    } catch (SocketException e) {
-      logger.log(Level.SEVERE, "Could not get the local network interfaces", e);
-      interfaces = Collections.emptyList();
-    }
-    networkInterfaces = interfaces;
   }
 
   public static final OperationDescription DESCRIPTION =
