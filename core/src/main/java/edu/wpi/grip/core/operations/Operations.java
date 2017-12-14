@@ -17,7 +17,6 @@ import edu.wpi.grip.core.operations.network.ros.JavaToMessageConverter;
 import edu.wpi.grip.core.operations.network.ros.ROSNetworkPublisherFactory;
 import edu.wpi.grip.core.operations.network.ros.ROSPublishOperation;
 import edu.wpi.grip.core.sockets.InputSocket;
-import edu.wpi.grip.core.sockets.OutputSocket;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.ImmutableList;
@@ -52,7 +51,6 @@ public class Operations {
 
   private final Injector injector;
   private final InputSocket.Factory isf;
-  private final OutputSocket.Factory osf; //NOPMD
   private final MapNetworkPublisherFactory ntManager;
   private final MapNetworkPublisherFactory httpManager;
   private final ROSNetworkPublisherFactory rosManager; //NOPMD
@@ -70,7 +68,6 @@ public class Operations {
    * @param injector    the injector to use to create operations
    * @param fileManager the file manager
    * @param isf         the factory for creating input sockets
-   * @param osf         the factory for creating output sockets
    */
   @Inject
   Operations(EventBus eventBus,
@@ -79,15 +76,13 @@ public class Operations {
              @Named("rosManager") ROSNetworkPublisherFactory rosManager,
              Injector injector,
              FileManager fileManager,
-             InputSocket.Factory isf,
-             OutputSocket.Factory osf) {
+             InputSocket.Factory isf) {
     this.injector = checkNotNull(injector, "The injector cannot be null");
     this.eventBus = checkNotNull(eventBus, "EventBus cannot be null");
     this.ntManager = checkNotNull(ntManager, "ntManager cannot be null");
     this.httpManager = checkNotNull(httpManager, "httpManager cannot be null");
     this.rosManager = checkNotNull(rosManager, "rosManager cannot be null");
     this.isf = checkNotNull(isf, "InputSocket factory cannot be null");
-    this.osf = checkNotNull(osf, "OutputSocket factory cannot be null");
     checkNotNull(fileManager, "fileManager cannot be null");
 
     List<OperationMetaData> all = new ArrayList<>();

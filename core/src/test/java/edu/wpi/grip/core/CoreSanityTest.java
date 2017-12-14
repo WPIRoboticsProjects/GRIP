@@ -27,8 +27,7 @@ public class CoreSanityTest extends AbstractPackageSanityTests {
         ManualPipelineRunner.class,
         SubtractionOperation.class,
         Main.class,
-        CoreCommandLineHelper.class,
-        OperationDescription.class
+        CoreCommandLineHelper.class
     ).contains(c));
     setDefault(OutputSocket.class, new MockOutputSocket("Mock Out"));
     setDefault(InputSocket.class, new MockInputSocket("Mock In"));
@@ -44,5 +43,17 @@ public class CoreSanityTest extends AbstractPackageSanityTests {
     setDefault(OperationDescription.class, OperationDescription.builder().name("").summary("")
         .build());
     setDefault(Step.class, new MockStep());
+
+    setDistinctValues(Description.class,
+            A.class.getAnnotation(Description.class),
+            B.class.getAnnotation(Description.class));
+  }
+
+  @Description(name = "A", summary = "A")
+  private static class A {
+  }
+
+  @Description(name = "B", summary = "B")
+  private static class B {
   }
 }

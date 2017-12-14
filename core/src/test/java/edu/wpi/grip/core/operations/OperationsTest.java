@@ -45,7 +45,6 @@ public class OperationsTest {
   // @Parameters is called before @BeforeClass, so we call it manually in a static initializer block
   //  @BeforeClass
   public static void setUpClass() {
-    System.out.println("setUpClass");
     testModule = new GripCoreTestModule();
     testModule.setUp();
     injector = Guice.createInjector(
@@ -55,7 +54,6 @@ public class OperationsTest {
 
   @AfterClass
   public static void tearDownClass() {
-    System.out.println("tearDownClass()");
     testModule.tearDown();
   }
 

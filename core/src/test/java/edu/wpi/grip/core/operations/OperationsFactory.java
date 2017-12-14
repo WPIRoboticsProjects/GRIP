@@ -40,7 +40,7 @@ public class OperationsFactory {
                                   InputSocket.Factory isf,
                                   OutputSocket.Factory osf) {
     return new Operations(eventBus, mapFactory, httpFactory, rosFactory,
-        injector, fileManager, isf, osf);
+        injector, fileManager, isf);
   }
 
   public static CVOperations createCV(EventBus eventBus) {
