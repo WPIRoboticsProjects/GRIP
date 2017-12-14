@@ -19,7 +19,7 @@ As a result, many teams with minimal computer vision knowledge successfully used
 
  - Intuitive drag and drop UI.
  - Active development community.
- - Generates Java, C++, and Python code directly from the pipeline!
+ - Generates Java, C++, and Python code directly from the pipeline ([Example usage here](https://github.com/WPIRoboticsProjects/GRIP-code-generation))!
  - Extensible!
  - Deploys and runs headless.
  - Supports various network protocols

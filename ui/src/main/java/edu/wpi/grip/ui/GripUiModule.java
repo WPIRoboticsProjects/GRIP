@@ -21,6 +21,7 @@ import edu.wpi.grip.ui.pipeline.source.ClassifierSourceController;
 import edu.wpi.grip.ui.pipeline.source.HttpSourceController;
 import edu.wpi.grip.ui.pipeline.source.MultiImageFileSourceController;
 import edu.wpi.grip.ui.pipeline.source.SourceController;
+import edu.wpi.grip.ui.pipeline.source.VideoFileSourceController;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.TypeLiteral;
@@ -75,6 +76,7 @@ public class GripUiModule extends AbstractModule {
     install(new FactoryModuleBuilder().build(CameraSourceController.Factory.class));
     install(new FactoryModuleBuilder().build(HttpSourceController.Factory.class));
     install(new FactoryModuleBuilder().build(ClassifierSourceController.Factory.class));
+    install(new FactoryModuleBuilder().build(VideoFileSourceController.Factory.class));
     // END Source Factories
 
     // Components

@@ -9,6 +9,7 @@ public class UtilitySanityTest extends AbstractPackageSanityTests {
     super();
     publicApiOnly();
     ignoreClasses(c -> c.getName().contains("Mock"));
+    ignoreClasses(DaemonThread.class::equals);
   }
 
   @SuppressWarnings("PMD.JUnit4TestShouldUseBeforeAnnotation")

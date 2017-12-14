@@ -20,6 +20,7 @@ import com.google.inject.name.Named;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.Properties;
 
 /**
@@ -75,7 +76,7 @@ public class NetworkTableEntrySource extends Source {
     }
 
     public String toProperty() {
-      return toString().toUpperCase();
+      return toString().toUpperCase(Locale.ENGLISH);
     }
   }
 

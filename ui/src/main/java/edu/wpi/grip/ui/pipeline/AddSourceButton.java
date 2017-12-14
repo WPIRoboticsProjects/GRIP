@@ -9,6 +9,7 @@ import edu.wpi.grip.core.sources.HttpSource;
 import edu.wpi.grip.core.sources.ImageFileSource;
 import edu.wpi.grip.core.sources.MultiImageFileSource;
 import edu.wpi.grip.core.sources.NetworkTableEntrySource;
+import edu.wpi.grip.core.sources.VideoFileSource;
 import edu.wpi.grip.ui.util.DPIUtility;
 import edu.wpi.grip.ui.util.SupplierWithIO;
 
@@ -26,6 +27,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
+
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.event.ActionEvent;
@@ -66,6 +68,7 @@ public class AddSourceButton extends MenuButton {
   private final MenuItem httpButton;
   private final MenuItem networktablesButton;
   private final MenuItem classifierButton;
+  private final MenuItem videoFileButton;
   private Optional<Dialog> activeDialog = Optional.empty();
 
   @Inject
@@ -75,10 +78,11 @@ public class AddSourceButton extends MenuButton {
                   CameraSource.Factory cameraSourceFactory,
                   HttpSource.Factory httpSourceFactory,
                   NetworkTableEntrySource.Factory networkTableSourceFactory,
-                  ClassifierSource.Factory classifierSourceFactory) {
+                  ClassifierSource.Factory classifierSourceFactory,
+                  VideoFileSource.Factory videoFileSourceFactory) {
     super("Add Source");
     this.eventBus = eventBus;
-    
+
     addMenuItem("Image(s)",
         getClass().getResource("/edu/wpi/grip/ui/icons/add-image.png"), mouseEvent -> {
           // Show a file picker so the user can open one or more images from disk
@@ -123,6 +127,23 @@ public class AddSourceButton extends MenuButton {
               eventBus.post(new UnexpectedThrowableEvent(e, "One of the images selected was "
                   + "invalid"));
             }
+          }
+        });
+
+    videoFileButton = addMenuItem("Video File",
+        getClass().getResource("/edu/wpi/grip/ui/icons/add-image.png"),
+        e -> {
+          FileChooser fc = new FileChooser();
+          fc.setTitle("Choose a video file");
+          fc.getExtensionFilters().addAll(
+              new ExtensionFilter("Video files", "*.avi", "*.mp4", "*.mpeg", "*.mov", "*.mkv"),
+              new ExtensionFilter("All files", "*")
+          );
+          File file = fc.showOpenDialog(getScene().getWindow());
+          if (file != null) {
+            VideoFileSource source = videoFileSourceFactory.create(file.getAbsoluteFile());
+            source.initializeSafely();
+            eventBus.post(new SourceAddedEvent(source));
           }
         });
 
@@ -340,6 +361,11 @@ public class AddSourceButton extends MenuButton {
   @VisibleForTesting
   MenuItem getClassifierButton() {
     return classifierButton;
+  }
+
+  @VisibleForTesting
+  MenuItem getVideoFileButton() {
+    return videoFileButton;
   }
 
   @VisibleForTesting

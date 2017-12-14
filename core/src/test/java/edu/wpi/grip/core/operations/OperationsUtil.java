@@ -20,9 +20,11 @@ public class OperationsUtil {
 
   public OperationMetaData getMetaData(String opName) {
     Locale locOpName = new Locale(opName);
-    String newOpName = locOpName.toString().toLowerCase().replaceAll("[^a-zA-Z]", "");
+    String newOpName
+        = locOpName.toString().toLowerCase(Locale.ENGLISH).replaceAll("[^a-zA-Z]", "");
     for (OperationMetaData data : operations()) {
-      String dataName = data.getDescription().name().toLowerCase().replaceAll("[^a-zA-Z]", "");
+      String dataName
+          = data.getDescription().name().toLowerCase(Locale.ENGLISH).replaceAll("[^a-zA-Z]", "");
       if (dataName.equals(newOpName)) {
         return data;
       }

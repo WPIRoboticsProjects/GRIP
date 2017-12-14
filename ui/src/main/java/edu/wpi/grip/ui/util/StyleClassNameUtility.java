@@ -5,6 +5,8 @@ import edu.wpi.grip.core.Operation;
 import edu.wpi.grip.core.OperationDescription;
 import edu.wpi.grip.core.Step;
 
+import java.util.Locale;
+
 /**
  * Creates CSS style classes and ID's for nodes.  This makes it possible to use CSS selectors to
  * retrieve nodes in unit tests.
@@ -81,6 +83,7 @@ public final class StyleClassNameUtility {
   }
 
   private static StringBuilder shortNameFor(OperationDescription operationDescription) {
-    return new StringBuilder(operationDescription.name().toLowerCase().replace(" ", "-"));
+    return new StringBuilder(operationDescription.name().toLowerCase(Locale.ENGLISH)
+        .replace(" ", "-"));
   }
 }

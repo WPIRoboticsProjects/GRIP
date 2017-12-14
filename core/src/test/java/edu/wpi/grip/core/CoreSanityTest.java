@@ -43,5 +43,6 @@ public class CoreSanityTest extends AbstractPackageSanityTests {
             () -> null));
     setDefault(OperationDescription.class, OperationDescription.builder().name("").summary("")
         .build());
+    setDefault(Step.class, new MockStep());
   }
 }
