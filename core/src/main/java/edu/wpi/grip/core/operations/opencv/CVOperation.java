@@ -18,4 +18,9 @@ public interface CVOperation extends Operation {
   static OperationDescription defaults(String name, String description) {
     return defaultBuilder().name(name).summary(description).build();
   }
+
+  static OperationDescription defaults(String name, String summary, String... aliases) {
+    return defaultBuilder().name(name).summary(summary).aliases(aliases).build();
+  }
+
 }

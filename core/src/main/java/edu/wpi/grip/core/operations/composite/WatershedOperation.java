@@ -1,14 +1,15 @@
 package edu.wpi.grip.core.operations.composite;
 
+import edu.wpi.grip.core.Description;
 import edu.wpi.grip.core.Operation;
 import edu.wpi.grip.core.OperationDescription;
 import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.core.sockets.SocketHint;
 import edu.wpi.grip.core.sockets.SocketHints;
-import edu.wpi.grip.core.util.Icon;
 
 import com.google.common.collect.ImmutableList;
+import com.google.inject.Inject;
 
 import org.bytedeco.javacpp.opencv_core;
 
@@ -40,15 +41,11 @@ import static org.bytedeco.javacpp.opencv_imgproc.watershed;
  * GRIP {@link Operation} for
  * {@link org.bytedeco.javacpp.opencv_imgproc#watershed}.
  */
+@Description(name = "Watershed",
+             summary = "Isolates overlapping objects from the background and each other",
+             category = OperationDescription.Category.FEATURE_DETECTION,
+             iconName = "opencv")
 public class WatershedOperation implements Operation {
-
-  public static final OperationDescription DESCRIPTION =
-      OperationDescription.builder()
-          .name("Watershed")
-          .summary("Isolates overlapping objects from the background and each other")
-          .category(OperationDescription.Category.FEATURE_DETECTION)
-          .icon(Icon.iconStream("opencv"))
-          .build();
 
   private final SocketHint<Mat> srcHint = SocketHints.Inputs.createMatSocketHint("Input", false);
   private final SocketHint<ContoursReport> contoursHint =
@@ -74,6 +71,7 @@ public class WatershedOperation implements Operation {
   private final Mat output = new Mat();
   private final Point backgroundLabel = new Point();
 
+  @Inject
   @SuppressWarnings("JavadocMethod")
   public WatershedOperation(InputSocket.Factory inputSocketFactory,
                             OutputSocket.Factory outputSocketFactory) {

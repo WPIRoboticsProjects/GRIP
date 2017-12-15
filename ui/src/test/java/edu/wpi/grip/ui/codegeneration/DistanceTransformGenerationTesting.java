@@ -1,6 +1,7 @@
 package edu.wpi.grip.ui.codegeneration;
 
 import edu.wpi.grip.core.ManualPipelineRunner;
+import edu.wpi.grip.core.OperationDescription;
 import edu.wpi.grip.core.OperationMetaData;
 import edu.wpi.grip.core.Step;
 import edu.wpi.grip.core.operations.composite.DistanceTransformOperation;
@@ -45,7 +46,8 @@ public class DistanceTransformGenerationTesting extends AbstractGenerationTestin
     lVal.add(new Double(0.0));
     lVal.add(new Double(250.0));
     GripIconHSLSetup.setup(this, GripIconHSLSetup.getHVal(), GripIconHSLSetup.getSVal(), lVal);
-    Step dist = gen.addStep(new OperationMetaData(DistanceTransformOperation.DESCRIPTION,
+    Step dist = gen.addStep(new OperationMetaData(
+        OperationDescription.from(DistanceTransformOperation.class),
         () -> new DistanceTransformOperation(isf, osf)));
     // output from HSL
     OutputSocket hslImg = pipeline.getSteps().get(0).getOutputSockets().get(0);

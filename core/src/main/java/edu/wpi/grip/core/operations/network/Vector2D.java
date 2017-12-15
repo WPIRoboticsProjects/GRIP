@@ -11,6 +11,7 @@ import static org.bytedeco.javacpp.opencv_core.Size;
  * {@link Size}s are converted into this.
  */
 @Immutable
+@PublishableProxy({Point.class, Size.class})
 public final class Vector2D implements Publishable {
 
   private final double x;

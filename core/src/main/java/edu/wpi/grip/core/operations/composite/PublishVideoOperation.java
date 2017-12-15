@@ -1,13 +1,14 @@
 package edu.wpi.grip.core.operations.composite;
 
+import edu.wpi.grip.core.Description;
 import edu.wpi.grip.core.Operation;
 import edu.wpi.grip.core.OperationDescription;
 import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.core.sockets.SocketHints;
-import edu.wpi.grip.core.util.Icon;
 
 import com.google.common.collect.ImmutableList;
+import com.google.inject.Inject;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
@@ -35,16 +36,13 @@ import static org.bytedeco.javacpp.opencv_imgcodecs.imencode;
  * https://github.com/robotpy/allwpilib/blob/master/wpilibj/src/athena/java/edu/wpi/first/wpilibj
  * /CameraServer.java
  */
+@Description(name = "Publish Video",
+             summary = "Publish an MJPEG stream",
+             category = OperationDescription.Category.NETWORK,
+             iconName = "publish-video")
 public class PublishVideoOperation implements Operation {
 
   private static final Logger logger = Logger.getLogger(PublishVideoOperation.class.getName());
-  public static final OperationDescription DESCRIPTION =
-      OperationDescription.builder()
-          .name("Publish Video")
-          .summary("Publish an M_JPEG stream to the dashboard.")
-          .category(OperationDescription.Category.NETWORK)
-          .icon(Icon.iconStream("publish-video"))
-          .build();
   private static final int PORT = 1180;
   private static final byte[] MAGIC_NUMBER = {0x01, 0x00, 0x00, 0x00};
 
@@ -134,9 +132,10 @@ public class PublishVideoOperation implements Operation {
     }
   };
 
+  @Inject
   @SuppressWarnings("JavadocMethod")
   @SuppressFBWarnings(value = "ST_WRITE_TO_STATIC_FROM_INSTANCE_METHOD",
-      justification = "Do not need to synchronize inside of a constructor")
+                      justification = "Do not need to synchronize inside of a constructor")
   public PublishVideoOperation(InputSocket.Factory inputSocketFactory) {
     if (numSteps != 0) {
       throw new IllegalStateException("Only one instance of PublishVideoOperation may exist");

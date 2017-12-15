@@ -1,6 +1,7 @@
 package edu.wpi.grip.ui.codegeneration;
 
 import edu.wpi.grip.core.ManualPipelineRunner;
+import edu.wpi.grip.core.OperationDescription;
 import edu.wpi.grip.core.OperationMetaData;
 import edu.wpi.grip.core.Step;
 import edu.wpi.grip.core.operations.opencv.NewPointOperation;
@@ -19,7 +20,8 @@ import static org.junit.Assert.assertTrue;
 public class NewPointGenerationTesting extends AbstractGenerationTesting {
 
   void generatePipeline(double x, double y) {
-    Step desat = gen.addStep(new OperationMetaData(NewPointOperation.DESCRIPTION,
+    Step desat = gen.addStep(new OperationMetaData(
+        OperationDescription.from(NewPointOperation.class),
         () -> new NewPointOperation(isf, osf)));
     for (InputSocket sock : desat.getInputSockets()) {
       if (sock.getSocketHint().getIdentifier().equals("x")) {
@@ -47,7 +49,7 @@ public class NewPointGenerationTesting extends AbstractGenerationTesting {
     pip.process();
     Point genSize = (Point) pip.getOutput("New_Point_Output", GenType.POINT);
     assertSame("The grip x: " + gripSize.x() + "does not equals the generated x: " + genSize.x,
-        gripSize.x(),  (int) genSize.x);
+        gripSize.x(), (int) genSize.x);
     assertSame("The grip y: " + gripSize.y() + "does not equals the generated y: " + genSize.y,
         gripSize.y(), (int) genSize.y);
   }

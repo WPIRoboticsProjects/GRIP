@@ -1,12 +1,13 @@
 package edu.wpi.grip.core.operations.composite;
 
+import edu.wpi.grip.core.Description;
 import edu.wpi.grip.core.Operation;
-import edu.wpi.grip.core.OperationDescription;
 import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.core.sockets.SocketHints;
 
 import com.google.common.collect.ImmutableList;
+import com.google.inject.Inject;
 
 import org.bytedeco.javacpp.opencv_core;
 import org.bytedeco.javacpp.opencv_core.Mat;
@@ -17,16 +18,16 @@ import java.util.List;
 /**
  * Finds the absolute difference between the current image and the previous image.
  */
+@Description(name = "Threshold Moving",
+             summary = "Thresholds off parts of the image that have moved or changed between the"
+                 + " previous and next image.")
 public class ThresholdMoving implements Operation {
-  public static final OperationDescription DESCRIPTION = OperationDescription
-      .builder().name("Threshold Moving")
-      .summary("Thresholds off parts of the image that have moved or changed between the previous"
-          + " and next image.")
-      .build();
+
   private final InputSocket<Mat> imageSocket;
   private final OutputSocket<Mat> outputSocket;
   private final Mat lastImage;
 
+  @Inject
   @SuppressWarnings("JavadocMethod")
   public ThresholdMoving(InputSocket.Factory inputSocketFactory,
                          OutputSocket.Factory outputSocketFactory) {

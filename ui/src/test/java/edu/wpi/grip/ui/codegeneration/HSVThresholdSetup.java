@@ -1,5 +1,6 @@
 package edu.wpi.grip.ui.codegeneration;
 
+import edu.wpi.grip.core.OperationDescription;
 import edu.wpi.grip.core.OperationMetaData;
 import edu.wpi.grip.core.Step;
 import edu.wpi.grip.core.operations.composite.HSVThresholdOperation;
@@ -16,7 +17,8 @@ public class HSVThresholdSetup {
     List<Number> sVal = Arrays.asList(0.0d, 255.0d);
     List<Number> vVal = Arrays.asList(0.0d, 255.0d);
 
-    Step hsv = caller.gen.addStep(new OperationMetaData(HSVThresholdOperation.DESCRIPTION,
+    Step hsv = caller.gen.addStep(new OperationMetaData(
+        OperationDescription.from(HSVThresholdOperation.class),
         () -> new HSVThresholdOperation(caller.isf, caller.osf)));
     caller.loadImage(Files.imageFile);
     OutputSocket imgOut = caller.pipeline.getSources().get(0).getOutputSockets().get(0);

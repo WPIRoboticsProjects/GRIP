@@ -43,5 +43,17 @@ public class CoreSanityTest extends AbstractPackageSanityTests {
     setDefault(OperationDescription.class, OperationDescription.builder().name("").summary("")
         .build());
     setDefault(Step.class, new MockStep());
+
+    setDistinctValues(Description.class,
+            A.class.getAnnotation(Description.class),
+            B.class.getAnnotation(Description.class));
+  }
+
+  @Description(name = "A", summary = "A")
+  private static class A {
+  }
+
+  @Description(name = "B", summary = "B")
+  private static class B {
   }
 }

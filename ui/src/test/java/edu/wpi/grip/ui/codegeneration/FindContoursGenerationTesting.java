@@ -1,6 +1,7 @@
 package edu.wpi.grip.ui.codegeneration;
 
 import edu.wpi.grip.core.ManualPipelineRunner;
+import edu.wpi.grip.core.OperationDescription;
 import edu.wpi.grip.core.OperationMetaData;
 import edu.wpi.grip.core.Step;
 import edu.wpi.grip.core.operations.composite.ContoursReport;
@@ -45,7 +46,8 @@ public class FindContoursGenerationTesting extends AbstractGenerationTesting {
   }
 
   void generatePipeline(boolean externalBool) {
-    Step step0 = gen.addStep(new OperationMetaData(HSLThresholdOperation.DESCRIPTION,
+    Step step0 = gen.addStep(new OperationMetaData(
+        OperationDescription.from(HSLThresholdOperation.class),
         () -> new HSLThresholdOperation(isf, osf)));
     loadImage(Files.imageFile);
     OutputSocket imgOut0 = pipeline.getSources().get(0).getOutputSockets().get(0);
@@ -62,7 +64,8 @@ public class FindContoursGenerationTesting extends AbstractGenerationTesting {
       }
     }
 
-    Step step1 = gen.addStep(new OperationMetaData(FindContoursOperation.DESCRIPTION,
+    Step step1 = gen.addStep(new OperationMetaData(
+        OperationDescription.from(FindContoursOperation.class),
         () -> new FindContoursOperation(isf, osf)));
     OutputSocket imgOut1 = pipeline.getSteps().get(0).getOutputSockets().get(0);
     for (InputSocket sock : step1.getInputSockets()) {

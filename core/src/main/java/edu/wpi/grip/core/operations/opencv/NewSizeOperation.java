@@ -1,26 +1,25 @@
 package edu.wpi.grip.core.operations.opencv;
 
 
+import edu.wpi.grip.core.Description;
 import edu.wpi.grip.core.OperationDescription;
 import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.core.sockets.SocketHint;
 import edu.wpi.grip.core.sockets.SocketHints;
-import edu.wpi.grip.core.util.Icon;
+
+import com.google.inject.Inject;
 
 import org.bytedeco.javacpp.opencv_core.Size;
 import org.python.google.common.collect.ImmutableList;
 
 import java.util.List;
 
+@Description(name = "New Size",
+             summary = "Create a size by width and height values",
+             category = OperationDescription.Category.OPENCV,
+             iconName = "size")
 public class NewSizeOperation implements CVOperation {
-
-  public static final OperationDescription DESCRIPTION =
-      CVOperation.defaultBuilder()
-          .name("New Size")
-          .summary("Create a size.")
-          .icon(Icon.iconStream("size"))
-          .build();
 
   private final SocketHint<Number> widthHint = SocketHints.Inputs
       .createNumberSpinnerSocketHint("width", -1, -1, Integer.MAX_VALUE);
@@ -34,6 +33,7 @@ public class NewSizeOperation implements CVOperation {
 
   private final OutputSocket<Size> outputSocket;
 
+  @Inject
   @SuppressWarnings("JavadocMethod")
   public NewSizeOperation(InputSocket.Factory inputSocketFactory,
                           OutputSocket.Factory outputSocketFactory) {

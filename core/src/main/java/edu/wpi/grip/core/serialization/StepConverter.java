@@ -17,6 +17,7 @@ import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
@@ -61,7 +62,12 @@ public class StepConverter implements Converter {
         .getOperationByName(operationName);
 
     if (!operationMetaData.isPresent()) {
-      throw new ConversionException("Unknown operation: " + operationName);
+      throw new ConversionException(String.format("Unknown operation: %s. Known operations: %s",
+          operationName,
+          palette.getOperations().stream()
+              .map(m -> m.getDescription())
+              .map(d -> d.name())
+              .collect(Collectors.toList())));
     }
 
     // Instead of simply returning the step and having XStream insert it into the pipeline using

@@ -1,6 +1,7 @@
 package edu.wpi.grip.ui.codegeneration.cv;
 
 import edu.wpi.grip.core.ManualPipelineRunner;
+import edu.wpi.grip.core.OperationDescription;
 import edu.wpi.grip.core.OperationMetaData;
 import edu.wpi.grip.core.Step;
 import edu.wpi.grip.core.operations.composite.BlurOperation;
@@ -23,7 +24,8 @@ import static org.junit.Assert.assertTrue;
 public class CVSubtract extends AbstractGenerationTesting {
 
   boolean set() {
-    Step blur = gen.addStep(new OperationMetaData(BlurOperation.DESCRIPTION, () -> new
+    Step blur = gen.addStep(new OperationMetaData(
+        OperationDescription.from(BlurOperation.class), () -> new
         BlurOperation(isf, osf)));
     loadImage(Files.gompeiJpegFile);
     OutputSocket imgOut = pipeline.getSources().get(0).getOutputSockets().get(0);
@@ -42,12 +44,12 @@ public class CVSubtract extends AbstractGenerationTesting {
     gen.connect(blur.getOutputSockets().get(0), sub.getInputSockets().get(1));
     return true;
   }
-  
+
   @Test
   public void cvSubtractTest() {
     test(() -> set(), (pip) -> validate(pip), "CvSubtractTest");
   }
-  
+
   void validate(PipelineInterfacer pip) {
     ManualPipelineRunner runner = new ManualPipelineRunner(eventBus, pipeline);
     runner.runPipeline();

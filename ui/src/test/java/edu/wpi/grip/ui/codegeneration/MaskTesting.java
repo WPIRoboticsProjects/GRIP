@@ -1,6 +1,7 @@
 package edu.wpi.grip.ui.codegeneration;
 
 import edu.wpi.grip.core.ManualPipelineRunner;
+import edu.wpi.grip.core.OperationDescription;
 import edu.wpi.grip.core.OperationMetaData;
 import edu.wpi.grip.core.Step;
 import edu.wpi.grip.core.operations.composite.MaskOperation;
@@ -24,7 +25,8 @@ public class MaskTesting extends AbstractGenerationTesting {
   void set() {
     HSVThresholdSetup.setup(this);
     Step mask = gen.addStep(
-        new OperationMetaData(MaskOperation.DESCRIPTION, () -> new MaskOperation(isf, osf)));
+        new OperationMetaData(OperationDescription.from(MaskOperation.class),
+            () -> new MaskOperation(isf, osf)));
     OutputSocket hsvImg = pipeline.getSteps().get(0).getOutputSockets().get(0);
     for (InputSocket sock : mask.getInputSockets()) {
       String sockHint = sock.getSocketHint().getIdentifier();

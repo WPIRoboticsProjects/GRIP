@@ -3,6 +3,7 @@ package edu.wpi.grip.ui.pipeline;
 import edu.wpi.grip.core.AdditionOperation;
 import edu.wpi.grip.core.Connection;
 import edu.wpi.grip.core.MockStep;
+import edu.wpi.grip.core.OperationDescription;
 import edu.wpi.grip.core.OperationMetaData;
 import edu.wpi.grip.core.Pipeline;
 import edu.wpi.grip.core.Step;
@@ -74,10 +75,11 @@ public class PipelineUITest extends ApplicationTest {
         AdditionOperation(isf, osf));
     subtractionOperation = new OperationMetaData(SubtractionOperation.DESCRIPTION, () -> new
         SubtractionOperation(isf, osf));
-    blurOperation = new OperationMetaData(BlurOperation.DESCRIPTION, () -> new
+    blurOperation = new OperationMetaData(OperationDescription.from(BlurOperation.class), () -> new
         BlurOperation(isf, osf));
-    desaturateOperation = new OperationMetaData(DesaturateOperation.DESCRIPTION, () -> new
-        DesaturateOperation(isf, osf));
+    desaturateOperation = new OperationMetaData(
+        OperationDescription.from(DesaturateOperation.class),
+        () -> new DesaturateOperation(isf, osf));
     pipelineController = injector.getInstance(PipelineController.class);
     final Scene scene = new Scene(TestAnnotationFXMLLoader.load(pipelineController), 800, 600);
     stage.setScene(scene);

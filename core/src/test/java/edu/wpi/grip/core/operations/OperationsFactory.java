@@ -14,16 +14,18 @@ import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.core.util.MockFileManager;
 
 import com.google.common.eventbus.EventBus;
+import com.google.inject.Injector;
 
 import java.util.Optional;
 
 public class OperationsFactory {
 
-  public static Operations create(EventBus eventBus) {
+  public static Operations create(EventBus eventBus, Injector injector) {
     return create(eventBus,
         MockMapNetworkPublisher::new,
         MockMapNetworkPublisher::new,
         MockROSMessagePublisher::new,
+        injector,
         new MockFileManager(),
         new MockInputSocketFactory(eventBus),
         new MockOutputSocketFactory(eventBus));
@@ -33,10 +35,12 @@ public class OperationsFactory {
                                   MapNetworkPublisherFactory mapFactory,
                                   MapNetworkPublisherFactory httpFactory,
                                   ROSNetworkPublisherFactory rosFactory,
+                                  Injector injector,
                                   FileManager fileManager,
                                   InputSocket.Factory isf,
                                   OutputSocket.Factory osf) {
-    return new Operations(eventBus, mapFactory, httpFactory, rosFactory, fileManager, isf, osf);
+    return new Operations(eventBus, mapFactory, httpFactory, rosFactory,
+        injector, fileManager, isf);
   }
 
   public static CVOperations createCV(EventBus eventBus) {
@@ -44,8 +48,8 @@ public class OperationsFactory {
         MockOutputSocketFactory(eventBus));
   }
 
-  private static class MockROSMessagePublisher<C extends JavaToMessageConverter> extends
-      ROSMessagePublisher {
+  private static class MockROSMessagePublisher<C extends JavaToMessageConverter>
+      extends ROSMessagePublisher {
     public MockROSMessagePublisher(C converter) {
 
     }

@@ -1,14 +1,15 @@
 package edu.wpi.grip.core.operations.composite;
 
+import edu.wpi.grip.core.Description;
 import edu.wpi.grip.core.Operation;
 import edu.wpi.grip.core.OperationDescription;
 import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.core.sockets.SocketHint;
 import edu.wpi.grip.core.sockets.SocketHints;
-import edu.wpi.grip.core.util.Icon;
 
 import com.google.common.collect.ImmutableList;
+import com.google.inject.Inject;
 
 import java.util.List;
 
@@ -23,15 +24,11 @@ import static org.bytedeco.javacpp.opencv_imgproc.findContours;
  * An {@link Operation} that, given a binary image, produces a list of contours of all of the shapes
  * in the image.
  */
+@Description(name = "Find Contours",
+             summary = "Detects contours in a binary image",
+             category = OperationDescription.Category.FEATURE_DETECTION,
+             iconName = "find-contours")
 public class FindContoursOperation implements Operation {
-
-  public static final OperationDescription DESCRIPTION =
-      OperationDescription.builder()
-          .name("Find Contours")
-          .summary("Detects contours in a binary image.")
-          .category(OperationDescription.Category.FEATURE_DETECTION)
-          .icon(Icon.iconStream("find-contours"))
-          .build();
 
   private final SocketHint<Mat> inputHint =
       new SocketHint.Builder<>(Mat.class).identifier("Input").build();
@@ -49,6 +46,7 @@ public class FindContoursOperation implements Operation {
 
   private final OutputSocket<ContoursReport> contoursSocket;
 
+  @Inject
   @SuppressWarnings("JavadocMethod")
   public FindContoursOperation(InputSocket.Factory inputSocketFactory, OutputSocket.Factory
       outputSocketFactory) {

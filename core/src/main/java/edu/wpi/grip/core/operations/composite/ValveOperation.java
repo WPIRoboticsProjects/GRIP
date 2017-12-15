@@ -1,6 +1,7 @@
 package edu.wpi.grip.core.operations.composite;
 
 
+import edu.wpi.grip.core.Description;
 import edu.wpi.grip.core.Operation;
 import edu.wpi.grip.core.OperationDescription;
 import edu.wpi.grip.core.sockets.InputSocket;
@@ -10,24 +11,22 @@ import edu.wpi.grip.core.sockets.SocketHint;
 import edu.wpi.grip.core.sockets.SocketHints;
 
 import com.google.common.collect.ImmutableList;
+import com.google.inject.Inject;
 
 import java.util.List;
 import java.util.Optional;
 
+@Description(name = "Valve",
+             summary = "Toggle an output socket on or off using a boolean",
+             category = OperationDescription.Category.LOGICAL)
 public class ValveOperation implements Operation {
-
-  public static final OperationDescription DESCRIPTION =
-      OperationDescription.builder()
-          .name("Valve")
-          .summary("Toggle an output socket on or off using a boolean")
-          .category(OperationDescription.Category.LOGICAL)
-          .build();
 
   private final InputSocket<Boolean> switcherSocket;
   private final InputSocket inputSocket; // Intentionally using raw types
 
   private final OutputSocket outputSocket;
 
+  @Inject
   @SuppressWarnings("JavadocMethod")
   public ValveOperation(InputSocket.Factory inputSocketFactory, OutputSocket.Factory
       outputSocketFactory) {
