@@ -6,6 +6,7 @@ import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.core.sockets.SocketHints;
 import edu.wpi.grip.core.util.Icon;
+import edu.wpi.grip.core.util.OpenCvShims;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.ImmutableList;
@@ -90,7 +91,7 @@ public class PublishVideoOperation implements Operation {
   // applications connected to the same NetworkTable server (eg Shuffleboard)
   private final ITable cameraPublisherTable = NetworkTable.getTable("/CameraPublisher"); // NOPMD
   private final ITable ourTable;
-  private Mat publishMat = null;
+  private final Mat publishMat = new Mat();
   private long lastFrame = -1;
 
   @SuppressWarnings("JavadocMethod")
@@ -160,16 +161,7 @@ public class PublishVideoOperation implements Operation {
       throw new IllegalArgumentException("Input image must not be empty");
     }
 
-    // "copy" the input data to an OpenCV mat for cscore to use
-    // This basically just wraps the mat pointer in a different wrapper object
-    // No copies are performed, but it means we have to be careful about making sure we use the
-    // same version of JavaCV and OpenCV to minimize the risk of binary incompatibility.
-    // This copy only needs to happen once, since the operation input image is always the same
-    // object that gets copied into.  The data address will change, however, if the image is resized
-    // or changes type.
-    if (publishMat == null || publishMat.nativeObj != input.address()) {
-      publishMat = new Mat(input.address());
-    }
+    OpenCvShims.copyJavaCvMatToOpenCvMat(input, publishMat);
     // Make sure the output resolution is up to date. Might not be needed, depends on cscore updates
     serverSource.setResolution(input.size().width(), input.size().height());
     serverSource.putFrame(publishMat);
