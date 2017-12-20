@@ -1,6 +1,5 @@
 package edu.wpi.grip.core.operations.composite;
 
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.lang.reflect.Constructor;
@@ -14,12 +13,6 @@ import static edu.wpi.grip.core.operations.composite.PublishVideoOperation.gener
 import static org.junit.Assert.assertEquals;
 
 public class PublishVideoOperationTest {
-
-  @BeforeClass
-  public static void loadOpenCvJni() {
-    // Make sure the OpenCV JNI is loaded
-    blackHole(PublishVideoOperation.DESCRIPTION);
-  }
 
   @Test
   public void testGenerateStreams() {
@@ -94,11 +87,6 @@ public class PublishVideoOperationTest {
     } catch (ReflectiveOperationException e) {
       throw new AssertionError(e);
     }
-  }
-
-  // workaround for FindBugs reporting unused variables
-  private static void blackHole(Object ignore) {
-    // nop
   }
 
 }
