@@ -1,6 +1,7 @@
 package edu.wpi.grip.ui.codegeneration.cv;
 
 import edu.wpi.grip.core.ManualPipelineRunner;
+import edu.wpi.grip.core.OperationDescription;
 import edu.wpi.grip.core.OperationMetaData;
 import edu.wpi.grip.core.Step;
 import edu.wpi.grip.core.operations.composite.DesaturateOperation;
@@ -25,7 +26,8 @@ public class CVThreshold extends AbstractGenerationTesting {
   private static final double maxval = 200;
 
   boolean setup(String type) {
-    Step desat = gen.addStep(new OperationMetaData(DesaturateOperation.DESCRIPTION, () -> new
+    Step desat = gen.addStep(new OperationMetaData(
+        OperationDescription.from(DesaturateOperation.class), () -> new
         DesaturateOperation(isf, osf)));
     loadImage(Files.gompeiJpegFile);
     OutputSocket imgOut = pipeline.getSources().get(0).getOutputSockets().get(0);

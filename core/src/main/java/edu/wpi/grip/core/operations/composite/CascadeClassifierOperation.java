@@ -1,14 +1,15 @@
 package edu.wpi.grip.core.operations.composite;
 
+import edu.wpi.grip.core.Description;
 import edu.wpi.grip.core.Operation;
 import edu.wpi.grip.core.OperationDescription;
 import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.core.sockets.SocketHint;
 import edu.wpi.grip.core.sockets.SocketHints;
-import edu.wpi.grip.core.util.Icon;
 
 import com.google.common.collect.ImmutableList;
+import com.google.inject.Inject;
 
 import org.bytedeco.javacpp.opencv_core.Mat;
 import org.bytedeco.javacpp.opencv_core.Rect;
@@ -22,15 +23,11 @@ import java.util.List;
 /**
  * Operation for identifying parts of an image with a cascade classifier.
  */
+@Description(name = "Cascade Cassifier",
+             summary = "Runs a Haar cascade classifier on an image",
+             category = OperationDescription.Category.FEATURE_DETECTION,
+             iconName = "opencv")
 public class CascadeClassifierOperation implements Operation {
-
-  public static final OperationDescription DESCRIPTION =
-      OperationDescription.builder()
-          .name("Cascade Classifier")
-          .summary("Runs a cascade classifier on an image")
-          .icon(Icon.iconStream("opencv"))
-          .category(OperationDescription.Category.FEATURE_DETECTION)
-          .build();
 
   private final SocketHint<Mat> imageHint =
       SocketHints.Inputs.createMatSocketHint("Image", false);
@@ -60,6 +57,7 @@ public class CascadeClassifierOperation implements Operation {
   private final InputSocket<Size> maxSizeSocket;
   private final OutputSocket<RectsReport> output;
 
+  @Inject
   @SuppressWarnings("JavadocMethod")
   public CascadeClassifierOperation(InputSocket.Factory isf, OutputSocket.Factory osf) {
     imageSocket = isf.create(imageHint);

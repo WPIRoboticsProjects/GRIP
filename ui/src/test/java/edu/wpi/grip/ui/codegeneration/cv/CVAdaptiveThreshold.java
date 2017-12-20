@@ -1,6 +1,7 @@
 package edu.wpi.grip.ui.codegeneration.cv;
 
 import edu.wpi.grip.core.ManualPipelineRunner;
+import edu.wpi.grip.core.OperationDescription;
 import edu.wpi.grip.core.OperationMetaData;
 import edu.wpi.grip.core.Step;
 import edu.wpi.grip.core.operations.CVOperations;
@@ -26,8 +27,9 @@ public class CVAdaptiveThreshold extends AbstractGenerationTesting {
 
   boolean setup(AdaptiveThresholdTypesEnum adaptMethod,
                 CVOperations.CVAdaptThresholdTypesEnum threshMethod) {
-    Step desat = gen.addStep(new OperationMetaData(DesaturateOperation.DESCRIPTION, () -> new
-        DesaturateOperation(isf, osf)));
+    Step desat = gen.addStep(new OperationMetaData(
+        OperationDescription.from(DesaturateOperation.class),
+        () -> new DesaturateOperation(isf, osf)));
     loadImage(Files.gompeiJpegFile);
     OutputSocket imgOut = pipeline.getSources().get(0).getOutputSockets().get(0);
     for (InputSocket sock : desat.getInputSockets()) {
@@ -48,7 +50,7 @@ public class CVAdaptiveThreshold extends AbstractGenerationTesting {
 
   @Test
   public void binaryMeanTest() {
-    test(() -> setup(AdaptiveThresholdTypesEnum.ADAPTIVE_THRESH_MEAN_C, 
+    test(() -> setup(AdaptiveThresholdTypesEnum.ADAPTIVE_THRESH_MEAN_C,
         CVOperations.CVAdaptThresholdTypesEnum.THRESH_BINARY),
         (pip) -> validate(pip), "cvBinaryMeanATTest");
   }

@@ -1,6 +1,7 @@
 package edu.wpi.grip.ui.codegeneration;
 
 import edu.wpi.grip.core.ManualPipelineRunner;
+import edu.wpi.grip.core.OperationDescription;
 import edu.wpi.grip.core.OperationMetaData;
 import edu.wpi.grip.core.Step;
 import edu.wpi.grip.core.operations.composite.RGBThresholdOperation;
@@ -25,8 +26,9 @@ import static org.junit.Assert.assertTrue;
 public class RGBThresholdTesting extends AbstractGenerationTesting {
 
   boolean setup() {
-    final Step rgb = gen.addStep(new OperationMetaData(RGBThresholdOperation.DESCRIPTION,
-        () -> new RGBThresholdOperation(isf, osf)));
+    final Step rgb = gen.addStep(
+        new OperationMetaData(OperationDescription.from(RGBThresholdOperation.class),
+            () -> new RGBThresholdOperation(isf, osf)));
     loadImage(Files.gompeiJpegFile);
     OutputSocket imgOut = pipeline.getSources().get(0).getOutputSockets().get(0);
     List<Double> rVal = Arrays.asList(46d, 188d);

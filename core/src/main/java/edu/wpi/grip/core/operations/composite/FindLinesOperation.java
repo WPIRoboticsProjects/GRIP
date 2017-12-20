@@ -1,14 +1,15 @@
 package edu.wpi.grip.core.operations.composite;
 
+import edu.wpi.grip.core.Description;
 import edu.wpi.grip.core.Operation;
 import edu.wpi.grip.core.OperationDescription;
 import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.core.sockets.SocketHint;
 import edu.wpi.grip.core.sockets.SocketHints;
-import edu.wpi.grip.core.util.Icon;
 
 import com.google.common.collect.ImmutableList;
+import com.google.inject.Inject;
 
 import org.bytedeco.javacpp.indexer.FloatIndexer;
 
@@ -23,15 +24,11 @@ import static org.bytedeco.javacpp.opencv_imgproc.cvtColor;
 /**
  * Find line segments in a color or grayscale image.
  */
+@Description(name = "Find Lines",
+             summary = "Detects line segments in an image",
+             category = OperationDescription.Category.FEATURE_DETECTION,
+             iconName = "find-lines")
 public class FindLinesOperation implements Operation {
-
-  public static final OperationDescription DESCRIPTION =
-      OperationDescription.builder()
-          .name("Find Lines")
-          .summary("Detects line segments in an image.")
-          .category(OperationDescription.Category.FEATURE_DETECTION)
-          .icon(Icon.iconStream("find-lines"))
-          .build();
 
   private final SocketHint<Mat> inputHint = SocketHints.Inputs.createMatSocketHint("Input", false);
   private final SocketHint<LinesReport> linesHint = new SocketHint.Builder<>(LinesReport.class)
@@ -42,6 +39,7 @@ public class FindLinesOperation implements Operation {
 
   private final OutputSocket<LinesReport> linesReportSocket;
 
+  @Inject
   public FindLinesOperation(InputSocket.Factory inputSocketFactory, OutputSocket.Factory
       outputSocketFactory) {
     this.inputSocket = inputSocketFactory.create(inputHint);

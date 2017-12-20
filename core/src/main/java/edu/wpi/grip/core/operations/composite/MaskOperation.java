@@ -1,14 +1,15 @@
 package edu.wpi.grip.core.operations.composite;
 
+import edu.wpi.grip.core.Description;
 import edu.wpi.grip.core.Operation;
 import edu.wpi.grip.core.OperationDescription;
 import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.core.sockets.SocketHint;
 import edu.wpi.grip.core.sockets.SocketHints;
-import edu.wpi.grip.core.util.Icon;
 
 import com.google.common.collect.ImmutableList;
+import com.google.inject.Inject;
 
 import java.util.List;
 
@@ -18,15 +19,11 @@ import static org.bytedeco.javacpp.opencv_core.bitwise_xor;
 /**
  * An {@link Operation} that masks out an area of interest from an image.
  */
+@Description(name = "Mask",
+             summary = "Filter out an area of interest in an image using a binary mask",
+             category = OperationDescription.Category.IMAGE_PROCESSING,
+             iconName = "mask")
 public class MaskOperation implements Operation {
-
-  public static final OperationDescription DESCRIPTION =
-      OperationDescription.builder()
-          .name("Mask")
-          .summary("Filter out an area of interest in an image using a binary mask.")
-          .category(OperationDescription.Category.IMAGE_PROCESSING)
-          .icon(Icon.iconStream("mask"))
-          .build();
 
   private final SocketHint<Mat> inputHint = SocketHints.Inputs.createMatSocketHint("Input", false);
   private final SocketHint<Mat> maskHint = SocketHints.Inputs.createMatSocketHint("Mask", false);
@@ -39,6 +36,7 @@ public class MaskOperation implements Operation {
 
   private final OutputSocket<Mat> outputSocket;
 
+  @Inject
   @SuppressWarnings("JavadocMethod")
   public MaskOperation(InputSocket.Factory inputSocketFactory,
                        OutputSocket.Factory outputSocketFactory) {

@@ -1,5 +1,6 @@
 package edu.wpi.grip.ui.codegeneration;
 
+import edu.wpi.grip.core.OperationDescription;
 import edu.wpi.grip.core.OperationMetaData;
 import edu.wpi.grip.core.Step;
 import edu.wpi.grip.core.operations.composite.ValveOperation;
@@ -23,7 +24,8 @@ public class ValveTesting extends AbstractGenerationTesting {
 
   boolean setup(Number value) {
     Step valve = gen.addStep(
-        new OperationMetaData(ValveOperation.DESCRIPTION, () -> new ValveOperation(isf, osf)));
+        new OperationMetaData(OperationDescription.from(ValveOperation.class),
+            () -> new ValveOperation(isf, osf)));
     MockNumberSource src = new MockNumberSource(ewf, value.doubleValue(), osf);
     for (InputSocket sock : valve.getInputSockets()) {
       String socketHint = sock.getSocketHint().getIdentifier();

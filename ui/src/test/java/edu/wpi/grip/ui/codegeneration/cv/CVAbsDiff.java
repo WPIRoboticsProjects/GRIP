@@ -1,6 +1,7 @@
 package edu.wpi.grip.ui.codegeneration.cv;
 
 import edu.wpi.grip.core.ManualPipelineRunner;
+import edu.wpi.grip.core.OperationDescription;
 import edu.wpi.grip.core.OperationMetaData;
 import edu.wpi.grip.core.Step;
 import edu.wpi.grip.core.operations.composite.BlurOperation;
@@ -13,7 +14,6 @@ import edu.wpi.grip.ui.codegeneration.tools.PipelineInterfacer;
 import edu.wpi.grip.util.Files;
 
 import org.junit.Test;
-
 import org.opencv.core.Mat;
 
 import java.util.Optional;
@@ -24,7 +24,8 @@ import static org.junit.Assert.assertTrue;
 public class CVAbsDiff extends AbstractGenerationTesting {
 
   boolean set() {
-    Step blur = gen.addStep(new OperationMetaData(BlurOperation.DESCRIPTION, () -> new
+    Step blur = gen.addStep(new OperationMetaData(
+        OperationDescription.from(BlurOperation.class), () -> new
         BlurOperation(isf, osf)));
     loadImage(Files.gompeiJpegFile);
     OutputSocket imgOut = pipeline.getSources().get(0).getOutputSockets().get(0);
@@ -43,12 +44,12 @@ public class CVAbsDiff extends AbstractGenerationTesting {
     gen.connect(blur.getOutputSockets().get(0), abs.getInputSockets().get(1));
     return true;
   }
-  
+
   @Test
   public void absDiffTest() {
     test(() -> set(), (pip) -> validate(pip), "AbsDiffTest");
   }
-  
+
   void validate(PipelineInterfacer pip) {
     ManualPipelineRunner runner = new ManualPipelineRunner(eventBus, pipeline);
     runner.runPipeline();

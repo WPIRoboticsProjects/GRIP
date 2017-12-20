@@ -3,6 +3,7 @@ package edu.wpi.grip.core.operations.network.ros;
 import edu.wpi.grip.core.operations.composite.BlobsReport;
 import edu.wpi.grip.core.operations.composite.ContoursReport;
 import edu.wpi.grip.core.operations.composite.LinesReport;
+import edu.wpi.grip.core.operations.network.PublishableRosProxy;
 
 import com.google.common.reflect.TypeToken;
 
@@ -19,6 +20,8 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * Used to convert from a java type to a ROS message.
  */
 public abstract class JavaToMessageConverter<J, M extends Message> {
+
+  @PublishableRosProxy(BlobsReport.class)
   public static final JavaToMessageConverter<BlobsReport, grip_msgs.Blobs> BLOBS =
       new JavaToMessageConverter<BlobsReport, grip_msgs.Blobs>(grip_msgs.Blobs._TYPE) {
         @Override
@@ -38,6 +41,8 @@ public abstract class JavaToMessageConverter<J, M extends Message> {
           blobsMsg.setBlobs(blobs);
         }
       };
+
+  @PublishableRosProxy(LinesReport.class)
   public static final JavaToMessageConverter<LinesReport, grip_msgs.Lines> LINES =
       new JavaToMessageConverter<LinesReport, grip_msgs.Lines>(grip_msgs.Lines._TYPE) {
         @Override
@@ -57,6 +62,8 @@ public abstract class JavaToMessageConverter<J, M extends Message> {
           linesMsg.setLines(lines);
         }
       };
+
+  @PublishableRosProxy(ContoursReport.class)
   public static final JavaToMessageConverter<ContoursReport, grip_msgs.Contours> CONTOURS =
       new JavaToMessageConverter<ContoursReport, grip_msgs.Contours>(grip_msgs.Contours._TYPE) {
         @Override
@@ -79,10 +86,14 @@ public abstract class JavaToMessageConverter<J, M extends Message> {
           contoursMsg.setContours(contours);
         }
       };
+
+  @PublishableRosProxy(Boolean.class)
   public static final JavaToMessageConverter<Boolean, std_msgs.Bool> BOOL =
       new SimpleConverter<Boolean, std_msgs.Bool>(std_msgs.Bool._TYPE,
           std_msgs.Bool::setData) {
       };
+
+  @PublishableRosProxy(Number.class)
   public static final JavaToMessageConverter<Number, std_msgs.Float64> FLOAT =
       new SimpleConverter<Number, std_msgs.Float64>(
           std_msgs.Float64._TYPE,

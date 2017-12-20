@@ -1,14 +1,15 @@
 package edu.wpi.grip.core.operations.composite;
 
+import edu.wpi.grip.core.Description;
 import edu.wpi.grip.core.Operation;
 import edu.wpi.grip.core.OperationDescription;
 import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.core.sockets.SocketHint;
 import edu.wpi.grip.core.sockets.SocketHints;
-import edu.wpi.grip.core.util.Icon;
 
 import com.google.common.collect.ImmutableList;
+import com.google.inject.Inject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,15 +22,11 @@ import static org.bytedeco.javacpp.opencv_features2d.SimpleBlobDetector;
 /**
  * Find groups of similar pixels in a color or grayscale image.
  */
+@Description(name = "Find Blobs",
+             summary = "Detects groups of pixels in an image",
+             category = OperationDescription.Category.FEATURE_DETECTION,
+             iconName = "find-blobs")
 public class FindBlobsOperation implements Operation {
-
-  public static final OperationDescription DESCRIPTION =
-      OperationDescription.builder()
-          .name("Find Blobs")
-          .summary("Detects groups of pixels in an image.")
-          .category(OperationDescription.Category.FEATURE_DETECTION)
-          .icon(Icon.iconStream("find-blobs"))
-          .build();
 
   private final SocketHint<Mat> inputHint = SocketHints.Inputs.createMatSocketHint("Input", false);
   private final SocketHint<Number> minAreaHint = SocketHints.Inputs
@@ -51,6 +48,7 @@ public class FindBlobsOperation implements Operation {
 
   private final OutputSocket<BlobsReport> outputSocket;
 
+  @Inject
   @SuppressWarnings("JavadocMethod")
   public FindBlobsOperation(InputSocket.Factory inputSocketFactory, OutputSocket.Factory
       outputSocketFactory) {

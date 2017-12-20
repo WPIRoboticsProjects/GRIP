@@ -1,14 +1,15 @@
 package edu.wpi.grip.core.operations.composite;
 
+import edu.wpi.grip.core.Description;
 import edu.wpi.grip.core.Operation;
 import edu.wpi.grip.core.OperationDescription;
 import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.core.sockets.SocketHint;
 import edu.wpi.grip.core.sockets.SocketHints;
-import edu.wpi.grip.core.util.Icon;
 
 import com.google.common.collect.ImmutableList;
+import com.google.inject.Inject;
 
 import java.util.List;
 
@@ -28,15 +29,11 @@ import static org.bytedeco.javacpp.opencv_imgproc.convexHull;
  * small objects, as well as contours that do not meet the expected characteristics of the feature
  * we're actually looking for.  So, this operation can help narrow them down.
  */
+@Description(name = "Filter Contours",
+             summary = "Find contours matching certain criteria",
+             category = OperationDescription.Category.FEATURE_DETECTION,
+             iconName = "find-contours")
 public class FilterContoursOperation implements Operation {
-
-  public static final OperationDescription DESCRIPTION =
-      OperationDescription.builder()
-          .name("Filter Contours")
-          .summary("Find contours matching certain criteria")
-          .category(OperationDescription.Category.FEATURE_DETECTION)
-          .icon(Icon.iconStream("find-contours"))
-          .build();
 
   private final SocketHint<ContoursReport> contoursHint = new SocketHint.Builder<>(ContoursReport
       .class)
@@ -92,6 +89,7 @@ public class FilterContoursOperation implements Operation {
 
   private final OutputSocket<ContoursReport> outputSocket;
 
+  @Inject
   @SuppressWarnings("JavadocMethod")
   public FilterContoursOperation(InputSocket.Factory inputSocketFactory, OutputSocket.Factory
       outputSocketFactory) {

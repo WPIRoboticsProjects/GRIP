@@ -366,7 +366,8 @@ public class CVOperations {
             )),
 
         new OperationMetaData(CVOperation.defaults("CV Threshold",
-            "Apply a fixed-level threshold to each array element in an image."),
+            "Apply a fixed-level threshold to each array element in an image.",
+            "CV threshold"),
             templateFactory.create(
                 SocketHints.Inputs.createMatSocketHint("src", false),
                 SocketHints.Inputs.createNumberSpinnerSocketHint("thresh", 0),

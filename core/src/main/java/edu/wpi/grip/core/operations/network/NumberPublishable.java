@@ -8,6 +8,7 @@ import javax.annotation.concurrent.Immutable;
  * @see PublishAnnotatedOperation#PublishAnnotatedOperation
  */
 @Immutable
+@PublishableProxy(Number.class)
 public final class NumberPublishable implements Publishable {
 
   private final double number;

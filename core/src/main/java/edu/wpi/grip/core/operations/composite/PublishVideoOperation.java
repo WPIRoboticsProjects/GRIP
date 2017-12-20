@@ -1,15 +1,16 @@
 package edu.wpi.grip.core.operations.composite;
 
+import edu.wpi.grip.core.Description;
 import edu.wpi.grip.core.Operation;
 import edu.wpi.grip.core.OperationDescription;
 import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.core.sockets.SocketHints;
-import edu.wpi.grip.core.util.Icon;
 import edu.wpi.grip.core.util.OpenCvShims;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.ImmutableList;
+import com.google.inject.Inject;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import edu.wpi.cscore.CameraServerJNI;
@@ -40,6 +41,10 @@ import java.util.stream.Stream;
  * allows FRC teams to view video streams on their dashboard during competition even when GRIP has
  * exclusive access to the camera. Uses cscore to host the image streaming server.
  */
+@Description(name = "Publish Video",
+             summary = "Publish an MJPEG stream",
+             category = OperationDescription.Category.NETWORK,
+             iconName = "publish-video")
 public class PublishVideoOperation implements Operation {
 
   private static final Logger logger = Logger.getLogger(PublishVideoOperation.class.getName());
@@ -63,13 +68,6 @@ public class PublishVideoOperation implements Operation {
     cscoreLoaded = loaded;
   }
 
-  public static final OperationDescription DESCRIPTION =
-      OperationDescription.builder()
-          .name("Publish Video")
-          .summary("Publish an M_JPEG stream to the dashboard.")
-          .category(OperationDescription.Category.NETWORK)
-          .icon(Icon.iconStream("publish-video"))
-          .build();
   private static final int INITIAL_PORT = 1180;
   private static final int MAX_STEP_COUNT = 10; // limit ports to 1180-1189
 
@@ -94,9 +92,10 @@ public class PublishVideoOperation implements Operation {
   private final Mat publishMat = new Mat();
   private long lastFrame = -1;
 
+  @Inject
   @SuppressWarnings("JavadocMethod")
   @SuppressFBWarnings(value = "ST_WRITE_TO_STATIC_FROM_INSTANCE_METHOD",
-      justification = "Do not need to synchronize inside of a constructor")
+                      justification = "Do not need to synchronize inside of a constructor")
   public PublishVideoOperation(InputSocket.Factory inputSocketFactory) {
     if (numSteps >= MAX_STEP_COUNT) {
       throw new IllegalStateException(
@@ -181,9 +180,7 @@ public class PublishVideoOperation implements Operation {
       serverSource.setConnected(false);
       serverSource.free();
       server.free();
-      if (publishMat != null) {
-        publishMat.release();
-      }
+      publishMat.release();
     }
   }
 

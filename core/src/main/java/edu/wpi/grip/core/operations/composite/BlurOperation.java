@@ -1,14 +1,15 @@
 package edu.wpi.grip.core.operations.composite;
 
+import edu.wpi.grip.core.Description;
 import edu.wpi.grip.core.Operation;
 import edu.wpi.grip.core.OperationDescription;
 import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.core.sockets.SocketHint;
 import edu.wpi.grip.core.sockets.SocketHints;
-import edu.wpi.grip.core.util.Icon;
 
 import com.google.common.collect.ImmutableList;
+import com.google.inject.Inject;
 
 import java.util.List;
 
@@ -22,18 +23,12 @@ import static org.bytedeco.javacpp.opencv_imgproc.medianBlur;
 /**
  * An {@link Operation} that softens an image using one of several different filters.
  */
+@Description(name = "Blur",
+             summary = "Blurs an image to remove noise",
+             category = OperationDescription.Category.IMAGE_PROCESSING,
+             iconName = "blur")
 public class BlurOperation implements Operation {
 
-  /**
-   * Describes this operation. This is used by the 'Operations' class to add operations to GRIP.
-   */
-  public static final OperationDescription DESCRIPTION =
-      OperationDescription.builder()
-          .name("Blur")
-          .summary("Blurs an image to remove noise")
-          .category(OperationDescription.Category.IMAGE_PROCESSING)
-          .icon(Icon.iconStream("blur"))
-          .build();
   private final SocketHint<Mat> inputHint = SocketHints.Inputs.createMatSocketHint("Input", false);
   private final SocketHint<Type> typeHint = SocketHints.createEnumSocketHint("Type", Type.BOX);
   private final SocketHint<Number> radiusHint = SocketHints.Inputs
@@ -44,9 +39,10 @@ public class BlurOperation implements Operation {
   private final InputSocket<Number> radiusSocket;
   private final OutputSocket<Mat> outputSocket;
 
+  @Inject
   @SuppressWarnings("JavadocMethod")
-  public BlurOperation(InputSocket.Factory inputSocketFactory, OutputSocket.Factory
-      outputSocketFactory) {
+  public BlurOperation(InputSocket.Factory inputSocketFactory,
+                       OutputSocket.Factory outputSocketFactory) {
     this.inputSocket = inputSocketFactory.create(inputHint);
     this.typeSocket = inputSocketFactory.create(typeHint);
     this.radiusSocket = inputSocketFactory.create(radiusHint);

@@ -1,5 +1,6 @@
 package edu.wpi.grip.core.operations.opencv;
 
+import edu.wpi.grip.core.Description;
 import edu.wpi.grip.core.OperationDescription;
 import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.sockets.OutputSocket;
@@ -7,6 +8,7 @@ import edu.wpi.grip.core.sockets.SocketHint;
 import edu.wpi.grip.core.sockets.SocketHints;
 
 import com.google.common.collect.ImmutableList;
+import com.google.inject.Inject;
 
 import org.bytedeco.javacpp.DoublePointer;
 import org.bytedeco.javacpp.opencv_core;
@@ -18,13 +20,11 @@ import java.util.List;
 /**
  * Operation to call {@link opencv_core#minMaxLoc}.
  */
+@Description(name = "Find Min and Max",
+             summary = "Find the global minimum and maximum in a single channel grayscale image",
+             category = OperationDescription.Category.OPENCV,
+             iconName = "opencv")
 public class MinMaxLoc implements CVOperation {
-
-  public static final OperationDescription DESCRIPTION =
-      CVOperation.defaultBuilder()
-          .name("Find Min and Max")
-          .summary("Find the global minimum and manimum in a single channel grayscale image.")
-          .build();
 
   private final SocketHint<Mat> srcInputHint = SocketHints.Inputs
       .createMatSocketHint("Image", false);
@@ -49,6 +49,7 @@ public class MinMaxLoc implements CVOperation {
   private final OutputSocket<Point> minLocSocket;
   private final OutputSocket<Point> maxLocSocket;
 
+  @Inject
   @SuppressWarnings("JavadocMethod")
   public MinMaxLoc(InputSocket.Factory inputSocketFactory, OutputSocket.Factory
       outputSocketFactory) {

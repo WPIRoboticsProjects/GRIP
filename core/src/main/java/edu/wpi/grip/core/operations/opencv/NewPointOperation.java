@@ -1,27 +1,24 @@
 package edu.wpi.grip.core.operations.opencv;
 
-
+import edu.wpi.grip.core.Description;
 import edu.wpi.grip.core.OperationDescription;
 import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.core.sockets.SocketHint;
 import edu.wpi.grip.core.sockets.SocketHints;
-import edu.wpi.grip.core.util.Icon;
 
 import com.google.common.collect.ImmutableList;
+import com.google.inject.Inject;
 
 import org.bytedeco.javacpp.opencv_core.Point;
 
 import java.util.List;
 
+@Description(name = "New Point",
+             summary = "Create a new point by (x,y) value",
+             category = OperationDescription.Category.OPENCV,
+             iconName = "point")
 public class NewPointOperation implements CVOperation {
-
-  public static final OperationDescription DESCRIPTION =
-      CVOperation.defaultBuilder()
-          .name("New Point")
-          .summary("Create a point by (x,y) value.")
-          .icon(Icon.iconStream("point"))
-          .build();
 
   private final SocketHint<Number> xHint = SocketHints.Inputs.createNumberSpinnerSocketHint("x", -1,
       Integer.MIN_VALUE, Integer.MAX_VALUE);
@@ -35,6 +32,7 @@ public class NewPointOperation implements CVOperation {
 
   private final OutputSocket<Point> outputSocket;
 
+  @Inject
   @SuppressWarnings("JavadocMethod")
   public NewPointOperation(InputSocket.Factory inputSocketFactory, OutputSocket.Factory
       outputSocketFactory) {
