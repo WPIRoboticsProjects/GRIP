@@ -67,6 +67,7 @@ public class PipelineGenerator {
             .className(fileName)
             .saveDir(codeDir.getAbsolutePath())
             .implementVisionPipeline(false)
+            .implementJevoisModule(false)
             .packageName("")
             .moduleName("")
             .build(),
@@ -77,6 +78,7 @@ public class PipelineGenerator {
             .className(fileName)
             .saveDir(codeDir.getAbsolutePath())
             .implementVisionPipeline(false)
+            .implementJevoisModule(false)
             .packageName("")
             .moduleName(fileName)
             .build(),
@@ -87,6 +89,7 @@ public class PipelineGenerator {
             .className(fileName)
             .saveDir(codeDir.getAbsolutePath())
             .implementVisionPipeline(false)
+            .implementJevoisModule(false)
             .packageName("")
             .moduleName("")
             .build(),

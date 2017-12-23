@@ -31,6 +31,7 @@ import java.util.stream.Collectors;
 public class Exporter implements Runnable {
   private static final Logger logger = Logger.getLogger(Exporter.class.getName());
   private static final String PIPELINE_TEMPLATE = "Pipeline.vm";
+  private static final String PIPELINE_JEVOIS_TEMPLATE = "PipelineJevoisRunner.vm";
   private static final String PIPELINE_HTEMPLATE = "Pipeline.h.vm";
   private final ImmutableList<Step> steps;
   private final CodeGenerationSettings settings;
@@ -87,6 +88,8 @@ public class Exporter implements Runnable {
     context.put(CodeGenerationSettings.SAVE_DIR, settings.getSaveDir());
     context.put(CodeGenerationSettings.IMPLEMENT_WPILIB_PIPELINE,
         settings.shouldImplementWpilibPipeline());
+    context.put(CodeGenerationSettings.IMPLEMENT_JEVOIS_MODULE,
+        settings.shouldImplementJevoisModule());
     context.put(CodeGenerationSettings.PACKAGE_NAME, settings.getPackageName());
     context.put(CodeGenerationSettings.MODULE_NAME, settings.getModuleName());
     context.put("pipeline", new TPipeline(steps));
@@ -166,6 +169,20 @@ public class Exporter implements Runnable {
       writer.println(sw);
     } catch (UnsupportedEncodingException | FileNotFoundException e) {
       logger.log(Level.SEVERE, "Unable to write to file", e);
+    }
+    if (settings.shouldImplementJevoisModule()) {
+      File jevoisRunner = new File(new File(settings.getSaveDir()),
+              "GRIPRunner." + lang.extension );
+      logger.info("Generating " + lang.name + " Jevois module code to "
+              + jevoisRunner.getAbsolutePath());
+      Template runner = ve.getTemplate(templateDir + "/" + PIPELINE_JEVOIS_TEMPLATE);
+      StringWriter swRunner = new StringWriter();
+      runner.merge(context, swRunner);
+      try (PrintWriter pwRunner = new PrintWriter(jevoisRunner.getAbsolutePath(), "UTF-8")) {
+        pwRunner.println(swRunner);
+      } catch (UnsupportedEncodingException | FileNotFoundException e) {
+        logger.log(Level.SEVERE, "Unable to create Jevois module", e);
+      }
     }
   }
 

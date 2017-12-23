@@ -52,6 +52,8 @@ public class CodeGenerationOptionsController {
   @FXML
   private CheckBox implementVisionPipeline;
   @FXML
+  private CheckBox implementJevoisModule;
+  @FXML
   private TextField classNameField;
   @FXML
   private Label saveLocationLabel;
@@ -69,6 +71,8 @@ public class CodeGenerationOptionsController {
   private TextField moduleNameField;
 
   private Language language;
+  private boolean canImplementPipeline;
+  private boolean canImplementJevoisModule;
 
   private static final String CLASS_NAME_REGEX = "^|([A-Z][a-z]*)+$";
   private static final String PACKAGE_REGEX = "^|([a-z]+[a-z0-9]*\\.?)+$";
@@ -96,6 +100,7 @@ public class CodeGenerationOptionsController {
     packageNameField.setText(settings.getPackageName());
     moduleNameField.setText(settings.getModuleName());
     implementVisionPipeline.setSelected(settings.shouldImplementWpilibPipeline());
+    implementJevoisModule.setSelected(settings.shouldImplementJevoisModule());
     Language language = Language.get(settings.getLanguage());
     if (language != null) {
       languageSelector.getSelectionModel().select(language);
@@ -114,10 +119,15 @@ public class CodeGenerationOptionsController {
   private void updateImplementButton() {
     // Use runLater because pipeline change events are fired before the pipeline actually updates
     Platform.runLater(() -> {
-      boolean canImplementPipeline = canImplementVisionPipeline();
+      canImplementPipeline = canImplementVisionPipeline();
       implementVisionPipeline.setDisable(!canImplementPipeline);
+      canImplementJevoisModule = language == Language.PYTHON;
+      implementJevoisModule.setDisable(!canImplementJevoisModule);
       if (!canImplementPipeline) {
         implementVisionPipeline.setSelected(false);
+      }
+      if (!canImplementJevoisModule) {
+        implementJevoisModule.setSelected(false);
       }
     });
   }
@@ -138,6 +148,30 @@ public class CodeGenerationOptionsController {
         .filter(s -> !s.getConnections().isEmpty())
         .count() == 0;
     return supportedLanguage && onlyOneImageInput && noConnectedNonImageInputs;
+  }
+
+  @FXML
+  private void setImplementVisionPipeline() {
+    if (implementVisionPipeline.isSelected()) {
+      implementJevoisModule.setSelected(false);
+      implementJevoisModule.setDisable(true);
+    } else {
+      if (canImplementJevoisModule) {
+        implementJevoisModule.setDisable(false);
+      }
+    }
+  }
+
+  @FXML
+  private void setImplementJevoisModule() {
+    if (implementJevoisModule.isSelected()) {
+      implementVisionPipeline.setSelected(false);
+      implementVisionPipeline.setDisable(true);
+    } else {
+      if (canImplementPipeline) {
+        implementVisionPipeline.setDisable(false);
+      }
+    }
   }
 
   @FXML
@@ -214,6 +248,7 @@ public class CodeGenerationOptionsController {
         .language(language.name)
         .className(classNameField.getText())
         .implementVisionPipeline(implementVisionPipeline.isSelected())
+        .implementJevoisModule(implementJevoisModule.isSelected())
         .saveDir(saveLocationLabel.getText())
         .packageName(packageNameField.getText())
         .moduleName(moduleNameField.getText())

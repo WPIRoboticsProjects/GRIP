@@ -14,7 +14,7 @@
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox fx:id="root" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="edu.wpi.grip.ui.codegeneration.CodeGenerationOptionsController">
+<VBox fx:id="root" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="edu.wpi.grip.ui.codegeneration.CodeGenerationOptionsController">
     <children>
         <GridPane fx:id="optionsGrid" alignment="CENTER_LEFT">
             <columnConstraints>
@@ -24,23 +24,26 @@
             <rowConstraints>
                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="NEVER" />
                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="NEVER" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="NEVER" />
                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="NEVER" />
                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="NEVER" />
             </rowConstraints>
             <children>
                 <Label text="Language" />
                 <ComboBox fx:id="languageSelector" maxWidth="1.7976931348623157E308" onAction="#setLanguage" GridPane.columnIndex="1" />
-                <Label text="Pipeline class name" GridPane.rowIndex="2" />
-                <TextField fx:id="classNameField" text="Pipeline" GridPane.columnIndex="1" GridPane.hgrow="NEVER" GridPane.rowIndex="2" />
-                <Label text="Save location" GridPane.rowIndex="3" />
-                <HBox nodeOrientation="LEFT_TO_RIGHT" GridPane.columnIndex="1" GridPane.rowIndex="3" GridPane.vgrow="NEVER">
+                <Label text="Pipeline class name" GridPane.rowIndex="3" />
+                <TextField fx:id="classNameField" text="Pipeline" GridPane.columnIndex="1" GridPane.hgrow="NEVER" GridPane.rowIndex="3" />
+                <Label text="Save location" GridPane.rowIndex="4" />
+                <HBox nodeOrientation="LEFT_TO_RIGHT" GridPane.columnIndex="1" GridPane.rowIndex="4" GridPane.vgrow="NEVER">
                     <children>
                         <Label fx:id="saveLocationLabel" disable="true" maxHeight="-Infinity" minHeight="26.0" prefHeight="30.0" prefWidth="105.0" HBox.hgrow="ALWAYS" />
                         <Button fx:id="browseButton" alignment="CENTER" disable="true" mnemonicParsing="false" onAction="#browseForSave" prefHeight="26.0" prefWidth="82.0" text="Browse" />
                     </children>
                 </HBox>
                 <Label text="Implement WPILib VisionPipeline" GridPane.rowIndex="1" />
-                <CheckBox fx:id="implementVisionPipeline" mnemonicParsing="false" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                <CheckBox fx:id="implementVisionPipeline" mnemonicParsing="false" onAction="#setImplementVisionPipeline" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+            <CheckBox fx:id="implementJevoisModule" mnemonicParsing="false" onAction="#setImplementJevoisModule" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+            <Label text="Implement Jevois Module" GridPane.rowIndex="2" />
             </children>
             <padding>
                 <Insets left="5.0" right="5.0" top="5.0" />

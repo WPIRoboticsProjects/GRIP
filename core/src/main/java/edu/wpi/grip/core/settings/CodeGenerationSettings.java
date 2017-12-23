@@ -13,6 +13,7 @@ public class CodeGenerationSettings {
   private final String language;
   private final String className;
   private final boolean implementWpilibPipeline;
+  private final boolean implementJevoisModule;
   private final String saveDir;
   private final String packageName;
   private final String moduleName;
@@ -20,6 +21,7 @@ public class CodeGenerationSettings {
   public static final String LANGUAGE = "language";
   public static final String CLASS_NAME = "className";
   public static final String IMPLEMENT_WPILIB_PIPELINE = "implementVisionPipeline";
+  public static final String IMPLEMENT_JEVOIS_MODULE = "implementJevoisModule";
   public static final String SAVE_DIR = "saveDir";
   public static final String PACKAGE_NAME = "packageName";
   public static final String MODULE_NAME = "moduleName";
@@ -32,6 +34,7 @@ public class CodeGenerationSettings {
    * <tr><td>Language</td><td>Java</td></tr>
    * <tr><td>Class name</td><td>GripPipeline</td></tr>
    * <tr><td>Implement WPILib API</td><td>false</td></tr>
+   * <tr><td>Implement Jevois Module</td><td>false</td></tr>
    * <tr><td>Save directory</td><td>User home</td></tr>
    * <tr><td>Java package</td><td>Default package</td></tr>
    * <tr><td>Python module</td><td>grip</td></tr>
@@ -46,6 +49,7 @@ public class CodeGenerationSettings {
    * <tr><td>Language</td><td>Java</td></tr>
    * <tr><td>Class name</td><td>GripPipeline</td></tr>
    * <tr><td>Implement WPILib API</td><td>false</td></tr>
+   * <tr><td>Implement Jevois Module</td><td>false</td></tr>
    * <tr><td>Save directory</td><td>User home</td></tr>
    * <tr><td>Java package</td><td>Default package</td></tr>
    * <tr><td>Python module</td><td>grip</td></tr>
@@ -55,6 +59,7 @@ public class CodeGenerationSettings {
     this("Java",
         "GripPipeline",
         false,
+        true,
         GripFileManager.GRIP_DIRECTORY.getAbsolutePath(),
         "",
         "grip");
@@ -67,6 +72,8 @@ public class CodeGenerationSettings {
    * @param className               the name of the class to generate
    * @param implementWpilibPipeline if the generated class should implement the
    *                                WPILib VisionPipeline interface
+   * @param implementJevoisModule   if we should generate a full Jevois Module
+   *                                for the GRIP pipeline
    * @param saveDir                 the directory to save the generated file to
    * @param packageName             the name of the Java package to place the file in
    * @param moduleName              the name of the Python module
@@ -74,12 +81,14 @@ public class CodeGenerationSettings {
   private CodeGenerationSettings(String language,
                                  String className,
                                  boolean implementWpilibPipeline,
+                                 boolean implementJevoisModule,
                                  String saveDir,
                                  String packageName,
                                  String moduleName) {
     this.language = language;
     this.className = className;
     this.implementWpilibPipeline = implementWpilibPipeline;
+    this.implementJevoisModule = implementJevoisModule;
     this.saveDir = saveDir;
     this.packageName = packageName;
     this.moduleName = moduleName;
@@ -95,6 +104,10 @@ public class CodeGenerationSettings {
 
   public boolean shouldImplementWpilibPipeline() {
     return implementWpilibPipeline;
+  }
+
+  public boolean shouldImplementJevoisModule() {
+    return implementJevoisModule;
   }
 
   public String getSaveDir() {
@@ -124,6 +137,7 @@ public class CodeGenerationSettings {
         .language(defaultSettings.getLanguage())
         .className(defaultSettings.getClassName())
         .implementVisionPipeline(defaultSettings.shouldImplementWpilibPipeline())
+        .implementJevoisModule(defaultSettings.shouldImplementJevoisModule())
         .saveDir(defaultSettings.getSaveDir())
         .packageName(defaultSettings.getPackageName())
         .moduleName(defaultSettings.getModuleName());
@@ -134,6 +148,7 @@ public class CodeGenerationSettings {
     private String language;
     private String className;
     private Boolean implementVisionPipeline;
+    private Boolean implementJevoisModule;
     private String saveDir;
     private String packageName;
     private String moduleName;
@@ -174,6 +189,11 @@ public class CodeGenerationSettings {
       return this;
     }
 
+    public Builder implementJevoisModule(boolean implementJevoisModule) {
+      this.implementJevoisModule = implementJevoisModule;
+      return this;
+    }
+
     /**
      * Sets the package of the generated Java class.
      */
@@ -199,6 +219,7 @@ public class CodeGenerationSettings {
           checkNotNull(language, LANGUAGE),
           checkNotNull(className, CLASS_NAME),
           checkNotNull(implementVisionPipeline, IMPLEMENT_WPILIB_PIPELINE),
+          checkNotNull(implementJevoisModule, IMPLEMENT_JEVOIS_MODULE),
           checkNotNull(saveDir, SAVE_DIR),
           checkNotNull(packageName, PACKAGE_NAME),
           checkNotNull(moduleName, MODULE_NAME)
