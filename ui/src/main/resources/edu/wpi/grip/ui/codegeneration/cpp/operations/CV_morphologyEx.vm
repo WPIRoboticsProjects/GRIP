@@ -1,0 +1,14 @@
+	/**
+	 * Performs advanced morphology functions.
+	 * @param src the Image to morph.
+     * @param op the morph operation
+	 * @param kernel the kernel for morphing.
+	 * @param anchor the center of the kernel.
+	 * @param iterations the number of times to perform the morph.
+	 * @param borderType pixel extrapolation method.
+	 * @param borderValue value to be used for a constant border.
+	 * @param dst Output Image.
+	 */
+	void $className::#func($step ["src", "op", "kernel", "anchor", "iterations", "borderType", "borderValue", "dst"]) {
+		cv::morphologyEx(src, dst, op, kernel, anchor, (int)iterations, borderType, borderValue);
+	}

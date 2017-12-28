@@ -1,0 +1,24 @@
+	/**
+	 * Performs advanced morphology functions.
+	 * @param src the Image to morph.
+	 * @param op the operation to perform.
+	 * @param kernel the kernel for morphing.
+	 * @param anchor the center of the kernel.
+	 * @param iterations the number of times to perform the morph.
+	 * @param borderType pixel extrapolation method.
+	 * @param borderValue value to be used for a constant border.
+	 * @param dst Output Image.
+	 */
+	private void $tMeth.name($step.name())(Mat src, MorphType op, Mat kernel, Point anchor, double iterations,
+		int borderType, Scalar borderValue, Mat dst) {
+		if (kernel == null) {
+			kernel = new Mat();
+		}
+		if (anchor == null) {
+			anchor = new Point(-1,-1);
+		}
+		if (borderValue == null) {
+			borderValue = new Scalar(-1);
+		}
+		Imgproc.morphologyEx(src, dst, op, kernel, anchor, (int)iterations, borderType, borderValue);
+	}

@@ -17,6 +17,7 @@ import edu.wpi.grip.generated.opencv_imgproc.enumeration.AdaptiveThresholdTypesE
 import edu.wpi.grip.generated.opencv_imgproc.enumeration.ColorConversionCodesEnum;
 import edu.wpi.grip.generated.opencv_imgproc.enumeration.ColormapTypesEnum;
 import edu.wpi.grip.generated.opencv_imgproc.enumeration.InterpolationFlagsEnum;
+import edu.wpi.grip.generated.opencv_imgproc.enumeration.MorphTypesEnum;
 import edu.wpi.grip.generated.opencv_imgproc.enumeration.ThresholdTypesEnum;
 
 import com.google.common.annotations.VisibleForTesting;
@@ -313,8 +314,8 @@ public class CVOperations {
             "Performs advanced morphological transformations."),
             templateFactory.create(
                 SocketHints.Inputs.createMatSocketHint("src", false),
+                SocketHints.createEnumSocketHint("op", MorphTypesEnum.MORPH_OPEN),
                 SocketHints.Inputs.createMatSocketHint("kernel", true),
-                SocketHints.createEnumSocketHint("op", CVMorphologyTypesEnum.MORPH_OPEN),
                 new SocketHint.Builder<>(Point.class).identifier("anchor").initialValueSupplier(
                     () -> new Point(-1, -1)).build(),
                 SocketHints.Inputs.createNumberSpinnerSocketHint("iterations", 1),
@@ -322,7 +323,7 @@ public class CVOperations {
                 new SocketHint.Builder<>(Scalar.class).identifier("borderValue")
                     .initialValueSupplier(opencv_imgproc::morphologyDefaultBorderValue).build(),
                 SocketHints.Outputs.createMatSocketHint("dst"),
-                (src, kernel, op, anchor, iterations, borderType, borderValue, dst) -> {
+                (src, op, kernel, anchor, iterations, borderType, borderValue, dst) -> {
                   opencv_imgproc.morphologyEx(src, dst, op.value, kernel, anchor,
                       iterations.intValue(), borderType.value, borderValue);
                 }
@@ -447,17 +448,16 @@ public class CVOperations {
     }
   }
 
-  public enum CVMorphologyTypesEnum {
-    MORPH_OPEN(2),
-    MORPH_CLOSE(3),
-    MORPH_GRADIENT(4),
-    MORPH_TOPHAT(5),
-    MORPH_BLACKHAT(6),
-    MORPH_HITMISS(7);
+  public enum CVMorphTypesEnum {
+    MORPH_OPEN(MorphTypesEnum.MORPH_OPEN.value),
+    MORPH_CLOSE(MorphTypesEnum.MORPH_CLOSE.value),
+    MORPH_GRADIENT(MorphTypesEnum.MORPH_GRADIENT.value),
+    MORPH_TOPHAT(MorphTypesEnum.MORPH_TOPHAT.value),
+    MORPH_BLACKHAT(MorphTypesEnum.MORPH_BLACKHAT.value);
 
     public final int value;
 
-    CVMorphologyTypesEnum(int value) {
+    CVMorphTypesEnum(int value) {
       this.value = value;
     }
   }
