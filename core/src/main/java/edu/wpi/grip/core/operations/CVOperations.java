@@ -309,7 +309,28 @@ public class CVOperations {
                 }
             )),
 
-        new OperationMetaData(CVOperation.defaults("CV rectangle",
+        new OperationMetaData(CVOperation.defaults("CV morphologyEx",
+            "Performs advanced morphological transformations."),
+            templateFactory.create(
+                SocketHints.Inputs.createMatSocketHint("src", false),
+                SocketHints.Inputs.createMatSocketHint("kernel", true),
+                SocketHints.createEnumSocketHint("op", CVMorphologyTypesEnum.MORPH_OPEN),
+                new SocketHint.Builder<>(Point.class).identifier("anchor").initialValueSupplier(
+                    () -> new Point(-1, -1)).build(),
+                SocketHints.Inputs.createNumberSpinnerSocketHint("iterations", 1),
+                SocketHints.createEnumSocketHint("borderType", BorderTypesEnum.BORDER_CONSTANT),
+                new SocketHint.Builder<>(Scalar.class).identifier("borderValue")
+                    .initialValueSupplier(opencv_imgproc::morphologyDefaultBorderValue).build(),
+                SocketHints.Outputs.createMatSocketHint("dst"),
+                (src, kernel, op, anchor, iterations, borderType, borderValue, dst) -> {
+                  opencv_imgproc.morphologyEx(src, dst, op.value, kernel, anchor,
+                      iterations.intValue(), borderType.value, borderValue);
+                }
+            )),
+
+
+
+            new OperationMetaData(CVOperation.defaults("CV rectangle",
             "Draw a rectangle (outline or filled) on an image."),
             templateFactory.create(
                 SocketHints.Inputs.createMatSocketHint("src", false),
@@ -422,6 +443,21 @@ public class CVOperations {
     public final int value;
 
     CVBorderTypesEnum(int value) {
+      this.value = value;
+    }
+  }
+
+  public enum CVMorphologyTypesEnum {
+    MORPH_OPEN(2),
+    MORPH_CLOSE(3),
+    MORPH_GRADIENT(4),
+    MORPH_TOPHAT(5),
+    MORPH_BLACKHAT(6),
+    MORPH_HITMISS(7);
+
+    public final int value;
+
+    CVMorphologyTypesEnum(int value) {
       this.value = value;
     }
   }
