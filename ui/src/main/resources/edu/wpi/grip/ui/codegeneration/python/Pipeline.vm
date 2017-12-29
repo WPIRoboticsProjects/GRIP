@@ -20,14 +20,15 @@ class $className:
 #foreach($input in $step.getInputs())
 #if (!$input.value().matches("source[0-9]+"))
         #newInput($input)
+
+#end#end#if ($step.name() == "New_Kernel" || $step.name() == "New_Point" || $step.name() == "New_Size")
+        #parse("$vmLoc/step.vm")
+
+#else #foreach($output in $step.getOutputs())
+       #output($output) = None
+#end
 #end
 
-#end
-
-#foreach($output in $step.getOutputs())
-        #output($output) = None
-
-#end
 #end
 
     def process(self#foreach($source in $pipeline.getSources()), $source.value()#end):
@@ -35,9 +36,10 @@ class $className:
         Runs the pipeline and sets all outputs to new values.
         """
 #foreach($step in $pipeline.getSteps())
-#parse("$vmLoc/step.vm")
+    #if ($step.name() != "New_Kernel" && $step.name() != "New_Point" && $step.name() != "New_Size")
+        #parse("$vmLoc/step.vm")
 
-
+#end
 #end
 #foreach($step in $pipeline.getSteps())
 #if($step.name() == "Switch" || $step.name() == "Valve")
