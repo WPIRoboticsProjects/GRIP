@@ -56,10 +56,11 @@ class $className:
 #end
 
 #foreach($step in $pipeline.getUniqueSteps())
-    #set($toParse = "$vmLoc/operations/" + $step.name())
-    #set($toParse = $toParse + ".vm")
-    #if ($step.name() != "New_Kernel" && $step.name() != "New_Point" && $step.name() != "New_Size")
+#set($toParse = "$vmLoc/operations/" + $step.name())
+#set($toParse = $toParse + ".vm")
+#if ($step.name() != "New_Kernel" && $step.name() != "New_Point" && $step.name() != "New_Size")
 #parse($toParse)
+
 #end
 
 #end
