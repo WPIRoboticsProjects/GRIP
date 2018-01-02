@@ -42,24 +42,25 @@ class $className:
 #end
 #end
 #foreach($step in $pipeline.getSteps())
-#if($step.name() == "Switch" || $step.name() == "Valve")
-#set($boolInp = $step.getInput(0))
-#set($boolName = "$tMeth.pyName($boolInp.name())")
-#if($boolInp.hasValue())
-    def set$tMeth.pyName($step.name())$step.num()(self, value):
+    #if($step.name() == "Switch" || $step.name() == "Valve")
+        #set($boolInp = $step.getInput(0))
+        #set($boolName = "$tMeth.pyName($boolInp.name())")
+        #if($boolInp.hasValue())
+        def set$tMeth.pyName($step.name())$step.num()(self, value):
         'This method is a generated setter for the condition of $step.name()'
         assert isinstance(value, bool) , "Source must be of type bool"
         self.__$tMeth.pyName($boolName) = value
-#end
+        #end
 
-#end
+    #end
 #end
 
 #foreach($step in $pipeline.getUniqueSteps())
-#set($toParse = "$vmLoc/operations/" + $step.name())
-#set($toParse = $toParse + ".vm")
+    #set($toParse = "$vmLoc/operations/" + $step.name())
+    #set($toParse = $toParse + ".vm")
+    #if ($step.name() != "New_Kernel" && $step.name() != "New_Point" && $step.name() != "New_Size")
 #parse($toParse)
-
+#end
 
 #end
 
