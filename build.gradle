@@ -225,10 +225,10 @@ project(":core") {
 
     dependencies {
         compile group: 'com.google.code.findbugs', name: 'jsr305', version: '3.0.1'
-        compile group: 'org.bytedeco', name: 'javacv', version: '1.1'
-        compile group: 'org.bytedeco.javacpp-presets', name: 'opencv', version: '3.0.0-1.1'
-        compile group: 'org.bytedeco.javacpp-presets', name: 'opencv', version: '3.0.0-1.1', classifier: os
-        compile group: 'org.bytedeco.javacpp-presets', name: 'opencv-3.0.0-1.1', classifier: 'linux-frc'
+        compile group: 'org.bytedeco', name: 'javacv', version: '1.3.3'
+        compile group: 'org.bytedeco.javacpp-presets', name: 'opencv', version: '3.2.0-1.3'
+        compile group: 'org.bytedeco.javacpp-presets', name: 'opencv', version: '3.2.0-1.3', classifier: os
+        //compile group: 'org.bytedeco.javacpp-presets', name: 'opencv-3.0.0-1.1', classifier: 'linux-frc'
         compile group: 'org.bytedeco.javacpp-presets', name: 'videoinput', version: '0.200-1.1', classifier: os
         compile group: 'org.bytedeco.javacpp-presets', name: 'ffmpeg', version: '0.200-1.1', classifier: os
         compile group: 'org.python', name: 'jython', version: '2.7.0'
@@ -253,6 +253,13 @@ project(":core") {
         compile group: 'org.ros.rosjava_messages', name: 'grip_msgs', version: '0.0.1'
         compile group: 'edu.wpi.first.wpilib.networktables.java', name: 'NetworkTables', version: '3.1.2', classifier: 'desktop'
         compile group: 'edu.wpi.first.wpilib.networktables.java', name: 'NetworkTables', version: '3.1.2', classifier: 'arm'
+
+        // cscore dependencies
+        compile group: 'edu.wpi.first.cscore', name: 'cscore-java', version: '1.1.0-beta-2'
+        compile group: 'edu.wpi.first.cscore', name: 'cscore-jni', version: '1.1.0-beta-2', classifier: 'all'
+        runtime group: 'edu.wpi.first.wpiutil', name: 'wpiutil-java', version: '3.+'
+        compile group: 'org.opencv', name: 'opencv-java', version: '3.2.0'
+        compile group: 'org.opencv', name: 'opencv-jni', version: '3.2.0', classifier: 'all'
     }
 
     mainClassName = 'edu.wpi.grip.core.Main'

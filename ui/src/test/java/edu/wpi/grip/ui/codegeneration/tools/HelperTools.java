@@ -68,7 +68,8 @@ public class HelperTools {
    */
   public static Mat bytedecoMatToCVMat(org.bytedeco.javacpp.opencv_core.Mat input) {
     UByteIndexer idxer = input.createIndexer();
-    Mat out = new Mat(idxer.rows(), idxer.cols(), CvType.CV_8UC(idxer.channels()));
+    Mat out = new Mat(
+        (int) idxer.rows(), (int) idxer.cols(), CvType.CV_8UC((int) idxer.channels()));
     //Mat out = new Mat(idxer.rows(),idxer.cols(),input.type());
     for (int row = 0; row < idxer.rows(); row++) {
       for (int col = 0; col < idxer.cols(); col++) {
