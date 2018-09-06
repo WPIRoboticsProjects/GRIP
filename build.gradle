@@ -34,6 +34,7 @@ plugins {
     id 'com.dorongold.task-tree' version '1.3'
     id 'org.ajoberstar.grgit' version '1.7.1' apply false
     id 'net.ltgt.errorprone-javacplugin' version '0.3' apply false
+    id "com.github.spotbugs" version "1.6.2"
 }
 apply plugin: 'nebula-aggregate-javadocs'
 apply from: 'git.gradle'
@@ -82,16 +83,15 @@ def getVersionSimple = { ->
 configure(subprojects - project(':ui:linuxLauncher')) {
     apply plugin: 'java'
     apply plugin: 'application'
-//    apply plugin: 'jacoco'
-//    apply plugin: 'net.ltgt.errorprone'
+    apply plugin: 'jacoco'
     apply plugin: 'net.ltgt.errorprone-javacplugin'
     apply plugin: 'checkstyle'
-//    apply plugin: 'pmd'
-//    apply plugin: 'findbugs'
+    apply plugin: 'pmd'
+    apply plugin: 'com.github.spotbugs'
 
-//    configurations.errorprone {
-//        resolutionStrategy.force 'com.google.errorprone:error_prone_core:2.0.21'
-//    }
+    configurations.errorprone {
+        resolutionStrategy.force 'com.google.errorprone:error_prone_core:2.0.21'
+    }
 
     checkstyle {
         configFile = new File(rootDir, "checkstyle.xml")
@@ -107,41 +107,41 @@ configure(subprojects - project(':ui:linuxLauncher')) {
         it.dependsOn = []
     }
 
-//    pmd {
-//        consoleOutput = true
-//        sourceSets = [sourceSets.main, sourceSets.test]
-//        reportsDir = file("$project.buildDir/reports/pmd")
-//        ruleSetFiles = files(new File(rootDir, "pmd-ruleset.xml"))
-//        ruleSets = []
-//    }
+    pmd {
+        consoleOutput = true
+        sourceSets = [sourceSets.main, sourceSets.test]
+        reportsDir = file("$project.buildDir/reports/pmd")
+        ruleSetFiles = files(new File(rootDir, "pmd-ruleset.xml"))
+        ruleSets = []
+    }
 
-//    findbugs {
-//        sourceSets = [sourceSets.main, sourceSets.test]
-//        excludeFilter = new File(rootDir, "findBugsSuppressions.xml")
-//        effort = "max"
-//    }
+    spotbugs {
+        sourceSets = [project.sourceSets.main, project.sourceSets.test]
+        excludeFilter = new File(rootDir, "findBugsSuppressions.xml")
+        effort = "max"
+    }
 
-//    ext.printReportSafe = { xmlReport ->
-//        if (xmlReport.exists()) {
-//            def bugs = (new XmlParser().parse(xmlReport)).BugInstance
-//            bugs.each { System.out.println(new XmlUtil().serialize(it)) }
-//        }
-//    }
+    ext.printReportSafe = { xmlReport ->
+        if (xmlReport.exists()) {
+            def bugs = (new XmlParser().parse(xmlReport)).BugInstance
+            bugs.each { System.out.println(new XmlUtil().serialize(it)) }
+        }
+    }
 
-//    task findbugsMainReport {
-//        doLast {
-//            printReportSafe(findbugsMain.reports.getXml().destination)
-//        }
-//    }
+    task spotbugsMainReport {
+        doLast {
+            printReportSafe(spotbugsMain.reports.getXml().destination)
+        }
+    }
 
-//    task findbugsTestReport {
-//        doLast {
-//            printReportSafe(findbugsTest.reports.getXml().destination)
-//        }
-//    }
+    task spotbugsTestReport {
+        doLast {
+            printReportSafe(spotbugsTest.reports.getXml().destination)
+        }
+    }
 
-//    findbugsMain.finalizedBy findbugsMainReport
-//    findbugsTest.finalizedBy findbugsTestReport
+    spotbugsMain.finalizedBy spotbugsMainReport
+    spotbugsTest.finalizedBy spotbugsTestReport
 
     repositories {
         mavenCentral()
@@ -149,7 +149,7 @@ configure(subprojects - project(':ui:linuxLauncher')) {
     }
 
     dependencies {
-        compile group: 'com.google.code.findbugs', name: 'annotations', version: '3.0.1'
+        compile group: 'com.github.spotbugs', name: 'spotbugs-annotations', version: '3.1.0'
         testCompile group: 'net.jodah', name: 'concurrentunit', version: '0.4.2'
         testCompile group: 'org.hamcrest', name: 'hamcrest-all', version: '1.3'
         testCompile group: 'junit', name: 'junit', version: '4.12'

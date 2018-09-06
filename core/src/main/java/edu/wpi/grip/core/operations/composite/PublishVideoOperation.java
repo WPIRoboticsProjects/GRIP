@@ -40,6 +40,9 @@ import static org.bytedeco.javacpp.opencv_imgcodecs.imencode;
              summary = "Publish an MJPEG stream",
              category = OperationDescription.Category.NETWORK,
              iconName = "publish-video")
+// Note: this annotation is here instead of on the Runnable variable because spotbugs does not
+// handle it properly and does not actually ignore the "error"
+@SuppressFBWarnings(value = "UW_UNCOND_WAIT", justification = "The loop checks the wait condition")
 public class PublishVideoOperation implements Operation {
 
   private static final Logger logger = Logger.getLogger(PublishVideoOperation.class.getName());
