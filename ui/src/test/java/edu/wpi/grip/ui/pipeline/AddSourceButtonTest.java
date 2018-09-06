@@ -5,6 +5,7 @@ import edu.wpi.grip.core.sources.MockCameraSource;
 
 import com.google.common.eventbus.EventBus;
 
+import org.hamcrest.Matchers;
 import org.junit.After;
 import org.junit.Test;
 import org.junit.experimental.runners.Enclosed;
@@ -22,6 +23,7 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.testfx.api.FxAssert.verifyThat;
 
@@ -103,7 +105,8 @@ public class AddSourceButtonTest {
       Optional<CameraSource> cameraSource = mockCameraSourceFactory.lastSourceCreated;
       assertTrue("A source was not constructed", cameraSource.isPresent());
       assertTrue("A source was not created started", cameraSource.get().isRunning());
-      verifyThat("." + AddSourceButton.SOURCE_DIALOG_STYLE_CLASS, NodeMatchers.isNull());
+      assertThat(lookup("." + AddSourceButton.SOURCE_DIALOG_STYLE_CLASS).queryAll(),
+          Matchers.empty());
     }
 
     static class MockCameraSourceFactory implements CameraSource.Factory {
@@ -174,8 +177,8 @@ public class AddSourceButtonTest {
 
       WaitForAsyncUtils.waitForFxEvents();
 
-      // The dialog should not have closed because the source wasn't started
-      verifyThat("." + AddSourceButton.SOURCE_DIALOG_STYLE_CLASS, NodeMatchers.isNull());
+      assertThat(lookup("." + AddSourceButton.SOURCE_DIALOG_STYLE_CLASS).queryAll(),
+          Matchers.empty());
     }
 
     @Test

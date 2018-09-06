@@ -154,9 +154,19 @@ public final class ContoursReport implements Publishable {
   }
 
   public static final class Contour {
-    private final double area, centerX, centerY, width, height, solidity;
+    private final double area;
+    private final double centerX;
+    private final double centerY;
+    private final double width;
+    private final double height;
+    private final double solidity;
 
-    public Contour(double area, double centerX, double centerY, double width, double height, double solidity) {
+    Contour(double area,
+            double centerX,
+            double centerY,
+            double width,
+            double height,
+            double solidity) {
       this.area = area;
       this.centerX = centerX;
       this.centerY = centerY;
@@ -197,13 +207,13 @@ public final class ContoursReport implements Publishable {
       if (obj == null || getClass() != obj.getClass()) {
         return false;
       }
-      Contour contour = (Contour) obj;
-      return Double.compare(contour.area, area) == 0 &&
-          Double.compare(contour.centerX, centerX) == 0 &&
-          Double.compare(contour.centerY, centerY) == 0 &&
-          Double.compare(contour.width, width) == 0 &&
-          Double.compare(contour.height, height) == 0 &&
-          Double.compare(contour.solidity, solidity) == 0;
+      Contour that = (Contour) obj;
+      return this.area == that.area
+          && this.centerX == that.centerX
+          && this.centerY == that.centerY
+          && this.width == that.width
+          && this.height == that.height
+          && this.solidity == that.solidity;
     }
 
     @Override

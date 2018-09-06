@@ -14,7 +14,7 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.util.Modules;
 
-import org.junit.Before;
+import org.junit.After;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -93,8 +93,7 @@ public class InputSocketControllerFactoryTest extends ApplicationTest {
     stage.show();
   }
 
-  @Before
-  @SuppressWarnings("PMD.JUnit4TestShouldUseAfterAnnotation")
+  @After
   public void tearDown() {
     testModule.tearDown();
   }

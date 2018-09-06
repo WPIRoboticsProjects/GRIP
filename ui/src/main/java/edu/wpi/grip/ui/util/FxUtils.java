@@ -1,10 +1,14 @@
 package edu.wpi.grip.ui.util;
 
 import java.util.concurrent.CountDownLatch;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javafx.application.Platform;
 
 public class FxUtils {
+
+  private static final Logger logger = Logger.getLogger(FxUtils.class.getName());
 
   /**
    * Runs an action on the FX thread and blocks until it completes or throws an error.
@@ -18,8 +22,7 @@ public class FxUtils {
       try {
         runnable.run();
       } catch (Throwable t) {
-        System.err.println("Exception in runnable");
-        t.printStackTrace();
+        logger.log(Level.WARNING, "Exception in runnable", t);
       }
     } else {
       final CountDownLatch doneLatch = new CountDownLatch(1);
@@ -34,7 +37,8 @@ public class FxUtils {
       try {
         doneLatch.await();
       } catch (InterruptedException ex) {
-        ex.printStackTrace();
+        logger.log(Level.WARNING, "Interrupted while waiting for runnable to complete", ex);
+        Thread.currentThread().interrupt();
       }
     }
   }

@@ -16,7 +16,6 @@ buildscript {
     dependencies {
         //classpath group: 'de.dynamicfiles.projects.gradle.plugins', name: 'javafx-gradle-plugin', version: '8.8.0'
         classpath 'com.netflix.nebula:gradle-aggregate-javadocs-plugin:3.0.1'
-//        classpath 'net.ltgt.gradle:gradle-errorprone-plugin:0.0.11'
         classpath group: 'edu.wpi.first.wpilib.opencv', name: 'opencv-installer', version: '2.0.0'
     }
 }
@@ -34,6 +33,7 @@ plugins {
     id 'com.github.johnrengelman.shadow' version '1.2.4'
     id 'com.dorongold.task-tree' version '1.3'
     id 'org.ajoberstar.grgit' version '1.7.1' apply false
+    id 'net.ltgt.errorprone-javacplugin' version '0.3' apply false
 }
 apply plugin: 'nebula-aggregate-javadocs'
 apply from: 'git.gradle'
@@ -82,11 +82,12 @@ def getVersionSimple = { ->
 configure(subprojects - project(':ui:linuxLauncher')) {
     apply plugin: 'java'
     apply plugin: 'application'
-    apply plugin: 'jacoco'
+//    apply plugin: 'jacoco'
 //    apply plugin: 'net.ltgt.errorprone'
+    apply plugin: 'net.ltgt.errorprone-javacplugin'
     apply plugin: 'checkstyle'
-    apply plugin: 'pmd'
-    apply plugin: 'findbugs'
+//    apply plugin: 'pmd'
+//    apply plugin: 'findbugs'
 
 //    configurations.errorprone {
 //        resolutionStrategy.force 'com.google.errorprone:error_prone_core:2.0.21'
@@ -106,41 +107,41 @@ configure(subprojects - project(':ui:linuxLauncher')) {
         it.dependsOn = []
     }
 
-    pmd {
-        consoleOutput = true
-        sourceSets = [sourceSets.main, sourceSets.test]
-        reportsDir = file("$project.buildDir/reports/pmd")
-        ruleSetFiles = files(new File(rootDir, "pmd-ruleset.xml"))
-        ruleSets = []
-    }
+//    pmd {
+//        consoleOutput = true
+//        sourceSets = [sourceSets.main, sourceSets.test]
+//        reportsDir = file("$project.buildDir/reports/pmd")
+//        ruleSetFiles = files(new File(rootDir, "pmd-ruleset.xml"))
+//        ruleSets = []
+//    }
 
-    findbugs {
-        sourceSets = [sourceSets.main, sourceSets.test]
-        excludeFilter = new File(rootDir, "findBugsSuppressions.xml")
-        effort = "max"
-    }
+//    findbugs {
+//        sourceSets = [sourceSets.main, sourceSets.test]
+//        excludeFilter = new File(rootDir, "findBugsSuppressions.xml")
+//        effort = "max"
+//    }
 
-    ext.printReportSafe = { xmlReport ->
-        if (xmlReport.exists()) {
-            def bugs = (new XmlParser().parse(xmlReport)).BugInstance
-            bugs.each { System.out.println(new XmlUtil().serialize(it)) }
-        }
-    }
+//    ext.printReportSafe = { xmlReport ->
+//        if (xmlReport.exists()) {
+//            def bugs = (new XmlParser().parse(xmlReport)).BugInstance
+//            bugs.each { System.out.println(new XmlUtil().serialize(it)) }
+//        }
+//    }
 
-    task findbugsMainReport {
-        doLast {
-            printReportSafe(findbugsMain.reports.getXml().destination)
-        }
-    }
+//    task findbugsMainReport {
+//        doLast {
+//            printReportSafe(findbugsMain.reports.getXml().destination)
+//        }
+//    }
 
-    task findbugsTestReport {
-        doLast {
-            printReportSafe(findbugsTest.reports.getXml().destination)
-        }
-    }
+//    task findbugsTestReport {
+//        doLast {
+//            printReportSafe(findbugsTest.reports.getXml().destination)
+//        }
+//    }
 
-    findbugsMain.finalizedBy findbugsMainReport
-    findbugsTest.finalizedBy findbugsTestReport
+//    findbugsMain.finalizedBy findbugsMainReport
+//    findbugsTest.finalizedBy findbugsTestReport
 
     repositories {
         mavenCentral()
@@ -225,12 +226,12 @@ project(":core") {
 
     dependencies {
         compile group: 'com.google.code.findbugs', name: 'jsr305', version: '3.0.1'
-        compile group: 'org.bytedeco', name: 'javacv', version: '1.1'
-        compile group: 'org.bytedeco.javacpp-presets', name: 'opencv', version: '3.0.0-1.1'
-        compile group: 'org.bytedeco.javacpp-presets', name: 'opencv', version: '3.0.0-1.1', classifier: os
-        compile group: 'org.bytedeco.javacpp-presets', name: 'opencv-3.0.0-1.1', classifier: 'linux-frc'
-        compile group: 'org.bytedeco.javacpp-presets', name: 'videoinput', version: '0.200-1.1', classifier: os
-        compile group: 'org.bytedeco.javacpp-presets', name: 'ffmpeg', version: '0.200-1.1', classifier: os
+        compile group: 'org.bytedeco', name: 'javacv', version: '1.4.2'
+        compile group: 'org.bytedeco.javacpp-presets', name: 'opencv', version: '3.4.2-1.4.2'
+        compile group: 'org.bytedeco.javacpp-presets', name: 'opencv', version: '3.4.2-1.4.2', classifier: os
+        //compile group: 'org.bytedeco.javacpp-presets', name: 'opencv-3.0.0-1.1', classifier: 'linux-frc' // KILL, KILL!
+        //compile group: 'org.bytedeco.javacpp-presets', name: 'videoinput', version: '0.200-1.3', classifier: os // For some reason, only Windows builds are available after JavaCPP version 1.3
+        compile group: 'org.bytedeco.javacpp-presets', name: 'ffmpeg', version: '4.0.1-1.4.2', classifier: os
         compile group: 'org.python', name: 'jython', version: '2.7.0'
         compile group: 'com.thoughtworks.xstream', name: 'xstream', version: '1.4.10'
         compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.5'
@@ -244,8 +245,8 @@ project(":core") {
         // We use the no_aop version of Guice because the aop isn't avaiable in arm java
         // http://stackoverflow.com/a/15235190/3708426
         // https://github.com/google/guice/wiki/OptionalAOP
-        compile group: 'com.google.inject', name: 'guice', version: '4.1.0', classifier: 'no_aop'
-        compile group: 'com.google.inject.extensions', name: 'guice-assistedinject', version: '4.1.0'
+        compile group: 'com.google.inject', name: 'guice', version: '4.2.0'
+        compile group: 'com.google.inject.extensions', name: 'guice-assistedinject', version: '4.2.0'
 
         // Network publishing dependencies
         compile group: 'org.ros.rosjava_core', name: 'rosjava', version: '[0.2,0.3)'
@@ -285,39 +286,6 @@ project(":core") {
         exclude 'org/bytedeco/javacpp/*/*xfeatures2d*'
     }
 
-    sourceSets {
-        generated {
-            java {
-                /* Note: When referencing this it becomes `srcDirs` */
-                srcDir 'src/generated/java'
-            }
-        }
-    }
-
-    task generateCodeFromSource(type: CodeGenerator) {
-        description 'Generates the Operation Wrappers for the OpenCV methods.\n To skip run with parm `-PskipGenerate`'
-        dest sourceSets.generated.java.srcDirs
-        removeExisting true
-    }
-    generateCodeFromSource.onlyIf { !project.hasProperty('skipGenerate') }
-    compileJava.source sourceSets.generated.java, sourceSets.main.java
-    compileJava.dependsOn generateCodeFromSource
-
-    // IDE setup
-    eclipse.classpath {
-        file.whenMerged { cp ->
-            sourceSets.generated.java.srcDirs.forEach { srcDir ->
-                def source_folder = new org.gradle.plugins.ide.eclipse.model.SourceFolder(srcDir.getAbsolutePath(), "build/classes/merged")
-                if (cp.entries.find() { it.path == source_folder.path } == null)
-                    cp.entries.add(source_folder)
-            }
-        }
-    }
-
-    idea.module {
-        sourceDirs += sourceSets.generated.java.srcDirs
-        sourceDirs += file('generated')
-    }
 }
 
 project (":ui:linuxLauncher") {
@@ -394,9 +362,9 @@ project(":ui") {
         compile group: 'org.apache.velocity', name: 'velocity', version: '1.7'
         testCompile files(project(':core').sourceSets.test.output.classesDir)
         testCompile files(project(':core').sourceSets.test.output.resourcesDir)
-        testCompile group: 'org.testfx', name: 'testfx-core', version: '4.0.5-alpha'
-        testCompile group: 'org.testfx', name: 'testfx-junit', version: '4.0.5-alpha'
-        testRuntime group: 'org.testfx', name: 'openjfx-monocle', version: '1.8.0_20'
+        testCompile group: 'org.testfx', name: 'testfx-core', version: '4.0.14-alpha'
+        testCompile group: 'org.testfx', name: 'testfx-junit', version: '4.0.14-alpha'
+        testRuntime group: 'org.testfx', name: 'openjfx-monocle', version: 'jdk-9+181'
         testCompile group: 'org.opencv', name: 'opencv-java', version: '3.1.0'
     }
 
@@ -419,6 +387,14 @@ project(":ui") {
         test {
             jvmArgs = ['-Djava.awt.headless=true', '-Dtestfx.robot=glass', '-Dtestfx.headless=true', '-Dprism.order=sw', '-Dprism.text=t2k']
         }
+    }
+
+    test {
+        jvmArgs = ['--add-exports', 'javafx.controls/com.sun.javafx.scene.control.inputmap=ALL-UNNAMED']
+    }
+
+    run {
+        jvmArgs = ['--add-exports', 'javafx.controls/com.sun.javafx.scene.control.inputmap=ALL-UNNAMED']
     }
 
     task testSharedLib() {
@@ -545,7 +521,7 @@ configure([
 ]) {
     if (project.hasProperty('jvmArgs')) {
         run {
-            jvmArgs = (project.jvmArgs.split("\\s+") as List)
+            jvmArgs += (project.jvmArgs.split("\\s+") as List)
         }
     }
     if (project.hasProperty('args')) {
