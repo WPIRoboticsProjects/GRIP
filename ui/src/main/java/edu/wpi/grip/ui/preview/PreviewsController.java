@@ -6,11 +6,11 @@ import edu.wpi.grip.core.Step;
 import edu.wpi.grip.core.events.SocketPreviewChangedEvent;
 import edu.wpi.grip.core.events.StepMovedEvent;
 import edu.wpi.grip.core.sockets.OutputSocket;
+import edu.wpi.grip.ui.util.FxUtils;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
-import com.sun.javafx.application.PlatformImpl;
 
 import java.util.Comparator;
 
@@ -112,7 +112,7 @@ public class PreviewsController {
    */
   @Subscribe
   public synchronized void onStepMoved(StepMovedEvent event) {
-    PlatformImpl.runAndWait(() -> sortPreviews(getPreviews()));
+    FxUtils.runAndWait(() -> sortPreviews(getPreviews()));
   }
 
   /**
@@ -125,7 +125,7 @@ public class PreviewsController {
     // This needs to run right away to avoid synchronization problems, although in practice this
     // method only runs
     // in the UI thread anyways (since it fires in response to a button press)
-    PlatformImpl.runAndWait(() -> {
+    FxUtils.runAndWait(() -> {
       final ObservableList<SocketPreviewView<?>> previews = getPreviews();
       if (socket.isPreviewed()) {
         // When a socket previewed, add a new view, then sort all of the views so they stay ordered

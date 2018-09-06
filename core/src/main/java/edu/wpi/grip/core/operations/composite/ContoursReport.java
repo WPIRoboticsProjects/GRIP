@@ -5,10 +5,9 @@ import edu.wpi.grip.core.operations.network.Publishable;
 import edu.wpi.grip.core.sockets.NoSocketTypeLabel;
 import edu.wpi.grip.core.sockets.Socket;
 
-import com.google.auto.value.AutoValue;
-
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 import static org.bytedeco.javacpp.opencv_core.Mat;
@@ -69,7 +68,7 @@ public final class ContoursReport implements Publishable {
     double[] height = getHeights();
     double[] solidity = getSolidity();
     for (int i = 0; i < contours.size(); i++) {
-      processedContours.add(Contour.create(area[i], centerX[i], centerY[i], width[i], height[i],
+      processedContours.add(new Contour(area[i], centerX[i], centerY[i], width[i], height[i],
           solidity[i]));
     }
     return processedContours;
@@ -154,23 +153,74 @@ public final class ContoursReport implements Publishable {
     return solidities;
   }
 
-  @AutoValue
-  public abstract static class Contour {
-    static Contour create(double area, double centerX, double centerY, double width, double
-        height, double solidity) {
-      return new AutoValue_ContoursReport_Contour(area, centerX, centerY, width, height, solidity);
+  public static final class Contour {
+    private final double area, centerX, centerY, width, height, solidity;
+
+    public Contour(double area, double centerX, double centerY, double width, double height, double solidity) {
+      this.area = area;
+      this.centerX = centerX;
+      this.centerY = centerY;
+      this.width = width;
+      this.height = height;
+      this.solidity = solidity;
     }
 
-    public abstract double area();
+    public double area() {
+      return area;
+    }
 
-    public abstract double centerX();
+    public double centerX() {
+      return centerX;
+    }
 
-    public abstract double centerY();
+    public double centerY() {
+      return centerY;
+    }
 
-    public abstract double width();
+    public double width() {
+      return width;
+    }
 
-    public abstract double height();
+    public double height() {
+      return height;
+    }
 
-    public abstract double solidity();
+    public double solidity() {
+      return solidity;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+      if (this == obj) {
+        return true;
+      }
+      if (obj == null || getClass() != obj.getClass()) {
+        return false;
+      }
+      Contour contour = (Contour) obj;
+      return Double.compare(contour.area, area) == 0 &&
+          Double.compare(contour.centerX, centerX) == 0 &&
+          Double.compare(contour.centerY, centerY) == 0 &&
+          Double.compare(contour.width, width) == 0 &&
+          Double.compare(contour.height, height) == 0 &&
+          Double.compare(contour.solidity, solidity) == 0;
+    }
+
+    @Override
+    public int hashCode() {
+      return Objects.hash(area, centerX, centerY, width, height, solidity);
+    }
+
+    @Override
+    public String toString() {
+      return "Contour("
+          + "area=" + area
+          + ", centerX=" + centerX
+          + ", centerY=" + centerY
+          + ", width=" + width
+          + ", height=" + height
+          + ", solidity=" + solidity
+          + ')';
+    }
   }
 }

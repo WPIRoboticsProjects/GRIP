@@ -4,12 +4,12 @@ import edu.wpi.grip.core.OperationMetaData;
 import edu.wpi.grip.core.events.OperationAddedEvent;
 import edu.wpi.grip.ui.annotations.ParametrizedController;
 import edu.wpi.grip.ui.util.ControllerMap;
+import edu.wpi.grip.ui.util.FxUtils;
 import edu.wpi.grip.ui.util.SearchUtility;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.eventbus.Subscribe;
 import com.google.inject.Inject;
-import com.sun.javafx.application.PlatformImpl;
 
 import javafx.beans.InvalidationListener;
 import javafx.beans.property.SimpleStringProperty;
@@ -88,7 +88,7 @@ public class OperationListController {
 
     if (root.getUserData() == null || operationMetaData.getDescription().category() == root
         .getUserData()) {
-      PlatformImpl.runAndWait(() ->
+      FxUtils.runAndWait(() ->
           operationsMapManager.add(operationControllerFactory.create(operationMetaData)));
     }
   }

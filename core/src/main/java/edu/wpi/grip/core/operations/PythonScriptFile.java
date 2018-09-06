@@ -6,8 +6,6 @@ import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.core.sockets.SocketHint;
 
-import com.google.auto.value.AutoValue;
-
 import org.python.core.PyFunction;
 import org.python.core.PyObject;
 import org.python.core.PyString;
@@ -23,7 +21,6 @@ import java.util.Properties;
  * Converts a string of Python Code or a Python File into something the {@link
  * PythonScriptOperation} can handle.
  */
-@AutoValue
 public abstract class PythonScriptFile {
 
   static {
@@ -63,7 +60,7 @@ public abstract class PythonScriptFile {
     final List<SocketHint<PyObject>> inputSocketHints = interpreter.get("inputs", List.class);
     final List<SocketHint<PyObject>> outputSocketHints = interpreter.get("outputs", List.class);
     final PyFunction performFunction = interpreter.get("perform", PyFunction.class);
-    return new AutoValue_PythonScriptFile(
+    return new PythonScriptFileImpl(
         name == null ? alternativeName : name.toString(),
         summary == null ? "" : summary.toString(),
         inputSocketHints,
@@ -92,5 +89,52 @@ public abstract class PythonScriptFile {
       .Factory osf) {
     return new OperationMetaData(PythonScriptOperation.descriptionFor(this), () -> new
         PythonScriptOperation(isf, osf, this));
+  }
+
+  private static final class PythonScriptFileImpl extends PythonScriptFile {
+
+    private final String name;
+    private final String summary;
+    private final List<SocketHint<PyObject>> inputSocketHints;
+    private final List<SocketHint<PyObject>> outputSocketHints;
+    private final PyFunction performFunction;
+
+    public PythonScriptFileImpl(String name,
+                                String summary,
+                                List<SocketHint<PyObject>> inputSocketHints,
+                                List<SocketHint<PyObject>> outputSocketHints,
+                                PyFunction performFunction) {
+      super();
+      this.name = name;
+      this.summary = summary;
+      this.inputSocketHints = inputSocketHints;
+      this.outputSocketHints = outputSocketHints;
+      this.performFunction = performFunction;
+    }
+
+    @Override
+    public String name() {
+      return name;
+    }
+
+    @Override
+    public String summary() {
+      return summary;
+    }
+
+    @Override
+    public List<SocketHint<PyObject>> inputSocketHints() {
+      return inputSocketHints;
+    }
+
+    @Override
+    public List<SocketHint<PyObject>> outputSocketHints() {
+      return outputSocketHints;
+    }
+
+    @Override
+    public PyFunction performFunction() {
+      return performFunction;
+    }
   }
 }

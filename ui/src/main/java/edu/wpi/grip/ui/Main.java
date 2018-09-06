@@ -15,6 +15,7 @@ import edu.wpi.grip.core.settings.SettingsProvider;
 import edu.wpi.grip.core.sources.GripSourcesHardwareModule;
 import edu.wpi.grip.core.util.SafeShutdown;
 import edu.wpi.grip.ui.util.DPIUtility;
+import edu.wpi.grip.ui.util.FxUtils;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.eventbus.EventBus;
@@ -22,7 +23,6 @@ import com.google.common.eventbus.Subscribe;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.util.Modules;
-import com.sun.javafx.application.PlatformImpl;
 
 import org.apache.commons.cli.CommandLine;
 
@@ -177,7 +177,7 @@ public class Main extends Application {
       // if the program is shutting down.
       if (!SafeShutdown.isStopping()) {
         // This should still use PlatformImpl
-        PlatformImpl.runAndWait(() -> {
+        FxUtils.runAndWait(() -> {
           // WARNING! Do not post any events from within this! It could result in a deadlock!
           synchronized (this.dialogLock) {
             // Check again because the value could have been changed while waiting for the javafx
