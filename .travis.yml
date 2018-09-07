@@ -6,8 +6,10 @@ matrix:
   include:
     - os: linux
       jdk: oraclejdk9
-    - os: osx
-      osx_image: xcode8
+      # Disable OSX since Travis does not have any image with Java 9,
+      # and homebrew does not have a cask for it (Java 9 downloads require an Oracle account)
+#    - os: osx
+#      osx_image: xcode8
 
 # GCC needs to be 4.8 or higher so that GOMP_4.0 is installed for opencv
 # This is incredibly hard to track down, find the solution for and fix.
