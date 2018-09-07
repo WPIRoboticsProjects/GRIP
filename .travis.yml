@@ -5,7 +5,7 @@ matrix:
   fast_finish: true
   include:
     - os: linux
-      jdk: oraclejdk8
+      jdk: oraclejdk9
     - os: osx
       osx_image: xcode8
 
@@ -20,7 +20,7 @@ addons:
     packages:
       - gcc-4.8
       - g++-4.8
-      - oracle-java8-installer
+      - oracle-java9-installer
       - python3
 before_install:
   - .travis-scripts/install.sh
