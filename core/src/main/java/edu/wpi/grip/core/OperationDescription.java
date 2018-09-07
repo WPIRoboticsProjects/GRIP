@@ -19,6 +19,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * An interface describing how an operation should be displayed in the {@link Palette} to the user.
  */
 @Immutable
+@SuppressWarnings("PMD.TooManyMethods")
 public class OperationDescription {
 
   private final String name;

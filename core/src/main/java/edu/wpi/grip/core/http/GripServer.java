@@ -186,7 +186,7 @@ public class GripServer {
     if (state == State.PRE_RUN) {
       try {
         server.start();
-      } catch (Exception ex) {
+      } catch (Exception ex) { // NOPMD Jetty has a poor API (boo!)
         throw new GripServerException("Could not start Jetty server", ex);
       }
       state = State.RUNNING;
@@ -203,7 +203,7 @@ public class GripServer {
     if (state == State.RUNNING) {
       try {
         server.stop();
-      } catch (Exception ex) {
+      } catch (Exception ex) { // NOPMD Jetty has a poor API (boo!)
         throw new GripServerException("Could not stop Jetty server", ex);
       }
       state = State.STOPPED;
@@ -220,14 +220,14 @@ public class GripServer {
       if (state == State.RUNNING) {
         try {
           server.stop();
-        } catch (Exception ex) {
+        } catch (Exception ex) { // NOPMD Jetty has a poor API (boo!)
           throw new GripServerException("Could not stop Jetty server", ex);
         }
         state = State.STOPPED;
       }
       server = serverFactory.create(port);
       start();
-    } catch (GripServerException | IllegalStateException ex) {
+    } catch (GripServerException | IllegalStateException ex) { // NOPMD Jetty has a poor API (boo!)
       throw new GripServerException("Could not restart GripServer", ex);
     }
   }

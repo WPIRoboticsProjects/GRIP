@@ -55,7 +55,7 @@ public class CVRectangle extends AbstractGenerationTesting {
     }
 
     Step step = gen.addStep(opUtil.getMetaData("CV Rectangle"));
-    loadImage(Files.gompeiJpegFile);
+    loadImage(Files.GOMPEI_FILE);
     OutputSocket imgOut = pipeline.getSources().get(0).getOutputSockets().get(0);
     OutputSocket point0 = step0.getOutputSockets().get(0);
     OutputSocket point1 = step1.getOutputSockets().get(0);
@@ -92,7 +92,7 @@ public class CVRectangle extends AbstractGenerationTesting {
   void validate(PipelineInterfacer pip) {
     ManualPipelineRunner runner = new ManualPipelineRunner(eventBus, pipeline);
     runner.runPipeline();
-    pip.setMatSource(0, Files.gompeiJpegFile.file);
+    pip.setMatSource(0, Files.GOMPEI_FILE.file);
     pip.process();
     Optional out = pipeline.getSteps().get(2).getOutputSockets().get(0).getValue();
     assertTrue("Pipeline did not process", out.isPresent());

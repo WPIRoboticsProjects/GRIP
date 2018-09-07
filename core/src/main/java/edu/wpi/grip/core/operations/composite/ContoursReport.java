@@ -153,6 +153,7 @@ public final class ContoursReport implements Publishable {
     return solidities;
   }
 
+  @SuppressWarnings("PMD.DataClass") // Nothing wrong with this
   public static final class Contour {
     private final double area;
     private final double centerX;

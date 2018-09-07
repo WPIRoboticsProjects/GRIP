@@ -51,7 +51,7 @@ public abstract class PedanticHandler extends GenericHandler {
     }
     try {
       handleIfPassed(target, baseRequest, request, response);
-    } catch (RuntimeException ex) {
+    } catch (RuntimeException ex) { // NOPMD we just wrap the exception
       Logger.getLogger(getClass().getName())
           .log(Level.SEVERE, "Exception when handling HTTP request", ex);
       throw new GripServerException("Exception when handling HTTP request", ex);

@@ -6,7 +6,6 @@ import edu.wpi.grip.core.sockets.SocketHint;
 import edu.wpi.grip.core.util.ExceptionWitness;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.eventbus.EventBus;
 import com.google.inject.assistedinject.Assisted;
 import com.google.inject.assistedinject.AssistedInject;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
@@ -35,8 +34,7 @@ public class ClassifierSource extends Source {
   private final OutputSocket<CascadeClassifier> classifierSocket;
 
   @AssistedInject
-  protected ClassifierSource(EventBus eventBus,
-                             OutputSocket.Factory osf,
+  protected ClassifierSource(OutputSocket.Factory osf,
                              ExceptionWitness.Factory exceptionWitnessFactory,
                              @Assisted String filePath) {
     super(exceptionWitnessFactory);
@@ -45,11 +43,10 @@ public class ClassifierSource extends Source {
   }
 
   @AssistedInject
-  protected ClassifierSource(EventBus eventBus,
-                             OutputSocket.Factory osf,
+  protected ClassifierSource(OutputSocket.Factory osf,
                              ExceptionWitness.Factory exceptionWitnessFactory,
                              @Assisted Properties properties) {
-    this(eventBus, osf, exceptionWitnessFactory, properties.getProperty(FILE_PATH_PROPERTY));
+    this(osf, exceptionWitnessFactory, properties.getProperty(FILE_PATH_PROPERTY));
   }
 
   @Override
@@ -84,7 +81,7 @@ public class ClassifierSource extends Source {
     }
     try {
       classifierSocket.setValue(new CascadeClassifier(filePath));
-    } catch (Exception e) {
+    } catch (Exception e) { // NOPMD catch raw exceptions
       // OpenCV will throw an exception if given malformed XML
       throw new IOException("Could not load cascade classifier XML", e);
     }

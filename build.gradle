@@ -108,11 +108,16 @@ configure(subprojects - project(':ui:linuxLauncher')) {
     }
 
     pmd {
+        toolVersion = "6.7.0"
         consoleOutput = true
-        sourceSets = [sourceSets.main, sourceSets.test]
+        it.sourceSets = [sourceSets.main, sourceSets.test]
         reportsDir = file("$project.buildDir/reports/pmd")
         ruleSetFiles = files(new File(rootDir, "pmd-ruleset.xml"))
         ruleSets = []
+    }
+
+    tasks.withType(Pmd) {
+        excludes = ["**/generated/**"]
     }
 
     spotbugs {

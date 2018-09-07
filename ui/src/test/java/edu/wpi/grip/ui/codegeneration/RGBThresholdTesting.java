@@ -29,7 +29,7 @@ public class RGBThresholdTesting extends AbstractGenerationTesting {
     final Step rgb = gen.addStep(
         new OperationMetaData(OperationDescription.from(RGBThresholdOperation.class),
             () -> new RGBThresholdOperation(isf, osf)));
-    loadImage(Files.gompeiJpegFile);
+    loadImage(Files.GOMPEI_FILE);
     OutputSocket imgOut = pipeline.getSources().get(0).getOutputSockets().get(0);
     List<Double> rVal = Arrays.asList(46d, 188d);
     List<Double> gVal = Arrays.asList(0d, 110d);
@@ -56,7 +56,7 @@ public class RGBThresholdTesting extends AbstractGenerationTesting {
     assertTrue("Pipeline did not process", out.isPresent());
     assertFalse("Pipeline output is empty",
         ((org.bytedeco.javacpp.opencv_core.Mat) out.get()).empty());
-    pip.setMatSource(0, Files.gompeiJpegFile.file);
+    pip.setMatSource(0, Files.GOMPEI_FILE.file);
     pip.process();
     Mat genMat = (Mat) pip.getOutput("RGB_Threshold_Output", GenType.IMAGE);
     Mat gripMat = HelperTools.bytedecoMatToCVMat((org.bytedeco.javacpp.opencv_core.Mat) out.get());

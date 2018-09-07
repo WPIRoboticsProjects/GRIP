@@ -76,7 +76,7 @@ public class DistanceTransformGenerationTesting extends AbstractGenerationTestin
     assertTrue("Pipeline did not process", out.isPresent());
     assertFalse("Pipeline output is empty",
         ((org.bytedeco.javacpp.opencv_core.Mat) out.get()).empty());
-    pip.setMatSource(0, Files.imageFile.file);
+    pip.setMatSource(0, Files.IMAGE_FILE.file);
     pip.process();
     Mat genMat = (Mat) pip.getOutput("Distance_Transform_Output", GenType.IMAGE);
     Mat gripMat = new Mat();

@@ -55,7 +55,7 @@ public class FindLinesGenerationTesting extends AbstractGenerationTesting {
     Step step0 = gen.addStep(new OperationMetaData(
         OperationDescription.from(HSLThresholdOperation.class),
         () -> new HSLThresholdOperation(isf, osf)));
-    loadImage(Files.imageFile);
+    loadImage(Files.IMAGE_FILE);
     OutputSocket imgOut0 = pipeline.getSources().get(0).getOutputSockets().get(0);
 
     for (InputSocket sock : step0.getInputSockets()) {
@@ -96,7 +96,7 @@ public class FindLinesGenerationTesting extends AbstractGenerationTesting {
     Optional out1 = pipeline.getSteps().get(1).getOutputSockets().get(0).getValue();
     assertTrue("Pipeline did not process", out1.isPresent());
     LinesReport linOut = (LinesReport) out1.get();
-    pip.setMatSource(0, Files.imageFile.file);
+    pip.setMatSource(0, Files.IMAGE_FILE.file);
     pip.process();
     List<TestLine> gripLin = GripLine.convertReport(linOut);
     List<TestLine> genLin = (List<TestLine>) pip.getOutput("Find_Lines_Output", GenType.LINES);

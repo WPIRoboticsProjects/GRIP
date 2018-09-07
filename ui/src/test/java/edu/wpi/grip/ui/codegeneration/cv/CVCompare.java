@@ -27,7 +27,7 @@ public class CVCompare extends AbstractGenerationTesting {
   boolean set(CmpTypesEnum val) {
     Step blur = gen.addStep(new OperationMetaData(
         OperationDescription.from(BlurOperation.class), () -> new BlurOperation(isf, osf)));
-    loadImage(Files.gompeiJpegFile);
+    loadImage(Files.GOMPEI_FILE);
     OutputSocket imgOut = pipeline.getSources().get(0).getOutputSockets().get(0);
     for (InputSocket sock : blur.getInputSockets()) {
       String sockHint = sock.getSocketHint().getIdentifier();
@@ -83,7 +83,7 @@ public class CVCompare extends AbstractGenerationTesting {
     assertTrue("Pipeline did not process", out.isPresent());
     assertFalse("Pipeline output is empty", ((org.bytedeco.javacpp.opencv_core.Mat) out.get())
         .empty());
-    pip.setMatSource(0, Files.gompeiJpegFile.file);
+    pip.setMatSource(0, Files.GOMPEI_FILE.file);
     pip.process();
     Mat genMat = (Mat) pip.getOutput("CV_Compare_Output", GenType.IMAGE);
     Mat gripMat = HelperTools.bytedecoMatToCVMat((org.bytedeco.javacpp.opencv_core.Mat) out.get());

@@ -24,7 +24,6 @@ public class GenericHandlerTest {
   }
 
   @Test
-  @SuppressWarnings("PMD.JUnitTestsShouldIncludeAssert")
   public void testNoClaim() {
     gh = new MockGenericHandler();
     gh = new MockGenericHandler("testNoClaim");

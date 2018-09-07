@@ -59,7 +59,7 @@ public class CsvExporter {
    * @see #addRow(Object...)
    */
   public void addRow(List<?> data) {
-    addRow(data.toArray(new Object[data.size()]));
+    addRow(data.toArray(new Object[0]));
   }
 
   /**

@@ -52,7 +52,7 @@ public class Project {
                          SocketConverter socketConverter,
                          ConnectionConverter connectionConverter,
                          ProjectSettingsConverter projectSettingsConverter,
-                         CodeGenerationSettingsConverter codeGenerationSettingsConverter) {
+                         CodeGenerationSettingsConverter codegenSettingsConverter) {
     xstream.setMode(XStream.NO_REFERENCES);
     xstream.ignoreUnknownElements(); // ignores all unknown tags
     xstream.registerConverter(stepConverter);
@@ -60,7 +60,7 @@ public class Project {
     xstream.registerConverter(socketConverter);
     xstream.registerConverter(connectionConverter);
     xstream.registerConverter(projectSettingsConverter);
-    xstream.registerConverter(codeGenerationSettingsConverter);
+    xstream.registerConverter(codegenSettingsConverter);
     try {
       ClassPath cp = ClassPath.from(getClass().getClassLoader());
       cp.getAllClasses()
@@ -96,7 +96,7 @@ public class Project {
    * Load the project from a file.
    */
   public void open(File file) throws IOException {
-    try (final InputStreamReader reader = new InputStreamReader(new FileInputStream(file),
+    try (InputStreamReader reader = new InputStreamReader(new FileInputStream(file),
         StandardCharsets.UTF_8)) {
       this.open(reader);
     }
@@ -151,7 +151,7 @@ public class Project {
    * Save the project to a file.
    */
   public void save(File file) throws IOException {
-    try (final Writer writer = new OutputStreamWriter(new FileOutputStream(file),
+    try (Writer writer = new OutputStreamWriter(new FileOutputStream(file),
         StandardCharsets.UTF_8)) {
       this.save(writer);
     }
@@ -190,6 +190,7 @@ public class Project {
       consumers.parallelStream().forEach(c -> c.accept(b));
     }
 
+    @SuppressWarnings("PMD.BooleanGetMethodName")
     public boolean get() {
       return b;
     }

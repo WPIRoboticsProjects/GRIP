@@ -30,7 +30,7 @@ public class BlurGenerationTesting extends AbstractGenerationTesting {
     Step step = gen.addStep(
         new OperationMetaData(OperationDescription.from(BlurOperation.class),
             () -> new BlurOperation(isf, osf)));
-    loadImage(Files.gompeiJpegFile);
+    loadImage(Files.GOMPEI_FILE);
     OutputSocket imgOut = pipeline.getSources().get(0).getOutputSockets().get(0);
 
     for (InputSocket sock : step.getInputSockets()) {
@@ -84,7 +84,7 @@ public class BlurGenerationTesting extends AbstractGenerationTesting {
     assertTrue("Pipeline did not process", out.isPresent());
     assertFalse("Pipeline output is empty",
         ((org.bytedeco.javacpp.opencv_core.Mat) out.get()).empty());
-    pip.setMatSource(0, Files.gompeiJpegFile.file);
+    pip.setMatSource(0, Files.GOMPEI_FILE.file);
     pip.process();
     Mat genMat = (Mat) pip.getOutput("blur_Output", GenType.IMAGE);
     Mat gripMat = HelperTools.bytedecoMatToCVMat((org.bytedeco.javacpp.opencv_core.Mat) out.get());

@@ -44,6 +44,7 @@ import javafx.stage.Stage;
 
 import javax.inject.Inject;
 
+@SuppressWarnings("PMD.ExcessiveImports")
 public class Main extends Application {
 
   private final Object dialogLock = new Object();

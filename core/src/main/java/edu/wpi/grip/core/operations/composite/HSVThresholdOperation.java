@@ -15,8 +15,6 @@ import org.bytedeco.javacpp.opencv_core.Mat;
 import org.bytedeco.javacpp.opencv_core.Scalar;
 
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import static org.bytedeco.javacpp.opencv_core.inRange;
 import static org.bytedeco.javacpp.opencv_imgproc.COLOR_BGR2HSV;
@@ -32,7 +30,6 @@ import static org.bytedeco.javacpp.opencv_imgproc.cvtColor;
              iconName = "threshold")
 public class HSVThresholdOperation extends ThresholdOperation {
 
-  private static final Logger logger = Logger.getLogger(HSVThresholdOperation.class.getName());
   private final SocketHint<Mat> inputHint = SocketHints.Inputs.createMatSocketHint("Input", false);
   private final SocketHint<List<Number>> hueHint = SocketHints.Inputs
       .createNumberListRangeSocketHint("Hue", 0.0, 180.0);
@@ -106,12 +103,8 @@ public class HSVThresholdOperation extends ThresholdOperation {
     final Mat high = reallocateMatIfInputSizeOrWidthChanged(dataArray, 1, highScalar, input);
     final Mat hsv = dataArray[2];
 
-    try {
-      cvtColor(input, hsv, COLOR_BGR2HSV);
-      inRange(hsv, low, high, output);
-      outputSocket.setValue(output);
-    } catch (RuntimeException e) {
-      logger.log(Level.WARNING, e.getMessage(), e);
-    }
+    cvtColor(input, hsv, COLOR_BGR2HSV);
+    inRange(hsv, low, high, output);
+    outputSocket.setValue(output);
   }
 }

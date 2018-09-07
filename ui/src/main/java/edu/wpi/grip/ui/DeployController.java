@@ -52,6 +52,7 @@ import javax.inject.Inject;
  * current project to a remote target using SSH, then runs it remotely.  The default values for all
  * fields are based on typical settings for FRC, with the address based on the project settings.
  */
+@SuppressWarnings({"PMD.ExcessiveImports", "PMD.TooManyFields"})
 public class DeployController {
   private static final String GRIP_JAR = "grip.jar";
   private static final String GRIP_WRAPPER = "grip";
@@ -179,7 +180,8 @@ public class DeployController {
    * thread, and it periodically updates the GUI to inform the user of the current status of the
    * deployment.
    */
-  @SuppressWarnings("PMD.AvoidUsingOctalValues")
+  @SuppressWarnings(
+      {"PMD.AvoidUsingOctalValues", "PMD.CyclomaticComplexity", "PMD.ExcessiveMethodLength"})
   private void deploy() {
     setStatusAsync("Connecting to " + address.getText(), false);
 
@@ -261,7 +263,7 @@ public class DeployController {
         session.allocateDefaultPTY();
         Session.Command cmd = session.exec(String.format("'%s/%s'", pathStr, GRIP_WRAPPER));
 
-        try (final InputStreamReader reader = new InputStreamReader(cmd.getInputStream(),
+        try (InputStreamReader reader = new InputStreamReader(cmd.getInputStream(),
             StandardCharsets.UTF_8)) {
           final LineReader inputReader = new LineReader(reader);
           while (isNotCanceled()) {

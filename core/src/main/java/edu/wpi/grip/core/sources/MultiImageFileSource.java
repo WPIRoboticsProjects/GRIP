@@ -33,7 +33,7 @@ import static com.google.common.base.Preconditions.checkElementIndex;
  * A Source that supports multiple images. They can be toggled using {@link
  * MultiImageFileSource#next()} and {@link MultiImageFileSource#previous()}
  */
-@XStreamAlias(value = "grip:MultiImageFile")
+@XStreamAlias("grip:MultiImageFile")
 public final class MultiImageFileSource extends Source implements PreviousNext {
   private static final String INDEX_PROPERTY = "index";
   private static final String SIZE_PROPERTY = "numImages";
@@ -141,7 +141,7 @@ public final class MultiImageFileSource extends Source implements PreviousNext {
     final int size = sizeFromProperties(properties);
     final String[] paths = new String[size];
     for (int i = 0; i < size; i++) {
-      paths[i] = (properties.getProperty(getPathProperty(i)));
+      paths[i] = properties.getProperty(getPathProperty(i));
     }
     return paths;
   }

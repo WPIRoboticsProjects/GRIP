@@ -48,7 +48,6 @@ public class GripPlatformTest extends ApplicationTest {
   }
 
   @Test
-  @SuppressWarnings("PMD.JUnitTestsShouldIncludeAssert")
   public void testRunAsSoonAsPossibleRunsInCorrectThreadWhenNotCalledFromFXThread() throws
       Exception {
     final Waiter waiter = new Waiter();
@@ -74,7 +73,6 @@ public class GripPlatformTest extends ApplicationTest {
   }
 
   @Test
-  @SuppressWarnings("PMD.JUnitTestsShouldIncludeAssert")
   public void testRunAsSoonAsPossibleDoesNotDeadlockWhenRunInsideItself() throws Exception {
     final Waiter waiter = new Waiter();
     platform.runAsSoonAsPossible(() -> {

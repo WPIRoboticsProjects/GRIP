@@ -23,8 +23,8 @@ import static org.junit.Assert.assertEquals;
 
 
 public class ImageConverterTest extends ApplicationTest {
-  private static final ImageWithData gompeiImage = Files.gompeiJpegFile;
-  private static final ImageWithData imageFile = Files.imageFile;
+  private static final ImageWithData gompeiImage = Files.GOMPEI_FILE;
+  private static final ImageWithData imageFile = Files.IMAGE_FILE;
 
   private ImageConverter converter;
 

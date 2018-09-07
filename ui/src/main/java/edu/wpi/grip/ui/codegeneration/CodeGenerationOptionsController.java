@@ -33,6 +33,7 @@ import javafx.stage.DirectoryChooser;
 /**
  * Controller for the code generation options pane.
  */
+@SuppressWarnings("PMD.TooManyMethods")
 public class CodeGenerationOptionsController {
 
   private static final Logger logger =

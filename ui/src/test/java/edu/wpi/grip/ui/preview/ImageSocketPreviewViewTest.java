@@ -41,7 +41,7 @@ public class ImageSocketPreviewViewTest extends ApplicationTest {
             injector.getInstance(OutputSocket.Factory.class)
                 .create(new SocketHint.Builder<>(Mat.class)
                     .identifier(identifier)
-                    .initialValueSupplier(Files.gompeiJpegFile::createMat)
+                    .initialValueSupplier(Files.GOMPEI_FILE::createMat)
                     .build()));
     final Scene scene = new Scene(imageSocketPreviewView);
     stage.setScene(scene);
@@ -54,7 +54,6 @@ public class ImageSocketPreviewViewTest extends ApplicationTest {
   }
 
   @Test
-  @SuppressWarnings("PMD.JUnitTestsShouldIncludeAssert")
   public void testIfImageRenders() {
     WaitForAsyncUtils.waitForFxEvents();
     verifyThat(identifier, NodeMatchers.isVisible());

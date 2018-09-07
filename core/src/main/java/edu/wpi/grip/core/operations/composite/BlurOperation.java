@@ -67,6 +67,7 @@ public class BlurOperation implements Operation {
   }
 
   @Override
+  @SuppressWarnings("PMD.NcssCount")
   public void perform() {
     final Mat input = inputSocket.getValue().get();
     final Type type = typeSocket.getValue().get();

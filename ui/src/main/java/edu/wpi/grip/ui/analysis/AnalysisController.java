@@ -49,6 +49,7 @@ import javax.annotation.Nullable;
 /**
  * Controller for the analysis view.
  */
+@SuppressWarnings("PMD.ExcessiveImports")
 public class AnalysisController {
 
   // Table
@@ -83,10 +84,8 @@ public class AnalysisController {
   private final CsvExporter csvExporter = new CsvExporter(4,
       "Step", "% Time", "Average Time (ms)", "Standard Deviation");
 
-  /**
-   * Initializes the controller. This should only be called by the FXML loader.
-   */
-  public void initialize() {
+  @FXML
+  private void initialize() {
     table.setPlaceholder(new Label("Waiting for steps"));
     operationColumn.prefWidthProperty().bind(table.widthProperty().multiply(0.499));
     timeColumn.prefWidthProperty().bind(table.widthProperty().multiply(0.499));
@@ -121,7 +120,6 @@ public class AnalysisController {
   }
 
   @Subscribe
-  @SuppressWarnings("PMD.UnusedPrivateMethod")
   private void onRun(TimerEvent event) {
     if (event.getTarget() instanceof Step) {
       Step source = (Step) event.getTarget();
@@ -143,7 +141,6 @@ public class AnalysisController {
   }
 
   @Subscribe
-  @SuppressWarnings("PMD.UnusedPrivateMethod")
   private void onStepRemoved(StepRemovedEvent e) {
     sampleMap.remove(e.getStep());
     timeViewMap.remove(e.getStep());
@@ -151,7 +148,7 @@ public class AnalysisController {
   }
 
   @Subscribe
-  @SuppressWarnings({"PMD.UnusedPrivateMethod", "PMD.UnusedFormalParameter"})
+  @SuppressWarnings({ "PMD.UnusedFormalParameter"})
   private void onPipelineFinish(@Nullable RunStoppedEvent event) {
     double[] averageRunTimes = sortedStream(sampleMap)
         .parallel()
@@ -164,7 +161,6 @@ public class AnalysisController {
   }
 
   @Subscribe
-  @SuppressWarnings("PMD.UnusedPrivateMethod")
   private void onBenchmark(BenchmarkEvent event) {
     benchmarkButton.setDisable(event.isStart());
     benchmarkRunsField.setDisable(event.isStart());
@@ -177,7 +173,6 @@ public class AnalysisController {
   }
 
   @FXML
-  @SuppressWarnings("PMD.UnusedPrivateMethod")
   private void runBenchmark() {
     if (benchmarkRunsField.getText().length() > 0) {
       final int numRuns = Integer.parseInt(benchmarkRunsField.getText());

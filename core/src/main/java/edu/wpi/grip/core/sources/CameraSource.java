@@ -44,7 +44,8 @@ import java.util.logging.Logger;
 /**
  * Provides a way to generate a constantly updated {@link Mat} from a camera.
  */
-@XStreamAlias(value = "grip:Camera")
+@XStreamAlias("grip:Camera")
+@SuppressWarnings({"PMD.TooManyMethods", "PMD.ExcessiveImports"})
 public class CameraSource extends Source implements RestartableService {
 
   /**
@@ -86,6 +87,7 @@ public class CameraSource extends Source implements RestartableService {
   private final OutputSocket<Mat> frameOutputSocket;
   private final OutputSocket<Number> frameRateOutputSocket;
   private final Supplier<FrameGrabber> grabberSupplier;
+  @SuppressWarnings("PMD.LinguisticNaming") // The "is" prefix is perfectly valid for AtomicBooleans
   private final AtomicBoolean isNewFrame = new AtomicBoolean(false);
   private final Mat currentFrameTransferMat = new Mat();
   private final AutoRestartingService cameraService;
@@ -129,6 +131,7 @@ public class CameraSource extends Source implements RestartableService {
    * Used for serialization.
    */
   @AssistedInject
+  @SuppressWarnings("PMD.NcssCount")
   CameraSource(
       final EventBus eventBus,
       final OutputSocket.Factory outputSocketFactory,

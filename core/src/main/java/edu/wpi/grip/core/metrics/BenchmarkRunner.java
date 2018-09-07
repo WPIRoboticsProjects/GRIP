@@ -33,6 +33,7 @@ public class BenchmarkRunner {
   /**
    * State flag.
    */
+  @SuppressWarnings("PMD.LinguisticNaming") // The "is" prefix is perfectly valid for AtomicBooleans
   private final AtomicBoolean isBenchmarking = new AtomicBoolean(false);
 
   /**

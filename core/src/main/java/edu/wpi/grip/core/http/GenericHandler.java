@@ -15,6 +15,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * <p>Instances of this class can either claim a context, preventing other instances from handling
  * events on that context, or not, in which case it will run on any context.
  */
+@SuppressWarnings("PMD.DataClass") // It most certainly is not
 public abstract class GenericHandler extends AbstractHandler {
 
   private final ContextStore contextStore;

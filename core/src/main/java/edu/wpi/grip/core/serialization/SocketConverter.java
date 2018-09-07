@@ -92,7 +92,7 @@ public class SocketConverter implements Converter {
   }
 
   @Override
-  @SuppressWarnings("unchecked")
+  @SuppressWarnings({"unchecked", "PMD.CyclomaticComplexity", "PMD.NcssCount"})
   public Object unmarshal(HierarchicalStreamReader reader, UnmarshallingContext context) {
     try {
       reader.moveDown();
@@ -148,7 +148,7 @@ public class SocketConverter implements Converter {
       reader.moveUp();
 
       return socket;
-    } catch (RuntimeException e) {
+    } catch (RuntimeException e) { // NOPMD catch raw exceptions
       throw new ConversionException("Error deserializing socket", e);
     }
   }
@@ -159,6 +159,7 @@ public class SocketConverter implements Converter {
    *
    * @return The type to convert a serialized socket value into when deserializing.
    */
+  @SuppressWarnings("PMD.LooseCoupling") // XStream needs a concrete type to deserialize
   private Class<?> getDeserializedType(Socket socket) {
     final Class<?> socketType = socket.getSocketHint().getType();
 

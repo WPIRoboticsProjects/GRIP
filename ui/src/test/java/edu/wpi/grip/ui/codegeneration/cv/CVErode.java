@@ -23,7 +23,7 @@ public class CVErode extends AbstractGenerationTesting {
 
   boolean setup(String type) {
     Step step = gen.addStep(opUtil.getMetaData("CV erode"));
-    loadImage(Files.gompeiJpegFile);
+    loadImage(Files.GOMPEI_FILE);
     OutputSocket imgOut = pipeline.getSources().get(0).getOutputSockets().get(0);
     gen.connect(imgOut, step.getInputSockets().get(0));
     step.getInputSockets().get(3).setValue(iterations);
@@ -80,7 +80,7 @@ public class CVErode extends AbstractGenerationTesting {
   void validate(PipelineInterfacer pip) {
     ManualPipelineRunner runner = new ManualPipelineRunner(eventBus, pipeline);
     runner.runPipeline();
-    pip.setMatSource(0, Files.gompeiJpegFile.file);
+    pip.setMatSource(0, Files.GOMPEI_FILE.file);
     pip.process();
     Optional out = pipeline.getSteps().get(0).getOutputSockets().get(0).getValue();
     assertTrue("Pipeline did not process", out.isPresent());

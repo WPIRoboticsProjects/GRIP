@@ -26,7 +26,7 @@ public class ResizeTesting extends AbstractGenerationTesting {
     Step resize = gen.addStep(
         new OperationMetaData(OperationDescription.from(ResizeOperation.class),
             () -> new ResizeOperation(isf, osf)));
-    loadImage(Files.gompeiJpegFile);
+    loadImage(Files.GOMPEI_FILE);
     OutputSocket imgOut = pipeline.getSources().get(0).getOutputSockets().get(0);
     for (InputSocket sock : resize.getInputSockets()) {
       String sockHint = sock.getSocketHint().getIdentifier();
@@ -89,7 +89,7 @@ public class ResizeTesting extends AbstractGenerationTesting {
     assertTrue("Pipeline did not process", out.isPresent());
     assertFalse("Pipeline output is empty",
         ((org.bytedeco.javacpp.opencv_core.Mat) out.get()).empty());
-    pip.setMatSource(0, Files.gompeiJpegFile.file);
+    pip.setMatSource(0, Files.GOMPEI_FILE.file);
     pip.process();
     Mat genMat = (Mat) pip.getOutput("Resize_Image_Output", GenType.IMAGE);
     Mat gripMat = HelperTools.bytedecoMatToCVMat((org.bytedeco.javacpp.opencv_core.Mat) out.get());

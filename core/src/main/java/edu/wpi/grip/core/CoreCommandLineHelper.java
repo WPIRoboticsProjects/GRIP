@@ -113,7 +113,7 @@ public class CoreCommandLineHelper {
    * @see #parse(String[])
    */
   public CommandLine parse(List<String> args) {
-    return parse(args.toArray(new String[args.size()]));
+    return parse(args.toArray(new String[0]));
   }
 
   /**

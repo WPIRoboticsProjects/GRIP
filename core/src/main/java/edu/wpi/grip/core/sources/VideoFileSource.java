@@ -38,6 +38,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * A source for a video file input.
  */
 @XStreamAlias("grip:VideoFile")
+@SuppressWarnings("PMD.ExcessiveImports")
 public class VideoFileSource extends Source implements Pausable {
 
   private final String path;
@@ -46,6 +47,7 @@ public class VideoFileSource extends Source implements Pausable {
   private final OutputSocket<Mat> imageSocket;
   private final OutputSocket<Number> fpsSocket;
   private final Mat workingMat = new Mat();
+  @SuppressWarnings("PMD.LinguisticNaming") // The "is" prefix is perfectly valid for AtomicBooleans
   private final AtomicBoolean isNewFrame = new AtomicBoolean(false);
   private FFmpegFrameGrabber frameGrabber;
   private final OpenCVFrameConverter.ToMat converter = new OpenCVFrameConverter.ToMat();

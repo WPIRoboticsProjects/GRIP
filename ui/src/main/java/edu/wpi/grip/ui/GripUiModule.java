@@ -38,6 +38,7 @@ import javafx.fxml.FXMLLoader;
 /**
  * A Guice {@link com.google.inject.Module} for GRIP's UI package.
  */
+@SuppressWarnings({"PMD.ExcessiveImports", "PMD.CouplingBetweenObjects"})
 public class GripUiModule extends AbstractModule {
   @Override
   protected void configure() {

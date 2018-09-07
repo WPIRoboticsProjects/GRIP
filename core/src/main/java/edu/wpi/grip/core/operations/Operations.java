@@ -43,6 +43,7 @@ import java.util.stream.Stream;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 @Singleton
+@SuppressWarnings("PMD.ExcessiveImports")
 public class Operations {
 
   private static final Logger logger = Logger.getLogger(Operations.class.getName());

@@ -7,6 +7,7 @@ import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.core.sockets.SocketHint;
 import edu.wpi.grip.core.sockets.SocketHints;
+import edu.wpi.grip.core.util.JavaCppUtils;
 
 import com.google.common.collect.ImmutableList;
 import com.google.inject.Inject;
@@ -33,6 +34,7 @@ import static org.bytedeco.javacpp.opencv_imgproc.convexHull;
              summary = "Find contours matching certain criteria",
              category = OperationDescription.Category.FEATURE_DETECTION,
              iconName = "find-contours")
+@SuppressWarnings("PMD.TooManyFields")
 public class FilterContoursOperation implements Operation {
 
   private final SocketHint<ContoursReport> contoursHint = new SocketHint.Builder<>(ContoursReport
@@ -134,8 +136,11 @@ public class FilterContoursOperation implements Operation {
     );
   }
 
+  public static boolean inRange(double x, double min, double max) {
+    return x >= min && x <= max;
+  }
+
   @Override
-  @SuppressWarnings("unchecked")
   public void perform() {
     final InputSocket<ContoursReport> inputSocket = contoursSocket;
     final double minArea = minAreaSocket.getValue().get().doubleValue();
@@ -153,54 +158,39 @@ public class FilterContoursOperation implements Operation {
 
 
     final MatVector inputContours = inputSocket.getValue().get().getContours();
-    final MatVector outputContours = new MatVector(inputContours.size());
-    final Mat hull = new Mat();
-
-    // Add contours from the input vector to the output vector only if they pass all of the
-    // criteria (minimum
-    // area, minimum perimeter, width, and height, etc...)
-    int filteredContourCount = 0;
-    for (int i = 0; i < inputContours.size(); i++) {
-      final Mat contour = inputContours.get(i);
-
-      final Rect bb = boundingRect(contour);
-      if (bb.width() < minWidth || bb.width() > maxWidth) {
-        continue;
-      }
-      if (bb.height() < minHeight || bb.height() > maxHeight) {
-        continue;
-      }
-
-      final double area = contourArea(contour);
-      if (area < minArea) {
-        continue;
-      }
-      if (arcLength(contour, true) < minPerimeter) {
-        continue;
-      }
-
-      convexHull(contour, hull);
-      final double solidity = 100 * area / contourArea(hull);
-      hull.release();
-      if (solidity < minSolidity || solidity > maxSolidity) {
-        continue;
-      }
-
-      if (contour.rows() < minVertexCount || contour.rows() > maxVertexCount) {
-        continue;
-      }
-
-      final double ratio = (double) bb.width() / (double) bb.height();
-      if (ratio < minRatio || ratio > maxRatio) {
-        continue;
-      }
-
-      outputContours.put(filteredContourCount++, contour);
-    }
-
-    outputContours.resize(filteredContourCount);
+    final MatVector outputContours = JavaCppUtils.stream(inputContours)
+        .filter(contour -> sizeMatch(contour, minWidth, maxWidth, minHeight, maxHeight))
+        .filter(contour -> ratioMatch(contour, minRatio, maxRatio))
+        .filter(contour -> arcLength(contour, true) >= minPerimeter)
+        .filter(contour -> contourArea(contour) >= minArea)
+        .filter(contour -> solidityInRange(contour, minSolidity, maxSolidity))
+        .filter(contour -> inRange(contour.rows(), minVertexCount, maxVertexCount))
+        .collect(JavaCppUtils.toMatVector());
 
     outputSocket.setValue(new ContoursReport(outputContours,
         inputSocket.getValue().get().getRows(), inputSocket.getValue().get().getCols()));
   }
+
+  private static boolean sizeMatch(Mat contour,
+                                   double minWidth, double maxWidth,
+                                   double minHeight, double maxHeight) {
+    try (Rect bb = boundingRect(contour)) {
+      return inRange(bb.width(), minWidth, maxWidth)
+          && inRange(bb.height(), minHeight, maxHeight);
+    }
+  }
+
+  private static boolean solidityInRange(Mat contour, double minSolidity, double maxSolidity) {
+    try (Mat hull = new Mat()) {
+      convexHull(contour, hull);
+      return inRange(100 * contourArea(contour) / contourArea(hull), minSolidity, maxSolidity);
+    }
+  }
+
+  private static boolean ratioMatch(Mat contour, double minRatio, double maxRatio) {
+    try (Rect bb = boundingRect(contour)) {
+      return inRange(bb.width() / (double) bb.height(), minRatio, maxRatio);
+    }
+  }
+
 }

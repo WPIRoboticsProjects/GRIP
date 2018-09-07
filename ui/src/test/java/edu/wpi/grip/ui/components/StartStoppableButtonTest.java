@@ -45,7 +45,6 @@ public class StartStoppableButtonTest extends ApplicationTest {
     stage.show();
   }
 
-  @SuppressWarnings("PMD.JUnitTestsShouldIncludeAssert")
   @Test
   public void testInitialState() {
     WaitForAsyncUtils.waitForFxEvents();

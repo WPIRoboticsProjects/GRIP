@@ -45,6 +45,7 @@ import static org.bytedeco.javacpp.opencv_imgproc.watershed;
              summary = "Isolates overlapping objects from the background and each other",
              category = OperationDescription.Category.FEATURE_DETECTION,
              iconName = "opencv")
+@SuppressWarnings("PMD.ExcessiveImports")
 public class WatershedOperation implements Operation {
 
   private final SocketHint<Mat> srcHint = SocketHints.Inputs.createMatSocketHint("Input", false);
@@ -99,6 +100,7 @@ public class WatershedOperation implements Operation {
   }
 
   @Override
+  @SuppressWarnings("PMD.NcssCount")
   public void perform() {
     final Mat input = srcSocket.getValue().get();
     if (input.type() != CV_8UC3) {
@@ -144,7 +146,7 @@ public class WatershedOperation implements Operation {
       }
       contourList.add(contour.get(0).clone());
     }
-    MatVector foundContours = new MatVector(contourList.toArray(new Mat[contourList.size()]));
+    MatVector foundContours = new MatVector(contourList.toArray(new Mat[0]));
     outputSocket.setValue(new ContoursReport(foundContours, output.rows(), output.cols()));
   }
 

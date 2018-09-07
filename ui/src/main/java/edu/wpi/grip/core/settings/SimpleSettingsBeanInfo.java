@@ -53,7 +53,7 @@ public class SimpleSettingsBeanInfo extends SimpleBeanInfo {
         }
       }
 
-      return propertyDescriptors.toArray(new PropertyDescriptor[propertyDescriptors.size()]);
+      return propertyDescriptors.toArray(new PropertyDescriptor[0]);
     } catch (IntrospectionException ex) {
       // This should only happen if an invalid argument is passed to the PropertyDescriptor
       // constructor

@@ -40,6 +40,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * RunPipelineEvents} and releases the pipeline thread to update the sources and run the steps.
  */
 @Singleton
+@SuppressWarnings("PMD.TooManyMethods")
 public class PipelineRunner implements RestartableService {
   private static final Logger logger = Logger.getLogger(PipelineRunner.class.getName());
   /**

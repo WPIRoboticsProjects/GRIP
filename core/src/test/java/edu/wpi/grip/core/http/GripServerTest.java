@@ -111,7 +111,6 @@ public class GripServerTest {
   }
 
   @Test
-  @SuppressWarnings("PMD.JUnitTestsShouldIncludeAssert")
   public void testStartStop() throws GripServerException {
     instance.start(); // should do nothing since the server's already running
     instance.stop();  // stop the server so we know we can start it

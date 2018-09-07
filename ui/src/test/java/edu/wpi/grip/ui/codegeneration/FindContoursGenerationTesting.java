@@ -49,7 +49,7 @@ public class FindContoursGenerationTesting extends AbstractGenerationTesting {
     Step step0 = gen.addStep(new OperationMetaData(
         OperationDescription.from(HSLThresholdOperation.class),
         () -> new HSLThresholdOperation(isf, osf)));
-    loadImage(Files.imageFile);
+    loadImage(Files.IMAGE_FILE);
     OutputSocket imgOut0 = pipeline.getSources().get(0).getOutputSockets().get(0);
 
     for (InputSocket sock : step0.getInputSockets()) {
@@ -107,7 +107,7 @@ public class FindContoursGenerationTesting extends AbstractGenerationTesting {
         opencv_core.Scalar.WHITE);
 
     // exporter.export(pipeline, Language.JAVA,new File() , false);
-    pip.setMatSource(0, Files.imageFile.file);
+    pip.setMatSource(0, Files.IMAGE_FILE.file);
     pip.process();
     Mat genMat =
         new Mat(conOut.getRows(), conOut.getCols(), opencv_core.CV_8UC3, new Scalar(0, 0, 0));

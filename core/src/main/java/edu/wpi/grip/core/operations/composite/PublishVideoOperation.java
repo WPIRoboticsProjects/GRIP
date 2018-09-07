@@ -82,7 +82,7 @@ public class PublishVideoOperation implements Operation {
 
           final int fps = socketInputStream.readInt();
           final int compression = socketInputStream.readInt();
-          final int size = socketInputStream.readInt();
+          final int size = socketInputStream.readInt(); // NOPMD unused local variable
 
           if (compression != -1) {
             logger.warning("Dashboard video should be in HW mode");

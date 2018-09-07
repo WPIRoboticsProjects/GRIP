@@ -14,6 +14,7 @@ import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+@SuppressWarnings("PMD.TooManyMethods")
 public class SocketTest {
   private final EventBus eventBus = new EventBus();
   private SocketHint<Number> sh;

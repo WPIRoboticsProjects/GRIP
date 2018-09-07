@@ -42,7 +42,7 @@ public class PaletteController {
       m.setAccessible(true);
       m.invoke(null, operationSearch, operationSearch.rightProperty());
     } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-      throw new RuntimeException(e);
+      throw new AssertionError("Could not set up clear button", e);
     }
 
     imgprocOperations.setUserData(OperationDescription.Category.IMAGE_PROCESSING);

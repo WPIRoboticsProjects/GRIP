@@ -22,7 +22,7 @@ public class CVFlip extends AbstractGenerationTesting {
 
   boolean setup(FlipCode flip) {
     Step step = gen.addStep(opUtil.getMetaData("CV flip"));
-    loadImage(Files.gompeiJpegFile);
+    loadImage(Files.GOMPEI_FILE);
     OutputSocket imgOut = pipeline.getSources().get(0).getOutputSockets().get(0);
     gen.connect(imgOut, step.getInputSockets().get(0));
     step.getInputSockets().get(1).setValue(flip);
@@ -48,7 +48,7 @@ public class CVFlip extends AbstractGenerationTesting {
   void validate(PipelineInterfacer pip) {
     ManualPipelineRunner runner = new ManualPipelineRunner(eventBus, pipeline);
     runner.runPipeline();
-    pip.setMatSource(0, Files.gompeiJpegFile.file);
+    pip.setMatSource(0, Files.GOMPEI_FILE.file);
     pip.process();
     Optional out = pipeline.getSteps().get(0).getOutputSockets().get(0).getValue();
     assertTrue("Pipeline did not process", out.isPresent());

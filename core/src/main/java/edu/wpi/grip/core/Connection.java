@@ -20,7 +20,7 @@ import static com.google.common.base.Preconditions.checkArgument;
 /**
  * A connection is a rule that causes one socket to update to always the value of another socket.
  */
-@XStreamAlias(value = "grip:Connection")
+@XStreamAlias("grip:Connection")
 public class Connection<T> {
 
   private final EventBus eventBus;

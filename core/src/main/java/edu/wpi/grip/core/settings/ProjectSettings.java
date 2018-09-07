@@ -12,7 +12,7 @@ import static com.google.common.base.Preconditions.checkArgument;
  * This object holds settings that are saved in project files.  This includes things like team
  * numbers, which need to be preserved when deploying the project.
  */
-@SuppressWarnings("JavadocMethod")
+@SuppressWarnings({"JavadocMethod", "PMD.DataClass"})
 public class ProjectSettings implements Settings, Cloneable {
 
   @Setting(label = "FRC team number", description = "The team number, if used for FRC")

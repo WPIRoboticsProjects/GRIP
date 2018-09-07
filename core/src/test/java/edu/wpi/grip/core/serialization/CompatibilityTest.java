@@ -37,9 +37,9 @@ import static junit.framework.TestCase.assertEquals;
  */
 public class CompatibilityTest {
 
-  private static final URI testphotoURI = Files.testphotoURI; //The location of the photo source
+  private static final URI testphotoURI = Files.TEST_PHOTO_URI; //The location of the photo source
   // for the test
-  private static final URI testprojectURI = Files.testprojectURI; //The location of the save file
+  private static final URI testprojectURI = Files.TEST_PROJECT_URI; //The location of the save file
   // for the test
 
   private GripCoreTestModule testModule;

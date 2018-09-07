@@ -25,11 +25,13 @@ import static com.google.common.base.Preconditions.checkNotNull;
  *
  * @see <a href="https://gist.github.com/vladdu/b8af7709e26206b1832b">Original version</a>
  */
+@SuppressWarnings("PMD.TooManyMethods")
 public class AutoRestartingService<S extends Service> implements RestartableService {
 
   private final ServiceRestartPolicy policy;
   private final Supplier<S> delegateFactory;
   private final ConcurrentMap<Listener, Executor> listeners;
+  @SuppressWarnings("PMD.LinguisticNaming") // The "should" prefix is perfectly valid
   private final AtomicBoolean shouldContinueRestarting = new AtomicBoolean(false);
   private final Set<Listener> addedListeners = new HashSet<>();
   private S delegate;

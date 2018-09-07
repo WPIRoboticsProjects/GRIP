@@ -33,6 +33,7 @@ import javax.annotation.Nullable;
 public class ExceptionWitness {
   private final EventBus eventBus;
   private final Object origin;
+  @SuppressWarnings("PMD.LinguisticNaming") // The "is" prefix is perfectly valid for AtomicBooleans
   private final AtomicBoolean isExceptionState = new AtomicBoolean(false);
 
   @Inject

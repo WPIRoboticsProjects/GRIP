@@ -47,7 +47,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * with more information about what the operation does.
  */
 public class PythonScriptOperation implements Operation {
-  private static final String DEFAULT_NAME = "Python Operation";
+  private static final String DEFAULT_NAME = "Python Operation"; // NOPMD unused private field
   private static final Logger logger = Logger.getLogger(PythonScriptOperation.class.getName());
 
 
@@ -151,7 +151,7 @@ public class PythonScriptOperation implements Operation {
         Object javaOutput = Py.tojava(pyOutput, outputSockets.get(0).getSocketHint().getType());
         outputSockets.get(0).setValue(javaOutput);
       }
-    } catch (RuntimeException e) {
+    } catch (RuntimeException e) { // NOPMD we have to catch this
       /* Exceptions can happen if there's a mistake in a Python script, so just print a
       stack trace and leave the
        * current state of the output sockets alone.

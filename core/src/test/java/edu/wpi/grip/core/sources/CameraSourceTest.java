@@ -48,6 +48,7 @@ import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+@SuppressWarnings({"PMD.ExcessiveImports", "PMD.TooManyMethods"})
 public class CameraSourceTest {
   @Rule
   public final Timeout timeout = Timeout.seconds(3);
@@ -155,11 +156,7 @@ public class CameraSourceTest {
   @Test(expected = IllegalStateException.class)
   public void testStartingTwiceShouldThrowIllegalState() throws Exception {
     try {
-      try {
-        cameraSourceWithMockGrabber.startAsync();
-      } catch (RuntimeException e) {
-        fail("This should not have failed");
-      }
+      cameraSourceWithMockGrabber.startAsync();
       cameraSourceWithMockGrabber.startAsync();
     } finally {
       cameraSourceWithMockGrabber.stopAsync();
@@ -168,9 +165,10 @@ public class CameraSourceTest {
   }
 
   @Test
+  @SuppressWarnings("PMD.NcssCount")
   public void testEnsureThatGrabberIsReinitializedWhenStartThrowsException() throws IOException,
       TimeoutException {
-    final String GRABBER_START_MESSAGE = "This is expected to fail this way";
+    final String exceptionMessage = "This is expected to fail this way";
     Waiter waiter1 = new Waiter();
     Waiter waiter2 = new Waiter();
     Waiter waiter3 = new Waiter();
@@ -186,7 +184,7 @@ public class CameraSourceTest {
             if (!waiterQueue.isEmpty()) {
               waiterQueue.poll().resume();
             }
-            throw new FrameGrabber.Exception(GRABBER_START_MESSAGE);
+            throw new FrameGrabber.Exception(exceptionMessage);
           }
         };
       }
@@ -203,7 +201,7 @@ public class CameraSourceTest {
       public void failed(Service.State from, Throwable failure) {
         failedWaiter.assertNotNull(failure);
         failedWaiter.assertNotNull(failure.getCause());
-        failedWaiter.assertEquals(GRABBER_START_MESSAGE, failure.getCause().getMessage());
+        failedWaiter.assertEquals(exceptionMessage, failure.getCause().getMessage());
         failedWaiter.resume();
       }
     }, MoreExecutors.directExecutor());
@@ -216,6 +214,7 @@ public class CameraSourceTest {
   }
 
   @Test
+  @SuppressWarnings("PMD.NcssCount")
   public void testFrameRateUpdatesWithGrabSpeed() throws IOException, InterruptedException,
       TimeoutException {
     Waiter waiter1 = new Waiter();
@@ -223,7 +222,7 @@ public class CameraSourceTest {
     Queue<Waiter> waiterQueue = new LinkedList<>(Arrays.asList(waiter1, waiter2));
 
     Mat image = new Mat();
-    ImageLoadingUtility.loadImage(Files.gompeiJpegFile.file.getPath(), image);
+    ImageLoadingUtility.loadImage(Files.GOMPEI_FILE.file.getPath(), image);
     CameraSource source = new CameraSource(new EventBus(), osf, new CameraSource
         .FrameGrabberFactory() {
       @Override

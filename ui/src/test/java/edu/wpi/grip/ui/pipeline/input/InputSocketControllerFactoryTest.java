@@ -99,7 +99,6 @@ public class InputSocketControllerFactoryTest extends ApplicationTest {
   }
 
   @Test
-  @SuppressWarnings("PMD.JUnitTestsShouldIncludeAssert")
   public void testCreateAllKnownInputSocketControllers() throws Exception {
     final Step step = stepFactory.create(operationMeta);
     interact(() -> {

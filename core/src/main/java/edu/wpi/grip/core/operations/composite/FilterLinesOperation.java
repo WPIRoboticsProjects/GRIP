@@ -72,7 +72,7 @@ public class FilterLinesOperation implements Operation {
   }
 
   @Override
-  @SuppressWarnings("unchecked")
+  @SuppressWarnings({"unchecked", "PMD.UselessParentheses"})
   public void perform() {
     final LinesReport inputLines = inputSocket.getValue().get();
     final double minLengthSquared = Math.pow(minLengthSocket.getValue().get().doubleValue(), 2);

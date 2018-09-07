@@ -19,11 +19,12 @@ import java.util.function.Supplier;
  * method.
  */
 @Singleton
-@SuppressWarnings({"PMD.GenericsNaming", "JavadocMethod"})
+@SuppressWarnings({"PMD.GenericsNaming", "PMD.TooManyMethods", "JavadocMethod"})
 public final class TemplateFactory {
   /*
    * Intentionally package private
    */
+  @SuppressWarnings("PMD.DefaultPackage")
   static final String ASSERTION_MESSAGE = "Output must be present for this operation to complete "
       + "correctly.";
   private final InputSocket.Factory isf;

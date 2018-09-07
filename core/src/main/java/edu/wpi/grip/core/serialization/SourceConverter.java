@@ -65,7 +65,7 @@ public class SourceConverter implements Converter {
       source.initializeSafely();
 
       return null;
-    } catch (IOException | RuntimeException ex) {
+    } catch (IOException | RuntimeException ex) { // NOPMD catch raw exceptions
       throw new ConversionException("Error deserializing source", ex);
     }
   }

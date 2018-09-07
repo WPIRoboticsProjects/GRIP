@@ -45,15 +45,15 @@ public class CoreSanityTest extends AbstractPackageSanityTests {
     setDefault(Step.class, new MockStep());
 
     setDistinctValues(Description.class,
-            A.class.getAnnotation(Description.class),
-            B.class.getAnnotation(Description.class));
+            ClassA.class.getAnnotation(Description.class),
+            ClassB.class.getAnnotation(Description.class));
   }
 
   @Description(name = "A", summary = "A")
-  private static class A {
+  private static class ClassA {
   }
 
   @Description(name = "B", summary = "B")
-  private static class B {
+  private static class ClassB {
   }
 }

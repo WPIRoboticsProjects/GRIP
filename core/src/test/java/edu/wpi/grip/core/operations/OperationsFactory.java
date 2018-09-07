@@ -10,7 +10,6 @@ import edu.wpi.grip.core.operations.network.ros.ROSNetworkPublisherFactory;
 import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.sockets.MockInputSocketFactory;
 import edu.wpi.grip.core.sockets.MockOutputSocketFactory;
-import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.core.util.MockFileManager;
 
 import com.google.common.eventbus.EventBus;
@@ -18,7 +17,12 @@ import com.google.inject.Injector;
 
 import java.util.Optional;
 
-public class OperationsFactory {
+public final class OperationsFactory {
+
+  private OperationsFactory() {
+    throw new UnsupportedOperationException(
+        "This is a utility class. What do you expect to happen?");
+  }
 
   public static Operations create(EventBus eventBus, Injector injector) {
     return create(eventBus,
@@ -27,8 +31,7 @@ public class OperationsFactory {
         MockROSMessagePublisher::new,
         injector,
         new MockFileManager(),
-        new MockInputSocketFactory(eventBus),
-        new MockOutputSocketFactory(eventBus));
+        new MockInputSocketFactory(eventBus));
   }
 
   public static Operations create(EventBus eventBus,
@@ -37,8 +40,7 @@ public class OperationsFactory {
                                   ROSNetworkPublisherFactory rosFactory,
                                   Injector injector,
                                   FileManager fileManager,
-                                  InputSocket.Factory isf,
-                                  OutputSocket.Factory osf) {
+                                  InputSocket.Factory isf) {
     return new Operations(eventBus, mapFactory, httpFactory, rosFactory,
         injector, fileManager, isf);
   }
@@ -50,6 +52,7 @@ public class OperationsFactory {
 
   private static class MockROSMessagePublisher<C extends JavaToMessageConverter>
       extends ROSMessagePublisher {
+    @SuppressWarnings("PMD.UnusedFormalParameter") // Used to make the args list neater
     public MockROSMessagePublisher(C converter) {
 
     }

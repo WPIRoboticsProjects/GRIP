@@ -31,7 +31,7 @@ public class GripIconHSLSetup {
     Step hsl = caller.gen.addStep(new OperationMetaData(
         OperationDescription.from(HSLThresholdOperation.class),
         () -> new HSLThresholdOperation(caller.isf, caller.osf)));
-    caller.loadImage(Files.imageFile);
+    caller.loadImage(Files.IMAGE_FILE);
     OutputSocket imgOut = caller.pipeline.getSources().get(0).getOutputSockets().get(0);
     for (InputSocket sock : hsl.getInputSockets()) {
       if ("Input".equals(sock.getSocketHint().getIdentifier())) {

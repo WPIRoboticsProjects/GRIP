@@ -1,41 +1,84 @@
 <?xml version="1.0"?>
-<ruleset name="GripRuleset"
+<ruleset name="Ruleset"
          xmlns="http://pmd.sourceforge.net/ruleset/2.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0 http://pmd.sourceforge.net/ruleset_2_0_0.xsd">
-    <rule ref="rulesets/java/basic.xml" />
-    <rule ref="rulesets/java/braces.xml" />
-    <rule ref="rulesets/java/design.xml">
-        <exclude name="AccessorClassGeneration" />
-        <exclude name="AccessorMethodGeneration" />
-        <exclude name="AvoidSynchronizedAtMethodLevel" />
-        <exclude name="CloseResource" />
-        <exclude name="ConfusingTernary" />
-        <exclude name="UncommentedEmptyConstructor" />
-        <exclude name="UseUtilityClass" />
-        <exclude name="UseVarargs" />
+    <description>
+        The PMD RuleSet for PathWeaver.
+    </description>
+    <rule ref="category/java/bestpractices.xml">
+        <exclude name="AccessorClassGeneration"/>
+        <exclude name="AccessorMethodGeneration"/>
+        <exclude name="GuardLogStatement"/>
+        <exclude name="JUnitAssertionsShouldIncludeMessage"/>
+        <exclude name="JUnitTestContainsTooManyAsserts"/>
+        <exclude name="JUnitTestsShouldIncludeAssert"/>
+        <exclude name="UseVarargs"/>
     </rule>
-    <rule ref="rulesets/java/empty.xml" />
-    <rule ref="rulesets/java/imports.xml">
-        <exclude name="TooManyStaticImports" />
+    <rule ref="category/java/bestpractices.xml/UnusedPrivateMethod">
+        <properties>
+            <property name="ignoredAnnotations" value="javafx.fxml.FXML|com.google.common.eventbus.Subscribe"/>
+        </properties>
     </rule>
-    <rule ref="rulesets/java/junit.xml">
-        <exclude name="JUnitTestContainsTooManyAsserts" />
+    <rule ref="category/java/codestyle.xml">
+        <exclude name="AtLeastOneConstructor"/>
+        <exclude name="AvoidFinalLocalVariable"/>
+        <exclude name="CallSuperInConstructor"/>
+        <exclude name="CommentDefaultAccessModifier"/>
+        <exclude name="ConfusingTernary"/>
+        <exclude name="LocalVariableCouldBeFinal"/>
+        <exclude name="MethodArgumentCouldBeFinal"/>
+        <exclude name="OnlyOneReturn"/>
+        <exclude name="ShortVariable"/>
+        <exclude name="TooManyStaticImports"/>
     </rule>
-    <rule ref="rulesets/java/logging-java.xml">
-        <exclude name="GuardLogStatementJavaUtil" />
+    <rule ref="category/java/codestyle.xml/ClassNamingConventions">
+        <properties>
+            <property name="utilityClassPattern" value="[A-Z].+"/>
+            <property name="enumPattern" value="[A-Z].+"/>
+        </properties>
     </rule>
-    <rule ref="rulesets/java/migrating.xml" />
-    <rule ref="rulesets/java/optimizations.xml">
-        <exclude name="AvoidInstantiatingObjectsInLoops" />
-        <exclude name="LocalVariableCouldBeFinal" />
-        <exclude name="MethodArgumentCouldBeFinal" />
-        <exclude name="RedundantFieldInitializer" />
+    <rule ref="category/java/codestyle.xml/LongVariable">
+        <properties>
+            <property name="minimum" value="30"/>
+        </properties>
     </rule>
-    <rule ref="rulesets/java/strings.xml">
-        <exclude name="AvoidDuplicateLiterals" />
+    <rule ref="category/java/codestyle.xml/FieldNamingConventions">
+        <properties>
+            <property name="constantPattern" value="[a-zA-Z][a-zA-Z_0-9]*"/>
+        </properties>
     </rule>
-    <rule ref="rulesets/java/unnecessary.xml">
-        <exclude name="UselessParentheses" />
+    <rule ref="category/java/design.xml/TooManyMethods">
+        <properties>
+            <property name="maxmethods" value="16"/>
+        </properties>
+    </rule>
+    <rule ref="category/java/design.xml/TooManyFields">
+        <properties>
+            <property name="maxfields" value="16"/>
+        </properties>
+    </rule>
+    <rule ref="category/java/codestyle.xml/ShortClassName">
+        <properties>
+            <property name="minimum" value="4"/>
+        </properties>
+    </rule>
+    <rule ref="category/java/codestyle.xml/ShortMethodName">
+        <properties>
+            <!-- Minimum value of 2 permits static factory methods named "of" -->
+            <property name="minimum" value="2"/>
+        </properties>
+    </rule>
+    <rule ref="category/java/design.xml">
+        <exclude name="AvoidThrowingNullPointerException"/>
+        <exclude name="DataClass"/>
+        <exclude name="LawOfDemeter"/>
+        <exclude name="LoosePackageCoupling"/>
+    </rule>
+    <rule ref="category/java/design.xml/NcssCount">
+        <properties>
+            <property name="methodReportLevel" value="25"/>
+            <property name="classReportLevel" value="250"/>
+        </properties>
     </rule>
 </ruleset>

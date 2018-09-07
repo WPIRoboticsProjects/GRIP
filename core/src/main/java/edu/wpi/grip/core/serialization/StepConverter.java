@@ -8,7 +8,6 @@ import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.core.sockets.Socket;
 
-import com.google.common.eventbus.EventBus;
 import com.thoughtworks.xstream.converters.ConversionException;
 import com.thoughtworks.xstream.converters.Converter;
 import com.thoughtworks.xstream.converters.MarshallingContext;
@@ -31,8 +30,6 @@ public class StepConverter implements Converter {
   private static final String NAME_ATTRIBUTE = "name";
 
   @Inject
-  private EventBus eventBus;
-  @Inject
   private Palette palette;
   @Inject
   private Pipeline pipeline;
@@ -41,7 +38,7 @@ public class StepConverter implements Converter {
 
   @Override
   public void marshal(Object source, HierarchicalStreamWriter writer, MarshallingContext context) {
-    final Step step = ((Step) source);
+    final Step step = (Step) source;
 
     writer.addAttribute(NAME_ATTRIBUTE, step.getOperationDescription().name());
 

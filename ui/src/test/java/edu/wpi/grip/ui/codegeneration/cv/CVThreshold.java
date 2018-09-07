@@ -29,7 +29,7 @@ public class CVThreshold extends AbstractGenerationTesting {
     Step desat = gen.addStep(new OperationMetaData(
         OperationDescription.from(DesaturateOperation.class), () -> new
         DesaturateOperation(isf, osf)));
-    loadImage(Files.gompeiJpegFile);
+    loadImage(Files.GOMPEI_FILE);
     OutputSocket imgOut = pipeline.getSources().get(0).getOutputSockets().get(0);
     for (InputSocket sock : desat.getInputSockets()) {
       if (sock.getSocketHint().getIdentifier().equals("Input")) {
@@ -84,7 +84,7 @@ public class CVThreshold extends AbstractGenerationTesting {
   void validate(PipelineInterfacer pip) {
     ManualPipelineRunner runner = new ManualPipelineRunner(eventBus, pipeline);
     runner.runPipeline();
-    pip.setMatSource(0, Files.gompeiJpegFile.file);
+    pip.setMatSource(0, Files.GOMPEI_FILE.file);
     pip.process();
     Optional out = pipeline.getSteps().get(1).getOutputSockets().get(0).getValue();
     assertTrue("Pipeline did not process", out.isPresent());

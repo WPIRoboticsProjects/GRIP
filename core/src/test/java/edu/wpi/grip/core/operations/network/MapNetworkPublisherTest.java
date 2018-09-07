@@ -74,7 +74,7 @@ public class MapNetworkPublisherTest {
 
   @Test
   public void testPublisherCallsCorrectDoPublishWhenNoKeysAreProvidedAndMapIsNotEmpty() {
-    final double EXPECTED_VALUE = Math.PI;
+    final double expected = Math.PI;
     boolean[] doPublishSingleValueWasCalled = {false};
     final DoubleMapPublisher doubleMapPublisher =
         new DoubleMapPublisher(new HashSet<>()) {
@@ -92,11 +92,11 @@ public class MapNetworkPublisherTest {
           @Override
           protected void doPublishSingle(Double value) {
             doPublishSingleValueWasCalled[0] = true;
-            assertEquals("Should have published the expected value", EXPECTED_VALUE, value, 0.001);
+            assertEquals("Should have published the expected value", expected, value, 0.001);
           }
         };
     doubleMapPublisher.setName("Don't care");
-    doubleMapPublisher.publish(ImmutableMap.of("", EXPECTED_VALUE));
+    doubleMapPublisher.publish(ImmutableMap.of("", expected));
     assertTrue("doPublish with a single value should have been called",
         doPublishSingleValueWasCalled[0]);
   }

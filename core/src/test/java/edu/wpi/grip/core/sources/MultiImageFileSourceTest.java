@@ -18,9 +18,9 @@ import java.util.Properties;
 
 
 public class MultiImageFileSourceTest {
-  private static final ImageWithData imageFile = Files.imageFile;
-  private static final ImageWithData gompeiJpegFile = Files.gompeiJpegFile;
-  private static final File textFile = Files.textFile;
+  private static final ImageWithData imageFile = Files.IMAGE_FILE;
+  private static final ImageWithData gompeiJpegFile = Files.GOMPEI_FILE;
+  private static final File textFile = Files.TEXT_FILE;
   private MultiImageFileSource source;
   private MultiImageFileSource sourceWithIndexSet;
   private OutputSocket.Factory osf;
@@ -52,7 +52,7 @@ public class MultiImageFileSourceTest {
   }
 
   @Test
-  public void testNextValue() throws Exception {
+  public void testNextValue() {
     source.next();
     OutputSocket<Mat> outputSocket = source.getOutputSockets().get(0);
     source.updateOutputSockets();
@@ -60,7 +60,7 @@ public class MultiImageFileSourceTest {
   }
 
   @Test
-  public void testPreviousValue() throws Exception {
+  public void testPreviousValue() {
     source.previous();
 
     OutputSocket<Mat> outputSocket = source.getOutputSockets().get(0);

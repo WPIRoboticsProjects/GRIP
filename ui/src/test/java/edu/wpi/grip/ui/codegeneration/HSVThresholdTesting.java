@@ -34,7 +34,7 @@ public class HSVThresholdTesting extends AbstractGenerationTesting {
     assertTrue("Pipeline did not process", out.isPresent());
     assertFalse("Pipeline output is empty",
         ((org.bytedeco.javacpp.opencv_core.Mat) out.get()).empty());
-    pip.setMatSource(0, Files.imageFile.file);
+    pip.setMatSource(0, Files.IMAGE_FILE.file);
     pip.process();
     Mat genMat = (Mat) pip.getOutput("HSV_Threshold_Output", GenType.IMAGE);
     Mat gripMat = HelperTools.bytedecoMatToCVMat((org.bytedeco.javacpp.opencv_core.Mat) out.get());

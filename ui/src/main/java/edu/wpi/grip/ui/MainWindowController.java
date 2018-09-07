@@ -1,7 +1,6 @@
 package edu.wpi.grip.ui;
 
 import edu.wpi.grip.core.GripFileManager;
-import edu.wpi.grip.core.Palette;
 import edu.wpi.grip.core.Pipeline;
 import edu.wpi.grip.core.PipelineRunner;
 import edu.wpi.grip.core.events.AppSettingsChangedEvent;
@@ -60,6 +59,7 @@ import javax.inject.Inject;
 /**
  * The Controller for the application window.
  */
+@SuppressWarnings({"PMD.ExcessiveImports", "PMD.TooManyMethods", "PMD.TooManyFields"})
 public class MainWindowController {
 
   @FXML
@@ -96,8 +96,6 @@ public class MainWindowController {
   private PipelineRunner pipelineRunner;
   @Inject
   private StartStoppableButton.Factory startStoppableButtonFactory;
-  @Inject
-  private Palette palette;
   @Inject
   private Project project;
 

@@ -31,6 +31,7 @@ import static org.bytedeco.javacpp.opencv_imgcodecs.imencode;
 @Description(name = "Save Images to Disk",
              summary = "Save image periodically to local disk",
              iconName = "publish-video")
+@SuppressWarnings("PMD.TooManyFields")
 public class SaveImageOperation implements Operation {
 
   private final SocketHint<Mat> inputHint

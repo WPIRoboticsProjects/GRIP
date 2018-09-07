@@ -50,7 +50,8 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * connections, and for registering and unregistering them from the event bus when appropriate.
  */
 @Singleton
-@XStreamAlias(value = "grip:Pipeline")
+@XStreamAlias("grip:Pipeline")
+@SuppressWarnings({"PMD.ExcessiveImports", "PMD.TooManyMethods"})
 public class Pipeline implements ConnectionValidator, SettingsProvider, StepIndexer {
 
   private final transient ReadWriteLock sourceLock = new ReentrantReadWriteLock();
@@ -106,7 +107,7 @@ public class Pipeline implements ConnectionValidator, SettingsProvider, StepInde
         .forEach(this.eventBus::post);
   }
 
-  private final <R> R readSourcesSafely(Function<List<Source>, R> sourceListFunction) {
+  private <R> R readSourcesSafely(Function<List<Source>, R> sourceListFunction) {
     return accessSafely(sourceLock.readLock(), Collections.unmodifiableList(sources),
         sourceListFunction);
   }
@@ -126,7 +127,7 @@ public class Pipeline implements ConnectionValidator, SettingsProvider, StepInde
    * @param <R>              The return type of the function
    * @return The value returned by the function.
    */
-  private final <R> R readStepsSafely(Function<List<Step>, R> stepListFunction) {
+  private <R> R readStepsSafely(Function<List<Step>, R> stepListFunction) {
     return accessSafely(stepLock.readLock(), Collections.unmodifiableList(steps), stepListFunction);
   }
 

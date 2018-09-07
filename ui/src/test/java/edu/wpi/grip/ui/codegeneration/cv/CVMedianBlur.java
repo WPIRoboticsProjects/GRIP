@@ -21,7 +21,7 @@ public class CVMedianBlur extends AbstractGenerationTesting {
 
   boolean set() {
     Step step = gen.addStep(opUtil.getMetaData("CV MedianBlur"));
-    loadImage(Files.gompeiJpegFile);
+    loadImage(Files.GOMPEI_FILE);
     OutputSocket imgOut = pipeline.getSources().get(0).getOutputSockets().get(0);
     gen.connect(imgOut, step.getInputSockets().get(0));
     return true;
@@ -35,7 +35,7 @@ public class CVMedianBlur extends AbstractGenerationTesting {
   void validate(PipelineInterfacer pip) {
     ManualPipelineRunner runner = new ManualPipelineRunner(eventBus, pipeline);
     runner.runPipeline();
-    pip.setMatSource(0, Files.gompeiJpegFile.file);
+    pip.setMatSource(0, Files.GOMPEI_FILE.file);
     pip.process();
     Optional out = pipeline.getSteps().get(0).getOutputSockets().get(0).getValue();
     assertTrue("Pipeline did not process", out.isPresent());

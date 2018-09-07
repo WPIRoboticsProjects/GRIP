@@ -46,6 +46,7 @@ import static org.bytedeco.javacpp.opencv_core.Scalar;
 import static org.bytedeco.javacpp.opencv_core.compare;
 import static org.bytedeco.javacpp.opencv_core.countNonZero;
 
+@SuppressWarnings({"PMD.ExcessiveImports", "PMD.TooManyMethods"})
 public class ProjectTest {
 
   private GripCoreTestModule testModule;
@@ -58,7 +59,7 @@ public class ProjectTest {
   private ManualPipelineRunner pipelineRunner;
 
   private OperationMetaData pythonAdditionOperationFromURL;
-  private OperationMetaData pythonAdditionOperationFromSource;
+  private OperationMetaData pythonAdditionOperationFromSource; // NOPMD long variable name
   private OperationMetaData additionOperation;
   private OperationMetaData opencvAddOperation;
 
@@ -292,16 +293,15 @@ public class ProjectTest {
   }
 
   @Test
-  @SuppressWarnings("PMD.JUnitTestsShouldIncludeAssert")
   public void testSerializePipelineWithSource() throws Exception {
-    final ImageFileSource source = imageSourceFactory.create(Files.gompeiJpegFile.file);
+    final ImageFileSource source = imageSourceFactory.create(Files.GOMPEI_FILE.file);
     source.initialize();
     eventBus.post(new SourceAddedEvent(source));
 
     serializeAndDeserialize();
 
     final ImageFileSource sourceDeserialized = (ImageFileSource) pipeline.getSources().get(0);
-    Files.gompeiJpegFile.assertSameImage((Mat) sourceDeserialized.createOutputSockets().get(0)
+    Files.GOMPEI_FILE.assertSameImage((Mat) sourceDeserialized.createOutputSockets().get(0)
         .getValue().get());
   }
 

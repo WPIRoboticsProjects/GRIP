@@ -32,7 +32,7 @@ public class ThresholdMovingTesting extends AbstractGenerationTesting {
    * @return an array of the switch steps used to trigger the moving thresholds.
    */
   public ThresholdSwitch[] setupThreshold(int num) {
-    loadImage(Files.gompeiJpegFile);
+    loadImage(Files.GOMPEI_FILE);
     ThresholdSwitch[] threshs = new ThresholdSwitch[num];
     OutputSocket imgOut = pipeline.getSources().get(0).getOutputSockets().get(0);
     for (int idx = 0; idx < num; idx++) {
@@ -101,7 +101,7 @@ public class ThresholdMovingTesting extends AbstractGenerationTesting {
   void validate(PipelineInterfacer pip, ThresholdSwitch[] threshs) {
     ManualPipelineRunner runner = new ManualPipelineRunner(eventBus, pipeline);
     runner.runPipeline();
-    pip.setMatSource(0, Files.gompeiJpegFile.file);
+    pip.setMatSource(0, Files.GOMPEI_FILE.file);
     pip.process();
     for (int idx = 0; idx < threshs.length; idx++) {
       boolean value = threshs[idx].toggle();

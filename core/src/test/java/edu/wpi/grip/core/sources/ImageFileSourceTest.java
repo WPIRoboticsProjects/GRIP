@@ -24,8 +24,8 @@ import static org.junit.Assert.fail;
  *
  */
 public class ImageFileSourceTest {
-  private final ImageWithData imageFile = Files.imageFile;
-  private final File textFile = Files.textFile;
+  private final ImageWithData imageFile = Files.IMAGE_FILE;
+  private final File textFile = Files.TEXT_FILE;
   private OutputSocket.Factory osf;
 
   @Before

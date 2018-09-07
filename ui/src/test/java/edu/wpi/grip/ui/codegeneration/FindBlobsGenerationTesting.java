@@ -44,7 +44,7 @@ public class FindBlobsGenerationTesting extends AbstractGenerationTesting {
     Step step0 = gen.addStep(new OperationMetaData(
         OperationDescription.from(HSLThresholdOperation.class),
         () -> new HSLThresholdOperation(isf, osf)));
-    loadImage(Files.imageFile);
+    loadImage(Files.IMAGE_FILE);
     OutputSocket imgOut0 = pipeline.getSources().get(0).getOutputSockets().get(0);
 
     for (InputSocket sock : step0.getInputSockets()) {
@@ -107,7 +107,7 @@ public class FindBlobsGenerationTesting extends AbstractGenerationTesting {
     Optional out1 = pipeline.getSteps().get(1).getOutputSockets().get(0).getValue();
     assertTrue("Pipeline did not process", out1.isPresent());
     BlobsReport blobOut = (BlobsReport) out1.get();
-    pip.setMatSource(0, Files.imageFile.file);
+    pip.setMatSource(0, Files.IMAGE_FILE.file);
     pip.process();
     MatOfKeyPoint gen = (MatOfKeyPoint) pip.getOutput("Find_Blobs_Output", GenType.BLOBS);
     assertTrue("Number of Blobs is not the same. grip: " + blobOut.getBlobs().size() + " gen: "

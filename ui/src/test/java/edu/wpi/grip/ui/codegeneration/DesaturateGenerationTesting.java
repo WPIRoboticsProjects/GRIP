@@ -26,7 +26,7 @@ public class DesaturateGenerationTesting extends AbstractGenerationTesting {
     Step desat = gen.addStep(new OperationMetaData(
         OperationDescription.from(DesaturateOperation.class),
         () -> new DesaturateOperation(isf, osf)));
-    loadImage(Files.gompeiJpegFile);
+    loadImage(Files.GOMPEI_FILE);
     OutputSocket imgOut = pipeline.getSources().get(0).getOutputSockets().get(0);
     for (InputSocket sock : desat.getInputSockets()) {
       if (sock.getSocketHint().getIdentifier().equals("Input")) {
@@ -48,7 +48,7 @@ public class DesaturateGenerationTesting extends AbstractGenerationTesting {
     Optional out = pipeline.getSteps().get(0).getOutputSockets().get(0).getValue();
     assertTrue("Output is not present", out.isPresent());
     assertFalse("Output Mat is empty", ((org.bytedeco.javacpp.opencv_core.Mat) out.get()).empty());
-    pip.setMatSource(0, Files.gompeiJpegFile.file);
+    pip.setMatSource(0, Files.GOMPEI_FILE.file);
     pip.process();
     Mat genMat = (Mat) pip.getOutput("Desaturate_Output", GenType.IMAGE);
     Mat gripMat = HelperTools.bytedecoMatToCVMat((org.bytedeco.javacpp.opencv_core.Mat) out.get());
