@@ -20,13 +20,13 @@ public class VideoFileSourceController extends SourceController<VideoFileSource>
   VideoFileSourceController(
       EventBus eventBus,
       OutputSocketController.Factory outputSocketControllerFactory,
-      ExceptionWitnessResponderButton.Factory exceptionWitnessResponderButtonFactory,
+      ExceptionWitnessResponderButton.Factory exceptionWitnessButtonFactory,
       @Assisted VideoFileSource source) {
-    super(eventBus, outputSocketControllerFactory, exceptionWitnessResponderButtonFactory, source);
+    super(eventBus, outputSocketControllerFactory, exceptionWitnessButtonFactory, source);
   }
 
   @Override
-  protected void initialize() throws Exception {
+  protected void initialize() {
     super.initialize();
     if (getSource().getFrameCount() > 1) {
       // Only add controls if there's multiple frames

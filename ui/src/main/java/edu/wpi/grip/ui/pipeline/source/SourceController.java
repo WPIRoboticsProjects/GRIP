@@ -35,7 +35,7 @@ public class SourceController<S extends Source> implements Controller {
 
   private final EventBus eventBus;
   private final OutputSocketController.Factory outputSocketControllerFactory;
-  private final ExceptionWitnessResponderButton.Factory exceptionWitnessResponderButtonFactory;
+  private final ExceptionWitnessResponderButton.Factory exceptionWitnessButtonFactory;
   private final S source;
   @FXML
   private VBox root;
@@ -51,20 +51,20 @@ public class SourceController<S extends Source> implements Controller {
   SourceController(
       final EventBus eventBus,
       final OutputSocketController.Factory outputSocketControllerFactory,
-      final ExceptionWitnessResponderButton.Factory exceptionWitnessResponderButtonFactory,
+      final ExceptionWitnessResponderButton.Factory exceptionWitnessButtonFactory,
       @Assisted final S source) {
     this.eventBus = eventBus;
     this.outputSocketControllerFactory = outputSocketControllerFactory;
-    this.exceptionWitnessResponderButtonFactory = exceptionWitnessResponderButtonFactory;
+    this.exceptionWitnessButtonFactory = exceptionWitnessButtonFactory;
     this.source = source;
   }
 
   @FXML
-  protected void initialize() throws Exception {
+  protected void initialize() {
     outputSocketMapManager = new ControllerMap<>(sockets.getChildren());
     this.name.setText(source.getName());
 
-    addControls(exceptionWitnessResponderButtonFactory.create(source, source.getClass()
+    addControls(exceptionWitnessButtonFactory.create(source, source.getClass()
         .getSimpleName() + " Error"));
 
     for (OutputSocket<?> socket : source.getOutputSockets()) {

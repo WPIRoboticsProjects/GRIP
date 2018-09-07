@@ -288,6 +288,7 @@ public class MainWindowController {
    * The user can select the language to export to, save location and file name.
    */
   @FXML
+  @SuppressWarnings("PMD.NcssCount")
   protected void generate() {
     if (pipeline.getSources().isEmpty()) {
       // No sources
@@ -396,7 +397,7 @@ public class MainWindowController {
     elapsedTimeLabel.setText(
         String.format("Ran in %.1f ms (%.1f fps)",
             elapsed / 1e3,
-            elapsed != 0 ? (1e6 / elapsed) : Double.NaN));
+            elapsed != 0 ? (1e6 / elapsed) : Double.NaN)); // NOPMD useless parens
   }
 
   @FXML

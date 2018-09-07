@@ -52,6 +52,7 @@ public class TPipeline {
    *
    * @param pipeSteps The list of steps used to create the TPipeline.
    */
+  @SuppressWarnings({"PMD.NcssCount", "PMD.CyclomaticComplexity", "PMD.NPathComplexity"})
   private void set(List<Step> pipeSteps) {
     pipeSteps.stream()
         .map(s -> s.getOperationDescription().name())

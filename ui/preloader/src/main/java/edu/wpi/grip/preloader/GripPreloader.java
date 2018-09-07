@@ -90,7 +90,13 @@ public final class GripPreloader extends Preloader {
   }
 
   private static double clamp(double n, double min, double max) {
-    return (n < min) ? min : ((n > max) ? max : n);
+    if (n < min) {
+      return min;
+    } else if (n > max) {
+      return max;
+    } else {
+      return n;
+    }
   }
 
 }

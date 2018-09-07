@@ -18,7 +18,7 @@ public class SourceControllerFactory {
   @Inject
   private CameraSourceController.Factory cameraControllerFactory;
   @Inject
-  private MultiImageFileSourceController.Factory multiImageFileSourceControllerFactory;
+  private MultiImageFileSourceController.Factory multiImageControllerFactory;
   @Inject
   private HttpSourceController.Factory httpSourceControllerFactory;
   @Inject
@@ -26,7 +26,7 @@ public class SourceControllerFactory {
   @Inject
   private ClassifierSourceController.Factory fileSourceControllerFactory;
   @Inject
-  private VideoFileSourceController.Factory videoFileSourceControllerFactory;
+  private VideoFileSourceController.Factory videoFileControllerFactory;
 
   SourceControllerFactory() { /* no-op */ }
 
@@ -45,7 +45,7 @@ public class SourceControllerFactory {
       sourceController = (SourceController<S>) cameraControllerFactory.create((CameraSource)
           source);
     } else if (source instanceof MultiImageFileSource) {
-      sourceController = (SourceController<S>) multiImageFileSourceControllerFactory.create(
+      sourceController = (SourceController<S>) multiImageControllerFactory.create(
           (MultiImageFileSource) source);
     } else if (source instanceof HttpSource) {
       sourceController = (SourceController<S>) httpSourceControllerFactory.create(
@@ -54,7 +54,7 @@ public class SourceControllerFactory {
       sourceController = (SourceController<S>) fileSourceControllerFactory.create(
           (ClassifierSource) source);
     } else if (source instanceof VideoFileSource) {
-      sourceController = (SourceController<S>) videoFileSourceControllerFactory.create(
+      sourceController = (SourceController<S>) videoFileControllerFactory.create(
           (VideoFileSource) source);
     } else {
       sourceController = (SourceController<S>) baseSourceControllerFactory.create(source);

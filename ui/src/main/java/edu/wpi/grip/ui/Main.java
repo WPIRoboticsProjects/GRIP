@@ -113,6 +113,7 @@ public class Main extends Application {
   }
 
   @Override
+  @SuppressWarnings("PMD.NcssCount")
   public void start(Stage stage) throws IOException {
     // Load UI elements if we're not in headless mode
     if (!headless) {

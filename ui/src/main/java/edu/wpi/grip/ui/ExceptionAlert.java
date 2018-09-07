@@ -50,6 +50,7 @@ public final class ExceptionAlert extends Alert {
    *                  in order to display the issue website.
    * @see <a href="http://code.makery.ch/blog/javafx-dialogs-official/">Inspiration</a>
    */
+  @SuppressWarnings("PMD.NcssCount")
   public ExceptionAlert(final Parent root, final Throwable throwable, final String message,
                         boolean isFatal, final HostServices services) {
     super(AlertType.ERROR);

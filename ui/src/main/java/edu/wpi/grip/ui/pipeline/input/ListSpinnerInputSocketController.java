@@ -5,7 +5,6 @@ import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.ui.pipeline.SocketHandleView;
 import edu.wpi.grip.ui.util.GripPlatform;
 
-import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
@@ -35,8 +34,9 @@ public class ListSpinnerInputSocketController extends InputSocketController<List
    *               from.
    */
   @Inject
-  ListSpinnerInputSocketController(EventBus eventBus, SocketHandleView.Factory
-      socketHandleViewFactory, GripPlatform platform, @Assisted InputSocket<List> socket) {
+  ListSpinnerInputSocketController(SocketHandleView.Factory socketHandleViewFactory,
+                                   GripPlatform platform,
+                                   @Assisted InputSocket<List> socket) {
     super(socketHandleViewFactory, socket);
     this.platform = platform;
 

@@ -85,6 +85,7 @@ public class AnalysisController {
       "Step", "% Time", "Average Time (ms)", "Standard Deviation");
 
   @FXML
+  @SuppressWarnings("PMD.UselessParentheses")
   private void initialize() {
     table.setPlaceholder(new Label("Waiting for steps"));
     operationColumn.prefWidthProperty().bind(table.widthProperty().multiply(0.499));
@@ -102,7 +103,7 @@ public class AnalysisController {
           TimeView view = timeViewMap.computeIfAbsent(step, s -> new TimeView());
           view.update(statistics.getMean(),
               statistics.getMean() / lastStats.getSum(),
-              lastStats.hotness(statistics.getMean()));
+              lastStats.zScore(statistics.getMean()));
           setGraphic(null);
           setGraphic(view);
         }
@@ -311,12 +312,12 @@ public class AnalysisController {
       getChildren().addAll(progressBar, text);
     }
 
-    void update(double time, double relativeAmount, double hotness) {
+    public void update(double time, double relativeAmount, double zScore) {
       text.setText(String.format("%.1fms", time / 1e3));
       progressBar.setProgress(relativeAmount);
-      if (hotness > 0) {
+      if (zScore > 0) {
         final double max = 3; // highest value before being clamped
-        double h = ((max - Math.min(hotness, max)) * 270 / max) - 45;
+        double h = ((max - Math.min(zScore, max)) * 270 / max) - 45; // NOPMD
         final String formatStyle = "-fx-accent: hsb(%.2f, 100%%, 100%%);";
         progressBar.setStyle(String.format(formatStyle, h));
       } else {

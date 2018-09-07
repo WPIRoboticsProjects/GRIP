@@ -23,16 +23,16 @@ public final class CameraSourceController extends SourceController<CameraSource>
       final EventBus eventBus,
       final OutputSocketController.Factory outputSocketControllerFactory,
       final StartStoppableButton.Factory startStoppableButtonFactory,
-      final ExceptionWitnessResponderButton.Factory exceptionWitnessResponderButtonFactory,
+      final ExceptionWitnessResponderButton.Factory exceptionWitnessButtonFactory,
       @Assisted final CameraSource cameraSource) {
-    super(eventBus, outputSocketControllerFactory, exceptionWitnessResponderButtonFactory,
+    super(eventBus, outputSocketControllerFactory, exceptionWitnessButtonFactory,
         cameraSource);
     this.startStoppableButtonFactory = startStoppableButtonFactory;
   }
 
   @FXML
   @Override
-  public void initialize() throws Exception {
+  public void initialize() {
     super.initialize();
     addControls(startStoppableButtonFactory.create(getSource()));
   }

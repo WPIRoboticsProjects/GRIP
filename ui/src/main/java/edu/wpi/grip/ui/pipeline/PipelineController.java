@@ -52,6 +52,7 @@ import javax.inject.Inject;
  */
 @Singleton
 @ParametrizedController(url = "Pipeline.fxml")
+@SuppressWarnings("PMD.ExcessiveImports")
 public final class PipelineController {
 
   @FXML
@@ -411,6 +412,7 @@ public final class PipelineController {
   /**
    * Simple class for returning two steps.
    */
+  @SuppressWarnings("PMD.DefaultPackage")
   private static final class StepPair {
     final Step lower;
     final Step higher;

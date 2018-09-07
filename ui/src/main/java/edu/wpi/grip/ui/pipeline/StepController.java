@@ -52,12 +52,13 @@ import javax.inject.Inject;
  * as well as a list of input sockets and output sockets.
  */
 @ParametrizedController(url = "Step.fxml")
+@SuppressWarnings({"PMD.ExcessiveImports", "PMD.TooManyFields"})
 public class StepController implements Controller {
 
   private final Pipeline pipeline;
   private final InputSocketControllerFactory inputSocketControllerFactory;
   private final OutputSocketController.Factory outputSocketControllerFactory;
-  private final ExceptionWitnessResponderButton.Factory exceptionWitnessResponderButtonFactory;
+  private final ExceptionWitnessResponderButton.Factory exceptionWitnessButtonFactory;
   private final StepDragService stepDragService;
   private final EventBus eventBus;
   private final Step step;
@@ -98,20 +99,21 @@ public class StepController implements Controller {
   StepController(Pipeline pipeline,
                  InputSocketControllerFactory inputSocketControllerFactory,
                  OutputSocketController.Factory outputSocketControllerFactory,
-                 ExceptionWitnessResponderButton.Factory exceptionWitnessResponderButtonFactory,
+                 ExceptionWitnessResponderButton.Factory exceptionWitnessButtonFactory,
                  StepDragService stepDragService,
                  EventBus eventBus,
                  @Assisted Step step) {
     this.pipeline = pipeline;
     this.inputSocketControllerFactory = inputSocketControllerFactory;
     this.outputSocketControllerFactory = outputSocketControllerFactory;
-    this.exceptionWitnessResponderButtonFactory = exceptionWitnessResponderButtonFactory;
+    this.exceptionWitnessButtonFactory = exceptionWitnessButtonFactory;
     this.stepDragService = stepDragService;
     this.eventBus = eventBus;
     this.step = step;
   }
 
   @FXML
+  @SuppressWarnings("PMD.NcssCount")
   private void initialize() {
     inputSocketMapManager = new ControllerMap<>(inputs.getChildren());
     outputSocketMapManager = new ControllerMap<>(outputs.getChildren());
@@ -120,7 +122,7 @@ public class StepController implements Controller {
     title.setText(step.getOperationDescription().name());
     step.getOperationDescription().icon().ifPresent(icon -> this.icon.setImage(
         new Image(InputStream.class.cast(icon))));
-    buttons.getChildren().add(0, exceptionWitnessResponderButtonFactory.create(step, "Step Error"));
+    buttons.getChildren().add(0, exceptionWitnessButtonFactory.create(step, "Step Error"));
 
     if (step.getInputSockets().stream()
         .allMatch(inputSocket -> inputSocket.getSocketHint().getView()
@@ -128,7 +130,7 @@ public class StepController implements Controller {
       expand.setManaged(false);
     } else {
       expandIcon.setImage(UP_ARROW);
-      expanded.addListener(((observable, oldValue, newValue) -> {
+      expanded.addListener((observable, oldValue, newValue) -> {
         if (newValue) {
           inputSocketMapManager.keySet().stream()
               .filter(interactiveInputSocketFilter)
@@ -143,7 +145,7 @@ public class StepController implements Controller {
           closeUp();
           expandIcon.setImage(DOWN_ARROW);
         }
-      }));
+      });
     }
 
     // Add a SocketControlView for each input socket and output socket

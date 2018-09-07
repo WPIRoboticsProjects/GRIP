@@ -50,6 +50,7 @@ import static junit.framework.TestCase.fail;
 import static org.testfx.api.FxAssert.verifyThat;
 import static org.testfx.api.FxAssert.verifyThatIter;
 
+@SuppressWarnings("PMD.ExcessiveImports")
 public class PipelineUITest extends ApplicationTest {
 
   private GripCoreTestModule testModule;

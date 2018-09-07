@@ -2,7 +2,6 @@ package edu.wpi.grip.ui;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
-import javafx.scene.input.MouseEvent;
 
 import javax.inject.Inject;
 
@@ -15,18 +14,19 @@ public class AboutDialogController {
   private Label versionNumberLabel;
 
   @FXML
-  void mousePressedDocumentationButton(MouseEvent event) {
+  private void initialize() {
+    versionNumberLabel.setText(
+        "Version " + edu.wpi.grip.core.Main.class.getPackage().getImplementationVersion());
+  }
+
+  @FXML
+  private void mousePressedDocumentationButton() {
     main.getHostServices().showDocument("http://wpilib.screenstepslive.com/s/4485/m/50711");
   }
 
   @FXML
-  void mousePressedGithubButton(MouseEvent event) {
+  private void mousePressedGithubButton() {
     main.getHostServices().showDocument("https://github.com/WPIRoboticsProjects/GRIP");
   }
 
-  @FXML
-  void initialize() {
-    versionNumberLabel.setText("Version " + edu.wpi.grip.core.Main.class.getPackage()
-        .getImplementationVersion());
-  }
 }

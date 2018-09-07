@@ -58,6 +58,7 @@ public abstract class ImageBasedPreviewView<T> extends SocketPreviewView<T> {
    *
    * @return true if the image can be previewed, false if it can't
    */
+  @SuppressWarnings("PMD.UselessParentheses")
   public static boolean isPreviewable(Mat image) {
     return (image.channels() == 1) || (image.channels() == 3)
         && (image.depth() == CV_8U || image.depth() == CV_8S);

@@ -21,9 +21,9 @@ public class ClassifierSourceController extends SourceController<ClassifierSourc
   ClassifierSourceController(
       EventBus eventBus,
       OutputSocketController.Factory outputSocketControllerFactory,
-      ExceptionWitnessResponderButton.Factory exceptionWitnessResponderButtonFactory,
+      ExceptionWitnessResponderButton.Factory exceptionWitnessButtonFactory,
       @Assisted ClassifierSource source) {
-    super(eventBus, outputSocketControllerFactory, exceptionWitnessResponderButtonFactory, source);
+    super(eventBus, outputSocketControllerFactory, exceptionWitnessButtonFactory, source);
   }
 
 }

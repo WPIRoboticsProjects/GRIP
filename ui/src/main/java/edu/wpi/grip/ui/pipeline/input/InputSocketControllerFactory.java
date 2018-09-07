@@ -13,22 +13,21 @@ import java.util.List;
 public final class InputSocketControllerFactory {
 
   @Inject
-  private InputSocketController.BaseInputSocketControllerFactory<Object>
-      baseInputSocketControllerFactory;
+  private InputSocketController.BaseInputSocketControllerFactory<Object> baseSocketFactory;
   @Inject
-  private CheckboxInputSocketController.Factory checkboxInputSocketControllerFactory;
+  private CheckboxInputSocketController.Factory checkboxSocketFactory;
   @Inject
-  private NumberSpinnerInputSocketController.Factory numberInputSocketControllerFactory;
+  private NumberSpinnerInputSocketController.Factory numberSocketFactory;
   @Inject
-  private ListSpinnerInputSocketController.Factory listInputSocketControllerFactory;
+  private ListSpinnerInputSocketController.Factory listSocketFactory;
   @Inject
-  private SliderInputSocketController.Factory sliderInputSocketControllerFactory;
+  private SliderInputSocketController.Factory sliderSocketFactory;
   @Inject
-  private RangeInputSocketController.Factory rangeInputSocketControllerFactory;
+  private RangeInputSocketController.Factory rangeSocketFactory;
   @Inject
-  private SelectInputSocketController.Factory<Object> selectInputSocketControllerFactory;
+  private SelectInputSocketController.Factory<Object> selectSocketFactory;
   @Inject
-  private TextFieldInputSocketController.Factory textFieldInputSocketController;
+  private TextFieldInputSocketController.Factory textFieldSocketFactory;
 
   /**
    * Create an instance of {@link InputSocketController} appropriate for the given socket.
@@ -39,63 +38,82 @@ public final class InputSocketControllerFactory {
 
     switch (socketHint.getView()) {
       case NONE:
-        return (InputSocketController<T>) baseInputSocketControllerFactory.create(
+        return (InputSocketController<T>) baseSocketFactory.create(
             (InputSocket<Object>) socket);
-
       case TEXT:
-        if (socketHint.getType().equals(Number.class)) {
-          return (InputSocketController<T>) numberInputSocketControllerFactory.create(
-              (InputSocket<Number>) socket);
-        } else if (socketHint.getType().equals(List.class)) {
-          return (InputSocketController<T>) listInputSocketControllerFactory.create(
-              (InputSocket<List>) socket);
-        } else if (socketHint.getType().equals(String.class)) {
-          return (InputSocketController<T>) textFieldInputSocketController.create(
-              (InputSocket<String>) socket);
-        } else {
-          throw new IllegalArgumentException("Could not create view for socket.  SPINNER views "
-              + "must be Number or List. "
-              + socket.toString());
-        }
+        return makeTextSocketController(socket, socketHint);
 
       case SLIDER:
-        if (socketHint.getType().equals(Number.class)) {
-          return (InputSocketController<T>) sliderInputSocketControllerFactory.create(
-              (InputSocket<Number>) socket);
-        } else {
-          throw new IllegalArgumentException("Could not create view for socket.  SLIDER views "
-              + "must be Numbers. "
-              + socket.toString());
-        }
+        return makeSliderSocketController(socket, socketHint);
 
       case RANGE:
-        if (socketHint.getType().equals(List.class)) {
-          return (InputSocketController<T>) rangeInputSocketControllerFactory.create(
-              (InputSocket<List<Number>>) socket);
-        } else {
-          throw new IllegalArgumentException("Could not create view for socket.  RANGE views must"
-              + " be Lists. "
-              + socket.toString());
-        }
+        return makeRangeSocketController(socket, socketHint);
 
       case SELECT:
-        return (InputSocketController<T>) selectInputSocketControllerFactory.create(
+        return (InputSocketController<T>) selectSocketFactory.create(
             (InputSocket<Object>) socket);
 
       case CHECKBOX:
-        if (socketHint.getType().equals(Boolean.class)) {
-          return (InputSocketController<T>) checkboxInputSocketControllerFactory.create(
-              (InputSocket<Boolean>) socket);
-        } else {
-          throw new IllegalArgumentException("Could not create view for socket.  CHECKBOX views "
-              + "must be Booleans. "
-              + socket.toString());
-        }
+        return makeCheckboxSocketController(socket, socketHint);
 
       default:
-        throw new IllegalArgumentException("Could not create view for socket. "
-            + socket.toString());
+        throw new IllegalArgumentException("Could not create view for socket. " + socket);
     }
 
+  }
+
+  @SuppressWarnings("unchecked")
+  private <T> InputSocketController<T> makeTextSocketController(InputSocket<T> socket,
+                                                                SocketHint<T> socketHint) {
+    if (socketHint.getType().equals(Number.class)) {
+      return (InputSocketController<T>) numberSocketFactory.create(
+          (InputSocket<Number>) socket);
+    } else if (socketHint.getType().equals(List.class)) {
+      return (InputSocketController<T>) listSocketFactory.create(
+          (InputSocket<List>) socket);
+    } else if (socketHint.getType().equals(String.class)) {
+      return (InputSocketController<T>) textFieldSocketFactory.create(
+          (InputSocket<String>) socket);
+    } else {
+      throw new IllegalArgumentException("Could not create view for socket.  SPINNER views "
+          + "must be Number or List. "
+          + socket.toString());
+    }
+  }
+
+  @SuppressWarnings("unchecked")
+  private <T> InputSocketController<T> makeSliderSocketController(InputSocket<T> socket,
+                                                                  SocketHint<T> socketHint) {
+    if (socketHint.getType().equals(Number.class)) {
+      return (InputSocketController<T>) sliderSocketFactory.create(
+          (InputSocket<Number>) socket);
+    } else {
+      throw new IllegalArgumentException("Could not create view for socket.  SLIDER views "
+          + "must be Numbers. " + socket);
+    }
+  }
+
+  @SuppressWarnings("unchecked")
+  private <T> InputSocketController<T> makeRangeSocketController(InputSocket<T> socket,
+                                                                 SocketHint<T> socketHint) {
+    if (socketHint.getType().equals(List.class)) {
+      return (InputSocketController<T>) rangeSocketFactory.create(
+          (InputSocket<List<Number>>) socket);
+    } else {
+      throw new IllegalArgumentException("Could not create view for socket.  RANGE views must"
+          + " be Lists. " + socket);
+    }
+  }
+
+  @SuppressWarnings("unchecked")
+  private <T> InputSocketController<T> makeCheckboxSocketController(InputSocket<T> socket,
+                                                                    SocketHint<T> socketHint) {
+    if (socketHint.getType().equals(Boolean.class)) {
+      return (InputSocketController<T>) checkboxSocketFactory.create(
+          (InputSocket<Boolean>) socket);
+    } else {
+      throw new IllegalArgumentException("Could not create view for socket.  CHECKBOX views "
+          + "must be Booleans. " + socket);
+    }
   }
 }

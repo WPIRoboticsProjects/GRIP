@@ -38,6 +38,7 @@ public final class ImageConverter {
    *
    * @return A JavaFX image, or null for empty
    */
+  @SuppressWarnings({"PMD.NcssCount", "PMD.CyclomaticComplexity", "PMD.NPathComplexity"})
   public Image convert(Mat mat, int desiredHeight) {
     /*
      * IMPORTANT!
@@ -136,7 +137,7 @@ public final class ImageConverter {
    *
    * @return A JavaFX image, or null for empty
    */
-  Image convert(Mat mat) {
+  public Image convert(Mat mat) {
     return convert(mat, mat.rows());
   }
 

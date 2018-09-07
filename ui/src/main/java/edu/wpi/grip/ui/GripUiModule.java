@@ -41,6 +41,7 @@ import javafx.fxml.FXMLLoader;
 @SuppressWarnings({"PMD.ExcessiveImports", "PMD.CouplingBetweenObjects"})
 public class GripUiModule extends AbstractModule {
   @Override
+  @SuppressWarnings("PMD.NcssCount")
   protected void configure() {
     bind(GripMode.class).toInstance(GripMode.GUI);
 

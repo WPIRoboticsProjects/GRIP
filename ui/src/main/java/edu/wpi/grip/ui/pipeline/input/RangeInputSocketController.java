@@ -34,6 +34,7 @@ public class RangeInputSocketController extends InputSocketController<List<Numbe
    *               (the min and max slider values).
    */
   @Inject
+  @SuppressWarnings("PMD.NcssCount")
   RangeInputSocketController(SocketHandleView.Factory socketHandleViewFactory,
                              GripPlatform platform,
                              @Assisted InputSocket<List<Number>> socket) {
@@ -48,8 +49,9 @@ public class RangeInputSocketController extends InputSocketController<List<Numbe
 
     @SuppressWarnings("unchecked")
     final List<Number> extremes = (List<Number>) domain[0];
-    checkArgument((extremes.size() == 2) && (extremes.get(0) instanceof Number) && (extremes.get(1)
-            instanceof Number),
+    checkArgument(extremes.size() == 2
+            && extremes.get(0) != null
+            && extremes.get(1) instanceof Number,
         "Sliders must have a domain with a list of two numbers (min and max)");
 
     checkArgument(initialValue.size() == 2, "Range sliders must contain two values (low and high)");

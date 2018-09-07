@@ -57,6 +57,7 @@ import javafx.stage.FileChooser.ExtensionFilter;
  * construct that source.  As an example, the image file source results in a file picker that the
  * user can use to browse for an image.
  */
+@SuppressWarnings("PMD.ExcessiveImports")
 public class AddSourceButton extends MenuButton {
 
   @VisibleForTesting
@@ -72,6 +73,7 @@ public class AddSourceButton extends MenuButton {
   private Optional<Dialog> activeDialog = Optional.empty();
 
   @Inject
+  @SuppressWarnings({"PMD.ExcessiveMethodLength", "PMD.NcssCount"})
   AddSourceButton(EventBus eventBus,
                   MultiImageFileSource.Factory multiImageSourceFactory,
                   ImageFileSource.Factory imageSourceFactory,

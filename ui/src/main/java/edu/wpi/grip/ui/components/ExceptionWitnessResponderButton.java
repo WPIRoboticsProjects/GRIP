@@ -41,6 +41,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 /**
  * Listens and responds to events posted by the {@link edu.wpi.grip.core.util.ExceptionWitness}.
  */
+@SuppressWarnings("PMD.ExcessiveImports")
 public final class ExceptionWitnessResponderButton extends Button {
   @VisibleForTesting
   @SuppressWarnings({"PMD.DefaultPackage", "PMD.FieldDeclarationsShouldBeAtStartOfClass"})
@@ -154,6 +155,7 @@ public final class ExceptionWitnessResponderButton extends Button {
     private final TextArea stackTrace = new TextArea();
     private final TitledPane stackTracePane;
 
+    @SuppressWarnings("PMD.NcssCount")
     private ExceptionPopOver(String title) {
       super();
 

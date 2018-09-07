@@ -43,6 +43,7 @@ public abstract class TemplateMethods {
    * @param socket the socket to be parsed
    * @return the value of the socket or "null" if there is no value
    */
+  @SuppressWarnings({"PMD.NcssCount", "PMD.CyclomaticComplexity"})
   public static String parseSocketValue(Socket socket) {
     if (socket.getValue().isPresent() && !socket.getValue().get().toString().contains("bytedeco")
         && !socket.getValue().get().toString().contains("Infinity")

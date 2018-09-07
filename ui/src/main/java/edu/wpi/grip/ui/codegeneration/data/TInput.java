@@ -40,7 +40,7 @@ public class TInput extends TSocket {
   }
 
   @Override
-  String baseTypeHelper(String type) {
+  protected String baseTypeHelper(String type) {
     if ("Integer".equals(type)) {
       return "int";
     }

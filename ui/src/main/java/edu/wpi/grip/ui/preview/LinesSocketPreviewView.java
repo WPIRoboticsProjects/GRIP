@@ -65,6 +65,7 @@ public final class LinesSocketPreviewView extends ImageBasedPreviewView<LinesRep
   }
 
   @Override
+  @SuppressWarnings("PMD.NcssCount")
   protected void convertImage() {
     synchronized (this) {
       final LinesReport linesReport = this.getSocket().getValue().get();

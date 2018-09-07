@@ -58,7 +58,7 @@ public class TSocket {
    * @param type the original type
    * @return the baseType
    */
-  String baseTypeHelper(String type) {
+  protected String baseTypeHelper(String type) {
     return type;
   }
 
@@ -67,8 +67,10 @@ public class TSocket {
    * @return true if mutable. false if not mutable.
    */
   public boolean mutable() {
-    return ("Integer".equals(type) || "Double".equals(type) || "Boolean".equals(type)
-        || "Number".equals(type));
+    return "Integer".equals(type)
+        || "Double".equals(type)
+        || "Boolean".equals(type)
+        || "Number".equals(type);
   }
 
   /**

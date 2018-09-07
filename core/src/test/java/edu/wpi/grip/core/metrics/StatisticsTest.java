@@ -13,7 +13,7 @@ public class StatisticsTest {
     assertEquals("sum should be 0", 0, statistics.getSum(), 0);
     assertEquals("mean should be 0", 0, statistics.getMean(), 0);
     assertEquals("std dev should be 0", 0, statistics.getStandardDeviation(), 0);
-    assertEquals("hotness should be 0", statistics.hotness(7), 0, 0);
+    assertEquals("Z-score should be 0", statistics.zScore(7), 0, 0);
   }
 
   @Test
@@ -24,7 +24,7 @@ public class StatisticsTest {
     assertEquals("sum should be 0", 0, statistics.getSum(), 0);
     assertEquals("mean should be 0", 0, statistics.getMean(), 0);
     assertEquals("std dev should be 0", 0, statistics.getStandardDeviation(), 0);
-    assertEquals("hotness should be 0", statistics.hotness(15), 0, 0);
+    assertEquals("Z-score should be 0", statistics.zScore(15), 0, 0);
   }
 
   @Test
@@ -35,7 +35,7 @@ public class StatisticsTest {
     assertEquals("sum should be pi", Math.PI, statistics.getSum(), 0);
     assertEquals("mean should be pi", Math.PI, statistics.getMean(), 0);
     assertEquals("std dev should be 0", 0, statistics.getStandardDeviation(), 0);
-    assertEquals("hotness should be 0", statistics.hotness(31), 0, 0);
+    assertEquals("Z-score should be 0", statistics.zScore(31), 0, 0);
   }
 
   @Test
@@ -46,11 +46,11 @@ public class StatisticsTest {
     assertEquals("sum should be 15", 15, statistics.getSum(), 0);
     assertEquals("mean should be 3", 3, statistics.getMean(), 0);
     assertEquals("std dev should be sqrt(2)", Math.sqrt(2), statistics.getStandardDeviation(), 0);
-    assertEquals("hotness should be 0", statistics.hotness(1), 0, 0);
-    assertEquals("hotness should be 0", statistics.hotness(2), 0, 0);
-    assertEquals("hotness should be 0", statistics.hotness(3), 0, 0);
-    assertEquals("hotness should be 1/sqrt(2)", statistics.hotness(4), 1 / Math.sqrt(2), 0);
-    assertEquals("hotness should be 2/sqrt(2)", statistics.hotness(5), 2 / Math.sqrt(2), 0);
+    assertEquals("Z-score should be 0", statistics.zScore(1), 0, 0);
+    assertEquals("Z-score should be 0", statistics.zScore(2), 0, 0);
+    assertEquals("Z-score should be 0", statistics.zScore(3), 0, 0);
+    assertEquals("Z-score should be 1/sqrt(2)", statistics.zScore(4), 1 / Math.sqrt(2), 0);
+    assertEquals("Z-score should be 2/sqrt(2)", statistics.zScore(5), 2 / Math.sqrt(2), 0);
   }
 
 }

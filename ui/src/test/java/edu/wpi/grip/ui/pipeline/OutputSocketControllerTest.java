@@ -20,8 +20,8 @@ import static org.junit.Assert.assertTrue;
 public class OutputSocketControllerTest extends ApplicationTest {
 
   private MockOutputSocket outputSocket;
-  private OutputSocketController defaultOutputSocketController;
-  private OutputSocketController initiallyPreviewedOutputSocketController;
+  private OutputSocketController defaultController;
+  private OutputSocketController initiallyPreviewedController;
 
   @Override
   public void start(Stage stage) {
@@ -30,15 +30,14 @@ public class OutputSocketControllerTest extends ApplicationTest {
     final SocketHandleView.Factory socketHandleFactory
         = socket -> new SocketHandleView(new EventBus(), null, null, new SocketHandleView
         .SocketDragService(), socket);
-    defaultOutputSocketController =
-        new OutputSocketController(socketHandleFactory, outputSocket);
-    initiallyPreviewedOutputSocketController =
+    defaultController = new OutputSocketController(socketHandleFactory, outputSocket);
+    initiallyPreviewedController =
         new OutputSocketController(socketHandleFactory,
             new InitiallyPreviewedOutputSocket("Initially previewed"));
 
     final GridPane gridPane = new GridPane();
-    gridPane.add(TestAnnotationFXMLLoader.load(defaultOutputSocketController), 0, 0);
-    gridPane.add(TestAnnotationFXMLLoader.load(initiallyPreviewedOutputSocketController), 0, 1);
+    gridPane.add(TestAnnotationFXMLLoader.load(defaultController), 0, 0);
+    gridPane.add(TestAnnotationFXMLLoader.load(initiallyPreviewedController), 0, 1);
 
     final Scene scene = new Scene(gridPane, 800, 600);
     stage.setScene(scene);
@@ -47,7 +46,7 @@ public class OutputSocketControllerTest extends ApplicationTest {
 
   @Test
   public void testClickOnButton() throws Exception {
-    clickOn(defaultOutputSocketController.previewButton());
+    clickOn(defaultController.previewButton());
     WaitForAsyncUtils.waitForFxEvents();
     assertTrue("The output socket was not made previewed when button was clicked", outputSocket
         .isPreviewed());
@@ -55,8 +54,8 @@ public class OutputSocketControllerTest extends ApplicationTest {
 
   @Test
   public void testClickOnButtonTwice() throws Exception {
-    clickOn(defaultOutputSocketController.previewButton());
-    clickOn(defaultOutputSocketController.previewButton());
+    clickOn(defaultController.previewButton());
+    clickOn(defaultController.previewButton());
     WaitForAsyncUtils.waitForFxEvents();
     assertFalse("The output socket was not made not previewed when button was clicked twice",
         outputSocket.isPreviewed());
@@ -65,7 +64,7 @@ public class OutputSocketControllerTest extends ApplicationTest {
   @Test
   public void testInitiallyPreviewedOutputSocket() {
     assertTrue("The preview button did not initialize selected",
-        initiallyPreviewedOutputSocketController.previewButton().isSelected());
+        initiallyPreviewedController.previewButton().isSelected());
   }
 
   private static class InitiallyPreviewedOutputSocket extends MockOutputSocket {

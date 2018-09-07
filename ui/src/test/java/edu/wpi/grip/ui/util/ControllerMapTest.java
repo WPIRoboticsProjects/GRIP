@@ -9,6 +9,7 @@ import org.testfx.framework.junit.ApplicationTest;
 
 import java.util.Arrays;
 
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
@@ -17,7 +18,7 @@ import static org.junit.Assert.assertEquals;
 
 public class ControllerMapTest extends ApplicationTest {
 
-  private static final String SIZE_OF_CONTROLLER_NOT_SAME_STRING =
+  private static final String WRONG_CONTROLLER_SIZE =
       "The size of the controller was not the same";
 
   private MockPane mockPane;
@@ -56,7 +57,7 @@ public class ControllerMapTest extends ApplicationTest {
   public void testAdd() throws Exception {
     interact(() -> {
       mockPane.controllerMap.add(new MockController());
-      assertEquals(SIZE_OF_CONTROLLER_NOT_SAME_STRING, 1, mockPane.controllerMap.size());
+      assertEquals(WRONG_CONTROLLER_SIZE, 1, mockPane.controllerMap.size());
     });
   }
 
@@ -64,7 +65,7 @@ public class ControllerMapTest extends ApplicationTest {
   public void testAddAll() throws Exception {
     interact(() -> {
       mockPane.controllerMap.addAll(new MockController(), new MockController());
-      assertEquals(SIZE_OF_CONTROLLER_NOT_SAME_STRING, 2, mockPane.controllerMap.size());
+      assertEquals(WRONG_CONTROLLER_SIZE, 2, mockPane.controllerMap.size());
     });
   }
 
@@ -72,7 +73,7 @@ public class ControllerMapTest extends ApplicationTest {
   public void testAddAll1() throws Exception {
     interact(() -> {
       mockPane.controllerMap.addAll(Arrays.asList(new MockController(), new MockController()));
-      assertEquals(SIZE_OF_CONTROLLER_NOT_SAME_STRING, 2, mockPane.controllerMap.size());
+      assertEquals(WRONG_CONTROLLER_SIZE, 2, mockPane.controllerMap.size());
     });
   }
 
@@ -81,7 +82,7 @@ public class ControllerMapTest extends ApplicationTest {
     interact(() -> {
       final MockController mockController = new MockController();
       mockPane.controllerMap.add(mockController);
-      assertEquals(SIZE_OF_CONTROLLER_NOT_SAME_STRING,
+      assertEquals(WRONG_CONTROLLER_SIZE,
           mockController, mockPane.controllerMap.getWithNode(mockController.getRoot()));
     });
   }
@@ -112,11 +113,11 @@ public class ControllerMapTest extends ApplicationTest {
 
   private static class MockPane extends Pane {
 
-    private final ControllerMap controllerMap;
+    private final ControllerMap<MockController, Node> controllerMap;
 
     public MockPane() {
       super();
-      controllerMap = new ControllerMap(this.getChildren());
+      controllerMap = new ControllerMap<>(this.getChildren());
     }
 
   }

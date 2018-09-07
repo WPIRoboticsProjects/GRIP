@@ -33,6 +33,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * @param <C> The Controller type for ever node in this list.
  * @param <N> The type of the Node being mapped to a Controller.
  */
+@SuppressWarnings("PMD.TooManyMethods") // Map is a big interface
 public final class ControllerMap<C extends Controller, N extends Node> implements Map<C, N> {
 
   private final ObservableList<N> nodesList;

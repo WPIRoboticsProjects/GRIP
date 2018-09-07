@@ -21,15 +21,15 @@ public final class MultiImageFileSourceController extends SourceController<Multi
   MultiImageFileSourceController(
       final EventBus eventBus,
       final OutputSocketController.Factory outputSocketControllerFactory,
-      final ExceptionWitnessResponderButton.Factory exceptionWitnessResponderButtonFactory,
+      final ExceptionWitnessResponderButton.Factory exceptionWitnessButtonFactory,
       @Assisted final MultiImageFileSource multiImageFileSource) {
-    super(eventBus, outputSocketControllerFactory, exceptionWitnessResponderButtonFactory,
+    super(eventBus, outputSocketControllerFactory, exceptionWitnessButtonFactory,
         multiImageFileSource);
   }
 
   @FXML
   @Override
-  protected void initialize() throws Exception {
+  protected void initialize() {
     super.initialize();
     addControls(new PreviousNextButtons(getSource()));
   }

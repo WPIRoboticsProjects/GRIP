@@ -6,9 +6,13 @@ import java.util.logging.Logger;
 
 import javafx.application.Platform;
 
-public class FxUtils {
+public final class FxUtils {
 
   private static final Logger logger = Logger.getLogger(FxUtils.class.getName());
+
+  private FxUtils() {
+    throw new UnsupportedOperationException("This is a utility class");
+  }
 
   /**
    * Runs an action on the FX thread and blocks until it completes or throws an error.

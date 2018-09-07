@@ -64,6 +64,7 @@ public class Exporter implements Runnable {
   }
 
   @Override
+  @SuppressWarnings("PMD.NcssCount")
   public void run() {
     File dir = new File(settings.getSaveDir());
     File saveFile;

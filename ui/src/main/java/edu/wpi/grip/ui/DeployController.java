@@ -36,6 +36,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.BooleanProperty;
@@ -45,6 +46,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleButton;
+
 import javax.inject.Inject;
 
 /**
@@ -180,8 +182,10 @@ public class DeployController {
    * thread, and it periodically updates the GUI to inform the user of the current status of the
    * deployment.
    */
-  @SuppressWarnings(
-      {"PMD.AvoidUsingOctalValues", "PMD.CyclomaticComplexity", "PMD.ExcessiveMethodLength"})
+  @SuppressWarnings({"PMD.AvoidUsingOctalValues",
+                        "PMD.CyclomaticComplexity",
+                        "PMD.ExcessiveMethodLength",
+                        "PMD.NcssCount"})
   private void deploy() {
     setStatusAsync("Connecting to " + address.getText(), false);
 

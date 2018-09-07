@@ -108,25 +108,25 @@ public final class Statistics {
   }
 
   /**
-   * Calculates the 'hotness' of the given value based on these statistics. Using a {@code value}
+   * Calculates the Z-score of the given value based on these statistics. Using a {@code value}
    * that is not in the data set used to create these statistics will most likely have a useless
-   * result. Hotness is equal to the number of standard deviations above the mean, or zero if the
+   * result. Z-score is equal to the number of standard deviations above the mean, or zero if the
    * input value is not above the mean. Effectively, this means
-   * {@code hotness(x) == max(0, ((x - mean) / standard deviation))}.
+   * {@code zScore(x) == max(0, ((x - mean) / standard deviation))}.
    *
-   * <p>If this set of statistics was calculated from less than two data points, 'hotness' doesn't
+   * <p>If this set of statistics was calculated from less than two data points, Z-score doesn't
    * mean anything and this method will always return zero.
    *
-   * @param value the value to calculate the hotness of
-   * @return the hotness of the given value.
+   * @param value the value to calculate the Z-score of
+   * @return the Z-score of the given value in the context of these statistics
    */
-  public double hotness(double value) {
+  public double zScore(double value) {
     if (numSamples < 2) {
-      // Hotness doesn't make sense if there's 0 or 1 data points
+      // Z-score doesn't make sense if there's 0 or 1 data points
       return 0;
     }
     if (value <= mean) {
-      // Avoid negative hotness
+      // Avoid negative Z-score
       return 0;
     }
     return (value - mean) / standardDeviation;

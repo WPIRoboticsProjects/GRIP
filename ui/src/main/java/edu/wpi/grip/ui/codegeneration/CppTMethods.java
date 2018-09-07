@@ -8,9 +8,6 @@ import com.google.common.base.CaseFormat;
 import org.apache.commons.lang3.text.WordUtils;
 
 public class CppTMethods extends TemplateMethods {
-  public CppTMethods() {
-    super();
-  }
 
   @Override
   public String name(String name) {

@@ -23,9 +23,9 @@ public class HttpSourceController extends SourceController<HttpSource> {
   HttpSourceController(
       final EventBus eventBus,
       final OutputSocketController.Factory outputSocketControllerFactory,
-      final ExceptionWitnessResponderButton.Factory exceptionWitnessResponderButtonFactory,
+      final ExceptionWitnessResponderButton.Factory exceptionWitnessButtonFactory,
       @Assisted final HttpSource source) {
-    super(eventBus, outputSocketControllerFactory, exceptionWitnessResponderButtonFactory, source);
+    super(eventBus, outputSocketControllerFactory, exceptionWitnessButtonFactory, source);
   }
 
 }
