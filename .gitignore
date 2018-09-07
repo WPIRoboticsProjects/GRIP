@@ -85,7 +85,6 @@ node_modules
 bower_components
 
 #Generated files should be ignored as the are regenerated as a build step
-**/generated
 */generated_tests
 /bin/
 ui/PipelineTest.java
