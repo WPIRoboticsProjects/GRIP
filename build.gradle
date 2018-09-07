@@ -14,7 +14,7 @@ buildscript {
     }
 
     dependencies {
-        //classpath group: 'de.dynamicfiles.projects.gradle.plugins', name: 'javafx-gradle-plugin', version: '8.8.0'
+        classpath group: 'de.dynamicfiles.projects.gradle.plugins', name: 'javafx-gradle-plugin', version: '8.8.0'
         classpath 'com.netflix.nebula:gradle-aggregate-javadocs-plugin:3.0.1'
         classpath group: 'edu.wpi.first.wpilib.opencv', name: 'opencv-installer', version: '2.0.0'
     }
@@ -337,7 +337,7 @@ project(":ui") {
     apply plugin: 'idea'
     apply plugin: 'jacoco'
     apply plugin: 'application'
-    //apply plugin: 'javafx-gradle-plugin'
+    apply plugin: 'javafx-gradle-plugin'
 
     repositories {
         maven {
@@ -375,9 +375,9 @@ project(":ui") {
 
     evaluationDependsOn(':core')
     evaluationDependsOn(':ui:preloader')
-//    if (System.getProperty("os.name").toLowerCase().contains("linux")) {
-//        jfxNative.dependsOn tasks.getByPath(':ui:linuxLauncher:linuxLauncherExecutable')
-//    }
+    if (System.getProperty("os.name").toLowerCase().contains("linux")) {
+        jfxNative.dependsOn tasks.getByPath(':ui:linuxLauncher:linuxLauncherExecutable')
+    }
     compileTestJava.dependsOn tasks.getByPath(':core:testClasses')
 
     idea.module {
@@ -488,33 +488,34 @@ project(":ui") {
         }
     }
 
-//    jfx {
-//        mainClass = "edu.wpi.grip.ui.Main"
-//        preLoader = "edu.wpi.grip.preloader.GripPreloader"
-//
-//        identifier = "GRIP"
-//        appName = "GRIP"
-//        vendor = "Worcester Polytechnic Institute"
-//        nativeReleaseVersion = "${getVersionSimple()}-${arch}"
-//
-//        jfxMainAppJarName = "${jfx.appName}-${jfx.nativeReleaseVersion}.jar"
-//
-//        // -XX:-OmitStackTraceInFastThrow prevents the JIT from eating stack traces that get thrown a lot
-//        // This is slower but means we actually get the stack traces instead of
-//        // having them become one line like `java.lang.ArrayIndexOutOfBoundsException`
-//        // and as such, would be useless.
-//        // See: https://plumbr.eu/blog/java/on-a-quest-for-missing-stacktraces
-//        // -Xmx limits the heap size. This prevents memory use from ballooning with a lot
-//        // of JavaCV native objects being allocated hanging around waiting to get GC'd.
-//        // -XX:MaxNewSize limits the size of the eden space to force minor GCs to run more often.
-//        // This causes old mats (which take up little space on the heap but a lot of native memory) to get deallocated
-//        // and free up native memory quicker, limiting the memory the app takes up.
-//        jvmArgs = ["-XX:-OmitStackTraceInFastThrow", "-Xmx200m", "-XX:MaxNewSize=32m"]
-//
-//        bundleArguments = [
-//                "linux.launcher.url": file('linuxLauncher/build/exe/linuxLauncher/linuxLauncher').toURI().toURL()
-//        ]
-//    }
+    jfx {
+        mainClass = "edu.wpi.grip.ui.Main"
+        preLoader = "edu.wpi.grip.preloader.GripPreloader"
+
+        identifier = "GRIP"
+        appName = "GRIP"
+        vendor = "Worcester Polytechnic Institute"
+        nativeReleaseVersion = "${getVersionSimple()}-${arch}"
+        //fileAssociations = [grip: "GRIP Project"]
+
+        jfxMainAppJarName = "${jfx.appName}-${jfx.nativeReleaseVersion}.jar"
+
+        // -XX:-OmitStackTraceInFastThrow prevents the JIT from eating stack traces that get thrown a lot
+        // This is slower but means we actually get the stack traces instead of
+        // having them become one line like `java.lang.ArrayIndexOutOfBoundsException`
+        // and as such, would be useless.
+        // See: https://plumbr.eu/blog/java/on-a-quest-for-missing-stacktraces
+        // -Xmx limits the heap size. This prevents memory use from ballooning with a lot
+        // of JavaCV native objects being allocated hanging around waiting to get GC'd.
+        // -XX:MaxNewSize limits the size of the eden space to force minor GCs to run more often.
+        // This causes old mats (which take up little space on the heap but a lot of native memory) to get deallocated
+        // and free up native memory quicker, limiting the memory the app takes up.
+        jvmArgs = ["-XX:-OmitStackTraceInFastThrow", "-Xmx200m", "-XX:MaxNewSize=32m"]
+
+        bundleArguments = [
+                "linux.launcher.url": file('linuxLauncher/build/exe/linuxLauncher/linuxLauncher').toURI().toURL()
+        ]
+    }
     mainClassName = "edu.wpi.grip.ui.Main"
 }
 
