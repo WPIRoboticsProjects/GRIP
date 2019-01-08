@@ -278,7 +278,6 @@ project(":core") {
         should be changed, but for now this saves us a lot of space. */
         exclude 'org/bytedeco/javacpp/*/*calib3d*'
         exclude 'org/bytedeco/javacpp/*/*optflow*'
-        exclude 'org/bytedeco/javacpp/*/*photo*'
         exclude 'org/bytedeco/javacpp/*/*shape*'
         exclude 'org/bytedeco/javacpp/*/*stitching*'
         exclude 'org/bytedeco/javacpp/*/*superres*'
