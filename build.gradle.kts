@@ -1,4 +1,5 @@
 import org.ajoberstar.grgit.Grgit
+import com.github.spotbugs.*
 
 buildscript {
     repositories {
@@ -22,6 +23,7 @@ plugins {
     id("com.google.osdetector") version "1.4.0"
     id("org.ajoberstar.grgit") version "2.0.0" apply false
     id("net.ltgt.errorprone") version "0.0.16"
+    id("com.github.spotbugs") version "1.6.4"
 }
 
 repositories {
@@ -55,6 +57,7 @@ javaSubprojects {
         plugin("org.gradle.pmd")
         plugin("org.gradle.checkstyle")
         plugin("net.ltgt.errorprone")
+        plugin("com.github.spotbugs")
     }
     repositories {
         mavenCentral()
@@ -103,6 +106,34 @@ javaSubprojects {
 
     configurations["errorprone"].apply {
         resolutionStrategy.force("com.google.errorprone:error_prone_core:2.3.2")
+    }
+
+    spotbugs {
+        toolVersion = "3.1.7"
+        val javaSources = this@javaSubprojects.sourceSets
+        sourceSets = setOf(javaSources["main"], javaSources["test"])
+        excludeFilter = file("$rootDir/findBugsSuppressions.xml")
+        effort = "max"
+    }
+
+    tasks.withType<SpotBugsTask> {
+        reports {
+            xml.isEnabled = false
+            emacs.isEnabled = true
+        }
+        finalizedBy(task("${name}Report") {
+            mustRunAfter(this@withType)
+            doLast {
+                this@withType
+                        .reports
+                        .emacs
+                        .destination
+                        .takeIf { it.exists() }
+                        ?.readText()
+                        .takeIf { !it.isNullOrBlank() }
+                        ?.also { logger.warn(it) }
+            }
+        })
     }
 
     tasks.named<JacocoReport>("jacocoTestReport") {
