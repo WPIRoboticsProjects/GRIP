@@ -58,10 +58,8 @@ subprojects {
     }
 }
 
-var git_provided = false
 var grgit: Grgit? = null
 if (rootProject.file(".git").exists()) {
-    git_provided = true
     project.apply {
         plugin("org.ajoberstar.grgit")
     }
