@@ -21,6 +21,7 @@ plugins {
     id("com.github.johnrengelman.shadow") version "4.0.3"
     id("com.google.osdetector") version "1.4.0"
     id("org.ajoberstar.grgit") version "2.0.0" apply false
+    id("net.ltgt.errorprone") version "0.0.16"
 }
 
 repositories {
@@ -53,6 +54,7 @@ javaSubprojects {
         plugin("org.gradle.jacoco")
         plugin("org.gradle.pmd")
         plugin("org.gradle.checkstyle")
+        plugin("net.ltgt.errorprone")
     }
     repositories {
         mavenCentral()
@@ -97,6 +99,10 @@ javaSubprojects {
         sourceSets = listOf(projectSourcesSets["main"], projectSourcesSets["test"])
         reportsDir = buildDir.resolve("reports/pmd")
         ruleSetFiles = files(rootDir.resolve("pmd-ruleset.xml"))
+    }
+
+    configurations["errorprone"].apply {
+        resolutionStrategy.force("com.google.errorprone:error_prone_core:2.3.2")
     }
 
     tasks.named<JacocoReport>("jacocoTestReport") {

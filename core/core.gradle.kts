@@ -27,6 +27,7 @@ dependencies {
     api(group = "org.apache.commons", name = "commons-lang3", version = "3.5")
     api(group = "com.google.guava", name = "guava", version = "20.0")
     api(group = "com.google.auto.value", name = "auto-value", version = "1.3")
+    annotationProcessor("com.google.auto.value:auto-value:1.3")
     api(group = "com.google.code.gson", name = "gson", version = "2.8.0")
     api(group = "org.eclipse.jetty", name = "jetty-server", version = "9.3.14.v20161028")
     testCompile(group = "org.apache.httpcomponents", name = "httpclient", version = "4.5.2")
@@ -39,10 +40,6 @@ dependencies {
     // https://github.com/google/guice/wiki/OptionalAOP
     api(group = "com.google.inject", name = "guice", version = "4.1.0", classifier = "no_aop")
     api(group = "com.google.inject.extensions", name = "guice-assistedinject", version = "4.1.0")
-
-    // Lombok (replaces AutoValue)
-    compileOnly(group = "org.projectlombok", name = "lombok", version = "1.18.4")
-    annotationProcessor("org.projectlombok:lombok:1.18.4")
 
     // Network publishing dependencies
     api(group = "org.ros.rosjava_core", name = "rosjava", version = "+")
