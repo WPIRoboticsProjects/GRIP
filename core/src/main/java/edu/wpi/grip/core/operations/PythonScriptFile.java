@@ -6,7 +6,8 @@ import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.core.sockets.SocketHint;
 
-import com.google.auto.value.AutoValue;
+import lombok.Value;
+import lombok.experimental.Accessors;
 
 import org.python.core.PyFunction;
 import org.python.core.PyObject;
@@ -23,14 +24,21 @@ import java.util.Properties;
  * Converts a string of Python Code or a Python File into something the {@link
  * PythonScriptOperation} can handle.
  */
-@AutoValue
-public abstract class PythonScriptFile {
+@Value
+@Accessors(fluent = true)
+public class PythonScriptFile {
 
   static {
     Properties pythonProperties = new Properties();
     pythonProperties.setProperty("python.import.site", "false");
     PySystemState.initialize(pythonProperties, null);
   }
+
+  private String name;
+  private String summary;
+  private List<SocketHint<PyObject>> inputSocketHints;
+  private List<SocketHint<PyObject>> outputSocketHints;
+  private PyFunction performFunction;
 
   /**
    * @param url The URL to get the script file from.
@@ -63,23 +71,13 @@ public abstract class PythonScriptFile {
     final List<SocketHint<PyObject>> inputSocketHints = interpreter.get("inputs", List.class);
     final List<SocketHint<PyObject>> outputSocketHints = interpreter.get("outputs", List.class);
     final PyFunction performFunction = interpreter.get("perform", PyFunction.class);
-    return new AutoValue_PythonScriptFile(
+    return new PythonScriptFile(
         name == null ? alternativeName : name.toString(),
         summary == null ? "" : summary.toString(),
         inputSocketHints,
         outputSocketHints,
         performFunction);
   }
-
-  public abstract String name();
-
-  public abstract String summary();
-
-  public abstract List<SocketHint<PyObject>> inputSocketHints();
-
-  public abstract List<SocketHint<PyObject>> outputSocketHints();
-
-  public abstract PyFunction performFunction();
 
   /**
    * Converts this file into a {@link PythonScriptOperation}.

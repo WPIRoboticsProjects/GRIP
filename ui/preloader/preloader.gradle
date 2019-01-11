@@ -1,0 +1,13 @@
+plugins {
+    id 'application'
+}
+
+application {
+    mainClassName = 'edu.wpi.grip.preloader.GripPreloader'
+}
+
+task run(overwrite: true, type: JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    main = mainClassName
+    args 'windowed'
+}

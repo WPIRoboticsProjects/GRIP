@@ -5,7 +5,8 @@ import edu.wpi.grip.core.operations.network.Publishable;
 import edu.wpi.grip.core.sockets.NoSocketTypeLabel;
 import edu.wpi.grip.core.sockets.Socket;
 
-import com.google.auto.value.AutoValue;
+import lombok.Value;
+import lombok.experimental.Accessors;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -154,23 +155,14 @@ public final class ContoursReport implements Publishable {
     return solidities;
   }
 
-  @AutoValue
-  public abstract static class Contour {
-    static Contour create(double area, double centerX, double centerY, double width, double
-        height, double solidity) {
-      return new AutoValue_ContoursReport_Contour(area, centerX, centerY, width, height, solidity);
-    }
-
-    public abstract double area();
-
-    public abstract double centerX();
-
-    public abstract double centerY();
-
-    public abstract double width();
-
-    public abstract double height();
-
-    public abstract double solidity();
+  @Value(staticConstructor = "create")
+  @Accessors(fluent = true)
+  public static final class Contour {
+    private double area;
+    private double centerX;
+    private double centerY;
+    private double width;
+    private double height;
+    private double solidity;
   }
 }
