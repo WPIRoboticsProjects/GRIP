@@ -39,6 +39,14 @@ fun javaSubprojects(action: Project.() -> Unit) {
     }
 }
 
+var grgit: Grgit? = null
+if (rootProject.file(".git").exists()) {
+    project.apply {
+        plugin("org.ajoberstar.grgit")
+    }
+    grgit = Grgit.open()
+}
+
 javaSubprojects {
     apply {
         plugin("java")
@@ -125,14 +133,6 @@ tasks.register<JacocoReport>("jacocoRootReport") {
     doFirst {
         executionData.setFrom(files(executionData.files.filter { it.exists() }))
     }
-}
-
-var grgit: Grgit? = null
-if (rootProject.file(".git").exists()) {
-    project.apply {
-        plugin("org.ajoberstar.grgit")
-    }
-    grgit = Grgit.open()
 }
 
 fun Project.getGitCommit(): String {

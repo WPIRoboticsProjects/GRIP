@@ -181,6 +181,10 @@ jfx {
     )
 }
 
+tasks.named("jfxNative") {
+    dependsOn(":core:jar")
+}
+
 application {
     mainClassName = jfx.mainClass
 }
