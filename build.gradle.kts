@@ -16,6 +16,8 @@ buildscript {
 plugins {
     `java`
     `jacoco`
+    `checkstyle`
+    `pmd`
     id("com.github.johnrengelman.shadow") version "4.0.3"
     id("com.google.osdetector") version "1.4.0"
     id("org.ajoberstar.grgit") version "2.0.0" apply false
@@ -41,6 +43,8 @@ javaSubprojects {
     apply {
         plugin("java")
         plugin("org.gradle.jacoco")
+        plugin("org.gradle.pmd")
+        plugin("org.gradle.checkstyle")
     }
     repositories {
         mavenCentral()
@@ -61,15 +65,30 @@ javaSubprojects {
 
     version = getVersionName()
 
-    afterEvaluate {
-        dependencies {
-            "compile"(group = "com.google.code.findbugs", name = "annotations", version = "3.0.1")
-            "testCompile"(group = "net.jodah", name = "concurrentunit", version = "0.4.2")
-            "testCompile"(group = "org.hamcrest", name = "hamcrest-all", version = "1.3")
-            "testCompile"(group = "junit", name = "junit", version = "4.12")
-            "testCompile"(group = "com.google.truth", name = "truth", version = "0.34")
-            "testCompile"(group = "com.google.guava", name = "guava-testlib", version = "22.0")
+    dependencies {
+        "compile"(group = "com.google.code.findbugs", name = "annotations", version = "3.0.1")
+        "testCompile"(group = "net.jodah", name = "concurrentunit", version = "0.4.2")
+        "testCompile"(group = "org.hamcrest", name = "hamcrest-all", version = "1.3")
+        "testCompile"(group = "junit", name = "junit", version = "4.12")
+        "testCompile"(group = "com.google.truth", name = "truth", version = "0.34")
+        "testCompile"(group = "com.google.guava", name = "guava-testlib", version = "22.0")
+    }
+
+    checkstyle {
+        configFile = rootDir.resolve("checkstyle.xml")
+        toolVersion = "6.19"
+        if (project.hasProperty("ignoreCheckstyle")) {
+            isIgnoreFailures = true
         }
+    }
+
+    pmd {
+        toolVersion = "5.6.0"
+        isConsoleOutput = true
+        val projectSourcesSets = this@javaSubprojects.sourceSets
+        sourceSets = listOf(projectSourcesSets["main"], projectSourcesSets["test"])
+        reportsDir = buildDir.resolve("reports/pmd")
+        ruleSetFiles = files(rootDir.resolve("pmd-ruleset.xml"))
     }
 
     tasks.named<JacocoReport>("jacocoTestReport") {
