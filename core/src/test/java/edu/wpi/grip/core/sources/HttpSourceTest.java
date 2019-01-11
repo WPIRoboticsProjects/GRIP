@@ -11,7 +11,6 @@ import edu.wpi.grip.util.Files;
 
 import com.google.common.eventbus.EventBus;
 
-import org.apache.commons.httpclient.URIException;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.FileEntity;
@@ -42,7 +41,7 @@ public class HttpSourceTest {
   private CloseableHttpClient postClient;
 
   @Before
-  public void setUp() throws URIException, URISyntaxException {
+  public void setUp() throws URISyntaxException {
     GripServer.JettyServerFactory f = new GripServerTest.TestServerFactory();
     ContextStore contextStore = new ContextStore();
     server = GripServerTest.makeServer(contextStore, f, new Pipeline());
