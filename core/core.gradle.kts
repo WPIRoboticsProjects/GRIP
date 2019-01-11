@@ -4,7 +4,6 @@ plugins {
     id("java")
     id("java-library")
     id("application")
-    id("jacoco")
     id("com.github.johnrengelman.shadow")
     id("com.google.osdetector")
 }

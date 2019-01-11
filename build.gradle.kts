@@ -14,9 +14,16 @@ buildscript {
 }
 
 plugins {
+    `java`
+    `jacoco`
     id("com.github.johnrengelman.shadow") version "4.0.3"
     id("com.google.osdetector") version "1.4.0"
     id("org.ajoberstar.grgit") version "2.0.0" apply false
+}
+
+repositories {
+    mavenCentral()
+    jcenter()
 }
 
 tasks.withType<Wrapper>().configureEach {
@@ -24,7 +31,17 @@ tasks.withType<Wrapper>().configureEach {
     distributionType = Wrapper.DistributionType.ALL
 }
 
-subprojects {
+fun javaSubprojects(action: Project.() -> Unit) {
+    subprojects.minus(project(":ui:linuxLauncher")).forEach { project ->
+        project.action()
+    }
+}
+
+javaSubprojects {
+    apply {
+        plugin("java")
+        plugin("org.gradle.jacoco")
+    }
     repositories {
         mavenCentral()
         jcenter()
@@ -45,16 +62,49 @@ subprojects {
     version = getVersionName()
 
     afterEvaluate {
-        if (pluginManager.hasPlugin("java")) {
-            dependencies {
-                "compile"(group = "com.google.code.findbugs", name = "annotations", version = "3.0.1")
-                "testCompile"(group = "net.jodah", name = "concurrentunit", version = "0.4.2")
-                "testCompile"(group = "org.hamcrest", name = "hamcrest-all", version = "1.3")
-                "testCompile"(group = "junit", name = "junit", version = "4.12")
-                "testCompile"(group = "com.google.truth", name = "truth", version = "0.34")
-                "testCompile"(group = "com.google.guava", name = "guava-testlib", version = "22.0")
-            }
+        dependencies {
+            "compile"(group = "com.google.code.findbugs", name = "annotations", version = "3.0.1")
+            "testCompile"(group = "net.jodah", name = "concurrentunit", version = "0.4.2")
+            "testCompile"(group = "org.hamcrest", name = "hamcrest-all", version = "1.3")
+            "testCompile"(group = "junit", name = "junit", version = "4.12")
+            "testCompile"(group = "com.google.truth", name = "truth", version = "0.34")
+            "testCompile"(group = "com.google.guava", name = "guava-testlib", version = "22.0")
         }
+    }
+
+    tasks.named<JacocoReport>("jacocoTestReport") {
+        reports {
+            html.isEnabled = true
+            xml.isEnabled = true
+        }
+    }
+
+    tasks.withType<Javadoc> {
+        source(tasks.named<JavaCompile>("compileJava").map { it.source })
+    }
+
+}
+
+tasks.register<JacocoReport>("jacocoRootReport") {
+    group = "Coverage reports"
+    description = "Generates an aggregate report from all subprojects"
+
+    reports {
+        html.isEnabled = true
+        xml.isEnabled = true
+    }
+
+    javaSubprojects {
+        val sourceSets = (this as ExtensionAware).extensions.getByName("sourceSets") as SourceSetContainer
+        dependsOn(tasks["test"])
+        val srcFiles = files(sourceSets["main"].allSource.srcDirs)
+        additionalSourceDirs(srcFiles)
+        sourceDirectories.from(srcFiles)
+        classDirectories.from(files(sourceSets["main"].output))
+        executionData.from(tasks.named<JacocoReport>("jacocoTestReport").map { it.executionData })
+    }
+    doFirst {
+        executionData.setFrom(files(executionData.files.filter { it.exists() }))
     }
 }
 
