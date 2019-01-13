@@ -18,10 +18,10 @@ addons:
     sources:
       - ubuntu-toolchain-r-test
     packages:
-      - gcc-4.8
-      - g++-4.8
+#      - gcc-4.8
+#      - g++-4.8
       - oracle-java8-installer
-      - python3
+#      - python3
 before_install:
   - .travis-scripts/install.sh
   - |
@@ -36,11 +36,7 @@ install:
 script:
   # Only run code generation tests on OSX -- linux requires sudo to install OpenCV dependencies, and that environment
   # will not be able to run MainWindowTest.testDragOperationFromPaletteToPipeline
-  - |
-    if [[ "$TRAVIS_OS_NAME" == "osx" ]];
-    then ./gradlew check jacocoTestReport jacocoRootReport --stacktrace -Pheadless=true -PlogTests --scan -Pgeneration -PjniLocation=$HOME/opencv/jni;
-    else ./gradlew check jacocoTestReport jacocoRootReport --stacktrace -Pheadless=true -PlogTests --scan;
-    fi
+  - ./gradlew check jacocoTestReport jacocoRootReport --stacktrace -Pheadless=true -PlogTests --scan;
 
 after_success:
   - if [[ "$TRAVIS_OS_NAME" != "osx" ]]; then codecov         ; fi
