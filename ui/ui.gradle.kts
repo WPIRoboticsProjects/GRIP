@@ -1,6 +1,7 @@
 import de.dynamicfiles.projects.gradle.plugins.javafx.JavaFXGradlePluginExtension
 import de.dynamicfiles.projects.gradle.plugins.javafx.tasks.JfxNativeTask
 import edu.wpi.first.wpilib.opencv.installer.Installer
+import java.io.File
 import java.io.FileFilter
 
 plugins {
@@ -131,14 +132,21 @@ tasks.register("testSharedLib") {
 }
 
 if (project.hasProperty("generation") || project.hasProperty("genonly")) {
-    val syst = osdetector.os
-    tasks.withType<Test>() {
-        val platform = Installer.getPlatform()
-        Installer.setOpenCvVersion("3.1.0")
-        val jniLocation = project.properties.getOrDefault("jniLocation", platform.defaultJniLocation())
-        Installer.installJni("$jniLocation")
+    val platform = Installer.getPlatform()
+    val jniLocation: String = project.properties.getOrDefault("jniLocation", platform.defaultJniLocation()).toString()
+    val jniPath = File(jniLocation).absolutePath
+
+    val installOpenCV = tasks.register("installOpenCV") {
+        doFirst {
+            Installer.setOpenCvVersion("3.1.0")
+            Installer.installJni(jniPath)
+        }
+    }
+
+    tasks.withType<Test> {
+        dependsOn(installOpenCV)
         val defaultLibPath = System.getProperty("java.library.path");
-        jvmArgs = listOf("-Djava.library.path=$defaultLibPath${System.getProperty("path.separator")}$jniLocation")
+        jvmArgs = listOf("-Djava.library.path=$defaultLibPath${System.getProperty("path.separator")}$jniPath")
         if (project.hasProperty("genonly")) {
             useJUnit {
                 includeCategories = setOf("edu.wpi.grip.ui.codegeneration.GenerationTesting")
