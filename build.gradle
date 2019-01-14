@@ -536,6 +536,24 @@ project(":ui") {
         ]
     }
     mainClassName = jfx.mainClass
+
+    tasks.withType(de.dynamicfiles.projects.gradle.plugins.javafx.tasks.JfxNativeTask) {
+        doLast {
+            File[] packageFiles = file("${buildDir}/jfx/native/").listFiles(new FilenameFilter() {
+                @Override
+                boolean accept(File dir, String name) {
+                    return name.startsWith('grip-') || name.startsWith('GRIP-') && new File(dir, name).isFile()
+                }
+            })
+            for (File packageFile : packageFiles) {
+                String oldName = packageFile.name
+                String newName = oldName.replaceAll(/^grip/, /GRIP/)
+                        .replaceAll(/64\./, /-x64./)
+                        .replaceAll(/8632\./, /-x86-32./)
+                packageFile.renameTo(new File(packageFile.parentFile, newName))
+            }
+        }
+    }
 }
 
 
@@ -582,7 +600,7 @@ task jacocoRootReport(type: JacocoReport, group: 'Coverage reports') {
 }
 
 task wrapper(type: Wrapper) {
-    gradleVersion = '4.0.2'
+    gradleVersion = '4.10.2'
     // We want the sources with the wrapper.
     distributionType = DistributionType.ALL
 }
