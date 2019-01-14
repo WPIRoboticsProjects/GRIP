@@ -29,7 +29,7 @@ jobs:
           gradleOptions: '-Xmx3072m -Dorg.gradle.java.home=/usr/lib/jvm/java-8-oracle'
           jdkUserInputPath: '/usr/lib/jvm/java-8-oracle'
           publishJUnitResults: false
-          tasks: 'check jacocoTestReport jacocoRootReport jfxNative -Pheadless=true -PlogTests --stacktrace'
+          tasks: 'check jacocoTestReport jacocoRootReport jfxNative -Pgeneration -PjniLocation=build/OpenCVJNI -Pheadless=true -PlogTests --stacktrace'
 
       # Publish JaCoCo code coverage results from the build
       - task: PublishCodeCoverageResults@1
