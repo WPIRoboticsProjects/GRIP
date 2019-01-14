@@ -55,6 +55,7 @@ public class PublishVideoOperation implements Operation {
   private final InputSocket<Number> qualitySocket;
   @SuppressWarnings("PMD.SingularField")
   private volatile boolean connected = false;
+  private volatile boolean hasImage = false;
   /**
    * Listens for incoming connections on port 1180 and writes JPEG data whenever there's a new
    * frame.
@@ -93,7 +94,9 @@ public class PublishVideoOperation implements Operation {
             // called with
             // a new input.
             synchronized (imageLock) {
-              imageLock.wait();
+              while (!hasImage) {
+                imageLock.wait();
+              }
 
               // Copy the image data into a pre-allocated buffer, growing it if necessary
               bufferSize = imagePointer.limit();
@@ -101,6 +104,7 @@ public class PublishVideoOperation implements Operation {
                 buffer = new byte[imagePointer.limit()];
               }
               imagePointer.get(buffer, 0, bufferSize);
+              hasImage = false;
             }
 
             // The FRC dashboard image protocol consists of a magic number, the size of the image
@@ -177,6 +181,7 @@ public class PublishVideoOperation implements Operation {
     synchronized (imageLock) {
       imencode(".jpeg", inputSocket.getValue().get(), imagePointer,
           new IntPointer(CV_IMWRITE_JPEG_QUALITY, qualitySocket.getValue().get().intValue()));
+      hasImage = true;
       imageLock.notifyAll();
     }
   }

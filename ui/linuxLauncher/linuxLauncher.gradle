@@ -1,0 +1,23 @@
+plugins {
+    id 'cpp'
+}
+
+model {
+    binaries {
+        all {
+            cppCompiler.args '-pthread', '-ldl'
+            linker.args '-pthread', '-ldl'
+        }
+    }
+    components {
+        linuxLauncher(NativeExecutableSpec) {
+            sources {
+                cpp {
+                    source {
+                        srcDir "src/cpp"
+                    }
+                }
+            }
+        }
+    }
+}
