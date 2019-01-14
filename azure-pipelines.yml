@@ -31,14 +31,8 @@ jobs:
           publishJUnitResults: false
           tasks: 'check jacocoTestReport jacocoRootReport jfxNative -Pgeneration -PjniLocation=build/OpenCVJNI -Pheadless=true -PlogTests --stacktrace'
 
-      # Publish JaCoCo code coverage results from the build
-      - task: PublishCodeCoverageResults@1
-        inputs:
-          codeCoverageTool: 'JaCoCo'
-          summaryFileLocation: '$(System.DefaultWorkingDirectory)/**/reports/jacoco/test/jacocoTestReport.xml'
-          reportDirectory: '$(System.DefaultWorkingDirectory)/**/reports/jacoco/test/jacocoTestReport.html'
-          additionalCodeCoverageFiles: '$(System.DefaultWorkingDirectory)/**/build/jacoco/text.exec'
-          failIfCoverageEmpty: false
+      - script: bash <(curl -s https://codecov.io/bash)
+        displayName: 'Upload JaCoCo reports to codecov.io'
 
       - task: CopyFiles@2
         inputs:
