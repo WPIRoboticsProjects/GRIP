@@ -5,7 +5,6 @@
 [![Build Status](https://travis-ci.org/WPIRoboticsProjects/GRIP.svg?branch=master)](https://travis-ci.org/WPIRoboticsProjects/GRIP)
 [![Build status](https://ci.appveyor.com/api/projects/status/sbrd2nhpiktlhf58/branch/master?svg=true)](https://ci.appveyor.com/project/JLLeitschuh/grip/branch/master)
 [![codecov.io](http://codecov.io/github/WPIRoboticsProjects/GRIP/coverage.svg?branch=master)](http://codecov.io/github/WPIRoboticsProjects/GRIP?branch=master)
-[![Dependency Status](https://www.versioneye.com/user/projects/56aaaac57e03c7003ba40ab6/badge.svg?style=plastic)](https://www.versioneye.com/user/projects/56aaaac57e03c7003ba40ab6)
 [![Github Releases](https://img.shields.io/github/downloads/WPIRoboticsProjects/GRIP/total.svg)](https://github.com/WPIRoboticsProjects/GRIP/releases/latest)
 
 # GRIP Computer Vision Engine
