@@ -7,6 +7,7 @@
 [![codecov.io](http://codecov.io/github/WPIRoboticsProjects/GRIP/coverage.svg?branch=master)](http://codecov.io/github/WPIRoboticsProjects/GRIP?branch=master)
 [![Github Releases](https://img.shields.io/github/downloads/WPIRoboticsProjects/GRIP/total.svg)](https://github.com/WPIRoboticsProjects/GRIP/releases/latest)
 
+
 # GRIP Computer Vision Engine
 
 GRIP (the Graphically Represented Image Processing engine) is an application for rapidly prototyping and deploying computer
