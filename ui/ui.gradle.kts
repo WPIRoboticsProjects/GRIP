@@ -1,5 +1,7 @@
 import de.dynamicfiles.projects.gradle.plugins.javafx.JavaFXGradlePluginExtension
+import de.dynamicfiles.projects.gradle.plugins.javafx.tasks.JfxNativeTask
 import edu.wpi.first.wpilib.opencv.installer.Installer
+import java.io.FileFilter
 
 plugins {
     `application`
@@ -181,8 +183,25 @@ jfx {
     )
 }
 
-tasks.named("jfxNative") {
+tasks.named<JfxNativeTask>("jfxNative") {
     dependsOn(":core:jar")
+
+    // The JavaFX plugin removes all but numeric characters after the app name in the file
+    // name, so we restore the full name of the file here
+    doLast {
+        logger.log(LogLevel.INFO, "Renaming installer packages")
+        val packageFileFilter = FileFilter { file ->
+            listOf("exe", "dmg", "pkg", "deb", "rpm").any {
+                file.extension == it
+            }
+        }
+        val packageFiles = buildDir.resolve("jfx/native").listFiles(packageFileFilter)
+        packageFiles.forEach { packageFile ->
+            val newName: String = jfx.jfxMainAppJarName.replace(Regex("""\.jar$"""), ".${packageFile.extension}")
+            logger.log(LogLevel.DEBUG, "Renaming ${packageFile.name} to $newName")
+            packageFile.renameTo(packageFile.resolveSibling(newName))
+        }
+    }
 }
 
 application {
