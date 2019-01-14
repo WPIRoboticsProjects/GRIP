@@ -1,5 +1,5 @@
 import org.ajoberstar.grgit.Grgit
-import com.github.spotbugs.*
+import com.github.spotbugs.SpotBugsTask
 
 buildscript {
     repositories {
@@ -24,6 +24,12 @@ plugins {
     id("org.ajoberstar.grgit") version "2.0.0" apply false
     id("net.ltgt.errorprone") version "0.0.16"
     id("com.github.spotbugs") version "1.6.4"
+    id("com.gradle.build-scan") version "2.1"
+}
+
+buildScan {
+    setTermsOfServiceUrl("https://gradle.com/terms-of-service")
+    setTermsOfServiceAgree("yes")
 }
 
 repositories {
