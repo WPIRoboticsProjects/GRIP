@@ -37,8 +37,6 @@ dependencies {
     testCompile(group = "org.opencv", name = "opencv-java", version = "3.1.0")
 }
 
-evaluationDependsOn(":core")
-evaluationDependsOn(":ui:preloader")
 if (System.getProperty("os.name").toLowerCase().contains("linux")) {
     tasks.named("jfxNative") {
         dependsOn(":ui:linuxLauncher:linuxLauncherExecutable")
