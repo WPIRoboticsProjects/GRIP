@@ -10,13 +10,9 @@ plugins {
 }
 
 if (!(project.hasProperty("generation") || project.hasProperty("genonly"))) {
-    sourceSets {
-        test {
-            java {
-                exclude("**/ui/codegeneration")
-                exclude("**/ui/codegeneration/**")
-            }
-        }
+    sourceSets["test"].java {
+        exclude("**/ui/codegeneration")
+        exclude("**/ui/codegeneration/**")
     }
 }
 
