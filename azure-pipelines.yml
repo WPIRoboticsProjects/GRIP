@@ -31,7 +31,7 @@ jobs:
           publishJUnitResults: false
           tasks: 'check jacocoTestReport jacocoRootReport jfxNative -Pgeneration -PjniLocation=build/OpenCVJNI -Pheadless=true -PlogTests --stacktrace'
 
-      - script: bash <(curl -s https://codecov.io/bash)
+      - script: bash <(curl -s https://codecov.io/bash) -t $CODECOV_TOKEN
         displayName: 'Upload JaCoCo reports to codecov.io'
 
       - task: CopyFiles@2
