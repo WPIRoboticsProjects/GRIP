@@ -35,7 +35,7 @@ jobs:
           curl -s https://codecov.io/bash > .codecov
           chmod +x .codecov
           ./.codecov -t $(CODECOV_TOKEN)
-        displayName: 'Upload JaCoCo reports to codecov.io'
+        displayName: 'Upload jacoco reports to codecov'
 
       - task: CopyFiles@2
         inputs:
