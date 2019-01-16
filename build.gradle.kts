@@ -159,22 +159,20 @@ tasks.register<JacocoReport>("jacocoRootReport") {
     group = "Coverage reports"
     description = "Generates an aggregate report from all subprojects"
 
-    reports {
-        html.isEnabled = true
-        xml.isEnabled = true
-    }
+    // Based on the codecov Gradle example: https://github.com/codecov/example-gradle
 
     javaSubprojects {
-        val sourceSets = (this as ExtensionAware).extensions.getByName("sourceSets") as SourceSetContainer
-        dependsOn(tasks["test"])
-        val srcFiles = files(sourceSets["main"].allSource.srcDirs)
-        additionalSourceDirs(srcFiles)
-        sourceDirectories.from(srcFiles)
-        classDirectories.from(files(sourceSets["main"].output))
-        executionData.from(tasks.named<JacocoReport>("jacocoTestReport").map { it.executionData })
+        this@register.sourceSets(sourceSets["main"])
+        this@register.dependsOn(tasks.named<JacocoReport>("jacocoTestReport"))
     }
-    doFirst {
-        executionData.setFrom(files(executionData.files.filter { it.exists() }))
+
+    executionData(fileTree(rootDir.absolutePath).include("**/build/jacoco/*.exec"))
+
+    reports {
+        xml.isEnabled = true
+        xml.destination = buildDir.resolve("reports/jacoco/report.xml")
+        html.isEnabled = false
+        csv.isEnabled = false
     }
 }
 
