@@ -17,11 +17,11 @@ import edu.wpi.grip.core.operations.network.ros.JavaToMessageConverter;
 import edu.wpi.grip.core.operations.network.ros.ROSNetworkPublisherFactory;
 import edu.wpi.grip.core.operations.network.ros.ROSPublishOperation;
 import edu.wpi.grip.core.sockets.InputSocket;
+import edu.wpi.grip.core.util.MetaInfReader;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.ImmutableList;
 import com.google.common.eventbus.EventBus;
-import com.google.common.reflect.ClassPath;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Singleton;
@@ -56,7 +56,7 @@ public class Operations {
   private final ROSNetworkPublisherFactory rosManager; //NOPMD
   private final ImmutableList<OperationMetaData> operations;
 
-  private List<Class<Publishable>> publishableTypes = null;
+  private List<Class<? extends Publishable>> publishableTypes = null;
 
   /**
    * Creates a new Operations instance. This should only be used in tests.
@@ -109,16 +109,9 @@ public class Operations {
     return OperationDescription.from(clazz.getAnnotation(Description.class));
   }
 
-  @SuppressWarnings("unchecked")
   private List<OperationMetaData> createBasicOperations() {
     try {
-      ClassPath cp = ClassPath.from(getClass().getClassLoader());
-      return cp.getAllClasses().stream()
-          .filter(ci -> ci.getName().startsWith("edu.wpi.grip.core.operations"))
-          .map(ClassPath.ClassInfo::load)
-          .filter(Operation.class::isAssignableFrom)
-          .map(c -> (Class<? extends Operation>) c)
-          .filter(c -> c.isAnnotationPresent(Description.class))
+      return MetaInfReader.<Operation>readClasses("operations")
           .map(c -> new OperationMetaData(descriptionFor(c), () -> injector.getInstance(c)))
           .collect(Collectors.toList());
     } catch (IOException e) {
@@ -131,21 +124,11 @@ public class Operations {
    * Finds all subclasses of {@link Publishable} in {@code edu.wpi.grip.core.operation}.
    */
   @SuppressWarnings("unchecked")
-  private List<Class<Publishable>> findPublishables() {
+  private List<Class<? extends Publishable>> findPublishables() {
     if (publishableTypes == null) {
       // Only need to search once
       try {
-        ClassPath cp = ClassPath.from(getClass().getClassLoader());
-        publishableTypes = cp.getAllClasses().stream()
-            // only look in our namespace (don't want to wade through tens of thousands of classes)
-            .filter(ci -> ci.getName().startsWith("edu.wpi.grip.core.operation"))
-            .map(ClassPath.ClassInfo::load)
-            .filter(Publishable.class::isAssignableFrom)
-            // only accept concrete top-level subclasses
-            .filter(c -> !c.isAnonymousClass() && !c.isInterface() && !c.isLocalClass()
-                && !c.isMemberClass())
-            .filter(c -> Modifier.isPublic(c.getModifiers()))
-            .map(c -> (Class<Publishable>) c)
+        publishableTypes = MetaInfReader.<Publishable>readClasses("publishables")
             .collect(Collectors.toList());
       } catch (IOException e) {
         logger.log(Level.WARNING, "Could not find the publishable types.", e);

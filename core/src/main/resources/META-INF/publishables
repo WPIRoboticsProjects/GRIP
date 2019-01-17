@@ -1,0 +1,10 @@
+# Basic Data
+edu.wpi.grip.core.operations.network.NumberPublishable
+edu.wpi.grip.core.operations.network.BooleanPublishable
+edu.wpi.grip.core.operations.network.Vector2D
+
+# Composite Data and Reports
+edu.wpi.grip.core.operations.composite.RectsReport
+edu.wpi.grip.core.operations.composite.BlobsReport
+edu.wpi.grip.core.operations.composite.ContoursReport
+edu.wpi.grip.core.operations.composite.LinesReport
