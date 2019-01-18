@@ -42,6 +42,9 @@ As a result, many teams with minimal computer vision knowledge successfully used
 
 Check out the release notes and [the wiki](https://github.com/WPIRoboticsProjects/GRIP/wiki) for more information.
 
+Note for Linux users: GRIP requires GTK2 to be installed. Most Ubuntu-based distributions include it,
+but some other distros such as Arch may require it to be manually installed. 
+
 ## Building GRIP From Source
 
 To build and run, use the included Gradle wrapper script on a Unix System:
