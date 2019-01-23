@@ -5,17 +5,21 @@ import edu.wpi.grip.core.operations.network.PublishValue;
 import edu.wpi.grip.core.operations.network.Publishable;
 import edu.wpi.grip.core.sockets.NoSocketTypeLabel;
 import edu.wpi.grip.core.sockets.Socket;
+import edu.wpi.grip.core.util.LazyInit;
+import edu.wpi.grip.core.util.PointerStream;
 
 import com.google.auto.value.AutoValue;
 
+import org.bytedeco.javacpp.opencv_core.RotatedRect;
+import org.bytedeco.javacpp.opencv_imgproc;
+
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
+import java.util.stream.Stream;
 
 import static org.bytedeco.javacpp.opencv_core.Mat;
 import static org.bytedeco.javacpp.opencv_core.MatVector;
 import static org.bytedeco.javacpp.opencv_core.Rect;
-import static org.bytedeco.javacpp.opencv_imgproc.boundingRect;
 import static org.bytedeco.javacpp.opencv_imgproc.contourArea;
 import static org.bytedeco.javacpp.opencv_imgproc.convexHull;
 
@@ -31,7 +35,9 @@ public final class ContoursReport implements Publishable {
   private final int rows;
   private final int cols;
   private final MatVector contours;
-  private Optional<Rect[]> boundingBoxes = Optional.empty();
+  private final LazyInit<Rect[]> boundingBoxes = new LazyInit<>(this::computeBoundingBoxes);
+  private final LazyInit<RotatedRect[]> rotatedBoundingBoxes =
+      new LazyInit<>(this::computeMinAreaBoundingBoxes);
 
   /**
    * Construct an empty report.  This is used as a default value for {@link Socket}s containing
@@ -70,9 +76,10 @@ public final class ContoursReport implements Publishable {
     double[] width = getWidth();
     double[] height = getHeights();
     double[] solidity = getSolidity();
+    double[] angles = getAngles();
     for (int i = 0; i < contours.size(); i++) {
       processedContours.add(Contour.create(area[i], centerX[i], centerY[i], width[i], height[i],
-          solidity[i]));
+          solidity[i], angles[i]));
     }
     return processedContours;
   }
@@ -82,66 +89,51 @@ public final class ContoursReport implements Publishable {
    * boxes are used to compute several different properties, so it's probably not a good idea to
    * compute them over and over again.
    */
-  private synchronized Rect[] computeBoundingBoxes() {
-    if (!boundingBoxes.isPresent()) {
-      Rect[] bb = new Rect[(int) contours.size()];
-      for (int i = 0; i < contours.size(); i++) {
-        bb[i] = boundingRect(contours.get(i));
-      }
+  private Rect[] computeBoundingBoxes() {
+    return PointerStream.ofMatVector(contours)
+        .map(opencv_imgproc::boundingRect)
+        .toArray(Rect[]::new);
+  }
 
-      boundingBoxes = Optional.of(bb);
-    }
-
-    return boundingBoxes.get();
+  private RotatedRect[] computeMinAreaBoundingBoxes() {
+    return PointerStream.ofMatVector(contours)
+        .map(opencv_imgproc::minAreaRect)
+        .toArray(RotatedRect[]::new);
   }
 
   @PublishValue(key = "area", weight = 0)
   public double[] getArea() {
-    final double[] areas = new double[(int) contours.size()];
-    for (int i = 0; i < contours.size(); i++) {
-      areas[i] = contourArea(contours.get(i));
-    }
-    return areas;
+    return PointerStream.ofMatVector(contours)
+        .mapToDouble(opencv_imgproc::contourArea)
+        .toArray();
   }
 
   @PublishValue(key = "centerX", weight = 1)
   public double[] getCenterX() {
-    final double[] centers = new double[(int) contours.size()];
-    final Rect[] boundingBoxes = computeBoundingBoxes();
-    for (int i = 0; i < contours.size(); i++) {
-      centers[i] = boundingBoxes[i].x() + boundingBoxes[i].width() / 2;
-    }
-    return centers;
+    return Stream.of(boundingBoxes.get())
+        .mapToDouble(r -> r.x() + r.width() / 2)
+        .toArray();
   }
 
   @PublishValue(key = "centerY", weight = 2)
   public double[] getCenterY() {
-    final double[] centers = new double[(int) contours.size()];
-    final Rect[] boundingBoxes = computeBoundingBoxes();
-    for (int i = 0; i < contours.size(); i++) {
-      centers[i] = boundingBoxes[i].y() + boundingBoxes[i].height() / 2;
-    }
-    return centers;
+    return Stream.of(boundingBoxes.get())
+        .mapToDouble(r -> r.y() + r.height() / 2)
+        .toArray();
   }
 
   @PublishValue(key = "width", weight = 3)
   public synchronized double[] getWidth() {
-    final double[] widths = new double[(int) contours.size()];
-    final Rect[] boundingBoxes = computeBoundingBoxes();
-    for (int i = 0; i < contours.size(); i++) {
-      widths[i] = boundingBoxes[i].width();
-    }
-    return widths;
+    return Stream.of(boundingBoxes.get())
+        .mapToDouble(Rect::width)
+        .toArray();
   }
 
   @PublishValue(key = "height", weight = 4)
   public synchronized double[] getHeights() {
-    final double[] heights = new double[(int) contours.size()];
-    final Rect[] boundingBoxes = computeBoundingBoxes();
-    for (int i = 0; i < contours.size(); i++) {
-      heights[i] = boundingBoxes[i].height();
-    }
-    return heights;
+    return Stream.of(boundingBoxes.get())
+        .mapToDouble(Rect::height)
+        .toArray();
   }
 
   @PublishValue(key = "solidity", weight = 5)
@@ -156,11 +148,19 @@ public final class ContoursReport implements Publishable {
     return solidities;
   }
 
+  @PublishValue(key = "angle", weight = 6)
+  public synchronized double[] getAngles() {
+    return Stream.of(rotatedBoundingBoxes.get())
+        .mapToDouble(RotatedRect::angle)
+        .toArray();
+  }
+
   @AutoValue
   public abstract static class Contour {
     public static Contour create(double area, double centerX, double centerY, double width, double
-        height, double solidity) {
-      return new AutoValue_ContoursReport_Contour(area, centerX, centerY, width, height, solidity);
+        height, double solidity, double angle) {
+      return new AutoValue_ContoursReport_Contour(area, centerX, centerY, width, height, solidity,
+          angle);
     }
 
     public abstract double area();
@@ -174,5 +174,7 @@ public final class ContoursReport implements Publishable {
     public abstract double height();
 
     public abstract double solidity();
+
+    public abstract double angle();
   }
 }
