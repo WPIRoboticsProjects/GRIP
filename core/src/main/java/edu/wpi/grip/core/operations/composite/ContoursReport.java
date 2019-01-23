@@ -85,9 +85,7 @@ public final class ContoursReport implements Publishable {
   }
 
   /**
-   * Compute the bounding boxes of all contours (if they haven't already been computed).  Bounding
-   * boxes are used to compute several different properties, so it's probably not a good idea to
-   * compute them over and over again.
+   * Compute the bounding boxes of all contours. Called lazily and cached by {@link #boundingBoxes}.
    */
   private Rect[] computeBoundingBoxes() {
     return PointerStream.ofMatVector(contours)
@@ -95,6 +93,10 @@ public final class ContoursReport implements Publishable {
         .toArray(Rect[]::new);
   }
 
+  /**
+   * Computes the minimum-area bounding boxes of all contours. Called lazily and cached by
+   * {@link #rotatedBoundingBoxes}.
+   */
   private RotatedRect[] computeMinAreaBoundingBoxes() {
     return PointerStream.ofMatVector(contours)
         .map(opencv_imgproc::minAreaRect)
