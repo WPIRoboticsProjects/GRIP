@@ -60,8 +60,7 @@ public class SourceConverter implements Converter {
       source.initializeSafely();
 
       // Instead of returning the source, post it to the event bus so both the core and GUI
-      // classes know it
-      // exists.
+      // classes know it exists.
       eventBus.post(new SourceAddedEvent(source));
 
       return null;
