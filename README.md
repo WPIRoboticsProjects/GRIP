@@ -24,13 +24,13 @@ As a result, many teams with minimal computer vision knowledge successfully used
  - Extensible!
  - Deploys and runs headless.
  - Supports various network protocols
-   - [Network Tables](https://github.com/PeterJohnson/ntcore)
+   - [Network Tables](https://github.com/wpilibsuite/allwpilib/tree/master/ntcore/)
    - [Robot Operating System (ROS)](http://www.ros.org/)
    - HTTP
  - OS Support:
      - Windows
      - OSX
-     - Linux
+     - Linux (minimum Ubuntu 18.04 or libc version 2.27+)
      - Embedded Linux ARM (NI RoboRIO)
 
 
@@ -43,7 +43,8 @@ As a result, many teams with minimal computer vision knowledge successfully used
 Check out the release notes and [the wiki](https://github.com/WPIRoboticsProjects/GRIP/wiki) for more information.
 
 Note for Linux users: GRIP requires GTK2 to be installed. Most Ubuntu-based distributions include it,
-but some other distros such as Arch may require it to be manually installed. 
+but some other distros such as Arch may require it to be manually installed. GRIP also requires libc version 2.27
+or higher; for Ubuntu-based distributions, this requires Ubuntu 18.04 or newer.
 
 ## Building GRIP From Source
 
