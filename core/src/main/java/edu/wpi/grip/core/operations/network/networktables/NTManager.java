@@ -2,7 +2,7 @@ package edu.wpi.grip.core.operations.network.networktables;
 
 import edu.wpi.grip.core.PipelineRunner;
 import edu.wpi.grip.core.events.ProjectSettingsChangedEvent;
-import edu.wpi.grip.core.events.RenderEvent;
+import edu.wpi.grip.core.events.RunStoppedEvent;
 import edu.wpi.grip.core.operations.network.Manager;
 import edu.wpi.grip.core.operations.network.MapNetworkPublisher;
 import edu.wpi.grip.core.operations.network.MapNetworkPublisherFactory;
@@ -36,6 +36,7 @@ import java.util.function.Consumer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.annotation.Nullable;
 import javax.inject.Inject;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -140,8 +141,7 @@ public class NTManager implements Manager, MapNetworkPublisherFactory, MapNetwor
    * Flush all changes to networktables when the pipeline completes.
    */
   @Subscribe
-  public void flushOnPipelineComplete(RenderEvent event) {
-    Objects.requireNonNull(event, "event");
+  public void flushOnPipelineComplete(@Nullable RunStoppedEvent event) {
     synchronized (ntLock) {
       ntInstance.flush();
     }
