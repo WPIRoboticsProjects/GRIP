@@ -3,13 +3,14 @@ package edu.wpi.grip.core.operations.network.networktables;
 
 import com.google.common.testing.AbstractPackageSanityTests;
 
+import edu.wpi.first.networktables.NetworkTableInstance;
+
 @SuppressWarnings("PMD.TestClassWithoutTestCases")
 public class NetworkTablesSanityTest extends AbstractPackageSanityTests {
 
   public NetworkTablesSanityTest() {
     super();
-    ignoreClasses(MockNetworkTable.class::equals);
-    ignoreClasses(MockNTReceiver.class::equals);
+    setDefault(NetworkTableInstance.class, NetworkTableInstance.create());
   }
 
 }

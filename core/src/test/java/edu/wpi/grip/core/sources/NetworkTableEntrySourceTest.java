@@ -2,18 +2,20 @@ package edu.wpi.grip.core.sources;
 
 import edu.wpi.grip.core.events.SourceRemovedEvent;
 import edu.wpi.grip.core.operations.network.MapNetworkReceiverFactory;
-import edu.wpi.grip.core.operations.network.networktables.MockNTReceiver;
-import edu.wpi.grip.core.operations.network.networktables.MockNetworkTable;
+import edu.wpi.grip.core.operations.network.NetworkReceiver;
 import edu.wpi.grip.core.sockets.MockOutputSocketFactory;
 import edu.wpi.grip.core.util.MockExceptionWitness;
 
 import com.google.common.eventbus.EventBus;
 
-import edu.wpi.first.wpilibj.tables.ITable;
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableInstance;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+
+import java.util.function.Consumer;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -23,13 +25,13 @@ public class NetworkTableEntrySourceTest {
 
   private final EventBus eventBus;
   private final MockOutputSocketFactory osf;
+  private NetworkTableInstance ntInstance;
 
   private NetworkTableEntrySource source;
   private MapNetworkReceiverFactory testingNtManager;
 
   private static final double TEST_NUMBER = 13.13;
   private static final String TEST_STRING = "Some test string";
-  private final ITable testTable = MockNetworkTable.getTable("GRIP/test");
   private static final String BOOLEAN_PATH = "boolean";
   private static final String NUMBER_PATH = "number";
   private static final String STRING_PATH = "string";
@@ -41,16 +43,34 @@ public class NetworkTableEntrySourceTest {
 
   @Before
   public void setUp() {
-    testingNtManager = p -> new MockNTReceiver(p, testTable);
+    ntInstance = NetworkTableInstance.create();
+    NetworkTable testTable = ntInstance.getTable("GRIP/test");
+    testingNtManager = p -> new NetworkReceiver(p) {
+      @Override
+      public Object getValue() {
+        return testTable.getEntry(p).getValue().getValue();
+      }
 
-    testTable.putBoolean(BOOLEAN_PATH, true);
-    testTable.putDouble(NUMBER_PATH, TEST_NUMBER);
-    testTable.putString(STRING_PATH, TEST_STRING);
+      @Override
+      public void addListener(Consumer<Object> consumer) {
+        // NOP for tests
+      }
+
+      @Override
+      public void close() {
+        testTable.delete(p);
+      }
+    };
+
+    testTable.getEntry(BOOLEAN_PATH).setBoolean(true);
+    testTable.getEntry(NUMBER_PATH).setDouble(TEST_NUMBER);
+    testTable.getEntry(STRING_PATH).setString(TEST_STRING);
   }
 
   @After
   public void tearDown() {
     eventBus.post(new SourceRemovedEvent(source));
+    ntInstance.close();
   }
 
   @Test

@@ -2,6 +2,7 @@ package edu.wpi.grip.core.operations.network.networktables;
 
 import edu.wpi.grip.core.PipelineRunner;
 import edu.wpi.grip.core.events.ProjectSettingsChangedEvent;
+import edu.wpi.grip.core.events.RenderEvent;
 import edu.wpi.grip.core.operations.network.Manager;
 import edu.wpi.grip.core.operations.network.MapNetworkPublisher;
 import edu.wpi.grip.core.operations.network.MapNetworkPublisherFactory;
@@ -10,26 +11,31 @@ import edu.wpi.grip.core.operations.network.NetworkReceiver;
 import edu.wpi.grip.core.settings.ProjectSettings;
 import edu.wpi.grip.core.util.GripMode;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 import com.google.common.eventbus.Subscribe;
 import com.google.inject.Singleton;
 
-import edu.wpi.first.wpilibj.networktables.NetworkTable;
-import edu.wpi.first.wpilibj.networktables.NetworkTablesJNI;
-import edu.wpi.first.wpilibj.tables.ITable;
+import edu.wpi.first.networktables.EntryListenerFlags;
+import edu.wpi.first.networktables.LogMessage;
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.networktables.NetworkTableType;
+import edu.wpi.first.networktables.NetworkTablesJNI;
 
 import java.io.File;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import javax.inject.Inject;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -39,10 +45,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
  */
 @Singleton
 public class NTManager implements Manager, MapNetworkPublisherFactory, MapNetworkReceiverFactory {
-  /*
-   * Nasty hack that is unavoidable because of how NetworkTables works.
-   */
-  private static final AtomicInteger count = new AtomicInteger(0);
 
   /**
    * Information from: https://github.com/PeterJohnson/ntcore/blob/master/src/Log.h and
@@ -50,6 +52,7 @@ public class NTManager implements Manager, MapNetworkPublisherFactory, MapNetwor
    * /include/ntcore_c.h#L39
    */
   protected static final Map<Integer, Level> ntLogLevels = ImmutableMap.<Integer, Level>builder()
+      .put(50, Level.SEVERE) // "Critical"
       .put(40, Level.SEVERE)
       .put(30, Level.WARNING)
       .put(20, Level.INFO)
@@ -66,34 +69,31 @@ public class NTManager implements Manager, MapNetworkPublisherFactory, MapNetwor
   private PipelineRunner pipelineRunner;
   @Inject
   private GripMode gripMode;
+  private final NetworkTableInstance ntInstance;
+
+  private static final Object ntLock = new Object();
 
   @Inject
-  NTManager() {
-    // We may have another instance of this method lying around
-    NetworkTable.shutdown();
-
+  @VisibleForTesting
+  @SuppressWarnings("JavadocMethod")
+  public NTManager(NetworkTableInstance ntInstance) {
+    this.ntInstance = Objects.requireNonNull(ntInstance, "ntInstance");
     // Redirect NetworkTables log messages to our own log files.  This gets rid of console spam,
-    // and it also lets
-    // us grep through NetworkTables messages just like any other messages.
-    NetworkTablesJNI.setLogger((level, file, line, msg) -> {
-      String filename = new File(file).getName();
-      logger.log(ntLogLevels.get(level), String.format("NetworkTables: %s:%d %s", filename, line,
-          msg));
-    }, 0);
+    // and it also lets us grep through NetworkTables messages just like any other messages.
+    ntInstance.addLogger(NTManager::logNtMessage, 0, 50);
 
-    NetworkTable.setClientMode();
+    ntInstance.startClient();
 
     // When in headless mode, start and stop the pipeline based on the "GRIP/run" key.  This
-    // allows robot programs
-    // to control GRIP without actually restarting the process.
-    NetworkTable.getTable("GRIP").addTableListener("run", (source, key, value, isNew) -> {
+    // allows robot programs to control GRIP without actually restarting the process.
+    ntInstance.getTable("GRIP").addEntryListener("run", (source, key, entry, value, flags) -> {
       if (gripMode == GripMode.HEADLESS) {
-        if (!(value instanceof Boolean)) {
+        if (value.getType() != NetworkTableType.kBoolean) {
           logger.warning("NetworkTables value GRIP/run should be a boolean!");
           return;
         }
 
-        if ((Boolean) value) {
+        if (value.getBoolean()) {
           if (!pipelineRunner.isRunning()) {
             logger.info("Starting GRIP from NetworkTables");
             pipelineRunner.startAsync();
@@ -104,9 +104,21 @@ public class NTManager implements Manager, MapNetworkPublisherFactory, MapNetwor
 
         }
       }
-    }, true);
+    }, 0xFF);
+  }
 
-    NetworkTable.shutdown();
+  private static void logNtMessage(LogMessage logMessage) {
+    String file = logMessage.filename;
+    int level = logMessage.level;
+    String filename = new File(file).getName();
+    logger.log(
+        ntLogLevels.get(level),
+        String.format(
+            "NetworkTables: %s:%d %s",
+            filename,
+            logMessage.line,
+            logMessage.message)
+    );
   }
 
   /**
@@ -116,51 +128,61 @@ public class NTManager implements Manager, MapNetworkPublisherFactory, MapNetwor
   public void updateSettings(ProjectSettingsChangedEvent event) {
     final ProjectSettings projectSettings = event.getProjectSettings();
 
-    synchronized (NetworkTable.class) {
-      NetworkTable.shutdown();
-      NetworkTable.setIPAddress(projectSettings.getPublishAddress());
+    synchronized (ntLock) {
+      ntInstance.stopClient();
+      ntInstance.deleteAllEntries();
+      ntInstance.startClient();
+      ntInstance.setServer(projectSettings.getPublishAddress());
+    }
+  }
+
+  /**
+   * Flush all changes to networktables when the pipeline completes.
+   */
+  @Subscribe
+  public void flushOnPipelineComplete(RenderEvent event) {
+    Objects.requireNonNull(event, "event");
+    synchronized (ntLock) {
+      ntInstance.flush();
     }
   }
 
   @Override
   public <P> MapNetworkPublisher<P> create(Set<String> keys) {
-    // Keep track of every publisher created.
-    count.getAndAdd(1);
-    return new NTPublisher<>(keys);
+    return new NTPublisher<>(ntInstance, keys);
   }
 
   @Override
   public NetworkReceiver create(String path) {
-    count.getAndAdd(1);
-    return new NTReceiver(path);
+    return new NTReceiver(ntInstance, path);
   }
 
   private static final class NTReceiver extends NetworkReceiver {
 
+    private final NetworkTableInstance ntInstance;
     private int entryListenerFunctionUid;
     private Object object = false;
     private final List<Consumer<Object>> listeners = new LinkedList<>();
 
-    protected NTReceiver(String path) {
+    protected NTReceiver(NetworkTableInstance ntInstance, String path) {
       super(path);
+      this.ntInstance = ntInstance;
       addListener();
-
-      synchronized (NetworkTable.class) {
-        NetworkTable.initialize();
-      }
     }
 
     private void addListener() {
-      entryListenerFunctionUid = NetworkTablesJNI.addEntryListener(path,
-          (uid, key, value, flags) -> {
-            object = value;
+      entryListenerFunctionUid = ntInstance.addEntryListener(
+          path,
+          entryNotification -> {
+            object = entryNotification.value.getValue();
             listeners.forEach(c -> c.accept(object));
           },
-          ITable.NOTIFY_IMMEDIATE
-              | ITable.NOTIFY_NEW
-              | ITable.NOTIFY_UPDATE
-              | ITable.NOTIFY_DELETE
-              | ITable.NOTIFY_LOCAL);
+          EntryListenerFlags.kImmediate
+              | EntryListenerFlags.kLocal
+              | EntryListenerFlags.kNew
+              | EntryListenerFlags.kUpdate
+              | EntryListenerFlags.kDelete
+      );
     }
 
     @Override
@@ -176,38 +198,29 @@ public class NTManager implements Manager, MapNetworkPublisherFactory, MapNetwor
     @Override
     public void close() {
       NetworkTablesJNI.removeEntryListener(entryListenerFunctionUid);
-
-      synchronized (NetworkTable.class) {
-        // This receiver is no longer used.
-        if (NTManager.count.addAndGet(-1) == 0) {
-          // We are the last resource using NetworkTables so shut it down
-          NetworkTable.shutdown();
-        }
-      }
     }
   }
 
   private static final class NTPublisher<P> extends MapNetworkPublisher<P> {
+    private final NetworkTableInstance ntInstance;
     private final ImmutableSet<String> keys;
     private Optional<String> name = Optional.empty();
 
-    protected NTPublisher(Set<String> keys) {
+    protected NTPublisher(NetworkTableInstance ntInstance, Set<String> keys) {
       super(keys);
+      this.ntInstance = ntInstance;
       this.keys = ImmutableSet.copyOf(keys);
     }
 
-    private static ITable getRootTable() {
-      NetworkTable.flush();
-      synchronized (NetworkTable.class) {
-        return NetworkTable.getTable("GRIP");
+    private NetworkTable getRootTable() {
+      synchronized (ntLock) {
+        return ntInstance.getTable("GRIP");
       }
     }
 
     @Override
     protected void publishNameChanged(Optional<String> oldName, String newName) {
-      if (oldName.isPresent()) {
-        deleteOldTable(oldName.get());
-      }
+      oldName.ifPresent(this::deleteOldTable);
       this.name = Optional.of(newName);
     }
 
@@ -218,43 +231,32 @@ public class NTManager implements Manager, MapNetworkPublisherFactory, MapNetwor
 
     @Override
     protected void doPublish(Map<String, P> publishValueMap) {
-      publishValueMap.forEach(getTable()::putValue);
+      publishValueMap.forEach((key, value) -> getTable().getEntry(key).setValue(value));
       Sets.difference(keys, publishValueMap.keySet()).forEach(getTable()::delete);
     }
 
     @Override
     protected void doPublishSingle(P value) {
       checkNotNull(value, "value cannot be null");
-      getRootTable().putValue(name.get(), value);
+      getRootTable().getEntry(name.get()).setValue(value);
     }
 
     private void deleteOldTable(String tableName) {
-      final ITable root;
-      final ITable subTable;
-      synchronized (NetworkTable.class) {
-        root = getRootTable();
-        subTable = root.getSubTable(tableName);
+      synchronized (ntLock) {
+        final NetworkTable root = getRootTable();
+        final NetworkTable subTable = root.getSubTable(tableName);
+        keys.forEach(subTable::delete);
+        root.delete(tableName);
       }
-      keys.forEach(subTable::delete);
-      root.delete(tableName);
     }
 
     @Override
     public void close() {
-      if (name.isPresent()) {
-        deleteOldTable(name.get());
-      }
-      synchronized (NetworkTable.class) {
-        // This publisher is no longer used.
-        if (NTManager.count.addAndGet(-1) == 0) {
-          // We are the last resource using NetworkTables so shut it down
-          NetworkTable.shutdown();
-        }
-      }
+      name.ifPresent(this::deleteOldTable);
     }
 
-    private ITable getTable() {
-      synchronized (NetworkTable.class) {
+    private NetworkTable getTable() {
+      synchronized (ntLock) {
         return getRootTable().getSubTable(name.get());
       }
     }

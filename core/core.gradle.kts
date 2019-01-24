@@ -46,8 +46,9 @@ dependencies {
     api(group = "org.ros.rosjava_bootstrap", name = "message_generation", version = "+")
     api(group = "org.ros.rosjava_messages", name = "std_msgs", version = "+")
     api(group = "org.ros.rosjava_messages", name = "grip_msgs", version = "0.0.1")
-    api(group = "edu.wpi.first.wpilib.networktables.java", name = "NetworkTables", version = "3.1.2", classifier = "desktop")
-    api(group = "edu.wpi.first.wpilib.networktables.java", name = "NetworkTables", version = "3.1.2", classifier = "arm")
+    api(group = "edu.wpi.first.ntcore", name = "ntcore-java", version = "2019.2.1")
+    implementation(group = "edu.wpi.first.ntcore", name = "ntcore-jni", version = "2019.2.1", classifier = "all")
+    implementation(group = "edu.wpi.first.wpiutil", name = "wpiutil-java", version = "2019.2.1")
 }
 
 tasks.withType<Jar>().configureEach {
