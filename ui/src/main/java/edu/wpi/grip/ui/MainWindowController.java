@@ -186,7 +186,11 @@ public class MainWindowController {
           new ExtensionFilter("GRIP File", "*.grip"),
           new ExtensionFilter("All Files", "*", "*.*"));
 
-      project.getFile().ifPresent(file -> fileChooser.setInitialDirectory(file.getParentFile()));
+      if (project.getFile().isPresent()) {
+        fileChooser.setInitialDirectory(project.getFile().get().getParentFile());
+      } else {
+        fileChooser.setInitialDirectory(new File(System.getProperty("user.home") + "/GRIP"));
+      }
 
       final File file = fileChooser.showOpenDialog(root.getScene().getWindow());
       if (file != null) {
@@ -262,7 +266,9 @@ public class MainWindowController {
   protected void showProjectAboutDialog() throws IOException {
     if (aboutDialogStage == null) {
       aboutDialogStage = new Stage();
-      aboutDialogStage.setScene(new Scene(aboutPane));
+      Scene scene = new Scene(aboutPane);
+      scene.getStylesheets().setAll(root.getScene().getStylesheets());
+      aboutDialogStage.setScene(scene);
       aboutDialogStage.initStyle(StageStyle.UTILITY);
       aboutDialogStage.focusedProperty().addListener((observable, oldvalue, newvalue) -> {
         if (oldvalue) {

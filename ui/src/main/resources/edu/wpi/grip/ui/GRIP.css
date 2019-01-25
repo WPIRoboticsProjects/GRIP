@@ -1,5 +1,13 @@
+@import "base.css";
+
 .root {
     -fx-font-family: "Roboto";
+
+    -swatch-100: hsb(0, 0%, 98%);
+    -swatch-200: hsb(0, 0%, 88%);
+    -swatch-300: hsb(0, 0%, 78%);
+    -swatch-400: hsb(0, 0%, 68%);
+    -swatch-500: hsb(0, 0%, 58%);
 }
 
 .main-window {
@@ -13,7 +21,6 @@
 }
 
 .pane-title {
-    -fx-background-color: -fx-control-inner-background;
     -fx-font-weight: bold;
     -fx-padding: 1.0em;
     -fx-border-width: 1px;
@@ -22,21 +29,28 @@
     -fx-min-width: 30em;
 }
 
+.operation-list {
+    -fx-spacing: 0.5em;
+    -fx-padding: 0.5em;
+    -fx-background-color: #ddd;
+}
+
 .operation {
     -fx-cursor: hand;
     -fx-hgap: 1em;
     -fx-padding: 0.5em;
     -fx-alignment: center-left;
-    -fx-color: -fx-background;
+    -fx-color: white;
     -fx-background-color: -fx-color;
+    -fx-effect: dropshadow(gaussian, #777, 4, 0.1, 0, 2);
 }
 
 .operation:hover {
-    -fx-color: white;
+    -fx-color: #eee;
 }
 
 .operation:pressed {
-    -fx-color: -fx-pressed-base;
+    -fx-color: #d7d7d7;
 }
 
 Label.operation-name {
@@ -62,14 +76,36 @@ Label.operation-description {
     -fx-pref-width: 40em;
 }
 
+.previews > .scroll-pane > .viewport {
+    -fx-background-color: #eee;
+    -fx-effect: innershadow(gaussian, #777, 8, 0.125, 2, 2);
+}
+
 .previews HBox {
     -fx-spacing: 1em;
     -fx-padding: 0.5em;
 }
 
+.socket-preview {
+    -fx-effect: dropshadow(gaussian, #777, 16, 0.125, 0, 4);
+    -fx-background-color: white;
+    -fx-border-color: transparent;
+    -fx-padding: 0;
+}
+
 .socket-preview .title {
     -fx-font-weight: bold;
     -fx-padding: 0.5em;
+    -fx-background-color: transparent;
+}
+
+.socket-preview > .content {
+    -fx-border-color: none;
+    -fx-padding: 0;
+}
+
+.sources-pane {
+    -fx-background-color: white;
 }
 
 .addSource {
@@ -79,6 +115,30 @@ Label.operation-description {
 
 .addSource * {
     -fx-max-width: Infinity;
+}
+
+.add-source-button {
+    -fx-background-color: transparent;
+    -fx-border-color: -swatch-gray;
+    -fx-border-width: 0 0 2 0;
+    -fx-background-radius: 0;
+    -fx-border-radius: 0;
+}
+
+.add-source-button:focused {
+    -fx-border-color: -swatch-500;
+}
+
+.add-source-button > .arrow-button {
+    -fx-background-radius: 0.0 2.0 2.0 0.0;
+}
+
+.add-source-button > .arrow-button > .arrow {
+    -fx-background-color: -swatch-200;
+}
+
+.add-source-button:hover > .arrow-button > .arrow {
+    -fx-background-color: -swatch-400;
 }
 
 .sources {
@@ -91,7 +151,8 @@ Label.operation-description {
     -fx-spacing: 1em;
     -fx-border-width: 1px;
     -fx-border-color: -fx-box-border;
-    -fx-background-color: -fx-background;
+    -fx-background-color: white;
+    -fx-effect: dropshadow(gaussian, #7f7f7f, 6, 0.125, 0, 4);
 }
 
 Label.source-name {
@@ -103,6 +164,10 @@ Button.add-source {
     -fx-padding: 0.5em;
 }
 
+.pipeline > .bottom {
+    -fx-background-color: hsb(0, 0%, 97%);
+}
+
 .steps {
     -fx-spacing: 1em;
     -fx-padding: 0.5em;
@@ -111,9 +176,40 @@ Button.add-source {
 .step {
     -fx-pref-width: 15em;
     -fx-border-color: -fx-box-border;
-    -fx-background-color: -fx-background;
+    -fx-background-color: white;
+    -fx-effect: dropshadow(gaussian, #7f7f7f, 6, 0.125, 0, 4);
     -fx-padding: 1.0em;
     -fx-spacing: 0.5em;
+}
+
+.step .controls .button,
+.source .source-header-box .button,
+.source .source-header-box .toggle-button,
+.small-icon-button {
+    -fx-background-color: transparent;
+    -fx-border-color: white;
+    -fx-effect: none;
+}
+
+.step .controls .button:hover,
+.source .source-header-box .button:hover,
+.source .source-header-box .toggle-button:hover,
+.small-icon-button:hover {
+    -fx-background-color: #eee;
+    -fx-border-color: -fx-box-border;
+}
+
+.step .controls .button:pressed,
+.source .button:pressed,
+.source .source-header-box .toggle-button:selected,
+.small-icon-button:selected,
+.step .controls .button:pressed:focused,
+.source .button:pressed:focused,
+.source .source-header-box .toggle-button:selected:focused,
+.small-icon-button:focused:selected {
+    -fx-background-color: #d7d7d7;
+    -fx-border-color: -fx-box-border;
+    -fx-effect: innershadow(gaussian, #777, 4, 0.25, 0, 0);
 }
 
 Button.delete, Button.move-left, Button.move-right, .start-stoppable-button, .exception-witness-responder-button {
@@ -210,7 +306,7 @@ VBox.sockets {
 .property-sheet .property-pane {
     -fx-hgap: 4em;
     -fx-vgap: 1em;
-    -fx-padding: 0;
+    /*-fx-padding: 0;*/
 }
 
 .exception-pane {

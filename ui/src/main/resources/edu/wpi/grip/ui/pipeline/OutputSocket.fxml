@@ -9,7 +9,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.StackPane?>
 <HBox styleClass="socket"
-      fx:controller="edu.wpi.grip.ui.OperationController"
+      fx:controller="edu.wpi.grip.ui.pipeline.OutputSocketController"
       fx:id="root"
       xmlns="http://javafx.com/javafx/null"
       xmlns:fx="http://javafx.com/fxml/1" alignment="CENTER_RIGHT">

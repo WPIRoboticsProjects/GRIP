@@ -145,7 +145,11 @@ public class Main extends Application {
 
       stage.setTitle(MAIN_TITLE);
       stage.getIcons().add(new Image("/edu/wpi/grip/ui/icons/grip.png"));
-      stage.setScene(new Scene(root));
+      Scene scene = new Scene(root);
+      root.getStylesheets().clear();
+      scene.getStylesheets().clear();
+      root.getStylesheets().setAll("/edu/wpi/grip/ui/GRIP.css");
+      stage.setScene(scene);
       notifyPreloader(new Preloader.ProgressNotification(1.0));
       notifyPreloader(new Preloader.StateChangeNotification(
           Preloader.StateChangeNotification.Type.BEFORE_START));

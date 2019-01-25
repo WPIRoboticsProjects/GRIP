@@ -215,8 +215,5 @@
         <fx:include source="analysis/Analysis.fxml" fx:id="analysisPane" />
         <fx:include source="codegeneration/CodegenDialog.fxml" fx:id="codegenPane"/>
     </fx:define>
-    <stylesheets>
-        <URL value="@GRIP.css" />
-    </stylesheets>
 </VBox>
 
