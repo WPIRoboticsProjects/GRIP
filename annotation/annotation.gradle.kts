@@ -7,7 +7,6 @@ repositories {
 }
 
 dependencies {
-    api(group = "com.google.guava", name = "guava", version = "20.0")
-    api(group = "com.google.auto.service", name = "auto-service", version = "+")
-    annotationProcessor(group = "com.google.auto.service", name = "auto-service", version = "+")
+    compileOnly(group = "com.google.auto.service", name = "auto-service", version = "1.0-rc4")
+    annotationProcessor(group = "com.google.auto.service", name = "auto-service", version = "1.0-rc4")
 }
