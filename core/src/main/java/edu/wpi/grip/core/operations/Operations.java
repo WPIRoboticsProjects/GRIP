@@ -1,6 +1,7 @@
 package edu.wpi.grip.core.operations;
 
 import edu.wpi.grip.annotation.operation.Description;
+import edu.wpi.grip.annotation.processor.ClassListProcessor;
 import edu.wpi.grip.core.FileManager;
 import edu.wpi.grip.core.Operation;
 import edu.wpi.grip.core.OperationDescription;
@@ -111,7 +112,7 @@ public class Operations {
 
   private List<OperationMetaData> createBasicOperations() {
     try {
-      return MetaInfReader.<Operation>readClasses("operations")
+      return MetaInfReader.<Operation>readClasses(ClassListProcessor.OPERATIONS_FILE_NAME)
           .map(c -> new OperationMetaData(descriptionFor(c), () -> injector.getInstance(c)))
           .collect(Collectors.toList());
     } catch (IOException e) {
@@ -128,7 +129,8 @@ public class Operations {
     if (publishableTypes == null) {
       // Only need to search once
       try {
-        publishableTypes = MetaInfReader.<Publishable>readClasses("publishables")
+        String fileName = ClassListProcessor.PUBLISHABLES_FILE_NAME;
+        publishableTypes = MetaInfReader.<Publishable>readClasses(fileName)
             .collect(Collectors.toList());
       } catch (IOException e) {
         logger.log(Level.WARNING, "Could not find the publishable types.", e);

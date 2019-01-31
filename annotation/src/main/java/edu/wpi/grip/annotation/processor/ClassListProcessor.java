@@ -39,10 +39,14 @@ import javax.tools.StandardLocation;
 @AutoService(Processor.class)
 public class ClassListProcessor extends AbstractProcessor {
 
+  public static final String OPERATIONS_FILE_NAME = "operations";
+  public static final String PUBLISHABLES_FILE_NAME = "publishables";
+  public static final String XSTREAM_ALIASES_FILE_NAME = "xstream-aliases";
+
   private final Map<String, String> fileNames = ImmutableMap.of(
-      Description.class.getName(), "operations",
-      PublishableObject.class.getName(), "publishables",
-      "com.thoughtworks.xstream.annotations.XStreamAlias", "xstream-aliases"
+      Description.class.getName(), OPERATIONS_FILE_NAME,
+      PublishableObject.class.getName(), PUBLISHABLES_FILE_NAME,
+      "com.thoughtworks.xstream.annotations.XStreamAlias", XSTREAM_ALIASES_FILE_NAME
   );
 
   @Override

@@ -1,5 +1,6 @@
 package edu.wpi.grip.core.serialization;
 
+import edu.wpi.grip.annotation.processor.ClassListProcessor;
 import edu.wpi.grip.core.Pipeline;
 import edu.wpi.grip.core.PipelineRunner;
 import edu.wpi.grip.core.events.DirtiesSaveEvent;
@@ -62,18 +63,10 @@ public class Project {
     xstream.registerConverter(projectSettingsConverter);
     xstream.registerConverter(codeGenerationSettingsConverter);
     try {
-      MetaInfReader.readClasses("xstream-aliases")
-          .forEach(this::processXstreamAliasClass);
+      MetaInfReader.readClasses(ClassListProcessor.XSTREAM_ALIASES_FILE_NAME)
+          .forEach(xstream::processAnnotations);
     } catch (IOException ex) {
       throw new AssertionError("Could not load classes for XStream annotation processing", ex);
-    }
-  }
-
-  private void processXstreamAliasClass(Class<?> clazz) {
-    try {
-      xstream.processAnnotations(clazz);
-    } catch (InternalError ex) {
-      throw new AssertionError("Failed to load class: " + clazz.getName(), ex);
     }
   }
 
