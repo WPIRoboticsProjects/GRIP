@@ -1,16 +1,16 @@
-package edu.wpi.grip.core;
+package edu.wpi.grip.annotation.operation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import static edu.wpi.grip.core.OperationDescription.Category;
-import static edu.wpi.grip.core.OperationDescription.Category.MISCELLANEOUS;
+import static edu.wpi.grip.annotation.operation.OperationCategory.MISCELLANEOUS;
+
 
 /**
- * Annotates an {@link Operation} subclass to describe it. This annotation gets transformed into a
- * {@link OperationDescription}. All operation classes with this annotation will be automatically
+ * Annotates an {@code Operation} subclass to describe it. This annotation gets transformed into a
+ * {@code OperationDescription}. All operation classes with this annotation will be automatically
  * discovered and added to the palette at startup.
  */
 @Target(ElementType.TYPE)
@@ -30,9 +30,9 @@ public @interface Description {
 
   /**
    * The category the operation belongs to. Defaults to
-   * {@link OperationDescription.Category#MISCELLANEOUS MISCELLANEOUS}.
+   * {@link OperationCategory#MISCELLANEOUS MISCELLANEOUS}.
    */
-  Category category() default MISCELLANEOUS;
+  OperationCategory category() default MISCELLANEOUS;
 
   /**
    * All known aliases of the operation. If the name of the operation changes, the previous name

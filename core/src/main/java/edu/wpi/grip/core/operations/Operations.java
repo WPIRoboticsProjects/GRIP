@@ -1,6 +1,6 @@
 package edu.wpi.grip.core.operations;
 
-import edu.wpi.grip.core.Description;
+import edu.wpi.grip.annotation.operation.Description;
 import edu.wpi.grip.core.FileManager;
 import edu.wpi.grip.core.Operation;
 import edu.wpi.grip.core.OperationDescription;

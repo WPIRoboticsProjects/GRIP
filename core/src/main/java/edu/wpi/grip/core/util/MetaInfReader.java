@@ -12,6 +12,8 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 /**
  * Reads class registries from the META-INF directory.
  */
@@ -40,10 +42,18 @@ public final class MetaInfReader {
    *
    * @param fileName the name of the file, relative to the META-INF directory
    *
+   * @throws IOException if no file exists with the given name, or if the file exists but cannot
+   *                     be read
+   *
    * @see #read(InputStream)
    */
   private static Stream<String> read(String fileName) throws IOException {
-    return read(MetaInfReader.class.getResourceAsStream("/META-INF/" + fileName));
+    checkNotNull(fileName, "fileName");
+    InputStream stream = MetaInfReader.class.getResourceAsStream("/META-INF/" + fileName);
+    if (stream == null) {
+      throw new IOException("No resource /META-INF/" + fileName + " found");
+    }
+    return read(stream);
   }
 
   /**

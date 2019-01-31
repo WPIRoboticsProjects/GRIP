@@ -1,5 +1,7 @@
 package edu.wpi.grip.core.operations.network;
 
+import edu.wpi.grip.annotation.operation.PublishableObject;
+
 import javax.annotation.concurrent.Immutable;
 
 /**
@@ -9,6 +11,7 @@ import javax.annotation.concurrent.Immutable;
  */
 @Immutable
 @PublishableProxy(Number.class)
+@PublishableObject
 public final class NumberPublishable implements Publishable {
 
   private final double number;
