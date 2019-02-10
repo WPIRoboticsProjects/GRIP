@@ -8,9 +8,10 @@
 	 */
 	private void $tMeth.name($step.name())(List<Line> inputs,double minLength,double[] angle,
 		List<Line> outputs) {
-		outputs = inputs.stream()
+		outputs.clear();
+		outputs.addAll(inputs.stream()
 				.filter(line -> line.lengthSquared() >= Math.pow(minLength,2))
 				.filter(line -> (line.angle() >= angle[0] && line.angle() <= angle[1])
 				|| (line.angle() + 180.0 >= angle[0] && line.angle() + 180.0 <= angle[1]))
-				.collect(Collectors.toList());
+				.collect(Collectors.toList()));
 	}
