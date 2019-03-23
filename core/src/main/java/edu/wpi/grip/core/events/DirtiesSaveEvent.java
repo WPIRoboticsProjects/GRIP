@@ -8,6 +8,13 @@ package edu.wpi.grip.core.events;
  */
 public interface DirtiesSaveEvent {
 
+  DirtiesSaveEvent DIRTIES_SAVE_EVENT = new DirtiesSaveEvent() {
+    @Override
+    public boolean doesDirtySave() {
+      return true;
+    }
+  };
+
   /**
    * Some events may have more logic regarding whether they make the save dirty or not.
    *

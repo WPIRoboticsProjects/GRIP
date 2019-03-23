@@ -1,5 +1,6 @@
 package edu.wpi.grip.core.serialization;
 
+import edu.wpi.grip.core.GripFileManager;
 import edu.wpi.grip.core.Pipeline;
 import edu.wpi.grip.core.PipelineRunner;
 import edu.wpi.grip.core.events.DirtiesSaveEvent;
@@ -8,6 +9,7 @@ import edu.wpi.grip.core.events.WarningEvent;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
+import com.google.common.io.Files;
 import com.google.common.reflect.ClassPath;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
@@ -22,11 +24,15 @@ import java.io.OutputStreamWriter;
 import java.io.Reader;
 import java.io.StringReader;
 import java.io.Writer;
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
@@ -35,6 +41,8 @@ import javax.inject.Singleton;
  */
 @Singleton
 public class Project {
+
+  private static final Logger logger = Logger.getLogger(Project.class.getName());
 
   protected final XStream xstream = new XStream(new PureJavaReflectionProvider());
   @Inject
@@ -74,7 +82,6 @@ public class Project {
             } catch (InternalError ex) {
               throw new AssertionError("Failed to load class: " + clazz.getName(), ex);
             }
-
           });
     } catch (IOException ex) {
       throw new AssertionError("Could not load classes for XStream annotation processing", ex);
@@ -88,8 +95,27 @@ public class Project {
     return file;
   }
 
+  /**
+   * Sets the current project file to the given optional one. This also updates a file on disk
+   * so the app can "remember" the most recent save file when it's opened later.
+   *
+   * @param file the optional file that this project is associated with.
+   */
   public void setFile(Optional<File> file) {
+    file.ifPresent(f -> logger.info("Setting project file to: " + f.getAbsolutePath()));
     this.file = file;
+    try {
+      if (file.isPresent()) {
+        Files.write(file.get().getAbsolutePath(),
+            GripFileManager.LAST_SAVE_FILE,
+            Charset.defaultCharset());
+      } else {
+        // No project file, delete the last_save file
+        GripFileManager.LAST_SAVE_FILE.delete();
+      }
+    } catch (IOException e) {
+      logger.log(Level.WARNING, "Could not set last file", e);
+    }
   }
 
   /**
@@ -100,7 +126,7 @@ public class Project {
         StandardCharsets.UTF_8)) {
       this.open(reader);
     }
-    this.file = Optional.of(file);
+    setFile(Optional.of(file));
   }
 
   /**
@@ -158,9 +184,27 @@ public class Project {
     this.file = Optional.of(file);
   }
 
+  /**
+   * Save the project using a writer to write the data. This will clear the dirty flag.
+   *
+   * @param writer the writer to use to save the project
+   *
+   * @see #saveRaw(Writer)
+   */
   public void save(Writer writer) {
     this.xstream.toXML(this.pipeline, writer);
     saveIsDirty.set(false);
+  }
+
+  /**
+   * Save the project using a writer to write the data. This has no other side effects.
+   *
+   * @param writer the writer to use to save the project
+   *
+   * @see #save(Writer)
+   */
+  public void saveRaw(Writer writer) {
+    xstream.toXML(pipeline, writer);
   }
 
   public boolean isSaveDirty() {
@@ -173,9 +217,7 @@ public class Project {
 
   @Subscribe
   public void onDirtiesSaveEvent(DirtiesSaveEvent dirtySaveEvent) {
-    // Only update the flag the save isn't already dirty
-    // We don't need to be redundantly checking if the event dirties the save
-    if (!saveIsDirty.get() && dirtySaveEvent.doesDirtySave()) {
+    if (dirtySaveEvent.doesDirtySave()) {
       saveIsDirty.set(true);
     }
   }

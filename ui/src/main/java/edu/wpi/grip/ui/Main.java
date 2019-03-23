@@ -1,6 +1,8 @@
 package edu.wpi.grip.ui;
 
+import edu.wpi.grip.core.CoreCommandLineHelper;
 import edu.wpi.grip.core.GripCoreModule;
+import edu.wpi.grip.core.GripFileManager;
 import edu.wpi.grip.core.GripFileModule;
 import edu.wpi.grip.core.PipelineRunner;
 import edu.wpi.grip.core.events.UnexpectedThrowableEvent;
@@ -27,6 +29,9 @@ import com.sun.javafx.application.PlatformImpl;
 import org.apache.commons.cli.CommandLine;
 
 import java.io.IOException;
+import java.io.Writer;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -65,6 +70,7 @@ public class Main extends Application {
   @Inject private CVOperations cvOperations;
   @Inject private GripServer server;
   @Inject private HttpPipelineSwitcher pipelineSwitcher;
+  @Inject private ProjectBackupLoader backupLoader;
   private Parent root;
   private boolean headless;
   private final UICommandLineHelper commandLineHelper = new UICommandLineHelper();
@@ -128,6 +134,16 @@ public class Main extends Application {
           Platform.runLater(() -> stage.setTitle(MAIN_TITLE));
         }
       });
+      project.addIsSaveDirtyConsumer(dirty -> {
+        if (dirty) {
+          try (Writer fw = Files.newBufferedWriter(
+              GripFileManager.BACKUP_FILE.toPath(), StandardCharsets.UTF_8)) {
+            project.saveRaw(fw);
+          } catch (IOException e) {
+            logger.log(Level.WARNING, "Could not save backup file", e);
+          }
+        }
+      });
 
       stage.setTitle(MAIN_TITLE);
       stage.getIcons().add(new Image("/edu/wpi/grip/ui/icons/grip.png"));
@@ -141,7 +157,11 @@ public class Main extends Application {
     operations.addOperations();
     cvOperations.addOperations();
 
-    commandLineHelper.loadFile(parsedArgs, project);
+    if (parsedArgs.hasOption(CoreCommandLineHelper.FILE_OPTION)) {
+      commandLineHelper.loadFile(parsedArgs, project);
+    } else {
+      backupLoader.loadBackupOrPreviousSave();
+    }
     commandLineHelper.setServerPort(parsedArgs, settingsProvider, eventBus);
 
     // This will throw an exception if the port specified by the save file or command line
