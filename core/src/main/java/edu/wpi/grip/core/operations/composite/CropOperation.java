@@ -51,7 +51,7 @@ public class CropOperation implements Operation {
     this.heightSocket = inputSocketFactory.create(SocketHints.Inputs
         .createNumberSpinnerSocketHint("Height", 50));
     this.originSocket = inputSocketFactory
-        .create(SocketHints.createEnumSocketHint("Interpolation", Origin.CENTER));
+        .create(SocketHints.createEnumSocketHint("Origin", Origin.CENTER));
 
     this.outputSocket = outputSocketFactory.create(SocketHints.Outputs
         .createMatSocketHint("Output"));
@@ -79,6 +79,7 @@ public class CropOperation implements Operation {
   @Override
   public void perform() {
     final Mat input = inputSocket.getValue().get();
+    final Mat output = outputSocket.getValue().get();
     final Number x = xSocket.getValue().get();
     final Number y = ySocket.getValue().get();
     final Number width = widthSocket.getValue().get();
@@ -87,14 +88,13 @@ public class CropOperation implements Operation {
     final Origin origin = originSocket.getValue().get();
 
     final Rect regionOfInterest = new Rect(
-            x.intValue() + (int)(origin.xOffsetMultiplier * width.intValue()),
-            y.intValue() + (int)(origin.yOffsetMultiplier * height.intValue()),
+            x.intValue() + (int) (origin.xOffsetMultiplier * width.intValue()),
+            y.intValue() + (int) (origin.yOffsetMultiplier * height.intValue()),
             width.intValue(),
             height.intValue()
             );
 
-    final Mat output = new Mat(input, regionOfInterest).clone();
-
+    input.apply(regionOfInterest).copyTo(output);
     outputSocket.setValue(output);
   }
 
