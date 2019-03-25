@@ -101,7 +101,19 @@ public class RangeInputSocketController extends InputSocketController<List<Numbe
   }
 
   private String getLowHighLabelText() {
-    return String.format("%.0f - %.0f", this.slider.getLowValue(), this.slider.getHighValue());
+    // Ensure that we use the same number of decimal places for both the low and high values
+    // Otherwise we could have something like "0.01 - 123" instead of "0 - 123"
+    int max = (int) Math.max(Math.abs(this.slider.getMin()), Math.abs(this.slider.getMax()));
+    int numDecimals;
+    if (max >= 100) {
+      numDecimals = 0;
+    } else if (max >= 10) {
+      numDecimals = 1;
+    } else {
+      numDecimals = 2;
+    }
+    String fmt = "%." + numDecimals + "f";
+    return String.format(fmt + " - " + fmt, this.slider.getLowValue(), this.slider.getHighValue());
   }
 
   @Subscribe
