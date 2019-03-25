@@ -34,6 +34,10 @@ public class FindBlobsOperation implements Operation {
       .createNumberSpinnerSocketHint("Min Area", 1);
   private final SocketHint<List<Number>> circularityHint = SocketHints.Inputs
       .createNumberListRangeSocketHint("Circularity", 0.0, 1.0);
+  private final SocketHint<List<Number>> convexityHint = SocketHints.Inputs
+      .createNumberListRangeSocketHint("Convexity", 0.0, 1.0);
+  private final SocketHint<List<Number>> inertiaRatioHint = SocketHints.Inputs
+      .createNumberListRangeSocketHint("Inertia Ratio", 0.0, 1.0);
   private final SocketHint<Boolean> colorHint = SocketHints
       .createBooleanSocketHint("Dark Blobs", false);
 
@@ -45,6 +49,8 @@ public class FindBlobsOperation implements Operation {
   private final InputSocket<MatWrapper> inputSocket;
   private final InputSocket<Number> minAreaSocket;
   private final InputSocket<List<Number>> circularitySocket;
+  private final InputSocket<List<Number>> convexitySocket;
+  private final InputSocket<List<Number>> inertiaRatioSocket;
   private final InputSocket<Boolean> colorSocket;
 
   private final OutputSocket<BlobsReport> outputSocket;
@@ -56,6 +62,8 @@ public class FindBlobsOperation implements Operation {
     this.inputSocket = inputSocketFactory.create(inputHint);
     this.minAreaSocket = inputSocketFactory.create(minAreaHint);
     this.circularitySocket = inputSocketFactory.create(circularityHint);
+    this.convexitySocket = inputSocketFactory.create(convexityHint);
+    this.inertiaRatioSocket = inputSocketFactory.create(inertiaRatioHint);
     this.colorSocket = inputSocketFactory.create(colorHint);
 
     this.outputSocket = outputSocketFactory.create(blobsHint);
@@ -67,6 +75,8 @@ public class FindBlobsOperation implements Operation {
         inputSocket,
         minAreaSocket,
         circularitySocket,
+        convexitySocket,
+        inertiaRatioSocket,
         colorSocket
     );
   }
@@ -84,6 +94,8 @@ public class FindBlobsOperation implements Operation {
     final Mat input = inputSocket.getValue().get().getCpu();
     final Number minArea = minAreaSocket.getValue().get();
     final List<Number> circularity = circularitySocket.getValue().get();
+    final List<Number> convexity = convexitySocket.getValue().get();
+    final List<Number> inertiaRatio = inertiaRatioSocket.getValue().get();
     final Boolean darkBlobs = colorSocket.getValue().get();
 
 
@@ -98,7 +110,15 @@ public class FindBlobsOperation implements Operation {
 
         .filterByCircularity(true)
         .minCircularity(circularity.get(0).floatValue())
-        .maxCircularity(circularity.get(1).floatValue()));
+        .maxCircularity(circularity.get(1).floatValue())
+
+        .filterByConvexity(true)
+        .minConvexity(convexity.get(0).floatValue())
+        .maxConvexity(convexity.get(1).floatValue())
+
+        .filterByInertia(true)
+        .minInertiaRatio(inertiaRatio.get(0).floatValue())
+        .maxInertiaRatio(inertiaRatio.get(1).floatValue()));
 
     // Detect the blobs and store them in the output BlobsReport
     final KeyPointVector keyPointVector = new KeyPointVector();
