@@ -62,9 +62,9 @@ public class FindBlobsOperation implements Operation {
     this.inputSocket = inputSocketFactory.create(inputHint);
     this.minAreaSocket = inputSocketFactory.create(minAreaHint);
     this.circularitySocket = inputSocketFactory.create(circularityHint);
+    this.colorSocket = inputSocketFactory.create(colorHint);
     this.convexitySocket = inputSocketFactory.create(convexityHint);
     this.inertiaRatioSocket = inputSocketFactory.create(inertiaRatioHint);
-    this.colorSocket = inputSocketFactory.create(colorHint);
 
     this.outputSocket = outputSocketFactory.create(blobsHint);
   }
@@ -75,9 +75,10 @@ public class FindBlobsOperation implements Operation {
         inputSocket,
         minAreaSocket,
         circularitySocket,
+        colorSocket,
+        //Sockets placed last to maintain backwards compatibility in deserialization
         convexitySocket,
-        inertiaRatioSocket,
-        colorSocket
+        inertiaRatioSocket
     );
   }
 
@@ -94,10 +95,9 @@ public class FindBlobsOperation implements Operation {
     final Mat input = inputSocket.getValue().get().getCpu();
     final Number minArea = minAreaSocket.getValue().get();
     final List<Number> circularity = circularitySocket.getValue().get();
+    final Boolean darkBlobs = colorSocket.getValue().get();
     final List<Number> convexity = convexitySocket.getValue().get();
     final List<Number> inertiaRatio = inertiaRatioSocket.getValue().get();
-    final Boolean darkBlobs = colorSocket.getValue().get();
-
 
     final SimpleBlobDetector blobDetector = SimpleBlobDetector.create(new SimpleBlobDetector
         .Params()
