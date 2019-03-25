@@ -34,12 +34,12 @@ public class FindBlobsOperation implements Operation {
       .createNumberSpinnerSocketHint("Min Area", 1);
   private final SocketHint<List<Number>> circularityHint = SocketHints.Inputs
       .createNumberListRangeSocketHint("Circularity", 0.0, 1.0);
+  private final SocketHint<Boolean> colorHint = SocketHints
+      .createBooleanSocketHint("Dark Blobs", false);
   private final SocketHint<List<Number>> convexityHint = SocketHints.Inputs
       .createNumberListRangeSocketHint("Convexity", 0.0, 1.0);
   private final SocketHint<List<Number>> inertiaRatioHint = SocketHints.Inputs
       .createNumberListRangeSocketHint("Inertia Ratio", 0.0, 1.0);
-  private final SocketHint<Boolean> colorHint = SocketHints
-      .createBooleanSocketHint("Dark Blobs", false);
 
   private final SocketHint<BlobsReport> blobsHint = new SocketHint.Builder<>(BlobsReport.class)
       .identifier("Blobs")
@@ -49,9 +49,9 @@ public class FindBlobsOperation implements Operation {
   private final InputSocket<MatWrapper> inputSocket;
   private final InputSocket<Number> minAreaSocket;
   private final InputSocket<List<Number>> circularitySocket;
+  private final InputSocket<Boolean> colorSocket;
   private final InputSocket<List<Number>> convexitySocket;
   private final InputSocket<List<Number>> inertiaRatioSocket;
-  private final InputSocket<Boolean> colorSocket;
 
   private final OutputSocket<BlobsReport> outputSocket;
 
