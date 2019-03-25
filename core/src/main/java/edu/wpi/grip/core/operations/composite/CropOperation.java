@@ -95,6 +95,7 @@ public class CropOperation implements Operation {
             height.intValue()
             );
 
+    //apply() returns a sub-matrix; It does not modify the input Mat
     input.apply(regionOfInterest).copyTo(output);
     outputSocket.setValue(output);
   }
