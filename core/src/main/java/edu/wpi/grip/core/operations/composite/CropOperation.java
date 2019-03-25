@@ -95,7 +95,7 @@ public class CropOperation implements Operation {
             height.intValue()
             );
 
-    //apply() returns a sub-matrix; It does not modify the input Mat
+    //apply() returns a sub-matrix; It does not modify the input Mat: https://github.com/WPIRoboticsProjects/GRIP/pull/926
     input.apply(regionOfInterest).copyTo(output);
     outputSocket.setValue(output);
   }
