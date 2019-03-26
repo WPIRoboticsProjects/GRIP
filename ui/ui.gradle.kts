@@ -1,12 +1,12 @@
-import de.dynamicfiles.projects.gradle.plugins.javafx.JavaFXGradlePluginExtension
-import de.dynamicfiles.projects.gradle.plugins.javafx.tasks.JfxNativeTask
 import edu.wpi.first.wpilib.opencv.installer.Installer
+import org.gradle.api.internal.AbstractTask
+import org.gradle.internal.os.OperatingSystem
 import java.io.File
 import java.io.FileFilter
+import javax.inject.Inject
 
 plugins {
     `application`
-    id("javafx-gradle-plugin")
     id("com.google.osdetector")
 }
 
@@ -17,27 +17,28 @@ if (!(project.hasProperty("generation") || project.hasProperty("genonly"))) {
     }
 }
 
+createNativeConfigurations()
+
 dependencies {
     compile(project(":core"))
     compile(project(":ui:preloader"))
     //ideProvider project(path= ":core", configuration= "compile")
-    compile(group = "org.controlsfx", name = "controlsfx", version = "8.40.11")
+    compile(group = "org.controlsfx", name = "controlsfx", version = "11.0.0-RC2")
     compile(group = "com.hierynomus", name = "sshj", version = "0.16.0")
     compile(group = "org.apache.velocity", name = "velocity", version = "1.7")
+
+    javafx("base")
+    javafx("controls")
+    javafx("fxml")
+    javafx("graphics")
 
     val coreTestOutput = project(":core").dependencyProject.sourceSets["test"].output
     testCompile(files(coreTestOutput))
     testCompile(files(coreTestOutput.resourcesDir))
-    testCompile(group = "org.testfx", name = "testfx-core", version = "4.0.5-alpha")
-    testCompile(group = "org.testfx", name = "testfx-junit", version = "4.0.5-alpha")
-    testRuntime(group = "org.testfx", name = "openjfx-monocle", version = "1.8.0_20")
+    testCompile(group = "org.testfx", name = "testfx-core", version = "4.0.15-alpha")
+    testCompile(group = "org.testfx", name = "testfx-junit", version = "4.0.15-alpha")
+    testRuntime(group = "org.testfx", name = "openjfx-monocle", version = "jdk-11+26")
     testCompile(group = "org.opencv", name = "opencv-java", version = "3.1.0")
-}
-
-if (System.getProperty("os.name").toLowerCase().contains("linux")) {
-    tasks.named("jfxNative") {
-        dependsOn(":ui:linuxLauncher:linuxLauncherExecutable")
-    }
 }
 
 tasks.named<JavaCompile>("compileTestJava") {
@@ -45,11 +46,12 @@ tasks.named<JavaCompile>("compileTestJava") {
 }
 
 /*
- * Allows you to run the UI tests in headless mode by calling gradle with the -Pheadless=true argument
+ * Allows you to run the UI tests in headless mode by calling gradle with the -Pheadless argument
  */
 if (project.hasProperty("headless")) {
-    println("Running UI Tests Headless")
-    tasks.withType<Test>() {
+    //println("Running UI Tests Headless")
+    println("UI tests do not work properly when headless, and are disabled until fixed in JavaFX and TestFX")
+    tasks.withType<Test> {
         jvmArgs = listOf(
                 "-Djava.awt.headless=true",
                 "-Dtestfx.robot=glass",
@@ -57,6 +59,19 @@ if (project.hasProperty("headless")) {
                 "-Dprism.order=sw",
                 "-Dprism.text=t2k"
         )
+        useJUnit {
+            excludeCategories("edu.wpi.grip.ui.UiTests")
+        }
+    }
+}
+
+/*
+ * TestFX is flaky on Java >= 10, and is completely broken in headless mode on Java 10+. JavaFX 13
+ * should fix the issue, but won't be publicly available for a while.
+ */
+tasks.withType<Test> {
+    useJUnit {
+        excludeCategories("edu.wpi.grip.ui.UiTests")
     }
 }
 
@@ -155,62 +170,85 @@ if (project.hasProperty("generation") || project.hasProperty("genonly")) {
     }
 }
 
-val arch = osdetector.arch.replace("x86_64", "x64")
-
-jfx {
-    mainClass = "edu.wpi.grip.ui.Main"
-    preLoader = "edu.wpi.grip.preloader.GripPreloader"
-
-    identifier = "GRIP"
-    appName = "GRIP"
-    vendor = "Worcester Polytechnic Institute"
-    nativeReleaseVersion = "$version-$arch"
-
-    jfxMainAppJarName = "${jfx.appName}-${jfx.nativeReleaseVersion}.jar"
-
-    // -XX:-OmitStackTraceInFastThrow prevents the JIT from eating stack traces that get thrown a lot
-    // This is slower but means we actually get the stack traces instead of
-    // having them become one line like `java.lang.ArrayIndexOutOfBoundsException`
-    // and as such, would be useless.
-    // See= https://plumbr.eu/blog/java/on-a-quest-for-missing-stacktraces
-    // -Xmx limits the heap size. This prevents memory use from ballooning with a lot
-    // of JavaCV native objects being allocated hanging around waiting to get GC"d.
-    // -XX:MaxNewSize limits the size of the eden space to force minor GCs to run more often.
-    // This causes old mats (which take up little space on the heap but a lot of native memory) to get deallocated
-    // and free up native memory quicker, limiting the memory the app takes up.
-    jvmArgs = listOf("-XX:-OmitStackTraceInFastThrow", "-Xmx200m", "-XX:MaxNewSize=32m")
-
-    bundleArguments = mapOf(
-            "linux.launcher.url" to file("linuxLauncher/build/exe/linuxLauncher/linuxLauncher").toURI().toURL().toExternalForm()
-    )
+tasks.register<Delete>("cleanInstaller") {
+    group = "Installer generation"
+    description = "Deletes old installer files for the GRIP application installer."
+    delete(buildDir.resolve("installer"))
 }
 
-tasks.named<JfxNativeTask>("jfxNative") {
-    dependsOn(":core:jar")
+tasks.register<Copy>("collectDependencies") {
+    group = "Installer generation"
+    description = "Collects dependencies into a single directory for jpackage."
+    from(
+            configurations["compile"],
+            configurations["runtime"],
+            configurations["runtimeClasspath"],
+            project.projectDir.resolve("installer-files"),
+            tasks.named("jar"),
+            project("preloader").tasks.named("jar")
+    )
+    into(buildDir.resolve("installerInput"))
+}
 
-    // The JavaFX plugin removes all but numeric characters after the app name in the file
-    // name, so we restore the full name of the file here
-    doLast {
-        logger.log(LogLevel.INFO, "Renaming installer packages")
-        val packageFileFilter = FileFilter { file ->
-            listOf("exe", "dmg", "pkg", "deb", "rpm").any {
-                file.extension == it
-            }
-        }
-        val packageFiles = buildDir.resolve("jfx/native").listFiles(packageFileFilter)
-        packageFiles.forEach { packageFile ->
-            val newName: String = jfx.jfxMainAppJarName.replace(Regex("""\.jar$"""), ".${packageFile.extension}")
-            logger.log(LogLevel.DEBUG, "Renaming ${packageFile.name} to $newName")
-            packageFile.renameTo(packageFile.resolveSibling(newName))
-        }
+tasks.register<JpackageExec>("jpackage") {
+    group = "Installer generation"
+    description = "Generates a native installer for the GRIP application."
+
+    // TODO: Since Gradle does not run on JDK 13, we need to pass in the JDK home as part of the build process
+    // See https://github.com/gradle/gradle/issues/8681
+    if (!project.properties.containsKey("jdk13")) {
+        throw IllegalStateException("The path to a valid JDK 13 installation with jpackage must be provided with -Pjdk13=/path/to/jdk-13")
     }
+
+    val cleanInstaller: Delete by tasks
+    val collectDependencies: Copy by tasks
+    dependsOn(cleanInstaller, collectDependencies)
+
+    val jdk13: String = project.property("jdk13").toString()
+
+    jdkHome.set(File(jdk13))
+    verbose.set(true)
+    outputDir.set(buildDir.resolve("installer"))
+    inputDir.set(collectDependencies.destinationDir)
+    resourceDir.set(projectDir.resolve("installer-files"))
+    icon.set("installer-files/grip_TP6_icon.ico")
+
+    jvmArgs.addAll("-Xmx200M")
+
+    mainJar.set(collectDependencies.destinationDir.resolve("ui-${project.version}.jar"))
+    mainClassName.set("edu.wpi.grip.ui.Launch")
+
+    applicationName.set("GRIP")
+    applicationDescription.set("GRIP Computer Vision Engine")
+
+    val projectVersion = "${project.version}"
+    applicationVersion.set(projectVersion.drop(1).takeWhile { it != '-' }) // 'v1.5.2-abfa51a' -> '1.5.2'
+    fullApplicationVersion.set(projectVersion)
+    copyright.set("Copyright (c) 2015-2019 WPI")
+    licenseFile.set(rootDir.resolve("LICENSE.txt"))
+    applicationVendor.set("Worcester Polytechnic Institute")
+    identifier.set("edu.wpi.grip")
+    installerType.set(installerTypeForCurrentOs())
+
+    winUpgradeUuid.set("d74b4d69-a88a-47ef-b972-9a7911cf7af1")
+    winRegistryName.set("edu.wpi.grip")
+    addToWindowsMenu.set(true)
+    addWindowsDesktopShortcut.set(true)
+
+    macBundleIdentifier.set("edu.wpi.grip")
 }
 
 application {
-    mainClassName = jfx.mainClass
+    mainClassName = "edu.wpi.grip.ui.Launch"
 }
 
-val jfx: JavaFXGradlePluginExtension
-    get() = extensions.getByType(JavaFXGradlePluginExtension::class.java)
-
-fun jfx(configuration: JavaFXGradlePluginExtension.() -> Unit) = jfx.apply(configuration)
+/**
+ * Gets the installer type to use for the current operating system. Windows uses `.exe`, mac `.dmg`,
+ * and linux `.deb`.
+ */
+fun installerTypeForCurrentOs() = when (OperatingSystem.current()) {
+    OperatingSystem.WINDOWS -> "exe"
+    OperatingSystem.MAC_OS -> "dmg"
+    OperatingSystem.LINUX -> "deb"
+    else -> throw UnsupportedOperationException("Unsupported OS")
+}

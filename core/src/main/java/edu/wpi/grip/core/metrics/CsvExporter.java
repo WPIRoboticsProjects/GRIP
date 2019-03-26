@@ -74,7 +74,7 @@ public class CsvExporter {
   public void addRow(Object... data) {
     checkNotNull(data, "data");
     if (Arrays.stream(data).anyMatch(Objects::isNull)) {
-      throw new NullPointerException("Data elements cannot be null");
+      throw new IllegalArgumentException("Data elements cannot be null");
     }
     checkArgument(data.length == numCols, "Wrong number of data elements");
     dataRows++;

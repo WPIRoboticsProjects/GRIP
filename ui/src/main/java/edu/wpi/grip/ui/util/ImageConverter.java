@@ -136,7 +136,7 @@ public final class ImageConverter {
    *
    * @return A JavaFX image, or null for empty
    */
-  Image convert(Mat mat) {
+  public Image convert(Mat mat) {
     return convert(mat, mat.rows());
   }
 

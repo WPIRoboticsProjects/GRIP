@@ -22,7 +22,7 @@
 
     <!-- Suppress checkstyle for certain files and directories -->
     <module name="SuppressionFilter">
-        <property name="file" value="checkstyleSuppressions.xml"/>
+        <property name="file" value="${config_loc}/checkstyleSuppressions.xml"/>
     </module>
 
     <property name="fileExtensions" value="java, properties, xml"/>

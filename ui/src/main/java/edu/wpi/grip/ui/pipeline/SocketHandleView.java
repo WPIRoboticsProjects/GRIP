@@ -46,6 +46,7 @@ public class SocketHandleView extends Button {
       false);
 
   @Inject
+  @SuppressWarnings("PMD.ExcessiveMethodLength")
   SocketHandleView(EventBus eventBus,
                    Pipeline pipeline,
                    Connection.Factory<Object> connectionFactory,

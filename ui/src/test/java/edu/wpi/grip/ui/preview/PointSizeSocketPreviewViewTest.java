@@ -4,6 +4,7 @@ import edu.wpi.grip.core.operations.network.MockGripNetworkModule;
 import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.core.sockets.SocketHint;
 import edu.wpi.grip.ui.GripUiModule;
+import edu.wpi.grip.ui.UiTests;
 import edu.wpi.grip.ui.util.MockGripPlatform;
 import edu.wpi.grip.util.GripCoreTestModule;
 
@@ -16,6 +17,7 @@ import org.bytedeco.javacpp.opencv_core.Point;
 import org.bytedeco.javacpp.opencv_core.Size;
 import org.junit.After;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 import org.junit.experimental.runners.Enclosed;
 import org.junit.runner.RunWith;
 import org.testfx.framework.junit.ApplicationTest;
@@ -30,6 +32,7 @@ import static org.testfx.api.FxAssert.verifyThat;
 @RunWith(Enclosed.class)
 public class PointSizeSocketPreviewViewTest {
 
+  @Category(UiTests.class)
   public static class PointSocketPreviewViewTest extends ApplicationTest {
     private static final String identifier = "testPoint";
     private static final int value1 = 1;
@@ -71,6 +74,7 @@ public class PointSizeSocketPreviewViewTest {
     }
   }
 
+  @Category(UiTests.class)
   public static class SizeSocketPreviewViewTest extends ApplicationTest {
     private static final String identifier = "testSize";
     private static final int value1 = 1;

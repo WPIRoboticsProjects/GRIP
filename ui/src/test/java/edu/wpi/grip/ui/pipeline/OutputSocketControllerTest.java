@@ -1,11 +1,13 @@
 package edu.wpi.grip.ui.pipeline;
 
 import edu.wpi.grip.core.sockets.MockOutputSocket;
+import edu.wpi.grip.ui.UiTests;
 import edu.wpi.grip.ui.util.TestAnnotationFXMLLoader;
 
 import com.google.common.eventbus.EventBus;
 
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 import org.testfx.framework.junit.ApplicationTest;
 import org.testfx.util.WaitForAsyncUtils;
 
@@ -17,6 +19,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 
+@Category(UiTests.class)
 public class OutputSocketControllerTest extends ApplicationTest {
 
   private MockOutputSocket outputSocket;

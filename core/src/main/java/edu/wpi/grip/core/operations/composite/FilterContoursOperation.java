@@ -33,6 +33,7 @@ import static org.bytedeco.javacpp.opencv_imgproc.convexHull;
              summary = "Find contours matching certain criteria",
              category = OperationDescription.Category.FEATURE_DETECTION,
              iconName = "find-contours")
+@SuppressWarnings("PMD.TooManyFields")
 public class FilterContoursOperation implements Operation {
 
   private final SocketHint<ContoursReport> contoursHint = new SocketHint.Builder<>(ContoursReport

@@ -47,7 +47,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * with more information about what the operation does.
  */
 public class PythonScriptOperation implements Operation {
-  private static final String DEFAULT_NAME = "Python Operation";
   private static final Logger logger = Logger.getLogger(PythonScriptOperation.class.getName());
 
 

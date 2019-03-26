@@ -18,12 +18,11 @@ import static org.junit.Assert.assertTrue;
 
 public class AddOperationTest {
 
-  EventBus eventBus;
-  AddOperation addition;
+  private AddOperation addition;
 
   @Before
   public void setUp() throws Exception {
-    this.eventBus = new EventBus();
+    EventBus eventBus = new EventBus();
     this.addition = new AddOperation(eventBus);
   }
 

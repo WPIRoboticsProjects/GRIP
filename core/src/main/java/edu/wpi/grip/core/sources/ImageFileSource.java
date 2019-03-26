@@ -29,7 +29,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 /**
  * Provides a way to generate a {@link Mat} from an image on the filesystem.
  */
-@XStreamAlias(value = "grip:ImageFile")
+@XStreamAlias("grip:ImageFile")
 public final class ImageFileSource extends Source {
 
   private static final String PATH_PROPERTY = "path";

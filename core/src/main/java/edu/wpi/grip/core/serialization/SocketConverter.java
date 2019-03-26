@@ -112,7 +112,7 @@ public class SocketConverter implements Converter {
       // different things
       // (such as connections) can reference sockets in the pipeline.
       Socket socket;
-      if (reader.getAttribute(STEP_ATTRIBUTE) != null) {
+      if (reader.getAttribute(STEP_ATTRIBUTE) != null) { // NOPMD
         final int stepIndex = Integer.parseInt(reader.getAttribute(STEP_ATTRIBUTE));
         final int socketIndex = Integer.parseInt(reader.getAttribute(SOCKET_ATTRIBUTE));
 
@@ -120,7 +120,7 @@ public class SocketConverter implements Converter {
         socket = (direction == Socket.Direction.INPUT)
             ? step.getInputSockets().get(socketIndex)
             : step.getOutputSockets().get(socketIndex);
-      } else if (reader.getAttribute(SOURCE_ATTRIBUTE) != null) {
+      } else if (reader.getAttribute(SOURCE_ATTRIBUTE) != null) { // NOPMD
         final int sourceIndex = Integer.parseInt(reader.getAttribute(SOURCE_ATTRIBUTE));
         final int socketIndex = Integer.parseInt(reader.getAttribute(SOCKET_ATTRIBUTE));
 
@@ -162,12 +162,14 @@ public class SocketConverter implements Converter {
   private Class<?> getDeserializedType(Socket socket) {
     final Class<?> socketType = socket.getSocketHint().getType();
 
-    if (!socketType.isInterface() && !Modifier.isAbstract(socketType.getModifiers())) {
+    if (socketType.isInterface() || Modifier.isAbstract(socketType.getModifiers())) {
+      if (socketType.equals(List.class)) {
+        return ArrayList.class; // NOPMD
+      } else if (socketType.equals(Number.class)) {
+        return Double.class;
+      }
+    } else {
       return socketType;
-    } else if (socketType.equals(List.class)) {
-      return ArrayList.class;
-    } else if (socketType.equals(Number.class)) {
-      return Double.class;
     }
 
     throw new ConversionException("Not sure what concrete class to use for socket with type "

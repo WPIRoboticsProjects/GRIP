@@ -3,10 +3,12 @@ package edu.wpi.grip.ui.components;
 import edu.wpi.grip.core.util.service.AutoRestartingService;
 import edu.wpi.grip.core.util.service.RestartableService;
 import edu.wpi.grip.core.util.service.ServiceRestartPolicy;
+import edu.wpi.grip.ui.UiTests;
 
 import com.google.common.util.concurrent.AbstractIdleService;
 
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 import org.testfx.framework.junit.ApplicationTest;
 import org.testfx.matcher.base.NodeMatchers;
 import org.testfx.util.WaitForAsyncUtils;
@@ -20,6 +22,7 @@ import static junit.framework.TestCase.assertFalse;
 import static junit.framework.TestCase.assertTrue;
 import static org.testfx.api.FxAssert.verifyThat;
 
+@Category(UiTests.class)
 public class StartStoppableButtonTest extends ApplicationTest {
 
   private RestartableService restartableService;

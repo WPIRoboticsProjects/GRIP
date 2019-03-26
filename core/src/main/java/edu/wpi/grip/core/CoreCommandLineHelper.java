@@ -181,13 +181,13 @@ public class CoreCommandLineHelper {
     if (args.hasOption(PORT_OPTION)) {
       try {
         int port = Integer.parseInt(args.getOptionValue(PORT_OPTION));
-        if (!GripServer.isPortValid(port)) {
-          logger.warning("Not a valid port: " + port);
-        } else {
+        if (GripServer.isPortValid(port)) {
           logger.info("Setting server port: " + port);
           AppSettings settings = settingsProvider.getAppSettings().clone();
           settings.setServerPort(port);
           eventBus.post(new AppSettingsChangedEvent(settings));
+        } else {
+          logger.warning("Not a valid port: " + port);
         }
       } catch (NumberFormatException e) {
         logger.warning("Not a valid port: " + args.getOptionValue(PORT_OPTION));

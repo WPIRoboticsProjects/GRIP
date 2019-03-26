@@ -93,19 +93,19 @@ public class OutputSocketController implements Controller {
   @Subscribe
   public void onSocketChanged(SocketChangedEvent event) {
     if (event.isRegarding(this.socket)) {
-      if (!this.socket.getValue().isPresent()) {
+      if (this.socket.getValue().isEmpty()) {
         // No value
         handlePreview(false);
-      } else if (!(this.socket.getValue().get() instanceof Mat)) {
-        // There is a non-image value, which can always be previewed
-        handlePreview(true);
-      } else {
+      } else if (this.socket.getValue().get() instanceof Mat) {
         // Only allow the image to be previewed if it's previewable
         boolean previewable = this.socket.getValue()
             .map(Mat.class::cast)
             .map(ImageBasedPreviewView::isPreviewable)
             .get();
         handlePreview(previewable);
+      } else {
+        // There is a non-image value, which can always be previewed
+        handlePreview(true);
       }
     }
   }
@@ -134,6 +134,7 @@ public class OutputSocketController implements Controller {
    * Disable user input while benchmarking.
    */
   @Subscribe
+  @SuppressWarnings("PMD.UnusedPrivateMethod")
   private void onBenchmarkEvent(BenchmarkEvent e) {
     Platform.runLater(() -> handle.setDisable(e.isStart()));
   }

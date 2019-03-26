@@ -7,7 +7,11 @@ import java.util.Locale;
 /**
  * Utility for fuzzy text searching.
  */
-public class SearchUtility {
+public final class SearchUtility {
+
+  private SearchUtility() {
+    throw new UnsupportedOperationException("This is a utility class!");
+  }
 
   /**
    * Returns true if query if approximately a substring of text, not taking into account

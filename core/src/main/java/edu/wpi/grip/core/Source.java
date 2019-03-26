@@ -115,19 +115,19 @@ public abstract class Source {
 
   public static class SourceFactoryImpl implements SourceFactory {
     @Inject
-    CameraSource.Factory cameraFactory;
+    private CameraSource.Factory cameraFactory;
     @Inject
-    ImageFileSource.Factory imageFactory;
+    private ImageFileSource.Factory imageFactory;
     @Inject
-    MultiImageFileSource.Factory multiImageFactory;
+    private MultiImageFileSource.Factory multiImageFactory;
     @Inject
-    HttpSource.Factory httpFactory;
+    private HttpSource.Factory httpFactory;
     @Inject
-    NetworkTableEntrySource.Factory networkTableEntryFactory;
+    private NetworkTableEntrySource.Factory networkTableEntryFactory;
     @Inject
-    ClassifierSource.Factory fileSourceFactory;
+    private ClassifierSource.Factory fileSourceFactory;
     @Inject
-    VideoFileSource.Factory videoFileSourceFactory;
+    private VideoFileSource.Factory videoFileSourceFactory;
 
     @Override
     public Source create(Class<?> type, Properties properties) throws IOException {

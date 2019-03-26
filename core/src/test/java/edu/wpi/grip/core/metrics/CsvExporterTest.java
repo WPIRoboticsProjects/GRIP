@@ -56,7 +56,7 @@ public class CsvExporterTest {
     exporter.addRow((Object[]) null);
   }
 
-  @Test(expected = NullPointerException.class)
+  @Test(expected = IllegalArgumentException.class)
   public void testNullDataElement() {
     exporter = new CsvExporter(2, "foo", "bar");
     exporter.addRow(null, null);

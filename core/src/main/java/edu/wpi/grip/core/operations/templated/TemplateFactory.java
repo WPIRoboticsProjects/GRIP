@@ -24,6 +24,7 @@ public final class TemplateFactory {
   /*
    * Intentionally package private
    */
+  @SuppressWarnings("PMD.DefaultPackage")
   static final String ASSERTION_MESSAGE = "Output must be present for this operation to complete "
       + "correctly.";
   private final InputSocket.Factory isf;

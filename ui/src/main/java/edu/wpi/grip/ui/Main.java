@@ -70,10 +70,6 @@ public class Main extends Application {
   private final UICommandLineHelper commandLineHelper = new UICommandLineHelper();
   private CommandLine parsedArgs;
 
-  public static void main(String[] args) {
-    launch(args);
-  }
-
   @Override
   public void init() throws IOException {
     parsedArgs = commandLineHelper.parse(getParameters().getRaw());
@@ -175,7 +171,7 @@ public class Main extends Application {
     event.handleSafely((throwable, message, isFatal) -> {
       // Check this so we can avoid entering the the platform wait
       // if the program is shutting down.
-      if (!SafeShutdown.isStopping()) {
+      if (!SafeShutdown.isStopping()) { // NOPMD
         // This should still use PlatformImpl
         PlatformImpl.runAndWait(() -> {
           // WARNING! Do not post any events from within this! It could result in a deadlock!

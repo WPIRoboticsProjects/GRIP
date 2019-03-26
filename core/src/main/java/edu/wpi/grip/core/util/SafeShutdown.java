@@ -31,6 +31,10 @@ public final class SafeShutdown {
     });
   }
 
+  private SafeShutdown() {
+    throw new UnsupportedOperationException("This is a utility class!");
+  }
+
   /**
    * Shutdown's the VM in such a way that flags that the vm is stopping. This is so that we don't
    * run the normal exception handling code when shutting down the application.

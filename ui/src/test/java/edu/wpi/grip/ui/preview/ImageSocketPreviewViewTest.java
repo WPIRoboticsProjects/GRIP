@@ -4,6 +4,7 @@ import edu.wpi.grip.core.operations.network.MockGripNetworkModule;
 import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.core.sockets.SocketHint;
 import edu.wpi.grip.ui.GripUiModule;
+import edu.wpi.grip.ui.UiTests;
 import edu.wpi.grip.ui.util.MockGripPlatform;
 import edu.wpi.grip.util.Files;
 import edu.wpi.grip.util.GripCoreTestModule;
@@ -16,6 +17,7 @@ import com.google.inject.util.Modules;
 import org.bytedeco.javacpp.opencv_core.Mat;
 import org.junit.After;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 import org.testfx.framework.junit.ApplicationTest;
 import org.testfx.matcher.base.NodeMatchers;
 import org.testfx.util.WaitForAsyncUtils;
@@ -25,6 +27,7 @@ import javafx.stage.Stage;
 
 import static org.testfx.api.FxAssert.verifyThat;
 
+@Category(UiTests.class)
 public class ImageSocketPreviewViewTest extends ApplicationTest {
   private static final String identifier = "image";
   private GripCoreTestModule testModule;

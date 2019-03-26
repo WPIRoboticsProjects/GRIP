@@ -33,7 +33,7 @@ import static com.google.common.base.Preconditions.checkElementIndex;
  * A Source that supports multiple images. They can be toggled using {@link
  * MultiImageFileSource#next()} and {@link MultiImageFileSource#previous()}
  */
-@XStreamAlias(value = "grip:MultiImageFile")
+@XStreamAlias("grip:MultiImageFile")
 public final class MultiImageFileSource extends Source implements PreviousNext {
   private static final String INDEX_PROPERTY = "index";
   private static final String SIZE_PROPERTY = "numImages";
@@ -167,11 +167,11 @@ public final class MultiImageFileSource extends Source implements PreviousNext {
 
   @Override
   protected boolean updateOutputSockets() {
-    if (!currentImage.equals(outputSocket.getValue())) {
+    if (currentImage.equals(outputSocket.getValue())) {
+      return false;
+    } else {
       outputSocket.setValueOptional(currentImage);
       return true;
-    } else {
-      return false;
     }
   }
 

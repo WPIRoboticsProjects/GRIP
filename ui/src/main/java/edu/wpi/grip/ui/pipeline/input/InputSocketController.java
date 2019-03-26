@@ -110,6 +110,7 @@ public class InputSocketController<T> implements Controller {
    * Disable user input while benchmarking.
    */
   @Subscribe
+  @SuppressWarnings("PMD.UnusedPrivateMethod")
   private void onBenchmarkEvent(BenchmarkEvent e) {
     Platform.runLater(() -> {
       handle.setDisable(e.isStart());

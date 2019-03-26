@@ -16,6 +16,7 @@ import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.core.util.MockExceptionWitness;
 import edu.wpi.grip.ui.GripUiModule;
+import edu.wpi.grip.ui.UiTests;
 import edu.wpi.grip.ui.util.StyleClassNameUtility;
 import edu.wpi.grip.ui.util.TestAnnotationFXMLLoader;
 import edu.wpi.grip.util.GripCoreTestModule;
@@ -31,6 +32,7 @@ import org.hamcrest.Description;
 import org.junit.After;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 import org.testfx.framework.junit.ApplicationTest;
 import org.testfx.matcher.base.NodeMatchers;
 import org.testfx.util.WaitForAsyncUtils;
@@ -50,6 +52,7 @@ import static junit.framework.TestCase.fail;
 import static org.testfx.api.FxAssert.verifyThat;
 import static org.testfx.api.FxAssert.verifyThatIter;
 
+@Category(UiTests.class)
 public class PipelineUITest extends ApplicationTest {
 
   private GripCoreTestModule testModule;
