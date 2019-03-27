@@ -84,7 +84,7 @@ jobs:
           jdkVersionOption: '1.11'
           jdkArchitectureOption: 'x64'
           publishJUnitResults: true
-          tasks: 'check jacocoTestReport jacocoRootReport :ui:jpackage -Pheadless=true -Pgeneration -PlogTests -Pjdk13=build\jdk-13 --stacktrace'
+          tasks: 'check jacocoTestReport jacocoRootReport :ui:jpackage -Pheadless=true -Pgeneration -PlogTests -Pjdk13=..\build\jdk-13 --stacktrace'
 
       - task: CopyFiles@2
         inputs:
