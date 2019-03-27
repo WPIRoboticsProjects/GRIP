@@ -65,9 +65,9 @@ jobs:
           wget "https://download.java.net/java/ga/jdk11/openjdk-11_windows-x64_bin.zip" -O "build\jdk.zip"
         displayName: 'Download JDK'
       - powershell: |
-          $ProgressPreference = 'SilentlyContinue
+          $ProgressPreference = 'SilentlyContinue'
           wget "https://download.java.net/java/early_access/jpackage/30/openjdk-13-jpackage+30_osx-x64_bin.tar.gz" -O "build\jdk-13.zip"
-          unzip build\jdk-13.zip build
+          Expand-Archive build\jdk-13.zip build -DestinationPath build
       - task: JavaToolInstaller@0
         inputs:
           jdkSourceOption: localDirectory
@@ -79,7 +79,7 @@ jobs:
           workingDirectory: ''
           gradleWrapperFile: 'gradlew'
           gradleOptions: '-Xmx3072m'
-          jdkVersionOption: '1.8'
+          jdkVersionOption: '1.11'
           jdkArchitectureOption: 'x64'
           publishJUnitResults: true
           tasks: 'check jacocoTestReport jacocoRootReport :ui:jpackage -Pheadless=true -Pgeneration -PlogTests -Pjdk13=build\jdk-13 --stacktrace'
@@ -117,7 +117,7 @@ jobs:
           workingDirectory: ''
           gradleWrapperFile: 'gradlew'
           gradleOptions: '-Xmx1024m'
-          jdkVersionOption: '1.8'
+          jdkVersionOption: '1.11'
           jdkArchitectureOption: 'x86'
           publishJUnitResults: false
           tasks: 'check jacocoTestReport jacocoRootReport :ui:jpackage -Pheadless=true -Pgeneration -PlogTests --stacktrace'
@@ -149,7 +149,7 @@ jobs:
           workingDirectory: ''
           gradleWrapperFile: 'gradlew'
           gradleOptions: '-Xmx3072m'
-          jdkVersionOption: '1.8'
+          jdkVersionOption: '1.11'
           jdkArchitectureOption: 'x64'
           publishJUnitResults: false
           tasks: 'check jacocoTestReport jacocoRootReport :ui:jpackage -Pheadless=true -Pgeneration -PlogTests -Pjdk13=/Library/Java/JavaVirtualMachines/jdk-13.jdk/Contents/Home/ --stacktrace'
