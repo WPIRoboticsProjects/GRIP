@@ -24,8 +24,11 @@ import javax.swing.JLabel;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-public class HelperTools {
+public final class HelperTools {
   private static final Logger logger = Logger.getLogger(HelperTools.class.getName());
+
+  private HelperTools() {
+  }
 
   /**
    * Calculates the average per pixel difference between two Mats. If two Mats are perfectly equal

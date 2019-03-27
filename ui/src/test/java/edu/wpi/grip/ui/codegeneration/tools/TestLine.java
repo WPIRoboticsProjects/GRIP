@@ -17,6 +17,7 @@ public abstract class TestLine {
 
   public abstract Point getPoint2();
 
+  @Override
   public String toString() {
     StringBuilder bld = new StringBuilder(24);
     bld.append("P1: ").append(pointToStr(getPoint1())).append(" P2: ")
@@ -30,27 +31,15 @@ public abstract class TestLine {
   }
 
   public static boolean containsLin(TestLine line, List<TestLine> lines) {
-    for (int i = 0; i < lines.size(); i++) {
-      if ((lines.get(i).getPoint1().x - line.getPoint1().x) <= 2
-          && (lines.get(i).getPoint1().y - line.getPoint1().y) <= 2
-          && (lines.get(i).getPoint2().x - line.getPoint2().x) <= 2
-          && (lines.get(i).getPoint2().y - line.getPoint2().y) <= 2) {
+    for (TestLine line1 : lines) {
+      if ((line1.getPoint1().x - line.getPoint1().x) <= 2
+          && (line1.getPoint1().y - line.getPoint1().y) <= 2
+          && (line1.getPoint2().x - line.getPoint2().x) <= 2
+          && (line1.getPoint2().y - line.getPoint2().y) <= 2) {
         return true;
       }
     }
     return false;
   }
 
-  private static String errorMessage(TestLine grip, TestLine gen) {
-    StringBuilder bld = new StringBuilder(22);
-    bld.append("Grip was:").append(grip.toString())
-        .append("\nGen was:").append(gen.toString()).append('\n');
-    return bld.toString();
-  }
-
-  private static double angleDif(double alpha, double beta) {
-    double diff = Math.abs(alpha - beta) % 360.0;
-    diff = diff > 180 ? 360.0 - diff : diff;
-    return diff;
-  }
 }

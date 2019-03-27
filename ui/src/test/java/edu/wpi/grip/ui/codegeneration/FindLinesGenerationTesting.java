@@ -23,14 +23,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
-import java.util.logging.Logger;
 
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assume.assumeFalse;
 
 @Category(GenerationTesting.class)
+@SuppressWarnings("PMD.JUnitTestsShouldIncludeAssert")
 public class FindLinesGenerationTesting extends AbstractGenerationTesting {
-  private static final Logger logger = Logger.getLogger(FindLinesGenerationTesting.class.getName());
 
   private final List<Number> hVal = new ArrayList<Number>();
   private final List<Number> sVal = new ArrayList<Number>();
@@ -51,7 +50,7 @@ public class FindLinesGenerationTesting extends AbstractGenerationTesting {
         System.getProperty("os.name").toLowerCase(Locale.ENGLISH).contains("windows"));
   }
 
-  void generatePipeline() {
+  private void generatePipeline() {
     Step step0 = gen.addStep(new OperationMetaData(
         OperationDescription.from(HSLThresholdOperation.class),
         () -> new HSLThresholdOperation(isf, osf)));
@@ -90,7 +89,7 @@ public class FindLinesGenerationTesting extends AbstractGenerationTesting {
   }
 
 
-  void pipelineTest(PipelineInterfacer pip) {
+  private void pipelineTest(PipelineInterfacer pip) {
     ManualPipelineRunner runner = new ManualPipelineRunner(eventBus, pipeline);
     runner.runPipeline();
     Optional out1 = pipeline.getSteps().get(1).getOutputSockets().get(0).getValue();
@@ -103,9 +102,9 @@ public class FindLinesGenerationTesting extends AbstractGenerationTesting {
     assertTrue(
         "Number of lines is not the same. grip: " + gripLin.size() + " gen: " + genLin.size(),
         (linOut.getLines().size() - genLin.size()) < 5);
-    for (int idx = 0; idx < genLin.size(); idx++) {
-      assertTrue("griplin does not contain: " + genLin.get(idx),
-          TestLine.containsLin(genLin.get(idx), gripLin));
+    for (TestLine testLine : genLin) {
+      assertTrue("griplin does not contain: " + testLine,
+          TestLine.containsLin(testLine, gripLin));
     }
   }
 

@@ -17,9 +17,10 @@ import java.util.Optional;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
+@SuppressWarnings("PMD.JUnitTestsShouldIncludeAssert")
 public class NewSizeGenerationTesting extends AbstractGenerationTesting {
 
-  void generatePipeline(double width, double height) {
+  private void generatePipeline(double width, double height) {
     Step desat = gen.addStep(
         new OperationMetaData(OperationDescription.from(NewSizeOperation.class),
             () -> new NewSizeOperation(isf, osf)));
@@ -40,7 +41,7 @@ public class NewSizeGenerationTesting extends AbstractGenerationTesting {
     }, (pip) -> pipelineTest(pip), "newSizeTest");
   }
 
-  void pipelineTest(PipelineInterfacer pip) {
+  private void pipelineTest(PipelineInterfacer pip) {
     new ManualPipelineRunner(eventBus, pipeline).runPipeline();
     Optional out = pipeline.getSteps().get(0).getOutputSockets().get(0).getValue();
     assertTrue("Output is not present", out.isPresent());

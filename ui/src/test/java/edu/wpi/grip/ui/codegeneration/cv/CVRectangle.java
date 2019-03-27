@@ -22,6 +22,7 @@ import java.util.Optional;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+@SuppressWarnings("PMD.JUnitTestsShouldIncludeAssert")
 public class CVRectangle extends AbstractGenerationTesting {
   private static final double x0 = 20;
   private static final double y0 = 40;
@@ -31,7 +32,7 @@ public class CVRectangle extends AbstractGenerationTesting {
   private static final double shift = 3;
 
 
-  boolean setup(String type) {
+  private boolean setup(String type) {
     Step step0 = gen.addStep(new OperationMetaData(
         OperationDescription.from(NewPointOperation.class), () -> new
         NewPointOperation(isf, osf)));
@@ -89,7 +90,7 @@ public class CVRectangle extends AbstractGenerationTesting {
   }
 
 
-  void validate(PipelineInterfacer pip) {
+  private void validate(PipelineInterfacer pip) {
     ManualPipelineRunner runner = new ManualPipelineRunner(eventBus, pipeline);
     runner.runPipeline();
     pip.setMatSource(0, Files.gompeiJpegFile.file);

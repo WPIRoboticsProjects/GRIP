@@ -20,9 +20,10 @@ import java.util.Optional;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+@SuppressWarnings("PMD.JUnitTestsShouldIncludeAssert")
 public class ResizeTesting extends AbstractGenerationTesting {
 
-  void setup(String interp) {
+  private void setup(String interp) {
     Step resize = gen.addStep(
         new OperationMetaData(OperationDescription.from(ResizeOperation.class),
             () -> new ResizeOperation(isf, osf)));
@@ -82,7 +83,7 @@ public class ResizeTesting extends AbstractGenerationTesting {
     }, (pip) -> pipelineTest(pip), "ResizeAreaTest");
   }
 
-  void pipelineTest(PipelineInterfacer pip) {
+  private void pipelineTest(PipelineInterfacer pip) {
     ManualPipelineRunner runner = new ManualPipelineRunner(eventBus, pipeline);
     runner.runPipeline();
     Optional out = pipeline.getSteps().get(0).getOutputSockets().get(0).getValue();

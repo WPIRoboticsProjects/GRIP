@@ -31,6 +31,7 @@ import static junit.framework.TestCase.assertSame;
 import static org.junit.Assert.assertTrue;
 
 @Category(GenerationTesting.class)
+@SuppressWarnings("PMD.JUnitTestsShouldIncludeAssert")
 public class FindContoursGenerationTesting extends AbstractGenerationTesting {
   private final List<Number> hVal = new ArrayList<Number>();
   private final List<Number> sVal = new ArrayList<Number>();
@@ -45,7 +46,7 @@ public class FindContoursGenerationTesting extends AbstractGenerationTesting {
     lVal.add(new Double(101.0));
   }
 
-  void generatePipeline(boolean externalBool) {
+  private void generatePipeline(boolean externalBool) {
     Step step0 = gen.addStep(new OperationMetaData(
         OperationDescription.from(HSLThresholdOperation.class),
         () -> new HSLThresholdOperation(isf, osf)));
@@ -94,7 +95,7 @@ public class FindContoursGenerationTesting extends AbstractGenerationTesting {
   }
 
 
-  void pipelineTest(PipelineInterfacer pip) {
+  private void pipelineTest(PipelineInterfacer pip) {
     ManualPipelineRunner runner = new ManualPipelineRunner(eventBus, pipeline);
     runner.runPipeline();
     Optional out1 = pipeline.getSteps().get(1).getOutputSockets().get(0).getValue();

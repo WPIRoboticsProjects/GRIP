@@ -20,9 +20,10 @@ import java.util.Optional;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+@SuppressWarnings("PMD.JUnitTestsShouldIncludeAssert")
 public class DesaturateGenerationTesting extends AbstractGenerationTesting {
 
-  void generatePipeline() {
+  private void generatePipeline() {
     Step desat = gen.addStep(new OperationMetaData(
         OperationDescription.from(DesaturateOperation.class),
         () -> new DesaturateOperation(isf, osf)));
@@ -43,7 +44,7 @@ public class DesaturateGenerationTesting extends AbstractGenerationTesting {
     }, (pip) -> pipelineTest(pip), "DesatTest");
   }
 
-  void pipelineTest(PipelineInterfacer pip) {
+  private void pipelineTest(PipelineInterfacer pip) {
     new ManualPipelineRunner(eventBus, pipeline).runPipeline();
     Optional out = pipeline.getSteps().get(0).getOutputSockets().get(0).getValue();
     assertTrue("Output is not present", out.isPresent());

@@ -30,6 +30,7 @@ import java.util.Optional;
 import static org.junit.Assert.assertTrue;
 
 @Category(GenerationTesting.class)
+@SuppressWarnings("PMD.JUnitTestsShouldIncludeAssert")
 public class ConvexHullsGenerationTesting extends AbstractGenerationTesting {
   private static final boolean externalBool = false;
   private final List<Number> hVal = new ArrayList<Number>();
@@ -45,7 +46,7 @@ public class ConvexHullsGenerationTesting extends AbstractGenerationTesting {
     lVal.add(new Double(101.0));
   }
 
-  void generatePipeline() {
+  private void generatePipeline() {
     Step step0 = gen.addStep(new OperationMetaData(
         OperationDescription.from(HSLThresholdOperation.class),
         () -> new HSLThresholdOperation(isf, osf)));
@@ -95,7 +96,7 @@ public class ConvexHullsGenerationTesting extends AbstractGenerationTesting {
     }, (pip) -> pipelineTest(pip), "ConvexHullsTest");
   }
 
-  void pipelineTest(PipelineInterfacer pip) {
+  private void pipelineTest(PipelineInterfacer pip) {
     ManualPipelineRunner runner = new ManualPipelineRunner(eventBus, pipeline);
     runner.runPipeline();
     Optional out = pipeline.getSteps().get(2).getOutputSockets().get(0).getValue();

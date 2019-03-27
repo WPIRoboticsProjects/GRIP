@@ -21,9 +21,10 @@ import java.util.Optional;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+@SuppressWarnings("PMD.JUnitTestsShouldIncludeAssert")
 public class CVAbsDiff extends AbstractGenerationTesting {
 
-  boolean set() {
+  private boolean set() {
     Step blur = gen.addStep(new OperationMetaData(
         OperationDescription.from(BlurOperation.class), () -> new
         BlurOperation(isf, osf)));
@@ -50,7 +51,7 @@ public class CVAbsDiff extends AbstractGenerationTesting {
     test(() -> set(), (pip) -> validate(pip), "AbsDiffTest");
   }
 
-  void validate(PipelineInterfacer pip) {
+  private void validate(PipelineInterfacer pip) {
     ManualPipelineRunner runner = new ManualPipelineRunner(eventBus, pipeline);
     runner.runPipeline();
     Optional out = pipeline.getSteps().get(1).getOutputSockets().get(0).getValue();

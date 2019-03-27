@@ -14,9 +14,10 @@ import java.util.Optional;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+@SuppressWarnings("PMD.JUnitTestsShouldIncludeAssert")
 public class HSVThresholdTesting extends AbstractGenerationTesting {
 
-  void set() {
+  private void set() {
     HSVThresholdSetup.setup(this);
   }
 
@@ -28,7 +29,7 @@ public class HSVThresholdTesting extends AbstractGenerationTesting {
     }, (pip) -> validate(pip), "HSVThresholdTesting");
   }
 
-  void validate(PipelineInterfacer pip) {
+  private void validate(PipelineInterfacer pip) {
     new ManualPipelineRunner(eventBus, pipeline).runPipeline();
     Optional out = pipeline.getSteps().get(0).getOutputSockets().get(0).getValue();
     assertTrue("Pipeline did not process", out.isPresent());

@@ -17,6 +17,7 @@ import java.util.Optional;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+@SuppressWarnings("PMD.JUnitTestsShouldIncludeAssert")
 public class CVCanny extends AbstractGenerationTesting {
   private static final double thresh1 = 50;
   private static final double thresh2 = 60;
@@ -24,7 +25,7 @@ public class CVCanny extends AbstractGenerationTesting {
   private static final boolean grad = true;
 
 
-  boolean set() {
+  private boolean set() {
     Step step = gen.addStep(opUtil.getMetaData("CV canny"));
     loadImage(Files.gompeiJpegFile);
     OutputSocket imgOut = pipeline.getSources().get(0).getOutputSockets().get(0);
@@ -42,7 +43,7 @@ public class CVCanny extends AbstractGenerationTesting {
     test(() -> set(), (pip) -> validate(pip), "cvcannyTest");
   }
 
-  void validate(PipelineInterfacer pip) {
+  private void validate(PipelineInterfacer pip) {
     ManualPipelineRunner runner = new ManualPipelineRunner(eventBus, pipeline);
     runner.runPipeline();
     pip.setMatSource(0, Files.gompeiJpegFile.file);

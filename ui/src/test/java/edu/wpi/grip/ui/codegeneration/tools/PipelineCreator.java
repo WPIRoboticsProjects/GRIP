@@ -15,8 +15,12 @@ import javax.tools.ToolProvider;
 
 import static org.junit.Assert.fail;
 
-public class PipelineCreator {
+@SuppressWarnings("PMD.AvoidUsingNativeCode")
+public final class PipelineCreator {
   private static final Logger logger = Logger.getLogger(PipelineCreator.class.getName());
+
+  private PipelineCreator() {
+  }
 
   static {
     System.loadLibrary(Core.NATIVE_LIBRARY_NAME);

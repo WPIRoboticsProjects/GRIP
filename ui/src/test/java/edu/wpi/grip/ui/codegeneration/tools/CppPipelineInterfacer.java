@@ -19,7 +19,7 @@ import java.util.logging.Logger;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
-@SuppressWarnings("PMD.UseLocaleWithCaseConversions")
+@SuppressWarnings({"PMD.UseLocaleWithCaseConversions", "PMD.AvoidUsingNativeCode"})
 public class CppPipelineInterfacer implements PipelineInterfacer {
   private static File codeDir;
   private final CppTMethods tMeth;
@@ -36,7 +36,6 @@ public class CppPipelineInterfacer implements PipelineInterfacer {
   public CppPipelineInterfacer(String libName) {
     tMeth = new CppTMethods();
     try {
-      String libBase = codeDir.getAbsolutePath() + File.separator + libName;
       if (System.getProperty("os.name").toLowerCase().contains("windows")) {
         Process cmake = new ProcessBuilder("cmake", "CMakeLists.txt", "-DNAME=" + libName, "-G",
             "Visual Studio 14 2015 Win64").directory(codeDir).start();
@@ -174,6 +173,7 @@ public class CppPipelineInterfacer implements PipelineInterfacer {
   @Override
   public native void process();
 
+  @SuppressWarnings("PMD.LinguisticNaming")
   private native void getMatNative(String name, long addr);
 
   private native double getDouble(String name);
@@ -184,12 +184,14 @@ public class CppPipelineInterfacer implements PipelineInterfacer {
 
   private native void init(String libName);
 
-  private native void dispose();
+  private native void dispose(); // NOPMD
 
   private native double[] getSizeOrPoint(String name, boolean size);
 
+  @SuppressWarnings("PMD.LinguisticNaming")
   private native void getBlobs(String name, long retAddr);
 
+  @SuppressWarnings("PMD.LinguisticNaming")
   private native int getNumContours(String name);
 
   private native double[][] getLines(String name);
@@ -201,6 +203,7 @@ public class CppPipelineInterfacer implements PipelineInterfacer {
    * @param addrs an array of nativeAddresses of MatOfPoint objects. Note the size of addrs should
    *              be the number returned from getNumContours.
    */
+  @SuppressWarnings("PMD.LinguisticNaming")
   private native void getContours(String name, long[] addrs);
 
   private long nativeHandle; //NOPMD

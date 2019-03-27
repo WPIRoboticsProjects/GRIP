@@ -17,9 +17,10 @@ import java.util.Optional;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+@SuppressWarnings("PMD.JUnitTestsShouldIncludeAssert")
 public class CVBitwiseNot extends AbstractGenerationTesting {
 
-  boolean set() {
+  private boolean set() {
     Step step = gen.addStep(opUtil.getMetaData("CV bitwiseNot"));
     loadImage(Files.gompeiJpegFile);
     OutputSocket imgOut = pipeline.getSources().get(0).getOutputSockets().get(0);
@@ -32,7 +33,7 @@ public class CVBitwiseNot extends AbstractGenerationTesting {
     test(() -> set(), (pip) -> validate(pip), "BitwiseNotTest");
   }
 
-  void validate(PipelineInterfacer pip) {
+  private void validate(PipelineInterfacer pip) {
     ManualPipelineRunner runner = new ManualPipelineRunner(eventBus, pipeline);
     runner.runPipeline();
     pip.setMatSource(0, Files.gompeiJpegFile.file);
