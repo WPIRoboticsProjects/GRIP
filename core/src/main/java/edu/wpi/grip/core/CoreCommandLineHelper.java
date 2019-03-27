@@ -156,14 +156,22 @@ public class CoreCommandLineHelper {
    * @throws IOException if the file couldn't be loaded
    */
   public void loadFile(CommandLine args, Project project) throws IOException {
+    File file;
     if (args.hasOption(FILE_OPTION)) {
-      String file = args.getOptionValue(FILE_OPTION);
-      try {
-        project.open(new File(file));
-      } catch (IOException e) {
-        logger.log(Level.WARNING, "Invalid file: " + file, e);
-        throw e;
-      }
+      file = new File(args.getOptionValue(FILE_OPTION));
+    } else if (args.getArgs().length > 0 && new File(args.getArgs()[0]).exists()) {
+      // If GRIP is set in the OS as the default app to open a file, its path will be passed as the
+      // first argument
+      file = new File(args.getArgs()[0]);
+    } else {
+      // No file specified
+      return;
+    }
+    try {
+      project.open(file);
+    } catch (IOException e) {
+      logger.log(Level.WARNING, "Invalid file: " + file, e);
+      throw e;
     }
   }
 
