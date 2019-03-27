@@ -120,7 +120,8 @@ jobs:
           gradleWrapperFile: 'gradlew'
           gradleOptions: '-Xmx1024m'
           publishJUnitResults: false
-          tasks: 'check jacocoTestReport jacocoRootReport :ui:jpackage -Pheadless=true -Pgeneration -PlogTests --stacktrace'
+          # TODO: run :ui:jpackage once we have a JDK 13 build for 32-bit Windows
+          tasks: 'check jacocoTestReport jacocoRootReport -Pheadless=true -Pgeneration -PlogTests --stacktrace'
 
       - task: CopyFiles@2
         inputs:
