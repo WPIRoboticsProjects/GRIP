@@ -89,7 +89,7 @@ public class ClassListProcessor extends AbstractProcessor {
 
   private static final class TypeNameExtractor extends SimpleTypeVisitor8<String, Void> {
 
-    static final TypeNameExtractor INSTANCE = new TypeNameExtractor();
+    public static final TypeNameExtractor INSTANCE = new TypeNameExtractor();
 
     @Override
     public String visitDeclared(DeclaredType t, Void o) {

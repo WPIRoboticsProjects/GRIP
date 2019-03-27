@@ -19,6 +19,10 @@ import static com.google.common.base.Preconditions.checkNotNull;
  */
 public final class MetaInfReader {
 
+  private MetaInfReader() {
+    throw new UnsupportedOperationException("This is a utility class!");
+  }
+
   /**
    * Reads all classes from the appropriate registry file.
    *
@@ -103,10 +107,10 @@ public final class MetaInfReader {
   @VisibleForTesting
   static String stripComment(String line) {
     int index = line.indexOf('#');
-    if (index != -1) {
-      return line.substring(0, index);
-    } else {
+    if (index == -1) {
       return line;
+    } else {
+      return line.substring(0, index);
     }
   }
 
