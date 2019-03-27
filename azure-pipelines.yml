@@ -27,8 +27,7 @@ jobs:
         inputs:
           workingDirectory: ''
           gradleWrapperFile: 'gradlew'
-          gradleOptions: '-Xmx3072m -Dorg.gradle.java.home=/usr/lib/jvm/java-8-oracle'
-          jdkUserInputPath: '/usr/lib/jvm/java-8-oracle'
+          gradleOptions: '-Xmx3072m'
           publishJUnitResults: false
           tasks: 'check jacocoTestReport jacocoRootReport :ui:jpackage -Pgeneration -PjniLocation=build/OpenCVJNI -Pheadless=true -PlogTests --stacktrace'
 
