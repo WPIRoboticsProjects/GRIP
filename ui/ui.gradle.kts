@@ -211,7 +211,12 @@ tasks.register<JpackageExec>("jpackage") {
     outputDir.set(buildDir.resolve("installer"))
     inputDir.set(collectDependencies.destinationDir)
     resourceDir.set(projectDir.resolve("installer-files"))
-    icon.set("installer-files/grip_TP6_icon.ico")
+    icon.set(projectDir.resolve("installer-files").resolve(when (OperatingSystem.current()) {
+        OperatingSystem.WINDOWS -> "grip_TP6_icon.ico"
+        OperatingSystem.MAC_OS -> "GRIP.icns"
+        OperatingSystem.LINUX -> "GRIP.png"
+        else -> throw UnsupportedOperationException("Unsupported OS")
+    }))
 
     jvmArgs.addAll("-Xmx200M")
 

@@ -20,7 +20,7 @@ jobs:
       - script: |
           $ProgressPreference = 'SilentlyContinue'
           wget "https://download.java.net/java/early_access/jpackage/30/openjdk-13-jpackage+30_linux-x64_bin.tar.gz" -O "build/jdk-13.tar.gz"
-          tar -xzf build/jdk-13.tar.gz -C build
+          tar -xzvf build/jdk-13.tar.gz -C build
         displayName: 'Download JDK 13'
       - task: JavaToolInstaller@0
         inputs:
@@ -117,8 +117,6 @@ jobs:
           workingDirectory: ''
           gradleWrapperFile: 'gradlew'
           gradleOptions: '-Xmx1024m'
-          jdkVersionOption: '1.11'
-          jdkArchitectureOption: 'x86'
           publishJUnitResults: false
           tasks: 'check jacocoTestReport jacocoRootReport :ui:jpackage -Pheadless=true -Pgeneration -PlogTests --stacktrace'
 
