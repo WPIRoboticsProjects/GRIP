@@ -17,6 +17,11 @@ jobs:
           $ProgressPreference = 'SilentlyContinue'
           wget "https://download.java.net/java/GA/jdk11/9/GPL/openjdk-11.0.2_linux-x64_bin.tar.gz" -O "build/jdk.tar.gz"
         displayName: 'Download JDK'
+      - script: |
+          $ProgressPreference = 'SilentlyContinue'
+          wget "https://download.java.net/java/early_access/jpackage/30/openjdk-13-jpackage+30_linux-x64_bin.tar.gz" -O "build/jdk-13.tar.gz"
+          tar -xzf build/jdk-13.tar.gz -C build
+        displayName: 'Download JDK 13'
       - task: JavaToolInstaller@0
         inputs:
           jdkSourceOption: localDirectory
@@ -29,7 +34,7 @@ jobs:
           gradleWrapperFile: 'gradlew'
           gradleOptions: '-Xmx3072m'
           publishJUnitResults: false
-          tasks: 'check jacocoTestReport jacocoRootReport :ui:jpackage -Pgeneration -PjniLocation=build/OpenCVJNI -Pheadless=true -PlogTests --stacktrace'
+          tasks: 'check jacocoTestReport jacocoRootReport :ui:jpackage -Pgeneration -PjniLocation=build/OpenCVJNI -Pheadless=true -PlogTests -Pjdk13=build/jdk-13 --stacktrace'
 
       - script: |
           curl -s https://codecov.io/bash > .codecov
@@ -59,6 +64,10 @@ jobs:
           $ProgressPreference = 'SilentlyContinue'
           wget "https://download.java.net/java/ga/jdk11/openjdk-11_windows-x64_bin.zip" -O "build\jdk.zip"
         displayName: 'Download JDK'
+      - powershell: |
+          $ProgressPreference = 'SilentlyContinue
+          wget "https://download.java.net/java/early_access/jpackage/30/openjdk-13-jpackage+30_osx-x64_bin.tar.gz" -O "build\jdk-13.zip"
+          unzip build\jdk-13.zip build
       - task: JavaToolInstaller@0
         inputs:
           jdkSourceOption: localDirectory
@@ -73,7 +82,7 @@ jobs:
           jdkVersionOption: '1.8'
           jdkArchitectureOption: 'x64'
           publishJUnitResults: true
-          tasks: 'check jacocoTestReport jacocoRootReport :ui:jpackage -Pheadless=true -Pgeneration -PlogTests --stacktrace'
+          tasks: 'check jacocoTestReport jacocoRootReport :ui:jpackage -Pheadless=true -Pgeneration -PlogTests -Pjdk13=build\jdk-13 --stacktrace'
 
       - task: CopyFiles@2
         inputs:
@@ -130,6 +139,8 @@ jobs:
       - script: |
           mkdir build
           wget "https://download.java.net/java/ga/jdk11/openjdk-11_osx-x64_bin.tar.gz" -O "build/jdk.tar.gz"
+          wget "https://download.java.net/java/early_access/jpackage/30/openjdk-13-jpackage+30_osx-x64_bin.tar.gz" -O "build/jdk-13.tar.gz"
+          sudo tar xzvf build/jdk-13.tar.gz -C /Library/Java/JavaVirtualMachines/
           sudo tar xvzf build/jdk.tar.gz -C /Library/Java/JavaVirtualMachines/
           export JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk-11.jdk/Contents/Home/
         displayName: 'Setup JDK'
@@ -141,7 +152,7 @@ jobs:
           jdkVersionOption: '1.8'
           jdkArchitectureOption: 'x64'
           publishJUnitResults: false
-          tasks: 'check jacocoTestReport jacocoRootReport :ui:jpackage -Pheadless=true -Pgeneration -PlogTests --stacktrace'
+          tasks: 'check jacocoTestReport jacocoRootReport :ui:jpackage -Pheadless=true -Pgeneration -PlogTests -Pjdk13=/Library/Java/JavaVirtualMachines/jdk-13.jdk/Contents/Home/ --stacktrace'
 
       - task: CopyFiles@2
         inputs:
