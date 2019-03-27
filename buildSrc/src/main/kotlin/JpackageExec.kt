@@ -1,5 +1,6 @@
 import org.gradle.api.DefaultTask
 import org.gradle.api.logging.LogLevel
+import org.gradle.api.provider.HasMultipleValues
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
 import org.gradle.internal.os.OperatingSystem
@@ -282,4 +283,8 @@ inline fun <reified T> Provider<T>.ifPresent(action: (T) -> Unit) {
     if (isPresent) {
         action(get())
     }
+}
+
+inline fun <reified T> HasMultipleValues<T>.setAll(vararg items: T) {
+    set(items.asList())
 }

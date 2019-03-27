@@ -197,7 +197,8 @@ tasks.register<JpackageExec>("jpackage") {
     // TODO: Since Gradle does not run on JDK 13, we need to pass in the JDK home as part of the build process
     // See https://github.com/gradle/gradle/issues/8681
     if (!project.properties.containsKey("jdk13")) {
-        throw IllegalStateException("The path to a valid JDK 13 installation with jpackage must be provided with -Pjdk13=/path/to/jdk-13")
+        logger.error("The path to a valid JDK 13 installation with jpackage must be provided with -Pjdk13=/path/to/jdk-13")
+        return@register
     }
 
     val cleanInstaller: Delete by tasks
@@ -211,14 +212,9 @@ tasks.register<JpackageExec>("jpackage") {
     outputDir.set(buildDir.resolve("installer"))
     inputDir.set(collectDependencies.destinationDir)
     resourceDir.set(projectDir.resolve("installer-files"))
-    icon.set(projectDir.resolve("installer-files").resolve(when (OperatingSystem.current()) {
-        OperatingSystem.WINDOWS -> "grip_TP6_icon.ico"
-        OperatingSystem.MAC_OS -> "GRIP.icns"
-        OperatingSystem.LINUX -> "GRIP.png"
-        else -> throw UnsupportedOperationException("Unsupported OS")
-    }))
+    icon.set(iconForCurrentOs())
 
-    jvmArgs.addAll("-Xmx200M")
+    jvmArgs.setAll("-Xmx200M")
 
     mainJar.set(collectDependencies.destinationDir.resolve("ui-${project.version}.jar"))
     mainClassName.set("edu.wpi.grip.ui.Launch")
@@ -257,3 +253,10 @@ fun installerTypeForCurrentOs() = when (OperatingSystem.current()) {
     OperatingSystem.LINUX -> "deb"
     else -> throw UnsupportedOperationException("Unsupported OS")
 }
+
+fun iconForCurrentOs() = projectDir.resolve("installer-files").resolve(when (OperatingSystem.current()) {
+    OperatingSystem.WINDOWS -> "grip_TP6_icon.ico"
+    OperatingSystem.MAC_OS -> "GRIP.icns"
+    OperatingSystem.LINUX -> "GRIP.png"
+    else -> throw UnsupportedOperationException("Unsupported OS")
+})
