@@ -20,7 +20,8 @@ jobs:
       - script: |
           $ProgressPreference = 'SilentlyContinue'
           wget "https://download.java.net/java/early_access/jpackage/30/openjdk-13-jpackage+30_linux-x64_bin.tar.gz" -O "build/jdk-13.tar.gz"
-          tar -xzvf build/jdk-13.tar.gz -C build
+          sudo mkdir /opt/java
+          sudo tar -xzvf build/jdk-13.tar.gz -C /opt/java
         displayName: 'Download JDK 13'
       - task: JavaToolInstaller@0
         inputs:
@@ -34,7 +35,7 @@ jobs:
           gradleWrapperFile: 'gradlew'
           gradleOptions: '-Xmx3072m'
           publishJUnitResults: false
-          tasks: 'check jacocoTestReport jacocoRootReport :ui:jpackage -Pgeneration -PjniLocation=build/OpenCVJNI -Pheadless=true -PlogTests -Pjdk13=build/jdk-13 --stacktrace'
+          tasks: 'check jacocoTestReport jacocoRootReport :ui:jpackage -Pgeneration -PjniLocation=build/OpenCVJNI -Pheadless=true -PlogTests -Pjdk13=/opt/java/jdk-13 --stacktrace'
 
       - script: |
           curl -s https://codecov.io/bash > .codecov
@@ -67,7 +68,8 @@ jobs:
       - powershell: |
           $ProgressPreference = 'SilentlyContinue'
           wget "https://download.java.net/java/early_access/jpackage/30/openjdk-13-jpackage+30_osx-x64_bin.tar.gz" -O "build\jdk-13.zip"
-          Expand-Archive build\jdk-13.zip build -DestinationPath build
+          Expand-Archive build\jdk-13.zip -DestinationPath build
+        displayName: 'Download JDK 13'
       - task: JavaToolInstaller@0
         inputs:
           jdkSourceOption: localDirectory
