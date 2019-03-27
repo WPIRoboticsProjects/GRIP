@@ -67,7 +67,7 @@ jobs:
         displayName: 'Download JDK'
       - powershell: |
           $ProgressPreference = 'SilentlyContinue'
-          wget "https://download.java.net/java/early_access/jpackage/30/openjdk-13-jpackage+30_osx-x64_bin.tar.gz" -O "build\jdk-13.zip"
+          wget "https://download.java.net/java/early_access/jpackage/30/openjdk-13-jpackage+30_windows-x64_bin.zip" -O "build\jdk-13.zip"
           Expand-Archive build\jdk-13.zip -DestinationPath build
         displayName: 'Download JDK 13'
       - task: JavaToolInstaller@0
