@@ -16,6 +16,8 @@ val os = osdetector.classifier.replace("osx", "macosx").replace("x86_32", "x86")
 val arch = osdetector.arch.replace("x86_64", "x64")
 
 dependencies {
+    api(project(":annotation"))
+    annotationProcessor(project(":annotation"))
     api(group = "com.google.code.findbugs", name = "jsr305", version = "3.0.1")
     api(group = "org.bytedeco", name = "javacv", version = "1.1")
     api(group = "org.bytedeco.javacpp-presets", name = "opencv", version = "3.0.0-1.1")

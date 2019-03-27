@@ -1,16 +1,16 @@
 package edu.wpi.grip.core.serialization;
 
+import edu.wpi.grip.annotation.processor.ClassListProcessor;
 import edu.wpi.grip.core.Pipeline;
 import edu.wpi.grip.core.PipelineRunner;
 import edu.wpi.grip.core.events.DirtiesSaveEvent;
 import edu.wpi.grip.core.events.WarningEvent;
+import edu.wpi.grip.core.util.MetaInfReader;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
-import com.google.common.reflect.ClassPath;
 import com.thoughtworks.xstream.XStream;
-import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.converters.reflection.PureJavaReflectionProvider;
 
 import java.io.File;
@@ -27,6 +27,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
+
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
@@ -62,20 +63,8 @@ public class Project {
     xstream.registerConverter(projectSettingsConverter);
     xstream.registerConverter(codeGenerationSettingsConverter);
     try {
-      ClassPath cp = ClassPath.from(getClass().getClassLoader());
-      cp.getAllClasses()
-          .stream()
-          .filter(ci -> ci.getPackageName().startsWith("edu.wpi.grip"))
-          .map(ClassPath.ClassInfo::load)
-          .filter(clazz -> clazz.isAnnotationPresent(XStreamAlias.class))
-          .forEach(clazz -> {
-            try {
-              xstream.processAnnotations(clazz);
-            } catch (InternalError ex) {
-              throw new AssertionError("Failed to load class: " + clazz.getName(), ex);
-            }
-
-          });
+      MetaInfReader.readClasses(ClassListProcessor.XSTREAM_ALIASES_FILE_NAME)
+          .forEach(xstream::processAnnotations);
     } catch (IOException ex) {
       throw new AssertionError("Could not load classes for XStream annotation processing", ex);
     }

@@ -1,5 +1,6 @@
 package edu.wpi.grip.core.operations.composite;
 
+import edu.wpi.grip.annotation.operation.PublishableObject;
 import edu.wpi.grip.core.operations.network.PublishValue;
 import edu.wpi.grip.core.operations.network.Publishable;
 import edu.wpi.grip.core.sockets.NoSocketTypeLabel;
@@ -15,6 +16,7 @@ import java.util.List;
 /**
  * Contains the results of a rectangle detection operation.
  */
+@PublishableObject
 @NoSocketTypeLabel
 public class RectsReport implements Publishable {
 

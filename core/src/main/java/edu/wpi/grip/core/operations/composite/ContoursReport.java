@@ -1,5 +1,6 @@
 package edu.wpi.grip.core.operations.composite;
 
+import edu.wpi.grip.annotation.operation.PublishableObject;
 import edu.wpi.grip.core.operations.network.PublishValue;
 import edu.wpi.grip.core.operations.network.Publishable;
 import edu.wpi.grip.core.sockets.NoSocketTypeLabel;
@@ -23,6 +24,7 @@ import static org.bytedeco.javacpp.opencv_imgproc.convexHull;
  * a list of points) in OpenCV objects, as well as the width and height of the image that the
  * contours are from, to give context to the points.
  */
+@PublishableObject
 @NoSocketTypeLabel
 public final class ContoursReport implements Publishable {
 

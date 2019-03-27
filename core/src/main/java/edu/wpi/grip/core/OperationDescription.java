@@ -1,5 +1,7 @@
 package edu.wpi.grip.core;
 
+import edu.wpi.grip.annotation.operation.Description;
+import edu.wpi.grip.annotation.operation.OperationCategory;
 import edu.wpi.grip.core.util.Icon;
 
 import com.google.common.base.MoreObjects;
@@ -23,7 +25,7 @@ public class OperationDescription {
 
   private final String name;
   private final String summary;
-  private final Category category;
+  private final OperationCategory category;
   private final Icon icon;
   private final ImmutableSet<String> aliases;
 
@@ -59,25 +61,26 @@ public class OperationDescription {
    */
   private OperationDescription(String name,
                                String summary,
-                               Category category,
+                               OperationCategory category,
                                Icon icon,
                                Set<String> aliases) {
     this.name = checkNotNull(name, "Name cannot be null");
     this.summary = checkNotNull(summary, "Summary cannot be null");
-    this.category = checkNotNull(category, "Category cannot be null");
+    this.category = checkNotNull(category, "OperationCategory cannot be null");
     this.icon = icon; // This is allowed to be null
     this.aliases = ImmutableSet.copyOf(checkNotNull(aliases, "Aliases cannot be null"));
   }
 
   /**
    * Creates a new {@link Builder} instance to create a new {@code OperationDescription} object. The
-   * created descriptor has a default category of {@link Category#MISCELLANEOUS MISCELLANEOUS} and
-   * no icon; use the {@link Builder#category(Category) .category()} and {@link Builder#icon(Icon)
-   * .icon()} methods to override the default values.
+   * created descriptor has a default category of
+   * {@link OperationCategory#MISCELLANEOUS MISCELLANEOUS} and no icon; use the
+   * {@link Builder#category(OperationCategory) .category()} and {@link Builder#icon(Icon) .icon()}
+   * methods to override the default values.
    */
   public static Builder builder() {
     return new Builder()
-        .category(Category.MISCELLANEOUS)
+        .category(OperationCategory.MISCELLANEOUS)
         .icon(null);
   }
 
@@ -98,7 +101,7 @@ public class OperationDescription {
   /**
    * @return What category the operation falls under.  This is used to organize them in the GUI.
    */
-  public Category category() {
+  public OperationCategory category() {
     return category;
   }
 
@@ -156,24 +159,12 @@ public class OperationDescription {
   }
 
   /**
-   * The categories that entries can be in.
-   */
-  public enum Category {
-    IMAGE_PROCESSING,
-    FEATURE_DETECTION,
-    NETWORK,
-    LOGICAL,
-    OPENCV,
-    MISCELLANEOUS,
-  }
-
-  /**
    * Builder class for {@code OperationDescription}.
    */
   public static final class Builder {
     private String name;
     private String summary = "PLEASE PROVIDE A DESCRIPTION TO THE OPERATION DESCRIPTION!";
-    private Category category;
+    private OperationCategory category;
     private Icon icon;
     private ImmutableSet<String> aliases = ImmutableSet.of(); // default to empty Set to
     // avoid NPE if not assigned
@@ -203,7 +194,7 @@ public class OperationDescription {
     /**
      * Sets the category.
      */
-    public Builder category(Category category) {
+    public Builder category(OperationCategory category) {
       this.category = checkNotNull(category);
       return this;
     }

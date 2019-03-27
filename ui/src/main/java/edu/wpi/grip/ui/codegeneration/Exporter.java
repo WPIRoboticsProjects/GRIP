@@ -1,6 +1,6 @@
 package edu.wpi.grip.ui.codegeneration;
 
-import edu.wpi.grip.core.OperationDescription;
+import edu.wpi.grip.annotation.operation.OperationCategory;
 import edu.wpi.grip.core.Step;
 import edu.wpi.grip.core.settings.CodeGenerationSettings;
 import edu.wpi.grip.ui.codegeneration.data.TPipeline;
@@ -121,7 +121,7 @@ public class Exporter implements Runnable {
   public Set<String> getNonExportableStepNames() {
     return steps.stream()
         .filter(s -> {
-          return s.getOperationDescription().category() != OperationDescription.Category.NETWORK;
+          return s.getOperationDescription().category() != OperationCategory.NETWORK;
         })
         .filter(s -> !isExportable(s))
         .map(s -> s.getOperationDescription().name())

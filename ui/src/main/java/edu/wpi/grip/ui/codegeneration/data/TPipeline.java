@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import static edu.wpi.grip.core.OperationDescription.Category.NETWORK;
+import static edu.wpi.grip.annotation.operation.OperationCategory.NETWORK;
 
 /**
  * TPipeline(template pipeline) is a data structure
