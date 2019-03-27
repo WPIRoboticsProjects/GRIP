@@ -1,8 +1,8 @@
 package edu.wpi.grip.core.operations.composite;
 
-import edu.wpi.grip.core.Description;
+import edu.wpi.grip.annotation.operation.Description;
+import edu.wpi.grip.annotation.operation.OperationCategory;
 import edu.wpi.grip.core.Operation;
-import edu.wpi.grip.core.OperationDescription;
 import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.core.sockets.SocketHint;
@@ -31,7 +31,7 @@ import static org.bytedeco.javacpp.opencv_imgproc.convexHull;
  */
 @Description(name = "Filter Contours",
              summary = "Find contours matching certain criteria",
-             category = OperationDescription.Category.FEATURE_DETECTION,
+             category = OperationCategory.FEATURE_DETECTION,
              iconName = "find-contours")
 @SuppressWarnings("PMD.TooManyFields")
 public class FilterContoursOperation implements Operation {

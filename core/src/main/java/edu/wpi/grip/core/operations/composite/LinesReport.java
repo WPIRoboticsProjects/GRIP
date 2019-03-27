@@ -1,5 +1,6 @@
 package edu.wpi.grip.core.operations.composite;
 
+import edu.wpi.grip.annotation.operation.PublishableObject;
 import edu.wpi.grip.core.operations.network.PublishValue;
 import edu.wpi.grip.core.operations.network.Publishable;
 import edu.wpi.grip.core.sockets.NoSocketTypeLabel;
@@ -19,6 +20,7 @@ import static org.bytedeco.javacpp.opencv_imgproc.createLineSegmentDetector;
  * GUI previews and line filtering operations) to have a type-safe way of operating on line
  * detection results and not just any random matrix.
  */
+@PublishableObject
 @NoSocketTypeLabel
 public class LinesReport implements Publishable {
   private final LineSegmentDetector lsd;

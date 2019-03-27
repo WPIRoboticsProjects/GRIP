@@ -174,6 +174,16 @@ public interface SocketHint<T> {
     public String getIdentifier() {
       return identifier;
     }
+
+    @Override
+    public String toString() {
+      return MoreObjects.toStringHelper(this)
+          .add("identifier", identifier)
+          .add("type", getType())
+          .add("view", getView())
+          .add("domain", getDomain())
+          .toString();
+    }
   }
 
   abstract class SocketHintDecorator<T> implements SocketHint<T> {

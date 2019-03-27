@@ -1,7 +1,7 @@
 package edu.wpi.grip.core.operations.opencv;
 
-import edu.wpi.grip.core.Description;
-import edu.wpi.grip.core.OperationDescription;
+import edu.wpi.grip.annotation.operation.Description;
+import edu.wpi.grip.annotation.operation.OperationCategory;
 import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.core.sockets.SocketHint;
@@ -17,7 +17,7 @@ import java.util.List;
 
 @Description(name = "Get Mat Info",
              summary = "Provide access to the various elements and properties of an image",
-             category = OperationDescription.Category.OPENCV,
+             category = OperationCategory.OPENCV,
              iconName = "opencv")
 public class MatFieldAccessor implements CVOperation {
 

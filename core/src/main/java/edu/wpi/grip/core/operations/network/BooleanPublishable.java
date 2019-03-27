@@ -1,5 +1,7 @@
 package edu.wpi.grip.core.operations.network;
 
+import edu.wpi.grip.annotation.operation.PublishableObject;
+
 import javax.annotation.concurrent.Immutable;
 
 /**
@@ -7,6 +9,7 @@ import javax.annotation.concurrent.Immutable;
  */
 @Immutable
 @PublishableProxy(Boolean.class)
+@PublishableObject
 public final class BooleanPublishable implements Publishable {
   private final boolean bool;
 

@@ -1,5 +1,6 @@
 package edu.wpi.grip.core.operations.composite;
 
+import edu.wpi.grip.annotation.operation.PublishableObject;
 import edu.wpi.grip.core.operations.network.PublishValue;
 import edu.wpi.grip.core.operations.network.Publishable;
 import edu.wpi.grip.core.sockets.NoSocketTypeLabel;
@@ -14,6 +15,7 @@ import static org.bytedeco.javacpp.opencv_core.Mat;
 /**
  * This class is used as the output of operations that detect blobs in an image.
  */
+@PublishableObject
 @NoSocketTypeLabel
 public class BlobsReport implements Publishable {
   private final Mat input;
