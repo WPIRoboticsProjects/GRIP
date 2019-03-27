@@ -4,7 +4,6 @@ import edu.wpi.grip.annotation.operation.Description;
 import edu.wpi.grip.annotation.operation.PublishableObject;
 
 import com.google.auto.service.AutoService;
-import com.google.common.collect.ImmutableMap;
 
 import java.io.IOException;
 import java.io.Writer;
@@ -35,7 +34,7 @@ import javax.tools.StandardLocation;
         "edu.wpi.grip.annotation.*",
         "com.thoughtworks.xstream.annotations.XStreamAlias"
     })
-@SupportedSourceVersion(SourceVersion.RELEASE_8)
+@SupportedSourceVersion(SourceVersion.RELEASE_11)
 @AutoService(Processor.class)
 public class ClassListProcessor extends AbstractProcessor {
 
@@ -43,7 +42,7 @@ public class ClassListProcessor extends AbstractProcessor {
   public static final String PUBLISHABLES_FILE_NAME = "publishables";
   public static final String XSTREAM_ALIASES_FILE_NAME = "xstream-aliases";
 
-  private final Map<String, String> fileNames = ImmutableMap.of(
+  private final Map<String, String> fileNames = Map.of(
       Description.class.getName(), OPERATIONS_FILE_NAME,
       PublishableObject.class.getName(), PUBLISHABLES_FILE_NAME,
       "com.thoughtworks.xstream.annotations.XStreamAlias", XSTREAM_ALIASES_FILE_NAME
