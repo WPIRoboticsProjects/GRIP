@@ -2,7 +2,7 @@ install:
   - choco install -y InnoSetup
 
 build_script:
-  - gradlew.bat jfxNative --no-daemon --stacktrace
+  - gradlew.bat :ui:jpackage --no-daemon --stacktrace
 
 # to run your custom scripts instead of automatic tests
 test_script:
@@ -12,7 +12,7 @@ platform:
   - x64
 
 artifacts:
-  - path: ui\build\jfx\native\*.exe
+  - path: ui\build\installer\*.exe
 
 
 deploy:
