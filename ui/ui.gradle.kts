@@ -211,8 +211,6 @@ tasks.register<JpackageExec>("jpackage") {
     verbose.set(true)
     outputDir.set(buildDir.resolve("installer"))
     inputDir.set(collectDependencies.destinationDir)
-    resourceDir.set(projectDir.resolve("installer-files"))
-    icon.set(iconForCurrentOs())
 
     jvmArgs.setAll("-Xmx200M")
 
@@ -229,7 +227,8 @@ tasks.register<JpackageExec>("jpackage") {
     licenseFile.set(rootDir.resolve("LICENSE.txt"))
     applicationVendor.set("Worcester Polytechnic Institute")
     identifier.set("edu.wpi.grip")
-    installerType.set(installerTypeForCurrentOs())
+
+    configureForCurrentOs()
 
     winUpgradeUuid.set("d74b4d69-a88a-47ef-b972-9a7911cf7af1")
     winRegistryName.set("edu.wpi.grip")
@@ -254,9 +253,36 @@ fun installerTypeForCurrentOs() = when (OperatingSystem.current()) {
     else -> throw UnsupportedOperationException("Unsupported OS")
 }
 
-fun iconForCurrentOs() = projectDir.resolve("installer-files").resolve(when (OperatingSystem.current()) {
-    OperatingSystem.WINDOWS -> "grip_TP6_icon.ico"
-    OperatingSystem.MAC_OS -> "GRIP.icns"
-    OperatingSystem.LINUX -> "GRIP.png"
-    else -> throw UnsupportedOperationException("Unsupported OS")
-})
+/**
+ * The base directory for installer files.
+ */
+val installerFilesBaseDir by lazy {
+    projectDir.resolve("installer-files")
+}
+
+/**
+ * Configures a jpackage task for the current operating system.
+ */
+fun JpackageExec.configureForCurrentOs() {
+    when (OperatingSystem.current()) {
+        OperatingSystem.WINDOWS -> {
+            val installerFileDir = installerFilesBaseDir.resolve("win")
+            resourceDir.set(installerFileDir)
+            icon.set(installerFileDir.resolve("grip_TP6_icon.ico"))
+            fileAssociations.set(installerFileDir.resolve("file-associations.properties"))
+            installerType.set("exe")
+        }
+        OperatingSystem.MAC_OS -> {
+            val installerFileDir = installerFilesBaseDir.resolve("mac")
+            resourceDir.set(installerFileDir)
+            icon.set(installerFileDir.resolve("GRIP.icns"))
+            installerType.set("dmg")
+        }
+        OperatingSystem.LINUX -> {
+            val installerFileDir = installerFilesBaseDir.resolve("linux")
+            resourceDir.set(installerFileDir)
+            icon.set(installerFileDir.resolve("GRIP.png"))
+            installerType.set("deb")
+        }
+    }
+}

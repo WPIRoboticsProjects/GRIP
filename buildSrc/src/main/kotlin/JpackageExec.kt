@@ -147,6 +147,14 @@ open class JpackageExec : DefaultTask() {
     val identifier = stringProperty()
 
     /**
+     * A properties file containing key-value pairs for file association integration.
+     * Currently broken on Linux and Mac.
+     */
+    @get:Input
+    @get:Optional
+    val fileAssociations = objectFactory.fileProperty()
+
+    /**
      * The type of installer to generate. Windows supports "exe" (requires InnoSetup) and "msi".
      * Mac supports "dmg" and "pkg". Linux supports "deb" and "rpm".
      */
@@ -246,6 +254,9 @@ open class JpackageExec : DefaultTask() {
             }
             identifier.ifPresent { id ->
                 args.addAll("--identifier", id)
+            }
+            fileAssociations.ifPresent { propsFile ->
+                args.addAll("--file-associations", propsFile.asFile.absolutePath)
             }
             args.addAll("--installer-type", installerType.get())
 
