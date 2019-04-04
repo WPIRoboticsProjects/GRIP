@@ -12,14 +12,13 @@ val currentPlatform: NativePlatforms by lazy {
         else -> throw UnsupportedOperationException("Unknown OS: $osName")
     }
     val osArch = System.getProperty("os.arch")
-    val arch: String =
-            if (osArch.contains("x86_64") || osArch.contains("amd64")) {
-                "64"
-            } else if (osArch.contains("x86")) {
-                "32"
-            } else {
-                throw UnsupportedOperationException(osArch)
-            }
+    val arch: String = if (osArch.contains("x86_64") || osArch.contains("amd64")) {
+        "64"
+    } else if (osArch.contains("x86")) {
+        "32"
+    } else {
+        throw UnsupportedOperationException(osArch)
+    }
     NativePlatforms.forName(os + arch)
 }
 
@@ -45,7 +44,7 @@ fun javaCppClassifier(platform: NativePlatforms) = when (platform) {
 
 /**
  * Generates a classifier string for a platform-specific JavaFX artifact.
-*/
+ */
 fun javaFxClassifier(platform: NativePlatforms) = when (platform) {
     WIN32 -> "win32"
     WIN64 -> "win"
