@@ -17,7 +17,7 @@ plugins {
     `jacoco`
     `checkstyle`
     `pmd`
-    id("com.github.johnrengelman.shadow") version "4.0.3"
+    id("com.github.johnrengelman.shadow") version "4.0.1"
     id("com.google.osdetector") version "1.4.0"
     id("org.ajoberstar.grgit") version "2.0.0" apply false
     //id("net.ltgt.errorprone") version "0.0.16"
