@@ -15,6 +15,8 @@ import com.google.common.hash.Hashing;
 import com.google.common.io.LineReader;
 import com.google.common.io.Resources;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 import net.schmizz.sshj.SSHClient;
 import net.schmizz.sshj.common.StreamCopier;
 import net.schmizz.sshj.connection.channel.direct.Session;
@@ -181,6 +183,7 @@ public class DeployController {
    * deployment.
    */
   @SuppressWarnings({"PMD.AvoidUsingOctalValues", "PMD.ExcessiveMethodLength"})
+  @SuppressFBWarnings(value = "RCN", justification = "False positive on local var 'session'")
   private void deploy() {
     setStatusAsync("Connecting to " + address.getText(), false);
 
