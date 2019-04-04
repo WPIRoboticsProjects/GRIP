@@ -5,10 +5,12 @@ plugins {
 createNativeConfigurations()
 
 dependencies {
-    javafx("base")
-    javafx("controls")
-    javafx("fxml")
-    javafx("graphics")
+    if (BuildType.isJdk11) {
+        javafx("base")
+        javafx("controls")
+        javafx("fxml")
+        javafx("graphics")
+    }
 }
 
 application {

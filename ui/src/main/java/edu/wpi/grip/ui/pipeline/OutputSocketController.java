@@ -93,7 +93,7 @@ public class OutputSocketController implements Controller {
   @Subscribe
   public void onSocketChanged(SocketChangedEvent event) {
     if (event.isRegarding(this.socket)) {
-      if (this.socket.getValue().isEmpty()) {
+      if (!this.socket.getValue().isPresent()) { // NOPMD
         // No value
         handlePreview(false);
       } else if (this.socket.getValue().get() instanceof Mat) {

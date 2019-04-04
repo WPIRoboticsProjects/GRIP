@@ -142,7 +142,7 @@ public class MainWindowController {
       dialog.setHeaderText("Save the current project first?");
       dialog.getDialogPane().getButtonTypes().setAll(save, dontSave, cancel);
 
-      if (dialog.showAndWait().isEmpty()) {
+      if (!dialog.showAndWait().isPresent()) { // NOPMD
         return false;
       } else if (dialog.getResult().equals(cancel)) {
         return false;

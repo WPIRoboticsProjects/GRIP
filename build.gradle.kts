@@ -145,6 +145,10 @@ javaSubprojects {
         source(tasks.named<JavaCompile>("compileJava").map { it.source })
     }
 
+    tasks.withType<JavaCompile>().configureEach {
+        sourceCompatibility = "8"
+    }
+
 }
 
 tasks.register<JacocoReport>("jacocoRootReport") {
