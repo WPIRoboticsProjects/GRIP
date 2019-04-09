@@ -81,7 +81,7 @@ public class Main {
       gripServer.start();
     } catch (GripServerException e) {
       logger.log(Level.SEVERE, "The HTTP server could not be started", e);
-      SafeShutdown.exit(1);
+      SafeShutdown.exit(SafeShutdown.ExitCodes.HTTP_SERVER_COULD_NOT_START);
     }
 
     if (pipelineRunner.state() == Service.State.NEW) {

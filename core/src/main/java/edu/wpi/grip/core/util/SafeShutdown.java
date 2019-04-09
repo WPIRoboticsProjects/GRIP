@@ -14,6 +14,31 @@ public final class SafeShutdown {
 
   public static volatile boolean stopping = false;
 
+  /**
+   * Exit codes used by the GRIP application.
+   */
+  public static final class ExitCodes {
+    /**
+     * Clean shutdown.
+     */
+    public static final int SAFE_SHUTDOWN = 0x00;
+
+    /**
+     * An unknown exception was thrown and uncaught.
+     */
+    public static final int MISC_ERROR = 0x01;
+
+    /**
+     * The HTTP server cannot start (typically due to the port already being in use).
+     */
+    public static final int HTTP_SERVER_COULD_NOT_START = 0x02;
+
+    /**
+     * CUDA is required by OpenCV but no compatible runtime is available on the system.
+     */
+    public static final int CUDA_UNAVAILABLE = 0x04;
+  }
+
   static {
     /*
      * Shutdown hook run order is non-deterministic but this increases our likelihood of

@@ -3,6 +3,8 @@ package edu.wpi.grip.ui;
 import edu.wpi.grip.core.GripCoreModule;
 import edu.wpi.grip.core.GripFileModule;
 import edu.wpi.grip.core.PipelineRunner;
+import edu.wpi.grip.core.cuda.AccelerationMode;
+import edu.wpi.grip.core.cuda.CudaDetector;
 import edu.wpi.grip.core.events.UnexpectedThrowableEvent;
 import edu.wpi.grip.core.exception.GripServerException;
 import edu.wpi.grip.core.http.GripServer;
@@ -65,6 +67,8 @@ public class Main extends Application {
   @Inject private CVOperations cvOperations;
   @Inject private GripServer server;
   @Inject private HttpPipelineSwitcher pipelineSwitcher;
+  @Inject private CudaDetector cudaDetector;
+  @Inject private AccelerationMode accelerationMode;
   private Parent root;
   private boolean headless;
   private final UICommandLineHelper commandLineHelper = new UICommandLineHelper();
@@ -102,6 +106,8 @@ public class Main extends Application {
       Font.loadFont(this.getClass().getResource("roboto/Roboto-BoldItalic.ttf").openStream(), -1);
       notifyPreloader(new Preloader.ProgressNotification(0.3));
     }
+
+    verifyCuda();
 
     notifyPreloader(new Preloader.ProgressNotification(0.45));
     server.addHandler(pipelineSwitcher);
@@ -160,13 +166,28 @@ public class Main extends Application {
               + "HTTP sources and operations will not work until GRIP is restarted. "
               + "Continue without HTTP functionality anyway?"
       );
-      alert.showAndWait().filter(ButtonType.NO::equals).ifPresent(bt -> SafeShutdown.exit(1));
+      alert.showAndWait()
+          .filter(ButtonType.NO::equals)
+          .ifPresent(bt -> SafeShutdown.exit(SafeShutdown.ExitCodes.HTTP_SERVER_COULD_NOT_START));
     }
   }
 
   @Override
   public void stop() {
     SafeShutdown.flagStopping();
+  }
+
+  /**
+   * Verifies that GRIP can run if using CUDA-accelerated OpenCV.
+   */
+  private void verifyCuda() {
+    if (accelerationMode.isUsingCuda() && !cudaDetector.isCompatibleCudaInstalled()) {
+      logger.severe("This version of GRIP requires CUDA "
+          + CudaDetector.REQUIRED_VERSION + " to be installed and an NVIDIA graphics card. "
+          + "Install the appropriate CUDA runtime for your computer, or use a version of GRIP "
+          + "that does not use CUDA.");
+      SafeShutdown.exit(SafeShutdown.ExitCodes.CUDA_UNAVAILABLE);
+    }
   }
 
   @Subscribe
@@ -195,8 +216,8 @@ public class Main extends Application {
                 try {
                   logger.log(Level.SEVERE, "Failed to show exception alert", e);
                 } finally {
-                  SafeShutdown.exit(1); // Ensure we shut down the application if we get an
-                  // exception
+                  // Ensure we shut down the application if we get an exception
+                  SafeShutdown.exit(SafeShutdown.ExitCodes.MISC_ERROR);
                 }
               }
             }
