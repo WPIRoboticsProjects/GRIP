@@ -27,15 +27,32 @@ import static org.bytedeco.javacpp.opencv_core.IPL_DEPTH_8U;
 /**
  * Wraps a GPU mat and a CPU mat and allows device memory and host memory
  * to be used semi-transparently. A wrapper may change between wrapping an image in host memory or
- * an image in GPU memory. A wrapper is used to minimize copies between host and GPU memory, which
- * may take longer than the time savings of using a GPU-accelerated operation.
+ * an image in GPU memory. A wrapper is used to minimize copies between host and device memory,
+ * which may take longer than the time savings of using a CUDA-accelerated operation.
+ *
+ * <p>Data is lazily copied between host and device memory when needed. Wrappers that
+ * are only accessed from CPU operations will never have their data stored in device memory.
+ * Accessing a wrapper from CUDA land with {@link #getGpu()} will first copy the existing data from
+ * host memory to device, if the wrapper was most recently accessed from CPU code (from either
+ * {@link #getCpu()} or {@link #rawCpu()}). This behavior also applies in the reverse, for wrappers
+ * accessed from CPU land when they have been most recently used from CUDA code.
  */
 @SuppressWarnings("PMD.GodClass")
 public final class MatWrapper {
 
   private final Mat cpuMat;
   private final GpuMat gpuMat;
+
+  /**
+   * Flags whether or not the wrapped data is in host memory. Data may still be available in device
+   * memory, but the value in host memory will be the working version.
+   */
   private boolean isCpu = true;
+
+  /**
+   * Flags whether or not the wrapped value has been modified since the most recent read. This
+   * is used so that the value is only copied between host and device when it's needed.
+   */
   private boolean changed = false;
 
   /**
@@ -103,6 +120,8 @@ public final class MatWrapper {
    * {@link #getCpu()}.
    */
   public synchronized Mat rawCpu() {
+    // Assume the mat is about to be modified as a `dst` parameter to an OpenCV function
+    // running on the CPU
     isCpu = true;
     changed = true;
     return cpuMat;
@@ -114,6 +133,8 @@ public final class MatWrapper {
    * {@link #getGpu()}.
    */
   public synchronized GpuMat rawGpu() {
+    // Assume the mat is about to be modified as a `dst` parameter to an OpenCV function
+    // running on a CUDA device
     isCpu = false;
     changed = true;
     return gpuMat;
