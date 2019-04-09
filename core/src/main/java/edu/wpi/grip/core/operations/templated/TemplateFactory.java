@@ -112,6 +112,84 @@ public final class TemplateFactory {
         performer);
   }
 
+  public <T1, R> Supplier<Operation> createCuda(
+      SocketHint<T1> t1SocketHint,
+      SocketHint<R> rSocketHint,
+      OneSourceOneDestinationCudaOperation.Performer<T1, R> performer) {
+    return () -> new OneSourceOneDestinationCudaOperation<>(isf, osf, t1SocketHint,
+        rSocketHint, performer);
+  }
+
+  public <T1, T2, R> Supplier<Operation> createCuda(
+      SocketHint<T1> t1SocketHint,
+      SocketHint<T2> t2SocketHint,
+      SocketHint<R> rSocketHint,
+      TwoSourceOneDestinationCudaOperation.Performer<T1, T2, R> performer) {
+    return () -> new TwoSourceOneDestinationCudaOperation<>(isf, osf, t1SocketHint, t2SocketHint,
+        rSocketHint, performer);
+  }
+
+  public <T1, T2, T3, R> Supplier<Operation> createCuda(
+      SocketHint<T1> t1SocketHint,
+      SocketHint<T2> t2SocketHint,
+      SocketHint<T3> t3SocketHint,
+      SocketHint<R> rSocketHint,
+      ThreeSourceOneDestinationCudaOperation.Performer<T1, T2, T3, R> performer) {
+    return () -> new ThreeSourceOneDestinationCudaOperation<>(isf, osf, t1SocketHint, t2SocketHint,
+        t3SocketHint, rSocketHint, performer);
+  }
+
+  public <T1, T2, T3, T4, R> Supplier<Operation> createCuda(
+      SocketHint<T1> t1SocketHint,
+      SocketHint<T2> t2SocketHint,
+      SocketHint<T3> t3SocketHint,
+      SocketHint<T4> t4SocketHint,
+      SocketHint<R> rSocketHint,
+      FourSourceOneDestinationCudaOperation.Performer<T1, T2, T3, T4, R> performer) {
+    return () -> new FourSourceOneDestinationCudaOperation<>(isf, osf, t1SocketHint, t2SocketHint,
+        t3SocketHint, t4SocketHint, rSocketHint, performer);
+  }
+
+  public <T1, T2, T3, T4, T5, R> Supplier<Operation> createCuda(
+      SocketHint<T1> t1SocketHint,
+      SocketHint<T2> t2SocketHint,
+      SocketHint<T3> t3SocketHint,
+      SocketHint<T4> t4SocketHint,
+      SocketHint<T5> t5SocketHint,
+      SocketHint<R> rSocketHint,
+      FiveSourceOneDestinationCudaOperation.Performer<T1, T2, T3, T4, T5, R> performer) {
+    return () -> new FiveSourceOneDestinationCudaOperation<>(isf, osf, t1SocketHint, t2SocketHint,
+        t3SocketHint, t4SocketHint, t5SocketHint, rSocketHint, performer);
+  }
+
+  public <T1, T2, T3, T4, T5, T6, R> Supplier<Operation> createCuda(
+      SocketHint<T1> t1SocketHint,
+      SocketHint<T2> t2SocketHint,
+      SocketHint<T3> t3SocketHint,
+      SocketHint<T4> t4SocketHint,
+      SocketHint<T5> t5SocketHint,
+      SocketHint<T6> t6SocketHint,
+      SocketHint<R> rSocketHint,
+      SixSourceOneDestinationCudaOperation.Performer<T1, T2, T3, T4, T5, T6, R> performer) {
+    return () -> new SixSourceOneDestinationCudaOperation<>(isf, osf, t1SocketHint, t2SocketHint,
+        t3SocketHint, t4SocketHint, t5SocketHint, t6SocketHint, rSocketHint, performer);
+  }
+
+  public <T1, T2, T3, T4, T5, T6, T7, R> Supplier<Operation> createCuda(
+      SocketHint<T1> t1SocketHint,
+      SocketHint<T2> t2SocketHint,
+      SocketHint<T3> t3SocketHint,
+      SocketHint<T4> t4SocketHint,
+      SocketHint<T5> t5SocketHint,
+      SocketHint<T6> t6SocketHint,
+      SocketHint<T7> t7SocketHint,
+      SocketHint<R> rSocketHint,
+      SevenSourceOneDestinationCudaOperation.Performer<T1, T2, T3, T4, T5, T6, T7, R> performer) {
+    return () -> new SevenSourceOneDestinationCudaOperation<>(isf, osf, t1SocketHint, t2SocketHint,
+        t3SocketHint, t4SocketHint, t5SocketHint, t6SocketHint, t7SocketHint, rSocketHint,
+        performer);
+  }
+
   public Supplier<Operation> createAllMatTwoSource(
       SocketHint<MatWrapper> matSocketHint,
       SocketHint<MatWrapper> matSocketHint2,
@@ -127,6 +205,17 @@ public final class TemplateFactory {
         dstMatSocketHint(), performer);
   }
 
+  public Supplier<Operation> createAllMatTwoSourceCuda(
+      TwoSourceOneDestinationCudaOperation.Performer<MatWrapper, MatWrapper, MatWrapper>
+          performer) {
+    return createCuda(
+        srcSocketHint(MatWrapper.class, 1),
+        srcSocketHint(MatWrapper.class, 2),
+        dstMatSocketHint(),
+        performer
+    );
+  }
+
   public Supplier<Operation> createAllMatOneSource(
       SocketHint<MatWrapper> matSocketHint,
       SocketHint<MatWrapper> matSocketHint2,
@@ -140,6 +229,14 @@ public final class TemplateFactory {
         performer);
   }
 
+  public Supplier<Operation> createAllMatOneSourceCuda(
+      OneSourceOneDestinationCudaOperation.Performer<MatWrapper, MatWrapper> performer) {
+    return createCuda(
+        srcSocketHint(MatWrapper.class, 1),
+        dstMatSocketHint(),
+        performer
+    );
+  }
 
   private <R> SocketHint<R> srcSocketHint(Class<R> srcType, int index) {
     return new SocketHint.Builder<>(srcType).identifier("src" + index).build();

@@ -26,6 +26,9 @@ import com.google.inject.Inject;
 import org.bytedeco.javacpp.opencv_core.Point;
 import org.bytedeco.javacpp.opencv_core.Scalar;
 import org.bytedeco.javacpp.opencv_core.Size;
+import org.bytedeco.javacpp.opencv_cudaarithm;
+import org.bytedeco.javacpp.opencv_cudafilters.Filter;
+import org.bytedeco.javacpp.opencv_cudaimgproc;
 import org.bytedeco.javacpp.opencv_imgproc;
 
 import static org.bytedeco.javacpp.opencv_core.absdiff;
@@ -45,6 +48,7 @@ import static org.bytedeco.javacpp.opencv_core.multiply;
 import static org.bytedeco.javacpp.opencv_core.scaleAdd;
 import static org.bytedeco.javacpp.opencv_core.subtract;
 import static org.bytedeco.javacpp.opencv_core.transpose;
+import static org.bytedeco.javacpp.opencv_cudafilters.createSobelFilter;
 import static org.bytedeco.javacpp.opencv_imgproc.GaussianBlur;
 import static org.bytedeco.javacpp.opencv_imgproc.Laplacian;
 import static org.bytedeco.javacpp.opencv_imgproc.Sobel;
@@ -74,64 +78,98 @@ public class CVOperations {
     this.coreOperations = ImmutableList.of(
         new OperationMetaData(CVOperation.defaults("CV absdiff",
             "Calculate the per-element absolute difference of two images."),
-            templateFactory.createAllMatTwoSource((src1, src2, dst) -> {
-              absdiff(src1.getCpu(), src2.getCpu(), dst.rawCpu());
+            templateFactory.createAllMatTwoSourceCuda((src1, src2, useCuda, dst) -> {
+              if (useCuda) {
+                opencv_cudaarithm.absdiff(src1.getGpu(), src2.getGpu(), dst.rawGpu());
+              } else {
+                absdiff(src1.getCpu(), src2.getCpu(), dst.rawCpu());
+              }
             })),
 
         new OperationMetaData(CVOperation.defaults("CV add",
             "Calculate the per-pixel sum of two images."),
-            templateFactory.createAllMatTwoSource((src1, src2, dst) -> {
-              add(src1.getCpu(), src2.getCpu(), dst.rawCpu());
+            templateFactory.createAllMatTwoSourceCuda((src1, src2, useCuda, dst) -> {
+              if (useCuda) {
+                opencv_cudaarithm.add(src1.getGpu(), src2.getGpu(), dst.rawGpu());
+              } else {
+                add(src1.getCpu(), src2.getCpu(), dst.rawCpu());
+              }
             })),
 
         new OperationMetaData(CVOperation.defaults("CV addWeighted",
             "Calculate the weighted sum of two images."),
-            templateFactory.create(
+            templateFactory.createCuda(
                 SocketHints.createImageSocketHint("src1"),
                 SocketHints.Inputs.createNumberSpinnerSocketHint("alpha", 0),
                 SocketHints.createImageSocketHint("src2"),
                 SocketHints.Inputs.createNumberSpinnerSocketHint("beta", 0),
                 SocketHints.Inputs.createNumberSpinnerSocketHint("gamma", 0),
                 SocketHints.createImageSocketHint("dst"),
-                (src1, alpha, src2, beta, gamma, dst) -> {
-                  addWeighted(src1.getCpu(), alpha.doubleValue(), src2.getCpu(), beta.doubleValue(),
-                      gamma.doubleValue(), dst.rawCpu());
+                (src1, alpha, src2, beta, gamma, useCuda, dst) -> {
+                  if (useCuda) {
+                    opencv_cudaarithm.addWeighted(src1.getGpu(), alpha.doubleValue(), src2.getGpu(),
+                        beta.doubleValue(), gamma.doubleValue(), dst.rawGpu());
+                  } else {
+                    addWeighted(src1.getCpu(), alpha.doubleValue(), src2.getCpu(),
+                        beta.doubleValue(), gamma.doubleValue(), dst.rawCpu());
+                  }
                 }
             )),
 
         new OperationMetaData(CVOperation.defaults("CV bitwise_and",
             "Calculate the per-element bitwise conjunction of two images."),
-            templateFactory.createAllMatTwoSource((src1, src2, dst) -> {
-              bitwise_and(src1.getCpu(), src2.getCpu(), dst.rawCpu());
+            templateFactory.createAllMatTwoSourceCuda((src1, src2, useCuda, dst) -> {
+              if (useCuda) {
+                opencv_cudaarithm.bitwise_and(src1.getGpu(), src2.getGpu(), dst.rawGpu());
+              } else {
+                bitwise_and(src1.getCpu(), src2.getCpu(), dst.rawCpu());
+              }
             })),
 
         new OperationMetaData(CVOperation.defaults("CV bitwise_not",
             "Calculate per-element bit-wise inversion of an image."),
-            templateFactory.createAllMatOneSource((src, dst) -> {
-              bitwise_not(src.getCpu(), dst.rawCpu());
+            templateFactory.createAllMatOneSourceCuda((src, useCuda, dst) -> {
+              if (useCuda) {
+                opencv_cudaarithm.bitwise_not(src.getGpu(), dst.rawGpu());
+              } else {
+                bitwise_not(src.getCpu(), dst.rawCpu());
+              }
             })),
 
         new OperationMetaData(CVOperation.defaults("CV bitwise_or",
             "Calculate the per-element bit-wise disjunction of two images."),
-            templateFactory.createAllMatTwoSource((src1, src2, dst) -> {
-              bitwise_or(src1.getCpu(), src2.getCpu(), dst.rawCpu());
+            templateFactory.createAllMatTwoSourceCuda((src1, src2, useCuda, dst) -> {
+              if (useCuda) {
+                opencv_cudaarithm.bitwise_or(src1.getGpu(), src2.getGpu(), dst.rawGpu());
+              } else {
+                bitwise_or(src1.getCpu(), src2.getCpu(), dst.rawCpu());
+              }
             })),
 
         new OperationMetaData(CVOperation.defaults("CV bitwise_xor",
             "Calculate the per-element bit-wise \"exclusive or\" on two images."),
-            templateFactory.createAllMatTwoSource((src1, src2, dst) -> {
-              bitwise_xor(src1.getCpu(), src2.getCpu(), dst.rawCpu());
+            templateFactory.createAllMatTwoSourceCuda((src1, src2, useCuda, dst) -> {
+              if (useCuda) {
+                opencv_cudaarithm.bitwise_xor(src1.getGpu(), src2.getGpu(), dst.rawGpu());
+              } else {
+                bitwise_xor(src1.getCpu(), src2.getCpu(), dst.rawCpu());
+              }
             })),
 
         new OperationMetaData(CVOperation.defaults("CV compare",
             "Compare each pixel in two images using a given rule."),
-            templateFactory.create(
+            templateFactory.createCuda(
                 SocketHints.createImageSocketHint("src1"),
                 SocketHints.createImageSocketHint("src2"),
                 SocketHints.createEnumSocketHint("cmpop", CmpTypesEnum.CMP_EQ),
                 SocketHints.createImageSocketHint("dst"),
-                (src1, src2, cmp, dst) -> {
-                  compare(src1.getCpu(), src2.getCpu(), dst.rawCpu(), cmp.value);
+                (src1, src2, cmp, useCuda, dst) -> {
+                  int cmpop = cmp.value;
+                  if (useCuda) {
+                    opencv_cudaarithm.compare(src1.getGpu(), src2.getGpu(), dst.rawGpu(), cmpop);
+                  } else {
+                    compare(src1.getCpu(), src2.getCpu(), dst.rawCpu(), cmpop);
+                  }
                 }
             )),
 
@@ -210,8 +248,12 @@ public class CVOperations {
 
         new OperationMetaData(CVOperation.defaults("CV subtract",
             "Calculate the per-pixel difference between two images."),
-            templateFactory.createAllMatTwoSource((src1, src2, dst) -> {
-              subtract(src1.getCpu(), src2.getCpu(), dst.rawCpu());
+            templateFactory.createAllMatTwoSourceCuda((src1, src2, useCuda, dst) -> {
+              if (useCuda) {
+                opencv_cudaarithm.subtract(src1.getGpu(), src2.getGpu(), dst.rawGpu());
+              } else {
+                subtract(src1.getCpu(), src2.getCpu(), dst.rawCpu());
+              }
             })),
 
         new OperationMetaData(CVOperation.defaults("CV transpose",
@@ -254,12 +296,16 @@ public class CVOperations {
 
         new OperationMetaData(CVOperation.defaults("CV cvtColor",
             "Convert an image from one color space to another."),
-            templateFactory.create(
+            templateFactory.createCuda(
                 SocketHints.createImageSocketHint("src"),
                 SocketHints.createEnumSocketHint("code", ColorConversionCodesEnum.COLOR_BGR2BGRA),
                 SocketHints.createImageSocketHint("dst"),
-                (src, code, dst) -> {
-                  cvtColor(src.getCpu(), dst.rawCpu(), code.value);
+                (src, code, useCuda, dst) -> {
+                  if (useCuda) {
+                    opencv_cudaimgproc.cvtColor(dst.getGpu(), dst.rawGpu(), code.value);
+                  } else {
+                    cvtColor(src.getCpu(), dst.rawCpu(), code.value);
+                  }
                 }
             )),
 
@@ -382,7 +428,7 @@ public class CVOperations {
 
         new OperationMetaData(CVOperation.defaults("CV Sobel",
             "Find edges by calculating the requested derivative order for the given image."),
-            templateFactory.create(
+            templateFactory.createCuda(
                 SocketHints.createImageSocketHint("src"),
                 SocketHints.Inputs.createNumberSpinnerSocketHint("dx", 0),
                 SocketHints.Inputs.createNumberSpinnerSocketHint("dy", 0),
@@ -391,24 +437,49 @@ public class CVOperations {
                 SocketHints.Inputs.createNumberSpinnerSocketHint("delta", 0),
                 SocketHints.createEnumSocketHint("borderType", BorderTypesEnum.BORDER_DEFAULT),
                 SocketHints.createImageSocketHint("dst"),
-                (src, dx, dy, ksize, scale, delta, borderType, dst) -> {
-                  Sobel(src.getCpu(), dst.rawCpu(), 0, dx.intValue(), dy.intValue(),
-                      ksize.intValue(), scale.doubleValue(), delta.doubleValue(), borderType.value);
+                (src, dx, dy, ksize, scale, delta, borderType, useCuda, dst) -> {
+                  if (useCuda) {
+                    try (Filter sobelFilter = createSobelFilter(
+                        src.type(),
+                        src.type(),
+                        dx.intValue(),
+                        dy.intValue(),
+                        ksize.intValue(),
+                        scale.doubleValue(),
+                        borderType.value,
+                        borderType.value)) {
+                      sobelFilter.apply(src.getGpu(), dst.rawGpu());
+                    }
+                  } else {
+                    Sobel(src.getCpu(), dst.rawCpu(), 0, dx.intValue(), dy.intValue(),
+                        ksize.intValue(), scale.doubleValue(), delta.doubleValue(),
+                        borderType.value);
+                  }
                 }
             )),
 
         new OperationMetaData(CVOperation.defaults("CV Threshold",
             "Apply a fixed-level threshold to each array element in an image.",
             "CV threshold"),
-            templateFactory.create(
+            templateFactory.createCuda(
                 SocketHints.createImageSocketHint("src"),
                 SocketHints.Inputs.createNumberSpinnerSocketHint("thresh", 0),
                 SocketHints.Inputs.createNumberSpinnerSocketHint("maxval", 0),
                 SocketHints.createEnumSocketHint("type", CVThresholdTypesEnum.THRESH_BINARY),
                 SocketHints.createImageSocketHint("dst"),
-                (src, thresh, maxval, type, dst) -> {
-                  threshold(src.getCpu(), dst.rawCpu(), thresh.doubleValue(), maxval.doubleValue(),
-                      type.value);
+                (src, thresh, maxval, type, useCuda, dst) -> {
+                  if (useCuda) {
+                    opencv_cudaarithm.threshold(
+                        src.getGpu(),
+                        dst.rawGpu(),
+                        thresh.doubleValue(),
+                        maxval.doubleValue(),
+                        type.value
+                    );
+                  } else {
+                    threshold(src.getCpu(), dst.rawCpu(), thresh.doubleValue(),
+                        maxval.doubleValue(), type.value);
+                  }
                 }
             ))
     );
