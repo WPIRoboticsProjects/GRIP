@@ -2,6 +2,7 @@ package edu.wpi.grip.core.sockets;
 
 
 import edu.wpi.grip.core.Connection;
+import edu.wpi.grip.core.cuda.CudaDetector;
 
 import com.google.common.eventbus.EventBus;
 import com.google.inject.Inject;
@@ -56,15 +57,22 @@ public class InputSocketImpl<T> extends SocketImpl<T> implements InputSocket<T> 
   @Singleton
   public static class FactoryImpl implements Factory {
     private final EventBus eventBus;
+    private final CudaDetector cudaDetector;
 
     @Inject
-    FactoryImpl(EventBus eventBus) {
+    FactoryImpl(EventBus eventBus, CudaDetector cudaDetector) {
       this.eventBus = eventBus;
+      this.cudaDetector = cudaDetector;
     }
 
     @Override
     public <T> InputSocket<T> create(SocketHint<T> hint) {
       return new InputSocketImpl<>(eventBus, hint);
+    }
+
+    @Override
+    public CudaSocket createCuda(SocketHint<Boolean> hint) {
+      return new CudaSocket(eventBus, cudaDetector, hint);
     }
   }
 

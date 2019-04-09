@@ -2,6 +2,7 @@ package edu.wpi.grip.core.operations;
 
 import edu.wpi.grip.core.MatWrapper;
 import edu.wpi.grip.core.Operation;
+import edu.wpi.grip.core.sockets.CudaSocket;
 import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.core.sockets.SocketHint;
@@ -27,7 +28,7 @@ public abstract class CudaOperation implements Operation {
   /**
    * Input socket telling the operation to prefer to use CUDA acceleration when possible.
    */
-  protected final InputSocket<Boolean> gpuSocket;
+  protected final CudaSocket gpuSocket;
   /**
    * Default image output socket.
    */
@@ -45,7 +46,7 @@ public abstract class CudaOperation implements Operation {
 
   protected CudaOperation(InputSocket.Factory isf, OutputSocket.Factory osf) {
     inputSocket = isf.create(inputHint);
-    gpuSocket = isf.create(gpuHint);
+    gpuSocket = isf.createCuda(gpuHint);
     outputSocket = osf.create(outputHint);
 
     inputSocket.setValue(MatWrapper.wrap(gpuIn));
@@ -64,7 +65,8 @@ public abstract class CudaOperation implements Operation {
    * @return true if this operation should prefer to use CUDA, false if it should only use the CPU
    */
   protected boolean preferCuda() {
-    return gpuSocket.getValue().orElse(false);
+    return gpuSocket.isCudaAvailable()
+        && gpuSocket.getValue().orElse(false);
   }
 
 }
