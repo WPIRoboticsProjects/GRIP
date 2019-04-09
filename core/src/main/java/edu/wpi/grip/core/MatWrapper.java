@@ -5,6 +5,7 @@ import org.bytedeco.javacpp.opencv_core.GpuMat;
 import org.bytedeco.javacpp.opencv_core.Mat;
 import org.bytedeco.javacpp.opencv_core.Size;
 
+import java.util.Objects;
 import java.util.function.Function;
 
 import static org.bytedeco.javacpp.opencv_core.CV_16S;
@@ -32,9 +33,9 @@ import static org.bytedeco.javacpp.opencv_core.IPL_DEPTH_8U;
 @SuppressWarnings("PMD.GodClass")
 public final class MatWrapper {
 
-  private final Mat cpuMat = new Mat();
-  private final GpuMat gpuMat = new GpuMat();
-  private boolean isCpu = false;
+  private final Mat cpuMat;
+  private final GpuMat gpuMat;
+  private boolean isCpu = true;
   private boolean changed = false;
 
   /**
@@ -45,36 +46,41 @@ public final class MatWrapper {
   }
 
   /**
-   * Creates a wrapper around a mat in host memory.
+   * Creates a wrapper around an existing mat in host memory.
    */
   public static MatWrapper wrap(Mat cpuMat) {
     return new MatWrapper(cpuMat);
   }
 
   /**
-   * Creates a wrapper around a mat in GPU memory.
+   * Creates a wrapper around an existing mat in GPU memory.
    */
   public static MatWrapper wrap(GpuMat gpuMat) {
     return new MatWrapper(gpuMat);
   }
 
   private MatWrapper() {
-    isCpu = true;
-    changed = false;
+    this.cpuMat = new Mat();
+    this.gpuMat = new GpuMat();
   }
 
   /**
    * Creates a wrapper for a CPU mat. The mat may be accessed with {@link #getCpu()}.
    */
   private MatWrapper(Mat cpuMat) {
-    set(cpuMat);
+    Objects.requireNonNull(cpuMat, "cpuMat");
+    this.cpuMat = cpuMat;
+    this.gpuMat = new GpuMat();
   }
 
   /**
    * Creates a wrapper for a GPU mat. The mat may be accessed with {@link #getGpu()}
    */
   private MatWrapper(GpuMat gpuMat) {
-    set(gpuMat);
+    Objects.requireNonNull(gpuMat, "gpuMat");
+    this.cpuMat = new Mat();
+    this.gpuMat = gpuMat;
+    this.isCpu = false;
   }
 
   /**
