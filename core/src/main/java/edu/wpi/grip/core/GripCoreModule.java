@@ -1,5 +1,13 @@
 package edu.wpi.grip.core;
 
+import edu.wpi.grip.core.cuda.AccelerationMode;
+import edu.wpi.grip.core.cuda.CudaAccelerationMode;
+import edu.wpi.grip.core.cuda.CudaDetector;
+import edu.wpi.grip.core.cuda.LinuxCudaDetector;
+import edu.wpi.grip.core.cuda.MacCudaDetector;
+import edu.wpi.grip.core.cuda.NullAccelerationMode;
+import edu.wpi.grip.core.cuda.NullCudaDetector;
+import edu.wpi.grip.core.cuda.WindowsCudaDetector;
 import edu.wpi.grip.core.events.EventLogger;
 import edu.wpi.grip.core.events.UnexpectedThrowableEvent;
 import edu.wpi.grip.core.metrics.BenchmarkRunner;
@@ -19,6 +27,8 @@ import edu.wpi.grip.core.sources.NetworkTableEntrySource;
 import edu.wpi.grip.core.sources.VideoFileSource;
 import edu.wpi.grip.core.util.ExceptionWitness;
 import edu.wpi.grip.core.util.GripMode;
+import edu.wpi.grip.core.util.MetaInfReader;
+import edu.wpi.grip.core.util.OperatingSystem;
 
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.SubscriberExceptionContext;
@@ -137,6 +147,37 @@ public class GripCoreModule extends AbstractModule {
     bind(StepIndexer.class).to(Pipeline.class);
     bind(ConnectionValidator.class).to(Pipeline.class);
     bind(Source.SourceFactory.class).to(Source.SourceFactoryImpl.class);
+
+    OperatingSystem os = OperatingSystem.forOsName(System.getProperty("os.name"));
+    bind(OperatingSystem.class).toInstance(os);
+    switch (os) {
+      case WINDOWS:
+        bind(CudaDetector.class).to(WindowsCudaDetector.class);
+        break;
+      case MAC:
+        bind(CudaDetector.class).to(MacCudaDetector.class);
+        break;
+      case LINUX:
+        bind(CudaDetector.class).to(LinuxCudaDetector.class);
+        break;
+      default:
+        bind(CudaDetector.class).to(NullCudaDetector.class);
+        break;
+    }
+
+    boolean usingCuda = false;
+    try {
+      usingCuda = MetaInfReader.readLines("MANIFEST.MF")
+          .peek(System.out::println)
+          .anyMatch("Hardware-Acceleration: CUDA"::equals);
+    } catch (IOException e) {
+      logger.log(Level.WARNING, "Could not read manifest to determine CUDA acceleration", e);
+    }
+    if (usingCuda) {
+      bind(AccelerationMode.class).to(CudaAccelerationMode.class);
+    } else {
+      bind(AccelerationMode.class).to(NullAccelerationMode.class);
+    }
 
     bind(InputSocket.Factory.class).to(InputSocketImpl.FactoryImpl.class);
     bind(OutputSocket.Factory.class).to(OutputSocketImpl.FactoryImpl.class);
