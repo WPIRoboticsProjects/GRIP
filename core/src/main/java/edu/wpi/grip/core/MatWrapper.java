@@ -1,8 +1,9 @@
 package edu.wpi.grip.core;
 
+import org.bytedeco.javacpp.opencv_core;
+import org.bytedeco.javacpp.opencv_core.GpuMat;
 import org.bytedeco.javacpp.opencv_core.Mat;
 import org.bytedeco.javacpp.opencv_core.Size;
-import org.bytedeco.javacpp.opencv_core.GpuMat;
 
 import java.util.function.Function;
 
@@ -28,7 +29,7 @@ import static org.bytedeco.javacpp.opencv_core.IPL_DEPTH_8U;
  * an image in GPU memory. A wrapper is used to minimize copies between host and GPU memory, which
  * may take longer than the time savings of using a GPU-accelerated operation.
  */
-@SuppressWarnings("PMD")
+@SuppressWarnings("PMD.GodClass")
 public final class MatWrapper {
 
   private final Mat cpuMat = new Mat();
@@ -326,9 +327,38 @@ public final class MatWrapper {
       case CV_64F:
         return IPL_DEPTH_64F;
       default:
-        assert false;
+        throw new UnsupportedOperationException("Unsupported depth " + m.depth());
     }
-    return -1;
   }
 
+  /**
+   * Allocates new array data if needed.
+   *
+   * @param rows New number of rows.
+   * @param cols New number of columns.
+   * @param type New matrix type.
+   */
+  public synchronized void create(int rows, int cols, int type) {
+    if (isCpu) {
+      cpuMat.create(rows, cols, type);
+    } else {
+      gpuMat.create(rows, cols, type);
+    }
+    changed = true;
+  }
+
+  /**
+   * Sets all or some of the array elements to the specified value.
+   *
+   * @param value Assigned scalar converted to the actual array type.
+   */
+  public synchronized MatWrapper put(opencv_core.Scalar value) {
+    if (isCpu()) {
+      cpuMat.put(value);
+    } else {
+      gpuMat.setTo(value);
+    }
+    changed = true;
+    return this;
+  }
 }
