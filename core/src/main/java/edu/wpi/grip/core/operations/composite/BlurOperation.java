@@ -18,13 +18,11 @@ import org.bytedeco.javacpp.opencv_cudaimgproc;
 
 import java.util.List;
 
-import static org.bytedeco.javacpp.opencv_core.CV_8UC1;
 import static org.bytedeco.javacpp.opencv_core.CV_8UC3;
 import static org.bytedeco.javacpp.opencv_core.CV_8UC4;
 import static org.bytedeco.javacpp.opencv_core.Size;
 import static org.bytedeco.javacpp.opencv_cudafilters.Filter;
 import static org.bytedeco.javacpp.opencv_cudafilters.createGaussianFilter;
-import static org.bytedeco.javacpp.opencv_cudafilters.createMedianFilter;
 import static org.bytedeco.javacpp.opencv_imgproc.CV_BGR2BGRA;
 import static org.bytedeco.javacpp.opencv_imgproc.CV_BGRA2BGR;
 import static org.bytedeco.javacpp.opencv_imgproc.GaussianBlur;
@@ -51,7 +49,7 @@ public class BlurOperation extends CudaOperation {
   // used to covert 3-channel images to 4-channel for CUDA
   private final GpuMat upcast = new GpuMat();
   private Filter gpuGaussianFilter;
-  private Filter gpuMedianFilter;
+  //private Filter gpuMedianFilter;
 
   @Inject
   @SuppressWarnings("JavadocMethod")
@@ -116,7 +114,8 @@ public class BlurOperation extends CudaOperation {
         // Box filter kernels must have an odd size
         kernelSize = 2 * radius.intValue() + 1;
 
-        // Don't bother with CUDA acceleration here; CPU is faster
+        // Don't bother with CUDA acceleration here; CPU is fast enough that memory copies
+        // will remove the speedups from CUDA
         blur(input.getCpu(), output.getCpu(), new Size(kernelSize, kernelSize));
         break;
 
@@ -127,7 +126,7 @@ public class BlurOperation extends CudaOperation {
         kernelSize = 6 * radius.intValue() + 1;
         kernelChange = kernelSize != lastKernelSize;
         lastKernelSize = kernelSize;
-        if (preferCuda() && kernelSize < 32) {
+        if (preferCuda()/* && kernelSize < 32*/) {
           // GPU gaussian blurs require kernel size in 0..31
           if (kernelChange || gpuGaussianFilter == null) {
             gpuGaussianFilter = createGaussianFilter(imageType, imageType,
@@ -143,6 +142,8 @@ public class BlurOperation extends CudaOperation {
 
       case MEDIAN:
         kernelSize = 2 * radius.intValue() + 1;
+        // FIXME: CUDA median filters is broken - run on CPU only for now
+        /*
         kernelChange = kernelSize != lastKernelSize;
         lastKernelSize = kernelSize;
         if (preferCuda() && imageType == CV_8UC1) {
@@ -155,6 +156,8 @@ public class BlurOperation extends CudaOperation {
         } else {
           medianBlur(input.getCpu(), output.rawCpu(), kernelSize);
         }
+        */
+        medianBlur(input.getCpu(), output.rawCpu(), kernelSize);
         break;
 
       case BILATERAL_FILTER:
