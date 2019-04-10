@@ -1,6 +1,7 @@
 package edu.wpi.grip.core.sockets;
 
 
+import edu.wpi.grip.core.events.SocketChangedEvent;
 import edu.wpi.grip.core.events.SocketPreviewChangedEvent;
 
 import com.google.common.base.MoreObjects;
@@ -61,6 +62,12 @@ public class OutputSocketImpl<T> extends SocketImpl<T> implements OutputSocket<T
         .add("previewed", isPreviewed())
         .add("direction", getDirection())
         .toString();
+  }
+
+  @Override
+  public void flagChanged() {
+    onValueChanged();
+    eventBus.post(new SocketChangedEvent(this));
   }
 
   public static class FactoryImpl implements OutputSocket.Factory {
