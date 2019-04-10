@@ -2,6 +2,7 @@ package edu.wpi.grip.ui.codegeneration.data;
 
 import edu.wpi.grip.core.Connection;
 import edu.wpi.grip.core.Step;
+import edu.wpi.grip.core.sockets.CudaSocket;
 import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.ui.codegeneration.TemplateMethods;
@@ -97,6 +98,10 @@ public class TPipeline {
     for (int i = 0; i < pipeSteps.size(); i++) {
       TStep tStep = this.steps.get(i);
       for (InputSocket input : pipeSteps.get(i).getInputSockets()) {
+        // Skip CudaSockets entirely - generated code is purely CPU
+        if (input instanceof CudaSocket) {
+          continue;
+        }
         TInput tInput;
         String type = TemplateMethods.parseSocketType(input);
         if ("Type".equals(type)) {
