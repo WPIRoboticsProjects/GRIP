@@ -17,6 +17,10 @@ val arch = osdetector.arch.replace("x86_64", "x64")
 
 val withCuda = project.hasProperty("cuda") || project.hasProperty("WITH_CUDA")
 
+if (withCuda) {
+    version = "$version-cuda"
+}
+
 dependencies {
     api(project(":annotation"))
     annotationProcessor(project(":annotation"))
