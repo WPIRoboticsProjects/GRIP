@@ -31,7 +31,6 @@ import com.google.inject.util.Modules;
 
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.Reader;
@@ -271,7 +270,6 @@ public class ProjectTest {
 
   @Test
   @SuppressWarnings("unchecked")
-  @Ignore("opencv_core.compare segfaults")
   public void testPerformSerializedPipelineWithMats() throws Exception {
     pipeline.addStep(stepFactory.create(opencvAddOperation));
     serializeAndDeserialize();
@@ -284,6 +282,7 @@ public class ProjectTest {
 
     a.getValue().get().set(new Mat(1, 1, CV_32F, new Scalar(1234.5)));
     b.getValue().get().set(new Mat(1, 1, CV_32F, new Scalar(6789.0)));
+    a.flagChanged();
 
     pipelineRunner.runPipeline();
 

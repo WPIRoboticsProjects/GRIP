@@ -42,6 +42,15 @@ public interface Socket<T> {
   }
 
   /**
+   * Notifies this socket that the value changed. This is usually only needed for sockets that
+   * contain mutable data such as images or other native classes (Point, Size, etc) that are
+   * written to by OpenCV operations.
+   */
+  default void flagChanged() {
+    setValueOptional(getValue());
+  }
+
+  /**
    * @return The value currently stored in this socket.
    */
   Optional<T> getValue();
