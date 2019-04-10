@@ -5,6 +5,7 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 
 /**
@@ -19,7 +20,11 @@ public final class MacCudaDetector implements CudaDetector {
 
   @Override
   public boolean isCompatibleCudaInstalled() {
-    try (BufferedReader br = Files.newBufferedReader(Paths.get(VERSION_FILE_PATH))) {
+    Path path = Paths.get(VERSION_FILE_PATH);
+    if (Files.notExists(path)) {
+      return false;
+    }
+    try (BufferedReader br = Files.newBufferedReader(path)) {
       return checkLine(br.readLine());
     } catch (IOException e) {
       return false;

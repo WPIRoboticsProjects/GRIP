@@ -5,6 +5,7 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 
 /**
@@ -17,7 +18,11 @@ public final class LinuxCudaDetector implements CudaDetector {
 
   @Override
   public boolean isCompatibleCudaInstalled() {
-    try (BufferedReader reader = Files.newBufferedReader(Paths.get(VERSION_FILE_PATH))) {
+    Path path = Paths.get(VERSION_FILE_PATH);
+    if (Files.notExists(path)) {
+      return false;
+    }
+    try (BufferedReader reader = Files.newBufferedReader(path)) {
       return checkLine(reader.readLine());
     } catch (IOException e) {
       // File does not exist or could not be read
