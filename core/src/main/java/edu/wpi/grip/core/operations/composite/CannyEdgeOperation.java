@@ -76,10 +76,14 @@ public class CannyEdgeOperation extends CudaOperation {
     int apertureSize = apertureSizeSocket.getValue().get().intValue();
     boolean l2gradient = l2gradientSocket.getValue().get();
     if (preferCuda()) {
-      CannyEdgeDetector cannyEdgeDetector = createCannyEdgeDetector(lowThresh, highThresh,
-          apertureSize, l2gradient);
-      cannyEdgeDetector.detect(inputSocket.getValue().get().getGpu(),
-          outputSocket.getValue().get().rawGpu());
+      try (CannyEdgeDetector cannyEdgeDetector = createCannyEdgeDetector(
+          lowThresh,
+          highThresh,
+          apertureSize,
+          l2gradient)) {
+        cannyEdgeDetector.detect(inputSocket.getValue().get().getGpu(),
+            outputSocket.getValue().get().rawGpu());
+      }
     } else {
       Canny(inputSocket.getValue().get().getCpu(), outputSocket.getValue().get().getCpu(),
           lowThresh, highThresh, apertureSize, l2gradient);
