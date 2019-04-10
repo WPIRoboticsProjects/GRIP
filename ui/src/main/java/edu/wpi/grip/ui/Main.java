@@ -1,10 +1,11 @@
 package edu.wpi.grip.ui;
 
 import edu.wpi.grip.core.GripCoreModule;
+import edu.wpi.grip.core.GripCudaModule;
 import edu.wpi.grip.core.GripFileModule;
+import edu.wpi.grip.core.Loggers;
 import edu.wpi.grip.core.PipelineRunner;
-import edu.wpi.grip.core.cuda.AccelerationMode;
-import edu.wpi.grip.core.cuda.CudaDetector;
+import edu.wpi.grip.core.cuda.CudaVerifier;
 import edu.wpi.grip.core.events.UnexpectedThrowableEvent;
 import edu.wpi.grip.core.exception.GripServerException;
 import edu.wpi.grip.core.http.GripServer;
@@ -67,8 +68,6 @@ public class Main extends Application {
   @Inject private CVOperations cvOperations;
   @Inject private GripServer server;
   @Inject private HttpPipelineSwitcher pipelineSwitcher;
-  @Inject private CudaDetector cudaDetector;
-  @Inject private AccelerationMode accelerationMode;
   private Parent root;
   private boolean headless;
   private final UICommandLineHelper commandLineHelper = new UICommandLineHelper();
@@ -80,22 +79,37 @@ public class Main extends Application {
 
   @Override
   public void init() throws IOException {
+    Loggers.setupLoggers();
     parsedArgs = commandLineHelper.parse(getParameters().getRaw());
+
+    // Verify CUDA before using the core module, since that will cause OpenCV to be loaded,
+    // which will crash the app if we use CUDA and it's not available
+    GripCudaModule cudaModule = new GripCudaModule();
+    CudaVerifier cudaVerifier = Guice.createInjector(cudaModule).getInstance(CudaVerifier.class);
+    cudaVerifier.verifyCuda();
 
     if (parsedArgs.hasOption(UICommandLineHelper.HEADLESS_OPTION)) {
       // If --headless was specified on the command line,
       // run in headless mode (only use the core module)
       logger.info("Launching GRIP in headless mode");
-      injector = Guice.createInjector(Modules.override(new GripCoreModule(), new GripFileModule(),
-          new GripSourcesHardwareModule()).with(new GripNetworkModule()));
+      injector = Guice.createInjector(
+          Modules.override(
+              new GripCoreModule(),
+              new GripFileModule(),
+              new GripSourcesHardwareModule()
+          ).with(new GripNetworkModule(), cudaModule));
       injector.injectMembers(this);
 
       headless = true;
     } else {
       // Otherwise, run with both the core and UI modules, and show the JavaFX stage
       logger.info("Launching GRIP in UI mode");
-      injector = Guice.createInjector(Modules.override(new GripCoreModule(), new GripFileModule(),
-          new GripSourcesHardwareModule()).with(new GripNetworkModule(), new GripUiModule()));
+      injector = Guice.createInjector(
+          Modules.override(
+              new GripCoreModule(),
+              new GripFileModule(),
+              new GripSourcesHardwareModule()
+          ).with(new GripNetworkModule(), new GripUiModule(), cudaModule));
       injector.injectMembers(this);
       notifyPreloader(new Preloader.ProgressNotification(0.15));
 
@@ -106,8 +120,6 @@ public class Main extends Application {
       Font.loadFont(this.getClass().getResource("roboto/Roboto-BoldItalic.ttf").openStream(), -1);
       notifyPreloader(new Preloader.ProgressNotification(0.3));
     }
-
-    verifyCuda();
 
     notifyPreloader(new Preloader.ProgressNotification(0.45));
     server.addHandler(pipelineSwitcher);
@@ -175,19 +187,6 @@ public class Main extends Application {
   @Override
   public void stop() {
     SafeShutdown.flagStopping();
-  }
-
-  /**
-   * Verifies that GRIP can run if using CUDA-accelerated OpenCV.
-   */
-  private void verifyCuda() {
-    if (accelerationMode.isUsingCuda() && !cudaDetector.isCompatibleCudaInstalled()) {
-      logger.severe("This version of GRIP requires CUDA "
-          + CudaDetector.REQUIRED_VERSION + " to be installed and an NVIDIA graphics card. "
-          + "Install the appropriate CUDA runtime for your computer, or use a version of GRIP "
-          + "that does not use CUDA.");
-      SafeShutdown.exit(SafeShutdown.ExitCodes.CUDA_UNAVAILABLE);
-    }
   }
 
   @Subscribe

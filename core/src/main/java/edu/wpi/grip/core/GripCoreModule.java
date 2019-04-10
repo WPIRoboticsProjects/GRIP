@@ -1,13 +1,10 @@
 package edu.wpi.grip.core;
 
 import edu.wpi.grip.core.cuda.AccelerationMode;
-import edu.wpi.grip.core.cuda.CudaAccelerationMode;
 import edu.wpi.grip.core.cuda.CudaDetector;
-import edu.wpi.grip.core.cuda.LinuxCudaDetector;
-import edu.wpi.grip.core.cuda.MacCudaDetector;
+import edu.wpi.grip.core.cuda.CudaVerifier;
 import edu.wpi.grip.core.cuda.NullAccelerationMode;
 import edu.wpi.grip.core.cuda.NullCudaDetector;
-import edu.wpi.grip.core.cuda.WindowsCudaDetector;
 import edu.wpi.grip.core.events.EventLogger;
 import edu.wpi.grip.core.events.UnexpectedThrowableEvent;
 import edu.wpi.grip.core.metrics.BenchmarkRunner;
@@ -27,12 +24,11 @@ import edu.wpi.grip.core.sources.NetworkTableEntrySource;
 import edu.wpi.grip.core.sources.VideoFileSource;
 import edu.wpi.grip.core.util.ExceptionWitness;
 import edu.wpi.grip.core.util.GripMode;
-import edu.wpi.grip.core.util.MetaInfReader;
-import edu.wpi.grip.core.util.OperatingSystem;
 
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.SubscriberExceptionContext;
 import com.google.inject.AbstractModule;
+import com.google.inject.Scopes;
 import com.google.inject.TypeLiteral;
 import com.google.inject.assistedinject.FactoryModuleBuilder;
 import com.google.inject.matcher.Matchers;
@@ -40,15 +36,8 @@ import com.google.inject.spi.InjectionListener;
 import com.google.inject.spi.TypeEncounter;
 import com.google.inject.spi.TypeListener;
 
-import java.io.IOException;
-import java.util.logging.FileHandler;
-import java.util.logging.Handler;
 import java.util.logging.Level;
-import java.util.logging.LogManager;
-import java.util.logging.LogRecord;
 import java.util.logging.Logger;
-import java.util.logging.SimpleFormatter;
-import java.util.logging.StreamHandler;
 
 import javax.annotation.Nullable;
 
@@ -62,55 +51,6 @@ public class GripCoreModule extends AbstractModule {
   private final EventBus eventBus;
 
   private static final Logger logger = Logger.getLogger(GripCoreModule.class.getName());
-
-  // This is in a static initialization block so that we don't create a ton of
-  // log files when running tests
-  static {
-    //Set up the global level logger. This handles IO for all loggers.
-    final Logger globalLogger = LogManager.getLogManager().getLogger("");
-
-    try {
-      // Remove the default handlers that stream to System.err
-      for (Handler handler : globalLogger.getHandlers()) {
-        globalLogger.removeHandler(handler);
-      }
-
-      GripFileManager.GRIP_DIRECTORY.mkdirs();
-      final Handler fileHandler
-          = new FileHandler(GripFileManager.GRIP_DIRECTORY.getPath() + "/GRIP.log");
-
-      //Set level to handler and logger
-      fileHandler.setLevel(Level.INFO);
-      globalLogger.setLevel(Level.INFO);
-
-      // We need to stream to System.out instead of System.err
-      final StreamHandler sh = new StreamHandler(System.out, new SimpleFormatter()) {
-
-        @Override
-        public synchronized void publish(final LogRecord record) {
-          super.publish(record);
-          // For some reason this doesn't happen automatically.
-          // This will ensure we get all of the logs printed to the console immediately
-          // when running on a remote device.
-          flush();
-        }
-      };
-      sh.setLevel(Level.CONFIG);
-
-      globalLogger.addHandler(sh); // Add stream handler
-
-      globalLogger.addHandler(fileHandler); //Add the handler to the global logger
-
-      fileHandler.setFormatter(new SimpleFormatter()); //log in text, not xml
-
-      globalLogger.config("Configuration done."); //Log that we are done setting up the logger
-      globalLogger.config("GRIP Version: " + edu.wpi.grip.core.Main.class.getPackage()
-          .getImplementationVersion());
-
-    } catch (IOException exception) { //Something happened setting up file IO
-      throw new IllegalStateException("Failed to configure the Logger", exception);
-    }
-  }
 
   /*
    * This class should not be used in tests. Use GRIPCoreTestModule for tests.
@@ -148,36 +88,12 @@ public class GripCoreModule extends AbstractModule {
     bind(ConnectionValidator.class).to(Pipeline.class);
     bind(Source.SourceFactory.class).to(Source.SourceFactoryImpl.class);
 
-    OperatingSystem os = OperatingSystem.forOsName(System.getProperty("os.name"));
-    bind(OperatingSystem.class).toInstance(os);
-    switch (os) {
-      case WINDOWS:
-        bind(CudaDetector.class).to(WindowsCudaDetector.class);
-        break;
-      case MAC:
-        bind(CudaDetector.class).to(MacCudaDetector.class);
-        break;
-      case LINUX:
-        bind(CudaDetector.class).to(LinuxCudaDetector.class);
-        break;
-      default:
-        bind(CudaDetector.class).to(NullCudaDetector.class);
-        break;
-    }
-
-    boolean usingCuda = false;
-    try {
-      usingCuda = MetaInfReader.readLines("MANIFEST.MF")
-          .peek(System.out::println)
-          .anyMatch("Hardware-Acceleration: CUDA"::equals);
-    } catch (IOException e) {
-      logger.log(Level.WARNING, "Could not read manifest to determine CUDA acceleration", e);
-    }
-    if (usingCuda) {
-      bind(AccelerationMode.class).to(CudaAccelerationMode.class);
-    } else {
-      bind(AccelerationMode.class).to(NullAccelerationMode.class);
-    }
+    // Bind CUDA detector and acceleration mode to default values
+    // These will be overridden by the GripCudaModule at app runtime, but this lets
+    // automated tests assume GPU-only operation modes
+    bind(CudaDetector.class).to(NullCudaDetector.class);
+    bind(AccelerationMode.class).to(NullAccelerationMode.class);
+    bind(CudaVerifier.class).in(Scopes.SINGLETON);
 
     bind(InputSocket.Factory.class).to(InputSocketImpl.FactoryImpl.class);
     bind(OutputSocket.Factory.class).to(OutputSocketImpl.FactoryImpl.class);
