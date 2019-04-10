@@ -13,9 +13,14 @@ import static org.junit.Assert.fail;
 public class OperationsUtil {
   @Inject
   private CVOperations cvOperations;
+  @Inject
+  private Operations operations;
 
   public ImmutableList<OperationMetaData> operations() {
-    return cvOperations.operations();
+    return ImmutableList.<OperationMetaData>builder()
+        .addAll(cvOperations.operations())
+        .addAll(operations.operations())
+        .build();
   }
 
   public OperationMetaData getMetaData(String opName) {
