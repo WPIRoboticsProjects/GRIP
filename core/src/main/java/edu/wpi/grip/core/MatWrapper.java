@@ -103,14 +103,14 @@ public final class MatWrapper {
   /**
    * Checks if this is a wrapper around a CPU mat.
    */
-  public synchronized boolean isCpu() {
+  public boolean isCpu() {
     return isCpu;
   }
 
   /**
    * Checks if this is a wrapper around a GPU mat.
    */
-  public synchronized boolean isGpu() {
+  public boolean isGpu() {
     return !isCpu;
   }
 
@@ -119,7 +119,7 @@ public final class MatWrapper {
    * to an OpenCV function. If you want to get the current value as a mat in host memory, use
    * {@link #getCpu()}.
    */
-  public synchronized Mat rawCpu() {
+  public Mat rawCpu() {
     // Assume the mat is about to be modified as a `dst` parameter to an OpenCV function
     // running on the CPU
     isCpu = true;
@@ -132,7 +132,7 @@ public final class MatWrapper {
    * to an OpenCV function. If you want to get the current value as a mat in GPU memory, use
    * {@link #getGpu()}.
    */
-  public synchronized GpuMat rawGpu() {
+  public GpuMat rawGpu() {
     // Assume the mat is about to be modified as a `dst` parameter to an OpenCV function
     // running on a CUDA device
     isCpu = false;
@@ -146,7 +146,7 @@ public final class MatWrapper {
    * after {@link #set(GpuMat) set(GpuMat)} is called, and only once between successive calls;
    * invocations of this method after the first copy will not perform another.
    */
-  public synchronized Mat getCpu() {
+  public Mat getCpu() {
     if (changed && !isCpu) {
       gpuMat.download(cpuMat);
       changed = false;
@@ -160,7 +160,7 @@ public final class MatWrapper {
    * after {@link #set(Mat) set(Mat)} is called, and only once between successive calls;
    * invocations of this method after the first copy will not perform another.
    */
-  public synchronized GpuMat getGpu() {
+  public GpuMat getGpu() {
     if (changed && isCpu) {
       gpuMat.upload(cpuMat);
       changed = false;
@@ -173,7 +173,7 @@ public final class MatWrapper {
    * into the internal CPU mat, but not the GPU mat until {@link #getGpu()} is called. This avoids
    * unnecessary memory copies between GPU and host memory.
    */
-  public synchronized void set(Mat mat) {
+  public void set(Mat mat) {
     mat.copyTo(cpuMat);
     isCpu = true;
     changed = true;
@@ -184,7 +184,7 @@ public final class MatWrapper {
    * into the internal GPU mat, but not the mat residing in host memory until {@link #getCpu()} is
    * called. This avoids unnecessary memory copies between GPU and host memory.
    */
-  public synchronized void set(GpuMat mat) {
+  public void set(GpuMat mat) {
     gpuMat.put(mat);
     isCpu = false;
     changed = true;
@@ -194,7 +194,7 @@ public final class MatWrapper {
    * Sets this as being backed by the given wrapper. This wrapper will be functionally equivalent
    * to the one given.
    */
-  public synchronized void set(MatWrapper wrapper) {
+  public void set(MatWrapper wrapper) {
     if (wrapper.isCpu()) {
       set(wrapper.cpuMat);
     } else {
@@ -205,7 +205,7 @@ public final class MatWrapper {
   /**
    * Copies the data of this wrapper to a mat in host memory.
    */
-  public synchronized void copyTo(Mat mat) {
+  public void copyTo(Mat mat) {
     if (isCpu) {
       cpuMat.copyTo(mat);
     } else {
@@ -216,7 +216,7 @@ public final class MatWrapper {
   /**
    * Copies the data of this wrapper to a mat in GPU memory.
    */
-  public synchronized void copyTo(GpuMat mat) {
+  public void copyTo(GpuMat mat) {
     if (isCpu) {
       mat.upload(cpuMat);
     } else {
@@ -227,7 +227,7 @@ public final class MatWrapper {
   /**
    * Copies the data of this wrapper into another. Equivalent to {@code wrapper.set(this)}
    */
-  public synchronized void copyTo(MatWrapper wrapper) {
+  public void copyTo(MatWrapper wrapper) {
     wrapper.set(this);
   }
 
@@ -245,7 +245,7 @@ public final class MatWrapper {
    * @param ifGpu the function to call if this is backed by a mat in GPU memory
    * @param <T>   the type of the property to extract
    */
-  private synchronized <T> T extract(Function<Mat, T> ifCpu, Function<GpuMat, T> ifGpu) {
+  private <T> T extract(Function<Mat, T> ifCpu, Function<GpuMat, T> ifGpu) {
     if (isCpu) {
       return ifCpu.apply(cpuMat);
     } else {
@@ -365,7 +365,7 @@ public final class MatWrapper {
    * @param cols New number of columns.
    * @param type New matrix type.
    */
-  public synchronized void create(int rows, int cols, int type) {
+  public void create(int rows, int cols, int type) {
     if (isCpu) {
       cpuMat.create(rows, cols, type);
     } else {
@@ -379,7 +379,7 @@ public final class MatWrapper {
    *
    * @param value Assigned scalar converted to the actual array type.
    */
-  public synchronized MatWrapper put(opencv_core.Scalar value) {
+  public MatWrapper put(opencv_core.Scalar value) {
     if (isCpu()) {
       cpuMat.put(value);
     } else {
