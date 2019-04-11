@@ -1,4 +1,6 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+import com.google.common.io.Files
+import java.nio.charset.StandardCharsets
 
 plugins {
     id("java")
@@ -64,6 +66,21 @@ tasks.withType<Jar>().configureEach {
         attributes["Main-Class"] = application.mainClassName
         attributes["Hardware-Acceleration"] = if (withCuda) "CUDA" else "None"
     }
+}
+
+tasks.register("generateCudaFile") {
+    description = "Generates a file to let the GRIP runtime know what hardware acceleration to use."
+    doLast {
+        val file = buildDir.resolve("resources/main/META-INF/HardwareAcceleration.mf")
+        file.delete()
+        file.parentFile.mkdirs()
+        file.createNewFile()
+        Files.write("Hardware-Acceleration: ${if (withCuda) "CUDA" else "None"}\n", file, StandardCharsets.UTF_8)
+    }
+}
+
+tasks.withType<JavaCompile>().configureEach {
+    dependsOn("generateCudaFile")
 }
 
 tasks.withType<ShadowJar>().configureEach {

@@ -44,7 +44,7 @@ public class GripCudaModule extends AbstractModule {
 
     boolean usingCuda = false;
     try {
-      usingCuda = MetaInfReader.readLines("MANIFEST.MF")
+      usingCuda = MetaInfReader.readLines("HardwareAcceleration.mf")
           .anyMatch("Hardware-Acceleration: CUDA"::equals);
     } catch (IOException e) {
       logger.log(Level.WARNING, "Could not read manifest to determine CUDA acceleration", e);

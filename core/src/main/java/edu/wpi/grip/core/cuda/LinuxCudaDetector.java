@@ -34,7 +34,7 @@ public final class LinuxCudaDetector implements CudaDetector {
     if (line == null) {
       return false;
     }
-    return line.equals("CUDA Version " + REQUIRED_VERSION)
-        || line.startsWith("CUDA Version " + REQUIRED_VERSION + ".");
+    return line.equals("CUDA Version " + REQUIRED_MAJOR_VERSION)
+        || line.startsWith("CUDA Version " + REQUIRED_MAJOR_VERSION + ".");
   }
 }

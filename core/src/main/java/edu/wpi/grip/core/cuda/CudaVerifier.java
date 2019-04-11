@@ -28,7 +28,7 @@ public class CudaVerifier {
   public void verifyCuda() {
     if (!verify()) {
       String message = "This version of GRIP requires CUDA "
-          + CudaDetector.REQUIRED_VERSION
+          + CudaDetector.REQUIRED_MAJOR_VERSION
           + " to be installed and an NVIDIA graphics card in your computer. "
           + "If your computer does not have an NVIDIA graphics card, use a version of GRIP "
           + "without CUDA acceleration. Otherwise, you need to install the appropriate CUDA "
