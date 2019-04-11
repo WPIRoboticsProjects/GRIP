@@ -8,7 +8,9 @@ import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.core.sockets.SocketHint;
 import edu.wpi.grip.core.sockets.SocketHints;
 
+import org.bytedeco.javacpp.opencv_core;
 import org.bytedeco.javacpp.opencv_core.GpuMat;
+import org.bytedeco.javacpp.opencv_core.Mat;
 
 /**
  * A partial implementation of Operation that has the option to use CUDA acceleration.
@@ -35,9 +37,19 @@ public abstract class CudaOperation implements Operation {
   protected final OutputSocket<MatWrapper> outputSocket;
 
   /**
+   * The mat used for an input to the CPU operation.
+   */
+  protected final Mat cpuIn = new Mat();
+
+  /**
    * The mat used for an input to the CUDA operation.
    */
   protected final GpuMat gpuIn = new GpuMat();
+
+  /**
+   * The output mat of a CPU operation.
+   */
+  protected final Mat cpuOut = new Mat();
 
   /**
    * The output mat of a CUDA operation.
@@ -49,13 +61,15 @@ public abstract class CudaOperation implements Operation {
     gpuSocket = isf.createCuda(gpuHint);
     outputSocket = osf.create(outputHint);
 
-    inputSocket.setValue(MatWrapper.wrap(gpuIn));
-    outputSocket.setValue(MatWrapper.wrap(gpuOut));
+    inputSocket.setValue(MatWrapper.using(cpuIn, gpuIn));
+    outputSocket.setValue(MatWrapper.using(cpuOut, gpuOut));
   }
 
   @Override
   public void cleanUp() {
+    cpuIn.deallocate();
     gpuIn.deallocate();
+    cpuOut.deallocate();
     gpuOut.deallocate();
   }
 

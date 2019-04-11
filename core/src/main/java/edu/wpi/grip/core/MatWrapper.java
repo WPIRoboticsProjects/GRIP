@@ -76,6 +76,16 @@ public final class MatWrapper {
     return new MatWrapper(gpuMat);
   }
 
+  /**
+   * Creates a wrapper around existing mats in host and device memory.
+   *
+   * @param cpuMat the mat in host memory to use
+   * @param gpuMat the mat in device memory to use
+   */
+  public static MatWrapper using(Mat cpuMat, GpuMat gpuMat) {
+    return new MatWrapper(cpuMat, gpuMat);
+  }
+
   private MatWrapper() {
     this.cpuMat = new Mat();
     this.gpuMat = new GpuMat();
@@ -98,6 +108,13 @@ public final class MatWrapper {
     this.cpuMat = new Mat();
     this.gpuMat = gpuMat;
     this.isCpu = false;
+  }
+
+  private MatWrapper(Mat cpuMat, GpuMat gpuMat) {
+    Objects.requireNonNull(cpuMat, "cpuMat");
+    Objects.requireNonNull(gpuMat, "gpuMat");
+    this.cpuMat = cpuMat;
+    this.gpuMat = gpuMat;
   }
 
   /**
