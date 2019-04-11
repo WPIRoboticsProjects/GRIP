@@ -180,7 +180,7 @@ public class Main extends Application {
       );
       alert.showAndWait()
           .filter(ButtonType.NO::equals)
-          .ifPresent(bt -> SafeShutdown.exit(SafeShutdown.ExitCodes.HTTP_SERVER_COULD_NOT_START));
+          .ifPresent(bt -> SafeShutdown.exit(SafeShutdown.ExitCode.HTTP_SERVER_COULD_NOT_START));
     }
   }
 
@@ -216,7 +216,7 @@ public class Main extends Application {
                   logger.log(Level.SEVERE, "Failed to show exception alert", e);
                 } finally {
                   // Ensure we shut down the application if we get an exception
-                  SafeShutdown.exit(SafeShutdown.ExitCodes.MISC_ERROR);
+                  SafeShutdown.exit(SafeShutdown.ExitCode.MISC_ERROR);
                 }
               }
             }

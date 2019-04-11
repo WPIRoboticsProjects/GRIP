@@ -58,6 +58,6 @@ public class CudaVerifier {
    */
   @VisibleForTesting
   void exit() {
-    SafeShutdown.exit(SafeShutdown.ExitCodes.CUDA_UNAVAILABLE);
+    SafeShutdown.exit(SafeShutdown.ExitCode.CUDA_UNAVAILABLE);
   }
 }

@@ -279,7 +279,7 @@ public class MainWindowController {
   protected boolean quit() {
     if (showConfirmationDialogAndWait()) {
       pipelineRunner.stopAsync();
-      SafeShutdown.exit(SafeShutdown.ExitCodes.SAFE_SHUTDOWN);
+      SafeShutdown.exit(SafeShutdown.ExitCode.SAFE_SHUTDOWN);
       return true;
     }
     return false;

@@ -55,7 +55,7 @@ public final class UnexpectedThrowableEvent implements LoggableEvent {
       try {
         logger.log(Level.SEVERE, "Failed to handle safely", throwable);
       } finally {
-        SafeShutdown.exit(SafeShutdown.ExitCodes.MISC_ERROR);
+        SafeShutdown.exit(SafeShutdown.ExitCode.MISC_ERROR);
       }
     } finally {
       shutdownIfFatal();
@@ -72,7 +72,7 @@ public final class UnexpectedThrowableEvent implements LoggableEvent {
         logger.log(Level.SEVERE, "Shutting down from error", throwable);
       } finally {
         // If all else fails then shutdown
-        SafeShutdown.exit(SafeShutdown.ExitCodes.MISC_ERROR);
+        SafeShutdown.exit(SafeShutdown.ExitCode.MISC_ERROR);
       }
     }
   }

@@ -17,26 +17,35 @@ public final class SafeShutdown {
   /**
    * Exit codes used by the GRIP application.
    */
-  public static final class ExitCodes {
+  public enum ExitCode {
     /**
      * Clean shutdown.
      */
-    public static final int SAFE_SHUTDOWN = 0x00;
-
+    SAFE_SHUTDOWN(0x00),
     /**
      * An unknown exception was thrown and uncaught.
      */
-    public static final int MISC_ERROR = 0x01;
+    MISC_ERROR(0x01),
 
     /**
      * The HTTP server cannot start (typically due to the port already being in use).
      */
-    public static final int HTTP_SERVER_COULD_NOT_START = 0x02;
-
+    HTTP_SERVER_COULD_NOT_START(0x02),
     /**
      * CUDA is required by OpenCV but no compatible runtime is available on the system.
      */
-    public static final int CUDA_UNAVAILABLE = 0x04;
+    CUDA_UNAVAILABLE(0x04),
+    ;
+
+    private final int code;
+
+    ExitCode(int code) {
+      this.code = code;
+    }
+
+    public int getCode() {
+      return code;
+    }
   }
 
   static {
@@ -65,7 +74,7 @@ public final class SafeShutdown {
    *                   has been flagged true. This is nullable.
    * @see System#exit(int)
    */
-  public static void exit(int statusCode, @Nullable PreSystemExitHook hook) {
+  public static void exit(ExitCode statusCode, @Nullable PreSystemExitHook hook) {
     flagStopping();
     try {
       if (hook != null) {
@@ -73,7 +82,7 @@ public final class SafeShutdown {
       }
     } finally {
       Logger.getLogger(SafeShutdown.class.getName()).info("Exiting GRIP");
-      System.exit(statusCode);
+      System.exit(statusCode.getCode());
     }
 
   }
@@ -82,9 +91,9 @@ public final class SafeShutdown {
    * Helper method that passes null as the PreSystemExitHook.
    *
    * @param statusCode exit status.
-   * @see #exit(int)
+   * @see #exit(ExitCode, PreSystemExitHook)
    */
-  public static void exit(int statusCode) {
+  public static void exit(ExitCode statusCode) {
     exit(statusCode, null);
   }
 
