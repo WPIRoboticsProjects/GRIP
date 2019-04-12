@@ -1,31 +1,34 @@
 package edu.wpi.grip.core.cuda;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import org.bytedeco.javacpp.Loader;
+import org.bytedeco.javacpp.opencv_cudaarithm;
 
 /**
- * Detects CUDA installs on Windows. Assumes CUDA is installed at
- * {@code C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\}
+ * Detects CUDA installs on Windows.
  */
 public class WindowsCudaDetector implements CudaDetector {
 
-  /**
-   * The default directory into which CUDA is installed.
-   */
-  private static final String CUDA_DIR = "C:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA";
+  private boolean hasCuda;
+  private boolean checkedForCuda = false;
 
   @Override
   public boolean isCompatibleCudaInstalled() {
-    try {
-      return Files.list(Paths.get(CUDA_DIR))
-          .map(Path::getFileName)
-          .map(Path::toString)
-          .anyMatch(p -> p.startsWith("v" + REQUIRED_MAJOR_VERSION + "."));
-    } catch (IOException e) {
-      // CUDA dir does not exist or could not be read
-      return false;
+    // Note: since CUDA isn't necessarily going to be installed in the default location
+    // (though it is likely), it's easiest for us to just check if an OpenCV CUDA class
+    // can have its JNI loaded, since it'll require the CUDA DLLs to also be available.
+    // We cache the value so it's only checked once, since installing CUDA while GRIP's
+    // running will require a system reboot anyway to set the PATH environment variable
+    if (!checkedForCuda) {
+      try {
+        Loader.load(opencv_cudaarithm.class);
+        hasCuda = true;
+      } catch (UnsatisfiedLinkError | NoClassDefFoundError error) {
+        // Couldn't load the JNI, no compatible CUDA runtime is available
+        hasCuda = false;
+      }
+      checkedForCuda = true;
     }
+
+    return hasCuda;
   }
 }
