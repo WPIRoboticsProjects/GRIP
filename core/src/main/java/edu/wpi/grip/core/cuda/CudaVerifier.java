@@ -4,21 +4,29 @@ import edu.wpi.grip.core.util.SafeShutdown;
 
 import com.google.common.annotations.VisibleForTesting;
 
+import java.util.Properties;
 import java.util.logging.Logger;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 
 public class CudaVerifier {
 
   private static final Logger logger = Logger.getLogger(CudaVerifier.class.getName());
 
+  private static final String CUDA_VERSION_KEY = "edu.wpi.grip.cuda.version";
+
   private final AccelerationMode accelerationMode;
   private final CudaDetector cudaDetector;
+  private final String cudaVersion;
 
   @Inject
-  public CudaVerifier(AccelerationMode accelerationMode, CudaDetector cudaDetector) {
+  public CudaVerifier(AccelerationMode accelerationMode,
+                      CudaDetector cudaDetector,
+                      @Named("cudaProperties") Properties cudaProperties) {
     this.accelerationMode = accelerationMode;
     this.cudaDetector = cudaDetector;
+    this.cudaVersion = cudaProperties.getProperty(CUDA_VERSION_KEY, "Unknown");
   }
 
   /**
@@ -27,8 +35,8 @@ public class CudaVerifier {
    */
   public void verifyCuda() {
     if (!verify()) {
-      String message = "This version of GRIP requires CUDA "
-          + CudaDetector.REQUIRED_MAJOR_VERSION
+      String message = "This version of GRIP requires CUDA version "
+          + cudaVersion
           + " to be installed and an NVIDIA graphics card in your computer. "
           + "If your computer does not have an NVIDIA graphics card, use a version of GRIP "
           + "without CUDA acceleration. Otherwise, you need to install the appropriate CUDA "

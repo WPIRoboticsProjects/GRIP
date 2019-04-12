@@ -64,23 +64,19 @@ tasks.withType<Jar>().configureEach {
     manifest {
         attributes["Implementation-Version"] = version
         attributes["Main-Class"] = application.mainClassName
-        attributes["Hardware-Acceleration"] = if (withCuda) "CUDA" else "None"
     }
 }
 
-tasks.register("generateCudaFile") {
-    description = "Generates a file to let the GRIP runtime know what hardware acceleration to use."
-    doLast {
-        val file = buildDir.resolve("resources/main/META-INF/HardwareAcceleration.mf")
-        file.delete()
-        file.parentFile.mkdirs()
-        file.createNewFile()
-        Files.write("Hardware-Acceleration: ${if (withCuda) "CUDA" else "None"}\n", file, StandardCharsets.UTF_8)
-    }
+val writeCudaPropertiesTask = tasks.register<WriteProperties>("writeCudaProperties") {
+    description = "Generates a file to let the GRIP runtime know if its using CUDA-accelerated OpenCV."
+    outputFile = buildDir.resolve("resources/main/edu/wpi/grip/core/CUDA.properties")
+    comment = "Information about CUDA requirements for the GRIP runtime"
+    property("edu.wpi.grip.cuda.enabled", withCuda)
+    property("edu.wpi.grip.cuda.version", "10.0") // opencv-presets 3.4.3-1.4.3 is compiled with CUDA 10.0
 }
 
 tasks.withType<JavaCompile>().configureEach {
-    dependsOn("generateCudaFile")
+    dependsOn(writeCudaPropertiesTask)
 }
 
 tasks.withType<ShadowJar>().configureEach {

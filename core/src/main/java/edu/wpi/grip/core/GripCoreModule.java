@@ -32,10 +32,12 @@ import com.google.inject.Scopes;
 import com.google.inject.TypeLiteral;
 import com.google.inject.assistedinject.FactoryModuleBuilder;
 import com.google.inject.matcher.Matchers;
+import com.google.inject.name.Names;
 import com.google.inject.spi.InjectionListener;
 import com.google.inject.spi.TypeEncounter;
 import com.google.inject.spi.TypeListener;
 
+import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -88,12 +90,15 @@ public class GripCoreModule extends AbstractModule {
     bind(ConnectionValidator.class).to(Pipeline.class);
     bind(Source.SourceFactory.class).to(Source.SourceFactoryImpl.class);
 
-    // Bind CUDA detector and acceleration mode to default values
+    // Bind CUDA-specific stuff to default values
     // These will be overridden by the GripCudaModule at app runtime, but this lets
-    // automated tests assume GPU-only operation modes
+    // automated tests assume CPU-only operation modes
     bind(CudaDetector.class).to(NullCudaDetector.class);
     bind(AccelerationMode.class).to(NullAccelerationMode.class);
     bind(CudaVerifier.class).in(Scopes.SINGLETON);
+    bind(Properties.class)
+        .annotatedWith(Names.named("cudaProperties"))
+        .toInstance(new Properties());
 
     bind(InputSocket.Factory.class).to(InputSocketImpl.FactoryImpl.class);
     bind(OutputSocket.Factory.class).to(OutputSocketImpl.FactoryImpl.class);
