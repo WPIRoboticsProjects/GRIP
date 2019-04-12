@@ -4,13 +4,9 @@ import edu.wpi.grip.core.cuda.AccelerationMode;
 import edu.wpi.grip.core.cuda.CudaAccelerationMode;
 import edu.wpi.grip.core.cuda.CudaDetector;
 import edu.wpi.grip.core.cuda.CudaVerifier;
-import edu.wpi.grip.core.cuda.LinuxCudaDetector;
-import edu.wpi.grip.core.cuda.MacCudaDetector;
+import edu.wpi.grip.core.cuda.LoadingCudaDetector;
 import edu.wpi.grip.core.cuda.NullAccelerationMode;
-import edu.wpi.grip.core.cuda.NullCudaDetector;
-import edu.wpi.grip.core.cuda.WindowsCudaDetector;
 import edu.wpi.grip.core.util.MetaInfReader;
-import edu.wpi.grip.core.util.OperatingSystem;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Scopes;
@@ -25,22 +21,7 @@ public class GripCudaModule extends AbstractModule {
 
   @Override
   protected void configure() {
-    OperatingSystem os = OperatingSystem.forOsName(System.getProperty("os.name"));
-    bind(OperatingSystem.class).toInstance(os);
-    switch (os) {
-      case WINDOWS:
-        bind(CudaDetector.class).to(WindowsCudaDetector.class);
-        break;
-      case MAC:
-        bind(CudaDetector.class).to(MacCudaDetector.class);
-        break;
-      case LINUX:
-        bind(CudaDetector.class).to(LinuxCudaDetector.class);
-        break;
-      default:
-        bind(CudaDetector.class).to(NullCudaDetector.class);
-        break;
-    }
+    bind(CudaDetector.class).to(LoadingCudaDetector.class);
 
     boolean usingCuda = false;
     try {
