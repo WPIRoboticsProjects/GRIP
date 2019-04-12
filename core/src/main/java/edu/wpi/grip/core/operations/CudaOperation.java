@@ -8,7 +8,6 @@ import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.core.sockets.SocketHint;
 import edu.wpi.grip.core.sockets.SocketHints;
 
-import org.bytedeco.javacpp.opencv_core;
 import org.bytedeco.javacpp.opencv_core.GpuMat;
 import org.bytedeco.javacpp.opencv_core.Mat;
 
