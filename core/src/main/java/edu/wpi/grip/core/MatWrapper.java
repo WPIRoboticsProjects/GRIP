@@ -59,21 +59,21 @@ public final class MatWrapper {
    * Creates an empty wrapper. Both mats are empty and the wrapper is treated as a CPU mat.
    */
   public static MatWrapper emptyWrapper() {
-    return new MatWrapper();
+    return new MatWrapper(new Mat(), new GpuMat());
   }
 
   /**
    * Creates a wrapper around an existing mat in host memory.
    */
   public static MatWrapper wrap(Mat cpuMat) {
-    return new MatWrapper(cpuMat);
+    return new MatWrapper(cpuMat, new GpuMat());
   }
 
   /**
    * Creates a wrapper around an existing mat in GPU memory.
    */
   public static MatWrapper wrap(GpuMat gpuMat) {
-    return new MatWrapper(gpuMat);
+    return new MatWrapper(new Mat(), gpuMat);
   }
 
   /**
@@ -86,35 +86,9 @@ public final class MatWrapper {
     return new MatWrapper(cpuMat, gpuMat);
   }
 
-  private MatWrapper() {
-    this.cpuMat = new Mat();
-    this.gpuMat = new GpuMat();
-  }
-
-  /**
-   * Creates a wrapper for a CPU mat. The mat may be accessed with {@link #getCpu()}.
-   */
-  private MatWrapper(Mat cpuMat) {
-    Objects.requireNonNull(cpuMat, "cpuMat");
-    this.cpuMat = cpuMat;
-    this.gpuMat = new GpuMat();
-  }
-
-  /**
-   * Creates a wrapper for a GPU mat. The mat may be accessed with {@link #getGpu()}
-   */
-  private MatWrapper(GpuMat gpuMat) {
-    Objects.requireNonNull(gpuMat, "gpuMat");
-    this.cpuMat = new Mat();
-    this.gpuMat = gpuMat;
-    this.isCpu = false;
-  }
-
   private MatWrapper(Mat cpuMat, GpuMat gpuMat) {
-    Objects.requireNonNull(cpuMat, "cpuMat");
-    Objects.requireNonNull(gpuMat, "gpuMat");
-    this.cpuMat = cpuMat;
-    this.gpuMat = gpuMat;
+    this.cpuMat = Objects.requireNonNull(cpuMat, "cpuMat");
+    this.gpuMat = Objects.requireNonNull(gpuMat, "gpuMat");
   }
 
   /**
