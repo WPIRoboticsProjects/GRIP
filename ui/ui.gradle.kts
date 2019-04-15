@@ -216,10 +216,25 @@ if (BuildType.isJdk11) {
         outputs.file(outputDir)
         delete(outputDir)
 
+        val modules = listOf(
+                "java.base",
+                "java.desktop",
+                "java.datatransfer",
+                "java.logging",
+                "java.management",
+                "java.naming",
+                "java.prefs",
+                "java.scripting",
+                "java.sql",
+                "java.xml",
+                "jdk.dynalink",
+                "jdk.scripting.nashorn",
+                "jdk.unsupported"
+        )
+
         setCommandLine(
                 Jvm.current().javaHome.resolve("bin/jlink").absolutePath,
-                "--add-modules",
-                "java.base,java.desktop,java.datatransfer,java.logging,java.management,java.naming,java.prefs,java.scripting,java.sql,java.xml,jdk.dynalink,jdk.scripting.nashorn,jdk.unsupported",
+                "--add-modules", modules.joinToString(separator = ","),
                 "--output", outputDir,
                 "--no-header-files",
                 "--compress=2",
