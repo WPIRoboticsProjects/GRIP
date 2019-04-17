@@ -1,8 +1,11 @@
 package edu.wpi.grip.ui;
 
 import edu.wpi.grip.core.GripCoreModule;
+import edu.wpi.grip.core.GripCudaModule;
 import edu.wpi.grip.core.GripFileModule;
+import edu.wpi.grip.core.Loggers;
 import edu.wpi.grip.core.PipelineRunner;
+import edu.wpi.grip.core.cuda.CudaVerifier;
 import edu.wpi.grip.core.events.UnexpectedThrowableEvent;
 import edu.wpi.grip.core.exception.GripServerException;
 import edu.wpi.grip.core.http.GripServer;
@@ -76,22 +79,37 @@ public class Main extends Application {
 
   @Override
   public void init() throws IOException {
+    Loggers.setupLoggers();
     parsedArgs = commandLineHelper.parse(getParameters().getRaw());
+
+    // Verify CUDA before using the core module, since that will cause OpenCV to be loaded,
+    // which will crash the app if we use CUDA and it's not available
+    GripCudaModule cudaModule = new GripCudaModule();
+    CudaVerifier cudaVerifier = Guice.createInjector(cudaModule).getInstance(CudaVerifier.class);
+    cudaVerifier.verifyCuda();
 
     if (parsedArgs.hasOption(UICommandLineHelper.HEADLESS_OPTION)) {
       // If --headless was specified on the command line,
       // run in headless mode (only use the core module)
       logger.info("Launching GRIP in headless mode");
-      injector = Guice.createInjector(Modules.override(new GripCoreModule(), new GripFileModule(),
-          new GripSourcesHardwareModule()).with(new GripNetworkModule()));
+      injector = Guice.createInjector(
+          Modules.override(
+              new GripCoreModule(),
+              new GripFileModule(),
+              new GripSourcesHardwareModule()
+          ).with(new GripNetworkModule(), cudaModule));
       injector.injectMembers(this);
 
       headless = true;
     } else {
       // Otherwise, run with both the core and UI modules, and show the JavaFX stage
       logger.info("Launching GRIP in UI mode");
-      injector = Guice.createInjector(Modules.override(new GripCoreModule(), new GripFileModule(),
-          new GripSourcesHardwareModule()).with(new GripNetworkModule(), new GripUiModule()));
+      injector = Guice.createInjector(
+          Modules.override(
+              new GripCoreModule(),
+              new GripFileModule(),
+              new GripSourcesHardwareModule()
+          ).with(new GripNetworkModule(), new GripUiModule(), cudaModule));
       injector.injectMembers(this);
       notifyPreloader(new Preloader.ProgressNotification(0.15));
 
@@ -160,7 +178,9 @@ public class Main extends Application {
               + "HTTP sources and operations will not work until GRIP is restarted. "
               + "Continue without HTTP functionality anyway?"
       );
-      alert.showAndWait().filter(ButtonType.NO::equals).ifPresent(bt -> SafeShutdown.exit(1));
+      alert.showAndWait()
+          .filter(ButtonType.NO::equals)
+          .ifPresent(bt -> SafeShutdown.exit(SafeShutdown.ExitCode.HTTP_SERVER_COULD_NOT_START));
     }
   }
 
@@ -195,8 +215,8 @@ public class Main extends Application {
                 try {
                   logger.log(Level.SEVERE, "Failed to show exception alert", e);
                 } finally {
-                  SafeShutdown.exit(1); // Ensure we shut down the application if we get an
-                  // exception
+                  // Ensure we shut down the application if we get an exception
+                  SafeShutdown.exit(SafeShutdown.ExitCode.MISC_ERROR);
                 }
               }
             }

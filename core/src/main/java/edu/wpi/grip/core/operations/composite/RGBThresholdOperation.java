@@ -2,6 +2,7 @@ package edu.wpi.grip.core.operations.composite;
 
 import edu.wpi.grip.annotation.operation.Description;
 import edu.wpi.grip.annotation.operation.OperationCategory;
+import edu.wpi.grip.core.MatWrapper;
 import edu.wpi.grip.core.Operation;
 import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.sockets.OutputSocket;
@@ -30,7 +31,7 @@ import static org.bytedeco.javacpp.opencv_core.inRange;
 public class RGBThresholdOperation extends ThresholdOperation {
 
   private static final Logger logger = Logger.getLogger(RGBThresholdOperation.class.getName());
-  private final SocketHint<Mat> inputHint = SocketHints.Inputs.createMatSocketHint("Input", false);
+  private final SocketHint<MatWrapper> inputHint = SocketHints.createImageSocketHint("Input");
   private final SocketHint<List<Number>> redHint = SocketHints.Inputs
       .createNumberListRangeSocketHint("Red", 0.0, 255.0);
   private final SocketHint<List<Number>> greenHint = SocketHints.Inputs
@@ -38,15 +39,15 @@ public class RGBThresholdOperation extends ThresholdOperation {
   private final SocketHint<List<Number>> blueHint = SocketHints.Inputs
       .createNumberListRangeSocketHint("Blue", 0.0, 255.0);
 
-  private final SocketHint<Mat> outputHint = SocketHints.Outputs.createMatSocketHint("Output");
+  private final SocketHint<MatWrapper> outputHint = SocketHints.createImageSocketHint("Output");
 
 
-  private final InputSocket<Mat> inputSocket;
+  private final InputSocket<MatWrapper> inputSocket;
   private final InputSocket<List<Number>> redSocket;
   private final InputSocket<List<Number>> greenSocket;
   private final InputSocket<List<Number>> blueSocket;
 
-  private final OutputSocket<Mat> outputSocket;
+  private final OutputSocket<MatWrapper> outputSocket;
 
   @Inject
   @SuppressWarnings("JavadocMethod")
@@ -79,13 +80,13 @@ public class RGBThresholdOperation extends ThresholdOperation {
 
   @Override
   public void perform() {
-    final Mat input = inputSocket.getValue().get();
+    final Mat input = inputSocket.getValue().get().getCpu();
 
     if (input.channels() != 3) {
       throw new IllegalArgumentException("RGB Threshold needs a 3-channel input");
     }
 
-    final Mat output = outputSocket.getValue().get();
+    final Mat output = outputSocket.getValue().get().rawCpu();
     final List<Number> channel1 = redSocket.getValue().get();
     final List<Number> channel2 = greenSocket.getValue().get();
     final List<Number> channel3 = blueSocket.getValue().get();
@@ -106,7 +107,7 @@ public class RGBThresholdOperation extends ThresholdOperation {
     try {
       inRange(input, low, high, output);
 
-      outputSocket.setValue(output);
+      outputSocket.flagChanged();
     } catch (RuntimeException e) {
       logger.log(Level.WARNING, e.getMessage(), e);
     }

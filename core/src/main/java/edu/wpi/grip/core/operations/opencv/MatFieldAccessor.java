@@ -2,6 +2,7 @@ package edu.wpi.grip.core.operations.opencv;
 
 import edu.wpi.grip.annotation.operation.Description;
 import edu.wpi.grip.annotation.operation.OperationCategory;
+import edu.wpi.grip.core.MatWrapper;
 import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.core.sockets.SocketHint;
@@ -22,7 +23,7 @@ import java.util.List;
 public class MatFieldAccessor implements CVOperation {
 
   private static final Mat defaultsMat = new Mat();
-  private final SocketHint<Mat> matHint = SocketHints.Inputs.createMatSocketHint("Input", false);
+  private final SocketHint<MatWrapper> matHint = SocketHints.createImageSocketHint("Input");
   private final SocketHint<Size> sizeHint = SocketHints.Inputs.createSizeSocketHint("size", true);
   private final SocketHint<Boolean> emptyHint = SocketHints.Outputs
       .createBooleanSocketHint("empty", defaultsMat.empty());
@@ -36,7 +37,7 @@ public class MatFieldAccessor implements CVOperation {
       .createNumberSocketHint("high value", defaultsMat.highValue());
 
 
-  private final InputSocket<Mat> inputSocket;
+  private final InputSocket<MatWrapper> inputSocket;
 
   private final OutputSocket<Size> sizeSocket;
   private final OutputSocket<Boolean> emptySocket;
@@ -80,13 +81,13 @@ public class MatFieldAccessor implements CVOperation {
 
   @Override
   public void perform() {
-    final Mat inputMat = inputSocket.getValue().get();
+    MatWrapper wrapper = inputSocket.getValue().get();
 
-    sizeSocket.setValue(inputMat.size());
-    emptySocket.setValue(inputMat.empty());
-    channelsSocket.setValue(inputMat.channels());
-    colsSocket.setValue(inputMat.cols());
-    rowsSocket.setValue(inputMat.rows());
-    highValueSocket.setValue(inputMat.highValue());
+    sizeSocket.setValue(wrapper.size());
+    emptySocket.setValue(wrapper.empty());
+    channelsSocket.setValue(wrapper.channels());
+    colsSocket.setValue(wrapper.cols());
+    rowsSocket.setValue(wrapper.rows());
+    highValueSocket.setValue(wrapper.highValue());
   }
 }

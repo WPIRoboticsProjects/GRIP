@@ -1,5 +1,6 @@
 package edu.wpi.grip.core.sources;
 
+import edu.wpi.grip.core.MatWrapper;
 import edu.wpi.grip.core.sockets.MockOutputSocketFactory;
 import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.util.Files;
@@ -7,7 +8,6 @@ import edu.wpi.grip.util.ImageWithData;
 
 import com.google.common.eventbus.EventBus;
 
-import org.bytedeco.javacpp.opencv_core.Mat;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -54,7 +54,7 @@ public class MultiImageFileSourceTest {
   @Test
   public void testNextValue() throws Exception {
     source.next();
-    OutputSocket<Mat> outputSocket = source.getOutputSockets().get(0);
+    OutputSocket<MatWrapper> outputSocket = source.getOutputSockets().get(0);
     source.updateOutputSockets();
     gompeiJpegFile.assertSameImage(outputSocket.getValue().get());
   }
@@ -63,7 +63,7 @@ public class MultiImageFileSourceTest {
   public void testPreviousValue() throws Exception {
     source.previous();
 
-    OutputSocket<Mat> outputSocket = source.getOutputSockets().get(0);
+    OutputSocket<MatWrapper> outputSocket = source.getOutputSockets().get(0);
     source.updateOutputSockets();
     gompeiJpegFile.assertSameImage(outputSocket.getValue().get());
   }
@@ -71,7 +71,7 @@ public class MultiImageFileSourceTest {
   @Test
   public void testConstructedWithIndex() {
     sourceWithIndexSet.updateOutputSockets();
-    OutputSocket<Mat> outputSocket = sourceWithIndexSet.getOutputSockets().get(0);
+    OutputSocket<MatWrapper> outputSocket = sourceWithIndexSet.getOutputSockets().get(0);
     gompeiJpegFile.assertSameImage(outputSocket.getValue().get());
   }
 
@@ -85,7 +85,7 @@ public class MultiImageFileSourceTest {
         properties);
     newSource.initialize();
     newSource.updateOutputSockets();
-    OutputSocket<Mat> outputSocket = newSource.getOutputSockets().get(0);
+    OutputSocket<MatWrapper> outputSocket = newSource.getOutputSockets().get(0);
     gompeiJpegFile.assertSameImage(outputSocket.getValue().get());
   }
 }

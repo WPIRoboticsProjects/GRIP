@@ -46,7 +46,7 @@ final class ThreeSourceOneDestinationOperation<T1, T2, T3, R> implements Operati
   public void perform() {
     performer.perform(input1.getValue().get(), input2.getValue().get(), input3.getValue().get(),
         output.getValue().get());
-    output.setValue(output.getValue().get());
+    output.flagChanged();
   }
 
   @FunctionalInterface

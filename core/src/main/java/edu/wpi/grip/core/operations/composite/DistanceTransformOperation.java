@@ -2,6 +2,7 @@ package edu.wpi.grip.core.operations.composite;
 
 import edu.wpi.grip.annotation.operation.Description;
 import edu.wpi.grip.annotation.operation.OperationCategory;
+import edu.wpi.grip.core.MatWrapper;
 import edu.wpi.grip.core.Operation;
 import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.sockets.OutputSocket;
@@ -31,15 +32,15 @@ import static org.bytedeco.javacpp.opencv_imgproc.distanceTransform;
              iconName = "opencv")
 public class DistanceTransformOperation implements Operation {
 
-  private final SocketHint<Mat> srcHint = SocketHints.Inputs.createMatSocketHint("Input", false);
+  private final SocketHint<MatWrapper> srcHint = SocketHints.createImageSocketHint("Input");
   private final SocketHint<Type> typeHint = SocketHints.createEnumSocketHint("Type", Type.DIST_L2);
   private final SocketHint<MaskSize> maskSizeHint = SocketHints.createEnumSocketHint("Mask size",
       MaskSize.ZERO);
-  private final SocketHint<Mat> outputHint = SocketHints.Inputs.createMatSocketHint("Output", true);
-  private final InputSocket<Mat> srcSocket;
+  private final SocketHint<MatWrapper> outputHint = SocketHints.createImageSocketHint("Output");
+  private final InputSocket<MatWrapper> srcSocket;
   private final InputSocket<Type> typeSocket;
   private final InputSocket<MaskSize> maskSizeSocket;
-  private final OutputSocket<Mat> outputSocket;
+  private final OutputSocket<MatWrapper> outputSocket;
 
   @Inject
   @SuppressWarnings("JavadocMethod")
@@ -70,7 +71,7 @@ public class DistanceTransformOperation implements Operation {
 
   @Override
   public void perform() {
-    final Mat input = srcSocket.getValue().get();
+    final Mat input = srcSocket.getValue().get().getCpu();
 
     if (input.type() != CV_8U) {
       throw new IllegalArgumentException("Distance transform only works on 8-bit binary images");
@@ -79,12 +80,12 @@ public class DistanceTransformOperation implements Operation {
     final Type type = typeSocket.getValue().get();
     final MaskSize maskSize = maskSizeSocket.getValue().get();
 
-    final Mat output = outputSocket.getValue().get();
+    final Mat output = outputSocket.getValue().get().rawCpu();
 
     distanceTransform(input, output, type.value, maskSize.value);
     output.convertTo(output, CV_8U);
 
-    outputSocket.setValue(output);
+    outputSocket.flagChanged();
   }
 
   private enum Type {

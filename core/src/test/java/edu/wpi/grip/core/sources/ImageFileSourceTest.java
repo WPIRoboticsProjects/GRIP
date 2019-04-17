@@ -1,5 +1,6 @@
 package edu.wpi.grip.core.sources;
 
+import edu.wpi.grip.core.MatWrapper;
 import edu.wpi.grip.core.sockets.MockOutputSocketFactory;
 import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.util.Files;
@@ -7,7 +8,6 @@ import edu.wpi.grip.util.ImageWithData;
 
 import com.google.common.eventbus.EventBus;
 
-import org.bytedeco.javacpp.opencv_core.Mat;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -40,7 +40,7 @@ public class ImageFileSourceTest {
     final ImageFileSource fileSource = new ImageFileSource(osf, origin -> null, this
         .imageFile.file);
     fileSource.initialize();
-    OutputSocket<Mat> outputSocket = fileSource.getOutputSockets().get(0);
+    OutputSocket<MatWrapper> outputSocket = fileSource.getOutputSockets().get(0);
 
     // Then
     assertTrue("The output socket's value was empty.", outputSocket.getValue().isPresent());
@@ -53,7 +53,7 @@ public class ImageFileSourceTest {
     final ImageFileSource fileSource = new ImageFileSource(osf, origin -> null, this
         .textFile);
     fileSource.initialize();
-    OutputSocket<Mat> outputSocket = fileSource.getOutputSockets().get(0);
+    OutputSocket<MatWrapper> outputSocket = fileSource.getOutputSockets().get(0);
     assertTrue("No matrix should have been returned.", outputSocket.getValue().get().empty());
   }
 
@@ -71,7 +71,7 @@ public class ImageFileSourceTest {
     final ImageFileSource source = new ImageFileSource(osf, origin -> null, this
         .imageFile.file);
     // Calling this before loading the image should throw an exception
-    final OutputSocket<Mat> imageSource = source.getOutputSockets().get(0);
+    final OutputSocket<MatWrapper> imageSource = source.getOutputSockets().get(0);
     assertTrue("The value should not be present if the source hasn't been initialized",
         imageSource.getValue().get().empty());
     source.initialize();

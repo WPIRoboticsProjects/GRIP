@@ -1,5 +1,6 @@
 package edu.wpi.grip.ui.preview;
 
+import edu.wpi.grip.core.MatWrapper;
 import edu.wpi.grip.core.operations.network.MockGripNetworkModule;
 import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.core.sockets.SocketHint;
@@ -13,7 +14,6 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.util.Modules;
 
-import org.bytedeco.javacpp.opencv_core.Mat;
 import org.junit.After;
 import org.junit.Test;
 import org.testfx.framework.junit.ApplicationTest;
@@ -39,9 +39,9 @@ public class ImageSocketPreviewViewTest extends ApplicationTest {
     final ImageSocketPreviewView imageSocketPreviewView =
         new ImageSocketPreviewView(new MockGripPlatform(new EventBus()),
             injector.getInstance(OutputSocket.Factory.class)
-                .create(new SocketHint.Builder<>(Mat.class)
+                .create(new SocketHint.Builder<>(MatWrapper.class)
                     .identifier(identifier)
-                    .initialValueSupplier(Files.gompeiJpegFile::createMat)
+                    .initialValueSupplier(() -> MatWrapper.wrap(Files.gompeiJpegFile.createMat()))
                     .build()));
     final Scene scene = new Scene(imageSocketPreviewView);
     stage.setScene(scene);

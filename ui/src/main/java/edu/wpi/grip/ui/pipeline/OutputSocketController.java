@@ -1,5 +1,6 @@
 package edu.wpi.grip.ui.pipeline;
 
+import edu.wpi.grip.core.MatWrapper;
 import edu.wpi.grip.core.events.BenchmarkEvent;
 import edu.wpi.grip.core.events.SocketChangedEvent;
 import edu.wpi.grip.core.events.SocketPreviewChangedEvent;
@@ -25,7 +26,6 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static org.bytedeco.javacpp.opencv_core.Mat;
 
 /**
  * A JavaFX control that renders an {@link OutputSocket} that is the output of a step.  It shows a
@@ -96,13 +96,13 @@ public class OutputSocketController implements Controller {
       if (!this.socket.getValue().isPresent()) {
         // No value
         handlePreview(false);
-      } else if (!(this.socket.getValue().get() instanceof Mat)) {
+      } else if (!(this.socket.getValue().get() instanceof MatWrapper)) {
         // There is a non-image value, which can always be previewed
         handlePreview(true);
       } else {
         // Only allow the image to be previewed if it's previewable
         boolean previewable = this.socket.getValue()
-            .map(Mat.class::cast)
+            .map(MatWrapper.class::cast)
             .map(ImageBasedPreviewView::isPreviewable)
             .get();
         handlePreview(previewable);

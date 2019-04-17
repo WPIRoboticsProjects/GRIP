@@ -1,6 +1,7 @@
 package edu.wpi.grip.core.operations.opencv;
 
 import edu.wpi.grip.core.AddOperation;
+import edu.wpi.grip.core.MatWrapper;
 import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.sockets.OutputSocket;
 
@@ -55,20 +56,20 @@ public class AddOperationTest {
     // Given
     List<InputSocket> inputs = addition.getInputSockets();
     List<OutputSocket> outputs = addition.getOutputSockets();
-    InputSocket a = inputs.get(0);
-    InputSocket b = inputs.get(1);
-    OutputSocket c = outputs.get(0);
+    InputSocket<MatWrapper> a = inputs.get(0);
+    InputSocket<MatWrapper> b = inputs.get(1);
+    OutputSocket<MatWrapper> c = outputs.get(0);
 
     int[] sz = {256, 256};
 
-    a.setValue(new Mat(2, sz, opencv_core.CV_8U, Scalar.all(1)));
-    b.setValue(new Mat(2, sz, opencv_core.CV_8U, Scalar.all(2)));
+    a.getValue().ifPresent(m -> m.set(new Mat(2, sz, opencv_core.CV_8U, Scalar.all(1))));
+    b.getValue().ifPresent(m -> m.set(new Mat(2, sz, opencv_core.CV_8U, Scalar.all(2))));
 
     for (int i = 0; i < 1000; i++) {
       addition.perform();
     }
 
     Mat expectedResult = new Mat(2, sz, opencv_core.CV_8U, Scalar.all(3));
-    assertTrue(isMatEqual((Mat) c.getValue().get(), expectedResult));
+    assertTrue(isMatEqual(c.getValue().get().getCpu(), expectedResult));
   }
 }

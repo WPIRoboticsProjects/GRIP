@@ -1,5 +1,6 @@
 package edu.wpi.grip.core;
 
+import edu.wpi.grip.core.cuda.CudaVerifier;
 import edu.wpi.grip.core.events.ExceptionClearedEvent;
 import edu.wpi.grip.core.events.ExceptionEvent;
 import edu.wpi.grip.core.exception.GripServerException;
@@ -55,8 +56,20 @@ public class Main {
   @SuppressWarnings("JavadocMethod")
   public static void main(String[] args) throws IOException, InterruptedException {
     new CoreCommandLineHelper().parse(args); // Check for help or version before doing anything else
-    final Injector injector = Guice.createInjector(Modules.override(new GripCoreModule(),
-        new GripFileModule(), new GripSourcesHardwareModule()).with(new GripNetworkModule()));
+    Loggers.setupLoggers();
+
+    // Verify CUDA before using the core module, since that will cause OpenCV to be loaded,
+    // which will crash the app if we use CUDA and it's not available
+    GripCudaModule cudaModule = new GripCudaModule();
+    CudaVerifier cudaVerifier = Guice.createInjector(cudaModule).getInstance(CudaVerifier.class);
+    cudaVerifier.verifyCuda();
+
+    final Injector injector = Guice.createInjector(
+        Modules.override(
+            new GripCoreModule(),
+            new GripFileModule(),
+            new GripSourcesHardwareModule()
+        ).with(new GripNetworkModule(), cudaModule));
     injector.getInstance(Main.class).start(args);
   }
 
@@ -81,7 +94,7 @@ public class Main {
       gripServer.start();
     } catch (GripServerException e) {
       logger.log(Level.SEVERE, "The HTTP server could not be started", e);
-      SafeShutdown.exit(1);
+      SafeShutdown.exit(SafeShutdown.ExitCode.HTTP_SERVER_COULD_NOT_START);
     }
 
     if (pipelineRunner.state() == Service.State.NEW) {

@@ -1,6 +1,7 @@
 package edu.wpi.grip.core.sources;
 
 
+import edu.wpi.grip.core.MatWrapper;
 import edu.wpi.grip.core.Source;
 import edu.wpi.grip.core.events.SourceHasPendingUpdateEvent;
 import edu.wpi.grip.core.events.SourceRemovedEvent;
@@ -79,11 +80,10 @@ public class CameraSource extends Source implements RestartableService {
 
   private final Properties properties;
 
-  private final SocketHint<Mat> imageOutputHint = SocketHints.Inputs.createMatSocketHint("Image",
-      true);
+  private final SocketHint<MatWrapper> imageOutputHint = SocketHints.createImageSocketHint("Image");
   private final SocketHint<Number> frameRateOutputHint =
       SocketHints.createNumberSocketHint("Frame Rate", 0);
-  private final OutputSocket<Mat> frameOutputSocket;
+  private final OutputSocket<MatWrapper> frameOutputSocket;
   private final OutputSocket<Number> frameRateOutputSocket;
   private final Supplier<FrameGrabber> grabberSupplier;
   private final AtomicBoolean isNewFrame = new AtomicBoolean(false);
@@ -240,9 +240,9 @@ public class CameraSource extends Source implements RestartableService {
       // The camera frame thread should not try to modify the transfer mat while it is being
       // written to the pipeline
       synchronized (currentFrameTransferMat) {
-        currentFrameTransferMat.copyTo(frameOutputSocket.getValue().get());
+        frameOutputSocket.getValue().ifPresent(m -> m.set(currentFrameTransferMat));
       }
-      frameOutputSocket.setValueOptional(frameOutputSocket.getValue());
+      frameOutputSocket.flagChanged();
 
       // Update the frame rate value
       frameRateOutputSocket.setValue(frameRate);

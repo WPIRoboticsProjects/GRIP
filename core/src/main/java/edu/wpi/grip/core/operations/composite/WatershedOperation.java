@@ -2,6 +2,7 @@ package edu.wpi.grip.core.operations.composite;
 
 import edu.wpi.grip.annotation.operation.Description;
 import edu.wpi.grip.annotation.operation.OperationCategory;
+import edu.wpi.grip.core.MatWrapper;
 import edu.wpi.grip.core.Operation;
 import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.sockets.OutputSocket;
@@ -47,7 +48,7 @@ import static org.bytedeco.javacpp.opencv_imgproc.watershed;
              iconName = "opencv")
 public class WatershedOperation implements Operation {
 
-  private final SocketHint<Mat> srcHint = SocketHints.Inputs.createMatSocketHint("Input", false);
+  private final SocketHint<MatWrapper> srcHint = SocketHints.createImageSocketHint("Input");
   private final SocketHint<ContoursReport> contoursHint =
       new SocketHint.Builder<>(ContoursReport.class)
           .identifier("Contours")
@@ -60,7 +61,7 @@ public class WatershedOperation implements Operation {
           .initialValueSupplier(ContoursReport::new)
           .build();
 
-  private final InputSocket<Mat> srcSocket;
+  private final InputSocket<MatWrapper> srcSocket;
   private final InputSocket<ContoursReport> contoursSocket;
   private final OutputSocket<ContoursReport> outputSocket;
 
@@ -100,7 +101,7 @@ public class WatershedOperation implements Operation {
 
   @Override
   public void perform() {
-    final Mat input = srcSocket.getValue().get();
+    final Mat input = srcSocket.getValue().get().getCpu();
     if (input.type() != CV_8UC3) {
       throw new IllegalArgumentException("Watershed only works on 8-bit, 3-channel images");
     }

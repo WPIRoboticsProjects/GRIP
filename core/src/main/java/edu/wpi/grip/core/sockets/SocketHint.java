@@ -1,5 +1,7 @@
 package edu.wpi.grip.core.sockets;
 
+import edu.wpi.grip.core.MatWrapper;
+
 import com.google.common.base.MoreObjects;
 
 import org.bytedeco.javacpp.opencv_objdetect.CascadeClassifier;
@@ -121,7 +123,7 @@ public interface SocketHint<T> {
           || type.equals(List.class)) {
         // Enums labels are kind of redundant, and Lists actually represent ranges
         return "";
-      } else if (Mat.class.equals(type)) {
+      } else if (Mat.class.equals(type) || MatWrapper.class.equals(type)) {
         // "Mats" represent images
         return "Image";
       } else if (CascadeClassifier.class.equals(type)) {

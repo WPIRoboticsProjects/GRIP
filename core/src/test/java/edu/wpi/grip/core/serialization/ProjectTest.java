@@ -4,6 +4,7 @@ import edu.wpi.grip.core.AddOperation;
 import edu.wpi.grip.core.AdditionOperation;
 import edu.wpi.grip.core.Connection;
 import edu.wpi.grip.core.ManualPipelineRunner;
+import edu.wpi.grip.core.MatWrapper;
 import edu.wpi.grip.core.OperationMetaData;
 import edu.wpi.grip.core.Pipeline;
 import edu.wpi.grip.core.PipelineRunner;
@@ -274,19 +275,20 @@ public class ProjectTest {
     serializeAndDeserialize();
 
     Step step1 = pipeline.getSteps().get(0);
-    InputSocket<Mat> a = (InputSocket<Mat>) step1.getInputSockets().get(0);
-    InputSocket<Mat> b = (InputSocket<Mat>) step1.getInputSockets().get(1);
-    OutputSocket<Mat> sum = (OutputSocket<Mat>) step1.getOutputSockets().get(0);
+    InputSocket<MatWrapper> a = (InputSocket<MatWrapper>) step1.getInputSockets().get(0);
+    InputSocket<MatWrapper> b = (InputSocket<MatWrapper>) step1.getInputSockets().get(1);
+    OutputSocket<MatWrapper> sum = (OutputSocket<MatWrapper>) step1.getOutputSockets().get(0);
 
 
-    a.setValue(new Mat(1, 1, CV_32F, new Scalar(1234.5)));
-    b.setValue(new Mat(1, 1, CV_32F, new Scalar(6789.0)));
+    a.getValue().get().set(new Mat(1, 1, CV_32F, new Scalar(1234.5)));
+    b.getValue().get().set(new Mat(1, 1, CV_32F, new Scalar(6789.0)));
+    a.flagChanged();
 
     pipelineRunner.runPipeline();
 
     Mat diff = new Mat();
     Mat expected = new Mat(1, 1, CV_32F, new Scalar(1234.5 + 6789.0));
-    compare(expected, sum.getValue().get(), diff, CMP_NE);
+    compare(expected, sum.getValue().get().getCpu(), diff, CMP_NE);
     assertEquals("Deserialized pipeline with Mat operations did not produce the expected sum.",
         0, countNonZero(diff));
   }
@@ -301,8 +303,8 @@ public class ProjectTest {
     serializeAndDeserialize();
 
     final ImageFileSource sourceDeserialized = (ImageFileSource) pipeline.getSources().get(0);
-    Files.gompeiJpegFile.assertSameImage((Mat) sourceDeserialized.createOutputSockets().get(0)
-        .getValue().get());
+    Files.gompeiJpegFile.assertSameImage(
+        (MatWrapper) sourceDeserialized.createOutputSockets().get(0).getValue().get());
   }
 
   @Test

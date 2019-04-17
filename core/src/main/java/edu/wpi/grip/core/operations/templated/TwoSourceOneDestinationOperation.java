@@ -44,7 +44,7 @@ final class TwoSourceOneDestinationOperation<T1, T2, R> implements Operation {
   @SuppressWarnings("OptionalGetWithoutIsPresent")
   public void perform() {
     performer.perform(input1.getValue().get(), input2.getValue().get(), output.getValue().get());
-    output.setValue(output.getValue().get());
+    output.flagChanged();
   }
 
   @FunctionalInterface

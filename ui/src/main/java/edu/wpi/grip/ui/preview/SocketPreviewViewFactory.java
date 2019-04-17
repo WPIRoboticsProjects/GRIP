@@ -1,5 +1,6 @@
 package edu.wpi.grip.ui.preview;
 
+import edu.wpi.grip.core.MatWrapper;
 import edu.wpi.grip.core.operations.composite.BlobsReport;
 import edu.wpi.grip.core.operations.composite.ContoursReport;
 import edu.wpi.grip.core.operations.composite.LinesReport;
@@ -11,7 +12,6 @@ import com.google.common.eventbus.EventBus;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
-import static org.bytedeco.javacpp.opencv_core.Mat;
 import static org.bytedeco.javacpp.opencv_core.Point;
 import static org.bytedeco.javacpp.opencv_core.Size;
 
@@ -39,9 +39,9 @@ public class SocketPreviewViewFactory {
   @SuppressWarnings("unchecked")
   public <T> SocketPreviewView<T> create(OutputSocket<T> socket) {
     final SocketPreviewView<T> previewView;
-    if (socket.getSocketHint().getType() == Mat.class) {
-      previewView = (SocketPreviewView) new ImageSocketPreviewView(platform, (OutputSocket<Mat>)
-          socket);
+    if (socket.getSocketHint().getType() == MatWrapper.class) {
+      previewView = (SocketPreviewView) new ImageSocketPreviewView(platform,
+          (OutputSocket<MatWrapper>) socket);
     } else if (socket.getSocketHint().getType() == Point.class
         || socket.getSocketHint().getType() == Size.class) {
       previewView = (SocketPreviewView) new PointSizeSocketPreviewView(platform, socket);

@@ -1,6 +1,9 @@
 package edu.wpi.grip.ui.pipeline.input;
 
+import edu.wpi.grip.core.cuda.AccelerationMode;
+import edu.wpi.grip.core.cuda.CudaDetector;
 import edu.wpi.grip.core.events.SocketChangedEvent;
+import edu.wpi.grip.core.sockets.CudaSocket;
 import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.ui.pipeline.SocketHandleView;
 import edu.wpi.grip.ui.util.GripPlatform;
@@ -23,12 +26,17 @@ public class CheckboxInputSocketController extends InputSocketController<Boolean
 
   private final CheckBox checkBox;
   private final GripPlatform platform;
+  private final boolean isCudaAvailable;
 
   @Inject
-  CheckboxInputSocketController(SocketHandleView.Factory socketHandleViewFactory, GripPlatform
-      platform, @Assisted InputSocket<Boolean> socket) {
+  CheckboxInputSocketController(SocketHandleView.Factory socketHandleViewFactory,
+                                GripPlatform platform,
+                                AccelerationMode accelerationMode,
+                                CudaDetector cudaDetector,
+                                @Assisted InputSocket<Boolean> socket) {
     super(socketHandleViewFactory, socket);
     this.platform = platform;
+    isCudaAvailable = accelerationMode.isUsingCuda() && cudaDetector.isCompatibleCudaInstalled();
     this.checkBox = new CheckBox();
   }
 
@@ -41,6 +49,11 @@ public class CheckboxInputSocketController extends InputSocketController<Boolean
     this.getIdentifier().setGraphic(this.checkBox);
     this.getIdentifier().setContentDisplay(ContentDisplay.RIGHT);
     this.setContent(checkBox);
+
+    // Disable if controlling a CUDA socket and CUDA acceleration is unavailable
+    if (getSocket() instanceof CudaSocket && !isCudaAvailable) {
+      this.checkBox.setDisable(true);
+    }
 
     assignSocketValue(getSocket().getValue());
     // Add the listener after so that setting the initial value doesn't trigger it.
