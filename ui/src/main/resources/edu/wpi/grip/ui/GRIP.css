@@ -3,11 +3,11 @@
 .root {
     -fx-font-family: "Roboto";
 
-    -swatch-100: hsb(0, 0%, 98%);
-    -swatch-200: hsb(0, 0%, 88%);
-    -swatch-300: hsb(0, 0%, 78%);
-    -swatch-400: hsb(0, 0%, 68%);
-    -swatch-500: hsb(0, 0%, 58%);
+    -swatch-100: hsb(180, 25%, 98%);
+    -swatch-200: hsb(180, 25%, 88%);
+    -swatch-300: hsb(180, 25%, 78%);
+    -swatch-400: hsb(180, 25%, 68%);
+    -swatch-500: hsb(180, 25%, 58%);
 }
 
 .main-window {
