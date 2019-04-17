@@ -36,6 +36,13 @@ jobs:
           gradleOptions: '-Xmx3072m'
           publishJUnitResults: false
           tasks: 'check :ui:jpackage -Pgeneration -PjniLocation=build/OpenCVJNI -Pheadless=true -PlogTests -Pjdk13=/opt/java/jdk-13 --stacktrace'
+      - task: Gradle@2
+        inputs:
+          workingDirectory: ''
+          gradleWrapperFile: 'gradlew'
+          gradleOptions: '-Xmx3072m'
+          publishJUnitResults: false
+          tasks: ':ui:jpackage -Pcuda -Pjdk13=/opt/java/jdk-13 --stacktrace'
 
       - task: CopyFiles@2
         inputs:
@@ -79,6 +86,13 @@ jobs:
           jdkArchitectureOption: 'x64'
           publishJUnitResults: true
           tasks: 'check :ui:jpackage -Pheadless=true -Pgeneration -PlogTests -Pjdk13=..\build\jdk-13 --stacktrace'
+      - task: Gradle@2
+        inputs:
+          workingDirectory: ''
+          gradleWrapperFile: 'gradlew'
+          gradleOptions: '-Xmx3072m'
+          publishJUnitResults: false
+          tasks: ':ui:jpackage -Pcuda -Pjdk13=..\build\jdk-13 --stacktrace'
 
       - task: CopyFiles@2
         inputs:
@@ -148,6 +162,13 @@ jobs:
           jdkArchitectureOption: 'x64'
           publishJUnitResults: false
           tasks: 'check :ui:jpackage -Pheadless=true -Pgeneration -PlogTests -Pjdk13=/Library/Java/JavaVirtualMachines/jdk-13.jdk/Contents/Home/ --stacktrace'
+      - task: Gradle@2
+        inputs:
+          workingDirectory: ''
+          gradleWrapperFile: 'gradlew'
+          gradleOptions: '-Xmx3072m'
+          publishJUnitResults: false
+          tasks: ':ui:jpackage -Pcuda -Pjdk13=/Library/Java/JavaVirtualMachines/jdk-13.jdk/Contents/Home/ --stacktrace'
 
       - task: CopyFiles@2
         inputs:
