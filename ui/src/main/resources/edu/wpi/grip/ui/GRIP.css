@@ -42,7 +42,7 @@
     -fx-alignment: center-left;
     -fx-color: white;
     -fx-background-color: -fx-color;
-    -fx-effect: dropshadow(gaussian, #777, 4, 0.1, 0, 2);
+    -fx-effect: dropshadow(gaussian, #aaa, 4, 0.1, 0, 2);
 }
 
 .operation:hover {
@@ -76,9 +76,13 @@ Label.operation-description {
     -fx-pref-width: 40em;
 }
 
+.previews > .scroll-pane {
+    -fx-padding: 0;
+}
+
 .previews > .scroll-pane > .viewport {
     -fx-background-color: #eee;
-    -fx-effect: innershadow(gaussian, #777, 8, 0.125, 2, 2);
+    -fx-effect: innershadow(gaussian, #aaa, 8, 0.125, 2, 2);
 }
 
 .previews HBox {
@@ -87,7 +91,7 @@ Label.operation-description {
 }
 
 .socket-preview {
-    -fx-effect: dropshadow(gaussian, #777, 16, 0.125, 0, 4);
+    -fx-effect: dropshadow(gaussian, #aaa, 16, 0.125, 0, 4);
     -fx-background-color: white;
     -fx-border-color: transparent;
     -fx-padding: 0;
@@ -152,7 +156,7 @@ Label.operation-description {
     -fx-border-width: 1px;
     -fx-border-color: -fx-box-border;
     -fx-background-color: white;
-    -fx-effect: dropshadow(gaussian, #7f7f7f, 6, 0.125, 0, 4);
+    -fx-effect: dropshadow(gaussian, #aaa, 6, 0.125, 0, 4);
 }
 
 Label.source-name {
@@ -177,7 +181,7 @@ Button.add-source {
     -fx-pref-width: 15em;
     -fx-border-color: -fx-box-border;
     -fx-background-color: white;
-    -fx-effect: dropshadow(gaussian, #7f7f7f, 6, 0.125, 0, 4);
+    -fx-effect: dropshadow(gaussian, #aaa, 6, 0.125, 0, 4);
     -fx-padding: 1.0em;
     -fx-spacing: 0.5em;
 }
