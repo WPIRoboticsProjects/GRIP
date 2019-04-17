@@ -171,6 +171,7 @@ public class Main extends Application {
     } catch (GripServerException e) {
       logger.log(Level.SEVERE, "The HTTP server could not be started", e);
       Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "", ButtonType.YES, ButtonType.NO);
+      alert.getDialogPane().getStylesheets().setAll(root.getStylesheets());
       alert.setTitle("The HTTP server could not be started");
       alert.setHeaderText("The HTTP server could not be started");
       alert.setContentText(

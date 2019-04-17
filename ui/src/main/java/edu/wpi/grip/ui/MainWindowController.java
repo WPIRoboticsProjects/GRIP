@@ -411,6 +411,7 @@ public class MainWindowController {
     if (analysisStage == null) {
       analysisStage = new Stage();
       analysisStage.setScene(new Scene(analysisPane));
+      analysisPane.getStylesheets().setAll(root.getStylesheets());
       analysisStage.initOwner(root.getScene().getWindow());
       analysisStage.setTitle("Pipeline Analysis");
       analysisStage.getIcons().add(new Image("/edu/wpi/grip/ui/icons/grip.png"));

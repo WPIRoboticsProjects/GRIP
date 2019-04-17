@@ -42,6 +42,7 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
 import javafx.util.Callback;
 
 import javax.annotation.Nullable;
@@ -50,6 +51,9 @@ import javax.annotation.Nullable;
  * Controller for the analysis view.
  */
 public class AnalysisController {
+
+  @FXML
+  private Pane root;
 
   // Table
   @FXML
@@ -191,6 +195,7 @@ public class AnalysisController {
     // Show benchmarking results
     Platform.runLater(() -> {
       Alert a = new Alert(Alert.AlertType.INFORMATION);
+      a.getDialogPane().getStylesheets().setAll(root.getStylesheets());
       a.setHeaderText("Benchmarking results");
       TextArea resultArea = new TextArea(csvReport);
       a.getDialogPane().setContent(resultArea);
@@ -204,7 +209,6 @@ public class AnalysisController {
    *
    * @param m   the map to stream
    * @param <E> the type of the values in the map
-   *
    * @return a stream of the entries in the map, sorted by their key's index.
    */
   private <E> Stream<Map.Entry<Step, E>> sortedStream(Map<Step, E> m) {
