@@ -11,6 +11,8 @@ import edu.wpi.grip.core.sockets.SocketHints;
 import com.google.common.collect.ImmutableList;
 import com.google.inject.Inject;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 import org.bytedeco.javacpp.opencv_cudaimgproc.CannyEdgeDetector;
 
 import java.util.List;
@@ -70,6 +72,7 @@ public class CannyEdgeOperation extends CudaOperation {
   }
 
   @Override
+  @SuppressFBWarnings(value = "RCN", justification = "False positive (there is no nullcheck)")
   public void perform() {
     double lowThresh = lowThreshSocket.getValue().get().doubleValue();
     double highThresh = highThreshSocket.getValue().get().doubleValue();
