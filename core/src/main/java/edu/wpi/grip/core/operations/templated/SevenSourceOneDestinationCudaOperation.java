@@ -9,6 +9,7 @@ import com.google.common.collect.ImmutableList;
 
 import java.util.List;
 
+@SuppressWarnings("PMD.GenericsNaming")
 final class SevenSourceOneDestinationCudaOperation<T1, T2, T3, T4, T5, T6, T7, R>
     extends CudaOperation {
 
@@ -22,6 +23,7 @@ final class SevenSourceOneDestinationCudaOperation<T1, T2, T3, T4, T5, T6, T7, R
   private final OutputSocket<R> output;
   private final Performer<T1, T2, T3, T4, T5, T6, T7, R> performer;
 
+  @SuppressWarnings("PMD.ExcessiveParameterList")
   SevenSourceOneDestinationCudaOperation(InputSocket.Factory isf,
                                          OutputSocket.Factory osf,
                                          SocketHint<T1> t1SocketHint,

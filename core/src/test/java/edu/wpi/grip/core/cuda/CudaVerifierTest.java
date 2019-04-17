@@ -39,6 +39,7 @@ public class CudaVerifierTest {
     }
 
     @Override
+    @SuppressWarnings("PMD.DefaultPackage")
     void exit() {
       exitCount++;
     }
