@@ -1,11 +1,12 @@
 package edu.wpi.grip.core.sockets;
 
 
+import edu.wpi.grip.core.MatWrapper;
+
 import com.google.common.reflect.TypeToken;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
-import org.bytedeco.javacpp.opencv_core.Mat;
 import org.bytedeco.javacpp.opencv_core.Point;
 import org.bytedeco.javacpp.opencv_core.Size;
 
@@ -24,6 +25,13 @@ import static com.google.common.base.Preconditions.checkNotNull;
 public final class SocketHints {
 
   private SocketHints() { /* no op */ }
+
+  public static SocketHint<MatWrapper> createImageSocketHint(String identifier) {
+    return new SocketHint.Builder<>(MatWrapper.class)
+        .identifier(identifier)
+        .initialValueSupplier(MatWrapper::emptyWrapper)
+        .build();
+  }
 
   @SuppressWarnings("unchecked")
   public static <T extends Enum<T>> SocketHint<T> createEnumSocketHint(final String identifier,
@@ -96,11 +104,6 @@ public final class SocketHints {
   public static final class Inputs {
     private Inputs() { /* no op */ }
 
-    public static SocketHint<Mat> createMatSocketHint(final String identifier,
-                                                      final boolean withDefault) {
-      return createObjectSocketHintBuilder(identifier, Mat.class, Mat::new, withDefault).build();
-    }
-
     public static SocketHint<Size> createSizeSocketHint(final String identifier,
                                                         final boolean withDefault) {
       return createObjectSocketHintBuilder(identifier, Size.class, Size::new, withDefault).build();
@@ -172,10 +175,6 @@ public final class SocketHints {
    */
   public static final class Outputs {
     private Outputs() { /* no op */ }
-
-    public static SocketHint<Mat> createMatSocketHint(final String identifier) {
-      return Inputs.createMatSocketHint(identifier, true);
-    }
 
     public static SocketHint<Point> createPointSocketHint(final String identifier) {
       return Inputs.createPointSocketHint(identifier, true);

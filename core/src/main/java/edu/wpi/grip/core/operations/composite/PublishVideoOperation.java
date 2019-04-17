@@ -2,6 +2,7 @@ package edu.wpi.grip.core.operations.composite;
 
 import edu.wpi.grip.annotation.operation.Description;
 import edu.wpi.grip.annotation.operation.OperationCategory;
+import edu.wpi.grip.core.MatWrapper;
 import edu.wpi.grip.core.Operation;
 import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.sockets.OutputSocket;
@@ -24,7 +25,6 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import static org.bytedeco.javacpp.opencv_core.Mat;
 import static org.bytedeco.javacpp.opencv_imgcodecs.CV_IMWRITE_JPEG_QUALITY;
 import static org.bytedeco.javacpp.opencv_imgcodecs.imencode;
 
@@ -51,7 +51,7 @@ public class PublishVideoOperation implements Operation {
   private final Object imageLock = new Object();
   private final BytePointer imagePointer = new BytePointer();
   private final Thread serverThread;
-  private final InputSocket<Mat> inputSocket;
+  private final InputSocket<MatWrapper> inputSocket;
   private final InputSocket<Number> qualitySocket;
   @SuppressWarnings("PMD.SingularField")
   private volatile boolean connected = false;
@@ -99,9 +99,9 @@ public class PublishVideoOperation implements Operation {
               }
 
               // Copy the image data into a pre-allocated buffer, growing it if necessary
-              bufferSize = imagePointer.limit();
+              bufferSize = (int) imagePointer.limit();
               if (bufferSize > buffer.length) {
-                buffer = new byte[imagePointer.limit()];
+                buffer = new byte[(int) imagePointer.limit()];
               }
               imagePointer.get(buffer, 0, bufferSize);
               hasImage = false;
@@ -144,8 +144,7 @@ public class PublishVideoOperation implements Operation {
     if (numSteps != 0) {
       throw new IllegalStateException("Only one instance of PublishVideoOperation may exist");
     }
-    this.inputSocket = inputSocketFactory.create(SocketHints.Inputs.createMatSocketHint("Image",
-        false));
+    this.inputSocket = inputSocketFactory.create(SocketHints.createImageSocketHint("Image"));
     this.qualitySocket = inputSocketFactory.create(SocketHints.Inputs
         .createNumberSliderSocketHint("Quality", 80, 0, 100));
     numSteps++;
@@ -179,7 +178,7 @@ public class PublishVideoOperation implements Operation {
     }
 
     synchronized (imageLock) {
-      imencode(".jpeg", inputSocket.getValue().get(), imagePointer,
+      imencode(".jpeg", inputSocket.getValue().get().getCpu(), imagePointer,
           new IntPointer(CV_IMWRITE_JPEG_QUALITY, qualitySocket.getValue().get().intValue()));
       hasImage = true;
       imageLock.notifyAll();

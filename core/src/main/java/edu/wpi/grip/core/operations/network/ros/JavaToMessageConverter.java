@@ -137,7 +137,7 @@ public abstract class JavaToMessageConverter<J, M extends Message> {
   }
 
   private abstract static class SimpleConverter<J, M extends Message> extends
-      JavaToMessageConverter<J, M> {
+                                                                      JavaToMessageConverter<J, M> {
     private final BiConsumer<M, J> messageDataAssigner;
 
     private SimpleConverter(String type, BiConsumer<M, J> messageDataAssigner) {

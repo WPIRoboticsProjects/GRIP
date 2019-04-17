@@ -2,6 +2,7 @@ package edu.wpi.grip.core.operations.composite;
 
 import edu.wpi.grip.annotation.operation.Description;
 import edu.wpi.grip.annotation.operation.OperationCategory;
+import edu.wpi.grip.core.MatWrapper;
 import edu.wpi.grip.core.Operation;
 import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.sockets.OutputSocket;
@@ -30,12 +31,12 @@ import static org.bytedeco.javacpp.opencv_imgproc.cvtColor;
              iconName = "find-lines")
 public class FindLinesOperation implements Operation {
 
-  private final SocketHint<Mat> inputHint = SocketHints.Inputs.createMatSocketHint("Input", false);
+  private final SocketHint<MatWrapper> inputHint = SocketHints.createImageSocketHint("Input");
   private final SocketHint<LinesReport> linesHint = new SocketHint.Builder<>(LinesReport.class)
       .identifier("Lines").initialValueSupplier(LinesReport::new).build();
 
 
-  private final InputSocket<Mat> inputSocket;
+  private final InputSocket<MatWrapper> inputSocket;
 
   private final OutputSocket<LinesReport> linesReportSocket;
 
@@ -63,17 +64,17 @@ public class FindLinesOperation implements Operation {
   @Override
   @SuppressWarnings("unchecked")
   public void perform() {
-    final Mat input = inputSocket.getValue().get();
+    final MatWrapper input = inputSocket.getValue().get();
     final LineSegmentDetector lsd = linesReportSocket.getValue().get().getLineSegmentDetector();
 
     final Mat lines = new Mat();
     if (input.channels() == 1) {
-      lsd.detect(input, lines);
+      lsd.detect(input.getCpu(), lines);
     } else {
       // The line detector works on a single channel.  If the input is a color image, we can just
       // give the line  detector a grayscale version of it
       final Mat tmp = new Mat();
-      cvtColor(input, tmp, COLOR_BGR2GRAY);
+      cvtColor(input.getCpu(), tmp, COLOR_BGR2GRAY);
       lsd.detect(tmp, lines);
       tmp.release();
     }

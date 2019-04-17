@@ -1,23 +1,22 @@
 package edu.wpi.grip.ui.preview;
 
+import edu.wpi.grip.core.MatWrapper;
 import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.ui.util.GripPlatform;
 
 import javafx.scene.image.Image;
 
-import static org.bytedeco.javacpp.opencv_core.Mat;
-
 /**
  * A <code>SocketPreviewView</code> that previews sockets containing OpenCV Mats.
  */
-public class ImageSocketPreviewView extends ImageBasedPreviewView<Mat> {
+public class ImageSocketPreviewView extends ImageBasedPreviewView<MatWrapper> {
 
   private final GripPlatform platform;
 
   /**
    * @param socket An output socket to preview.
    */
-  ImageSocketPreviewView(GripPlatform platform, OutputSocket<Mat> socket) {
+  ImageSocketPreviewView(GripPlatform platform, OutputSocket<MatWrapper> socket) {
     super(socket);
     this.platform = platform;
     this.setContent(imageView);
@@ -28,9 +27,9 @@ public class ImageSocketPreviewView extends ImageBasedPreviewView<Mat> {
     synchronized (this) {
       this.getSocket().getValue()
           .filter(ImageBasedPreviewView::isPreviewable)
-          .ifPresent(mat -> {
+          .ifPresent(m -> {
             platform.runAsSoonAsPossible(() -> {
-              Image image = imageConverter.convert(mat, getImageHeight());
+              Image image = imageConverter.convert(m.getCpu(), getImageHeight());
               imageView.setImage(image);
             });
           });

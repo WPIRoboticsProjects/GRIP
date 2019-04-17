@@ -59,7 +59,7 @@ final class FiveSourceOneDestinationOperation<T1, T2, T3, T4, T5, R> implements 
         input4.getValue().get(),
         input5.getValue().get(),
         output.getValue().get());
-    output.setValue(output.getValue().get());
+    output.flagChanged();
   }
 
   @FunctionalInterface

@@ -16,6 +16,12 @@ if (!(project.hasProperty("generation") || project.hasProperty("genonly"))) {
 
 createNativeConfigurations()
 
+val withCuda = project.hasProperty("cuda") || project.hasProperty("WITH_CUDA")
+
+if (withCuda) {
+    version = "$version-cuda"
+}
+
 dependencies {
     compile(project(":core"))
     compile(project(":ui:preloader"))

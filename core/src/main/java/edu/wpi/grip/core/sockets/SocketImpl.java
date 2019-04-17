@@ -63,6 +63,12 @@ public class SocketImpl<T> implements Socket<T> {
   }
 
   @Override
+  public void flagChanged() {
+    onValueChanged();
+    eventBus.post(new SocketChangedEvent(this));
+  }
+
+  @Override
   public Optional<T> getValue() {
     if (!this.value.isPresent()) {
       this.value = socketHint.createInitialValue();

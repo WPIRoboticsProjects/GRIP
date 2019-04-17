@@ -1,5 +1,6 @@
 package edu.wpi.grip.core.sources;
 
+import edu.wpi.grip.core.MatWrapper;
 import edu.wpi.grip.core.Pipeline;
 import edu.wpi.grip.core.http.ContextStore;
 import edu.wpi.grip.core.http.GripServer;
@@ -17,7 +18,6 @@ import org.apache.http.entity.FileEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
-import org.bytedeco.javacpp.opencv_core.Mat;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -62,7 +62,7 @@ public class HttpSourceTest {
 
   @Test
   public void testPostImage() throws IOException, InterruptedException {
-    OutputSocket<Mat> imageSource = source.getOutputSockets().get(0);
+    OutputSocket<MatWrapper> imageSource = source.getOutputSockets().get(0);
 
     // We have to manually update the output sockets to get the image
     source.updateOutputSockets();

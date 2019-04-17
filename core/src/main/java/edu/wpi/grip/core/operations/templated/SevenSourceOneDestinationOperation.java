@@ -69,7 +69,7 @@ final class SevenSourceOneDestinationOperation<T1, T2, T3, T4, T5, T6, T7, R> im
         input7.getValue().get(),
         output.getValue().get()
     );
-    output.setValue(output.getValue().get());
+    output.flagChanged();
   }
 
   @FunctionalInterface

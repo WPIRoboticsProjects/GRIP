@@ -58,7 +58,7 @@ public final class RectangleSocketPreviewView extends ImageBasedPreviewView<Rect
     synchronized (this) {
       final RectsReport report = this.getSocket().getValue().get();
       final List<Rect> rectangles = report.getRectangles();
-      Mat input = report.getImage();
+      Mat input = report.getImage().getCpu();
 
       if (input.channels() == 3) {
         input.copyTo(tmp);

@@ -30,6 +30,8 @@ public interface InputSocket<T> extends Socket<T> {
 
   interface Factory {
     <T> InputSocket<T> create(SocketHint<T> hint);
+
+    CudaSocket createCuda(SocketHint<Boolean> hint);
   }
 
   /**

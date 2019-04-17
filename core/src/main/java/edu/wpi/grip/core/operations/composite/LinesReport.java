@@ -1,6 +1,7 @@
 package edu.wpi.grip.core.operations.composite;
 
 import edu.wpi.grip.annotation.operation.PublishableObject;
+import edu.wpi.grip.core.MatWrapper;
 import edu.wpi.grip.core.operations.network.PublishValue;
 import edu.wpi.grip.core.operations.network.Publishable;
 import edu.wpi.grip.core.sockets.NoSocketTypeLabel;
@@ -9,7 +10,6 @@ import edu.wpi.grip.core.sockets.Socket;
 import java.util.Collections;
 import java.util.List;
 
-import static org.bytedeco.javacpp.opencv_core.Mat;
 import static org.bytedeco.javacpp.opencv_imgproc.LineSegmentDetector;
 import static org.bytedeco.javacpp.opencv_imgproc.createLineSegmentDetector;
 
@@ -24,7 +24,7 @@ import static org.bytedeco.javacpp.opencv_imgproc.createLineSegmentDetector;
 @NoSocketTypeLabel
 public class LinesReport implements Publishable {
   private final LineSegmentDetector lsd;
-  private final Mat input;
+  private final MatWrapper input;
   private final List<Line> lines;
 
   /**
@@ -32,7 +32,7 @@ public class LinesReport implements Publishable {
    * LinesReports.
    */
   public LinesReport() {
-    this(createLineSegmentDetector(), new Mat(), Collections.emptyList());
+    this(createLineSegmentDetector(), MatWrapper.emptyWrapper(), Collections.emptyList());
   }
 
   /**
@@ -40,7 +40,7 @@ public class LinesReport implements Publishable {
    * @param input The input matrix.
    * @param lines The lines that have been found.
    */
-  public LinesReport(LineSegmentDetector lsd, Mat input, List<Line> lines) {
+  public LinesReport(LineSegmentDetector lsd, MatWrapper input, List<Line> lines) {
     this.lsd = lsd;
     this.input = input;
     this.lines = lines;
@@ -53,7 +53,7 @@ public class LinesReport implements Publishable {
   /**
    * @return The original image that the line detection was performed on.
    */
-  public Mat getInput() {
+  public MatWrapper getInput() {
     return this.input;
   }
 

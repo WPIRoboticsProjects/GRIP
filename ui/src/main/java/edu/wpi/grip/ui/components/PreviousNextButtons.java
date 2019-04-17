@@ -8,6 +8,7 @@ import com.google.common.annotations.VisibleForTesting;
 import org.controlsfx.control.SegmentedButton;
 
 import java.util.function.Consumer;
+
 import javafx.scene.Node;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.Tooltip;

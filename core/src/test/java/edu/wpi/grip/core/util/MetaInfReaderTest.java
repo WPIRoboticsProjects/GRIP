@@ -34,7 +34,7 @@ public class MetaInfReaderTest {
     String input = "# Leading comment\na\nb\n# Comment in the middle\n\nc\nd\ne # Trailing comment";
     List<String> expected = ImmutableList.of("a", "b", "c", "d", "e");
     InputStream s = new StringBufferInputStream(input);
-    List<String> out = MetaInfReader.read(s)
+    List<String> out = MetaInfReader.readLines(s)
         .collect(Collectors.toList());
     assertEquals("Unexpected line result", expected, out);
   }

@@ -35,7 +35,7 @@ public final class MetaInfReader {
    * @throws IOException if the file could not be read
    */
   public static <T> Stream<Class<T>> readClasses(String fileName) throws IOException {
-    return read(fileName)
+    return readLines(fileName)
         .map(MetaInfReader::classForNameOrNull)
         .map(c -> (Class<T>) c)
         .filter(Objects::nonNull);
@@ -49,15 +49,15 @@ public final class MetaInfReader {
    * @throws IOException if no file exists with the given name, or if the file exists but cannot
    *                     be read
    *
-   * @see #read(InputStream)
+   * @see #readLines(InputStream)
    */
-  private static Stream<String> read(String fileName) throws IOException {
+  public static Stream<String> readLines(String fileName) throws IOException {
     checkNotNull(fileName, "fileName");
     InputStream stream = MetaInfReader.class.getResourceAsStream("/META-INF/" + fileName);
     if (stream == null) {
       throw new IOException("No resource /META-INF/" + fileName + " found");
     }
-    return read(stream);
+    return readLines(stream);
   }
 
   /**
@@ -72,7 +72,7 @@ public final class MetaInfReader {
    * @throws IOException if the stream could not be read from or safely closed
    */
   @VisibleForTesting
-  static Stream<String> read(InputStream inputStream) throws IOException {
+  static Stream<String> readLines(InputStream inputStream) throws IOException {
     List<String> lines;
     try (InputStreamReader reader = new InputStreamReader(inputStream, StandardCharsets.UTF_8);
          BufferedReader bufferedReader = new BufferedReader(reader)) {

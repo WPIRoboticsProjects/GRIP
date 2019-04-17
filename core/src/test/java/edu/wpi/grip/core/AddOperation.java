@@ -11,7 +11,6 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.eventbus.EventBus;
 
 import org.bytedeco.javacpp.opencv_core;
-import org.bytedeco.javacpp.opencv_core.Mat;
 
 import java.util.List;
 
@@ -22,13 +21,13 @@ import java.util.List;
 public class AddOperation implements Operation {
   public static final OperationDescription DESCRIPTION = OperationDescription
       .builder().name("OpenCV Add").summary("Compute the per-pixel sum of two images.").build();
-  private final SocketHint<Mat> aHint = SocketHints.Inputs.createMatSocketHint("a", false);
-  private final SocketHint<Mat> bHint = SocketHints.Inputs.createMatSocketHint("b", false);
-  private final SocketHint<Mat> sumHint = SocketHints.Inputs.createMatSocketHint("sum", true);
+  private final SocketHint<MatWrapper> aHint = SocketHints.createImageSocketHint("a");
+  private final SocketHint<MatWrapper> bHint = SocketHints.createImageSocketHint("b");
+  private final SocketHint<MatWrapper> sumHint = SocketHints.createImageSocketHint("sum");
 
-  private InputSocket<Mat> a;
-  private InputSocket<Mat> b;
-  private OutputSocket<Mat> sum;
+  private InputSocket<MatWrapper> a;
+  private InputSocket<MatWrapper> b;
+  private OutputSocket<MatWrapper> sum;
 
   public AddOperation(EventBus eventBus) {
     this(new MockInputSocketFactory(eventBus), new MockOutputSocketFactory(eventBus));
@@ -56,6 +55,8 @@ public class AddOperation implements Operation {
 
   @Override
   public void perform() {
-    opencv_core.add(a.getValue().get(), b.getValue().get(), sum.getValue().get());
+    opencv_core.add(a.getValue().get().getCpu(),
+        b.getValue().get().getCpu(),
+        sum.getValue().get().rawCpu());
   }
 }
