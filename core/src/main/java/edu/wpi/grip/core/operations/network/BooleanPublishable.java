@@ -17,6 +17,7 @@ public final class BooleanPublishable implements Publishable {
     this.bool = bool;
   }
 
+  @SuppressWarnings("PMD.BooleanGetMethodName")
   @PublishValue(weight = 1)
   public boolean getValue() {
     return bool;

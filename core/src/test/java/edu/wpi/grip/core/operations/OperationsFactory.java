@@ -18,6 +18,7 @@ import com.google.inject.Injector;
 
 import java.util.Optional;
 
+@SuppressWarnings("PMD.UseUtilityClass")
 public class OperationsFactory {
 
   public static Operations create(EventBus eventBus, Injector injector) {
@@ -50,6 +51,7 @@ public class OperationsFactory {
 
   private static class MockROSMessagePublisher<C extends JavaToMessageConverter>
       extends ROSMessagePublisher {
+    @SuppressWarnings("PMD.UnusedFormalParameter")
     public MockROSMessagePublisher(C converter) {
 
     }

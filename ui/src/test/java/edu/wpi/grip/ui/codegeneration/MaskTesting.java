@@ -20,9 +20,10 @@ import java.util.Optional;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+@SuppressWarnings("PMD.JUnitTestsShouldIncludeAssert")
 public class MaskTesting extends AbstractGenerationTesting {
 
-  void set() {
+  private void set() {
     HSVThresholdSetup.setup(this);
     Step mask = gen.addStep(
         new OperationMetaData(OperationDescription.from(MaskOperation.class),
@@ -46,7 +47,7 @@ public class MaskTesting extends AbstractGenerationTesting {
     }, (pip) -> validate(pip), "MaskGripIconTest");
   }
 
-  void validate(PipelineInterfacer pip) {
+  private void validate(PipelineInterfacer pip) {
     new ManualPipelineRunner(eventBus, pipeline).runPipeline();
     Optional out = pipeline.getSteps().get(1).getOutputSockets().get(0).getValue();
     assertTrue("Pipeline did not process", out.isPresent());

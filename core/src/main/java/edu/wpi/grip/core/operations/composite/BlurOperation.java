@@ -78,6 +78,7 @@ public class BlurOperation extends CudaOperation {
   }
 
   @Override
+  @SuppressWarnings("PMD.ExcessiveMethodLength")
   public void perform() {
     final MatWrapper input = inputSocket.getValue().get();
     if (input.empty()) {

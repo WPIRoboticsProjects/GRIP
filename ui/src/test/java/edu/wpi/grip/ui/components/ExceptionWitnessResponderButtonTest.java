@@ -2,11 +2,13 @@ package edu.wpi.grip.ui.components;
 
 import edu.wpi.grip.core.util.ExceptionWitness;
 import edu.wpi.grip.core.util.MockExceptionWitness;
+import edu.wpi.grip.ui.UiTests;
 
 import com.google.common.eventbus.EventBus;
 
 import org.junit.Ignore;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 import org.testfx.framework.junit.ApplicationTest;
 import org.testfx.matcher.base.NodeMatchers;
 import org.testfx.util.WaitForAsyncUtils;
@@ -20,6 +22,7 @@ import javafx.stage.Stage;
 import static org.testfx.api.FxAssert.verifyThat;
 
 @SuppressWarnings("PMD.JUnitTestsShouldIncludeAssert")
+@Category(UiTests.class)
 public class ExceptionWitnessResponderButtonTest extends ApplicationTest {
 
   private ExceptionWitness witness;

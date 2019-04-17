@@ -17,4 +17,9 @@
         <Class name="edu.wpi.grip.core.ConnectionTest$MockPipeline" />
         <Bug pattern="SE_COMPARATOR_SHOULD_BE_SERIALIZABLE" />
     </Match>
+    <Match>
+        <!-- False positives -->
+        <Class name="edu.wpi.grip.core.operations.CVOperations"/>
+        <Bug pattern="RCN_REDUNDANT_NULLCHECK_WOULD_HAVE_BEEN_A_NPE"/>
+    </Match>
 </FindBugsFilter>

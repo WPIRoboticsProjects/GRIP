@@ -1,11 +1,13 @@
 package edu.wpi.grip.ui.util;
 
 import edu.wpi.grip.core.util.ImageLoadingUtility;
+import edu.wpi.grip.ui.UiTests;
 import edu.wpi.grip.util.Files;
 import edu.wpi.grip.util.ImageWithData;
 
 import org.bytedeco.javacpp.opencv_core.Mat;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 import org.testfx.framework.junit.ApplicationTest;
 
 import java.net.URLDecoder;
@@ -22,6 +24,7 @@ import static org.bytedeco.javacpp.opencv_imgproc.cvtColor;
 import static org.junit.Assert.assertEquals;
 
 
+@Category(UiTests.class)
 public class ImageConverterTest extends ApplicationTest {
   private static final ImageWithData gompeiImage = Files.gompeiJpegFile;
   private static final ImageWithData imageFile = Files.imageFile;
@@ -36,6 +39,7 @@ public class ImageConverterTest extends ApplicationTest {
   }
 
   @Test
+  @SuppressWarnings("PMD.JUnitTestsShouldIncludeAssert")
   public void testConvertImage() throws Exception {
     Mat mat = new Mat();
     ImageLoadingUtility.loadImage(
@@ -54,6 +58,7 @@ public class ImageConverterTest extends ApplicationTest {
   }
 
   @Test
+  @SuppressWarnings("PMD.JUnitTestsShouldIncludeAssert")
   public void testConvertImageSwitch() throws Exception {
     Mat gompeiMat = new Mat();
     Mat imageMat = new Mat();
@@ -71,6 +76,7 @@ public class ImageConverterTest extends ApplicationTest {
   }
 
   @Test
+  @SuppressWarnings("PMD.JUnitTestsShouldIncludeAssert")
   public void testConvertSingleChanelImage() throws Exception {
     final Mat gompeiMat = new Mat();
     ImageLoadingUtility.loadImage(

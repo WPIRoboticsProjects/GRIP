@@ -17,9 +17,10 @@ import java.util.Optional;
 import static junit.framework.TestCase.assertSame;
 import static org.junit.Assert.assertTrue;
 
+@SuppressWarnings("PMD.JUnitTestsShouldIncludeAssert")
 public class NewPointGenerationTesting extends AbstractGenerationTesting {
 
-  void generatePipeline(double x, double y) {
+  private void generatePipeline(double x, double y) {
     Step desat = gen.addStep(new OperationMetaData(
         OperationDescription.from(NewPointOperation.class),
         () -> new NewPointOperation(isf, osf)));
@@ -40,7 +41,7 @@ public class NewPointGenerationTesting extends AbstractGenerationTesting {
     }, (pip) -> pipelineTest(pip), "newPointTest");
   }
 
-  void pipelineTest(PipelineInterfacer pip) {
+  private void pipelineTest(PipelineInterfacer pip) {
     new ManualPipelineRunner(eventBus, pipeline).runPipeline();
     Optional out = pipeline.getSteps().get(0).getOutputSockets().get(0).getValue();
     assertTrue("Output is not present", out.isPresent());

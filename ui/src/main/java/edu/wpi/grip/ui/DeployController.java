@@ -15,6 +15,8 @@ import com.google.common.hash.Hashing;
 import com.google.common.io.LineReader;
 import com.google.common.io.Resources;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 import net.schmizz.sshj.SSHClient;
 import net.schmizz.sshj.common.StreamCopier;
 import net.schmizz.sshj.connection.channel.direct.Session;
@@ -54,6 +56,7 @@ import javax.inject.Inject;
  * current project to a remote target using SSH, then runs it remotely.  The default values for all
  * fields are based on typical settings for FRC, with the address based on the project settings.
  */
+@SuppressWarnings("PMD.TooManyFields")
 public class DeployController {
   private static final String GRIP_JAR = "grip.jar";
   private static final String GRIP_WRAPPER = "grip";
@@ -181,7 +184,8 @@ public class DeployController {
    * thread, and it periodically updates the GUI to inform the user of the current status of the
    * deployment.
    */
-  @SuppressWarnings("PMD.AvoidUsingOctalValues")
+  @SuppressWarnings({"PMD.AvoidUsingOctalValues", "PMD.ExcessiveMethodLength"})
+  @SuppressFBWarnings(value = "RCN", justification = "False positive on local var 'session'")
   private void deploy() {
     setStatusAsync("Connecting to " + address.getText(), false);
 
@@ -263,7 +267,7 @@ public class DeployController {
         session.allocateDefaultPTY();
         Session.Command cmd = session.exec(String.format("'%s/%s'", pathStr, GRIP_WRAPPER));
 
-        try (final InputStreamReader reader = new InputStreamReader(cmd.getInputStream(),
+        try (InputStreamReader reader = new InputStreamReader(cmd.getInputStream(),
             StandardCharsets.UTF_8)) {
           final LineReader inputReader = new LineReader(reader);
           while (isNotCanceled()) {

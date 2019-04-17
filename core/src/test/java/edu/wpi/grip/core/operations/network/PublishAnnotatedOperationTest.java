@@ -85,7 +85,7 @@ public class PublishAnnotatedOperationTest {
   @Test
   @SuppressWarnings("unchecked")
   public void testPublishSimpleReportReturnsExpectedValues() {
-    final String PUBLISHER_NAME = "PUBLISH QUACKERY!";
+    final String publisherName = "PUBLISH QUACKERY!";
     final boolean[] publishNameChangedRan = {false};
     final boolean[] doPublishRan = {false};
     class TestMapNetworkPublisher<T> extends MapNetworkPublisher<T> {
@@ -95,7 +95,7 @@ public class PublishAnnotatedOperationTest {
 
       @Override
       protected void publishNameChanged(Optional oldName, String newName) {
-        assertEquals("Name was not what was expected", newName, PUBLISHER_NAME);
+        assertEquals("Name was not what was expected", newName, publisherName);
         assertFalse("There was an old name when there shouldn't have been", oldName.isPresent());
         publishNameChangedRan[0] = true;
       }
@@ -137,7 +137,7 @@ public class PublishAnnotatedOperationTest {
 
     final List<InputSocket> inputSockets = testPublishAnnotatedOperation.getInputSockets();
     inputSockets.get(0).setValue(new SimpleReport());
-    inputSockets.get(1).setValue(PUBLISHER_NAME);
+    inputSockets.get(1).setValue(publisherName);
 
     testPublishAnnotatedOperation.perform();
 

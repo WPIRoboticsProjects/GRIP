@@ -34,7 +34,7 @@ public class LogTextArea extends TextArea {
     if (fullLog.length() + data.length() >= MAX_STRING_LENGTH && !full) {
       full = true;
       fullLog.append("[ERROR] Too much output to display. Discarding the rest.");
-    } else if (!full) {
+    } else if (!full) { // NOPMD
       fullLog.append(data).append('\n');
     } else {
       return;

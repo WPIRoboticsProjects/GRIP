@@ -23,9 +23,10 @@ import java.util.Optional;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+@SuppressWarnings("PMD.JUnitTestsShouldIncludeAssert")
 public class CVAdaptiveThreshold extends AbstractGenerationTesting {
 
-  boolean setup(AdaptiveThresholdTypesEnum adaptMethod,
+  private boolean setup(AdaptiveThresholdTypesEnum adaptMethod,
                 CVOperations.CVAdaptThresholdTypesEnum threshMethod) {
     Step desat = gen.addStep(new OperationMetaData(
         OperationDescription.from(DesaturateOperation.class),
@@ -76,7 +77,7 @@ public class CVAdaptiveThreshold extends AbstractGenerationTesting {
         (pip) -> validate(pip), "cvBinaryInvGaussianATTest");
   }
 
-  void validate(PipelineInterfacer pip) {
+  private void validate(PipelineInterfacer pip) {
     ManualPipelineRunner runner = new ManualPipelineRunner(eventBus, pipeline);
     runner.runPipeline();
     pip.setMatSource(0, Files.gompeiJpegFile.file);

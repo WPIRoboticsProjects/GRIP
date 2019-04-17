@@ -33,6 +33,7 @@ public class MockCameraSource extends CameraSource {
     return this;
   }
 
+  @Override
   public boolean isRunning() {
     return started;
   }

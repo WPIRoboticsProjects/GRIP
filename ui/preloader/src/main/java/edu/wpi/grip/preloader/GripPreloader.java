@@ -29,10 +29,6 @@ public final class GripPreloader extends Preloader {
 
   private Stage preloaderStage;
 
-  public static void main(String[] args) {
-    launch(args);
-  }
-
   @Override
   public void start(Stage preloaderStage) throws IOException {
     final StackPane root = FXMLLoader.load(GripPreloader.class.getResource("Preloader.fxml"));

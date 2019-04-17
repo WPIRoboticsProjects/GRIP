@@ -98,7 +98,7 @@ public class PipelineRunnerTest {
     }
 
     @Test
-    public void testRunSimplePipeline_WithSourcesAndSteps() throws IOException {
+    public void testRunSimplePipelineWithSourcesAndSteps() throws IOException {
       final EventBus eventBus = new EventBus();
       final MockSource source = new MockSource();
       final MockStep step = new MockStep();
@@ -400,6 +400,7 @@ public class PipelineRunnerTest {
     private Service.State failedFrom = null;
     private Throwable failure = null;
 
+    @Override
     public synchronized void failed(Service.State from, Throwable failure) {
       this.failedFrom = from;
       this.failure = failure;

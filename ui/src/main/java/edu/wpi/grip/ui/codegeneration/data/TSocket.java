@@ -46,10 +46,10 @@ public class TSocket {
    * @return The type of the socket.
    */
   public String baseType() {
-    if (!mutable()) {
-      return type;
-    } else {
+    if (mutable()) {
       return baseTypeHelper(type);
+    } else {
+      return type;
     }
   }
 
@@ -58,7 +58,7 @@ public class TSocket {
    * @param type the original type
    * @return the baseType
    */
-  String baseTypeHelper(String type) {
+  protected String baseTypeHelper(String type) {
     return type;
   }
 

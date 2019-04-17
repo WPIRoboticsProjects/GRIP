@@ -1,6 +1,4 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
-import com.google.common.io.Files
-import java.nio.charset.StandardCharsets
 
 plugins {
     id("java")

@@ -33,6 +33,7 @@ public class BenchmarkRunner {
   /**
    * State flag.
    */
+  @SuppressWarnings("PMD.LinguisticNaming")
   private final AtomicBoolean isBenchmarking = new AtomicBoolean(false);
 
   /**

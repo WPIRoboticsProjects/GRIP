@@ -45,7 +45,7 @@ import java.util.logging.Logger;
 /**
  * Provides a way to generate a constantly updated {@link Mat} from a camera.
  */
-@XStreamAlias(value = "grip:Camera")
+@XStreamAlias("grip:Camera")
 public class CameraSource extends Source implements RestartableService {
 
   /**
@@ -86,6 +86,7 @@ public class CameraSource extends Source implements RestartableService {
   private final OutputSocket<MatWrapper> frameOutputSocket;
   private final OutputSocket<Number> frameRateOutputSocket;
   private final Supplier<FrameGrabber> grabberSupplier;
+  @SuppressWarnings("PMD.LinguisticNaming")
   private final AtomicBoolean isNewFrame = new AtomicBoolean(false);
   private final Mat currentFrameTransferMat = new Mat();
   private final AutoRestartingService cameraService;
@@ -144,11 +145,11 @@ public class CameraSource extends Source implements RestartableService {
     final String deviceNumberProperty = properties.getProperty(DEVICE_NUMBER_PROPERTY);
     final String addressProperty = properties.getProperty(ADDRESS_PROPERTY);
 
-    if (deviceNumberProperty != null) {
+    if (deviceNumberProperty != null) { // NOPMD
       final int deviceNumber = Integer.parseInt(deviceNumberProperty);
       this.name = "Webcam " + deviceNumber;
       this.grabberSupplier = () -> grabberFactory.create(deviceNumber);
-    } else if (addressProperty != null) {
+    } else if (addressProperty != null) { // NOPMD
       this.name = "IP Camera " + new URL(addressProperty).getHost();
       this.grabberSupplier = () -> {
         try {

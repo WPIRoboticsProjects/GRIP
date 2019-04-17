@@ -15,6 +15,7 @@ public class SafeShutdownTest {
   protected static void setUpSecurityManager() {
     oldManager = System.getSecurityManager();
     System.setSecurityManager(new SecurityManager() {
+      @Override
       public void checkPermission(Permission permission) {
         if (permission.getName().contains("exitVM")) {
           throw new IllegalStateException(SHUTDOWN_EXCEPTION_MESSAGE);

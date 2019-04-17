@@ -22,9 +22,10 @@ import java.util.Optional;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+@SuppressWarnings("PMD.JUnitTestsShouldIncludeAssert")
 public class CVCompare extends AbstractGenerationTesting {
 
-  boolean set(CmpTypesEnum val) {
+  private boolean set(CmpTypesEnum val) {
     Step blur = gen.addStep(new OperationMetaData(
         OperationDescription.from(BlurOperation.class), () -> new BlurOperation(isf, osf)));
     loadImage(Files.gompeiJpegFile);
@@ -76,7 +77,7 @@ public class CVCompare extends AbstractGenerationTesting {
     test(() -> set(CmpTypesEnum.CMP_NE), (pip) -> validate(pip), "CvCmpNeTest");
   }
 
-  void validate(PipelineInterfacer pip) {
+  private void validate(PipelineInterfacer pip) {
     ManualPipelineRunner runner = new ManualPipelineRunner(eventBus, pipeline);
     runner.runPipeline();
     Optional out = pipeline.getSteps().get(1).getOutputSockets().get(0).getValue();

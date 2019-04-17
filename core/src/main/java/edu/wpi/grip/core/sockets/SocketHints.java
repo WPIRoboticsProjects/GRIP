@@ -5,6 +5,8 @@ import edu.wpi.grip.core.MatWrapper;
 
 import com.google.common.reflect.TypeToken;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 import org.bytedeco.javacpp.opencv_core.Point;
 import org.bytedeco.javacpp.opencv_core.Size;
 
@@ -83,6 +85,7 @@ public final class SocketHints {
 
   /* PRIVATE PARTIALLY CONSTRUCTED BUILDERS BELOW */
 
+  @SuppressFBWarnings(value = "UPM", justification = "False positive")
   private static SocketHint.Builder<Number> createNumberSocketHintBuilder(final String identifier,
                                                                           final Number number,
                                                                           final Number[] domain) {

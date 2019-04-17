@@ -9,6 +9,7 @@ import com.google.common.collect.ImmutableList;
 
 import java.util.List;
 
+@SuppressWarnings("PMD.GenericsNaming")
 final class OneSourceOneDestinationCudaOperation<T1, R> extends CudaOperation {
 
   private final InputSocket<T1> input1;

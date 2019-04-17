@@ -14,17 +14,16 @@ public abstract class ThresholdOperation<O extends ThresholdOperation<O>> implem
    * @param index     The index of the data array that should be inspected
    * @param value     The value that should be assigned to the mat regardless of being reallocated
    * @param input     The input matrix that the dataArray element should be compared against
-   *
    * @return Either the old mat with the value assigned or a newly created Matrix.
    */
   protected Mat reallocateMatIfInputSizeOrWidthChanged(final Mat[] dataArray, final int index,
                                                        final Scalar value, final Mat input) {
-    if (dataArray[index].size().width() != input.size().width()
-        || dataArray[index].size().height() != input.size().height()
-        || dataArray[index].type() != input.type()) {
-      return dataArray[index] = new Mat(input.size(), input.type(), value);
-    } else {
+    if (dataArray[index].size().width() == input.size().width()
+        && dataArray[index].size().height() == input.size().height()
+        && dataArray[index].type() == input.type()) {
       return dataArray[index].put(value);
+    } else {
+      return dataArray[index] = new Mat(input.size(), input.type(), value);
     }
   }
 }

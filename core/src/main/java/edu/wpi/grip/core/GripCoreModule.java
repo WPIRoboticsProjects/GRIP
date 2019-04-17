@@ -47,7 +47,7 @@ import javax.annotation.Nullable;
  * A Guice {@link com.google.inject.Module} for GRIP's core package.  This is where instances of
  * {@link Pipeline}, {@link Palette}, {@link Project}, etc... are created.
  */
-@SuppressWarnings("PMD.MoreThanOneLogger")
+@SuppressWarnings({"PMD.MoreThanOneLogger", "PMD.CouplingBetweenObjects"})
 public class GripCoreModule extends AbstractModule {
 
   private final EventBus eventBus;

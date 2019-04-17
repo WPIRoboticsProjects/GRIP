@@ -42,7 +42,7 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 @Category(GenerationTesting.class)
-@SuppressWarnings("PMD.JUnit4TestShouldUseTestAnnotation")
+@SuppressWarnings({"PMD.JUnit4TestShouldUseTestAnnotation", "PMD.AvoidUsingNativeCode"})
 public class AbstractGenerationTesting {
   private static final Logger logger = Logger.getLogger(AbstractGenerationTesting.class.getName());
   private GripCoreTestModule testModule;

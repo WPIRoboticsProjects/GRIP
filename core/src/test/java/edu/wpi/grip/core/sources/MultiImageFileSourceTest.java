@@ -52,6 +52,7 @@ public class MultiImageFileSourceTest {
   }
 
   @Test
+  @SuppressWarnings("PMD.JUnitTestsShouldIncludeAssert")
   public void testNextValue() throws Exception {
     source.next();
     OutputSocket<MatWrapper> outputSocket = source.getOutputSockets().get(0);
@@ -60,6 +61,7 @@ public class MultiImageFileSourceTest {
   }
 
   @Test
+  @SuppressWarnings("PMD.JUnitTestsShouldIncludeAssert")
   public void testPreviousValue() throws Exception {
     source.previous();
 
@@ -69,6 +71,7 @@ public class MultiImageFileSourceTest {
   }
 
   @Test
+  @SuppressWarnings("PMD.JUnitTestsShouldIncludeAssert")
   public void testConstructedWithIndex() {
     sourceWithIndexSet.updateOutputSockets();
     OutputSocket<MatWrapper> outputSocket = sourceWithIndexSet.getOutputSockets().get(0);
@@ -76,6 +79,7 @@ public class MultiImageFileSourceTest {
   }
 
   @Test
+  @SuppressWarnings("PMD.JUnitTestsShouldIncludeAssert")
   public void testLoadFromProperties() throws Exception {
     final Properties properties = sourceWithIndexSet.getProperties();
     final MultiImageFileSource newSource = new MultiImageFileSource(

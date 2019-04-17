@@ -13,6 +13,7 @@ import org.junit.Test;
 import org.junit.rules.Timeout;
 
 import java.util.LinkedList;
+import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
@@ -193,6 +194,7 @@ public class AutoRestartingServiceTest {
 
 
     restartingService.addListener(new Service.Listener() {
+      @Override
       public void starting() {
         startingListener[0] = true;
       }
@@ -222,7 +224,7 @@ public class AutoRestartingServiceTest {
    * Records all instances of the object returned by {@link Supplier#get()}
    */
   private static class RecordingSupplier<S extends Service> implements Supplier<S> {
-    private final LinkedList<S> services = new LinkedList<>();
+    private final List<S> services = new LinkedList<>();
     private final Supplier<S> serviceSupplier;
 
     private RecordingSupplier(Supplier<S> serviceSupplier) {
@@ -232,7 +234,7 @@ public class AutoRestartingServiceTest {
     @Override
     public S get() {
       final S instance = serviceSupplier.get();
-      services.push(instance);
+      services.add(instance);
       return instance;
     }
   }

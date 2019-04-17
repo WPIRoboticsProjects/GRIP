@@ -72,6 +72,7 @@ public class AddSourceButton extends MenuButton {
   private Optional<Dialog> activeDialog = Optional.empty();
 
   @Inject
+  @SuppressWarnings("PMD.ExcessiveMethodLength")
   AddSourceButton(EventBus eventBus,
                   MultiImageFileSource.Factory multiImageSourceFactory,
                   ImageFileSource.Factory imageSourceFactory,

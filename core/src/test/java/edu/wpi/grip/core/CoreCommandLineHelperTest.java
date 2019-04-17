@@ -8,7 +8,7 @@ public class CoreCommandLineHelperTest {
 
   private static class MockHelper extends CoreCommandLineHelper {
     @Override
-    void exit() {
+    public void exit() {
       // NOP
     }
   }
@@ -19,13 +19,13 @@ public class CoreCommandLineHelperTest {
     boolean[] exited = {false};
     MockHelper m = new MockHelper() {
       @Override
-      void printHelpAndExit() {
+      public void printHelpAndExit() {
         printed[0] = true;
         super.printHelpAndExit();
       }
 
       @Override
-      void exit() {
+      public void exit() {
         exited[0] = true;
       }
     };
@@ -50,13 +50,13 @@ public class CoreCommandLineHelperTest {
     boolean[] exited = {false};
     MockHelper m = new MockHelper() {
       @Override
-      void printVersionAndExit() {
+      public void printVersionAndExit() {
         printed[0] = true;
         super.printVersionAndExit();
       }
 
       @Override
-      void exit() {
+      public void exit() {
         exited[0] = true;
       }
     };

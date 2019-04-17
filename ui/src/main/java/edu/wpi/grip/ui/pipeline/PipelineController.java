@@ -413,10 +413,10 @@ public final class PipelineController {
    * Simple class for returning two steps.
    */
   private static final class StepPair {
-    final Step lower;
-    final Step higher;
+    public final Step lower;
+    public final Step higher;
 
-    StepPair(@Nullable Step lower, @Nullable Step higher) {
+    public StepPair(@Nullable Step lower, @Nullable Step higher) {
       this.lower = lower;
       this.higher = higher;
     }

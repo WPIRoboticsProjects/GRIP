@@ -1,10 +1,12 @@
 package edu.wpi.grip.ui.util;
 
 import edu.wpi.grip.ui.Controller;
+import edu.wpi.grip.ui.UiTests;
 
 import com.google.common.base.Throwables;
 
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 import org.testfx.framework.junit.ApplicationTest;
 
 import java.util.Arrays;
@@ -15,6 +17,7 @@ import javafx.stage.Stage;
 
 import static org.junit.Assert.assertEquals;
 
+@Category(UiTests.class)
 public class ControllerMapTest extends ApplicationTest {
 
   private static final String SIZE_OF_CONTROLLER_NOT_SAME_STRING =
@@ -31,6 +34,7 @@ public class ControllerMapTest extends ApplicationTest {
   }
 
   @Test
+  @SuppressWarnings("PMD.JUnitTestsShouldIncludeAssert")
   public void testRemoveWithController() throws Exception {
     interact(() -> {
       final MockController mockController = new MockController();
@@ -42,6 +46,7 @@ public class ControllerMapTest extends ApplicationTest {
   }
 
   @Test
+  @SuppressWarnings("PMD.JUnitTestsShouldIncludeAssert")
   public void testRemoveWithPane() throws Exception {
     interact(() -> {
       final MockController mockController = new MockController();
@@ -53,6 +58,7 @@ public class ControllerMapTest extends ApplicationTest {
   }
 
   @Test
+  @SuppressWarnings("PMD.JUnitTestsShouldIncludeAssert")
   public void testAdd() throws Exception {
     interact(() -> {
       mockPane.controllerMap.add(new MockController());
@@ -61,6 +67,7 @@ public class ControllerMapTest extends ApplicationTest {
   }
 
   @Test
+  @SuppressWarnings("PMD.JUnitTestsShouldIncludeAssert")
   public void testAddAll() throws Exception {
     interact(() -> {
       mockPane.controllerMap.addAll(new MockController(), new MockController());
@@ -69,6 +76,7 @@ public class ControllerMapTest extends ApplicationTest {
   }
 
   @Test
+  @SuppressWarnings("PMD.JUnitTestsShouldIncludeAssert")
   public void testAddAll1() throws Exception {
     interact(() -> {
       mockPane.controllerMap.addAll(Arrays.asList(new MockController(), new MockController()));
@@ -77,6 +85,7 @@ public class ControllerMapTest extends ApplicationTest {
   }
 
   @Test
+  @SuppressWarnings("PMD.JUnitTestsShouldIncludeAssert")
   public void testGetWithPane() throws Exception {
     interact(() -> {
       final MockController mockController = new MockController();

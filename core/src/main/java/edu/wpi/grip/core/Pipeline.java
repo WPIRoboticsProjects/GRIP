@@ -50,7 +50,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * connections, and for registering and unregistering them from the event bus when appropriate.
  */
 @Singleton
-@XStreamAlias(value = "grip:Pipeline")
+@XStreamAlias("grip:Pipeline")
 public class Pipeline implements ConnectionValidator, SettingsProvider, StepIndexer {
 
   private final transient ReadWriteLock sourceLock = new ReentrantReadWriteLock();
@@ -106,7 +106,7 @@ public class Pipeline implements ConnectionValidator, SettingsProvider, StepInde
         .forEach(this.eventBus::post);
   }
 
-  private final <R> R readSourcesSafely(Function<List<Source>, R> sourceListFunction) {
+  private <R> R readSourcesSafely(Function<List<Source>, R> sourceListFunction) {
     return accessSafely(sourceLock.readLock(), Collections.unmodifiableList(sources),
         sourceListFunction);
   }
@@ -126,7 +126,7 @@ public class Pipeline implements ConnectionValidator, SettingsProvider, StepInde
    * @param <R>              The return type of the function
    * @return The value returned by the function.
    */
-  private final <R> R readStepsSafely(Function<List<Step>, R> stepListFunction) {
+  private <R> R readStepsSafely(Function<List<Step>, R> stepListFunction) {
     return accessSafely(stepLock.readLock(), Collections.unmodifiableList(steps), stepListFunction);
   }
 
@@ -271,15 +271,15 @@ public class Pipeline implements ConnectionValidator, SettingsProvider, StepInde
       // If not in the list these can return -1
       int lowerIndex = steps.indexOf(lower);
       int upperIndex = steps.indexOf(higher);
-      if (lowerIndex != -1 && upperIndex != -1) {
+      if (lowerIndex != -1 && upperIndex != -1) { // NOPMD
         assert lowerIndex <= upperIndex : "Upper step was before lower index";
         int difference = Math.abs(upperIndex - lowerIndex); // Just in case
         // Place the step halfway between these two steps
         return lowerIndex + 1 + difference / 2;
-      } else if (lowerIndex != -1) {
+      } else if (lowerIndex != -1) { // NOPMD
         // Place it above the lower one
         return lowerIndex + 1;
-      } else if (upperIndex != -1) {
+      } else if (upperIndex != -1) { // NOPMD
         // Place it below the upper one
         return upperIndex;
       } else {

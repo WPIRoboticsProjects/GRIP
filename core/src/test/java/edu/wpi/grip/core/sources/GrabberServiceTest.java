@@ -166,7 +166,7 @@ public class GrabberServiceTest {
 
   @Test
   public void testEnsureThatUpdaterIsRunEvenIfExceptionIsThrownInShutDown() {
-    final String STOP_EXCEPTION = "This should be thrown but then caught";
+    final String message = "This should be thrown but then caught";
     final boolean[] updateWasCalled = {false};
     final GrabberService grabberService =
         createSimpleGrabberService(
@@ -174,7 +174,7 @@ public class GrabberServiceTest {
               @Override
               @SuppressWarnings("PMD.SignatureDeclareThrowsException")
               public void stop() throws Exception {
-                throw new FrameGrabber.Exception(STOP_EXCEPTION);
+                throw new FrameGrabber.Exception(message);
               }
             }, new SimpleUpdater() {
               @Override
@@ -193,7 +193,7 @@ public class GrabberServiceTest {
     } catch (GrabberService.GrabberServiceException e) {
       assertTrue("updatesComplete was not called", updateWasCalled[0]);
       assertThat(e.getCause()).isNotNull();
-      assertThat(e.getCause()).hasMessage(STOP_EXCEPTION);
+      assertThat(e.getCause()).hasMessage(message);
       assertThat(e.getCause()).isInstanceOf(FrameGrabber.Exception.class);
     }
   }

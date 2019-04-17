@@ -60,10 +60,10 @@ public class GripPlatform {
   public void onJavaFXRunnerEvent(JavaFXRunnerEvent event) throws InterruptedException {
     assert !Platform.isFxApplicationThread() : "This should never be run on the application "
         + "thread. This can cause a deadlock!";
-    final Thread callingThread = Thread.currentThread();
     if (Thread.interrupted()) {
       throw new InterruptedException("Interrupted in onJavaFXRunnerEvent");
     }
+    final Thread callingThread = Thread.currentThread();
 
     // queue on JavaFX thread and wait for completion
     final CountDownLatch doneLatch = new CountDownLatch(1);

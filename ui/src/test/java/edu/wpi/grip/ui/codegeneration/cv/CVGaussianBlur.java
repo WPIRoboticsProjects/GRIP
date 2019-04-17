@@ -21,13 +21,14 @@ import java.util.Optional;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+@SuppressWarnings("PMD.JUnitTestsShouldIncludeAssert")
 public class CVGaussianBlur extends AbstractGenerationTesting {
   private static final double width = 15;
   private static final double height = 1;
   private static final double sigmax = 3;
   private static final double sigmay = 41;
 
-  boolean setup(String type) {
+  private boolean setup(String type) {
     Step step0 = gen.addStep(new OperationMetaData(
         OperationDescription.from(NewSizeOperation.class), () -> new NewSizeOperation(isf, osf)));
     for (InputSocket sock : step0.getInputSockets()) {
@@ -86,7 +87,7 @@ public class CVGaussianBlur extends AbstractGenerationTesting {
   }
 
 
-  void validate(PipelineInterfacer pip) {
+  private void validate(PipelineInterfacer pip) {
     ManualPipelineRunner runner = new ManualPipelineRunner(eventBus, pipeline);
     runner.runPipeline();
     pip.setMatSource(0, Files.gompeiJpegFile.file);

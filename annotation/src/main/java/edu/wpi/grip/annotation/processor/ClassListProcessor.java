@@ -4,10 +4,10 @@ import edu.wpi.grip.annotation.operation.Description;
 import edu.wpi.grip.annotation.operation.PublishableObject;
 
 import com.google.auto.service.AutoService;
-import com.google.common.collect.ImmutableMap;
 
 import java.io.IOException;
 import java.io.Writer;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -43,11 +43,16 @@ public class ClassListProcessor extends AbstractProcessor {
   public static final String PUBLISHABLES_FILE_NAME = "publishables";
   public static final String XSTREAM_ALIASES_FILE_NAME = "xstream-aliases";
 
-  private final Map<String, String> fileNames = ImmutableMap.of(
-      Description.class.getName(), OPERATIONS_FILE_NAME,
-      PublishableObject.class.getName(), PUBLISHABLES_FILE_NAME,
-      "com.thoughtworks.xstream.annotations.XStreamAlias", XSTREAM_ALIASES_FILE_NAME
-  );
+  private final Map<String, String> fileNames = makeFileNamesMap();
+
+  private Map<String, String> makeFileNamesMap() {
+    Map<String, String> map = new HashMap<>();
+    map.put(Description.class.getName(), ClassListProcessor.OPERATIONS_FILE_NAME);
+    map.put(PublishableObject.class.getName(), ClassListProcessor.PUBLISHABLES_FILE_NAME);
+    map.put("com.thoughtworks.xstream.annotations.XStreamAlias",
+        ClassListProcessor.XSTREAM_ALIASES_FILE_NAME);
+    return map;
+  }
 
   @Override
   public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
@@ -90,7 +95,7 @@ public class ClassListProcessor extends AbstractProcessor {
 
   private static final class TypeNameExtractor extends SimpleTypeVisitor8<String, Void> {
 
-    static final TypeNameExtractor INSTANCE = new TypeNameExtractor();
+    public static final TypeNameExtractor INSTANCE = new TypeNameExtractor();
 
     @Override
     public String visitDeclared(DeclaredType t, Void o) {

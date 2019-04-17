@@ -21,6 +21,7 @@ import com.google.inject.util.Modules;
 
 import org.junit.After;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 import org.testfx.framework.junit.ApplicationTest;
 import org.testfx.matcher.base.NodeMatchers;
 import org.testfx.util.WaitForAsyncUtils;
@@ -34,6 +35,7 @@ import static org.junit.Assert.assertEquals;
 import static org.testfx.api.FxAssert.verifyThat;
 
 @SuppressWarnings("PMD.JUnitTestsShouldIncludeAssert")
+@Category(UiTests.class)
 public class MainWindowTest extends ApplicationTest {
   private static final String STEP_NOT_ADDED_MSG = "Step was not added to pipeline";
   private final GripCoreTestModule testModule = new GripCoreTestModule();

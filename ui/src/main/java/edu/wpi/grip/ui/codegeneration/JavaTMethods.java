@@ -6,9 +6,6 @@ import edu.wpi.grip.ui.codegeneration.data.TStep;
 import com.google.common.base.CaseFormat;
 
 public class JavaTMethods extends TemplateMethods {
-  public JavaTMethods() {
-    super();
-  }
 
   @Override
   public String name(String name) {

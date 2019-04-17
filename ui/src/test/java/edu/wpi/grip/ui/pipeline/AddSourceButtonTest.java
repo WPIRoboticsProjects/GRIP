@@ -2,11 +2,13 @@ package edu.wpi.grip.ui.pipeline;
 
 import edu.wpi.grip.core.sources.CameraSource;
 import edu.wpi.grip.core.sources.MockCameraSource;
+import edu.wpi.grip.ui.UiTests;
 
 import com.google.common.eventbus.EventBus;
 
 import org.junit.After;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 import org.junit.experimental.runners.Enclosed;
 import org.junit.runner.RunWith;
 import org.testfx.framework.junit.ApplicationTest;
@@ -31,6 +33,7 @@ public class AddSourceButtonTest {
   /**
    * Tests what happens when a source is created and started successfully
    */
+  @Category(UiTests.class)
   public static class AddSourceViewNoExceptionsTest extends ApplicationTest {
 
     private EventBus eventBus;
@@ -139,6 +142,7 @@ public class AddSourceButtonTest {
   /**
    * Tests what happens when the source being created and startedthrows an exception.
    */
+  @Category(UiTests.class)
   public static class AddSourceViewWithExceptionsTest extends ApplicationTest {
     private EventBus eventBus;
     private AddSourceButton addSourceView;

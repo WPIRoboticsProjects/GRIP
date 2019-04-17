@@ -60,10 +60,10 @@ public final class StartStoppableButton extends ToggleButton {
     addEventFilter(MouseEvent.MOUSE_RELEASED, (event) -> {
       setDisable(true);
       event.consume();
-      if (!isSelected()) {
-        this.service.startAsync();
-      } else {
+      if (isSelected()) {
         this.service.stopAsync();
+      } else {
+        this.service.startAsync();
       }
     });
 

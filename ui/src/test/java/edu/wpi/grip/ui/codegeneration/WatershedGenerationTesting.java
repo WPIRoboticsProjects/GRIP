@@ -24,6 +24,7 @@ import java.util.Optional;
 
 import static org.junit.Assert.assertTrue;
 
+@SuppressWarnings("PMD.JUnitTestsShouldIncludeAssert")
 public class WatershedGenerationTesting extends AbstractGenerationTesting {
   private static final boolean externalBool = false;
   private final List<Number> hVal = new ArrayList<Number>();
@@ -39,7 +40,7 @@ public class WatershedGenerationTesting extends AbstractGenerationTesting {
     lVal.add(new Double(101.0));
   }
 
-  void generatePipeline() {
+  private void generatePipeline() {
     Step step0 = gen.addStep(new OperationMetaData(
         OperationDescription.from(HSLThresholdOperation.class),
         () -> new HSLThresholdOperation(isf, osf)));
@@ -92,7 +93,7 @@ public class WatershedGenerationTesting extends AbstractGenerationTesting {
     }, (pip) -> pipelineTest(pip), "WatershedTest");
   }
 
-  void pipelineTest(PipelineInterfacer pip) {
+  private void pipelineTest(PipelineInterfacer pip) {
     ManualPipelineRunner runner = new ManualPipelineRunner(eventBus, pipeline);
     runner.runPipeline();
     Optional out = pipeline.getSteps().get(2).getOutputSockets().get(0).getValue();

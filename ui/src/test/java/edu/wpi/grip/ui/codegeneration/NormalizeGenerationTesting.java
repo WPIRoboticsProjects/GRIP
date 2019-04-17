@@ -22,9 +22,10 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 @Category(GenerationTesting.class)
+@SuppressWarnings("PMD.JUnitTestsShouldIncludeAssert")
 public class NormalizeGenerationTesting extends AbstractGenerationTesting {
 
-  void generatePipeline(String type, double minVal, double maxVal) {
+  private void generatePipeline(String type, double minVal, double maxVal) {
     Step step = gen.addStep(new OperationMetaData(
         OperationDescription.from(NormalizeOperation.class),
         () -> new NormalizeOperation(isf, osf)));
@@ -76,7 +77,7 @@ public class NormalizeGenerationTesting extends AbstractGenerationTesting {
     }, (pip) -> pipelineTest(pip), "NORM_MINMAXTest");
   }
 
-  void pipelineTest(PipelineInterfacer pip) {
+  private void pipelineTest(PipelineInterfacer pip) {
     ManualPipelineRunner runner = new ManualPipelineRunner(eventBus, pipeline);
     runner.runPipeline();
     Optional out = pipeline.getSteps().get(0).getOutputSockets().get(0).getValue();

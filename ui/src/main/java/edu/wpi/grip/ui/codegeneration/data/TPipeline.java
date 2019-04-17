@@ -118,19 +118,17 @@ public class TPipeline {
             .append('_')
             .append(TemplateMethods.parseSocketName(input));
         String name = nameBuilder.toString();
-        if (!input.getConnections().isEmpty()) {
-          if (connections.containsKey(input)) {
-            tInput = new TInput(type, name, connections.get(input));
-          } else {
-            tInput = null;
-            for (Object con : input.getConnections()) {
-              // Connections is a set. Should only have one element
-              tInput = createInput(type, name,
-                  "Connection" + ((Connection) con).getOutputSocket().toString());
-            }
-          }
-        } else {
+        if (input.getConnections().isEmpty()) {
           tInput = createInput(type, name, TemplateMethods.parseSocketValue(input));
+        } else if (connections.containsKey(input)) {
+          tInput = new TInput(type, name, connections.get(input));
+        } else {
+          tInput = null;
+          for (Object con : input.getConnections()) {
+            // Connections is a set. Should only have one element
+            tInput = createInput(type, name,
+                "Connection" + ((Connection) con).getOutputSocket().toString());
+          }
         }
         tStep.addInput(tInput);
       }

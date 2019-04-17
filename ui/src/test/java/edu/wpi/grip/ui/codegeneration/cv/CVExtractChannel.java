@@ -17,9 +17,10 @@ import java.util.Optional;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+@SuppressWarnings("PMD.JUnitTestsShouldIncludeAssert")
 public class CVExtractChannel extends AbstractGenerationTesting {
 
-  boolean setup(int channel) {
+  private boolean setup(int channel) {
     Step step = gen.addStep(opUtil.getMetaData("CV extractChannel"));
     loadImage(Files.gompeiJpegFile);
     OutputSocket imgOut = pipeline.getSources().get(0).getOutputSockets().get(0);
@@ -43,7 +44,7 @@ public class CVExtractChannel extends AbstractGenerationTesting {
     test(() -> setup(2), (pip) -> validate(pip), "extractTwoTest");
   }
   
-  void validate(PipelineInterfacer pip) {
+  private void validate(PipelineInterfacer pip) {
     ManualPipelineRunner runner = new ManualPipelineRunner(eventBus, pipeline);
     runner.runPipeline();
     pip.setMatSource(0, Files.gompeiJpegFile.file);

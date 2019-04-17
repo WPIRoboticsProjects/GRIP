@@ -24,10 +24,11 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 @Category(GenerationTesting.class)
+@SuppressWarnings("PMD.JUnitTestsShouldIncludeAssert")
 public class DistanceTransformGenerationTesting extends AbstractGenerationTesting {
-  String distType;
-  String maskSize;
-  static String[][] params = new String[9][2];
+  private String distType;
+  private String maskSize;
+  private static String[][] params = new String[9][2];
 
   static {
     String[] type = {"CV_DIST_L1", "CV_DIST_L2", "CV_DIST_C"};
@@ -70,7 +71,7 @@ public class DistanceTransformGenerationTesting extends AbstractGenerationTestin
         ("DistTrans" + distType + maskSize + "Test").replace(" ", "").replace("_", ""));
   }
 
-  void validate(PipelineInterfacer pip) {
+  private void validate(PipelineInterfacer pip) {
     new ManualPipelineRunner(eventBus, pipeline).runPipeline();
     Optional out = pipeline.getSteps().get(1).getOutputSockets().get(0).getValue();
     assertTrue("Pipeline did not process", out.isPresent());

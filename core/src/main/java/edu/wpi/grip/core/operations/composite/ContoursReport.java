@@ -158,7 +158,7 @@ public final class ContoursReport implements Publishable {
 
   @AutoValue
   public abstract static class Contour {
-    static Contour create(double area, double centerX, double centerY, double width, double
+    public static Contour create(double area, double centerX, double centerY, double width, double
         height, double solidity) {
       return new AutoValue_ContoursReport_Contour(area, centerX, centerY, width, height, solidity);
     }

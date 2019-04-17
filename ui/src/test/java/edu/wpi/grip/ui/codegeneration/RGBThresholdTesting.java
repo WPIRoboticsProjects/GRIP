@@ -22,10 +22,10 @@ import java.util.Optional;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-@SuppressWarnings("PMD.JUnitSpelling")
+@SuppressWarnings({"PMD.JUnitSpelling", "PMD.JUnitTestsShouldIncludeAssert"})
 public class RGBThresholdTesting extends AbstractGenerationTesting {
 
-  boolean setup() {
+  private boolean setup() {
     final Step rgb = gen.addStep(
         new OperationMetaData(OperationDescription.from(RGBThresholdOperation.class),
             () -> new RGBThresholdOperation(isf, osf)));
@@ -49,7 +49,7 @@ public class RGBThresholdTesting extends AbstractGenerationTesting {
     return true;
   }
 
-  void pipelineTest(PipelineInterfacer pip) {
+  private void pipelineTest(PipelineInterfacer pip) {
     ManualPipelineRunner runner = new ManualPipelineRunner(eventBus, pipeline);
     runner.runPipeline();
     Optional out = pipeline.getSteps().get(0).getOutputSockets().get(0).getValue();

@@ -21,8 +21,9 @@ import java.util.Optional;
 
 import static org.junit.Assert.assertTrue;
 
+@SuppressWarnings("PMD.JUnitTestsShouldIncludeAssert")
 public class ThresholdMovingTesting extends AbstractGenerationTesting {
-  ThresholdSwitch[] threshs = null;
+  private ThresholdSwitch[] threshs = null;
 
   /**
    * Sets up the pipeline with given number of moving thresholds.
@@ -98,7 +99,7 @@ public class ThresholdMovingTesting extends AbstractGenerationTesting {
     }, (pip) -> validate(pip, threshs), "ThreshMovingThreeTest");
   }
 
-  void validate(PipelineInterfacer pip, ThresholdSwitch[] threshs) {
+  private void validate(PipelineInterfacer pip, ThresholdSwitch[] threshs) {
     ManualPipelineRunner runner = new ManualPipelineRunner(eventBus, pipeline);
     runner.runPipeline();
     pip.setMatSource(0, Files.gompeiJpegFile.file);
@@ -123,14 +124,14 @@ public class ThresholdMovingTesting extends AbstractGenerationTesting {
         assertMatWithin(genMat, gripMat, 5.0);
       }
     } else {
-      Mat genMat = (Mat) pip.getOutput("Threshold_Moving_Output", GenType.IMAGE);
+      pip.getOutput("Threshold_Moving_Output", GenType.IMAGE);
     }
   }
 
 
-  static class ThresholdSwitch {
-    Step swi;
-    Step thresh;
+  private static final class ThresholdSwitch {
+    public final Step swi;
+    public final Step thresh;
 
     public ThresholdSwitch(Step swi, Step thresh) {
       this.swi = swi;

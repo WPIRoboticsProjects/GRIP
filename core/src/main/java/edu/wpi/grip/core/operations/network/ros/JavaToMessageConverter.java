@@ -67,8 +67,9 @@ public abstract class JavaToMessageConverter<J, M extends Message> {
   public static final JavaToMessageConverter<ContoursReport, grip_msgs.Contours> CONTOURS =
       new JavaToMessageConverter<ContoursReport, grip_msgs.Contours>(grip_msgs.Contours._TYPE) {
         @Override
-        void doConvert(ContoursReport contoursReport, grip_msgs.Contours contoursMsg, MessageFactory
-            messageFactory) {
+        public void doConvert(ContoursReport contoursReport,
+                              grip_msgs.Contours contoursMsg,
+                              MessageFactory messageFactory) {
           final List<ContoursReport.Contour> reportContours = contoursReport.getProcessedContours();
           final List<grip_msgs.Contour> contours = reportContours
               .stream()
@@ -101,7 +102,7 @@ public abstract class JavaToMessageConverter<J, M extends Message> {
       };
   protected final TypeToken<M> rosType;
   protected final TypeToken<J> javaType;
-  private final java.lang.String type;
+  private final String type;
 
   private JavaToMessageConverter(String type) {
     this.type = checkNotNull(type, "type cannot be null");
@@ -111,14 +112,14 @@ public abstract class JavaToMessageConverter<J, M extends Message> {
     };
   }
 
-  public final java.lang.String getType() {
+  public final String getType() {
     return type;
   }
 
   /*
    * Should not be called directly
    */
-  abstract void doConvert(J javaType, M message, MessageFactory messageFactory);
+  protected abstract void doConvert(J javaType, M message, MessageFactory messageFactory);
 
   /**
    * Takes a java type and a message that type maps to and adds the data to the message.
@@ -145,7 +146,7 @@ public abstract class JavaToMessageConverter<J, M extends Message> {
     }
 
     @Override
-    void doConvert(J javaType, M message, MessageFactory messageFactory) {
+    public void doConvert(J javaType, M message, MessageFactory messageFactory) {
       messageDataAssigner.accept(message, javaType);
     }
   }

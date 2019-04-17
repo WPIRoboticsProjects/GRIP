@@ -11,8 +11,13 @@ import edu.wpi.grip.util.Files;
 import java.util.Arrays;
 import java.util.List;
 
-public class HSVThresholdSetup {
-  static void setup(AbstractGenerationTesting caller) {
+@SuppressWarnings("PMD.JUnitTestsShouldIncludeAssert")
+public final class HSVThresholdSetup {
+
+  private HSVThresholdSetup() {
+  }
+
+  public static void setup(AbstractGenerationTesting caller) {
     List<Number> hVal = Arrays.asList(50.0d, 180.0d);
     List<Number> sVal = Arrays.asList(0.0d, 255.0d);
     List<Number> vVal = Arrays.asList(0.0d, 255.0d);
