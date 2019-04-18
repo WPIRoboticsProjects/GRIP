@@ -1,7 +1,7 @@
     @staticmethod
     def $tMeth.name($step.name())(input_contours, min_area, min_perimeter, min_width, max_width,
                         min_height, max_height, solidity, max_vertex_count, min_vertex_count,
-                        min_ratio, max_ratio):
+                        min_ratio, max_ratio, angle):
         """Filters out contours that do not meet certain criteria.
         Args:
             input_contours: Contours as a list of numpy.ndarray.
@@ -16,6 +16,7 @@
             max_vertex_count: Maximum vertex Count.
             min_ratio: Minimum ratio of width to height.
             max_ratio: Maximum ratio of width to height.
+            angle: The minimum and maximum allowable angles of a contour.
         Returns:
             Contours as a list of numpy.ndarray.
         """
@@ -39,6 +40,9 @@
                 continue
             ratio = (float)(w) / h
             if (ratio < min_ratio or ratio > max_ratio):
+                continue
+            contourAngle = cv2.minAreaRect(contour).angle
+            if (contourAngle < angle[0] or contourAngle > angle[1]):
                 continue
             output.append(contour)
         return output
