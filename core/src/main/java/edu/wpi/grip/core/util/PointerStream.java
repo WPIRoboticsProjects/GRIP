@@ -12,6 +12,10 @@ import static org.bytedeco.javacpp.opencv_core.MatVector;
  */
 public final class PointerStream {
 
+  private PointerStream() {
+    throw new UnsupportedOperationException("This is a utility class!");
+  }
+
   /**
    * Creates a stream of {@code Mat} objects in a {@code MatVector}.
    *
