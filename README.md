@@ -2,8 +2,6 @@
 
 [![Join the chat at https://gitter.im/WPIRoboticsProjects/GRIP](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/WPIRoboticsProjects/GRIP?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 [![Build Status](https://dev.azure.com/wpiroboticsprojects/GRIP/_apis/build/status/WPIRoboticsProjects.GRIP?branchName=master)](https://dev.azure.com/wpiroboticsprojects/GRIP/_build/latest?definitionId=1?branchName=master)
-[![Build Status](https://travis-ci.org/WPIRoboticsProjects/GRIP.svg?branch=master)](https://travis-ci.org/WPIRoboticsProjects/GRIP)
-[![Build status](https://ci.appveyor.com/api/projects/status/sbrd2nhpiktlhf58/branch/master?svg=true)](https://ci.appveyor.com/project/JLLeitschuh/grip/branch/master)
 [![codecov.io](http://codecov.io/github/WPIRoboticsProjects/GRIP/coverage.svg?branch=master)](http://codecov.io/github/WPIRoboticsProjects/GRIP?branch=master)
 [![Github Releases](https://img.shields.io/github/downloads/WPIRoboticsProjects/GRIP/total.svg)](https://github.com/WPIRoboticsProjects/GRIP/releases/latest)
 
@@ -60,8 +58,3 @@ If you don't have an internet connection you can build using the `--offline` fla
 ## Contributing
 
 See the guide on [setting up build tools](https://github.com/WPIRoboticsProjects/GRIP/wiki/Setting-up-build-tools) in the wiki.
-
-## Thanks
-
-Thanks to [TravisCI](https://travis-ci.org/) and [AppVeyor](https://www.appveyor.com/) for providing their continuous integration 
-servers to open source projects for free.
