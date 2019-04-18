@@ -20,9 +20,6 @@ jobs:
 
     steps:
       - script: |
-          sudo apt-get install fakeroot
-        displayName: 'Install fakeroot'
-      - script: |
           $ProgressPreference = 'SilentlyContinue'
           mkdir build
           wget "https://download.java.net/java/early_access/jpackage/30/openjdk-13-jpackage+30_linux-x64_bin.tar.gz" -O "build/jdk-13.tar.gz"
