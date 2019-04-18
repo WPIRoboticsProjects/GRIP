@@ -6,7 +6,6 @@ import edu.wpi.grip.ui.UiTests;
 
 import com.google.common.eventbus.EventBus;
 
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.testfx.framework.junit.ApplicationTest;
@@ -58,7 +57,6 @@ public class ExceptionWitnessResponderButtonTest extends ApplicationTest {
   }
 
   @Test
-  @Ignore("Broken on AppVeyor")
   public void testPopoverAppears() throws TimeoutException {
     flagNewException();
     WaitForAsyncUtils.waitFor(2, TimeUnit.SECONDS,
