@@ -105,7 +105,10 @@ public class NTManager implements Manager, MapNetworkPublisherFactory, MapNetwor
 
         }
       }
-    }, 0xFF);
+    }, EntryListenerFlags.kImmediate
+        | EntryListenerFlags.kNew
+        | EntryListenerFlags.kDelete
+        | EntryListenerFlags.kUpdate);
   }
 
   private static void logNtMessage(LogMessage logMessage) {
