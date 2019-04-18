@@ -6,29 +6,26 @@
 trigger:
   - master
 
+resources:
+  containers:
+    - container: wpilib2019
+      image: wpilib/roborio-cross-ubuntu:2019-18.04
+
 jobs:
   - job: Linux
     pool:
       vmImage: 'Ubuntu 16.04'
 
+    container: wpilib2019
+
     steps:
       - script: |
+          $ProgressPreference = 'SilentlyContinue'
           mkdir build
-          $ProgressPreference = 'SilentlyContinue'
-          wget "https://download.java.net/java/GA/jdk11/9/GPL/openjdk-11.0.2_linux-x64_bin.tar.gz" -O "build/jdk.tar.gz"
-        displayName: 'Download JDK'
-      - script: |
-          $ProgressPreference = 'SilentlyContinue'
           wget "https://download.java.net/java/early_access/jpackage/30/openjdk-13-jpackage+30_linux-x64_bin.tar.gz" -O "build/jdk-13.tar.gz"
           sudo mkdir /opt/java
           sudo tar -xzvf build/jdk-13.tar.gz -C /opt/java
         displayName: 'Download JDK 13'
-      - task: JavaToolInstaller@0
-        inputs:
-          jdkSourceOption: localDirectory
-          jdkFile: 'build/jdk.tar.gz'
-          jdkDestinationDirectory: 'build/jdkinst'
-          jdkArchitectureOption: x64
       - task: Gradle@2
         inputs:
           workingDirectory: ''

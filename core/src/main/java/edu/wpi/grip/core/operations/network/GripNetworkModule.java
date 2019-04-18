@@ -11,6 +11,8 @@ import edu.wpi.grip.core.operations.network.ros.ROSNetworkPublisherFactory;
 import com.google.inject.AbstractModule;
 import com.google.inject.name.Names;
 
+import edu.wpi.first.networktables.NetworkTableInstance;
+
 /**
  * Defines any concrete implementation mappings between network managers and their real
  * counterparts. This module should not be used in tests as networking protocols can define "Static
@@ -39,5 +41,8 @@ public final class GripNetworkModule extends AbstractModule {
     bind(MapNetworkReceiverFactory.class)
         .annotatedWith(Names.named("ntManager"))
         .to(NTManager.class);
+
+    bind(NetworkTableInstance.class)
+        .toProvider(NetworkTableInstance::getDefault);
   }
 }
