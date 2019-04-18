@@ -20,7 +20,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
  *   Timer myTimer = ...
  *   myTimer.time(this::doSomething);
  * </code></pre>
- * </p>
  */
 public class Timer {
 
@@ -88,7 +87,7 @@ public class Timer {
    * <pre><code>
    *   Timer myTimer = ...
    *   myTimer.time(this::doSomething);
-   * </code></pre></p>
+   * </code></pre>
    *
    * @param target the code to time
    * @throws IllegalStateException if this timer is already timing something
