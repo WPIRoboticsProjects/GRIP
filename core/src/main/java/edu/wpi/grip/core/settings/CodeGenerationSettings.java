@@ -29,6 +29,7 @@ public class CodeGenerationSettings {
    * The default code generation settings.
    * <br>
    * <table>
+   * <caption>Default Values</caption>
    * <tr><td>Language</td><td>Java</td></tr>
    * <tr><td>Class name</td><td>GripPipeline</td></tr>
    * <tr><td>Implement WPILib API</td><td>false</td></tr>
@@ -43,6 +44,7 @@ public class CodeGenerationSettings {
    * Creates the default code generation settings.
    * <br>
    * <table>
+   * <caption>Default Values</caption>
    * <tr><td>Language</td><td>Java</td></tr>
    * <tr><td>Class name</td><td>GripPipeline</td></tr>
    * <tr><td>Implement WPILib API</td><td>false</td></tr>

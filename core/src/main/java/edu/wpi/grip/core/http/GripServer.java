@@ -92,7 +92,7 @@ public class GripServer {
    * <p>For example, performing a {@code GET} request on the path
    * {@code /GRIP/data?foo&bar} will return a map such as
    * <br>
-   * <code><pre>
+   * <pre><code>
    * {
    *   'foo': {
    *        // data
@@ -102,7 +102,7 @@ public class GripServer {
    *       // data
    *     }
    * }
-   * </pre></code>
+   * </code></pre>
    */
   public static final String DATA_PATH = ROOT_PATH + "/data";
 

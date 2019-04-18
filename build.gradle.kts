@@ -149,7 +149,6 @@ javaSubprojects {
 
     tasks.withType<Javadoc> {
         source(tasks.named<JavaCompile>("compileJava").map { it.source })
-        isFailOnError = false
     }
 
     tasks.withType<JavaCompile>().configureEach {

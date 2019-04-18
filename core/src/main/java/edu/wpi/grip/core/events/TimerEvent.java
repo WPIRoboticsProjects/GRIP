@@ -14,7 +14,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * <li>How long the timed action took, in microseconds</li>
  * <li>Historical data about the action</li>
  * </ul>
- * </p>
  */
 public class TimerEvent {
 

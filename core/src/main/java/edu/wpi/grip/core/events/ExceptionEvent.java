@@ -21,7 +21,7 @@ public final class ExceptionEvent {
   /**
    * @param origin    The object that triggered this exception.
    * @param exception The exception this is handling.
-   * @param message   The message associated with this event. If <tt>null</tt> will use {@link
+   * @param message   The message associated with this event. If {@code null} will use {@link
    *                  Exception#getMessage()}
    */
   public ExceptionEvent(Object origin, Exception exception, @Nullable String message) {

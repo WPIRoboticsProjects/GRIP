@@ -23,8 +23,6 @@ import javafx.scene.layout.VBox;
 /**
  * Controller for a VBox of {@link OperationController}s.  The user data for this should be what
  * category it shows, and the filterText property allows for fuzzy searching the operations.
- *
- * @see edu.wpi.grip.core.OperationCategory
  */
 @ParametrizedController(url = "OperationList.fxml")
 public class OperationListController {
