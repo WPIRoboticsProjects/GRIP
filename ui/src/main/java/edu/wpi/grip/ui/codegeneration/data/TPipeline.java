@@ -2,6 +2,7 @@ package edu.wpi.grip.ui.codegeneration.data;
 
 import edu.wpi.grip.core.Connection;
 import edu.wpi.grip.core.Step;
+import edu.wpi.grip.core.sockets.CudaSocket;
 import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.ui.codegeneration.TemplateMethods;
@@ -12,7 +13,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import static edu.wpi.grip.core.OperationDescription.Category.NETWORK;
+import static edu.wpi.grip.annotation.operation.OperationCategory.NETWORK;
 
 /**
  * TPipeline(template pipeline) is a data structure
@@ -97,6 +98,10 @@ public class TPipeline {
     for (int i = 0; i < pipeSteps.size(); i++) {
       TStep tStep = this.steps.get(i);
       for (InputSocket input : pipeSteps.get(i).getInputSockets()) {
+        // Skip CudaSockets entirely - generated code is purely CPU
+        if (input instanceof CudaSocket) {
+          continue;
+        }
         TInput tInput;
         String type = TemplateMethods.parseSocketType(input);
         if ("Type".equals(type)) {
@@ -113,19 +118,17 @@ public class TPipeline {
             .append('_')
             .append(TemplateMethods.parseSocketName(input));
         String name = nameBuilder.toString();
-        if (!input.getConnections().isEmpty()) {
-          if (connections.containsKey(input)) {
-            tInput = new TInput(type, name, connections.get(input));
-          } else {
-            tInput = null;
-            for (Object con : input.getConnections()) {
-              // Connections is a set. Should only have one element
-              tInput = createInput(type, name,
-                  "Connection" + ((Connection) con).getOutputSocket().toString());
-            }
-          }
-        } else {
+        if (input.getConnections().isEmpty()) {
           tInput = createInput(type, name, TemplateMethods.parseSocketValue(input));
+        } else if (connections.containsKey(input)) {
+          tInput = new TInput(type, name, connections.get(input));
+        } else {
+          tInput = null;
+          for (Object con : input.getConnections()) {
+            // Connections is a set. Should only have one element
+            tInput = createInput(type, name,
+                "Connection" + ((Connection) con).getOutputSocket().toString());
+          }
         }
         tStep.addInput(tInput);
       }

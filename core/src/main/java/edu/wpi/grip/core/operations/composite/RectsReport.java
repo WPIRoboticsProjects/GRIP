@@ -1,12 +1,13 @@
 package edu.wpi.grip.core.operations.composite;
 
+import edu.wpi.grip.annotation.operation.PublishableObject;
+import edu.wpi.grip.core.MatWrapper;
 import edu.wpi.grip.core.operations.network.PublishValue;
 import edu.wpi.grip.core.operations.network.Publishable;
 import edu.wpi.grip.core.sockets.NoSocketTypeLabel;
 
 import com.google.common.collect.ImmutableList;
 
-import org.bytedeco.javacpp.opencv_core.Mat;
 import org.bytedeco.javacpp.opencv_core.Rect;
 
 import java.util.ArrayList;
@@ -15,15 +16,17 @@ import java.util.List;
 /**
  * Contains the results of a rectangle detection operation.
  */
+@PublishableObject
 @NoSocketTypeLabel
 public class RectsReport implements Publishable {
 
-  private final Mat image;
+  private final MatWrapper image;
   private final List<Rect> rectangles;
 
-  public static final RectsReport NIL = new RectsReport(new Mat(), new ArrayList<>());
+  public static final RectsReport NIL
+      = new RectsReport(MatWrapper.emptyWrapper(), new ArrayList<>());
 
-  public RectsReport(Mat image, List<Rect> rectangles) {
+  public RectsReport(MatWrapper image, List<Rect> rectangles) {
     this.image = image;
     this.rectangles = ImmutableList.copyOf(rectangles);
   }
@@ -31,7 +34,7 @@ public class RectsReport implements Publishable {
   /**
    * Gets the image the rectangles are for.
    */
-  public Mat getImage() {
+  public MatWrapper getImage() {
     return image;
   }
 

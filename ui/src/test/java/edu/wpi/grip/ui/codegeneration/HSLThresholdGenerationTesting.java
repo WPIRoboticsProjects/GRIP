@@ -16,6 +16,7 @@ import java.util.Optional;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+@SuppressWarnings("PMD.JUnitTestsShouldIncludeAssert")
 public class HSLThresholdGenerationTesting extends AbstractGenerationTesting {
   // H 0-49
   // S 0-41

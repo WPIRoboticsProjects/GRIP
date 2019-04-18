@@ -11,10 +11,13 @@ import edu.wpi.grip.util.Files;
 import java.util.Arrays;
 import java.util.List;
 
-public class GripIconHSLSetup {
+public final class GripIconHSLSetup {
   private static final List<Number> defaultHVal;
   private static final List<Number> defaultSVal;
   private static final List<Number> defaultLVal;
+
+  private GripIconHSLSetup() {
+  }
 
   static {
     defaultHVal = Arrays.asList(0.0d, 49.0d);

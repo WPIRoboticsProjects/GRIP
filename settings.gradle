@@ -1,5 +1,6 @@
 rootProject.name = 'GRIP'
 
+include 'annotation'
 include 'core'
 include 'ui'
 include 'ui:linuxLauncher'

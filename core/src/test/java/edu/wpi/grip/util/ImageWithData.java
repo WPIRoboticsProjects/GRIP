@@ -1,6 +1,7 @@
 package edu.wpi.grip.util;
 
 
+import edu.wpi.grip.core.MatWrapper;
 import edu.wpi.grip.core.util.ImageLoadingUtility;
 
 import org.bytedeco.javacpp.opencv_core.Mat;
@@ -33,6 +34,10 @@ public class ImageWithData {
     } catch (IOException e) {
       throw new AssertionError("Can not load image", e);
     }
+  }
+
+  public void assertSameImage(MatWrapper image) {
+    assertSameImage(image.getCpu());
   }
 
   public void assertSameImage(final Mat image) {

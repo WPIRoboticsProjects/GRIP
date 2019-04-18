@@ -18,9 +18,10 @@ import java.util.Optional;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+@SuppressWarnings("PMD.JUnitTestsShouldIncludeAssert")
 public class CVApplyColorMap extends AbstractGenerationTesting {
 
-  boolean set(ColormapTypesEnum map) {
+  private boolean set(ColormapTypesEnum map) {
     Step step = gen.addStep(opUtil.getMetaData("CV applyColorMap"));
     loadImage(Files.gompeiJpegFile);
     OutputSocket imgOut = pipeline.getSources().get(0).getOutputSockets().get(0);
@@ -95,11 +96,11 @@ public class CVApplyColorMap extends AbstractGenerationTesting {
     helpTest(ColormapTypesEnum.COLORMAP_PARULA, "ParulaTest");
   }
   
-  void helpTest(ColormapTypesEnum map, String testName) {
+  private void helpTest(ColormapTypesEnum map, String testName) {
     test(() -> set(map), (pip) -> validate(pip), "cvColorMap" + testName);
   }
 
-  void validate(PipelineInterfacer pip) {
+  private void validate(PipelineInterfacer pip) {
     ManualPipelineRunner runner = new ManualPipelineRunner(eventBus, pipeline);
     runner.runPipeline();
     pip.setMatSource(0, Files.gompeiJpegFile.file);

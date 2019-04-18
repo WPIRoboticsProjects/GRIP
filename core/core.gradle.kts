@@ -15,13 +15,21 @@ application {
 val os = osdetector.classifier.replace("osx", "macosx").replace("x86_32", "x86")
 val arch = osdetector.arch.replace("x86_64", "x64")
 
+val withCuda = project.hasProperty("cuda") || project.hasProperty("WITH_CUDA")
+
+if (withCuda) {
+    version = "$version-cuda"
+}
+
 dependencies {
+    api(project(":annotation"))
+    annotationProcessor(project(":annotation"))
     api(group = "com.google.code.findbugs", name = "jsr305", version = "3.0.1")
-    api(group = "org.bytedeco", name = "javacv", version = "1.1")
-    api(group = "org.bytedeco.javacpp-presets", name = "opencv", version = "3.0.0-1.1")
-    api(group = "org.bytedeco.javacpp-presets", name = "opencv", version = "3.0.0-1.1", classifier = os)
+    api(group = "org.bytedeco", name = "javacv", version = "1.3")
+    api(group = "org.bytedeco.javacpp-presets", name = "opencv", version = "3.4.3-1.4.3")
+    api(group = "org.bytedeco.javacpp-presets", name = "opencv", version = "3.4.3-1.4.3", classifier = if (withCuda) "$os-gpu" else os)
     api(group = "org.bytedeco.javacpp-presets", name = "videoinput", version = "0.200-1.1", classifier = os)
-    api(group = "org.bytedeco.javacpp-presets", name = "ffmpeg", version = "0.200-1.1", classifier = os)
+    api(group = "org.bytedeco.javacpp-presets", name = "ffmpeg", version = "0.200-1.3", classifier = os)
     api(group = "org.python", name = "jython", version = "2.7.0")
     api(group = "com.thoughtworks.xstream", name = "xstream", version = "1.4.10")
     api(group = "org.apache.commons", name = "commons-lang3", version = "3.5")
@@ -56,6 +64,18 @@ tasks.withType<Jar>().configureEach {
         attributes["Implementation-Version"] = version
         attributes["Main-Class"] = application.mainClassName
     }
+}
+
+val writeCudaPropertiesTask = tasks.register<WriteProperties>("writeCudaProperties") {
+    description = "Generates a file to let the GRIP runtime know if its using CUDA-accelerated OpenCV."
+    outputFile = buildDir.resolve("resources/main/edu/wpi/grip/core/CUDA.properties")
+    comment = "Information about CUDA requirements for the GRIP runtime"
+    property("edu.wpi.grip.cuda.enabled", withCuda)
+    property("edu.wpi.grip.cuda.version", "10.0") // opencv-presets 3.4.3-1.4.3 is compiled with CUDA 10.0
+}
+
+tasks.withType<JavaCompile>().configureEach {
+    dependsOn(writeCudaPropertiesTask)
 }
 
 tasks.withType<ShadowJar>().configureEach {

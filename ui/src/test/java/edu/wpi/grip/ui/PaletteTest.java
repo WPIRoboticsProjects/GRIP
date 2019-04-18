@@ -20,6 +20,7 @@ import com.google.inject.util.Modules;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 import org.testfx.framework.junit.ApplicationTest;
 import org.testfx.util.WaitForAsyncUtils;
 
@@ -33,6 +34,7 @@ import javafx.stage.Stage;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
+@Category(UiTests.class)
 public class PaletteTest extends ApplicationTest {
 
   private final GripCoreTestModule testModule = new GripCoreTestModule();

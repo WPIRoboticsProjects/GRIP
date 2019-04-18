@@ -1,7 +1,6 @@
 package edu.wpi.grip.ui;
 
 import edu.wpi.grip.core.GripFileManager;
-import edu.wpi.grip.core.Palette;
 import edu.wpi.grip.core.Pipeline;
 import edu.wpi.grip.core.PipelineRunner;
 import edu.wpi.grip.core.events.AppSettingsChangedEvent;
@@ -60,6 +59,7 @@ import javax.inject.Inject;
 /**
  * The Controller for the application window.
  */
+@SuppressWarnings("PMD.TooManyFields")
 public class MainWindowController {
 
   @FXML
@@ -96,8 +96,6 @@ public class MainWindowController {
   private PipelineRunner pipelineRunner;
   @Inject
   private StartStoppableButton.Factory startStoppableButtonFactory;
-  @Inject
-  private Palette palette;
   @Inject
   private Project project;
 
@@ -144,7 +142,7 @@ public class MainWindowController {
       dialog.setHeaderText("Save the current project first?");
       dialog.getDialogPane().getButtonTypes().setAll(save, dontSave, cancel);
 
-      if (!dialog.showAndWait().isPresent()) {
+      if (!dialog.showAndWait().isPresent()) { // NOPMD
         return false;
       } else if (dialog.getResult().equals(cancel)) {
         return false;
@@ -279,7 +277,7 @@ public class MainWindowController {
   protected boolean quit() {
     if (showConfirmationDialogAndWait()) {
       pipelineRunner.stopAsync();
-      SafeShutdown.exit(0);
+      SafeShutdown.exit(SafeShutdown.ExitCode.SAFE_SHUTDOWN);
       return true;
     }
     return false;
@@ -398,7 +396,7 @@ public class MainWindowController {
     elapsedTimeLabel.setText(
         String.format("Ran in %.1f ms (%.1f fps)",
             elapsed / 1e3,
-            elapsed != 0 ? (1e6 / elapsed) : Double.NaN));
+            elapsed == 0 ? Double.NaN : (1e6 / elapsed)));
   }
 
   @FXML

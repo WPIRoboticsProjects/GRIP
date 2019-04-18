@@ -17,20 +17,21 @@ import javax.inject.Inject;
 
 import static junit.framework.TestCase.assertTrue;
 
+@SuppressWarnings("PMD.JUnitTestsShouldIncludeAssert")
 public class SwitchTesting extends AbstractGenerationTesting {
 
   private static final int onTrueSourceNum = 0;
   private static final int onFalseSourceNum = 1;
   @Inject
-  ExceptionWitness.Factory ewf;
+  private ExceptionWitness.Factory ewf;
 
-  boolean setupNum(double onTrue, double onFalse, Boolean initVal) {
+  private boolean setupNum(double onTrue, double onFalse, Boolean initVal) {
     MockNumberSource srcTrue = new MockNumberSource(ewf, onTrue, osf);
     MockNumberSource srcFalse = new MockNumberSource(ewf, onFalse, osf);
     return setup(srcTrue, srcFalse, initVal);
   }
 
-  boolean setup(Source onTrue, Source onFalse, Boolean initVal) {
+  private boolean setup(Source onTrue, Source onFalse, Boolean initVal) {
     Step step = gen.addStep(
         new OperationMetaData(OperationDescription.from(SwitchOperation.class),
             () -> new SwitchOperation(isf, osf)));
@@ -65,7 +66,10 @@ public class SwitchTesting extends AbstractGenerationTesting {
         (pip) -> validateNum(pip, onTrue, onFalse, initVal), "SwitchNumFalseTest");
   }
 
-  void validateNum(PipelineInterfacer pip, Double switchUp, Double offSwitch, Boolean initVal) {
+  private void validateNum(PipelineInterfacer pip,
+                           Double switchUp,
+                           Double offSwitch,
+                           Boolean initVal) {
     pip.setNumSource(onTrueSourceNum, switchUp);
     pip.setNumSource(onFalseSourceNum, offSwitch);
     pip.process();

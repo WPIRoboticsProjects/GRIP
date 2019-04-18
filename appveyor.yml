@@ -1,31 +1,8 @@
-install:
-  - choco install -y InnoSetup
-
-build_script:
-  - gradlew.bat jfxNative --no-daemon --stacktrace
-
-# to run your custom scripts instead of automatic tests
 test_script:
   - gradlew.bat check --stacktrace -Pheadless=true -PlogTests -Dscan
 
 platform:
   - x64
-
-artifacts:
-  - path: ui\build\jfx\native\*.exe
-
-
-deploy:
-  provider: GitHub
-  description: ''
-  auth_token:
-      secure: k0uhlsYxGoZkHVNNm4E+WnOiBfzsv4yLS+htlplR7JwzARqiAC2RU0cVnsIg1UF0
-  artifact: /.*\.exe/           # upload all exe packages to release assets
-  draft: true
-  prerelease: true
-  on:
-    branch: master                # release from master branch only
-    appveyor_repo_tag: true       # deploy on tag push only
 
 cache:
   - C:\Users\appveyor\.gradle

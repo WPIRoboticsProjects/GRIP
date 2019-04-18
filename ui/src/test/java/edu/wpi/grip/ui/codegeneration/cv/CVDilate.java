@@ -17,11 +17,12 @@ import java.util.Optional;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+@SuppressWarnings("PMD.JUnitTestsShouldIncludeAssert")
 public class CVDilate extends AbstractGenerationTesting {
   private static final double iterations = 4;
 
 
-  boolean setup(String type) {
+  private boolean setup(String type) {
     Step step = gen.addStep(opUtil.getMetaData("CV dilate"));
     loadImage(Files.gompeiJpegFile);
     OutputSocket imgOut = pipeline.getSources().get(0).getOutputSockets().get(0);
@@ -77,7 +78,7 @@ public class CVDilate extends AbstractGenerationTesting {
   }
 
 
-  void validate(PipelineInterfacer pip) {
+  private void validate(PipelineInterfacer pip) {
     ManualPipelineRunner runner = new ManualPipelineRunner(eventBus, pipeline);
     runner.runPipeline();
     pip.setMatSource(0, Files.gompeiJpegFile.file);

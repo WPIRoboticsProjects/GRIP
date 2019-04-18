@@ -15,6 +15,7 @@ public class SafeShutdownTest {
   protected static void setUpSecurityManager() {
     oldManager = System.getSecurityManager();
     System.setSecurityManager(new SecurityManager() {
+      @Override
       public void checkPermission(Permission permission) {
         if (permission.getName().contains("exitVM")) {
           throw new IllegalStateException(SHUTDOWN_EXCEPTION_MESSAGE);
@@ -41,7 +42,7 @@ public class SafeShutdownTest {
   @Test
   public void testSafeShutdownShutsDownIfHandlerThrowsError() throws Exception {
     try {
-      SafeShutdown.exit(0, () -> {
+      SafeShutdown.exit(SafeShutdown.ExitCode.SAFE_SHUTDOWN, () -> {
         throw new AssertionError("This should not be the exception that appears");
       });
     } catch (IllegalStateException e) {

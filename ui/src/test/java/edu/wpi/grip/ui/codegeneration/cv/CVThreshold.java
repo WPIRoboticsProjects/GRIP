@@ -21,11 +21,12 @@ import java.util.Optional;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+@SuppressWarnings("PMD.JUnitTestsShouldIncludeAssert")
 public class CVThreshold extends AbstractGenerationTesting {
   private static final double thresh = 50;
   private static final double maxval = 200;
 
-  boolean setup(String type) {
+  private boolean setup(String type) {
     Step desat = gen.addStep(new OperationMetaData(
         OperationDescription.from(DesaturateOperation.class), () -> new
         DesaturateOperation(isf, osf)));
@@ -81,7 +82,7 @@ public class CVThreshold extends AbstractGenerationTesting {
     test(() -> setup("THRESH_TRIANGLE"), (pip) -> validate(pip), "cvThresholdTriangleTest");
   }
 
-  void validate(PipelineInterfacer pip) {
+  private void validate(PipelineInterfacer pip) {
     ManualPipelineRunner runner = new ManualPipelineRunner(eventBus, pipeline);
     runner.runPipeline();
     pip.setMatSource(0, Files.gompeiJpegFile.file);

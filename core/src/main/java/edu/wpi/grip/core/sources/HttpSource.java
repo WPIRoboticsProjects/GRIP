@@ -1,6 +1,7 @@
 
 package edu.wpi.grip.core.sources;
 
+import edu.wpi.grip.core.MatWrapper;
 import edu.wpi.grip.core.Source;
 import edu.wpi.grip.core.events.SourceHasPendingUpdateEvent;
 import edu.wpi.grip.core.events.SourceRemovedEvent;
@@ -19,13 +20,15 @@ import com.google.inject.assistedinject.AssistedInject;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 
 import org.bytedeco.javacpp.opencv_core.Mat;
-import org.bytedeco.javacpp.opencv_imgcodecs;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.function.Consumer;
+
+import static org.bytedeco.javacpp.opencv_imgcodecs.CV_LOAD_IMAGE_COLOR;
+import static org.bytedeco.javacpp.opencv_imgcodecs.imdecode;
 
 /**
  * Provides a way to generate a {@link Mat Mat} from an image that has been POSTed to the
@@ -50,9 +53,9 @@ public class HttpSource extends Source {
    */
   private final HttpImageHandler imageHandler;
 
-  private final OutputSocket<Mat> imageOutput;
-  private final SocketHint<Mat> outputHint = SocketHints.Outputs.createMatSocketHint("Image");
-  private final Mat image = new Mat();
+  private final OutputSocket<MatWrapper> imageOutput;
+  private final SocketHint<MatWrapper> outputHint = SocketHints.createImageSocketHint("Image");
+  private final MatWrapper image = MatWrapper.emptyWrapper();
   private final Consumer<Mat> callback;
   private final EventBus eventBus;
   private String path;
@@ -99,7 +102,7 @@ public class HttpSource extends Source {
   }
 
   private void setImage(Mat image) {
-    image.copyTo(this.image);
+    this.image.set(image);
     eventBus.post(new SourceHasPendingUpdateEvent(this));
   }
 
@@ -121,7 +124,8 @@ public class HttpSource extends Source {
       // No data, don't bother converting
       return false;
     }
-    imageOutput.setValue(opencv_imgcodecs.imdecode(image, opencv_imgcodecs.CV_LOAD_IMAGE_COLOR));
+    imageOutput.getValue().get().set(imdecode(image.getCpu(), CV_LOAD_IMAGE_COLOR));
+    imageOutput.flagChanged();
     return true;
   }
 

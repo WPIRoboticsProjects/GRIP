@@ -23,10 +23,11 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 @Category(GenerationTesting.class)
+@SuppressWarnings("PMD.JUnitTestsShouldIncludeAssert")
 public class BlurGenerationTesting extends AbstractGenerationTesting {
   private final Double blurRatio = new Double(10.0);
 
-  void generatePipeline(String blurType) {
+  private void generatePipeline(String blurType) {
     Step step = gen.addStep(
         new OperationMetaData(OperationDescription.from(BlurOperation.class),
             () -> new BlurOperation(isf, osf)));
@@ -77,7 +78,7 @@ public class BlurGenerationTesting extends AbstractGenerationTesting {
     }, (pip) -> pipelineTest(pip), "BilateralFilterTest");
   }
 
-  void pipelineTest(PipelineInterfacer pip) {
+  private void pipelineTest(PipelineInterfacer pip) {
     ManualPipelineRunner runner = new ManualPipelineRunner(eventBus, pipeline);
     runner.runPipeline();
     Optional out = pipeline.getSteps().get(0).getOutputSockets().get(0).getValue();

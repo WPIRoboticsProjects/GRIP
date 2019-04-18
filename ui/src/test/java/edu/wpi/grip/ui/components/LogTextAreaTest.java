@@ -1,8 +1,11 @@
 package edu.wpi.grip.ui.components;
 
 
+import edu.wpi.grip.ui.UiTests;
+
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 import org.testfx.framework.junit.ApplicationTest;
 
 import javafx.scene.Scene;
@@ -11,6 +14,7 @@ import javafx.stage.Stage;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 
+@Category(UiTests.class)
 public class LogTextAreaTest extends ApplicationTest {
   private LogTextArea logTextArea;
 
@@ -23,36 +27,36 @@ public class LogTextAreaTest extends ApplicationTest {
 
   @Test
   public void testAddFirstLine() {
-    final String FIRST_LINE = "First Line Of Text";
-    logTextArea.addLineToLog(FIRST_LINE);
-    assertEquals("First line wasn't added", FIRST_LINE + "\n", logTextArea.getText());
+    final String firstLine = "First Line Of Text";
+    logTextArea.addLineToLog(firstLine);
+    assertEquals("First line wasn't added", firstLine + "\n", logTextArea.getText());
   }
 
   @Test
   public void testAddTwoLines() {
-    final String FIRST_LINE = "First Line Of Text";
-    final String SECOND_LINE = "Second line of text";
-    logTextArea.addLineToLog(FIRST_LINE);
-    logTextArea.addLineToLog(SECOND_LINE);
-    assertEquals("Second line wasn't added", FIRST_LINE + "\n" + SECOND_LINE + "\n", logTextArea
+    final String firstLine = "First Line Of Text";
+    final String secondLine = "Second line of text";
+    logTextArea.addLineToLog(firstLine);
+    logTextArea.addLineToLog(secondLine);
+    assertEquals("Second line wasn't added", firstLine + "\n" + secondLine + "\n", logTextArea
         .getText());
   }
 
   @Test
   public void testAddingReallyLongLineOfText() {
-    final String INITIAL_TEXT = StringUtils.rightPad("Initial string", LogTextArea
+    final String initialLength = StringUtils.rightPad("Initial string", LogTextArea
         .MAX_STRING_LENGTH - 3, "Long\n");
-    logTextArea.addLineToLog(INITIAL_TEXT);
-    assertEquals("Text was not added to logger", INITIAL_TEXT + "\n", logTextArea.getText());
+    logTextArea.addLineToLog(initialLength);
+    assertEquals("Text was not added to logger", initialLength + "\n", logTextArea.getText());
   }
 
   @Test
   public void testAddingStringThatIsTooLong() {
-    final String INITIAL_TEXT = StringUtils.rightPad("Initial string", LogTextArea
+    final String initialText = StringUtils.rightPad("Initial string", LogTextArea
         .MAX_STRING_LENGTH, "Long\n");
-    logTextArea.addLineToLog(INITIAL_TEXT);
+    logTextArea.addLineToLog(initialText);
     assertNotEquals("The initial text should not have been appended as it was too long",
-        INITIAL_TEXT + "\n", logTextArea.getText());
+        initialText + "\n", logTextArea.getText());
   }
 
   @Test
@@ -67,10 +71,10 @@ public class LogTextAreaTest extends ApplicationTest {
   @Test
   public void testScrollIsMaintainedWhenScrollIsPaused() {
     logTextArea.setPausedScroll(true);
-    final double INITIAL_SCROLL = logTextArea.getScrollTop();
-    final String LONG_TEXT = StringUtils.rightPad("InitialString", 500, "Text\n");
-    logTextArea.addLineToLog(LONG_TEXT);
-    assertEquals("The log should not have scrolled", INITIAL_SCROLL, logTextArea.getScrollTop(),
+    final double initialScroll = logTextArea.getScrollTop();
+    final String longText = StringUtils.rightPad("InitialString", 500, "Text\n");
+    logTextArea.addLineToLog(longText);
+    assertEquals("The log should not have scrolled", initialScroll, logTextArea.getScrollTop(),
         0.001);
   }
 

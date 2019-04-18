@@ -3,9 +3,12 @@ package edu.wpi.grip.ui.components;
 import edu.wpi.grip.core.PreviousNext;
 import edu.wpi.grip.ui.util.DPIUtility;
 
+import com.google.common.annotations.VisibleForTesting;
+
 import org.controlsfx.control.SegmentedButton;
 
 import java.util.function.Consumer;
+
 import javafx.scene.Node;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.Tooltip;
@@ -73,11 +76,13 @@ public final class PreviousNextButtons extends SegmentedButton {
   }
 
   // Intentionally left package private for testing
+  @VisibleForTesting
   ToggleButton getPreviousButton() {
     return previousButton;
   }
 
   // Intentionally left package private for testing
+  @VisibleForTesting
   ToggleButton getNextButton() {
     return nextButton;
   }

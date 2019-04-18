@@ -30,6 +30,7 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assume.assumeFalse;
 
 @Category(GenerationTesting.class)
+@SuppressWarnings("PMD.JUnitTestsShouldIncludeAssert")
 public class FilterLinesGenerationTesting extends AbstractGenerationTesting {
   private final List angleVal = Arrays.asList(160.0, 200.0);
   private static final int minLength = 30;
@@ -53,7 +54,7 @@ public class FilterLinesGenerationTesting extends AbstractGenerationTesting {
         System.getProperty("os.name").toLowerCase(Locale.ENGLISH).contains("windows"));
   }
 
-  void generatePipeline() {
+  private void generatePipeline() {
     Step step0 = gen.addStep(new OperationMetaData(
         OperationDescription.from(HSLThresholdOperation.class),
         () -> new HSLThresholdOperation(isf, osf)));
@@ -107,7 +108,7 @@ public class FilterLinesGenerationTesting extends AbstractGenerationTesting {
   }
 
 
-  void pipelineTest(PipelineInterfacer pip) {
+  private void pipelineTest(PipelineInterfacer pip) {
     ManualPipelineRunner runner = new ManualPipelineRunner(eventBus, pipeline);
     runner.runPipeline();
     Optional out2 = pipeline.getSteps().get(2).getOutputSockets().get(0).getValue();
@@ -121,9 +122,9 @@ public class FilterLinesGenerationTesting extends AbstractGenerationTesting {
     List<TestLine> genLin = (List<TestLine>) pip.getOutput("Filter_Lines_Output", GenType.LINES);
     assertTrue("Number of lines is not the same. grip: " + linOut.getLines().size() + " gen: "
         + genLin.size(), (linOut.getLines().size() - genLin.size()) < 5);
-    for (int i = 0; i < genLin.size(); i++) {
-      assertTrue("griplin does not contain: " + genLin.get(i),
-          TestLine.containsLin(genLin.get(i), gripLin));
+    for (TestLine testLine : genLin) {
+      assertTrue("griplin does not contain: " + testLine,
+          TestLine.containsLin(testLine, gripLin));
     }
 
   }

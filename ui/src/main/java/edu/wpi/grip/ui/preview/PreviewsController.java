@@ -48,7 +48,7 @@ public class PreviewsController {
   private static final int PREVIEW_PADDING = 50;
 
   @FXML
-  void initialize() {
+  private void initialize() {
     scrollPane.heightProperty().addListener((obs, o, n) -> resizePreviews(n.intValue()));
   }
 

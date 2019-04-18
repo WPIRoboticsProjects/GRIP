@@ -24,6 +24,7 @@ public final class ManualPipelineRunner extends PipelineRunner {
   }
 
   @SuppressWarnings("PMD.UselessOverridingMethod")
+  @Override
   public void runPipeline() {
     super.runPipeline();
   }

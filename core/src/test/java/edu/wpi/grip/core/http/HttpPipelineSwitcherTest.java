@@ -38,6 +38,7 @@ public class HttpPipelineSwitcherTest {
   }
 
   @Test
+  @SuppressWarnings("PMD.JUnitTestsShouldIncludeAssert")
   public void testNotPost() throws IOException {
     project = new Project() {
       @Override

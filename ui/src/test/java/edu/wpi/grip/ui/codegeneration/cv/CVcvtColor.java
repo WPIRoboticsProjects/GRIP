@@ -17,10 +17,11 @@ import java.util.Optional;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+@SuppressWarnings("PMD.JUnitTestsShouldIncludeAssert")
 public class CVcvtColor extends AbstractGenerationTesting {
 
 
-  boolean setup(String code) {
+  private boolean setup(String code) {
     Step step = gen.addStep(opUtil.getMetaData("CV cvtColor"));
     loadImage(Files.gompeiJpegFile);
     OutputSocket imgOut = pipeline.getSources().get(0).getOutputSockets().get(0);
@@ -40,7 +41,7 @@ public class CVcvtColor extends AbstractGenerationTesting {
   }
 
 
-  void validate(PipelineInterfacer pip) {
+  private void validate(PipelineInterfacer pip) {
     ManualPipelineRunner runner = new ManualPipelineRunner(eventBus, pipeline);
     runner.runPipeline();
     pip.setMatSource(0, Files.gompeiJpegFile.file);

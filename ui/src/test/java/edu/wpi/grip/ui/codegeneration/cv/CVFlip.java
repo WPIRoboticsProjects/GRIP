@@ -18,9 +18,10 @@ import java.util.Optional;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+@SuppressWarnings("PMD.JUnitTestsShouldIncludeAssert")
 public class CVFlip extends AbstractGenerationTesting {
 
-  boolean setup(FlipCode flip) {
+  private boolean setup(FlipCode flip) {
     Step step = gen.addStep(opUtil.getMetaData("CV flip"));
     loadImage(Files.gompeiJpegFile);
     OutputSocket imgOut = pipeline.getSources().get(0).getOutputSockets().get(0);
@@ -45,7 +46,7 @@ public class CVFlip extends AbstractGenerationTesting {
   }
 
   
-  void validate(PipelineInterfacer pip) {
+  private void validate(PipelineInterfacer pip) {
     ManualPipelineRunner runner = new ManualPipelineRunner(eventBus, pipeline);
     runner.runPipeline();
     pip.setMatSource(0, Files.gompeiJpegFile.file);

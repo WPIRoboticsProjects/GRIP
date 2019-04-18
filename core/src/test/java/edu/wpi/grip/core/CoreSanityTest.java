@@ -1,5 +1,6 @@
 package edu.wpi.grip.core;
 
+import edu.wpi.grip.annotation.operation.Description;
 import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.sockets.MockInputSocket;
 import edu.wpi.grip.core.sockets.MockOutputSocket;
@@ -27,7 +28,8 @@ public class CoreSanityTest extends AbstractPackageSanityTests {
         ManualPipelineRunner.class,
         SubtractionOperation.class,
         Main.class,
-        CoreCommandLineHelper.class
+        CoreCommandLineHelper.class,
+        OperationDescription.class
     ).contains(c));
     setDefault(OutputSocket.class, new MockOutputSocket("Mock Out"));
     setDefault(InputSocket.class, new MockInputSocket("Mock In"));
@@ -45,15 +47,15 @@ public class CoreSanityTest extends AbstractPackageSanityTests {
     setDefault(Step.class, new MockStep());
 
     setDistinctValues(Description.class,
-            A.class.getAnnotation(Description.class),
-            B.class.getAnnotation(Description.class));
+        OperationA.class.getAnnotation(Description.class),
+        OperationB.class.getAnnotation(Description.class));
   }
 
   @Description(name = "A", summary = "A")
-  private static class A {
+  private static class OperationA {
   }
 
   @Description(name = "B", summary = "B")
-  private static class B {
+  private static class OperationB {
   }
 }

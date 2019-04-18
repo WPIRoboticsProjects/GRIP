@@ -1,6 +1,8 @@
 package edu.wpi.grip.core.operations.network;
 
 
+import edu.wpi.grip.annotation.operation.PublishableObject;
+
 import javax.annotation.concurrent.Immutable;
 
 import static org.bytedeco.javacpp.opencv_core.Point;
@@ -12,6 +14,7 @@ import static org.bytedeco.javacpp.opencv_core.Size;
  */
 @Immutable
 @PublishableProxy({Point.class, Size.class})
+@PublishableObject
 public final class Vector2D implements Publishable {
 
   private final double x;

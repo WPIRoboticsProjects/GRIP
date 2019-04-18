@@ -1,5 +1,6 @@
 package edu.wpi.grip.core.operations.network.networktables;
 
+import edu.wpi.grip.annotation.operation.OperationCategory;
 import edu.wpi.grip.core.OperationDescription;
 import edu.wpi.grip.core.operations.network.MapNetworkPublisherFactory;
 import edu.wpi.grip.core.operations.network.PublishAnnotatedOperation;
@@ -72,7 +73,7 @@ public class NTPublishAnnotatedOperation<D, P extends Publishable> extends
         .summary(String.format("Publishes a %s to a network table", name))
         .aliases(String.format("Publish %s", name))
         .icon(Icon.iconStream("first"))
-        .category(OperationDescription.Category.NETWORK)
+        .category(OperationCategory.NETWORK)
         .build();
   }
 

@@ -1,5 +1,6 @@
 package edu.wpi.grip.core.sources;
 
+import edu.wpi.grip.core.MatWrapper;
 import edu.wpi.grip.core.Source;
 import edu.wpi.grip.core.events.SourceHasPendingUpdateEvent;
 import edu.wpi.grip.core.events.SourceRemovedEvent;
@@ -41,11 +42,12 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class VideoFileSource extends Source implements Pausable {
 
   private final String path;
-  private final SocketHint<Mat> imageHint = SocketHints.Outputs.createMatSocketHint("Image");
+  private final SocketHint<MatWrapper> imageHint = SocketHints.createImageSocketHint("Image");
   private final SocketHint<Number> fpsHint = SocketHints.Outputs.createNumberSocketHint("FPS", 0);
-  private final OutputSocket<Mat> imageSocket;
+  private final OutputSocket<MatWrapper> imageSocket;
   private final OutputSocket<Number> fpsSocket;
   private final Mat workingMat = new Mat();
+  @SuppressWarnings("PMD.LinguisticNaming")
   private final AtomicBoolean isNewFrame = new AtomicBoolean(false);
   private FFmpegFrameGrabber frameGrabber;
   private final OpenCVFrameConverter.ToMat converter = new OpenCVFrameConverter.ToMat();
@@ -102,7 +104,7 @@ public class VideoFileSource extends Source implements Pausable {
     if (isNewFrame.compareAndSet(true, false)) {
       // New frame, update outputs
       synchronized (workingMat) {
-        workingMat.copyTo(imageSocket.getValue().get());
+        workingMat.copyTo(imageSocket.getValue().get().rawCpu());
       }
       imageSocket.setValue(imageSocket.getValue().get()); // force the socket to update
       return true;

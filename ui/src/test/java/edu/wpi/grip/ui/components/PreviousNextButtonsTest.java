@@ -1,9 +1,11 @@
 package edu.wpi.grip.ui.components;
 
 import edu.wpi.grip.core.PreviousNext;
+import edu.wpi.grip.ui.UiTests;
 
 import org.junit.Ignore;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 import org.testfx.framework.junit.ApplicationTest;
 import org.testfx.matcher.base.NodeMatchers;
 import org.testfx.util.WaitForAsyncUtils;
@@ -15,6 +17,7 @@ import javafx.stage.Stage;
 import static junit.framework.TestCase.assertEquals;
 import static org.testfx.api.FxAssert.verifyThat;
 
+@Category(UiTests.class)
 public class PreviousNextButtonsTest extends ApplicationTest {
 
   private MockPreviousNext previousNext;

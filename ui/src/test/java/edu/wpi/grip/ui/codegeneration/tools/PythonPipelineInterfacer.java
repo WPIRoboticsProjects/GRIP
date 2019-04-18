@@ -20,6 +20,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.URISyntaxException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -34,10 +35,10 @@ public class PythonPipelineInterfacer implements PipelineInterfacer {
 
   private final StringBuilder str; //NOPMD
   private BufferedWriter out;
-  static File codeDir = null;
+  private static File codeDir = null;
   private final PythonTMethods tMeth;
-  static String pythonCmd;
-  static final String newLine = System.lineSeparator();
+  private static String pythonCmd;
+  private static final String newLine = System.lineSeparator();
   private static final String outputFile = "output.txt";
   private static final Logger logger = Logger.getLogger(PythonPipelineInterfacer.class.getName());
 
@@ -68,7 +69,8 @@ public class PythonPipelineInterfacer implements PipelineInterfacer {
         .append("pipe = ").append(className).append('.')
         .append(className).append("()").append(newLine);
     try {
-      out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream("testing.py"), "UTF-8"));
+      out = new BufferedWriter(new OutputStreamWriter(
+          new FileOutputStream("testing.py"), StandardCharsets.UTF_8));
     } catch (IOException e) {
       fail("Could not write the testing python file");
       logger.log(Level.WARNING, e.getMessage(), e);
@@ -252,10 +254,10 @@ public class PythonPipelineInterfacer implements PipelineInterfacer {
     temp.append("print (pipe.").append(name).append(')').append(newLine);
     BufferedReader in = runProcess(temp.toString());
     final String input = in.readLine();
-    if (input != null && !input.equals("None")) {
-      return Double.parseDouble(input);
-    } else {
+    if (input == null || input.equals("None")) {
       return null;
+    } else {
+      return Double.parseDouble(input);
     }
   }
 

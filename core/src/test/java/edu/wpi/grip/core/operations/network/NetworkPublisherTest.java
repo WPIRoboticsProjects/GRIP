@@ -10,19 +10,19 @@ import static org.junit.Assert.assertEquals;
 public class NetworkPublisherTest {
   @Test
   public void testThatNameChangeIsCalledInitiallyButNotAgainIfNameIsSame() {
-    final String NAME = "QUACKERY!";
+    final String name = "QUACKERY!";
     final int[] publishNameChangedCallCount = {0};
     final TestNetworkPublisher publisher = new TestNetworkPublisher() {
       @Override
       protected void publishNameChanged(Optional<String> oldName, String newName) {
         publishNameChangedCallCount[0]++;
-        assertEquals("Name was not the new name", NAME, newName);
+        assertEquals("Name was not the new name", name, newName);
       }
     };
-    publisher.setName(NAME);
+    publisher.setName(name);
     assertEquals("publishNameChanged was called an unexpected number of times", 1,
         publishNameChangedCallCount[0]);
-    publisher.setName(NAME);
+    publisher.setName(name);
     assertEquals("publishNameChanged should not have been called agian", 1,
         publishNameChangedCallCount[0]);
   }

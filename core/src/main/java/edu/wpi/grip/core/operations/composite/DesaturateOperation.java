@@ -1,19 +1,20 @@
 package edu.wpi.grip.core.operations.composite;
 
-import edu.wpi.grip.core.Description;
+import edu.wpi.grip.annotation.operation.Description;
+import edu.wpi.grip.annotation.operation.OperationCategory;
+import edu.wpi.grip.core.MatWrapper;
 import edu.wpi.grip.core.Operation;
-import edu.wpi.grip.core.OperationDescription;
+import edu.wpi.grip.core.operations.CudaOperation;
 import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.sockets.OutputSocket;
-import edu.wpi.grip.core.sockets.SocketHint;
-import edu.wpi.grip.core.sockets.SocketHints;
 
 import com.google.common.collect.ImmutableList;
 import com.google.inject.Inject;
 
+import org.bytedeco.javacpp.opencv_cudaimgproc;
+
 import java.util.List;
 
-import static org.bytedeco.javacpp.opencv_core.Mat;
 import static org.bytedeco.javacpp.opencv_imgproc.COLOR_BGR2GRAY;
 import static org.bytedeco.javacpp.opencv_imgproc.COLOR_BGRA2GRAY;
 import static org.bytedeco.javacpp.opencv_imgproc.cvtColor;
@@ -23,29 +24,23 @@ import static org.bytedeco.javacpp.opencv_imgproc.cvtColor;
  */
 @Description(name = "Desaturate",
              summary = "Convert a color image into shades of gray",
-             category = OperationDescription.Category.IMAGE_PROCESSING,
+             category = OperationCategory.IMAGE_PROCESSING,
              iconName = "desaturate")
-public class DesaturateOperation implements Operation {
-
-  private final SocketHint<Mat> inputHint = SocketHints.Inputs.createMatSocketHint("Input", false);
-  private final SocketHint<Mat> outputHint = SocketHints.Outputs.createMatSocketHint("Output");
-
-  private final InputSocket<Mat> inputSocket;
-  private final OutputSocket<Mat> outputSocket;
+public class DesaturateOperation extends CudaOperation {
 
   @Inject
   @SuppressWarnings("JavadocMethod")
   public DesaturateOperation(InputSocket.Factory inputSocketFactory, OutputSocket.Factory
       outputSocketFactory) {
-    this.inputSocket = inputSocketFactory.create(inputHint);
-    this.outputSocket = outputSocketFactory.create(outputHint);
+    super(inputSocketFactory, outputSocketFactory);
   }
 
 
   @Override
   public List<InputSocket> getInputSockets() {
     return ImmutableList.of(
-        inputSocket
+        inputSocket,
+        gpuSocket
     );
   }
 
@@ -58,23 +53,30 @@ public class DesaturateOperation implements Operation {
 
   @Override
   public void perform() {
-    final Mat input = inputSocket.getValue().get();
-
-    Mat output = outputSocket.getValue().get();
+    final MatWrapper input = inputSocket.getValue().get();
+    final MatWrapper output = outputSocket.getValue().get();
 
 
     switch (input.channels()) {
       case 1:
         // If the input is already one channel, it's already desaturated
-        input.copyTo(output);
+        output.set(input);
         break;
 
       case 3:
-        cvtColor(input, output, COLOR_BGR2GRAY);
+        if (preferCuda()) {
+          opencv_cudaimgproc.cvtColor(input.getGpu(), output.rawGpu(), COLOR_BGR2GRAY);
+        } else {
+          cvtColor(input.getCpu(), output.rawCpu(), COLOR_BGR2GRAY);
+        }
         break;
 
       case 4:
-        cvtColor(input, output, COLOR_BGRA2GRAY);
+        if (preferCuda()) {
+          opencv_cudaimgproc.cvtColor(input.getGpu(), output.rawGpu(), COLOR_BGRA2GRAY);
+        } else {
+          cvtColor(input.getCpu(), output.rawCpu(), COLOR_BGRA2GRAY);
+        }
         break;
 
       default:

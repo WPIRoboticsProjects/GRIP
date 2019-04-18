@@ -1,8 +1,9 @@
 package edu.wpi.grip.core.operations.composite;
 
-import edu.wpi.grip.core.Description;
+import edu.wpi.grip.annotation.operation.Description;
+import edu.wpi.grip.annotation.operation.OperationCategory;
+import edu.wpi.grip.core.MatWrapper;
 import edu.wpi.grip.core.Operation;
-import edu.wpi.grip.core.OperationDescription;
 import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.core.sockets.SocketHint;
@@ -21,20 +22,20 @@ import static org.bytedeco.javacpp.opencv_core.bitwise_xor;
  */
 @Description(name = "Mask",
              summary = "Filter out an area of interest in an image using a binary mask",
-             category = OperationDescription.Category.IMAGE_PROCESSING,
+             category = OperationCategory.IMAGE_PROCESSING,
              iconName = "mask")
 public class MaskOperation implements Operation {
 
-  private final SocketHint<Mat> inputHint = SocketHints.Inputs.createMatSocketHint("Input", false);
-  private final SocketHint<Mat> maskHint = SocketHints.Inputs.createMatSocketHint("Mask", false);
+  private final SocketHint<MatWrapper> inputHint = SocketHints.createImageSocketHint("Input");
+  private final SocketHint<MatWrapper> maskHint = SocketHints.createImageSocketHint("Mask");
 
-  private final SocketHint<Mat> outputHint = SocketHints.Outputs.createMatSocketHint("Output");
+  private final SocketHint<MatWrapper> outputHint = SocketHints.createImageSocketHint("Output");
 
 
-  private final InputSocket<Mat> inputSocket;
-  private final InputSocket<Mat> maskSocket;
+  private final InputSocket<MatWrapper> inputSocket;
+  private final InputSocket<MatWrapper> maskSocket;
 
-  private final OutputSocket<Mat> outputSocket;
+  private final OutputSocket<MatWrapper> outputSocket;
 
   @Inject
   @SuppressWarnings("JavadocMethod")
@@ -63,14 +64,14 @@ public class MaskOperation implements Operation {
 
   @Override
   public void perform() {
-    final Mat input = inputSocket.getValue().get();
-    final Mat mask = maskSocket.getValue().get();
+    final Mat input = inputSocket.getValue().get().getCpu();
+    final Mat mask = maskSocket.getValue().get().getCpu();
 
-    final Mat output = outputSocket.getValue().get();
+    final Mat output = outputSocket.getValue().get().rawCpu();
 
     // Clear the output to black, then copy the input to it with the mask
     bitwise_xor(output, output, output);
     input.copyTo(output, mask);
-    outputSocket.setValue(output);
+    outputSocket.flagChanged();
   }
 }

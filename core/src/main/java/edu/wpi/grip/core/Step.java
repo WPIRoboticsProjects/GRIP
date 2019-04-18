@@ -23,7 +23,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * A step is an instance of an operation in a pipeline.  A step contains a list of input and output
  * sockets, and it runs the operation whenever one of the input sockets changes.
  */
-@XStreamAlias(value = "grip:Step")
+@XStreamAlias("grip:Step")
 public class Step {
   private static final Logger logger = Logger.getLogger(Step.class.getName());
   private static final String MISSING_SOCKET_MESSAGE_END = " must have a value to run this step.";

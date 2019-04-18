@@ -30,6 +30,7 @@ public class AutoRestartingService<S extends Service> implements RestartableServ
   private final ServiceRestartPolicy policy;
   private final Supplier<S> delegateFactory;
   private final ConcurrentMap<Listener, Executor> listeners;
+  @SuppressWarnings("PMD.LinguisticNaming")
   private final AtomicBoolean shouldContinueRestarting = new AtomicBoolean(false);
   private final Set<Listener> addedListeners = new HashSet<>();
   private S delegate;

@@ -1,6 +1,7 @@
 package edu.wpi.grip.core.sources;
 
 
+import edu.wpi.grip.core.MatWrapper;
 import edu.wpi.grip.core.Source;
 import edu.wpi.grip.core.events.SourceHasPendingUpdateEvent;
 import edu.wpi.grip.core.events.SourceRemovedEvent;
@@ -44,7 +45,7 @@ import java.util.logging.Logger;
 /**
  * Provides a way to generate a constantly updated {@link Mat} from a camera.
  */
-@XStreamAlias(value = "grip:Camera")
+@XStreamAlias("grip:Camera")
 public class CameraSource extends Source implements RestartableService {
 
   /**
@@ -79,13 +80,13 @@ public class CameraSource extends Source implements RestartableService {
 
   private final Properties properties;
 
-  private final SocketHint<Mat> imageOutputHint = SocketHints.Inputs.createMatSocketHint("Image",
-      true);
+  private final SocketHint<MatWrapper> imageOutputHint = SocketHints.createImageSocketHint("Image");
   private final SocketHint<Number> frameRateOutputHint =
       SocketHints.createNumberSocketHint("Frame Rate", 0);
-  private final OutputSocket<Mat> frameOutputSocket;
+  private final OutputSocket<MatWrapper> frameOutputSocket;
   private final OutputSocket<Number> frameRateOutputSocket;
   private final Supplier<FrameGrabber> grabberSupplier;
+  @SuppressWarnings("PMD.LinguisticNaming")
   private final AtomicBoolean isNewFrame = new AtomicBoolean(false);
   private final Mat currentFrameTransferMat = new Mat();
   private final AutoRestartingService cameraService;
@@ -144,11 +145,11 @@ public class CameraSource extends Source implements RestartableService {
     final String deviceNumberProperty = properties.getProperty(DEVICE_NUMBER_PROPERTY);
     final String addressProperty = properties.getProperty(ADDRESS_PROPERTY);
 
-    if (deviceNumberProperty != null) {
+    if (deviceNumberProperty != null) { // NOPMD
       final int deviceNumber = Integer.parseInt(deviceNumberProperty);
       this.name = "Webcam " + deviceNumber;
       this.grabberSupplier = () -> grabberFactory.create(deviceNumber);
-    } else if (addressProperty != null) {
+    } else if (addressProperty != null) { // NOPMD
       this.name = "IP Camera " + new URL(addressProperty).getHost();
       this.grabberSupplier = () -> {
         try {
@@ -240,9 +241,9 @@ public class CameraSource extends Source implements RestartableService {
       // The camera frame thread should not try to modify the transfer mat while it is being
       // written to the pipeline
       synchronized (currentFrameTransferMat) {
-        currentFrameTransferMat.copyTo(frameOutputSocket.getValue().get());
+        frameOutputSocket.getValue().ifPresent(m -> m.set(currentFrameTransferMat));
       }
-      frameOutputSocket.setValueOptional(frameOutputSocket.getValue());
+      frameOutputSocket.flagChanged();
 
       // Update the frame rate value
       frameRateOutputSocket.setValue(frameRate);

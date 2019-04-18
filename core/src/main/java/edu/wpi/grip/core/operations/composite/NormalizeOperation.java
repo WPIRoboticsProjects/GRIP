@@ -1,8 +1,10 @@
 package edu.wpi.grip.core.operations.composite;
 
-import edu.wpi.grip.core.Description;
+import edu.wpi.grip.annotation.operation.Description;
+import edu.wpi.grip.annotation.operation.OperationCategory;
+import edu.wpi.grip.core.MatWrapper;
 import edu.wpi.grip.core.Operation;
-import edu.wpi.grip.core.OperationDescription;
+import edu.wpi.grip.core.operations.CudaOperation;
 import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.core.sockets.SocketHint;
@@ -11,56 +13,52 @@ import edu.wpi.grip.core.sockets.SocketHints;
 import com.google.common.collect.ImmutableList;
 import com.google.inject.Inject;
 
+import org.bytedeco.javacpp.opencv_core;
+import org.bytedeco.javacpp.opencv_cudaarithm;
+
 import java.util.List;
 
-import static org.bytedeco.javacpp.opencv_core.Mat;
 import static org.bytedeco.javacpp.opencv_core.NORM_INF;
 import static org.bytedeco.javacpp.opencv_core.NORM_L1;
 import static org.bytedeco.javacpp.opencv_core.NORM_L2;
 import static org.bytedeco.javacpp.opencv_core.NORM_MINMAX;
-import static org.bytedeco.javacpp.opencv_core.normalize;
 
 /**
  * GRIP {@link Operation} for {@link org.bytedeco.javacpp.opencv_core#normalize}.
  */
 @Description(name = "Normalize",
              summary = "Normalizes or remaps the values of pixels in an image",
-             category = OperationDescription.Category.IMAGE_PROCESSING,
+             category = OperationCategory.IMAGE_PROCESSING,
              iconName = "opencv")
-public class NormalizeOperation implements Operation {
+public class NormalizeOperation extends CudaOperation {
 
-  private final SocketHint<Mat> srcHint = SocketHints.Inputs.createMatSocketHint("Input", false);
   private final SocketHint<Type> typeHint = SocketHints.createEnumSocketHint("Type", Type.MINMAX);
   private final SocketHint<Number> aHint = SocketHints.Inputs
       .createNumberSpinnerSocketHint("Alpha", 0.0, 0, Double.MAX_VALUE);
   private final SocketHint<Number> bHint = SocketHints.Inputs
       .createNumberSpinnerSocketHint("Beta", 255, 0, Double.MAX_VALUE);
-  private final SocketHint<Mat> dstHint = SocketHints.Inputs.createMatSocketHint("Output", true);
-  private final InputSocket<Mat> srcSocket;
   private final InputSocket<Type> typeSocket;
   private final InputSocket<Number> alphaSocket;
   private final InputSocket<Number> betaSocket;
-  private final OutputSocket<Mat> outputSocket;
 
   @Inject
   @SuppressWarnings("JavadocMethod")
   public NormalizeOperation(InputSocket.Factory inputSocketFactory, OutputSocket.Factory
       outputSocketFactory) {
-    this.srcSocket = inputSocketFactory.create(srcHint);
+    super(inputSocketFactory, outputSocketFactory);
     this.typeSocket = inputSocketFactory.create(typeHint);
     this.alphaSocket = inputSocketFactory.create(aHint);
     this.betaSocket = inputSocketFactory.create(bHint);
-
-    this.outputSocket = outputSocketFactory.create(dstHint);
   }
 
   @Override
   public List<InputSocket> getInputSockets() {
     return ImmutableList.of(
-        srcSocket,
+        inputSocket,
         typeSocket,
         alphaSocket,
-        betaSocket
+        betaSocket,
+        gpuSocket
     );
   }
 
@@ -73,16 +71,21 @@ public class NormalizeOperation implements Operation {
 
   @Override
   public void perform() {
-    final Mat input = srcSocket.getValue().get();
-    final Type type = typeSocket.getValue().get();
-    final Number a = alphaSocket.getValue().get();
-    final Number b = betaSocket.getValue().get();
+    final MatWrapper input = inputSocket.getValue().get();
+    final int type = typeSocket.getValue().get().value;
+    final double a = alphaSocket.getValue().get().doubleValue();
+    final double b = betaSocket.getValue().get().doubleValue();
 
-    final Mat output = outputSocket.getValue().get();
+    final MatWrapper output = outputSocket.getValue().get();
 
-    normalize(input, output, a.doubleValue(), b.doubleValue(), type.value, -1, null);
+    if (preferCuda() && input.channels() == 1) {
+      // CUDA normalize only works on single-channel images
+      opencv_cudaarithm.normalize(input.getGpu(), output.rawGpu(), a, b, type, -1);
+    } else {
+      opencv_core.normalize(input.getCpu(), output.rawCpu(), a, b, type, -1, null);
+    }
 
-    outputSocket.setValue(output);
+    outputSocket.flagChanged();
   }
 
   private enum Type {

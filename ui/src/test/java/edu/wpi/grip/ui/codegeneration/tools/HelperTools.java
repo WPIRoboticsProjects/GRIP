@@ -4,7 +4,6 @@ import edu.wpi.grip.core.sockets.InputSocket;
 
 import org.bytedeco.javacpp.indexer.UByteIndexer;
 import org.opencv.core.Core;
-import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfByte;
 import org.opencv.imgcodecs.Imgcodecs;
@@ -23,9 +22,13 @@ import javax.swing.JLabel;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.opencv.core.CvType.CV_8UC;
 
-public class HelperTools {
+public final class HelperTools {
   private static final Logger logger = Logger.getLogger(HelperTools.class.getName());
+
+  private HelperTools() {
+  }
 
   /**
    * Calculates the average per pixel difference between two Mats. If two Mats are perfectly equal
@@ -68,7 +71,7 @@ public class HelperTools {
    */
   public static Mat bytedecoMatToCVMat(org.bytedeco.javacpp.opencv_core.Mat input) {
     UByteIndexer idxer = input.createIndexer();
-    Mat out = new Mat(idxer.rows(), idxer.cols(), CvType.CV_8UC(idxer.channels()));
+    Mat out = new Mat((int) idxer.rows(), (int) idxer.cols(), CV_8UC((int) idxer.channels()));
     //Mat out = new Mat(idxer.rows(),idxer.cols(),input.type());
     for (int row = 0; row < idxer.rows(); row++) {
       for (int col = 0; col < idxer.cols(); col++) {

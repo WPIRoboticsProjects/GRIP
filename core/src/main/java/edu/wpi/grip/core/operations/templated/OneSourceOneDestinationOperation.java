@@ -40,7 +40,7 @@ final class OneSourceOneDestinationOperation<T1, R> implements Operation {
   @SuppressWarnings("OptionalGetWithoutIsPresent")
   public void perform() {
     performer.perform(input1.getValue().get(), output.getValue().get());
-    output.setValue(output.getValue().get());
+    output.flagChanged();
   }
 
   @FunctionalInterface

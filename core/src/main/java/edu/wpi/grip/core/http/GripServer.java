@@ -217,17 +217,10 @@ public class GripServer {
    */
   public void restart() {
     try {
-      if (state == State.RUNNING) {
-        try {
-          server.stop();
-        } catch (Exception ex) {
-          throw new GripServerException("Could not stop Jetty server", ex);
-        }
-        state = State.STOPPED;
-      }
+      stop();
       server = serverFactory.create(port);
       start();
-    } catch (GripServerException | IllegalStateException ex) {
+    } catch (IllegalStateException ex) {
       throw new GripServerException("Could not restart GripServer", ex);
     }
   }

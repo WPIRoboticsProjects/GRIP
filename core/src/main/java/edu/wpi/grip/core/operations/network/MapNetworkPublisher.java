@@ -36,9 +36,9 @@ public abstract class MapNetworkPublisher<T> extends NetworkPublisher<Map<String
           + "list: " + key));
     }
     checkNamePresent();
-    if (!publishMapCopy.containsKey("") && !keys.isEmpty()) {
+    if (!publishMapCopy.containsKey("") && !keys.isEmpty()) { // NOPMD
       doPublish(publishMapCopy);
-    } else if (!publishMapCopy.keySet().isEmpty()) {
+    } else if (!publishMapCopy.keySet().isEmpty()) { // NOPMD
       doPublishSingle(publishMapCopy.get(""));
     } else {
       doPublish();

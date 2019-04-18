@@ -31,6 +31,7 @@ import java.util.Map;
 import java.util.NavigableMap;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
+
 import javafx.beans.InvalidationListener;
 import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.collections.ObservableList;
@@ -43,6 +44,7 @@ import javafx.scene.Parent;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+
 import javax.annotation.Nullable;
 import javax.inject.Inject;
 
@@ -411,10 +413,10 @@ public final class PipelineController {
    * Simple class for returning two steps.
    */
   private static final class StepPair {
-    final Step lower;
-    final Step higher;
+    public final Step lower;
+    public final Step higher;
 
-    StepPair(@Nullable Step lower, @Nullable Step higher) {
+    public StepPair(@Nullable Step lower, @Nullable Step higher) {
       this.lower = lower;
       this.higher = higher;
     }

@@ -1,5 +1,6 @@
 package edu.wpi.grip.core.operations;
 
+import edu.wpi.grip.annotation.operation.OperationCategory;
 import edu.wpi.grip.core.Operation;
 import edu.wpi.grip.core.OperationDescription;
 import edu.wpi.grip.core.sockets.InputSocket;
@@ -47,7 +48,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * with more information about what the operation does.
  */
 public class PythonScriptOperation implements Operation {
-  private static final String DEFAULT_NAME = "Python Operation";
   private static final Logger logger = Logger.getLogger(PythonScriptOperation.class.getName());
 
 
@@ -81,7 +81,7 @@ public class PythonScriptOperation implements Operation {
         .name(pythonScriptFile.name())
         .summary(pythonScriptFile.summary())
         .icon(Icon.iconStream("python"))
-        .category(OperationDescription.Category.MISCELLANEOUS)
+        .category(OperationCategory.MISCELLANEOUS)
         .build();
   }
 

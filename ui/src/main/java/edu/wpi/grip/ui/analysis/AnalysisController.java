@@ -316,7 +316,7 @@ public class AnalysisController {
       getChildren().addAll(progressBar, text);
     }
 
-    void update(double time, double relativeAmount, double hotness) {
+    public void update(double time, double relativeAmount, double hotness) {
       text.setText(String.format("%.1fms", time / 1e3));
       progressBar.setProgress(relativeAmount);
       if (hotness > 0) {

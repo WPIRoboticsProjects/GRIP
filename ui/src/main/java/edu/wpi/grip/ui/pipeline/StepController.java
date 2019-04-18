@@ -51,6 +51,7 @@ import javax.inject.Inject;
  * A JavaFX control that shows a step in the pipeline.  This control shows the name of the operation
  * as well as a list of input sockets and output sockets.
  */
+@SuppressWarnings("PMD.TooManyFields")
 @ParametrizedController(url = "Step.fxml")
 public class StepController implements Controller {
 
@@ -218,6 +219,7 @@ public class StepController implements Controller {
   }
 
   @Subscribe
+  @SuppressWarnings("PMD.UnusedPrivateMethod")
   private void onBenchmark(BenchmarkEvent e) {
     Platform.runLater(() -> {
       deleteButton.setDisable(e.isStart());

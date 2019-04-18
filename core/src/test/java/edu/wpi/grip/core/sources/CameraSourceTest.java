@@ -170,7 +170,7 @@ public class CameraSourceTest {
   @Test
   public void testEnsureThatGrabberIsReinitializedWhenStartThrowsException() throws IOException,
       TimeoutException {
-    final String GRABBER_START_MESSAGE = "This is expected to fail this way";
+    final String message = "This is expected to fail this way";
     Waiter waiter1 = new Waiter();
     Waiter waiter2 = new Waiter();
     Waiter waiter3 = new Waiter();
@@ -186,7 +186,7 @@ public class CameraSourceTest {
             if (!waiterQueue.isEmpty()) {
               waiterQueue.poll().resume();
             }
-            throw new FrameGrabber.Exception(GRABBER_START_MESSAGE);
+            throw new FrameGrabber.Exception(message);
           }
         };
       }
@@ -203,7 +203,7 @@ public class CameraSourceTest {
       public void failed(Service.State from, Throwable failure) {
         failedWaiter.assertNotNull(failure);
         failedWaiter.assertNotNull(failure.getCause());
-        failedWaiter.assertEquals(GRABBER_START_MESSAGE, failure.getCause().getMessage());
+        failedWaiter.assertEquals(message, failure.getCause().getMessage());
         failedWaiter.resume();
       }
     }, MoreExecutors.directExecutor());
@@ -281,7 +281,7 @@ public class CameraSourceTest {
       for (int y = 0; y < frameIdx.rows(); y++) {
         for (int x = 0; x < frameIdx.cols(); x++) {
           for (int z = 0; z < frameIdx.channels(); z++) {
-            frameIdx.putDouble(new int[]{y, x, z}, y + x + z);
+            frameIdx.putDouble(new long[]{y, x, z}, y + x + z);
           }
         }
       }

@@ -1,8 +1,9 @@
 package edu.wpi.grip.core.operations.composite;
 
-import edu.wpi.grip.core.Description;
+import edu.wpi.grip.annotation.operation.Description;
+import edu.wpi.grip.annotation.operation.OperationCategory;
+import edu.wpi.grip.core.MatWrapper;
 import edu.wpi.grip.core.Operation;
-import edu.wpi.grip.core.OperationDescription;
 import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.core.sockets.SocketHints;
@@ -28,23 +29,22 @@ import static org.bytedeco.javacpp.opencv_imgproc.resize;
  */
 @Description(name = "Resize Image",
              summary = "Scale an image to an exact size",
-             category = OperationDescription.Category.IMAGE_PROCESSING,
+             category = OperationCategory.IMAGE_PROCESSING,
              iconName = "resize")
 public class ResizeOperation implements Operation {
 
-  private final InputSocket<Mat> inputSocket;
+  private final InputSocket<MatWrapper> inputSocket;
   private final InputSocket<Number> widthSocket;
   private final InputSocket<Number> heightSocket;
   private final InputSocket<Interpolation> interpolationSocket;
 
-  private final OutputSocket<Mat> outputSocket;
+  private final OutputSocket<MatWrapper> outputSocket;
 
   @Inject
   @SuppressWarnings("JavadocMethod")
   public ResizeOperation(InputSocket.Factory inputSocketFactory, OutputSocket.Factory
       outputSocketFactory) {
-    this.inputSocket = inputSocketFactory.create(SocketHints.Inputs
-        .createMatSocketHint("Input", false));
+    this.inputSocket = inputSocketFactory.create(SocketHints.createImageSocketHint("Input"));
     this.widthSocket = inputSocketFactory.create(SocketHints.Inputs
         .createNumberSpinnerSocketHint("Width", 640));
     this.heightSocket = inputSocketFactory.create(SocketHints.Inputs
@@ -52,8 +52,7 @@ public class ResizeOperation implements Operation {
     this.interpolationSocket = inputSocketFactory
         .create(SocketHints.createEnumSocketHint("Interpolation", Interpolation.CUBIC));
 
-    this.outputSocket = outputSocketFactory.create(SocketHints.Outputs
-        .createMatSocketHint("Output"));
+    this.outputSocket = outputSocketFactory.create(SocketHints.createImageSocketHint("Output"));
   }
 
   @Override
@@ -75,17 +74,17 @@ public class ResizeOperation implements Operation {
 
   @Override
   public void perform() {
-    final Mat input = inputSocket.getValue().get();
+    final Mat input = inputSocket.getValue().get().getCpu();
     final Number width = widthSocket.getValue().get();
     final Number height = heightSocket.getValue().get();
     final Interpolation interpolation = interpolationSocket.getValue().get();
 
-    final Mat output = outputSocket.getValue().get();
+    final Mat output = outputSocket.getValue().get().rawCpu();
 
     resize(input, output, new Size(width.intValue(), height.intValue()), 0.0, 0.0, interpolation
         .value);
 
-    outputSocket.setValue(output);
+    outputSocket.flagChanged();
   }
 
   private enum Interpolation {

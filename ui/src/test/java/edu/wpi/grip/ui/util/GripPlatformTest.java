@@ -1,5 +1,7 @@
 package edu.wpi.grip.ui.util;
 
+import edu.wpi.grip.ui.UiTests;
+
 import com.google.common.eventbus.EventBus;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -9,6 +11,7 @@ import net.jodah.concurrentunit.Waiter;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 import org.junit.rules.Timeout;
 import org.testfx.framework.junit.ApplicationTest;
 
@@ -20,6 +23,7 @@ import javafx.stage.Stage;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+@Category(UiTests.class)
 public class GripPlatformTest extends ApplicationTest {
 
   @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD",
@@ -60,6 +64,7 @@ public class GripPlatformTest extends ApplicationTest {
   }
 
   @Test
+  @SuppressWarnings("PMD.JUnitTestsShouldIncludeAssert")
   public void testRunAsSoonAsPossibleWhenCalledFromFXThread() {
     interact(() -> { // This will be running in the JavaFX thread
       final boolean[] hasRun = {false};

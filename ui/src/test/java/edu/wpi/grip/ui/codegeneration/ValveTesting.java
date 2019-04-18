@@ -17,12 +17,13 @@ import javax.inject.Inject;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 
+@SuppressWarnings("PMD.JUnitTestsShouldIncludeAssert")
 public class ValveTesting extends AbstractGenerationTesting {
 
   @Inject
-  ExceptionWitness.Factory ewf;
+  private ExceptionWitness.Factory ewf;
 
-  boolean setup(Number value) {
+  private boolean setup(Number value) {
     Step valve = gen.addStep(
         new OperationMetaData(OperationDescription.from(ValveOperation.class),
             () -> new ValveOperation(isf, osf)));

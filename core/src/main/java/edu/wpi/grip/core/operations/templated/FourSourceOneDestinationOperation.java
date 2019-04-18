@@ -72,7 +72,7 @@ final class FourSourceOneDestinationOperation<T1, T2, T3, T4, R> implements Oper
         input4.getValue().get(),
         output.getValue().get()
     );
-    output.setValue(output.getValue().get());
+    output.flagChanged();
   }
 
   @FunctionalInterface

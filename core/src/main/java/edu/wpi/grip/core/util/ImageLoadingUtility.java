@@ -29,10 +29,10 @@ public final class ImageLoadingUtility {
     checkNotNull(path, "The path can not be null");
     checkNotNull(dst, "The destination Mat can not be null");
     final Mat img = opencv_imgcodecs.imread(path, flags);
-    if (img != null && !img.empty() && !img.isNull()) {
-      img.copyTo(dst);
-    } else {
+    if (img == null || img.empty() || img.isNull()) {
       throw new IOException("Error loading image " + path);
+    } else {
+      img.copyTo(dst);
     }
   }
 

@@ -1,8 +1,9 @@
 package edu.wpi.grip.core.operations.composite;
 
-import edu.wpi.grip.core.Description;
+import edu.wpi.grip.annotation.operation.Description;
+import edu.wpi.grip.annotation.operation.OperationCategory;
+import edu.wpi.grip.core.MatWrapper;
 import edu.wpi.grip.core.Operation;
-import edu.wpi.grip.core.OperationDescription;
 import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.core.sockets.SocketHint;
@@ -24,11 +25,11 @@ import static org.bytedeco.javacpp.opencv_features2d.SimpleBlobDetector;
  */
 @Description(name = "Find Blobs",
              summary = "Detects groups of pixels in an image",
-             category = OperationDescription.Category.FEATURE_DETECTION,
+             category = OperationCategory.FEATURE_DETECTION,
              iconName = "find-blobs")
 public class FindBlobsOperation implements Operation {
 
-  private final SocketHint<Mat> inputHint = SocketHints.Inputs.createMatSocketHint("Input", false);
+  private final SocketHint<MatWrapper> inputHint = SocketHints.createImageSocketHint("Input");
   private final SocketHint<Number> minAreaHint = SocketHints.Inputs
       .createNumberSpinnerSocketHint("Min Area", 1);
   private final SocketHint<List<Number>> circularityHint = SocketHints.Inputs
@@ -41,7 +42,7 @@ public class FindBlobsOperation implements Operation {
       .initialValueSupplier(BlobsReport::new)
       .build();
 
-  private final InputSocket<Mat> inputSocket;
+  private final InputSocket<MatWrapper> inputSocket;
   private final InputSocket<Number> minAreaSocket;
   private final InputSocket<List<Number>> circularitySocket;
   private final InputSocket<Boolean> colorSocket;
@@ -80,7 +81,7 @@ public class FindBlobsOperation implements Operation {
   @Override
   @SuppressWarnings("unchecked")
   public void perform() {
-    final Mat input = inputSocket.getValue().get();
+    final Mat input = inputSocket.getValue().get().getCpu();
     final Number minArea = minAreaSocket.getValue().get();
     final List<Number> circularity = circularitySocket.getValue().get();
     final Boolean darkBlobs = colorSocket.getValue().get();
@@ -109,6 +110,6 @@ public class FindBlobsOperation implements Operation {
       blobs.add(new BlobsReport.Blob(keyPoint.pt().x(), keyPoint.pt().y(), keyPoint.size()));
     }
 
-    outputSocket.setValue(new BlobsReport(input, blobs));
+    outputSocket.setValue(new BlobsReport(inputSocket.getValue().get(), blobs));
   }
 }

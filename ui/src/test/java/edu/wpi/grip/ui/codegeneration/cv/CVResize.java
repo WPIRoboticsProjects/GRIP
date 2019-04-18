@@ -17,11 +17,12 @@ import java.util.Optional;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+@SuppressWarnings("PMD.JUnitTestsShouldIncludeAssert")
 public class CVResize extends AbstractGenerationTesting {
   private static final double fx = 0.26;
   private static final double fy = 0.24;
 
-  boolean set() {
+  private boolean set() {
     Step step = gen.addStep(opUtil.getMetaData("CV resize"));
     loadImage(Files.gompeiJpegFile);
     OutputSocket imgOut = pipeline.getSources().get(0).getOutputSockets().get(0);
@@ -36,7 +37,7 @@ public class CVResize extends AbstractGenerationTesting {
     test(() -> set(), (pip) -> validate(pip), "CVResize");
   }
 
-  void validate(PipelineInterfacer pip) {
+  private void validate(PipelineInterfacer pip) {
     ManualPipelineRunner runner = new ManualPipelineRunner(eventBus, pipeline);
     runner.runPipeline();
     pip.setMatSource(0, Files.gompeiJpegFile.file);

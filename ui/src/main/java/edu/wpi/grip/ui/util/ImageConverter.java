@@ -1,5 +1,7 @@
 package edu.wpi.grip.ui.util;
 
+import edu.wpi.grip.core.MatWrapper;
+
 import com.google.common.primitives.UnsignedBytes;
 
 import org.bytedeco.javacpp.opencv_core.Mat;
@@ -25,6 +27,9 @@ public final class ImageConverter {
   private WritableImage image;
   private IntBuffer pixels;
 
+  public Image convert(MatWrapper wrapper, int desiredHeight) {
+    return convert(wrapper.getCpu(), desiredHeight);
+  }
 
   /**
    * Convert a BGR-formatted OpenCV {@link Mat} into a JavaFX {@link Image}. JavaFX understands ARGB
@@ -136,7 +141,7 @@ public final class ImageConverter {
    *
    * @return A JavaFX image, or null for empty
    */
-  Image convert(Mat mat) {
+  public Image convert(Mat mat) {
     return convert(mat, mat.rows());
   }
 

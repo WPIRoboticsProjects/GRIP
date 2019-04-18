@@ -1,5 +1,6 @@
 package edu.wpi.grip.core.sources;
 
+import edu.wpi.grip.core.MatWrapper;
 import edu.wpi.grip.core.PreviousNext;
 import edu.wpi.grip.core.Source;
 import edu.wpi.grip.core.events.SourceHasPendingUpdateEvent;
@@ -33,14 +34,13 @@ import static com.google.common.base.Preconditions.checkElementIndex;
  * A Source that supports multiple images. They can be toggled using {@link
  * MultiImageFileSource#next()} and {@link MultiImageFileSource#previous()}
  */
-@XStreamAlias(value = "grip:MultiImageFile")
+@XStreamAlias("grip:MultiImageFile")
 public final class MultiImageFileSource extends Source implements PreviousNext {
   private static final String INDEX_PROPERTY = "index";
   private static final String SIZE_PROPERTY = "numImages";
 
-  private final SocketHint<Mat> imageOutputHint = SocketHints.Inputs.createMatSocketHint("Image",
-      true);
-  private final OutputSocket<Mat> outputSocket;
+  private final SocketHint<MatWrapper> imageOutputHint = SocketHints.createImageSocketHint("Image");
+  private final OutputSocket<MatWrapper> outputSocket;
 
   private final EventBus eventBus;
   private final List<String> paths;
@@ -116,7 +116,9 @@ public final class MultiImageFileSource extends Source implements PreviousNext {
    * paths.
    *
    * @param paths The paths of all of the images.
+   *
    * @return The list of Mats loaded from the file system.
+   *
    * @throws IOException if one of the images fails to load
    */
   private static Mat[] createImagesArray(List<String> paths) throws IOException {
@@ -167,8 +169,12 @@ public final class MultiImageFileSource extends Source implements PreviousNext {
 
   @Override
   protected boolean updateOutputSockets() {
-    if (!currentImage.equals(outputSocket.getValue())) {
-      outputSocket.setValueOptional(currentImage);
+    if (outputSocket.getValue()
+        .map(m -> m.getCpu())
+        .map(m -> !currentImage.get().equals(m))
+        .orElse(false)) {
+      outputSocket.getValue().ifPresent(m -> currentImage.ifPresent(m::set));
+      outputSocket.flagChanged();
       return true;
     } else {
       return false;
@@ -192,6 +198,7 @@ public final class MultiImageFileSource extends Source implements PreviousNext {
    * remain within the bounds of the image array.
    *
    * @param delta the value to add to the index when getting the image
+   *
    * @return The matrix at the given index in the array.
    */
   private Mat addIndexAndGetImageByOffset(final int delta) {

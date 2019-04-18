@@ -1,5 +1,6 @@
 package edu.wpi.grip.core.operations.network.http;
 
+import edu.wpi.grip.annotation.operation.OperationCategory;
 import edu.wpi.grip.core.OperationDescription;
 import edu.wpi.grip.core.operations.network.MapNetworkPublisherFactory;
 import edu.wpi.grip.core.operations.network.PublishAnnotatedOperation;
@@ -47,7 +48,7 @@ public class HttpPublishOperation<D, P extends Publishable>
         .name("HTTP Publish " + dataType.getSimpleName())
         .summary("Publishes a " + dataType.getSimpleName() + " to the internal HTTP server")
         .icon(Icon.iconStream("publish"))
-        .category(OperationDescription.Category.NETWORK)
+        .category(OperationCategory.NETWORK)
         .build();
   }
 }

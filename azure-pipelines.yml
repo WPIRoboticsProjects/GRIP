@@ -20,35 +20,23 @@ jobs:
 
     steps:
       - script: |
-          sudo apt update
-          sudo apt install -y software-properties-common
-          sudo add-apt-repository -y ppa:webupd8team/java
-          sudo apt-get update
-          echo debconf shared/accepted-oracle-license-v1-1 select true | sudo debconf-set-selections
-          echo debconf shared/accepted-oracle-license-v1-1 seen true | sudo debconf-set-selections
-          sudo apt-get install -y oracle-java8-installer
-          sudo apt-get install -y oracle-java8-set-default
-          export JAVA_HOME=/usr/lib/jvm/java-8-oracle
-          export PATH=$JAVA_HOME/bin:$PATH
-        displayName: 'Install Oracle JDK'
+          $ProgressPreference = 'SilentlyContinue'
+          mkdir build
+          wget "https://download.java.net/java/early_access/jpackage/30/openjdk-13-jpackage+30_linux-x64_bin.tar.gz" -O "build/jdk-13.tar.gz"
+          sudo mkdir /opt/java
+          sudo tar -xzvf build/jdk-13.tar.gz -C /opt/java
+        displayName: 'Download JDK 13'
       - task: Gradle@2
         inputs:
           workingDirectory: ''
           gradleWrapperFile: 'gradlew'
-          gradleOptions: '-Xmx3072m -Dorg.gradle.java.home=/usr/lib/jvm/java-8-oracle'
-          jdkUserInputPath: '/usr/lib/jvm/java-8-oracle'
+          gradleOptions: '-Xmx3072m'
           publishJUnitResults: false
-          tasks: 'check jacocoTestReport jacocoRootReport jfxNative -Pgeneration -PjniLocation=build/OpenCVJNI -Pheadless=true -PlogTests --stacktrace'
-
-      - script: |
-          curl -s https://codecov.io/bash > .codecov
-          chmod +x .codecov
-          ./.codecov -t $(CODECOV_TOKEN)
-        displayName: 'Upload jacoco reports to codecov'
+          tasks: 'check :ui:jpackage -Pgeneration -PjniLocation=build/OpenCVJNI -Pheadless=true -PlogTests -Pjdk13=/opt/java/jdk-13 --stacktrace'
 
       - task: CopyFiles@2
         inputs:
-          contents: 'ui/build/jfx/native/GRIP-*.deb'
+          contents: 'ui/build/installer/GRIP-*.deb'
           targetFolder: $(Build.ArtifactStagingDirectory)
 
       - task: PublishBuildArtifacts@1
@@ -63,19 +51,35 @@ jobs:
       - script: |
           choco install innosetup -y
         displayName: 'Install Inno Setup'
+      - powershell: |
+          mkdir build
+          $ProgressPreference = 'SilentlyContinue'
+          wget "https://download.java.net/java/ga/jdk11/openjdk-11_windows-x64_bin.zip" -O "build\jdk.zip"
+        displayName: 'Download JDK'
+      - powershell: |
+          $ProgressPreference = 'SilentlyContinue'
+          wget "https://download.java.net/java/early_access/jpackage/30/openjdk-13-jpackage+30_windows-x64_bin.zip" -O "build\jdk-13.zip"
+          Expand-Archive build\jdk-13.zip -DestinationPath build
+        displayName: 'Download JDK 13'
+      - task: JavaToolInstaller@0
+        inputs:
+          jdkSourceOption: localDirectory
+          jdkFile: 'build/jdk.zip'
+          jdkDestinationDirectory: 'build/jdkinst'
+          jdkArchitectureOption: x64
       - task: Gradle@2
         inputs:
           workingDirectory: ''
           gradleWrapperFile: 'gradlew'
           gradleOptions: '-Xmx3072m'
-          jdkVersionOption: '1.8'
+          jdkVersionOption: '1.11'
           jdkArchitectureOption: 'x64'
           publishJUnitResults: true
-          tasks: 'check jacocoTestReport jacocoRootReport jfxNative -Pheadless=true -Pgeneration -PlogTests --stacktrace'
+          tasks: 'check :ui:jpackage -Pheadless=true -Pgeneration -PlogTests -Pjdk13=..\build\jdk-13 --stacktrace'
 
       - task: CopyFiles@2
         inputs:
-          contents: 'ui\build\jfx\native\GRIP-*.exe'
+          contents: 'ui\build\installer\GRIP-*.exe'
           targetFolder: $(Build.ArtifactStagingDirectory)
 
       - task: PublishBuildArtifacts@1
@@ -90,19 +94,29 @@ jobs:
       - script: |
           choco install innosetup -y
         displayName: 'Install Inno Setup'
+      - powershell: |
+          mkdir build
+          $ProgressPreference = 'SilentlyContinue'
+          wget "https://github.com/wpilibsuite/frc-openjdk-windows/releases/download/v11.0.0u28-1/jdk-x86-11.0.0u28-1.zip" -O "build\jdk.zip"
+        displayName: 'Download JDK'
+      - task: JavaToolInstaller@0
+        inputs:
+          jdkSourceOption: localDirectory
+          jdkFile: 'build/jdk.zip'
+          jdkDestinationDirectory: 'build/jdkinst'
+          jdkArchitectureOption: x86
       - task: Gradle@2
         inputs:
           workingDirectory: ''
           gradleWrapperFile: 'gradlew'
           gradleOptions: '-Xmx1024m'
-          jdkVersionOption: '1.8'
-          jdkArchitectureOption: 'x86'
           publishJUnitResults: false
-          tasks: 'check jacocoTestReport jacocoRootReport jfxNative -Pheadless=true -Pgeneration -PlogTests --stacktrace'
+          # TODO: run :ui:jpackage once we have a JDK 13 build for 32-bit Windows
+          tasks: 'check -Pheadless=true -Pgeneration -PlogTests --stacktrace'
 
       - task: CopyFiles@2
         inputs:
-          contents: 'ui\build\jfx\native\GRIP-*.exe'
+          contents: 'ui\build\installer\GRIP-*.exe'
           targetFolder: $(Build.ArtifactStagingDirectory)
 
       - task: PublishBuildArtifacts@1
@@ -110,6 +124,39 @@ jobs:
           artifactName: 'Win32Installer'
 
   - job: Mac
+    pool:
+      vmImage: 'xcode9-macos10.13'
+
+    steps:
+      - script: |
+          mkdir build
+          wget "https://download.java.net/java/ga/jdk11/openjdk-11_osx-x64_bin.tar.gz" -O "build/jdk.tar.gz"
+          wget "https://download.java.net/java/early_access/jpackage/30/openjdk-13-jpackage+30_osx-x64_bin.tar.gz" -O "build/jdk-13.tar.gz"
+          sudo tar xzvf build/jdk-13.tar.gz -C /Library/Java/JavaVirtualMachines/
+          sudo tar xvzf build/jdk.tar.gz -C /Library/Java/JavaVirtualMachines/
+          export JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk-11.jdk/Contents/Home/
+        displayName: 'Setup JDK'
+      - task: Gradle@2
+        inputs:
+          workingDirectory: ''
+          gradleWrapperFile: 'gradlew'
+          gradleOptions: '-Xmx3072m'
+          jdkVersionOption: '1.11'
+          jdkArchitectureOption: 'x64'
+          publishJUnitResults: false
+          tasks: 'check :ui:jpackage -Pheadless=true -Pgeneration -PlogTests -Pjdk13=/Library/Java/JavaVirtualMachines/jdk-13.jdk/Contents/Home/ --stacktrace'
+
+      - task: CopyFiles@2
+        inputs:
+          contents: 'ui/build/installer/*'
+          targetFolder: $(Build.ArtifactStagingDirectory)
+
+      - task: PublishBuildArtifacts@1
+        inputs:
+          artifactName: 'MacInstaller'
+
+  # JDK 8 agent for UI tests
+  - job: Mac_UI_Testing
     pool:
       vmImage: 'xcode9-macos10.13'
 
@@ -122,13 +169,9 @@ jobs:
           jdkVersionOption: '1.8'
           jdkArchitectureOption: 'x64'
           publishJUnitResults: false
-          tasks: 'check jacocoTestReport jacocoRootReport jfxNative -Pheadless=true -Pgeneration -PlogTests --stacktrace'
-
-      - task: CopyFiles@2
-        inputs:
-          contents: 'ui/build/jfx/native/*'
-          targetFolder: $(Build.ArtifactStagingDirectory)
-
-      - task: PublishBuildArtifacts@1
-        inputs:
-          artifactName: 'MacInstaller'
+          tasks: 'check jacocoTestReport jacocoRootReport -Pheadless=true -Pgeneration -PlogTests --stacktrace'
+      - script: |
+          curl -s https://codecov.io/bash > .codecov
+          chmod +x .codecov
+          ./.codecov -t $(CODECOV_TOKEN)
+        displayName: 'Upload jacoco reports to codecov'

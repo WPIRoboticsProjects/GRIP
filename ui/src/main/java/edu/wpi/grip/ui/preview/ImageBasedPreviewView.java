@@ -1,5 +1,6 @@
 package edu.wpi.grip.ui.preview;
 
+import edu.wpi.grip.core.MatWrapper;
 import edu.wpi.grip.core.events.RenderEvent;
 import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.ui.util.ImageConverter;
@@ -11,7 +12,6 @@ import javafx.scene.image.ImageView;
 
 import static org.bytedeco.javacpp.opencv_core.CV_8S;
 import static org.bytedeco.javacpp.opencv_core.CV_8U;
-import static org.bytedeco.javacpp.opencv_core.Mat;
 
 /**
  * Base class for image previews.
@@ -58,7 +58,7 @@ public abstract class ImageBasedPreviewView<T> extends SocketPreviewView<T> {
    *
    * @return true if the image can be previewed, false if it can't
    */
-  public static boolean isPreviewable(Mat image) {
+  public static boolean isPreviewable(MatWrapper image) {
     return (image.channels() == 1) || (image.channels() == 3)
         && (image.depth() == CV_8U || image.depth() == CV_8S);
   }

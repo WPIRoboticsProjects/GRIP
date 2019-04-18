@@ -26,6 +26,7 @@ import java.util.Optional;
 import static org.junit.Assert.assertTrue;
 
 @Category(GenerationTesting.class)
+@SuppressWarnings("PMD.JUnitTestsShouldIncludeAssert")
 public class FindBlobsGenerationTesting extends AbstractGenerationTesting {
   private final List<Number> hVal = new ArrayList<Number>();
   private final List<Number> sVal = new ArrayList<Number>();
@@ -40,7 +41,7 @@ public class FindBlobsGenerationTesting extends AbstractGenerationTesting {
     lVal.add(new Double(101.0));
   }
 
-  void generatePipeline(boolean darkBool, double minArea, List<Double> circularity) {
+  private void generatePipeline(boolean darkBool, double minArea, List<Double> circularity) {
     Step step0 = gen.addStep(new OperationMetaData(
         OperationDescription.from(HSLThresholdOperation.class),
         () -> new HSLThresholdOperation(isf, osf)));
@@ -101,7 +102,7 @@ public class FindBlobsGenerationTesting extends AbstractGenerationTesting {
   }
 
 
-  void pipelineTest(PipelineInterfacer pip) {
+  private void pipelineTest(PipelineInterfacer pip) {
     ManualPipelineRunner runner = new ManualPipelineRunner(eventBus, pipeline);
     runner.runPipeline();
     Optional out1 = pipeline.getSteps().get(1).getOutputSockets().get(0).getValue();
@@ -118,10 +119,10 @@ public class FindBlobsGenerationTesting extends AbstractGenerationTesting {
     }
   }
 
-  public boolean containsBlob(List<BlobsReport.Blob> blobs, KeyPoint blob) {
-    for (int i = 0; i < blobs.size(); i++) {
-      if ((blobs.get(i).x - blob.pt.x) <= 20 && (blobs.get(i).y - blob.pt.y) <= 20
-          && (blobs.get(i).size - blob.size) <= 10) {
+  private boolean containsBlob(List<BlobsReport.Blob> blobs, KeyPoint blob) {
+    for (BlobsReport.Blob blob1 : blobs) {
+      if ((blob1.x - blob.pt.x) <= 20 && (blob1.y - blob.pt.y) <= 20
+          && (blob1.size - blob.size) <= 10) {
         return true;
       }
     }

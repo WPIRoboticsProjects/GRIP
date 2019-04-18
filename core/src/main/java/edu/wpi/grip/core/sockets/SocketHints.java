@@ -1,9 +1,12 @@
 package edu.wpi.grip.core.sockets;
 
 
+import edu.wpi.grip.core.MatWrapper;
+
 import com.google.common.reflect.TypeToken;
 
-import org.bytedeco.javacpp.opencv_core.Mat;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 import org.bytedeco.javacpp.opencv_core.Point;
 import org.bytedeco.javacpp.opencv_core.Size;
 
@@ -22,6 +25,13 @@ import static com.google.common.base.Preconditions.checkNotNull;
 public final class SocketHints {
 
   private SocketHints() { /* no op */ }
+
+  public static SocketHint<MatWrapper> createImageSocketHint(String identifier) {
+    return new SocketHint.Builder<>(MatWrapper.class)
+        .identifier(identifier)
+        .initialValueSupplier(MatWrapper::emptyWrapper)
+        .build();
+  }
 
   @SuppressWarnings("unchecked")
   public static <T extends Enum<T>> SocketHint<T> createEnumSocketHint(final String identifier,
@@ -75,6 +85,7 @@ public final class SocketHints {
 
   /* PRIVATE PARTIALLY CONSTRUCTED BUILDERS BELOW */
 
+  @SuppressFBWarnings(value = "UPM", justification = "False positive")
   private static SocketHint.Builder<Number> createNumberSocketHintBuilder(final String identifier,
                                                                           final Number number,
                                                                           final Number[] domain) {
@@ -92,11 +103,6 @@ public final class SocketHints {
    */
   public static final class Inputs {
     private Inputs() { /* no op */ }
-
-    public static SocketHint<Mat> createMatSocketHint(final String identifier,
-                                                      final boolean withDefault) {
-      return createObjectSocketHintBuilder(identifier, Mat.class, Mat::new, withDefault).build();
-    }
 
     public static SocketHint<Size> createSizeSocketHint(final String identifier,
                                                         final boolean withDefault) {
@@ -169,10 +175,6 @@ public final class SocketHints {
    */
   public static final class Outputs {
     private Outputs() { /* no op */ }
-
-    public static SocketHint<Mat> createMatSocketHint(final String identifier) {
-      return Inputs.createMatSocketHint(identifier, true);
-    }
 
     public static SocketHint<Point> createPointSocketHint(final String identifier) {
       return Inputs.createPointSocketHint(identifier, true);

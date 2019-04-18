@@ -20,7 +20,6 @@ addons:
     packages:
 #      - gcc-4.8
 #      - g++-4.8
-      - oracle-java8-installer
 #      - python3
 before_install:
   - .travis-scripts/install.sh
@@ -29,13 +28,8 @@ before_install:
     then .travis-scripts/osx-opencv-install.sh;
     else .travis-scripts/linux-opencv-install.sh;
     fi
-# Only do an assemble when we aren't building a pull request
-install:
-  - '[ "${TRAVIS_PULL_REQUEST}" = "false" ] && ./gradlew jfxNative --no-daemon --stacktrace -Dscan || ./gradlew --stacktrace -Dscan '
 
 script:
-  # Only run code generation tests on OSX -- linux requires sudo to install OpenCV dependencies, and that environment
-  # will not be able to run MainWindowTest.testDragOperationFromPaletteToPipeline
   - ./gradlew check --stacktrace -Pheadless=true -PlogTests;
 
 after_success:
@@ -51,21 +45,6 @@ notifications:
     on_failure: always  # options: [always|never|change] default: always
     on_start: never     # options: [always|never|change] default: always
 
-
-env:
-  global:
-    secure: f90qqcA5inkHmYUK6WNITkSPbalpw+r+6nzykPdN30ahB8OUupYxoJxFknxw74raPQ69IgsDF+f8RihEBNIjH8TiMihkcwbkUGGfYaON+sVdvV/GgRQcUk0tm/wrWxRiB1qOYfsvU4sdyvFWBtAbeuhBH1JMLlQGaFjHTJOUwCjm3iEW0CKC9btsgcZIvIrHkP2KNHUMD2iBs6BJ4W448ElQTBBnaoInWUm/ecV+nNUX9yT1CpVWABVuioUkSWSm7eMiqYnvm4J9+LUh8+IMYyodO2hjPWlQ18yhmP9kSlGpQT6pRZjCRd394GE8plKxxWwp9CVXyUY/KQiYoNMRQaAiwuNnXrCi2Et1Fp8+MzQjpl+2CWbdtPwqGhKrGICfhPHvswNE2jM7VLAu/8Gn+ubhKuYfiibska5tXDBknrVbOiV1s9h3y3hI2WyyUg+T1ZsirhGVzMSmDk4HZnLUf7uEEMZEMQzLC0yk495TTZ2zihRnAkOXhNd24lHVwns2WSu0BKvawaDlfQinCbddKGNXE0cdkDvO9xk4IsbioRJ3w8DhBdL4HAEw/Gzx5N3xEVXgOAtwoP+zH2b3LIXQvP5pkuyna48R9L7Fc+EXUmejuRUmjQQMbsdLbx6Ci8gnd6Xq7CYvwry6t3R0GKuCwziuZNl44doHYR6MK7CDBWo=
-
-deploy:
-  provider: releases
-  api_key:
-    secure: bdjiFXG3VBcM1iyxeputsWA9vHxgLNcxRB1i0REDNAnIEvDWpAdVr1jPBejeiOEw9s+k6EItATvQ2I7Xp5iKnYaXn0NuHzM3OSY8WNVCc+gBTaQwkijPBqi/vEXaO502CscW+H2U26QZGS/jJiUuieeErtzCNcWmCv8SRc5NFOVYdSlhAmp+aPeu2YwuweiMZNVquYM2hx7murghOYSF5hQTKq4/zrziENVi78XZS8rJFmxwOGqNj1GBLul2F9poIPjzDbPVJLeXTJEY+N3aYGJ4GyZYf6p8ynDO/v043/GuOAyNfkgSwhCcTQlmLG/mm6P9CUMoDQR9klh2eDswgrIP4rGLwILg3035nqHqwgTIKVXfspni3P/65siS6lXV0M5flEkRysMBr1GQhaIEUM32ArreMzAtC2Vn2CviKG0TwLmxyd/7W3JdoX4KrHAcKBwbqFDImWw43S6N63oTUEw6GjrI+CndwgF9RNgr5SAyS28LFXViOJe7JlGVUNU33kMNpEJxzVREzkJsO8aicaZTrvDniFOfg2WhrAyhjxmh4/IOHDE6qgtxw+2+TUzMlwdzdxb90BeXg2XfMichmKfQYQFEmZntCZcoHHDG5jbCTyAvFuOv6tdPjpr69QjiEJhEbohw8CEwoGhy1kxxQcCDCfABrOTivJ39Ui8MC6k=
-  file_glob: true
-  file: "ui/build/jfx/native/*.{deb,pkg,dmg}"
-  skip_cleanup: true
-  on:
-    repo: WPIRoboticsProjects/GRIP
-    tags: true
 
 before_cache:
   - rm -f $HOME/.gradle/caches/modules-2/modules-2.lock

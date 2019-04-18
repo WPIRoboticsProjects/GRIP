@@ -1,4 +1,3 @@
-import org.ajoberstar.grgit.Grgit
 import com.github.spotbugs.SpotBugsTask
 
 buildscript {
@@ -9,7 +8,6 @@ buildscript {
         }
     }
     dependencies {
-        classpath(group = "de.dynamicfiles.projects.gradle.plugins", name = "javafx-gradle-plugin", version = "8.8.2")
         classpath(group = "edu.wpi.first.wpilib.opencv", name = "opencv-installer", version = "2.0.0")
     }
 }
@@ -19,11 +17,11 @@ plugins {
     `jacoco`
     `checkstyle`
     `pmd`
-    id("com.github.johnrengelman.shadow") version "4.0.3"
+    id("com.github.johnrengelman.shadow") version "4.0.1"
     id("com.google.osdetector") version "1.4.0"
     id("org.ajoberstar.grgit") version "2.0.0" apply false
-    id("net.ltgt.errorprone") version "0.0.16"
-    id("com.github.spotbugs") version "1.6.4"
+    //id("net.ltgt.errorprone") version "0.0.16"
+    id("com.github.spotbugs") version "1.7.1"
     id("com.gradle.build-scan") version "2.1"
 }
 
@@ -48,21 +46,13 @@ fun javaSubprojects(action: Project.() -> Unit) {
     }
 }
 
-var grgit: Grgit? = null
-if (rootProject.file(".git").exists()) {
-    project.apply {
-        plugin("org.ajoberstar.grgit")
-    }
-    grgit = Grgit.open()
-}
-
 javaSubprojects {
     apply {
         plugin("java")
         plugin("org.gradle.jacoco")
         plugin("org.gradle.pmd")
         plugin("org.gradle.checkstyle")
-        plugin("net.ltgt.errorprone")
+        //plugin("net.ltgt.errorprone")
         plugin("com.github.spotbugs")
     }
     repositories {
@@ -82,9 +72,11 @@ javaSubprojects {
         }
     }
 
-    version = getVersionName()
+    version = getGitVersion()
 
     dependencies {
+        "compile"(group = "javax.annotation", name = "javax.annotation-api", version = "1.3.2")
+        "annotationProcessor"(group = "javax.annotation", name = "javax.annotation-api", version = "1.3.2")
         "compile"(group = "com.google.code.findbugs", name = "annotations", version = "3.0.1")
         "testCompile"(group = "net.jodah", name = "concurrentunit", version = "0.4.2")
         "testCompile"(group = "org.hamcrest", name = "hamcrest-all", version = "1.3")
@@ -94,7 +86,6 @@ javaSubprojects {
     }
 
     checkstyle {
-        configFile = rootDir.resolve("checkstyle.xml")
         toolVersion = "6.19"
         if (project.hasProperty("ignoreCheckstyle")) {
             isIgnoreFailures = true
@@ -102,20 +93,21 @@ javaSubprojects {
     }
 
     pmd {
-        toolVersion = "5.6.0"
+        toolVersion = "6.7.0"
         isConsoleOutput = true
         val projectSourcesSets = this@javaSubprojects.sourceSets
         sourceSets = listOf(projectSourcesSets["main"], projectSourcesSets["test"])
         reportsDir = buildDir.resolve("reports/pmd")
         ruleSetFiles = files(rootDir.resolve("pmd-ruleset.xml"))
+        ruleSets = emptyList()
     }
 
-    configurations["errorprone"].apply {
-        resolutionStrategy.force("com.google.errorprone:error_prone_core:2.3.2")
-    }
+//    configurations["errorprone"].apply {
+//        resolutionStrategy.force("com.google.errorprone:error_prone_core:2.3.2")
+//    }
 
     spotbugs {
-        toolVersion = "3.1.7"
+        toolVersion = "3.1.12"
         val javaSources = this@javaSubprojects.sourceSets
         sourceSets = setOf(javaSources["main"], javaSources["test"])
         excludeFilter = file("$rootDir/findBugsSuppressions.xml")
@@ -153,6 +145,10 @@ javaSubprojects {
         source(tasks.named<JavaCompile>("compileJava").map { it.source })
     }
 
+    tasks.withType<JavaCompile>().configureEach {
+        sourceCompatibility = "8"
+    }
+
 }
 
 tasks.register<JacocoReport>("jacocoRootReport") {
@@ -174,32 +170,4 @@ tasks.register<JacocoReport>("jacocoRootReport") {
         html.isEnabled = false
         csv.isEnabled = false
     }
-}
-
-fun Project.getGitCommit(): String {
-    return grgit?.head()?.abbreviatedId ?: "<no commit>"
-}
-
-fun Project.getGitDescribe(): String {
-    return grgit?.describe() ?: "v0.0.0"
-}
-
-fun Project.getGitDescribeAbbrev(): String {
-    return grgit?.tag?.list()?.last()?.name ?: "v0.0.0"
-}
-
-fun Project.getVersionName(): String {
-    if (project.hasProperty("vers")) {
-        val vers: String by properties
-        return vers
-    }
-    return getGitDescribe()
-}
-
-fun Project.getVersionSimple(): String {
-    if (project.hasProperty("vers")) {
-        val vers: String by properties
-        return vers
-    }
-    return getGitDescribeAbbrev()
 }
