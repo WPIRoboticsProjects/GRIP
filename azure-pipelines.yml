@@ -41,6 +41,7 @@ jobs:
           contents: 'ui/build/installer/GRIP-*.deb'
           targetFolder: $(Build.ArtifactStagingDirectory)
       - script: |
+          export GH_TOKEN=$(GH_TOKEN)
           .azure-scripts/push-javadoc-to-gh-pages.sh
         displayName: 'Publish Javadocs'
         condition: |
