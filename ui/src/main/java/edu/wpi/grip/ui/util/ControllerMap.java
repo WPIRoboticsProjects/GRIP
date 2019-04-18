@@ -100,7 +100,7 @@ public final class ControllerMap<C extends Controller, N extends Node> implement
    *
    * @param index      The index to place the Node
    * @param controller The controller to get the node from
-   * @return <tt>true</tt> if the observable list changed as a result of the call
+   * @return {@code true} if the observable list changed as a result of the call
    * @see List#add(int, Object)
    */
   public boolean add(int index, C controller) {
@@ -108,7 +108,9 @@ public final class ControllerMap<C extends Controller, N extends Node> implement
   }
 
   /**
-   * @see List#add(Object).
+   * Adds a controller to the map.
+   *
+   * @see List#add(Object)
    */
   public boolean add(C controller) {
     return add(size(), controller);
@@ -120,7 +122,7 @@ public final class ControllerMap<C extends Controller, N extends Node> implement
    *
    * @param index       The index to place the nodes
    * @param controllers The controllers to get the nodes from
-   * @return <tt>true</tt> if the observable list changed as a result of the call
+   * @return {@code true} if the observable list changed as a result of the call
    * @see List#addAll(int, Collection)
    */
   public boolean addAll(int index, Collection<C> controllers) {
@@ -131,14 +133,18 @@ public final class ControllerMap<C extends Controller, N extends Node> implement
   }
 
   /**
-   * @see List#addAll(Collection).
+   * Adds multiple controllers to the map at once.
+   *
+   * @see List#addAll(Collection)
    */
   public boolean addAll(Collection<C> controllers) {
     return addAll(size(), controllers);
   }
 
   /**
-   * @see List#addAll(Collection).
+   * Adds multiple controllers to the map at once.
+   *
+   * @see List#addAll(Collection)
    */
   public boolean addAll(C... controllers) {
     return addAll(Arrays.asList(controllers));

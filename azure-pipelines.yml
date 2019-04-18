@@ -40,6 +40,12 @@ jobs:
         inputs:
           contents: 'ui/build/installer/GRIP-*.deb'
           targetFolder: $(Build.ArtifactStagingDirectory)
+      - script: |
+          .azure-scripts/push-javadoc-to-gh-pages.sh
+        displayName: 'Publish Javadocs'
+        condition: |
+          and(not(eq(variables['Build.Reason'], 'PullRequest')),
+              eq(variables['Build.SourceBranch'], 'refs/heads/master'))
 
       - task: Gradle@2
         inputs:

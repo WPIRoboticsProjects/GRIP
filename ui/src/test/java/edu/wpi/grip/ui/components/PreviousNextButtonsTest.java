@@ -44,8 +44,6 @@ public class PreviousNextButtonsTest extends ApplicationTest {
   }
 
   @Test
-  @Ignore("Fails on TravisCI")
-  // TODO: Figure out what is different on travis that causes this to fail.
   public void testClickPrevious() {
     clickOn(previousNextButtons.getPreviousButton());
     WaitForAsyncUtils.waitForFxEvents();

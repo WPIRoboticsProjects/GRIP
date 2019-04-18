@@ -9,6 +9,8 @@ buildscript {
     }
     dependencies {
         classpath(group = "edu.wpi.first.wpilib.opencv", name = "opencv-installer", version = "2.0.0")
+        classpath("com.netflix.nebula:gradle-aggregate-javadocs-plugin:2.2.+")
+
     }
 }
 
@@ -23,6 +25,10 @@ plugins {
     //id("net.ltgt.errorprone") version "0.0.16"
     id("com.github.spotbugs") version "1.7.1"
     id("com.gradle.build-scan") version "2.1"
+}
+
+apply {
+    plugin("nebula-aggregate-javadocs")
 }
 
 buildScan {
@@ -170,4 +176,8 @@ tasks.register<JacocoReport>("jacocoRootReport") {
         html.isEnabled = false
         csv.isEnabled = false
     }
+}
+
+tasks.withType<Javadoc> {
+    isFailOnError = false
 }

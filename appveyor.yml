@@ -1,8 +1,0 @@
-test_script:
-  - gradlew.bat check --stacktrace -Pheadless=true -PlogTests -Dscan
-
-platform:
-  - x64
-
-cache:
-  - C:\Users\appveyor\.gradle
