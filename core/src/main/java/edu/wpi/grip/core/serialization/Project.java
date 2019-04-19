@@ -83,6 +83,8 @@ public class Project {
 
   /**
    * Load the project from a file.
+   *
+   * @throws IOException if the project file could not be read
    */
   public void open(File file) throws IOException {
     try (InputStreamReader reader = new InputStreamReader(new FileInputStream(file),
@@ -138,6 +140,8 @@ public class Project {
 
   /**
    * Save the project to a file.
+   *
+   * @throws IOException if the file could not written
    */
   public void save(File file) throws IOException {
     try (Writer writer = new OutputStreamWriter(new FileOutputStream(file),

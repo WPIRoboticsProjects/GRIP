@@ -46,7 +46,7 @@ public abstract class Source {
   /**
    * Get the sockets for this source.
    *
-   * @return @return An array of {@link OutputSocket}s for the outputs that the source produces.
+   * @return An array of {@link OutputSocket}s for the outputs that the source produces.
    */
   public final ImmutableList<OutputSocket> getOutputSockets() {
     final List<OutputSocket> outputSockets = createOutputSockets();
@@ -83,6 +83,8 @@ public abstract class Source {
    * Initializes the source. This should not try to handle initialization exceptions. Instead, the
    * {@link #initializeSafely()} should report the problem with initializing to the exception
    * witness.
+   *
+   * @throws IOException if the source could not be initialized
    */
   public abstract void initialize() throws IOException;
 

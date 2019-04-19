@@ -149,6 +149,11 @@ javaSubprojects {
 
     tasks.withType<Javadoc> {
         source(tasks.named<JavaCompile>("compileJava").map { it.source })
+        options.encoding = "UTF-8"
+    }
+
+    tasks.named("check").configure {
+        dependsOn("javadoc")
     }
 
     tasks.withType<JavaCompile>().configureEach {

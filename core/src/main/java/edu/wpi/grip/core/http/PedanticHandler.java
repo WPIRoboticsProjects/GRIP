@@ -66,6 +66,8 @@ public abstract class PedanticHandler extends GenericHandler {
    * @param baseRequest the base HTTP request
    * @param request     the request after being wrapped or filtered by other handlers
    * @param response    the HTTP response to send to the client
+   * @throws IOException      if an I/O error occurred while handling the request
+   * @throws ServletException if the request could not be handled
    * @see AbstractHandler#handle(String, Request, HttpServletRequest, HttpServletResponse)
    */
   protected abstract void handleIfPassed(String target,
