@@ -322,7 +322,6 @@ VBox.sockets {
 .property-sheet .property-pane {
     -fx-hgap: 4em;
     -fx-vgap: 1em;
-    /*-fx-padding: 0;*/
 }
 
 .exception-pane {
