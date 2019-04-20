@@ -144,11 +144,6 @@
  * Dialog pane                                                                 *
  *                                                                             *
  ******************************************************************************/
-.dialog-pane .content {
-    /* Bring the content to all edges */
-    -fx-padding: 0; /* 10 0 0 10 */
-}
-
 .dialog-pane .header-panel {
     -fx-background-color: -swatch-500;
 }
@@ -156,7 +151,6 @@
 .dialog-pane .header-panel .label {
     -fx-text-fill: white;
 }
-
 
 /*******************************************************************************
  *                                                                             *
