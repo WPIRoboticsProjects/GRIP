@@ -149,7 +149,6 @@ javaSubprojects {
 
     tasks.withType<Javadoc> {
         source(tasks.named<JavaCompile>("compileJava").map { it.source })
-        options.encoding = "UTF-8"
     }
 
     tasks.named("check").configure {
@@ -183,6 +182,9 @@ tasks.register<JacocoReport>("jacocoRootReport") {
     }
 }
 
-tasks.withType<Javadoc> {
-    isFailOnError = false
+allprojects {
+    tasks.withType<Javadoc> {
+        options.encoding = "UTF-8"
+        isFailOnError = true
+    }
 }
