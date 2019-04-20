@@ -332,6 +332,7 @@ public class MainWindowController {
       return;
     }
     Dialog<CodeGenerationSettings> optionsDialog = new CodeGenerationSettingsDialog(codegenPane);
+    optionsDialog.getDialogPane().getStylesheets().setAll(root.getStylesheets());
     optionsDialog.initOwner(root.getScene().getWindow());
     optionsDialog.showAndWait().ifPresent(settings -> {
       eventBus.post(new CodeGenerationSettingsChangedEvent(settings));
