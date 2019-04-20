@@ -50,6 +50,7 @@ import javax.annotation.Nullable;
 /**
  * Controller for the analysis view.
  */
+@SuppressWarnings("PMD.TooManyFields")
 public class AnalysisController {
 
   @FXML
