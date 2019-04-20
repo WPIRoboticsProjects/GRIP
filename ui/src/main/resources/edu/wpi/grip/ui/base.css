@@ -93,7 +93,29 @@
  *                                                                             *
  ******************************************************************************/
 .slider .track, .range-slider .track {
-    -fx-background-color: -swatch-300;
+    -fx-background-color: -swatch-gray;
+    -fx-background-insets: 1.5;
+}
+
+.range-slider {
+    -fx-cursor: default;
+}
+
+.range-slider:pressed .low-thumb,
+.range-slider:pressed .high-thumb,
+.range-slider:pressed .range-bar {
+    -fx-cursor: move;
+}
+
+.range-slider .range-bar {
+    -fx-background-color: -swatch-500;
+    -fx-background-insets: 0.5;
+}
+
+.range-slider .low-thumb,
+.range-slider .high-thumb {
+    -fx-background-color: -swatch-500;
+    -fx-cursor: hand;
 }
 
 .slider {
