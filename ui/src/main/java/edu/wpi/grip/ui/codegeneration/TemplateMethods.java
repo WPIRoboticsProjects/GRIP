@@ -106,7 +106,7 @@ public abstract class TemplateMethods {
    */
   public static String parseSocketType(Socket socket) {
     StringBuilder type = new StringBuilder();
-    type.append(socket.getSocketHint().getType().getSimpleName());
+    type.append(socket.getSocketHint().getType().getSimpleName().replace("MatWrapper", "Mat"));
     if (BorderTypesEnum.class.equals(socket.getSocketHint().getType())
         || CmpTypesEnum.class.equals(socket.getSocketHint().getType())
         || CVOperations.CVBorderTypesEnum.class.equals(socket.getSocketHint().getType())
