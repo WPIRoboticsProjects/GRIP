@@ -141,6 +141,7 @@ public class MainWindowController {
       dialog.setTitle("Save Project?");
       dialog.setHeaderText("Save the current project first?");
       dialog.getDialogPane().getButtonTypes().setAll(save, dontSave, cancel);
+      dialog.initOwner(root.getScene().getWindow());
 
       if (!dialog.showAndWait().isPresent()) { // NOPMD
         return false;
@@ -254,6 +255,7 @@ public class MainWindowController {
 
     ProjectSettingsEditor projectSettingsEditor
         = new ProjectSettingsEditor(root, projectSettings, appSettings);
+    projectSettingsEditor.initOwner(root.getScene().getWindow());
     projectSettingsEditor.showAndWait().ifPresent(buttonType -> {
       if (buttonType == ButtonType.OK) {
         eventBus.post(new ProjectSettingsChangedEvent(projectSettings));
@@ -329,6 +331,7 @@ public class MainWindowController {
       return;
     }
     Dialog<CodeGenerationSettings> optionsDialog = new CodeGenerationSettingsDialog(codegenPane);
+    optionsDialog.initOwner(root.getScene().getWindow());
     optionsDialog.showAndWait().ifPresent(settings -> {
       eventBus.post(new CodeGenerationSettingsChangedEvent(settings));
       Exporter exporter = new Exporter(pipeline.getSteps(), settings);
@@ -367,6 +370,7 @@ public class MainWindowController {
     Dialog<ButtonType> dialog = new Dialog<>();
     dialog.setTitle("Deploy");
     dialog.setHeaderText("Deploy");
+    dialog.initOwner(root.getScene().getWindow());
     dialog.setGraphic(graphic);
     dialog.getDialogPane().getButtonTypes().setAll(ButtonType.CLOSE);
     dialog.getDialogPane().styleProperty().bind(root.styleProperty());
@@ -387,6 +391,7 @@ public class MainWindowController {
 
   private void showWarningAlert(WarningEvent e) {
     Alert alert = new WarningAlert(e.getHeader(), e.getBody(), root.getScene().getWindow());
+    alert.initOwner(root.getScene().getWindow());
     alert.showAndWait();
   }
 

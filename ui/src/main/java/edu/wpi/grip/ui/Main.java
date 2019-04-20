@@ -171,6 +171,7 @@ public class Main extends Application {
     } catch (GripServerException e) {
       logger.log(Level.SEVERE, "The HTTP server could not be started", e);
       Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "", ButtonType.YES, ButtonType.NO);
+      alert.initOwner(root.getScene().getWindow());
       alert.getDialogPane().getStylesheets().setAll(root.getStylesheets());
       alert.setTitle("The HTTP server could not be started");
       alert.setHeaderText("The HTTP server could not be started");
@@ -208,6 +209,7 @@ public class Main extends Application {
                 // Don't create more than one exception dialog at the same time
                 final ExceptionAlert exceptionAlert = new ExceptionAlert(root, throwable,
                     message, isFatal, getHostServices());
+                exceptionAlert.initOwner(root.getScene().getWindow());
                 exceptionAlert.setInitialFocus();
                 exceptionAlert.showAndWait();
               } catch (Throwable e) {

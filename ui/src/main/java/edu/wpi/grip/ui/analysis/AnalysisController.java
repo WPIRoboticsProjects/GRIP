@@ -195,6 +195,7 @@ public class AnalysisController {
     // Show benchmarking results
     Platform.runLater(() -> {
       Alert a = new Alert(Alert.AlertType.INFORMATION);
+      a.initOwner(root.getScene().getWindow());
       a.getDialogPane().getStylesheets().setAll(root.getStylesheets());
       a.setHeaderText("Benchmarking results");
       TextArea resultArea = new TextArea(csvReport);
