@@ -8,6 +8,8 @@
     -swatch-300: hsb(180, 25%, 78%);
     -swatch-400: hsb(180, 25%, 68%);
     -swatch-500: hsb(180, 25%, 58%);
+
+    -fx-mark-color: -swatch-400;
 }
 
 .main-window {
@@ -24,6 +26,7 @@
     -fx-font-weight: bold;
     -fx-padding: 1.0em;
     -fx-border-width: 1px;
+    -fx-background-color: white;
 }
 .palette {
     -fx-min-width: 30em;
@@ -95,6 +98,11 @@ Label.operation-description {
     -fx-background-color: white;
     -fx-border-color: transparent;
     -fx-padding: 0;
+}
+
+.split-pane .split-pane-divider {
+    -fx-padding: 1pt;
+    -fx-background-color: white;
 }
 
 .socket-preview .title {
@@ -251,6 +259,9 @@ VBox.sockets {
     -fx-max-width: 1em;
     -fx-max-height: 1em;
     -fx-cursor: hand;
+    -fx-border-width: 0;
+    -fx-background-color: -swatch-light-gray;
+    -fx-effect: innershadow(gaussian, -swatch-500, 2, 0.06, 1, 1);
 }
 
 .socket-handle:connecting {
@@ -265,7 +276,8 @@ VBox.sockets {
 }
 
 .socket-handle:connected {
-    -fx-background-color: -fx-shadow-highlight-color, -fx-outer-border, -fx-inner-border, -fx-mark-color;
+    -fx-background-color: -fx-mark-color !important;
+    -fx-effect: innershadow(gaussian, -swatch-dark-gray, 2, 0.125, 1, 1);
 }
 
 .socket-handle:connected:focused {
