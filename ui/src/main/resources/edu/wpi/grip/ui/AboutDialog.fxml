@@ -43,9 +43,6 @@
                                     <HBox.margin>
                                         <Insets left="-3.0" />
                                     </HBox.margin>
-                                    <padding>
-                                        <Insets bottom="3.0" left="3.0" right="3.0" top="3.0" />
-                                    </padding>
                                 </StackPane>
                             </children>
                         </HBox>
@@ -59,9 +56,6 @@
                                     <HBox.margin>
                                         <Insets left="-3.0" />
                                     </HBox.margin>
-                                    <padding>
-                                        <Insets bottom="3.0" left="3.0" right="3.0" top="3.0" />
-                                    </padding>
                                 </StackPane>
                             </children>
                         </HBox>

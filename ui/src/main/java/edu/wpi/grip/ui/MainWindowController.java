@@ -269,9 +269,10 @@ public class MainWindowController {
     if (aboutDialogStage == null) {
       aboutDialogStage = new Stage();
       Scene scene = new Scene(aboutPane);
-      scene.getStylesheets().setAll(root.getScene().getStylesheets());
+      scene.getStylesheets().setAll(root.getStylesheets());
       aboutDialogStage.setScene(scene);
-      aboutDialogStage.initStyle(StageStyle.UTILITY);
+      aboutDialogStage.initStyle(StageStyle.UNDECORATED);
+      aboutDialogStage.initOwner(root.getScene().getWindow());
       aboutDialogStage.focusedProperty().addListener((observable, oldvalue, newvalue) -> {
         if (oldvalue) {
           aboutDialogStage.hide();
@@ -391,6 +392,7 @@ public class MainWindowController {
 
   private void showWarningAlert(WarningEvent e) {
     Alert alert = new WarningAlert(e.getHeader(), e.getBody(), root.getScene().getWindow());
+    alert.getDialogPane().getStylesheets().setAll(root.getStylesheets());
     alert.initOwner(root.getScene().getWindow());
     alert.showAndWait();
   }
