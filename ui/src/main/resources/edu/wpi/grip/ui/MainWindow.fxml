@@ -21,7 +21,8 @@
 <VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"
       minWidth="-Infinity" styleClass="main-window"
       fx:controller="edu.wpi.grip.ui.MainWindowController"
-      fx:id="root" xmlns:fx="http://javafx.com/fxml/1">
+      fx:id="root" xmlns:fx="http://javafx.com/fxml/1"
+      stylesheets="/edu/wpi/grip/ui/GRIP.css">
     <children>
         <MenuBar>
             <Menu text="File">
