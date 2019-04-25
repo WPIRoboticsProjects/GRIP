@@ -2,8 +2,6 @@ package edu.wpi.grip.ui.preview;
 
 import edu.wpi.grip.core.sockets.OutputSocket;
 
-import javafx.scene.control.TitledPane;
-
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
@@ -21,7 +19,6 @@ public abstract class SocketPreviewView<T> extends TitledPane {
 
     this.setText(this.getTitle());
     this.getStyleClass().add("socket-preview");
-    this.setCollapsible(false);
   }
 
   /**

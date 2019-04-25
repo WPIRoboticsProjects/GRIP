@@ -5,8 +5,6 @@ import edu.wpi.grip.core.MatWrapper;
 import com.google.common.primitives.UnsignedBytes;
 
 import org.bytedeco.javacpp.opencv_core.Mat;
-import org.bytedeco.javacpp.opencv_core.Size;
-import org.bytedeco.javacpp.opencv_imgproc;
 
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
@@ -27,8 +25,8 @@ public final class ImageConverter {
   private WritableImage image;
   private IntBuffer pixels;
 
-  public Image convert(MatWrapper wrapper, int desiredHeight) {
-    return convert(wrapper.getCpu(), desiredHeight);
+  public Image convert(MatWrapper wrapper) {
+    return convert(wrapper.getCpu());
   }
 
   /**
@@ -39,11 +37,10 @@ public final class ImageConverter {
    * JavaFX Image}) and is way too slow to use for a real-time video.
    *
    * @param mat           An 8-bit OpenCV Mat containing an image with either 1 or 3 channels
-   * @param desiredHeight the desired height of the image
    *
    * @return A JavaFX image, or null for empty
    */
-  public Image convert(Mat mat, int desiredHeight) {
+  public Image convert(Mat mat) {
     /*
      * IMPORTANT!
      * The {@link ImageConverter#image} is a component that may be actively part of the UI
@@ -68,21 +65,8 @@ public final class ImageConverter {
       return null;
     }
 
-    Mat toRender;
-    if (mat.rows() > desiredHeight) {
-      // Scale the image down
-      toRender = new Mat();
-      opencv_imgproc.resize(
-          mat, toRender,
-          new Size((int) (((double) mat.cols() * desiredHeight) / mat.rows()), desiredHeight),
-          0, 0, opencv_imgproc.INTER_CUBIC
-      );
-    } else {
-      toRender = mat;
-    }
-
-    final int width = toRender.cols();
-    final int height = toRender.rows();
+    final int width = mat.cols();
+    final int height = mat.rows();
 
     // If the size of the Mat changed for whatever reason, allocate a new image with the proper
     // dimensions and a buffer big enough to hold all of the pixels in the image.
@@ -91,7 +75,7 @@ public final class ImageConverter {
       this.pixels = IntBuffer.allocate(width * height);
     }
 
-    final ByteBuffer buffer = toRender.createBuffer();
+    final ByteBuffer buffer = mat.createBuffer();
     final int stride = buffer.capacity() / height;
 
     // Convert the data from the Mat into ARGB data that we can put into a JavaFX WritableImage
@@ -128,21 +112,6 @@ public final class ImageConverter {
     this.image.getPixelWriter().setPixels(0, 0, width, height, argb, this.pixels, width);
 
     return this.image;
-  }
-
-  /**
-   * Convert a BGR-formatted OpenCV {@link Mat} into a JavaFX {@link Image}. JavaFX understands ARGB
-   * pixel data, so one way to turn a Mat into a JavaFX image is to shift around the bytes from the
-   * Mat into an int array of pixels. This is also possible to do by using JavaCV, but the JavaCV
-   * method involves several intermediate conversions ({@code Mat -> Frame -> BufferedImage ->
-   * JavaFX Image}) and is way too slow to use for a real-time video.
-   *
-   * @param mat An 8-bit OpenCV Mat containing an image with either 1 or 3 channels
-   *
-   * @return A JavaFX image, or null for empty
-   */
-  public Image convert(Mat mat) {
-    return convert(mat, mat.rows());
   }
 
 }

@@ -18,7 +18,6 @@ import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.HBox;
 
 import javax.inject.Inject;
@@ -34,8 +33,6 @@ import javax.inject.Singleton;
 public class PreviewsController {
 
   @FXML
-  private ScrollPane scrollPane;
-  @FXML
   private HBox previewBox;
 
   @Inject
@@ -45,11 +42,8 @@ public class PreviewsController {
   @Inject
   private SocketPreviewViewFactory previewViewFactory;
 
-  private static final int PREVIEW_PADDING = 50;
-
   @FXML
   private void initialize() {
-    scrollPane.heightProperty().addListener((obs, o, n) -> resizePreviews(n.intValue()));
   }
 
   /**
@@ -131,7 +125,7 @@ public class PreviewsController {
         // When a socket previewed, add a new view, then sort all of the views so they stay ordered
         SocketPreviewView<?> view = previewViewFactory.create(socket);
         if (view instanceof ImageBasedPreviewView) {
-          ((ImageBasedPreviewView) view).resize((int) (previewBox.getHeight()) - PREVIEW_PADDING);
+          ((ImageBasedPreviewView) view).convertImage();
         }
         previews.add(view);
         sortPreviews(previews);
@@ -173,13 +167,6 @@ public class PreviewsController {
         Comparator.comparing(SocketPreviewView::getSocket,
             (OutputSocket<?> a, OutputSocket<?> b) -> compareSockets(a, b, steps, sources));
     FXCollections.sort(previews, comparePreviews);
-  }
-
-  private void resizePreviews(int height) {
-    getPreviews().stream()
-        .filter(p -> p instanceof ImageBasedPreviewView)
-        .map(p -> (ImageBasedPreviewView) p)
-        .forEach(p -> p.resize(height - PREVIEW_PADDING));
   }
 
 }
