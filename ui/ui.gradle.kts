@@ -164,8 +164,8 @@ tasks.register("testSharedLib") {
 }
 
 if (project.hasProperty("generation") || project.hasProperty("genonly")) {
-    val platform = Installer.getPlatform()
-    val jniLocation: String = project.properties.getOrDefault("jniLocation", platform.defaultJniLocation()).toString()
+    val defaultLocation = buildDir.resolve("opencv-jni")
+    val jniLocation: String = project.properties.getOrDefault("jniLocation", defaultLocation).toString()
     val jniPath = File(jniLocation).absolutePath
 
     val installOpenCV = tasks.register("installOpenCV") {

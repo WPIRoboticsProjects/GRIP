@@ -8,7 +8,7 @@ buildscript {
         }
     }
     dependencies {
-        classpath(group = "edu.wpi.first.wpilib.opencv", name = "opencv-installer", version = "2.0.0")
+        classpath(group = "edu.wpi.first.wpilib.opencv", name = "opencv-installer", version = "2.0.1")
         classpath("com.netflix.nebula:gradle-aggregate-javadocs-plugin:2.2.+")
 
     }
