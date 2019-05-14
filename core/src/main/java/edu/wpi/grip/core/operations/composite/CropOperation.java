@@ -1,8 +1,9 @@
 package edu.wpi.grip.core.operations.composite;
 
-import edu.wpi.grip.core.Description;
+import edu.wpi.grip.annotation.operation.Description;
+import edu.wpi.grip.annotation.operation.OperationCategory;
+import edu.wpi.grip.core.MatWrapper;
 import edu.wpi.grip.core.Operation;
-import edu.wpi.grip.core.OperationDescription;
 import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.core.sockets.SocketHints;
@@ -17,17 +18,16 @@ import static org.bytedeco.javacpp.opencv_core.Rect;
 
 
 /**
- * Scale an image to an exact width and height using one of several interpolation modes.  Scaling
- * images down can be a useful optimization, and scaling them up might be necessary for combining
- * multiple images that are different sizes.
+ * Crop an image to an exact width and height using one of several origin modes.  Cropping
+ * images down can be a useful optimization.
  */
 @Description(name = "Crop Image",
              summary = "Crop an image to an exact size",
-             category = OperationDescription.Category.IMAGE_PROCESSING,
+             category = OperationCategory.IMAGE_PROCESSING,
              iconName = "crop")
 public class CropOperation implements Operation {
 
-  private final InputSocket<Mat> inputSocket;
+  private final InputSocket<MatWrapper> inputSocket;
   private final InputSocket<Number> xSocket;
   private final InputSocket<Number> ySocket;
 
@@ -35,14 +35,14 @@ public class CropOperation implements Operation {
   private final InputSocket<Number> heightSocket;
   private final InputSocket<Origin> originSocket;
 
-  private final OutputSocket<Mat> outputSocket;
+  private final OutputSocket<MatWrapper> outputSocket;
 
   @Inject
   @SuppressWarnings("JavadocMethod")
   public CropOperation(InputSocket.Factory inputSocketFactory, OutputSocket.Factory
       outputSocketFactory) {
-    this.inputSocket = inputSocketFactory.create(SocketHints.Inputs
-        .createMatSocketHint("Input", false));
+    this.inputSocket = inputSocketFactory.create(SocketHints
+        .createImageSocketHint("Input"));
     this.xSocket = inputSocketFactory.create(SocketHints.Inputs
         .createNumberSpinnerSocketHint("X", 100));
     this.ySocket = inputSocketFactory.create(SocketHints.Inputs
@@ -54,8 +54,8 @@ public class CropOperation implements Operation {
     this.originSocket = inputSocketFactory
         .create(SocketHints.createEnumSocketHint("Origin", Origin.CENTER));
 
-    this.outputSocket = outputSocketFactory.create(SocketHints.Outputs
-        .createMatSocketHint("Output"));
+    this.outputSocket = outputSocketFactory.create(SocketHints
+        .createImageSocketHint("Output"));
   }
 
   @Override
@@ -79,8 +79,8 @@ public class CropOperation implements Operation {
 
   @Override
   public void perform() {
-    final Mat input = inputSocket.getValue().get();
-    final Mat output = outputSocket.getValue().get();
+    final MatWrapper input = inputSocket.getValue().get();
+    final MatWrapper output = outputSocket.getValue().get();
     final Number x = xSocket.getValue().get();
     final Number y = ySocket.getValue().get();
     final Number width = widthSocket.getValue().get();
@@ -96,7 +96,12 @@ public class CropOperation implements Operation {
             );
 
     //apply() returns a sub-matrix; It does not modify the input Mat: https://github.com/WPIRoboticsProjects/GRIP/pull/926
-    input.apply(regionOfInterest).copyTo(output);
+    if(input.isCpu()){
+      output.set(input.getCpu().apply(regionOfInterest)); // .clone() optional
+    } else {
+      output.set(input.getGpu().apply(regionOfInterest)); // .clone() optional
+    }
+
     outputSocket.setValue(output);
   }
 
