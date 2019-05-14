@@ -13,7 +13,6 @@ import com.google.inject.Inject;
 
 import java.util.List;
 
-import static org.bytedeco.javacpp.opencv_core.Mat;
 import static org.bytedeco.javacpp.opencv_core.Rect;
 
 
@@ -96,7 +95,7 @@ public class CropOperation implements Operation {
             );
 
     //apply() returns a sub-matrix; It does not modify the input Mat: https://github.com/WPIRoboticsProjects/GRIP/pull/926
-    if(input.isCpu()){
+    if (input.isCpu()) {
       output.set(input.getCpu().apply(regionOfInterest)); // .clone() optional
     } else {
       output.set(input.getGpu().apply(regionOfInterest)); // .clone() optional
