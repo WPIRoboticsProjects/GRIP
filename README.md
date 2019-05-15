@@ -25,6 +25,7 @@ As a result, many teams with minimal computer vision knowledge successfully used
    - [Network Tables](https://github.com/wpilibsuite/allwpilib/tree/master/ntcore/)
    - [Robot Operating System (ROS)](http://www.ros.org/)
    - HTTP
+ - CUDA acceleration
  - OS Support:
      - Windows
      - OSX
@@ -55,6 +56,16 @@ On Windows:
     gradlew.bat :ui:run
 
 If you don't have an internet connection you can build using the `--offline` flag if you have built GRIP once before.
+
+## CUDA Support
+To enable CUDA acceleration, CUDA 10.0 needs to be installed on your computer. CUDA 10.1 may work on
+Linux systems, but Windows _must_ use 10.0.
+
+When running or building from source, add the Gradle flag `-Pcuda` to enable CUDA acceleration (eg `./gradlew :ui:run -Pcuda`)
+
+Note that CUDA acceleration is not available for all operations.
+
+Code generation does not support CUDA - it is only used for operations running in GRIP.
 
 ## Contributing
 
