@@ -196,7 +196,8 @@
  *                                                                             *
  ******************************************************************************/
 .segmented-button {
-    -fx-effect: dropshadow(gaussian, rgba(0.0, 0.0, 0.0, 0.30), 6.0, 0.3, 0, 2);
+    -fx-border-width: 1;
+    -fx-border-color: -swatch-300;
 }
 
 .segmented-button .toggle-button {
