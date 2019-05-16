@@ -108,6 +108,7 @@ public class TPipeline {
           type = steps.get(i).name() + "Type";
         }
         type = type.replace("Number", "Double");
+        type = type.replace("MatWrapper", "Mat");
         StringBuilder nameBuilder = new StringBuilder(tStep.name());
         if (stepInstances.get(pipeSteps.get(i).getOperationDescription().name()) > 1) {
           nameBuilder

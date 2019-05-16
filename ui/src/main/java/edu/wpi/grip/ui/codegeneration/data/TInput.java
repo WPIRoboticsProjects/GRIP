@@ -50,6 +50,9 @@ public class TInput extends TSocket {
     if ("Double".equals(type)) {
       return "double";
     }
+    if ("MatWrapper".equals(type)) {
+      return "Mat";
+    }
     return type;
   }
 
