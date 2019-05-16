@@ -8,7 +8,7 @@
       fillWidth="true" maxHeight="Infinity" styleClass="previews">
     <Label styleClass="pane-title" text="Preview" VBox.Vgrow="NEVER" maxWidth="Infinity" />
     <ScrollPane hbarPolicy="AS_NEEDED" vbarPolicy="AS_NEEDED" fitToWidth="false" fitToHeight="true"
-                maxHeight="Infinity" VBox.Vgrow="ALWAYS" minHeight="150" fx:id="scrollPane">
+                maxHeight="Infinity" VBox.Vgrow="ALWAYS" minHeight="150">
         <HBox fx:id="previewBox" />
     </ScrollPane>
 </VBox>

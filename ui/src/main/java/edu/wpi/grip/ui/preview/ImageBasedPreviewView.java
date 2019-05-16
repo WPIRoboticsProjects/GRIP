@@ -8,7 +8,6 @@ import edu.wpi.grip.ui.util.ImageConverter;
 import com.google.common.eventbus.Subscribe;
 
 import javafx.application.Platform;
-import javafx.scene.image.ImageView;
 
 import static org.bytedeco.javacpp.opencv_core.CV_8S;
 import static org.bytedeco.javacpp.opencv_core.CV_8U;
@@ -26,9 +25,7 @@ public abstract class ImageBasedPreviewView<T> extends SocketPreviewView<T> {
   /**
    * The view showing the image.
    */
-  protected final ImageView imageView = new ImageView();
-
-  private int imageHeight = 1;
+  protected final ResizableImageView imageView = new ResizableImageView();
 
   /**
    * @param socket An output socket to preview.
@@ -37,13 +34,6 @@ public abstract class ImageBasedPreviewView<T> extends SocketPreviewView<T> {
     super(socket);
     assert Platform.isFxApplicationThread() : "Must be in FX Thread to create this or you will be"
         + " exposing constructor to another thread!";
-  }
-
-  /**
-   * Gets the height of the image to render.
-   */
-  protected final int getImageHeight() {
-    return imageHeight;
   }
 
   /**
@@ -68,14 +58,6 @@ public abstract class ImageBasedPreviewView<T> extends SocketPreviewView<T> {
    */
   @Subscribe
   public final void onRenderEvent(RenderEvent e) {
-    convertImage();
-  }
-
-  /**
-   * Resizes the image based on the given height while preserving the ratio.
-   */
-  public final void resize(int imageHeight) {
-    this.imageHeight = imageHeight;
     convertImage();
   }
 

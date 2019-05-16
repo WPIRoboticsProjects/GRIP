@@ -100,7 +100,7 @@ public final class LinesSocketPreviewView extends ImageBasedPreviewView<LinesRep
       final Mat convertInput = input;
       final int numLines = lines.size();
       platform.runAsSoonAsPossible(() -> {
-        final Image image = this.imageConverter.convert(convertInput, getImageHeight());
+        final Image image = this.imageConverter.convert(convertInput);
         this.imageView.setImage(image);
         this.infoLabel.setText("Found " + numLines + " lines");
       });

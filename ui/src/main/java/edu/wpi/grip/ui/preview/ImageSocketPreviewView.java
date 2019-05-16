@@ -29,7 +29,7 @@ public class ImageSocketPreviewView extends ImageBasedPreviewView<MatWrapper> {
           .filter(ImageBasedPreviewView::isPreviewable)
           .ifPresent(m -> {
             platform.runAsSoonAsPossible(() -> {
-              Image image = imageConverter.convert(m.getCpu(), getImageHeight());
+              Image image = imageConverter.convert(m.getCpu());
               imageView.setImage(image);
             });
           });

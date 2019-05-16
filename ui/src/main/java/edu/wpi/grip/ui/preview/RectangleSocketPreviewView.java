@@ -78,7 +78,7 @@ public final class RectangleSocketPreviewView extends ImageBasedPreviewView<Rect
       final Mat convertInput = tmp;
       final int numRegions = rectangles.size();
       platform.runAsSoonAsPossible(() -> {
-        final Image image = this.imageConverter.convert(convertInput, getImageHeight());
+        final Image image = this.imageConverter.convert(convertInput);
         this.imageView.setImage(image);
         this.infoLabel.setText("Found " + numRegions + " regions of interest");
       });
