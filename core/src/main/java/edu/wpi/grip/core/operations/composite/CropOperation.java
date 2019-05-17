@@ -96,9 +96,9 @@ public class CropOperation implements Operation {
 
     //apply() returns a sub-matrix; It does not modify the input Mat: https://github.com/WPIRoboticsProjects/GRIP/pull/926
     if (input.isCpu()) {
-      output.set(input.getCpu().apply(regionOfInterest)); // .clone() optional
+      output.set(input.getCpu().apply(regionOfInterest));
     } else {
-      output.set(input.getGpu().apply(regionOfInterest)); // .clone() optional
+      output.set(input.getGpu().apply(regionOfInterest));
     }
 
     outputSocket.setValue(output);
