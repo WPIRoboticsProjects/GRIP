@@ -20,7 +20,7 @@ import static org.bytedeco.javacpp.opencv_core.Rect;
  * Crop an image to an exact width and height using one of several origin modes.  Cropping
  * images down can be a useful optimization.
  */
-@Description(name = "Crop Image",
+@Description(name = "Crop",
              summary = "Crop an image to an exact size",
              category = OperationCategory.IMAGE_PROCESSING,
              iconName = "crop")
