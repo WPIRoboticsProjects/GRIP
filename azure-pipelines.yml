@@ -203,13 +203,16 @@ jobs:
       vmImage: 'xcode9-macos10.13'
 
     steps:
+      - script: |
+          mkdir build
+          wget "https://cdn.azul.com/zulu/bin/zulu8.38.0.13-ca-fx-jdk8.0.212-macosx_x64.tar.gz" -O "build/jdk.tar.gz"
+          sudo tar xzvf build/jdk.tar.gz -C /Library/Java/JavaVirtualMachines/
+        displayName: 'Install ZuluFX'
       - task: Gradle@2
         inputs:
           workingDirectory: ''
           gradleWrapperFile: 'gradlew'
-          gradleOptions: '-Xmx3072m'
-          jdkVersionOption: '1.8'
-          jdkArchitectureOption: 'x64'
+          gradleOptions: '-Xmx3072m -Dorg.gradle.java.home=/Library/Java/JavaVirtualMachines/zulu8.38.0.13-ca-fx-jdk8.0.212-macosx_x64'
           publishJUnitResults: false
           tasks: 'check jacocoTestReport jacocoRootReport -Pheadless=true -Pgeneration -PlogTests --stacktrace'
       - script: |
