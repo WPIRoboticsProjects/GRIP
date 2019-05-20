@@ -7,7 +7,7 @@
 	 * @param blobList The output where the MatOfKeyPoint is stored.
 	 */
 	private void $tMeth.name($step.name())(Mat input, double minArea, double[] circularity,
-		Boolean darkBlobs, MatOfKeyPoint blobList) {
+		Boolean darkBlobs, double[] convexity, double[] inertiaRatio, MatOfKeyPoint blobList) {
 		FeatureDetector blobDet = FeatureDetector.create(FeatureDetector.SIMPLEBLOB);
 		try {
 			File tempFile = File.createTempFile("config", ".xml");
@@ -40,11 +40,19 @@
 			config.append(circularity[1]);
 			config.append("</maxCircularity>\n");
 			config.append("<filterByInertia>1</filterByInertia>\n");
-			config.append("<minInertiaRatio>0.1</minInertiaRatio>\n");
-			config.append("<maxInertiaRatio>" + Integer.MAX_VALUE + "</maxInertiaRatio>\n");
+			config.append("<minInertiaRatio>");
+			config.append(inertiaRatio[0]);
+			config.append("</minInertiaRatio>\n");
+			config.append("<maxInertiaRatio>");
+			config.append(inertiaRatio[1]);
+			config.append("</maxInertiaRatio>\n");
 			config.append("<filterByConvexity>1</filterByConvexity>\n");
-			config.append("<minConvexity>0.95</minConvexity>\n");
-			config.append("<maxConvexity>" + Integer.MAX_VALUE + "</maxConvexity>\n");
+			config.append("<minConvexity>");
+			config.append(convexity[0]);
+			config.append("</minConvexity>\n");
+			config.append("<maxConvexity>");
+			config.append(convexity[1]);
+			config.append("</maxConvexity>\n");
 			config.append("</opencv_storage>\n");
 			FileWriter writer;
 			writer = new FileWriter(tempFile, false);

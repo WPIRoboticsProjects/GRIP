@@ -1,5 +1,5 @@
     @staticmethod
-    def $tMeth.name($step.name())(input, min_area, circularity, dark_blobs):
+    def $tMeth.name($step.name())(input, min_area, circularity, dark_blobs, convexity, inertia_ratio):
         """Detects groups of pixels in an image.
         Args:
             input: A numpy.ndarray.
@@ -19,7 +19,11 @@
         params.filterByCircularity = True
         params.minCircularity = circularity[0]
         params.maxCircularity = circularity[1]
-        params.filterByConvexity = False
-        params.filterByInertia = False
+        params.filterByConvexity = True
+        params.minConvexity = convexity[0]
+        params.maxConvexity = convexity[1]
+        params.filterByInertia = True
+        params.minInertia = inertia_ratio[0]
+        params.maxInertia = inertia_ratio[1]
         detector = cv2.SimpleBlobDetector_create(params)
         return detector.detect(input)
