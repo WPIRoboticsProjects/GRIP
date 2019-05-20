@@ -1,6 +1,6 @@
 	/**
 	 * An indication of which type of which point on the box is used as the origin.
-	 * Choices are TOP_LEF
+	 * Choices are TOP_LEFT, TOP_RIGHT, BOTTOM_LEFT, BOTTOM_RIGHT, CENTER
 	 */
 	enum Origin {
 		TOP_LEFT("Top Left", 0, 0),
