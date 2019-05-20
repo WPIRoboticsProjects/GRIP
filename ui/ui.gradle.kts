@@ -46,10 +46,10 @@ dependencies {
     testCompile(files(coreTestOutput))
     testCompile(files(coreTestOutput.resourcesDir))
 
-    // Note: testfx is ONLY usable on JDK 8, so we have to use the versions
-    testCompile(group = "org.testfx", name = "testfx-core", version = "4.0.5-alpha")
-    testCompile(group = "org.testfx", name = "testfx-junit", version = "4.0.5-alpha")
-    testRuntime(group = "org.testfx", name = "openjfx-monocle", version = "1.8.0_20")
+    // Note: testfx is ONLY usable on JDK 8, so we have to use the versions compatible with it
+    testCompile(group = "org.testfx", name = "testfx-core", version = "4.0.7-alpha")
+    testCompile(group = "org.testfx", name = "testfx-junit", version = "4.0.7-alpha")
+    testRuntime(group = "org.testfx", name = "openjfx-monocle", version = "8u76-b04")
     testCompile(group = "org.opencv", name = "opencv-java", version = "3.1.0")
 }
 
