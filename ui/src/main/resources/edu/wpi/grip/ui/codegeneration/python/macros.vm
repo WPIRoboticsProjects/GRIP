@@ -4,7 +4,7 @@ self.$tMeth.name($inp.name())#end
 
 #macro(newInput $inp)
 #if($inp.hasValue())
-#if($inp.type().equals("BlurType") || $inp.type().equals("FlipCode"))
+#if($inp.type().equals("BlurType") || $inp.type().equals("FlipCode") || $inp.type().equals("Origin"))
 #input($inp) = ${inp.type()}.$inp.value().replaceAll(' ','_')#elseif($inp.type().equals("MaskSize"))
 #input($inp) = $inp.value().substring(0,1)#elseif($inp.value().contains("source"))
 #input($inp) = $inp.value()#elseif ($inp.type().contains("Enum") ||
