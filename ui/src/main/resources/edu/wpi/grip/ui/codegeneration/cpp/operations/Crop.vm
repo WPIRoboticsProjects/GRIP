@@ -36,6 +36,5 @@
 			(int) width,
 			(int) height
 		);
-		input(regionOfInterest).copyTo(output);
-
+		output = input(regionOfInterest);
 	}
