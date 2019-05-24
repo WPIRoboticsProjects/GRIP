@@ -24,7 +24,7 @@
         elif origin is Origin.Bottom_Right:
             x_offset_multiplier = -1
             y_offset_multiplier = -1
-        else:
+        elif origin is Origin.Center:
             x_offset_multiplier = -.5
             y_offset_multiplier = -.5
 
