@@ -43,6 +43,12 @@ fun javaCppClassifier(platform: NativePlatforms) = when (platform) {
 }
 
 /**
+ * Generates a classifier string for a platform-specific JavaCPP native library with CUDA
+ * acceleration.
+ */
+fun javaCppCudaClassifier(platform: NativePlatforms) = "${javaCppClassifier(platform)}-gpu"
+
+/**
  * Generates a classifier string for a platform-specific JavaFX artifact.
  */
 fun javaFxClassifier(platform: NativePlatforms) = when (platform) {

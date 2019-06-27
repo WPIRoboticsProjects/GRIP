@@ -12,14 +12,13 @@ application {
     mainClassName = "edu.wpi.grip.core.Main"
 }
 
-val os = osdetector.classifier.replace("osx", "macosx").replace("x86_32", "x86")
-val arch = osdetector.arch.replace("x86_64", "x64")
-
 val withCuda = project.hasProperty("cuda") || project.hasProperty("WITH_CUDA")
 
 if (withCuda) {
     version = "$version-cuda"
 }
+
+createNativeConfigurations()
 
 dependencies {
     api(project(":annotation"))
@@ -27,9 +26,9 @@ dependencies {
     api(group = "com.google.code.findbugs", name = "jsr305", version = "3.0.1")
     api(group = "org.bytedeco", name = "javacv", version = "1.3")
     api(group = "org.bytedeco.javacpp-presets", name = "opencv", version = "3.4.3-1.4.3")
-    api(group = "org.bytedeco.javacpp-presets", name = "opencv", version = "3.4.3-1.4.3", classifier = if (withCuda) "$os-gpu" else os)
-    api(group = "org.bytedeco.javacpp-presets", name = "videoinput", version = "0.200-1.1", classifier = os)
-    api(group = "org.bytedeco.javacpp-presets", name = "ffmpeg", version = "0.200-1.3", classifier = os)
+    native(group = "org.bytedeco.javacpp-presets", name = "opencv", version = "3.4.3-1.4.3", classifierFunction = ::javaCppCudaClassifier)
+    native(group = "org.bytedeco.javacpp-presets", name = "videoinput", version = "0.200-1.1", classifierFunction = ::javaCppClassifier)
+    native(group = "org.bytedeco.javacpp-presets", name = "ffmpeg", version = "0.200-1.3", classifierFunction = ::javaCppClassifier)
     api(group = "org.python", name = "jython", version = "2.7.0")
     api(group = "com.thoughtworks.xstream", name = "xstream", version = "1.4.10")
     api(group = "org.apache.commons", name = "commons-lang3", version = "3.5")
@@ -55,7 +54,7 @@ dependencies {
     api(group = "org.ros.rosjava_messages", name = "std_msgs", version = "+")
     api(group = "org.ros.rosjava_messages", name = "grip_msgs", version = "0.0.1")
     api(group = "edu.wpi.first.ntcore", name = "ntcore-java", version = "2019.2.1")
-    implementation(group = "edu.wpi.first.ntcore", name = "ntcore-jni", version = "2019.2.1", classifier = "all")
+    native(group = "edu.wpi.first.ntcore", name = "ntcore-jni", version = "2019.2.1", classifierFunction = ::wpilibClassifier)
     implementation(group = "edu.wpi.first.wpiutil", name = "wpiutil-java", version = "2019.2.1")
 }
 
