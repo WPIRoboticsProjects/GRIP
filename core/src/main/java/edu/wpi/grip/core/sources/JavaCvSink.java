@@ -8,7 +8,6 @@ import edu.wpi.cscore.raw.RawFrame;
 import org.bytedeco.javacpp.BytePointer;
 import org.bytedeco.javacpp.opencv_core.Mat;
 
-
 import java.nio.ByteBuffer;
 
 import static org.bytedeco.javacpp.opencv_core.CV_8UC1;
@@ -16,13 +15,13 @@ import static org.bytedeco.javacpp.opencv_core.CV_8UC2;
 import static org.bytedeco.javacpp.opencv_core.CV_8UC3;
 
 public class JavaCvSink extends ImageSink {
-  RawFrame frame = new RawFrame();
-  Mat tmpMat;
-  ByteBuffer origByteBuffer;
-  int width;
-  int height;
-  int pixelFormat;
-  int bgrValue = PixelFormat.kBGR.getValue();
+  private RawFrame frame = new RawFrame();
+  private Mat tmpMat;
+  private ByteBuffer origByteBuffer;
+  private int width;
+  private int height;
+  private int pixelFormat;
+  private int bgrValue = PixelFormat.kBGR.getValue();
 
   private int getCVFormat(PixelFormat pixelFormat) {
     int type = 0;
