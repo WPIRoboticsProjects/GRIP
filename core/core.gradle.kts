@@ -59,10 +59,12 @@ dependencies {
     implementation(group = "edu.wpi.first.ntcore", name = "ntcore-jni", version = "2020.+", classifier = "windowsx86-64")
     implementation(group = "edu.wpi.first.ntcore", name = "ntcore-jni", version = "2020.+", classifier = "windowsx86")
     implementation(group = "edu.wpi.first.ntcore", name = "ntcore-jni", version = "2020.+", classifier = "linuxx86-64")
+    implementation(group = "edu.wpi.first.ntcore", name = "ntcore-jni", version = "2020.+", classifier = "osxx86-64")
 
     implementation(group = "edu.wpi.first.cscore", name = "cscore-jni", version = "2020.+", classifier = "windowsx86-64")
     implementation(group = "edu.wpi.first.cscore", name = "cscore-jni", version = "2020.+", classifier = "windowsx86")
     implementation(group = "edu.wpi.first.cscore", name = "cscore-jni", version = "2020.+", classifier = "linuxx86-64")
+    implementation(group = "edu.wpi.first.cscore", name = "cscore-jni", version = "2020.+", classifier = "osxx86-64")
 
 
     implementation(group = "edu.wpi.first.wpiutil", name = "wpiutil-java", version = "2020.+")
