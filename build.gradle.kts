@@ -66,7 +66,7 @@ javaSubprojects {
         jcenter()
         maven {
             name = "WPILib Maven Release"
-            setUrl("https://first.wpi.edu/FRC/roborio/maven/release")
+            setUrl("https://frcmaven.wpi.edu/artifactory/release")
         }
         maven {
             name = "rosjava Maven"
