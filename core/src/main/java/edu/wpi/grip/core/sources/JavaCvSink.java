@@ -1,20 +1,19 @@
 package edu.wpi.grip.core.sources;
 
-import java.nio.ByteBuffer;
-
-import org.bytedeco.javacpp.opencv_core.CvType;
-import org.bytedeco.javacpp.opencv_core.Mat;
-import org.bytedeco.javacpp.BytePointer;
-
-import static org.bytedeco.javacpp.opencv_core.CV_8UC1;
-import static org.bytedeco.javacpp.opencv_core.CV_8UC2;
-import static org.bytedeco.javacpp.opencv_core.CV_8UC3;
-
 import edu.wpi.cscore.CameraServerJNI;
 import edu.wpi.cscore.ImageSink;
 import edu.wpi.cscore.VideoMode;
 import edu.wpi.cscore.VideoMode.PixelFormat;
 import edu.wpi.cscore.raw.RawFrame;
+import org.bytedeco.javacpp.BytePointer;
+import org.bytedeco.javacpp.opencv_core.Mat;
+
+
+import java.nio.ByteBuffer;
+
+import static org.bytedeco.javacpp.opencv_core.CV_8UC1;
+import static org.bytedeco.javacpp.opencv_core.CV_8UC2;
+import static org.bytedeco.javacpp.opencv_core.CV_8UC3;
 
 public class JavaCvSink extends ImageSink {
   RawFrame frame = new RawFrame();
@@ -90,13 +89,14 @@ public class JavaCvSink extends ImageSink {
       return rv;
     }
 
-    if (frame.getDataByteBuffer() != origByteBuffer || width != frame.getWidth() || height != frame.getHeight() 
-        || pixelFormat != frame.getPixelFormat()) {
+    if (frame.getDataByteBuffer() != origByteBuffer || width != frame.getWidth() 
+        || height != frame.getHeight() || pixelFormat != frame.getPixelFormat()) {
       origByteBuffer = frame.getDataByteBuffer();
       height = frame.getHeight();
       width = frame.getWidth();
       pixelFormat = frame.getPixelFormat();
-      tmpMat = new Mat(frame.getHeight(), frame.getWidth(), getCVFormat(VideoMode.getPixelFormatFromInt(pixelFormat)), 
+      tmpMat = new Mat(frame.getHeight(), frame.getWidth(), 
+                       getCVFormat(VideoMode.getPixelFormatFromInt(pixelFormat)), 
                        new BytePointer(origByteBuffer));
     }
     tmpMat.copyTo(image);

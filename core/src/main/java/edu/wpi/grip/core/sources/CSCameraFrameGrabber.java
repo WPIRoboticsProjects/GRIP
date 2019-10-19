@@ -1,23 +1,18 @@
 package edu.wpi.grip.core.sources;
 
-import org.bytedeco.javacpp.Loader;
-import org.bytedeco.javacv.Frame;
-import org.bytedeco.javacv.FrameConverter;
 import edu.wpi.cscore.CameraServerJNI;
 import edu.wpi.cscore.HttpCamera;
+import org.bytedeco.javacpp.Loader;
 import org.bytedeco.javacpp.opencv_core.Mat;
+import org.bytedeco.javacv.Frame;
+import org.bytedeco.javacv.FrameConverter;
+
+import org.bytedeco.javacv.FrameGrabber;
+
 import org.bytedeco.javacv.OpenCVFrameConverter;
 
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
-import org.bytedeco.javacv.FrameGrabber;
-
-import static org.bytedeco.javacpp.opencv_core.CV_8UC1;
-import static org.bytedeco.javacpp.opencv_core.CvMat;
-import static org.bytedeco.javacpp.opencv_core.IplImage;
-import static org.bytedeco.javacpp.opencv_core.cvMat;
-import static org.bytedeco.javacpp.opencv_core.cvReleaseImage;
-import static org.bytedeco.javacpp.opencv_imgcodecs.cvDecodeImage;
 
 // This is here because FrameGrabber has an exception called Exception which triggers PMD
 @SuppressWarnings({"PMD.AvoidThrowingRawExceptionTypes", "all"})
