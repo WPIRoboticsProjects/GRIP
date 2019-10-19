@@ -22,7 +22,7 @@ jobs:
       - script: |
           $ProgressPreference = 'SilentlyContinue'
           mkdir build
-          wget "https://download.java.net/java/early_access/jpackage/30/openjdk-13-jpackage+30_linux-x64_bin.tar.gz" -O "build/jdk-13.tar.gz"
+          wget "https://download.java.net/java/GA/jdk13.0.1/cec27d702aa74d5a8630c65ae61e4305/9/GPL/openjdk-13.0.1_linux-x64_bin.tar.gz" -O "build/jdk-13.tar.gz"
           sudo mkdir /opt/java
           sudo tar -xzvf build/jdk-13.tar.gz -C /opt/java
         displayName: 'Download JDK 13'
@@ -76,7 +76,7 @@ jobs:
         displayName: 'Download JDK'
       - powershell: |
           $ProgressPreference = 'SilentlyContinue'
-          wget "https://download.java.net/java/early_access/jpackage/30/openjdk-13-jpackage+30_windows-x64_bin.zip" -O "build\jdk-13.zip"
+          wget "https://download.java.net/java/GA/jdk13.0.1/cec27d702aa74d5a8630c65ae61e4305/9/GPL/openjdk-13.0.1_windows-x64_bin.zip" -O "build\jdk-13.zip"
           Expand-Archive build\jdk-13.zip -DestinationPath build
         displayName: 'Download JDK 13'
       - task: JavaToolInstaller@0
@@ -160,7 +160,7 @@ jobs:
       - script: |
           mkdir build
           wget "https://download.java.net/java/ga/jdk11/openjdk-11_osx-x64_bin.tar.gz" -O "build/jdk.tar.gz"
-          wget "https://download.java.net/java/early_access/jpackage/30/openjdk-13-jpackage+30_osx-x64_bin.tar.gz" -O "build/jdk-13.tar.gz"
+          wget "https://download.java.net/java/GA/jdk13.0.1/cec27d702aa74d5a8630c65ae61e4305/9/GPL/openjdk-13.0.1_osx-x64_bin.tar.gz" -O "build/jdk-13.tar.gz"
           sudo tar xzvf build/jdk-13.tar.gz -C /Library/Java/JavaVirtualMachines/
           sudo tar xvzf build/jdk.tar.gz -C /Library/Java/JavaVirtualMachines/
           export JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk-11.jdk/Contents/Home/
