@@ -15,13 +15,13 @@ import static org.bytedeco.javacpp.opencv_core.CV_8UC2;
 import static org.bytedeco.javacpp.opencv_core.CV_8UC3;
 
 public class JavaCvSink extends ImageSink {
-  private RawFrame frame = new RawFrame();
+  private final RawFrame frame = new RawFrame();
   private Mat tmpMat;
   private ByteBuffer origByteBuffer;
   private int width;
   private int height;
   private int pixelFormat;
-  private int bgrValue = PixelFormat.kBGR.getValue();
+  private final int bgrValue = PixelFormat.kBGR.getValue();
 
   private int getCVFormat(PixelFormat pixelFormat) {
     int type = 0;

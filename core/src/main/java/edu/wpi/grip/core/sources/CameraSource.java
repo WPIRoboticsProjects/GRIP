@@ -57,14 +57,6 @@ public class CameraSource extends Source implements RestartableService {
   public static final String DEFAULT_IP_CAMERA_PATH = "/mjpg/video.mjpg";
 
   /**
-   * Connecting to a device can take the most time. This should have a little bit of leeway. On a
-   * fairly decent computer with a great internet connection 7 seconds is more than enough. This
-   * value has been doubled to ensure that people running computers that may be older or have
-   * firewalls that will slow down connecting can still use the device.
-   */
-  private static final int IP_CAMERA_CONNECTION_TIMEOUT = 14;
-
-  /**
    * Reading from an existing connection shouldn't take that long. If it does we should really give
    * up and try to reconnect.
    */
