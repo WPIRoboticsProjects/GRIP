@@ -14,10 +14,10 @@ buildscript {
 }
 
 plugins {
-    `java`
-    `jacoco`
-    `checkstyle`
-    `pmd`
+    java
+    jacoco
+    checkstyle
+    pmd
     id("com.github.johnrengelman.shadow") version "5.1.0"
     id("com.google.osdetector") version "1.6.2"
     id("org.ajoberstar.grgit") version "3.1.1" apply false
