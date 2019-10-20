@@ -42,7 +42,7 @@ repositories {
 }
 
 tasks.withType<Wrapper>().configureEach {
-    gradleVersion = "5.6.3"
+    gradleVersion = "5.1"
     distributionType = Wrapper.DistributionType.ALL
 }
 
