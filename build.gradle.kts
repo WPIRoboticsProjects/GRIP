@@ -86,8 +86,8 @@ javaSubprojects {
         "testCompile"(group = "net.jodah", name = "concurrentunit", version = "0.4.6")
         "testCompile"(group = "org.hamcrest", name = "hamcrest-all", version = "1.3")
         "testCompile"(group = "junit", name = "junit", version = "4.12")
-        "testCompile"(group = "com.google.truth", name = "truth", version = "0.34")
-        "testCompile"(group = "com.google.guava", name = "guava-testlib", version = "22.0")
+        "testCompile"(group = "com.google.truth", name = "truth", version = "1.0")
+        "testCompile"(group = "com.google.guava", name = "guava-testlib", version = "28.1-jre")
     }
 
     checkstyle {
