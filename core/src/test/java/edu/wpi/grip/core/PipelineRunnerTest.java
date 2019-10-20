@@ -129,7 +129,7 @@ public class PipelineRunnerTest {
     }
 
     @Test
-    public void testRunningOperationThatThrowsExceptionWillNotPropagate() throws TimeoutException {
+    public void testRunningOperationThatThrowsExceptionWillNotPropagate() throws TimeoutException, InterruptedException {
       final EventBus eventBus = new EventBus();
       final Waiter renderWaiter = new Waiter();
       final String illegalAugmentExceptionMessage = "Kersplat!";
@@ -186,7 +186,7 @@ public class PipelineRunnerTest {
       assertThat(exceptionEventReceiver.event.getException().get())
           .isInstanceOf(IllegalArgumentException.class);
       assertThat(exceptionEventReceiver.event.getException().get())
-          .hasMessage(illegalAugmentExceptionMessage);
+          .hasMessageThat().contains(illegalAugmentExceptionMessage);
 
     }
   }
@@ -218,7 +218,7 @@ public class PipelineRunnerTest {
 
     @Test
     @SuppressWarnings("PMD.AvoidDuplicateLiterals")
-    public void testOperationNormalMethodCallCount() throws TimeoutException {
+    public void testOperationNormalMethodCallCount() throws TimeoutException, InterruptedException {
       eventBus.register(new RenderWaiterResumer(renderWaiter));
       final PipelineRunner runner = new PipelineRunner(eventBus,
           () -> ImmutableList.of(sourceCounter),
@@ -292,7 +292,7 @@ public class PipelineRunnerTest {
 
     @Test
     public void testPipelineWontRunOperationIfStoppedAfterRunPipelineEvent() throws
-        TimeoutException {
+        TimeoutException, InterruptedException {
       final Waiter sourceSupplierWaiter = new Waiter();
       final Waiter supplierBlockedWaiter = new Waiter();
       final PipelineRunner runner = new PipelineRunner(eventBus,
@@ -300,7 +300,7 @@ public class PipelineRunnerTest {
             try {
               supplierBlockedWaiter.resume();
               sourceSupplierWaiter.await();
-            } catch (TimeoutException e) {
+            } catch (TimeoutException | InterruptedException e) {
               throw new IllegalStateException(e);
             }
             return ImmutableList.of();
@@ -324,7 +324,7 @@ public class PipelineRunnerTest {
     }
 
     @Test
-    public void testPipelineWontRunSourceIfStoppedAfterRunPipelineEvent() throws TimeoutException {
+    public void testPipelineWontRunSourceIfStoppedAfterRunPipelineEvent() throws TimeoutException, InterruptedException {
       final Waiter sourceSupplierWaiter = new Waiter();
       final Waiter supplierBlockedWaiter = new Waiter();
       final PipelineRunner runner = new PipelineRunner(eventBus,
@@ -332,12 +332,12 @@ public class PipelineRunnerTest {
             try {
               supplierBlockedWaiter.resume();
               sourceSupplierWaiter.await();
-            } catch (TimeoutException e) {
+            } catch (TimeoutException | InterruptedException e) {
               throw new IllegalStateException(e);
             }
             return ImmutableList.of(sourceCounter);
           },
-          () -> ImmutableList.of(),
+          ImmutableList::of,
           MockTimer.MOCK_FACTORY);
       runner.addListener(failureListener, MoreExecutors.directExecutor());
 

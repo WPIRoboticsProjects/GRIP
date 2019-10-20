@@ -163,7 +163,7 @@ public class AutoRestartingServiceTest {
       if (expected.getCause() == null) {
         throw expected;
       }
-      assertThat(expected.getCause()).hasMessage("kaboom!");
+      assertThat(expected.getCause()).hasMessageThat().contains("kaboom!");
     }
 
     try {
@@ -176,7 +176,7 @@ public class AutoRestartingServiceTest {
       if (expected.getCause() == null) {
         throw expected;
       }
-      assertThat(expected.getCause()).hasMessage("kaboom!");
+      assertThat(expected.getCause()).hasMessageThat().contains("kaboom!");
     }
 
     assertNotEquals("A new service should be created when the old service terminated",
