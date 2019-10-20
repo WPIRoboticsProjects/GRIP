@@ -83,7 +83,7 @@ javaSubprojects {
         "compile"(group = "javax.annotation", name = "javax.annotation-api", version = "1.3.2")
         "annotationProcessor"(group = "javax.annotation", name = "javax.annotation-api", version = "1.3.2")
         "compile"(group = "com.google.code.findbugs", name = "annotations", version = "3.0.1")
-        "testCompile"(group = "net.jodah", name = "concurrentunit", version = "0.4.2")
+        "testCompile"(group = "net.jodah", name = "concurrentunit", version = "0.4.6")
         "testCompile"(group = "org.hamcrest", name = "hamcrest-all", version = "1.3")
         "testCompile"(group = "junit", name = "junit", version = "4.12")
         "testCompile"(group = "com.google.truth", name = "truth", version = "0.34")
