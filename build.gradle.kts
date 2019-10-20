@@ -9,8 +9,7 @@ buildscript {
     }
     dependencies {
         classpath(group = "edu.wpi.first.wpilib.opencv", name = "opencv-installer", version = "2.0.1")
-        classpath("com.netflix.nebula:gradle-aggregate-javadocs-plugin:2.2.+")
-
+        classpath("com.netflix.nebula:gradle-aggregate-javadocs-plugin:3.0.1")
     }
 }
 
@@ -19,12 +18,12 @@ plugins {
     `jacoco`
     `checkstyle`
     `pmd`
-    id("com.github.johnrengelman.shadow") version "4.0.1"
-    id("com.google.osdetector") version "1.4.0"
-    id("org.ajoberstar.grgit") version "2.0.0" apply false
+    id("com.github.johnrengelman.shadow") version "5.1.0"
+    id("com.google.osdetector") version "1.6.2"
+    id("org.ajoberstar.grgit") version "3.1.1" apply false
     //id("net.ltgt.errorprone") version "0.0.16"
-    id("com.github.spotbugs") version "1.7.1"
-    id("com.gradle.build-scan") version "2.1"
+    id("com.github.spotbugs") version "2.0.0"
+    id("com.gradle.build-scan") version "2.4.2"
 }
 
 apply {
@@ -42,7 +41,7 @@ repositories {
 }
 
 tasks.withType<Wrapper>().configureEach {
-    gradleVersion = "5.0"
+    gradleVersion = "5.4.1"
     distributionType = Wrapper.DistributionType.ALL
 }
 
