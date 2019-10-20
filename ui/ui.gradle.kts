@@ -22,6 +22,18 @@ if (withCuda) {
     version = "$version-cuda"
 }
 
+// Need old server for OpenCV 3.1
+repositories {
+    maven {
+        name = "WPILib Old Maven Release"
+        setUrl("https://first.wpi.edu/FRC/roborio/maven/release")
+        content {
+            // Ensure this only grabs the opencv dependency.
+          includeGroup("org.opencv")
+        }
+    }
+}
+
 dependencies {
     compile(project(":core"))
     compile(project(":ui:preloader"))
@@ -50,7 +62,7 @@ dependencies {
     testCompile(group = "org.testfx", name = "testfx-core", version = "4.0.7-alpha")
     testCompile(group = "org.testfx", name = "testfx-junit", version = "4.0.7-alpha")
     testRuntime(group = "org.testfx", name = "openjfx-monocle", version = "8u76-b04")
-    testCompile(group = "edu.wpi.first.thirdparty.frc2020.opencv", name = "opencv-java", version = "3.4.7-1")
+    testCompile(group = "org.opencv", name = "opencv-java", version = "3.1.0")
 }
 
 tasks.named<JavaCompile>("compileTestJava") {
