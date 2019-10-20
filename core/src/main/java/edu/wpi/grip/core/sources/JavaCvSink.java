@@ -1,5 +1,6 @@
 package edu.wpi.grip.core.sources;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import edu.wpi.cscore.CameraServerJNI;
 import edu.wpi.cscore.ImageSink;
 import edu.wpi.cscore.VideoMode;
@@ -14,6 +15,7 @@ import static org.bytedeco.javacpp.opencv_core.CV_8UC1;
 import static org.bytedeco.javacpp.opencv_core.CV_8UC2;
 import static org.bytedeco.javacpp.opencv_core.CV_8UC3;
 
+@SuppressFBWarnings("EQ_DOESNT_OVERRIDE_EQUALS")
 public class JavaCvSink extends ImageSink {
   private final RawFrame frame = new RawFrame();
   private Mat tmpMat;
@@ -88,14 +90,14 @@ public class JavaCvSink extends ImageSink {
       return rv;
     }
 
-    if (frame.getDataByteBuffer() != origByteBuffer || width != frame.getWidth() 
+    if (frame.getDataByteBuffer() != origByteBuffer || width != frame.getWidth()
         || height != frame.getHeight() || pixelFormat != frame.getPixelFormat()) {
       origByteBuffer = frame.getDataByteBuffer();
       height = frame.getHeight();
       width = frame.getWidth();
       pixelFormat = frame.getPixelFormat();
-      tmpMat = new Mat(frame.getHeight(), frame.getWidth(), 
-                       getCVFormat(VideoMode.getPixelFormatFromInt(pixelFormat)), 
+      tmpMat = new Mat(frame.getHeight(), frame.getWidth(),
+                       getCVFormat(VideoMode.getPixelFormatFromInt(pixelFormat)),
                        new BytePointer(origByteBuffer));
     }
     tmpMat.copyTo(image);
