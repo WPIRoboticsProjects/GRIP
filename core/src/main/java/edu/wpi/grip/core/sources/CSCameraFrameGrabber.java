@@ -6,13 +6,13 @@ import org.bytedeco.javacpp.Loader;
 import org.bytedeco.javacpp.opencv_core.Mat;
 import org.bytedeco.javacv.Frame;
 import org.bytedeco.javacv.FrameConverter;
-
 import org.bytedeco.javacv.FrameGrabber;
-
 import org.bytedeco.javacv.OpenCVFrameConverter;
 
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
+
+import static com.google.common.base.Preconditions.checkNotNull;
 
 // This is here because FrameGrabber has an exception called Exception which triggers PMD
 @SuppressWarnings({"PMD.AvoidThrowingRawExceptionTypes", "all"})
@@ -28,10 +28,10 @@ public class CSCameraFrameGrabber extends FrameGrabber {
 
   private JavaCvSink javaCvSink;
   private HttpCamera httpCamera;
-  
+
   public CSCameraFrameGrabber(String urlstr, int readTimeout, TimeUnit unit) {
     super();
-    this.url = urlstr;
+    this.url = checkNotNull(urlstr, "urlstr");
     this.readTimeout = TimeUnit.MILLISECONDS.convert(readTimeout, unit) / 1000.0;
   }
 

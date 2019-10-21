@@ -11,6 +11,7 @@ import org.bytedeco.javacpp.opencv_core.Mat;
 
 import java.nio.ByteBuffer;
 
+import static com.google.common.base.Preconditions.checkNotNull;
 import static org.bytedeco.javacpp.opencv_core.CV_8UC1;
 import static org.bytedeco.javacpp.opencv_core.CV_8UC2;
 import static org.bytedeco.javacpp.opencv_core.CV_8UC3;
@@ -82,6 +83,7 @@ public class JavaCvSink extends ImageSink {
    *         message); the frame time is in 1 us increments.
    */
   public long grabFrame(Mat image, double timeout) {
+    checkNotNull(image, "Image cannot be null");
     frame.setWidth(0);
     frame.setHeight(0);
     frame.setPixelFormat(bgrValue);
