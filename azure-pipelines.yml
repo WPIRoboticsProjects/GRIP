@@ -126,8 +126,13 @@ jobs:
       - powershell: |
           mkdir build
           $ProgressPreference = 'SilentlyContinue'
-          wget "https://github.com/wpilibsuite/frc-openjdk-windows/releases/download/v11.0.0u28-1/jdk-x86-11.0.0u28-1.zip" -O "build\jdk.zip"
+          wget "https://github.com/AdoptOpenJDK/openjdk11-binaries/releases/download/jdk-11.0.4%2B11/OpenJDK11U-jdk_x86-32_windows_hotspot_11.0.4_11.zip" -O "build\jdk.zip"
         displayName: 'Download JDK'
+      - powershell: |
+          $ProgressPreference = 'SilentlyContinue'
+          wget "https://download.java.net/java/early_access/jpackage/1/openjdk-14-jpackage+1-49_windows-x64_bin.zip" -O "build\jdk-14.zip"
+          Expand-Archive build\jdk-14.zip -DestinationPath build
+        displayName: 'Download JDK 14'
       - task: JavaToolInstaller@0
         inputs:
           jdkSourceOption: localDirectory
@@ -141,7 +146,15 @@ jobs:
           gradleOptions: '-Xmx1024m'
           publishJUnitResults: false
           # TODO: run :ui:jpackage once we have a JDK 13 build for 32-bit Windows
-          tasks: 'check -Pheadless=true -Pgeneration -PlogTests --stacktrace'
+          tasks: 'check :ui:jpackage -Pheadless=true -Pgeneration -PlogTests -Pjdk13=..\build\jdk-14 --stacktrace'
+
+      - task: Gradle@2
+        inputs:
+          workingDirectory: ''
+          gradleWrapperFile: 'gradlew'
+          gradleOptions: '-Xmx3072m'
+          publishJUnitResults: false
+          tasks: ':ui:jpackage -Pcuda -Pjdk13=..\build\jdk-14 --stacktrace'
 
       - task: CopyFiles@2
         inputs:
