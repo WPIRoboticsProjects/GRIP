@@ -224,7 +224,7 @@ open class JpackageExec : DefaultTask() {
             resourceDir.ifPresent { dir ->
                 args.addAll("--resource-dir", dir.asFile.absolutePath)
             }
-            args.addAll("--output", outputDir.get().asFile.absolutePath)
+            args.addAll("--dest", outputDir.get().asFile.absolutePath)
             icon.ifPresent { iconFile ->
                 args.addAll("--icon", iconFile.toString())
             }
