@@ -22,17 +22,17 @@ jobs:
       - script: |
           $ProgressPreference = 'SilentlyContinue'
           mkdir build
-          wget "https://download.java.net/java/GA/jdk13.0.1/cec27d702aa74d5a8630c65ae61e4305/9/GPL/openjdk-13.0.1_linux-x64_bin.tar.gz" -O "build/jdk-13.tar.gz"
+          wget "https://download.java.net/java/early_access/jdk14/19/GPL/openjdk-14-ea+19_linux-x64_bin.tar.gz" -O "build/jdk-14.tar.gz"
           sudo mkdir /opt/java
-          sudo tar -xzvf build/jdk-13.tar.gz -C /opt/java
-        displayName: 'Download JDK 13'
+          sudo tar -xzvf build/jdk-14.tar.gz -C /opt/java
+        displayName: 'Download JDK 14'
       - task: Gradle@2
         inputs:
           workingDirectory: ''
           gradleWrapperFile: 'gradlew'
           gradleOptions: '-Xmx3072m'
           publishJUnitResults: false
-          tasks: 'check :ui:jpackage -Pgeneration -PjniLocation=build/OpenCVJNI -Pheadless=true -PlogTests -Pjdk13=/opt/java/jdk-13.0.1 --stacktrace'
+          tasks: 'check :ui:jpackage -Pgeneration -PjniLocation=build/OpenCVJNI -Pheadless=true -PlogTests -Pjdk13=/opt/java/jdk-14--stacktrace'
       - task: CopyFiles@2
         inputs:
           contents: 'ui/build/installer/GRIP-*.deb'
@@ -51,7 +51,7 @@ jobs:
           gradleWrapperFile: 'gradlew'
           gradleOptions: '-Xmx3072m'
           publishJUnitResults: false
-          tasks: ':ui:jpackage -Pcuda -Pjdk13=/opt/java/jdk-13.0.1 --stacktrace'
+          tasks: ':ui:jpackage -Pcuda -Pjdk13=/opt/java/jdk-14 --stacktrace'
       - task: CopyFiles@2
         inputs:
           contents: 'ui/build/installer/GRIP-*.deb'
@@ -76,9 +76,9 @@ jobs:
         displayName: 'Download JDK'
       - powershell: |
           $ProgressPreference = 'SilentlyContinue'
-          wget "https://download.java.net/java/GA/jdk13.0.1/cec27d702aa74d5a8630c65ae61e4305/9/GPL/openjdk-13.0.1_windows-x64_bin.zip" -O "build\jdk-13.zip"
-          Expand-Archive build\jdk-13.zip -DestinationPath build
-        displayName: 'Download JDK 13'
+          wget "https://download.java.net/java/early_access/jdk14/19/GPL/openjdk-14-ea+19_windows-x64_bin.zip" -O "build\jdk-14.zip"
+          Expand-Archive build\jdk-14.zip -DestinationPath build
+        displayName: 'Download JDK 14'
       - task: JavaToolInstaller@0
         inputs:
           jdkSourceOption: localDirectory
@@ -93,7 +93,7 @@ jobs:
           jdkVersionOption: '1.11'
           jdkArchitectureOption: 'x64'
           publishJUnitResults: true
-          tasks: 'check :ui:jpackage -Pheadless=true -Pgeneration -PlogTests -Pjdk13=..\build\jdk-13.0.1 --stacktrace'
+          tasks: 'check :ui:jpackage -Pheadless=true -Pgeneration -PlogTests -Pjdk13=..\build\jdk-14 --stacktrace'
       - task: CopyFiles@2
         inputs:
           contents: 'ui\build\installer\GRIP-*.exe'
@@ -105,7 +105,7 @@ jobs:
           gradleWrapperFile: 'gradlew'
           gradleOptions: '-Xmx3072m'
           publishJUnitResults: false
-          tasks: ':ui:jpackage -Pcuda -Pjdk13=..\build\jdk-13.0.1 --stacktrace'
+          tasks: ':ui:jpackage -Pcuda -Pjdk13=..\build\jdk-14 --stacktrace'
       - task: CopyFiles@2
         inputs:
           contents: 'ui\build\installer\GRIP-*.exe'
@@ -160,8 +160,8 @@ jobs:
       - script: |
           mkdir build
           wget "https://download.java.net/java/ga/jdk11/openjdk-11_osx-x64_bin.tar.gz" -O "build/jdk.tar.gz"
-          wget "https://download.java.net/java/GA/jdk13.0.1/cec27d702aa74d5a8630c65ae61e4305/9/GPL/openjdk-13.0.1_osx-x64_bin.tar.gz" -O "build/jdk-13.tar.gz"
-          sudo tar xzvf build/jdk-13.tar.gz -C /Library/Java/JavaVirtualMachines/
+          wget "https://download.java.net/java/early_access/jdk14/19/GPL/openjdk-14-ea+19_osx-x64_bin.tar.gz" -O "build/jdk-14.tar.gz"
+          sudo tar xzvf build/jdk-14.tar.gz -C /Library/Java/JavaVirtualMachines/
           sudo tar xvzf build/jdk.tar.gz -C /Library/Java/JavaVirtualMachines/
           export JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk-11.jdk/Contents/Home/
         displayName: 'Setup JDK'
@@ -173,7 +173,7 @@ jobs:
           jdkVersionOption: '1.11'
           jdkArchitectureOption: 'x64'
           publishJUnitResults: false
-          tasks: 'check :ui:jpackage -Pheadless=true -Pgeneration -PlogTests -Pjdk13=/Library/Java/JavaVirtualMachines/jdk-13.0.1.jdk/Contents/Home/ --stacktrace'
+          tasks: 'check :ui:jpackage -Pheadless=true -Pgeneration -PlogTests -Pjdk13=/Library/Java/JavaVirtualMachines/jdk-14.jdk/Contents/Home/ --stacktrace'
       - task: CopyFiles@2
         inputs:
           contents: 'ui/build/installer/*'
@@ -186,7 +186,7 @@ jobs:
           jdkVersionOption: '1.11'
           jdkArchitectureOption: 'x64'
           publishJUnitResults: false
-          tasks: ':ui:jpackage -Pcuda -Pjdk13=/Library/Java/JavaVirtualMachines/jdk-13.0.1.jdk/Contents/Home/ --stacktrace'
+          tasks: ':ui:jpackage -Pcuda -Pjdk13=/Library/Java/JavaVirtualMachines/jdk-14.jdk/Contents/Home/ --stacktrace'
 
       - task: CopyFiles@2
         inputs:
