@@ -214,7 +214,7 @@ open class JpackageExec : DefaultTask() {
             icon.ifPresent { iconFile ->
                 args.addAll("--icon", iconFile.toString())
             }
-            args.addAll("--main-jar", mainJar.get().asFile.absolutePath)
+            args.addAll("--main-jar", mainJar.get().asFile.name)
             args.addAll("--main-class", mainClassName.get())
 
             args.addAll("--name", applicationName.get())
