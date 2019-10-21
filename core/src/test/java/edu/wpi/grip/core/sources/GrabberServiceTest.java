@@ -48,7 +48,8 @@ public class GrabberServiceTest {
       grabberService.startUp();
       fail("This should have thrown an exception");
     } catch (IllegalStateException e) {
-      assertThat(e).hasMessageThat().contains(ConstructorThrowingFrameGrabber.CONSTRUCTOR_EXCEPTION_MESSAGE);
+      assertThat(e).hasMessageThat()
+                   .contains(ConstructorThrowingFrameGrabber.CONSTRUCTOR_EXCEPTION_MESSAGE);
       throw e;
     }
     fail("This should have rethrown an exception");

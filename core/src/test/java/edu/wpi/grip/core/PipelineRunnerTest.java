@@ -129,7 +129,8 @@ public class PipelineRunnerTest {
     }
 
     @Test
-    public void testRunningOperationThatThrowsExceptionWillNotPropagate() throws TimeoutException, InterruptedException {
+    public void testRunningOperationThatThrowsExceptionWillNotPropagate() throws TimeoutException,
+        InterruptedException {
       final EventBus eventBus = new EventBus();
       final Waiter renderWaiter = new Waiter();
       final String illegalAugmentExceptionMessage = "Kersplat!";
@@ -324,7 +325,8 @@ public class PipelineRunnerTest {
     }
 
     @Test
-    public void testPipelineWontRunSourceIfStoppedAfterRunPipelineEvent() throws TimeoutException {
+    public void testPipelineWontRunSourceIfStoppedAfterRunPipelineEvent() throws TimeoutException,
+        InterruptedException {
       final Waiter sourceSupplierWaiter = new Waiter();
       final Waiter supplierBlockedWaiter = new Waiter();
       final PipelineRunner runner = new PipelineRunner(eventBus,
@@ -332,7 +334,7 @@ public class PipelineRunnerTest {
             try {
               supplierBlockedWaiter.resume();
               sourceSupplierWaiter.await();
-            } catch (TimeoutException e) {
+            } catch (TimeoutException | InterruptedException e) {
               throw new IllegalStateException(e);
             }
             return ImmutableList.of(sourceCounter);
