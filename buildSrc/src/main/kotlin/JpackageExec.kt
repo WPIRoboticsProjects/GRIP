@@ -217,7 +217,7 @@ open class JpackageExec : DefaultTask() {
                 args.add("--verbose")
             }
             jvmArgs.ifPresent { jvmArgs ->
-                args.add("--jvm-args")
+                args.add("--java-options")
                 args.add(jvmArgs.joinToString(separator = " ", prefix = "\"", postfix = "\""))
             }
             args.addAll("--input", inputDir.get().asFile.absolutePath)
