@@ -169,13 +169,6 @@ open class JpackageExec : DefaultTask() {
     val winUpgradeUuid = stringProperty()
 
     /**
-     * Windows-specific. The name to use for the application in its Windows registry entries.
-     */
-    @get:Input
-    @get:Optional
-    val winRegistryName = stringProperty()
-
-    /**
      * Windows-specific. Allows the application to be installed in the Windows start menu.
      */
     @get:Input
@@ -248,9 +241,6 @@ open class JpackageExec : DefaultTask() {
                     winUpgradeUuid.ifPresent { uuid ->
                         args.addAll("--win-upgrade-uuid", uuid)
                     }
-                    winRegistryName.ifPresent { name ->
-                        args.addAll("--win-registry-name", name)
-                    }
                     if (addToWindowsMenu.getOrElse(false)) {
                         args.add("--win-menu")
                     }
@@ -260,7 +250,7 @@ open class JpackageExec : DefaultTask() {
                 }
                 OperatingSystem.MAC_OS -> {
                     macBundleIdentifier.ifPresent { id ->
-                        args.addAll("--mac-bundle-identifier", id)
+                        args.addAll("--mac-package-identifier", id)
                     }
                 }
                 OperatingSystem.LINUX -> {

@@ -303,7 +303,6 @@ if (BuildType.isJdk11) {
         configureForCurrentOs()
 
         winUpgradeUuid.set("d74b4d69-a88a-47ef-b972-9a7911cf7af1")
-        winRegistryName.set("edu.wpi.grip")
         addToWindowsMenu.set(true)
         addWindowsDesktopShortcut.set(true)
 
