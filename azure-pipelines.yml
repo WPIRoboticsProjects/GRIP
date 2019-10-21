@@ -186,11 +186,18 @@ jobs:
           jdkVersionOption: '1.11'
           jdkArchitectureOption: 'x64'
           publishJUnitResults: false
-          tasks: 'check :ui:jpackage -Pheadless=true -Pgeneration -PlogTests -Pjdk13=/Library/Java/JavaVirtualMachines/jdk-14.jdk/Contents/Home/ --stacktrace'
+          tasks: 'check jacocoTestReport jacocoRootReport :ui:jpackage -Pheadless=true -Pgeneration -PlogTests -Pjdk13=/Library/Java/JavaVirtualMachines/jdk-14.jdk/Contents/Home/ --stacktrace'
       - task: CopyFiles@2
         inputs:
           contents: 'ui/build/installer/*'
           targetFolder: $(Build.ArtifactStagingDirectory)
+
+      - script: |
+          curl -s https://codecov.io/bash > .codecov
+          chmod +x .codecov
+          ./.codecov -t $(CODECOV_TOKEN)
+        displayName: 'Upload jacoco reports to codecov'
+
       - task: Gradle@2
         inputs:
           workingDirectory: ''
@@ -209,27 +216,3 @@ jobs:
       - task: PublishBuildArtifacts@1
         inputs:
           artifactName: 'MacInstaller'
-
-  # JDK 8 agent for UI tests
-  - job: Mac_UI_Testing
-    pool:
-      vmImage: 'xcode9-macos10.13'
-
-    steps:
-      - script: |
-          mkdir build
-          wget "https://cdn.azul.com/zulu/bin/zulu8.38.0.13-ca-fx-jdk8.0.212-macosx_x64.tar.gz" -O "build/jdk.tar.gz"
-          sudo tar xzvf build/jdk.tar.gz -C /Library/Java/JavaVirtualMachines/
-        displayName: 'Install ZuluFX'
-      - task: Gradle@2
-        inputs:
-          workingDirectory: ''
-          gradleWrapperFile: 'gradlew'
-          gradleOptions: '-Xmx3072m -Dorg.gradle.java.home=/Library/Java/JavaVirtualMachines/zulu8.38.0.13-ca-fx-jdk8.0.212-macosx_x64'
-          publishJUnitResults: false
-          tasks: 'check jacocoTestReport jacocoRootReport -Pheadless=true -Pgeneration -PlogTests --stacktrace'
-      - script: |
-          curl -s https://codecov.io/bash > .codecov
-          chmod +x .codecov
-          ./.codecov -t $(CODECOV_TOKEN)
-        displayName: 'Upload jacoco reports to codecov'
