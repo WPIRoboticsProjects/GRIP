@@ -359,7 +359,8 @@ fun JpackageExec.configureForCurrentOs() {
         OperatingSystem.LINUX -> {
             val installerFileDir = installerFilesBaseDir.resolve("linux")
             resourceDir.set(installerFileDir)
-            icon.set(installerFileDir.resolve("GRIP.png"))
+            // Skip icon on linux, causing build to break
+            //icon.set(installerFileDir.resolve("GRIP.png"))
             installerType.set("deb")
         }
     }

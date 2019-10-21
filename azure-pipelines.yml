@@ -147,14 +147,14 @@ jobs:
           publishJUnitResults: false
           # TODO: run :ui:jpackage once we have a JDK 13 build for 32-bit Windows
           tasks: 'check :ui:jpackage -Pheadless=true -Pgeneration -PlogTests -Pjdk13=..\build\jdk-14 --stacktrace'
-
-      - task: Gradle@2
-        inputs:
-          workingDirectory: ''
-          gradleWrapperFile: 'gradlew'
-          gradleOptions: '-Xmx1024m'
-          publishJUnitResults: false
-          tasks: ':ui:jpackage -Pcuda -Pjdk13=..\build\jdk-14 --stacktrace'
+      # bytedeco does not have a 32 bit enabled CUDA build
+      # - task: Gradle@2
+      #   inputs:
+      #     workingDirectory: ''
+      #     gradleWrapperFile: 'gradlew'
+      #     gradleOptions: '-Xmx1024m'
+      #     publishJUnitResults: false
+      #     tasks: ':ui:jpackage -Pcuda -Pjdk13=..\build\jdk-14 --stacktrace'
 
       - task: CopyFiles@2
         inputs:
