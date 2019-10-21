@@ -16,7 +16,7 @@ import java.io.FileFilter
  * Because JDK 13 has not yet been released, and because `jpackage` is not yet included in the
  * early-access builds, a compatible JDK must be downloaded from
  * [https://jdk.java.net/jpackage/](https://jdk.java.net/jpackage/). The location of the JDK must be
- * specified with [jdkHome] (eg `/opt/java/jdk-13/`)
+ * specified with [jdkHome] (eg `/opt/java/jdk-14/`)
  *
  */
 open class JpackageExec : DefaultTask() {

@@ -253,8 +253,8 @@ tasks.register<JpackageExec>("jpackage") {
 
     // TODO: Since Gradle does not run on JDK 13, we need to pass in the JDK home as part of the build process
     // See https://github.com/gradle/gradle/issues/8681
-    if (!project.properties.containsKey("jdk13")) {
-        logger.error("The path to a valid JDK 13 installation with jpackage must be provided with -Pjdk13=/path/to/jdk-13")
+    if (!project.properties.containsKey("jdk14")) {
+        logger.error("The path to a valid JDK 13 installation with jpackage must be provided with -Pjdk14=/path/to/jdk-14")
         return@register
     }
 
@@ -263,9 +263,9 @@ tasks.register<JpackageExec>("jpackage") {
     val jlink by tasks
     dependsOn(cleanInstaller, collectDependencies, jlink)
 
-    val jdk13: String = project.property("jdk13").toString()
+    val jdk14: String = project.property("jdk14").toString()
 
-    jdkHome.set(File(jdk13))
+    jdkHome.set(File(jdk14))
     runtimeImage.set(jlink.outputs.files.singleFile)
     verbose.set(true)
     outputDir.set(buildDir.resolve("installer"))

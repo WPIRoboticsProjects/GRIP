@@ -32,7 +32,7 @@ jobs:
           gradleWrapperFile: 'gradlew'
           gradleOptions: '-Xmx3072m'
           publishJUnitResults: false
-          tasks: 'check :ui:jpackage -Pgeneration -PjniLocation=build/OpenCVJNI -Pheadless=true -PlogTests -Pjdk13=/opt/java/jdk-14 --stacktrace'
+          tasks: 'check :ui:jpackage -Pgeneration -PjniLocation=build/OpenCVJNI -Pheadless=true -PlogTests -Pjdk14=/opt/java/jdk-14 --stacktrace'
       - task: CopyFiles@2
         inputs:
           contents: 'ui/build/installer/GRIP-*.deb'
@@ -51,7 +51,7 @@ jobs:
           gradleWrapperFile: 'gradlew'
           gradleOptions: '-Xmx3072m'
           publishJUnitResults: false
-          tasks: ':ui:jpackage -Pcuda -Pjdk13=/opt/java/jdk-14 --stacktrace'
+          tasks: ':ui:jpackage -Pcuda -Pjdk14=/opt/java/jdk-14 --stacktrace'
       - task: CopyFiles@2
         inputs:
           contents: 'ui/build/installer/GRIP-*.deb'
@@ -93,7 +93,7 @@ jobs:
           jdkVersionOption: '1.11'
           jdkArchitectureOption: 'x64'
           publishJUnitResults: true
-          tasks: 'check :ui:jpackage -Pheadless=true -Pgeneration -PlogTests -PskipUITests -Pjdk13=..\build\jdk-14 --stacktrace'
+          tasks: 'check :ui:jpackage -Pheadless=true -Pgeneration -PlogTests -PskipUITests -Pjdk14=..\build\jdk-14 --stacktrace'
       - task: CopyFiles@2
         inputs:
           contents: 'ui\build\installer\GRIP-*.exe'
@@ -105,7 +105,7 @@ jobs:
           gradleWrapperFile: 'gradlew'
           gradleOptions: '-Xmx3072m'
           publishJUnitResults: false
-          tasks: ':ui:jpackage -Pcuda -PskipUITests -Pjdk13=..\build\jdk-14 --stacktrace'
+          tasks: ':ui:jpackage -Pcuda -PskipUITests -Pjdk14=..\build\jdk-14 --stacktrace'
       - task: CopyFiles@2
         inputs:
           contents: 'ui\build\installer\GRIP-*.exe'
@@ -146,7 +146,7 @@ jobs:
           gradleOptions: '-Xmx1024m'
           publishJUnitResults: false
           # TODO: run :ui:jpackage once we have a JDK 13 build for 32-bit Windows
-          tasks: 'check :ui:jpackage -Pheadless=true -Pgeneration -PlogTests -PskipUITests -Pjdk13=..\build\jdk-14 --stacktrace'
+          tasks: 'check :ui:jpackage -Pheadless=true -Pgeneration -PlogTests -PskipUITests -Pjdk14=..\build\jdk-14 --stacktrace'
       # bytedeco does not have a 32 bit enabled CUDA build
       # - task: Gradle@2
       #   inputs:
@@ -154,7 +154,7 @@ jobs:
       #     gradleWrapperFile: 'gradlew'
       #     gradleOptions: '-Xmx1024m'
       #     publishJUnitResults: false
-      #     tasks: ':ui:jpackage -Pcuda -PskipUITests -Pjdk13=..\build\jdk-14 --stacktrace'
+      #     tasks: ':ui:jpackage -Pcuda -PskipUITests -Pjdk14=..\build\jdk-14 --stacktrace'
 
       - task: CopyFiles@2
         inputs:
@@ -186,7 +186,7 @@ jobs:
           jdkVersionOption: '1.11'
           jdkArchitectureOption: 'x64'
           publishJUnitResults: false
-          tasks: 'check jacocoTestReport jacocoRootReport :ui:jpackage -Pheadless=true -Pgeneration -PlogTests -Pjdk13=/Library/Java/JavaVirtualMachines/jdk-14.jdk/Contents/Home/ --stacktrace'
+          tasks: 'check jacocoTestReport jacocoRootReport :ui:jpackage -Pheadless=true -Pgeneration -PlogTests -Pjdk14=/Library/Java/JavaVirtualMachines/jdk-14.jdk/Contents/Home/ --stacktrace'
       - task: CopyFiles@2
         inputs:
           contents: 'ui/build/installer/*'
@@ -206,7 +206,7 @@ jobs:
           jdkVersionOption: '1.11'
           jdkArchitectureOption: 'x64'
           publishJUnitResults: false
-          tasks: ':ui:jpackage -Pcuda -Pjdk13=/Library/Java/JavaVirtualMachines/jdk-14.jdk/Contents/Home/ --stacktrace'
+          tasks: ':ui:jpackage -Pcuda -Pjdk14=/Library/Java/JavaVirtualMachines/jdk-14.jdk/Contents/Home/ --stacktrace'
 
       - task: CopyFiles@2
         inputs:
