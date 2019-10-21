@@ -241,7 +241,7 @@ open class JpackageExec : DefaultTask() {
             fileAssociations.ifPresent { propsFile ->
                 args.addAll("--file-associations", propsFile.asFile.absolutePath)
             }
-            args.addAll("--installer-type", installerType.get())
+            args.addAll("--package-type", installerType.get())
 
             when (OperatingSystem.current()) {
                 OperatingSystem.WINDOWS -> {
