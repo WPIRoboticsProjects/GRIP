@@ -147,13 +147,6 @@ open class JpackageExec : DefaultTask() {
     val applicationVendor = stringProperty()
 
     /**
-     * A machine-readable identifier string in reverse-DNS format (e.g. "edu.wpi.grip").
-     */
-    @get:Input
-    @get:Optional
-    val identifier = stringProperty()
-
-    /**
      * A properties file containing key-value pairs for file association integration.
      * Currently broken on Linux and Mac.
      */
@@ -244,9 +237,6 @@ open class JpackageExec : DefaultTask() {
             }
             applicationVendor.ifPresent { vendor ->
                 args.addAll("--vendor", vendor)
-            }
-            identifier.ifPresent { id ->
-                args.addAll("--identifier", id)
             }
             fileAssociations.ifPresent { propsFile ->
                 args.addAll("--file-associations", propsFile.asFile.absolutePath)

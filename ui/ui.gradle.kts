@@ -299,7 +299,6 @@ if (BuildType.isJdk11) {
         copyright.set("Copyright (c) 2015-2019 WPI")
         licenseFile.set(rootDir.resolve("LICENSE.txt"))
         applicationVendor.set("Worcester Polytechnic Institute")
-        identifier.set("edu.wpi.grip")
 
         configureForCurrentOs()
 
