@@ -80,6 +80,17 @@ if (project.hasProperty("headless")) {
     }
 }
 
+// The tests segfault on windows, but pass successfully on mac and linux.
+// This lets us add a flag to skip UI tests on windows.
+if (project.hasProperty("skipUITests")) {
+    tasks.withType<Test> {
+        useJUnit {
+            excludeCategories("edu.wpi.grip.ui.UiTests")
+        }
+    }
+}
+
+
 tasks.register("testSharedLib") {
     description = "Compiles the shared library used by c++ generation testing."
     doLast {
