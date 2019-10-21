@@ -46,7 +46,7 @@ public class SafeShutdownTest {
         throw new AssertionError("This should not be the exception that appears");
       });
     } catch (IllegalStateException e) {
-      assertThat(e).hasMessage(SHUTDOWN_EXCEPTION_MESSAGE);
+      assertThat(e).hasMessageThat().contains(SHUTDOWN_EXCEPTION_MESSAGE);
     }
 
   }
