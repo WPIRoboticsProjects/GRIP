@@ -208,7 +208,7 @@ open class JpackageExec : DefaultTask() {
         project.exec {
             val args = mutableListOf<String>()
             args.add(jdkHome.file("bin/jpackage").get().asFile.absolutePath)
-            args.add("create-installer")
+            //args.add("create-installer")
 
             runtimeImage.ifPresent { dir ->
                 args.addAll("--runtime-image", dir.asFile.absolutePath)
