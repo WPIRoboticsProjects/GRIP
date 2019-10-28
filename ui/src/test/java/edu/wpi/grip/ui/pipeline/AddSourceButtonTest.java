@@ -7,7 +7,6 @@ import edu.wpi.grip.ui.UiTests;
 import com.google.common.eventbus.EventBus;
 
 import org.junit.After;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.experimental.runners.Enclosed;
@@ -94,7 +93,6 @@ public class AddSourceButtonTest {
     }
 
     @Test
-    @Ignore("Fails on all platforms") // TODO: Figure out why this is broken.
     public void testCreatesSourceStarted() throws Exception {
       // When
       Platform.runLater(() -> addSourceView.getWebcamButton().fire());
@@ -171,7 +169,6 @@ public class AddSourceButtonTest {
 
     @Test
     @SuppressWarnings("PMD.JUnitTestsShouldIncludeAssert")
-    @Ignore("Fails on all platforms") // TODO: Figure out why this is broken.
     public void testWhenStartFailsDialogStillCloses() throws Exception {
       // When
       Platform.runLater(() -> addSourceView.getWebcamButton().fire());
