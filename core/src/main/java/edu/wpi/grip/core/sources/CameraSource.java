@@ -409,9 +409,8 @@ public class CameraSource extends Source implements RestartableService {
       if (new URL(addressProperty).getPath().length() <= 1) {
         addressProperty += DEFAULT_IP_CAMERA_PATH;
       }
-      return new IPCameraFrameGrabber(
+      return new CSCameraFrameGrabber(
           addressProperty,
-          14,
           IP_CAMERA_READ_TIMEOUT,
           IP_CAMERA_TIMEOUT_UNIT);
     }
