@@ -60,8 +60,8 @@ public class CameraSource extends Source implements RestartableService {
    * Reading from an existing connection shouldn't take that long. If it does we should really give
    * up and try to reconnect.
    */
-  private static final int IP_CAMERA_READ_TIMEOUT = 5;
-  private static final TimeUnit IP_CAMERA_TIMEOUT_UNIT = TimeUnit.SECONDS;
+  private static final int CAMERA_READ_TIMEOUT = 5;
+  private static final TimeUnit CAMERA_TIMEOUT_UNIT = TimeUnit.SECONDS;
 
   private static final String DEVICE_NUMBER_PROPERTY = "deviceNumber";
   private static final String ADDRESS_PROPERTY = "address";
@@ -391,11 +391,13 @@ public class CameraSource extends Source implements RestartableService {
 
     @Override
     public FrameGrabber create(int deviceNumber) {
-      // On Windows, videoInput is much more reliable for webcam capture.  On other platforms,
-      // OpenCV's frame
-      // grabber class works fine.
-      if (StandardSystemProperty.OS_NAME.value().contains("Windows")) {
-        return new VideoInputFrameGrabber(deviceNumber);
+      // On Windows and Linux, use CS Core USB Cameras.
+      // Mac support does not exist, so must use OpenCV's Grabber
+      if (StandardSystemProperty.OS_NAME.value().contains("Windows")
+          || StandardSystemProperty.OS_NAME.value().contains("Linux")) {
+        return new CSUsbCameraFrameGrabber(deviceNumber,
+            CAMERA_READ_TIMEOUT,
+            CAMERA_TIMEOUT_UNIT);
       } else {
         return new OpenCVFrameGrabber(deviceNumber);
       }
@@ -409,10 +411,10 @@ public class CameraSource extends Source implements RestartableService {
       if (new URL(addressProperty).getPath().length() <= 1) {
         addressProperty += DEFAULT_IP_CAMERA_PATH;
       }
-      return new CSCameraFrameGrabber(
+      return new CSHttpCameraFrameGrabber(
           addressProperty,
-          IP_CAMERA_READ_TIMEOUT,
-          IP_CAMERA_TIMEOUT_UNIT);
+          CAMERA_READ_TIMEOUT,
+          CAMERA_TIMEOUT_UNIT);
     }
   }
 }
