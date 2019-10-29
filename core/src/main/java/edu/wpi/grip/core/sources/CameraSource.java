@@ -26,7 +26,6 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
 import org.bytedeco.javacpp.opencv_core.Mat;
 import org.bytedeco.javacv.FrameGrabber;
 import org.bytedeco.javacv.OpenCVFrameGrabber;
-import org.bytedeco.javacv.VideoInputFrameGrabber;
 
 import java.io.IOException;
 import java.net.MalformedURLException;

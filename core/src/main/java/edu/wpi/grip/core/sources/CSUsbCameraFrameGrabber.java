@@ -12,8 +12,6 @@ import org.bytedeco.javacv.OpenCVFrameConverter;
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-
 // This is here because FrameGrabber has an exception called Exception which triggers PMD
 @SuppressWarnings({"PMD.AvoidThrowingRawExceptionTypes", "all"})
 public class CSUsbCameraFrameGrabber extends FrameGrabber {
