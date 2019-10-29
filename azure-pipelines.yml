@@ -22,17 +22,17 @@ jobs:
       - script: |
           $ProgressPreference = 'SilentlyContinue'
           mkdir build
-          wget "https://download.java.net/java/early_access/jpackage/30/openjdk-13-jpackage+30_linux-x64_bin.tar.gz" -O "build/jdk-13.tar.gz"
+          wget "https://download.java.net/java/early_access/jpackage/1/openjdk-14-jpackage+1-49_linux-x64_bin.tar.gz" -O "build/jdk-14.tar.gz"
           sudo mkdir /opt/java
-          sudo tar -xzvf build/jdk-13.tar.gz -C /opt/java
-        displayName: 'Download JDK 13'
+          sudo tar -xzvf build/jdk-14.tar.gz -C /opt/java
+        displayName: 'Download JDK 14'
       - task: Gradle@2
         inputs:
           workingDirectory: ''
           gradleWrapperFile: 'gradlew'
           gradleOptions: '-Xmx3072m'
           publishJUnitResults: false
-          tasks: 'check :ui:jpackage -Pgeneration -PjniLocation=build/OpenCVJNI -Pheadless=true -PlogTests -Pjdk13=/opt/java/jdk-13 --stacktrace'
+          tasks: 'check :ui:jpackage -Pgeneration -PjniLocation=build/OpenCVJNI -Pheadless=true -PlogTests -Pjdk14=/opt/java/jdk-14 --stacktrace'
       - task: CopyFiles@2
         inputs:
           contents: 'ui/build/installer/GRIP-*.deb'
@@ -51,7 +51,7 @@ jobs:
           gradleWrapperFile: 'gradlew'
           gradleOptions: '-Xmx3072m'
           publishJUnitResults: false
-          tasks: ':ui:jpackage -Pcuda -Pjdk13=/opt/java/jdk-13 --stacktrace'
+          tasks: ':ui:jpackage -Pcuda -Pjdk14=/opt/java/jdk-14 --stacktrace'
       - task: CopyFiles@2
         inputs:
           contents: 'ui/build/installer/GRIP-*.deb'
@@ -76,9 +76,9 @@ jobs:
         displayName: 'Download JDK'
       - powershell: |
           $ProgressPreference = 'SilentlyContinue'
-          wget "https://download.java.net/java/early_access/jpackage/30/openjdk-13-jpackage+30_windows-x64_bin.zip" -O "build\jdk-13.zip"
-          Expand-Archive build\jdk-13.zip -DestinationPath build
-        displayName: 'Download JDK 13'
+          wget "https://download.java.net/java/early_access/jpackage/1/openjdk-14-jpackage+1-49_windows-x64_bin.zip" -O "build\jdk-14.zip"
+          Expand-Archive build\jdk-14.zip -DestinationPath build
+        displayName: 'Download JDK 14'
       - task: JavaToolInstaller@0
         inputs:
           jdkSourceOption: localDirectory
@@ -93,7 +93,7 @@ jobs:
           jdkVersionOption: '1.11'
           jdkArchitectureOption: 'x64'
           publishJUnitResults: true
-          tasks: 'check :ui:jpackage -Pheadless=true -Pgeneration -PlogTests -Pjdk13=..\build\jdk-13 --stacktrace'
+          tasks: 'check :ui:jpackage -Pheadless=true -Pgeneration -PlogTests -PskipUITests -Pjdk14=..\build\jdk-14 --stacktrace'
       - task: CopyFiles@2
         inputs:
           contents: 'ui\build\installer\GRIP-*.exe'
@@ -105,7 +105,7 @@ jobs:
           gradleWrapperFile: 'gradlew'
           gradleOptions: '-Xmx3072m'
           publishJUnitResults: false
-          tasks: ':ui:jpackage -Pcuda -Pjdk13=..\build\jdk-13 --stacktrace'
+          tasks: ':ui:jpackage -Pcuda -PskipUITests -Pjdk14=..\build\jdk-14 --stacktrace'
       - task: CopyFiles@2
         inputs:
           contents: 'ui\build\installer\GRIP-*.exe'
@@ -126,8 +126,13 @@ jobs:
       - powershell: |
           mkdir build
           $ProgressPreference = 'SilentlyContinue'
-          wget "https://github.com/wpilibsuite/frc-openjdk-windows/releases/download/v11.0.0u28-1/jdk-x86-11.0.0u28-1.zip" -O "build\jdk.zip"
+          wget "https://github.com/AdoptOpenJDK/openjdk11-binaries/releases/download/jdk-11.0.4%2B11/OpenJDK11U-jdk_x86-32_windows_hotspot_11.0.4_11.zip" -O "build\jdk.zip"
         displayName: 'Download JDK'
+      - powershell: |
+          $ProgressPreference = 'SilentlyContinue'
+          wget "https://download.java.net/java/early_access/jpackage/1/openjdk-14-jpackage+1-49_windows-x64_bin.zip" -O "build\jdk-14.zip"
+          Expand-Archive build\jdk-14.zip -DestinationPath build
+        displayName: 'Download JDK 14'
       - task: JavaToolInstaller@0
         inputs:
           jdkSourceOption: localDirectory
@@ -141,7 +146,15 @@ jobs:
           gradleOptions: '-Xmx1024m'
           publishJUnitResults: false
           # TODO: run :ui:jpackage once we have a JDK 13 build for 32-bit Windows
-          tasks: 'check -Pheadless=true -Pgeneration -PlogTests --stacktrace'
+          tasks: 'check :ui:jpackage -Pheadless=true -Pgeneration -PlogTests -PskipUITests -Pjdk14=..\build\jdk-14 --stacktrace'
+      # bytedeco does not have a 32 bit enabled CUDA build
+      # - task: Gradle@2
+      #   inputs:
+      #     workingDirectory: ''
+      #     gradleWrapperFile: 'gradlew'
+      #     gradleOptions: '-Xmx1024m'
+      #     publishJUnitResults: false
+      #     tasks: ':ui:jpackage -Pcuda -PskipUITests -Pjdk14=..\build\jdk-14 --stacktrace'
 
       - task: CopyFiles@2
         inputs:
@@ -160,8 +173,8 @@ jobs:
       - script: |
           mkdir build
           wget "https://download.java.net/java/ga/jdk11/openjdk-11_osx-x64_bin.tar.gz" -O "build/jdk.tar.gz"
-          wget "https://download.java.net/java/early_access/jpackage/30/openjdk-13-jpackage+30_osx-x64_bin.tar.gz" -O "build/jdk-13.tar.gz"
-          sudo tar xzvf build/jdk-13.tar.gz -C /Library/Java/JavaVirtualMachines/
+          wget "https://download.java.net/java/early_access/jpackage/1/openjdk-14-jpackage+1-49_osx-x64_bin.tar.gz" -O "build/jdk-14.tar.gz"
+          sudo tar xzvf build/jdk-14.tar.gz -C /Library/Java/JavaVirtualMachines/
           sudo tar xvzf build/jdk.tar.gz -C /Library/Java/JavaVirtualMachines/
           export JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk-11.jdk/Contents/Home/
         displayName: 'Setup JDK'
@@ -173,11 +186,18 @@ jobs:
           jdkVersionOption: '1.11'
           jdkArchitectureOption: 'x64'
           publishJUnitResults: false
-          tasks: 'check :ui:jpackage -Pheadless=true -Pgeneration -PlogTests -Pjdk13=/Library/Java/JavaVirtualMachines/jdk-13.jdk/Contents/Home/ --stacktrace'
+          tasks: 'check jacocoTestReport jacocoRootReport :ui:jpackage -Pheadless=true -Pgeneration -PlogTests -Pjdk14=/Library/Java/JavaVirtualMachines/jdk-14.jdk/Contents/Home/ --stacktrace'
       - task: CopyFiles@2
         inputs:
           contents: 'ui/build/installer/*'
           targetFolder: $(Build.ArtifactStagingDirectory)
+
+      - script: |
+          curl -s https://codecov.io/bash > .codecov
+          chmod +x .codecov
+          ./.codecov -t $(CODECOV_TOKEN)
+        displayName: 'Upload jacoco reports to codecov'
+
       - task: Gradle@2
         inputs:
           workingDirectory: ''
@@ -186,7 +206,7 @@ jobs:
           jdkVersionOption: '1.11'
           jdkArchitectureOption: 'x64'
           publishJUnitResults: false
-          tasks: ':ui:jpackage -Pcuda -Pjdk13=/Library/Java/JavaVirtualMachines/jdk-13.jdk/Contents/Home/ --stacktrace'
+          tasks: ':ui:jpackage -Pcuda -Pjdk14=/Library/Java/JavaVirtualMachines/jdk-14.jdk/Contents/Home/ --stacktrace'
 
       - task: CopyFiles@2
         inputs:
@@ -196,27 +216,3 @@ jobs:
       - task: PublishBuildArtifacts@1
         inputs:
           artifactName: 'MacInstaller'
-
-  # JDK 8 agent for UI tests
-  - job: Mac_UI_Testing
-    pool:
-      vmImage: 'xcode9-macos10.13'
-
-    steps:
-      - script: |
-          mkdir build
-          wget "https://cdn.azul.com/zulu/bin/zulu8.38.0.13-ca-fx-jdk8.0.212-macosx_x64.tar.gz" -O "build/jdk.tar.gz"
-          sudo tar xzvf build/jdk.tar.gz -C /Library/Java/JavaVirtualMachines/
-        displayName: 'Install ZuluFX'
-      - task: Gradle@2
-        inputs:
-          workingDirectory: ''
-          gradleWrapperFile: 'gradlew'
-          gradleOptions: '-Xmx3072m -Dorg.gradle.java.home=/Library/Java/JavaVirtualMachines/zulu8.38.0.13-ca-fx-jdk8.0.212-macosx_x64'
-          publishJUnitResults: false
-          tasks: 'check jacocoTestReport jacocoRootReport -Pheadless=true -Pgeneration -PlogTests --stacktrace'
-      - script: |
-          curl -s https://codecov.io/bash > .codecov
-          chmod +x .codecov
-          ./.codecov -t $(CODECOV_TOKEN)
-        displayName: 'Upload jacoco reports to codecov'

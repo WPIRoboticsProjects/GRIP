@@ -169,7 +169,7 @@ public class CameraSourceTest {
 
   @Test
   public void testEnsureThatGrabberIsReinitializedWhenStartThrowsException() throws IOException,
-      TimeoutException {
+      TimeoutException, InterruptedException {
     final String message = "This is expected to fail this way";
     Waiter waiter1 = new Waiter();
     Waiter waiter2 = new Waiter();

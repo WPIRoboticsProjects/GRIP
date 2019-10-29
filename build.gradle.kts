@@ -9,22 +9,22 @@ buildscript {
     }
     dependencies {
         classpath(group = "edu.wpi.first.wpilib.opencv", name = "opencv-installer", version = "2.0.1")
-        classpath("com.netflix.nebula:gradle-aggregate-javadocs-plugin:2.2.+")
+        classpath("com.netflix.nebula:gradle-aggregate-javadocs-plugin:3.0.1")
 
     }
 }
 
 plugins {
-    `java`
-    `jacoco`
-    `checkstyle`
-    `pmd`
-    id("com.github.johnrengelman.shadow") version "4.0.1"
-    id("com.google.osdetector") version "1.4.0"
-    id("org.ajoberstar.grgit") version "2.0.0" apply false
+    java
+    jacoco
+    checkstyle
+    pmd
+    id("com.github.johnrengelman.shadow") version "5.1.0"
+    id("com.google.osdetector") version "1.6.2"
+    id("org.ajoberstar.grgit") version "3.1.1" apply false
     //id("net.ltgt.errorprone") version "0.0.16"
-    id("com.github.spotbugs") version "1.7.1"
-    id("com.gradle.build-scan") version "2.1"
+    id("com.github.spotbugs") version "2.0.0"
+    id("com.gradle.build-scan") version "2.4.2"
 }
 
 apply {
@@ -32,8 +32,8 @@ apply {
 }
 
 buildScan {
-    setTermsOfServiceUrl("https://gradle.com/terms-of-service")
-    setTermsOfServiceAgree("yes")
+    termsOfServiceUrl = "https://gradle.com/terms-of-service"
+    termsOfServiceAgree = "yes"
 }
 
 repositories {
@@ -42,7 +42,7 @@ repositories {
 }
 
 tasks.withType<Wrapper>().configureEach {
-    gradleVersion = "5.0"
+    gradleVersion = "5.6.3"
     distributionType = Wrapper.DistributionType.ALL
 }
 
@@ -66,7 +66,7 @@ javaSubprojects {
         jcenter()
         maven {
             name = "WPILib Maven Release"
-            setUrl("https://first.wpi.edu/FRC/roborio/maven/release")
+            setUrl("https://frcmaven.wpi.edu/artifactory/release")
         }
         maven {
             name = "rosjava Maven"
@@ -84,11 +84,11 @@ javaSubprojects {
         "compile"(group = "javax.annotation", name = "javax.annotation-api", version = "1.3.2")
         "annotationProcessor"(group = "javax.annotation", name = "javax.annotation-api", version = "1.3.2")
         "compile"(group = "com.google.code.findbugs", name = "annotations", version = "3.0.1")
-        "testCompile"(group = "net.jodah", name = "concurrentunit", version = "0.4.2")
+        "testCompile"(group = "net.jodah", name = "concurrentunit", version = "0.4.6")
         "testCompile"(group = "org.hamcrest", name = "hamcrest-all", version = "1.3")
         "testCompile"(group = "junit", name = "junit", version = "4.12")
-        "testCompile"(group = "com.google.truth", name = "truth", version = "0.34")
-        "testCompile"(group = "com.google.guava", name = "guava-testlib", version = "22.0")
+        "testCompile"(group = "com.google.truth", name = "truth", version = "1.0")
+        "testCompile"(group = "com.google.guava", name = "guava-testlib", version = "28.1-jre")
     }
 
     checkstyle {

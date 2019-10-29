@@ -16,7 +16,7 @@ import java.io.FileFilter
  * Because JDK 13 has not yet been released, and because `jpackage` is not yet included in the
  * early-access builds, a compatible JDK must be downloaded from
  * [https://jdk.java.net/jpackage/](https://jdk.java.net/jpackage/). The location of the JDK must be
- * specified with [jdkHome] (eg `/opt/java/jdk-13/`)
+ * specified with [jdkHome] (eg `/opt/java/jdk-14/`)
  *
  */
 open class JpackageExec : DefaultTask() {
@@ -147,13 +147,6 @@ open class JpackageExec : DefaultTask() {
     val applicationVendor = stringProperty()
 
     /**
-     * A machine-readable identifier string in reverse-DNS format (e.g. "edu.wpi.grip").
-     */
-    @get:Input
-    @get:Optional
-    val identifier = stringProperty()
-
-    /**
      * A properties file containing key-value pairs for file association integration.
      * Currently broken on Linux and Mac.
      */
@@ -174,13 +167,6 @@ open class JpackageExec : DefaultTask() {
     @get:Input
     @get:Optional
     val winUpgradeUuid = stringProperty()
-
-    /**
-     * Windows-specific. The name to use for the application in its Windows registry entries.
-     */
-    @get:Input
-    @get:Optional
-    val winRegistryName = stringProperty()
 
     /**
      * Windows-specific. Allows the application to be installed in the Windows start menu.
@@ -208,7 +194,7 @@ open class JpackageExec : DefaultTask() {
         project.exec {
             val args = mutableListOf<String>()
             args.add(jdkHome.file("bin/jpackage").get().asFile.absolutePath)
-            args.add("create-installer")
+            //args.add("create-installer")
 
             runtimeImage.ifPresent { dir ->
                 args.addAll("--runtime-image", dir.asFile.absolutePath)
@@ -217,18 +203,18 @@ open class JpackageExec : DefaultTask() {
                 args.add("--verbose")
             }
             jvmArgs.ifPresent { jvmArgs ->
-                args.add("--jvm-args")
+                args.add("--java-options")
                 args.add(jvmArgs.joinToString(separator = " ", prefix = "\"", postfix = "\""))
             }
             args.addAll("--input", inputDir.get().asFile.absolutePath)
             resourceDir.ifPresent { dir ->
                 args.addAll("--resource-dir", dir.asFile.absolutePath)
             }
-            args.addAll("--output", outputDir.get().asFile.absolutePath)
+            args.addAll("--dest", outputDir.get().asFile.absolutePath)
             icon.ifPresent { iconFile ->
                 args.addAll("--icon", iconFile.toString())
             }
-            args.addAll("--main-jar", mainJar.get().asFile.absolutePath)
+            args.addAll("--main-jar", mainJar.get().asFile.name)
             args.addAll("--main-class", mainClassName.get())
 
             args.addAll("--name", applicationName.get())
@@ -245,21 +231,15 @@ open class JpackageExec : DefaultTask() {
             applicationVendor.ifPresent { vendor ->
                 args.addAll("--vendor", vendor)
             }
-            identifier.ifPresent { id ->
-                args.addAll("--identifier", id)
-            }
             fileAssociations.ifPresent { propsFile ->
                 args.addAll("--file-associations", propsFile.asFile.absolutePath)
             }
-            args.addAll("--installer-type", installerType.get())
+            args.addAll("--package-type", installerType.get())
 
             when (OperatingSystem.current()) {
                 OperatingSystem.WINDOWS -> {
                     winUpgradeUuid.ifPresent { uuid ->
                         args.addAll("--win-upgrade-uuid", uuid)
-                    }
-                    winRegistryName.ifPresent { name ->
-                        args.addAll("--win-registry-name", name)
                     }
                     if (addToWindowsMenu.getOrElse(false)) {
                         args.add("--win-menu")
@@ -270,7 +250,7 @@ open class JpackageExec : DefaultTask() {
                 }
                 OperatingSystem.MAC_OS -> {
                     macBundleIdentifier.ifPresent { id ->
-                        args.addAll("--mac-bundle-identifier", id)
+                        args.addAll("--mac-package-identifier", id)
                     }
                 }
                 OperatingSystem.LINUX -> {

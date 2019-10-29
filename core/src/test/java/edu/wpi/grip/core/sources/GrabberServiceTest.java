@@ -48,7 +48,8 @@ public class GrabberServiceTest {
       grabberService.startUp();
       fail("This should have thrown an exception");
     } catch (IllegalStateException e) {
-      assertThat(e).hasMessage(ConstructorThrowingFrameGrabber.CONSTRUCTOR_EXCEPTION_MESSAGE);
+      assertThat(e).hasMessageThat()
+                   .contains(ConstructorThrowingFrameGrabber.CONSTRUCTOR_EXCEPTION_MESSAGE);
       throw e;
     }
     fail("This should have rethrown an exception");
@@ -69,7 +70,7 @@ public class GrabberServiceTest {
       grabberService.startUp();
       fail("Should have thrown an exception when starting");
     } catch (GrabberService.GrabberServiceException e) {
-      assertThat(e.getCause()).hasMessage(exceptionMessage);
+      assertThat(e.getCause()).hasMessageThat().contains(exceptionMessage);
       throw e;
     }
     fail("Should have rethrown the exception in the catch block");
@@ -97,7 +98,7 @@ public class GrabberServiceTest {
 
       fail("Should have thrown an exception when running one grab");
     } catch (GrabberService.GrabberServiceException e) {
-      assertThat(e.getCause()).hasMessage(exceptionMessage);
+      assertThat(e.getCause()).hasMessageThat().contains(exceptionMessage);
       throw e;
     }
     fail("Should have rethrown an exception in the catch block");
@@ -193,7 +194,7 @@ public class GrabberServiceTest {
     } catch (GrabberService.GrabberServiceException e) {
       assertTrue("updatesComplete was not called", updateWasCalled[0]);
       assertThat(e.getCause()).isNotNull();
-      assertThat(e.getCause()).hasMessage(message);
+      assertThat(e.getCause()).hasMessageThat().contains(message);
       assertThat(e.getCause()).isInstanceOf(FrameGrabber.Exception.class);
     }
   }
