@@ -90,7 +90,6 @@ jobs:
           workingDirectory: ''
           gradleWrapperFile: 'gradlew'
           gradleOptions: '-Xmx3072m'
-          jdkVersionOption: '1.11'
           jdkArchitectureOption: 'x64'
           publishJUnitResults: true
           tasks: 'check :ui:jpackage -Pheadless=true -Pgeneration -PlogTests -PskipUITests -Pjdk14=..\build\jdk-14 --stacktrace'
