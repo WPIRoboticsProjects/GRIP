@@ -35,10 +35,6 @@ stages:
             gradleOptions: '-Xmx3072m'
             publishJUnitResults: false
             tasks: 'check :ui:jpackage -Pgeneration -PjniLocation=build/OpenCVJNI -Pheadless=true -PlogTests -Pjdk14=/opt/java/jdk-14 --stacktrace'
-        - task: CopyFiles@2
-          inputs:
-            contents: 'ui/build/installer/GRIP-*.deb'
-            targetFolder: $(Build.ArtifactStagingDirectory)
         - script: |
             export GH_TOKEN=$(GH_TOKEN)
             .azure-scripts/push-javadoc-to-gh-pages.sh
@@ -46,7 +42,6 @@ stages:
           condition: |
             and(not(eq(variables['Build.Reason'], 'PullRequest')),
                 eq(variables['Build.SourceBranch'], 'refs/heads/master'))
-
         - task: Gradle@2
           inputs:
             workingDirectory: ''
@@ -54,13 +49,9 @@ stages:
             gradleOptions: '-Xmx3072m'
             publishJUnitResults: false
             tasks: ':ui:jpackage -Pcuda -Pjdk14=/opt/java/jdk-14 --stacktrace'
-        - task: CopyFiles@2
+        - task: PublishPipelineArtifact@1
           inputs:
-            contents: 'ui/build/installer/GRIP-*.deb'
-            targetFolder: $(Build.ArtifactStagingDirectory)
-
-        - task: PublishBuildArtifacts@1
-          inputs:
+            targetPath: 'ui/build/installer'
             artifactName: 'LinuxInstaller'
 
     - job: Windows_64_Bit
@@ -95,11 +86,6 @@ stages:
             jdkArchitectureOption: 'x64'
             publishJUnitResults: true
             tasks: 'check :ui:jpackage -Pheadless=true -Pgeneration -PlogTests -PskipUITests -Pjdk14=..\build\jdk-14 --stacktrace'
-        - task: CopyFiles@2
-          inputs:
-            contents: 'ui\build\installer\GRIP-*.exe'
-            targetFolder: $(Build.ArtifactStagingDirectory)
-
         - task: Gradle@2
           inputs:
             workingDirectory: ''
@@ -107,13 +93,9 @@ stages:
             gradleOptions: '-Xmx3072m'
             publishJUnitResults: false
             tasks: ':ui:jpackage -Pcuda -PskipUITests -Pjdk14=..\build\jdk-14 --stacktrace'
-        - task: CopyFiles@2
+        - task: PublishPipelineArtifact@1
           inputs:
-            contents: 'ui\build\installer\GRIP-*.exe'
-            targetFolder: $(Build.ArtifactStagingDirectory)
-
-        - task: PublishBuildArtifacts@1
-          inputs:
+            targetPath: 'ui/build/installer'
             artifactName: 'Win64Installer'
 
     - job: Windows_32_Bit
@@ -157,13 +139,9 @@ stages:
         #     publishJUnitResults: false
         #     tasks: ':ui:jpackage -Pcuda -PskipUITests -Pjdk14=..\build\jdk-14 --stacktrace'
 
-        - task: CopyFiles@2
+        - task: PublishPipelineArtifact@1
           inputs:
-            contents: 'ui\build\installer\GRIP-*.exe'
-            targetFolder: $(Build.ArtifactStagingDirectory)
-
-        - task: PublishBuildArtifacts@1
-          inputs:
+            targetPath: 'ui/build/installer'
             artifactName: 'Win32Installer'
 
     - job: Mac
@@ -188,10 +166,6 @@ stages:
             jdkArchitectureOption: 'x64'
             publishJUnitResults: false
             tasks: 'check jacocoTestReport jacocoRootReport :ui:jpackage -Pheadless=true -Pgeneration -PlogTests -Pjdk14=/Library/Java/JavaVirtualMachines/jdk-14.jdk/Contents/Home/ --stacktrace'
-        - task: CopyFiles@2
-          inputs:
-            contents: 'ui/build/installer/*'
-            targetFolder: $(Build.ArtifactStagingDirectory)
 
         - script: |
             curl -s https://codecov.io/bash > .codecov
@@ -209,13 +183,9 @@ stages:
             publishJUnitResults: false
             tasks: ':ui:jpackage -Pcuda -Pjdk14=/Library/Java/JavaVirtualMachines/jdk-14.jdk/Contents/Home/ --stacktrace'
 
-        - task: CopyFiles@2
+        - task: PublishPipelineArtifact@1
           inputs:
-            contents: 'ui/build/installer/*'
-            targetFolder: $(Build.ArtifactStagingDirectory)
-
-        - task: PublishBuildArtifacts@1
-          inputs:
+            targetPath: 'ui/build/installer'
             artifactName: 'MacInstaller'
 
 - stage: Publish
