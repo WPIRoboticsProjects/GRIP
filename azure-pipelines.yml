@@ -235,7 +235,7 @@ stages:
         - task: GitHubRelease@0
           displayName: Create GitHub Release
           inputs:
-            gitHubConnection: WPIRoboticsProjects
+            gitHubConnection: 'GRIP GitHub Connection'
             repositoryName: $(Build.Repository.Name)
             action: edit
             target: $(Build.SourceVersion)
