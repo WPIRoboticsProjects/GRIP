@@ -56,7 +56,7 @@ stages:
         - task: PublishPipelineArtifact@1
           inputs:
             targetPath: 'ui/build/installer'
-            artifactName: 'LinuxInstaller'
+            artifactName: 'LinuxInstaller-cuda'
 
     - job: Windows_64_Bit
       pool:
@@ -104,7 +104,7 @@ stages:
         - task: PublishPipelineArtifact@1
           inputs:
             targetPath: 'ui/build/installer'
-            artifactName: 'Win64Installer'
+            artifactName: 'Win64Installer-cuda'
 
     - job: Windows_32_Bit
       pool:
@@ -198,7 +198,7 @@ stages:
         - task: PublishPipelineArtifact@1
           inputs:
             targetPath: 'ui/build/installer'
-            artifactName: 'MacInstaller'
+            artifactName: 'MacInstaller-cuda'
 
 - stage: Publish
   jobs:
