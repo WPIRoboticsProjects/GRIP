@@ -185,21 +185,6 @@ stages:
             ./.codecov -t $(CODECOV_TOKEN)
           displayName: 'Upload jacoco reports to codecov'
 
-        - task: Gradle@2
-          inputs:
-            workingDirectory: ''
-            gradleWrapperFile: 'gradlew'
-            gradleOptions: '-Xmx3072m'
-            jdkVersionOption: '1.11'
-            jdkArchitectureOption: 'x64'
-            publishJUnitResults: false
-            tasks: ':ui:jpackage -Pcuda -Pjdk14=/Library/Java/JavaVirtualMachines/jdk-14.jdk/Contents/Home/ --stacktrace'
-
-        - task: PublishPipelineArtifact@1
-          inputs:
-            targetPath: 'ui/build/installer'
-            artifactName: 'MacInstaller-cuda'
-
 - stage: Publish
   jobs:
     - job: UploadGitHubRelease
