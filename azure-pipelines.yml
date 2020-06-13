@@ -234,13 +234,13 @@ stages:
 
         - task: GitHubRelease@0
           displayName: Create GitHub release
-            inputs:
-              gitHubConnection: WPIRoboticsProjects
-              repositoryName: $(Build.Repository.Name)
-              action: edit
-              target: $(Build.SourceVersion)
-              tagSource: auto
-              tag: $(Build.SourceBranchName)
-              assetUploadMode: 'replace'
-              isDraft: true
-              addChangeLog: true
+          inputs:
+            gitHubConnection: WPIRoboticsProjects
+            repositoryName: $(Build.Repository.Name)
+            action: edit
+            target: $(Build.SourceVersion)
+            tagSource: auto
+            tag: $(Build.SourceBranchName)
+            assetUploadMode: 'replace'
+            isDraft: true
+            addChangeLog: true
