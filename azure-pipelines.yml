@@ -233,7 +233,7 @@ stages:
             path: $(Build.ArtifactStagingDirectory)
 
         - task: GitHubRelease@0
-            displayName: Create GitHub release
+          displayName: Create GitHub release
             inputs:
               gitHubConnection: WPIRoboticsProjects
               repositoryName: $(Build.Repository.Name)
