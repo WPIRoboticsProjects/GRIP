@@ -185,29 +185,29 @@ stages:
             ./.codecov -t $(CODECOV_TOKEN)
           displayName: 'Upload jacoco reports to codecov'
 
-- stage: Publish
-  jobs:
-    - job: UploadGitHubRelease
+- ${{ if startsWith(variables['Build.SourceBranch'], 'refs/tags/v') }}:
+  - stage: Publish
+    jobs:
+      - job: UploadGitHubRelease
 
-      pool:
-        vmImage: 'Ubuntu 16.04'
+        pool:
+          vmImage: 'Ubuntu 16.04'
 
-      condition: startsWith(variables['Build.SourceBranch'], 'refs/tags/v')
-      steps:
-        - task: DownloadPipelineArtifact@2
-          displayName: Download artifacts
-          inputs:
-            path: $(Build.ArtifactStagingDirectory)
+        steps:
+          - task: DownloadPipelineArtifact@2
+            displayName: Download artifacts
+            inputs:
+              path: $(Build.ArtifactStagingDirectory)
 
-        - task: GitHubRelease@0
-          displayName: Create GitHub Release
-          inputs:
-            gitHubConnection: 'GRIP GitHub Connection'
-            repositoryName: $(Build.Repository.Name)
-            action: edit
-            target: $(Build.SourceVersion)
-            tagSource: auto
-            tag: $(Build.SourceBranchName)
-            assetUploadMode: 'replace'
-            isDraft: true
-            addChangeLog: true
+          - task: GitHubRelease@0
+            displayName: Create GitHub Release
+            inputs:
+              gitHubConnection: 'GRIP GitHub Connection'
+              repositoryName: $(Build.Repository.Name)
+              action: edit
+              target: $(Build.SourceVersion)
+              tagSource: auto
+              tag: $(Build.SourceBranchName)
+              assetUploadMode: 'replace'
+              isDraft: true
+              addChangeLog: true
