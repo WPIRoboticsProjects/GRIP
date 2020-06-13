@@ -8,210 +8,239 @@ trigger:
 
 resources:
   containers:
-    - container: wpilib2019
-      image: wpilib/roborio-cross-ubuntu:2019-18.04
+    - container: wpilib2020
+      image: wpilib/roborio-cross-ubuntu:2020-18.04
 
-jobs:
-  - job: Linux
-    pool:
-      vmImage: 'Ubuntu 16.04'
+stages:
+- stage: Build
+  jobs:
+    - job: Linux
+      pool:
+        vmImage: 'Ubuntu 16.04'
 
-    container: wpilib2019
+      container: wpilib2020
 
-    steps:
-      - script: |
-          $ProgressPreference = 'SilentlyContinue'
-          mkdir build
-          wget "https://first.wpi.edu/FRC/roborio/jpackage/openjdk-14-ea+28_linux-x64_bin.tar.gz" -O "build/jdk-14.tar.gz"
-          sudo mkdir /opt/java
-          sudo tar -xzvf build/jdk-14.tar.gz -C /opt/java
-        displayName: 'Download JDK 14'
-      - task: Gradle@2
-        inputs:
-          workingDirectory: ''
-          gradleWrapperFile: 'gradlew'
-          gradleOptions: '-Xmx3072m'
-          publishJUnitResults: false
-          tasks: 'check :ui:jpackage -Pgeneration -PjniLocation=build/OpenCVJNI -Pheadless=true -PlogTests -Pjdk14=/opt/java/jdk-14 --stacktrace'
-      - task: CopyFiles@2
-        inputs:
-          contents: 'ui/build/installer/GRIP-*.deb'
-          targetFolder: $(Build.ArtifactStagingDirectory)
-      - script: |
-          export GH_TOKEN=$(GH_TOKEN)
-          .azure-scripts/push-javadoc-to-gh-pages.sh
-        displayName: 'Publish Javadocs'
-        condition: |
-          and(not(eq(variables['Build.Reason'], 'PullRequest')),
-              eq(variables['Build.SourceBranch'], 'refs/heads/master'))
+      steps:
+        - script: |
+            $ProgressPreference = 'SilentlyContinue'
+            mkdir build
+            wget "https://first.wpi.edu/FRC/roborio/jpackage/openjdk-14-ea+28_linux-x64_bin.tar.gz" -O "build/jdk-14.tar.gz"
+            sudo mkdir /opt/java
+            sudo tar -xzvf build/jdk-14.tar.gz -C /opt/java
+          displayName: 'Download JDK 14'
+        - task: Gradle@2
+          inputs:
+            workingDirectory: ''
+            gradleWrapperFile: 'gradlew'
+            gradleOptions: '-Xmx3072m'
+            publishJUnitResults: false
+            tasks: 'check :ui:jpackage -Pgeneration -PjniLocation=build/OpenCVJNI -Pheadless=true -PlogTests -Pjdk14=/opt/java/jdk-14 --stacktrace'
+        - task: CopyFiles@2
+          inputs:
+            contents: 'ui/build/installer/GRIP-*.deb'
+            targetFolder: $(Build.ArtifactStagingDirectory)
+        - script: |
+            export GH_TOKEN=$(GH_TOKEN)
+            .azure-scripts/push-javadoc-to-gh-pages.sh
+          displayName: 'Publish Javadocs'
+          condition: |
+            and(not(eq(variables['Build.Reason'], 'PullRequest')),
+                eq(variables['Build.SourceBranch'], 'refs/heads/master'))
 
-      - task: Gradle@2
-        inputs:
-          workingDirectory: ''
-          gradleWrapperFile: 'gradlew'
-          gradleOptions: '-Xmx3072m'
-          publishJUnitResults: false
-          tasks: ':ui:jpackage -Pcuda -Pjdk14=/opt/java/jdk-14 --stacktrace'
-      - task: CopyFiles@2
-        inputs:
-          contents: 'ui/build/installer/GRIP-*.deb'
-          targetFolder: $(Build.ArtifactStagingDirectory)
+        - task: Gradle@2
+          inputs:
+            workingDirectory: ''
+            gradleWrapperFile: 'gradlew'
+            gradleOptions: '-Xmx3072m'
+            publishJUnitResults: false
+            tasks: ':ui:jpackage -Pcuda -Pjdk14=/opt/java/jdk-14 --stacktrace'
+        - task: CopyFiles@2
+          inputs:
+            contents: 'ui/build/installer/GRIP-*.deb'
+            targetFolder: $(Build.ArtifactStagingDirectory)
 
-      - task: PublishBuildArtifacts@1
-        inputs:
-          artifactName: 'LinuxInstaller'
+        - task: PublishBuildArtifacts@1
+          inputs:
+            artifactName: 'LinuxInstaller'
 
-  - job: Windows_64_Bit
-    pool:
-      vmImage: 'vs2017-win2016'
+    - job: Windows_64_Bit
+      pool:
+        vmImage: 'windows-2019'
 
-    steps:
-      - script: |
-          choco install innosetup -y
-        displayName: 'Install Inno Setup'
-      - powershell: |
-          mkdir build
-          $ProgressPreference = 'SilentlyContinue'
-          wget "https://download.java.net/java/ga/jdk11/openjdk-11_windows-x64_bin.zip" -O "build\jdk.zip"
-        displayName: 'Download JDK'
-      - powershell: |
-          $ProgressPreference = 'SilentlyContinue'
-          wget "https://first.wpi.edu/FRC/roborio/jpackage/openjdk-14-ea+28_windows-x64_bin.zip" -O "build\jdk-14.zip"
-          Expand-Archive build\jdk-14.zip -DestinationPath build
-        displayName: 'Download JDK 14'
-      - task: JavaToolInstaller@0
-        inputs:
-          jdkSourceOption: localDirectory
-          jdkFile: 'build/jdk.zip'
-          jdkDestinationDirectory: 'build/jdkinst'
-          jdkArchitectureOption: x64
-      - task: Gradle@2
-        inputs:
-          workingDirectory: ''
-          gradleWrapperFile: 'gradlew'
-          gradleOptions: '-Xmx3072m'
-          jdkArchitectureOption: 'x64'
-          publishJUnitResults: true
-          tasks: 'check :ui:jpackage -Pheadless=true -Pgeneration -PlogTests -PskipUITests -Pjdk14=..\build\jdk-14 --stacktrace'
-      - task: CopyFiles@2
-        inputs:
-          contents: 'ui\build\installer\GRIP-*.exe'
-          targetFolder: $(Build.ArtifactStagingDirectory)
+      steps:
+        - script: |
+            choco install innosetup -y
+          displayName: 'Install Inno Setup'
+        - powershell: |
+            mkdir build
+            $ProgressPreference = 'SilentlyContinue'
+            wget "https://download.java.net/java/ga/jdk11/openjdk-11_windows-x64_bin.zip" -O "build\jdk.zip"
+          displayName: 'Download JDK'
+        - powershell: |
+            $ProgressPreference = 'SilentlyContinue'
+            wget "https://first.wpi.edu/FRC/roborio/jpackage/openjdk-14-ea+28_windows-x64_bin.zip" -O "build\jdk-14.zip"
+            Expand-Archive build\jdk-14.zip -DestinationPath build
+          displayName: 'Download JDK 14'
+        - task: JavaToolInstaller@0
+          inputs:
+            jdkSourceOption: localDirectory
+            jdkFile: 'build/jdk.zip'
+            jdkDestinationDirectory: 'build/jdkinst'
+            jdkArchitectureOption: x64
+        - task: Gradle@2
+          inputs:
+            workingDirectory: ''
+            gradleWrapperFile: 'gradlew'
+            gradleOptions: '-Xmx3072m'
+            jdkArchitectureOption: 'x64'
+            publishJUnitResults: true
+            tasks: 'check :ui:jpackage -Pheadless=true -Pgeneration -PlogTests -PskipUITests -Pjdk14=..\build\jdk-14 --stacktrace'
+        - task: CopyFiles@2
+          inputs:
+            contents: 'ui\build\installer\GRIP-*.exe'
+            targetFolder: $(Build.ArtifactStagingDirectory)
 
-      - task: Gradle@2
-        inputs:
-          workingDirectory: ''
-          gradleWrapperFile: 'gradlew'
-          gradleOptions: '-Xmx3072m'
-          publishJUnitResults: false
-          tasks: ':ui:jpackage -Pcuda -PskipUITests -Pjdk14=..\build\jdk-14 --stacktrace'
-      - task: CopyFiles@2
-        inputs:
-          contents: 'ui\build\installer\GRIP-*.exe'
-          targetFolder: $(Build.ArtifactStagingDirectory)
+        - task: Gradle@2
+          inputs:
+            workingDirectory: ''
+            gradleWrapperFile: 'gradlew'
+            gradleOptions: '-Xmx3072m'
+            publishJUnitResults: false
+            tasks: ':ui:jpackage -Pcuda -PskipUITests -Pjdk14=..\build\jdk-14 --stacktrace'
+        - task: CopyFiles@2
+          inputs:
+            contents: 'ui\build\installer\GRIP-*.exe'
+            targetFolder: $(Build.ArtifactStagingDirectory)
 
-      - task: PublishBuildArtifacts@1
-        inputs:
-          artifactName: 'Win64Installer'
+        - task: PublishBuildArtifacts@1
+          inputs:
+            artifactName: 'Win64Installer'
 
-  - job: Windows_32_Bit
-    pool:
-      vmImage: 'vs2017-win2016'
+    - job: Windows_32_Bit
+      pool:
+        vmImage: 'windows-2019'
 
-    steps:
-      - script: |
-          choco install innosetup -y
-        displayName: 'Install Inno Setup'
-      - powershell: |
-          mkdir build
-          $ProgressPreference = 'SilentlyContinue'
-          wget "https://github.com/AdoptOpenJDK/openjdk11-binaries/releases/download/jdk-11.0.4%2B11/OpenJDK11U-jdk_x86-32_windows_hotspot_11.0.4_11.zip" -O "build\jdk.zip"
-        displayName: 'Download JDK'
-      - powershell: |
-          $ProgressPreference = 'SilentlyContinue'
-          wget "https://first.wpi.edu/FRC/roborio/jpackage/openjdk-14-ea+28_windows-x64_bin.zip" -O "build\jdk-14.zip"
-          Expand-Archive build\jdk-14.zip -DestinationPath build
-        displayName: 'Download JDK 14'
-      - task: JavaToolInstaller@0
-        inputs:
-          jdkSourceOption: localDirectory
-          jdkFile: 'build/jdk.zip'
-          jdkDestinationDirectory: 'build/jdkinst'
-          jdkArchitectureOption: x86
-      - task: Gradle@2
-        inputs:
-          workingDirectory: ''
-          gradleWrapperFile: 'gradlew'
-          gradleOptions: '-Xmx1024m'
-          publishJUnitResults: false
-          # TODO: run :ui:jpackage once we have a JDK 13 build for 32-bit Windows
-          tasks: 'check :ui:jpackage -Pheadless=true -Pgeneration -PlogTests -PskipUITests -Pjdk14=..\build\jdk-14 --stacktrace'
-      # bytedeco does not have a 32 bit enabled CUDA build
-      # - task: Gradle@2
-      #   inputs:
-      #     workingDirectory: ''
-      #     gradleWrapperFile: 'gradlew'
-      #     gradleOptions: '-Xmx1024m'
-      #     publishJUnitResults: false
-      #     tasks: ':ui:jpackage -Pcuda -PskipUITests -Pjdk14=..\build\jdk-14 --stacktrace'
+      steps:
+        - script: |
+            choco install innosetup -y
+          displayName: 'Install Inno Setup'
+        - powershell: |
+            mkdir build
+            $ProgressPreference = 'SilentlyContinue'
+            wget "https://github.com/AdoptOpenJDK/openjdk11-binaries/releases/download/jdk-11.0.4%2B11/OpenJDK11U-jdk_x86-32_windows_hotspot_11.0.4_11.zip" -O "build\jdk.zip"
+          displayName: 'Download JDK'
+        - powershell: |
+            $ProgressPreference = 'SilentlyContinue'
+            wget "https://first.wpi.edu/FRC/roborio/jpackage/openjdk-14-ea+28_windows-x64_bin.zip" -O "build\jdk-14.zip"
+            Expand-Archive build\jdk-14.zip -DestinationPath build
+          displayName: 'Download JDK 14'
+        - task: JavaToolInstaller@0
+          inputs:
+            jdkSourceOption: localDirectory
+            jdkFile: 'build/jdk.zip'
+            jdkDestinationDirectory: 'build/jdkinst'
+            jdkArchitectureOption: x86
+        - task: Gradle@2
+          inputs:
+            workingDirectory: ''
+            gradleWrapperFile: 'gradlew'
+            gradleOptions: '-Xmx1024m'
+            publishJUnitResults: false
+            # TODO: run :ui:jpackage once we have a JDK 13 build for 32-bit Windows
+            tasks: 'check :ui:jpackage -Pheadless=true -Pgeneration -PlogTests -PskipUITests -Pjdk14=..\build\jdk-14 --stacktrace'
+        # bytedeco does not have a 32 bit enabled CUDA build
+        # - task: Gradle@2
+        #   inputs:
+        #     workingDirectory: ''
+        #     gradleWrapperFile: 'gradlew'
+        #     gradleOptions: '-Xmx1024m'
+        #     publishJUnitResults: false
+        #     tasks: ':ui:jpackage -Pcuda -PskipUITests -Pjdk14=..\build\jdk-14 --stacktrace'
 
-      - task: CopyFiles@2
-        inputs:
-          contents: 'ui\build\installer\GRIP-*.exe'
-          targetFolder: $(Build.ArtifactStagingDirectory)
+        - task: CopyFiles@2
+          inputs:
+            contents: 'ui\build\installer\GRIP-*.exe'
+            targetFolder: $(Build.ArtifactStagingDirectory)
 
-      - task: PublishBuildArtifacts@1
-        inputs:
-          artifactName: 'Win32Installer'
+        - task: PublishBuildArtifacts@1
+          inputs:
+            artifactName: 'Win32Installer'
 
-  - job: Mac
-    pool:
-      vmImage: 'xcode9-macos10.13'
+    - job: Mac
+      pool:
+        vmImage: 'macOS-10.15'
 
-    steps:
-      - script: |
-          mkdir build
-          wget "https://download.java.net/java/ga/jdk11/openjdk-11_osx-x64_bin.tar.gz" -O "build/jdk.tar.gz"
-          wget "https://first.wpi.edu/FRC/roborio/jpackage/openjdk-14-ea+28_osx-x64_bin.tar.gz" -O "build/jdk-14.tar.gz"
-          sudo tar xzvf build/jdk-14.tar.gz -C /Library/Java/JavaVirtualMachines/
-          sudo tar xvzf build/jdk.tar.gz -C /Library/Java/JavaVirtualMachines/
-          export JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk-11.jdk/Contents/Home/
-        displayName: 'Setup JDK'
-      - task: Gradle@2
-        inputs:
-          workingDirectory: ''
-          gradleWrapperFile: 'gradlew'
-          gradleOptions: '-Xmx3072m'
-          jdkVersionOption: '1.11'
-          jdkArchitectureOption: 'x64'
-          publishJUnitResults: false
-          tasks: 'check jacocoTestReport jacocoRootReport :ui:jpackage -Pheadless=true -Pgeneration -PlogTests -Pjdk14=/Library/Java/JavaVirtualMachines/jdk-14.jdk/Contents/Home/ --stacktrace'
-      - task: CopyFiles@2
-        inputs:
-          contents: 'ui/build/installer/*'
-          targetFolder: $(Build.ArtifactStagingDirectory)
+      steps:
+        - script: |
+            mkdir build
+            wget "https://download.java.net/java/ga/jdk11/openjdk-11_osx-x64_bin.tar.gz" -O "build/jdk.tar.gz"
+            wget "https://first.wpi.edu/FRC/roborio/jpackage/openjdk-14-ea+28_osx-x64_bin.tar.gz" -O "build/jdk-14.tar.gz"
+            sudo tar xzvf build/jdk-14.tar.gz -C /Library/Java/JavaVirtualMachines/
+            sudo tar xvzf build/jdk.tar.gz -C /Library/Java/JavaVirtualMachines/
+            export JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk-11.jdk/Contents/Home/
+          displayName: 'Setup JDK'
+        - task: Gradle@2
+          inputs:
+            workingDirectory: ''
+            gradleWrapperFile: 'gradlew'
+            gradleOptions: '-Xmx3072m'
+            jdkVersionOption: '1.11'
+            jdkArchitectureOption: 'x64'
+            publishJUnitResults: false
+            tasks: 'check jacocoTestReport jacocoRootReport :ui:jpackage -Pheadless=true -Pgeneration -PlogTests -Pjdk14=/Library/Java/JavaVirtualMachines/jdk-14.jdk/Contents/Home/ --stacktrace'
+        - task: CopyFiles@2
+          inputs:
+            contents: 'ui/build/installer/*'
+            targetFolder: $(Build.ArtifactStagingDirectory)
 
-      - script: |
-          curl -s https://codecov.io/bash > .codecov
-          chmod +x .codecov
-          ./.codecov -t $(CODECOV_TOKEN)
-        displayName: 'Upload jacoco reports to codecov'
+        - script: |
+            curl -s https://codecov.io/bash > .codecov
+            chmod +x .codecov
+            ./.codecov -t $(CODECOV_TOKEN)
+          displayName: 'Upload jacoco reports to codecov'
 
-      - task: Gradle@2
-        inputs:
-          workingDirectory: ''
-          gradleWrapperFile: 'gradlew'
-          gradleOptions: '-Xmx3072m'
-          jdkVersionOption: '1.11'
-          jdkArchitectureOption: 'x64'
-          publishJUnitResults: false
-          tasks: ':ui:jpackage -Pcuda -Pjdk14=/Library/Java/JavaVirtualMachines/jdk-14.jdk/Contents/Home/ --stacktrace'
+        - task: Gradle@2
+          inputs:
+            workingDirectory: ''
+            gradleWrapperFile: 'gradlew'
+            gradleOptions: '-Xmx3072m'
+            jdkVersionOption: '1.11'
+            jdkArchitectureOption: 'x64'
+            publishJUnitResults: false
+            tasks: ':ui:jpackage -Pcuda -Pjdk14=/Library/Java/JavaVirtualMachines/jdk-14.jdk/Contents/Home/ --stacktrace'
 
-      - task: CopyFiles@2
-        inputs:
-          contents: 'ui/build/installer/*'
-          targetFolder: $(Build.ArtifactStagingDirectory)
+        - task: CopyFiles@2
+          inputs:
+            contents: 'ui/build/installer/*'
+            targetFolder: $(Build.ArtifactStagingDirectory)
 
-      - task: PublishBuildArtifacts@1
-        inputs:
-          artifactName: 'MacInstaller'
+        - task: PublishBuildArtifacts@1
+          inputs:
+            artifactName: 'MacInstaller'
+
+- stage: Publish
+  jobs:
+    - job: Upload GitHub Release
+
+      pool:
+        vmImage: 'Ubuntu 16.04'
+
+      condition: startsWith(variables['Build.SourceBranch'], 'refs/tags/v')
+      steps:
+        - task: DownloadPipelineArtifact@2
+          displayName: Download artifacts
+          inputs:
+            path: $(Build.ArtifactStagingDirectory)
+
+        - task: GitHubRelease@0
+            displayName: Create GitHub release
+            inputs:
+              gitHubConnection: WPIRoboticsProjects
+              repositoryName: $(Build.Repository.Name)
+              action: edit
+              target: $(Build.SourceVersion)
+              tagSource: auto
+              tag: $(Build.SourceBranchName)
+              assetUploadMode: 'replace'
+              isDraft: true
+              addChangeLog: true
