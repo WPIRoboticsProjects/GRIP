@@ -220,7 +220,7 @@ stages:
 
 - stage: Publish
   jobs:
-    - job: Upload GitHub Release
+    - job: UploadGitHubRelease
 
       pool:
         vmImage: 'Ubuntu 16.04'
@@ -233,7 +233,7 @@ stages:
             path: $(Build.ArtifactStagingDirectory)
 
         - task: GitHubRelease@0
-          displayName: Create GitHub release
+          displayName: Create GitHub Release
           inputs:
             gitHubConnection: WPIRoboticsProjects
             repositoryName: $(Build.Repository.Name)
