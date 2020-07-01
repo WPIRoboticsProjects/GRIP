@@ -24,7 +24,7 @@ stages:
         - script: |
             $ProgressPreference = 'SilentlyContinue'
             mkdir build
-            wget "https://first.wpi.edu/FRC/roborio/jpackage/openjdk-14-ea+28_linux-x64_bin.tar.gz" -O "build/jdk-14.tar.gz"
+            wget "https://github.com/AdoptOpenJDK/openjdk14-binaries/releases/download/jdk-14.0.1%2B7/OpenJDK14U-jdk_x64_linux_hotspot_14.0.1_7.tar.gz" -O "build/jdk-14.tar.gz"
             sudo mkdir /opt/java
             sudo tar -xzvf build/jdk-14.tar.gz -C /opt/java
           displayName: 'Download JDK 14'
@@ -69,11 +69,11 @@ stages:
         - powershell: |
             mkdir build
             $ProgressPreference = 'SilentlyContinue'
-            wget "https://download.java.net/java/ga/jdk11/openjdk-11_windows-x64_bin.zip" -O "build\jdk.zip"
+            wget "https://github.com/AdoptOpenJDK/openjdk11-binaries/releases/download/jdk-11.0.7%2B10.2/OpenJDK11U-jdk_x64_windows_hotspot_11.0.7_10.zip" -O "build\jdk.zip"
           displayName: 'Download JDK'
         - powershell: |
             $ProgressPreference = 'SilentlyContinue'
-            wget "https://first.wpi.edu/FRC/roborio/jpackage/openjdk-14-ea+28_windows-x64_bin.zip" -O "build\jdk-14.zip"
+            wget "https://github.com/AdoptOpenJDK/openjdk14-binaries/releases/download/jdk-14.0.1%2B7.1/OpenJDK14U-jdk_x64_windows_hotspot_14.0.1_7.zip" -O "build\jdk-14.zip"
             Expand-Archive build\jdk-14.zip -DestinationPath build
           displayName: 'Download JDK 14'
         - task: JavaToolInstaller@0
@@ -117,11 +117,11 @@ stages:
         - powershell: |
             mkdir build
             $ProgressPreference = 'SilentlyContinue'
-            wget "https://github.com/AdoptOpenJDK/openjdk11-binaries/releases/download/jdk-11.0.4%2B11/OpenJDK11U-jdk_x86-32_windows_hotspot_11.0.4_11.zip" -O "build\jdk.zip"
+            wget "https://github.com/AdoptOpenJDK/openjdk11-binaries/releases/download/jdk-11.0.7%2B10.2/OpenJDK11U-jdk_x86-32_windows_hotspot_11.0.7_10.zip" -O "build\jdk.zip"
           displayName: 'Download JDK'
         - powershell: |
             $ProgressPreference = 'SilentlyContinue'
-            wget "https://first.wpi.edu/FRC/roborio/jpackage/openjdk-14-ea+28_windows-x64_bin.zip" -O "build\jdk-14.zip"
+            wget "https://github.com/AdoptOpenJDK/openjdk14-binaries/releases/download/jdk-14.0.1%2B7.1/OpenJDK14U-jdk_x86-32_windows_hotspot_14.0.1_7.zip" -O "build\jdk-14.zip"
             Expand-Archive build\jdk-14.zip -DestinationPath build
           displayName: 'Download JDK 14'
         - task: JavaToolInstaller@0
@@ -159,8 +159,8 @@ stages:
       steps:
         - script: |
             mkdir build
-            wget "https://download.java.net/java/ga/jdk11/openjdk-11_osx-x64_bin.tar.gz" -O "build/jdk.tar.gz"
-            wget "https://first.wpi.edu/FRC/roborio/jpackage/openjdk-14-ea+28_osx-x64_bin.tar.gz" -O "build/jdk-14.tar.gz"
+            wget "https://github.com/AdoptOpenJDK/openjdk11-binaries/releases/download/jdk-11.0.7%2B10/OpenJDK11U-jdk_x64_mac_hotspot_11.0.7_10.tar.gz" -O "build/jdk.tar.gz"
+            wget "https://github.com/AdoptOpenJDK/openjdk14-binaries/releases/download/jdk-14.0.1%2B7/OpenJDK14U-jdk_x64_mac_hotspot_14.0.1_7.tar.gz" -O "build/jdk-14.tar.gz"
             sudo tar xzvf build/jdk-14.tar.gz -C /Library/Java/JavaVirtualMachines/
             sudo tar xvzf build/jdk.tar.gz -C /Library/Java/JavaVirtualMachines/
             export JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk-11.jdk/Contents/Home/
