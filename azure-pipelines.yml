@@ -173,7 +173,7 @@ stages:
             jdkVersionOption: '1.11'
             jdkArchitectureOption: 'x64'
             publishJUnitResults: false
-            tasks: 'check jacocoTestReport jacocoRootReport :ui:jpackage -Pheadless=true -Pgeneration -PlogTests -Pjdk14=/Library/Java/JavaVirtualMachines/jdk-14.0.1+7.jdk/Contents/Home/ --stacktrace'
+            tasks: 'check jacocoTestReport jacocoRootReport :ui:jpackage -Pheadless=true -Pgeneration -PlogTests -Pjdk14=/Library/Java/JavaVirtualMachines/jdk-14.0.1+7/Contents/Home/ --stacktrace'
         - task: PublishPipelineArtifact@1
           inputs:
             targetPath: 'ui/build/installer'
