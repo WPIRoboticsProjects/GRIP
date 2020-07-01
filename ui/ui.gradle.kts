@@ -281,7 +281,7 @@ tasks.register<JpackageExec>("jpackage") {
 
     val projectVersion = "${project.version}"
     applicationVersion.set(projectVersion.drop(1).takeWhile { it != '-' }) // 'v1.5.2-abfa51a' -> '1.5.2'
-    fullApplicationVersion.set(projectVersion)
+    fullApplicationVersion.set(projectVersion + "-" + osdetector.classifier)
     copyright.set("Copyright (c) 2015-2019 WPI")
     licenseFile.set(rootDir.resolve("LICENSE.txt"))
     applicationVendor.set("Worcester Polytechnic Institute")
