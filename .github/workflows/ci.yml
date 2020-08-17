@@ -1,0 +1,73 @@
+name: CI
+
+on: [pull_request, push]
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-latest
+            artifact-name: Linux
+            architecture: x64
+            build-options: ""
+          - os: ubuntu-latest
+            artifact-name: Linux-cuda
+            architecture: x64
+            build-options: "-Pcuda -x test"
+          - os: windows-latest
+            artifact-name: Win64
+            architecture: x64
+            build-options: "-PskipUITests"
+          - os: windows-latest
+            artifact-name: Win64-cuda
+            architecture: x64
+            build-options: "-PskipUITests -Pcuda -x test"
+          - os: windows-latest
+            artifact-name: Win32
+            architecture: x86
+            build-options: "-PskipUITests"
+          - os: macos-latest
+            artifact-name: macOS
+            architecture: x64
+            build-options: ""
+    name: "Build - ${{ matrix.artifact-name }}"
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - uses: joschi/setup-jdk@v2
+        id: setup-java-14
+        with:
+          java-version: 14
+          architecture: ${{ matrix.architecture }}
+      - uses: joschi/setup-jdk@v2
+        with:
+          java-version: 11
+          architecture: ${{ matrix.architecture }}
+      - name: Check
+        run: ./gradlew check jacocoTestReport jacocoRootReport :ui:jpackage -Pheadless=true -Pgeneration -PlogTests -Pjdk14=${{ steps.setup-java-14.outputs.path }} --stacktrace ${{ matrix.build-options }}
+      - uses: actions/upload-artifact@v2
+        with:
+          name: ${{ matrix.artifact-name }}
+          path: ui/build/installer
+      - uses: codecov/codecov-action@v1
+        name: Upload coverage to Codecov
+
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/v')
+    steps:
+      - name: Download Artifacts
+        uses: actions/download-artifact@v2
+      - name: Upload assets to release
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: "**/*"
+          tag: ${{ github.ref }}
+          overwrite: true
+          file_glob: true
