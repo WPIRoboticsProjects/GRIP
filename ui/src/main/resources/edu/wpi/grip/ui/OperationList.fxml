@@ -9,6 +9,6 @@
      closable="false">
     <ScrollPane fitToHeight="true" fitToWidth="true" hbarPolicy="NEVER" vbarPolicy="AS_NEEDED"
                 VBox.vgrow="ALWAYS">
-        <VBox fx:id="operations" />
+        <VBox fx:id="operations" styleClass="operation-list"/>
     </ScrollPane>
 </Tab>

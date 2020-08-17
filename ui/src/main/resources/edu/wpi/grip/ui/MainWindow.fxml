@@ -21,7 +21,8 @@
 <VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"
       minWidth="-Infinity" styleClass="main-window"
       fx:controller="edu.wpi.grip.ui.MainWindowController"
-      fx:id="root" xmlns:fx="http://javafx.com/fxml/1">
+      fx:id="root" xmlns:fx="http://javafx.com/fxml/1"
+      stylesheets="/edu/wpi/grip/ui/GRIP.css">
     <children>
         <MenuBar>
             <Menu text="File">
@@ -215,8 +216,5 @@
         <fx:include source="analysis/Analysis.fxml" fx:id="analysisPane" />
         <fx:include source="codegeneration/CodegenDialog.fxml" fx:id="codegenPane"/>
     </fx:define>
-    <stylesheets>
-        <URL value="@GRIP.css" />
-    </stylesheets>
 </VBox>
 

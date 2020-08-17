@@ -8,6 +8,7 @@ import org.controlsfx.control.PropertySheet;
 import org.controlsfx.property.BeanPropertyUtils;
 
 import javafx.collections.ObservableList;
+import javafx.geometry.Insets;
 import javafx.scene.Parent;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Dialog;
@@ -43,6 +44,7 @@ public class ProjectSettingsEditor extends Dialog<ButtonType> {
         new CustomPropertySheet(BeanPropertyUtils.getProperties(appSettings))
     );
     content.setSpacing(5.0);
+    content.setPadding(Insets.EMPTY);
 
     DialogPane pane = getDialogPane();
     pane.getButtonTypes().setAll(ButtonType.OK, ButtonType.CANCEL);

@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.Control?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.Group?>
@@ -10,14 +9,8 @@
 <?import javafx.scene.shape.Rectangle?>
 <StackPane fx:id="root" maxHeight="Infinity" maxWidth="Infinity" styleClass="pipeline" xmlns="http://javafx.com/javafx/8.0.40" xmlns:fx="http://javafx.com/fxml/1" fx:controller="edu.wpi.grip.ui.pipeline.PipelineController">
     <children>
-        <HBox maxWidth="1.7976931348623157E308">
-            <VBox>
-                <minWidth>
-                    <Control fx:constant="USE_PREF_SIZE" />
-                </minWidth>
-                <maxWidth>
-                    <Control fx:constant="USE_PREF_SIZE" />
-                </maxWidth>
+        <HBox maxWidth="Infinity" styleClass="bottom">
+            <VBox minWidth="-Infinity" maxWidth="-Infinity" maxHeight="Infinity" styleClass="sources-pane">
                 <Label maxWidth="Infinity" styleClass="pane-title" text="Sources" />
                 <Separator orientation="HORIZONTAL" />
                 <VBox fx:id="addSourceBox" styleClass="addSource" />

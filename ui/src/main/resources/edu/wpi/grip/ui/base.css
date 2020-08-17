@@ -1,0 +1,221 @@
+/*******************************************************************************
+ *                                                                             *
+ * Base CSS for all themes.                                                    *
+ * This sets the styles for some app-specific types that are consistent        *
+ * through all themes (like the tile highlight) or use CSS variables to make   *
+ * them easy to reskin.                                                        *
+ ******************************************************************************/
+@import "material.css";
+
+/*******************************************************************************
+ *                                                                             *
+ * Root                                                                        *
+ *                                                                             *
+ ******************************************************************************/
+.root {
+    -fx-font-family: "Roboto";
+}
+
+/*******************************************************************************
+ *                                                                             *
+ * Widget pane                                                                 *
+ *                                                                             *
+ ******************************************************************************/
+.widget-pane {
+    -fx-grid-line-color: -swatch-light-gray;
+}
+
+/*******************************************************************************
+ *                                                                             *
+ * Tab Pane                                                                    *
+ *                                                                             *
+ ******************************************************************************/
+.tab-pane {
+    -fx-border-color: white;
+    -fx-border-width: 0.025em;
+    -fx-open-tab-animation: NONE;
+    -fx-close-tab-animation: NONE;
+}
+
+.tab-header-area .tab:selected .focus-indicator {
+    -fx-border-color: transparent;
+}
+
+.tab-container {
+    /* Rotate the tab container to put the close button on the left-hand side */
+    -fx-rotate: 180;
+}
+
+.tab-container > * {
+    /* Re-rotate the contents to keep the text right-side up */
+    -fx-rotate: 180;
+}
+
+/*******************************************************************************
+ *                                                                             *
+ * Tabs                                                                        *
+ *                                                                             *
+ ******************************************************************************/
+
+.tab-header-area {
+    -fx-padding: 0;
+    -fx-background-color: white;
+}
+
+.tab {
+    -fx-background-color: white;
+    -fx-align: center;
+    -fx-padding: 4;
+    -fx-border-radius: 0;
+    -fx-background-radius: 0;
+}
+
+.tab .tab-close-button {
+    -fx-padding: 0 0 0 10px;
+}
+
+.tab:hover {
+    -fx-cursor: hand;
+}
+
+/*******************************************************************************
+ *                                                                             *
+ * Property sheet                                                              *
+ *                                                                             *
+ ******************************************************************************/
+.property-sheet .property-pane * {
+    -fx-font-size: 10pt;
+}
+
+/*******************************************************************************
+ *                                                                             *
+ * Slider, range slider                                                        *
+ *                                                                             *
+ ******************************************************************************/
+.slider .track, .range-slider .track {
+    -fx-background-color: -swatch-gray;
+    -fx-background-insets: 1.5;
+}
+
+.range-slider {
+    -fx-cursor: default;
+}
+
+.range-slider:pressed .low-thumb,
+.range-slider:pressed .high-thumb,
+.range-slider:pressed .range-bar {
+    -fx-cursor: move;
+}
+
+.range-slider .range-bar {
+    -fx-background-color: -swatch-500;
+    -fx-background-insets: 0.5;
+}
+
+.range-slider .low-thumb,
+.range-slider .high-thumb {
+    -fx-background-color: -swatch-500;
+    -fx-cursor: hand;
+}
+
+.slider {
+    -fx-cursor: default;
+}
+
+.slider .thumb {
+    -fx-cursor: hand;
+}
+
+.slider:pressed .thumb {
+    -fx-cursor: move;
+}
+
+.jfx-slider {
+    -jfx-default-thumb: -swatch-300;
+    -jfx-default-track: -swatch-gray;
+}
+
+.jfx-slider .track {
+    -fx-pref-height: 4px;
+}
+
+/*******************************************************************************
+ *                                                                             *
+ * Dialog pane                                                                 *
+ *                                                                             *
+ ******************************************************************************/
+.dialog-pane .header-panel {
+    -fx-background-color: -swatch-500;
+}
+
+.dialog-pane .header-panel .label {
+    -fx-text-fill: white;
+}
+
+/*******************************************************************************
+ *                                                                             *
+ * Settings dialogs                                                            *
+ *                                                                             *
+ ******************************************************************************/
+.settings-pane {
+    -fx-border-width: 0 0 2px 0;
+    -fx-border-color: derive(-swatch-light-gray, 12%);
+}
+
+.settings-pane > .split-pane-divider {
+    -fx-padding: 0 1 0 1;
+    -fx-background-color: -swatch-light-gray;
+    -fx-background-insets: 0;
+}
+
+.settings-pane .settings-categories {
+    -fx-background-color: transparent;
+}
+
+.settings-pane .settings-categories .tree-cell {
+    -fx-background-color: transparent;
+}
+
+.settings-pane .settings-categories:focused .tree-cell:selected {
+    -fx-background-color: -swatch-100;
+    -fx-text-fill: -fx-text-base-color;
+}
+
+.settings-pane .settings-categories .tree-cell:selected {
+    -fx-background-color: -swatch-500;
+    -fx-text-fill: -fx-text-base-color;
+}
+
+.settings-pane .settings-categories .tree-cell > .tree-disclosure-node > .arrow {
+    -fx-background-color: -fx-text-base-color;
+}
+
+/*******************************************************************************
+ *                                                                             *
+ * Segmented Button                                                            *
+ *                                                                             *
+ ******************************************************************************/
+.segmented-button {
+    -fx-border-width: 1;
+    -fx-border-color: -swatch-300;
+}
+
+.segmented-button .toggle-button {
+    -fx-effect: none;
+}
+
+.segmented-button .toggle-button:selected {
+    -fx-background-color: -swatch-500;
+}
+
+.segmented-button .toggle-button.left-pill {
+    -fx-background-radius: 4 0 0 4;
+}
+
+.segmented-button .toggle-button.right-pill {
+    -fx-background-radius: 0 4 4 0;
+}
+
+.segmented-button .toggle-button.only-button {
+    -fx-background-radius: 4 4 4 4;
+}

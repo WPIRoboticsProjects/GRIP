@@ -145,7 +145,11 @@ public class Main extends Application {
 
       stage.setTitle(MAIN_TITLE);
       stage.getIcons().add(new Image("/edu/wpi/grip/ui/icons/grip.png"));
-      stage.setScene(new Scene(root));
+      Scene scene = new Scene(root);
+      root.getStylesheets().clear();
+      scene.getStylesheets().clear();
+      root.getStylesheets().setAll("/edu/wpi/grip/ui/GRIP.css");
+      stage.setScene(scene);
       notifyPreloader(new Preloader.ProgressNotification(1.0));
       notifyPreloader(new Preloader.StateChangeNotification(
           Preloader.StateChangeNotification.Type.BEFORE_START));
@@ -167,6 +171,8 @@ public class Main extends Application {
     } catch (GripServerException e) {
       logger.log(Level.SEVERE, "The HTTP server could not be started", e);
       Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "", ButtonType.YES, ButtonType.NO);
+      alert.initOwner(root.getScene().getWindow());
+      alert.getDialogPane().getStylesheets().setAll(root.getStylesheets());
       alert.setTitle("The HTTP server could not be started");
       alert.setHeaderText("The HTTP server could not be started");
       alert.setContentText(
@@ -203,6 +209,7 @@ public class Main extends Application {
                 // Don't create more than one exception dialog at the same time
                 final ExceptionAlert exceptionAlert = new ExceptionAlert(root, throwable,
                     message, isFatal, getHostServices());
+                exceptionAlert.initOwner(root.getScene().getWindow());
                 exceptionAlert.setInitialFocus();
                 exceptionAlert.showAndWait();
               } catch (Throwable e) {

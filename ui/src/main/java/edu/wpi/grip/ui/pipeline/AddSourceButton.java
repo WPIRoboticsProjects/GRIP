@@ -84,6 +84,8 @@ public class AddSourceButton extends MenuButton {
     super("Add Source");
     this.eventBus = eventBus;
 
+    getStyleClass().add("add-source-button");
+
     addMenuItem("Image(s)",
         getClass().getResource("/edu/wpi/grip/ui/icons/add-image.png"), mouseEvent -> {
           // Show a file picker so the user can open one or more images from disk
@@ -391,6 +393,8 @@ public class AddSourceButton extends MenuButton {
 
     private SourceDialog(final Parent root, Node customField) {
       super();
+
+      initOwner(root.getScene().getWindow());
 
       setOnShowing(event -> activeDialog = Optional.of(this));
       setOnHidden(event -> activeDialog = Optional.empty());

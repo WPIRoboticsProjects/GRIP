@@ -141,6 +141,7 @@ public class MainWindowController {
       dialog.setTitle("Save Project?");
       dialog.setHeaderText("Save the current project first?");
       dialog.getDialogPane().getButtonTypes().setAll(save, dontSave, cancel);
+      dialog.initOwner(root.getScene().getWindow());
 
       if (!dialog.showAndWait().isPresent()) { // NOPMD
         return false;
@@ -186,7 +187,11 @@ public class MainWindowController {
           new ExtensionFilter("GRIP File", "*.grip"),
           new ExtensionFilter("All Files", "*", "*.*"));
 
-      project.getFile().ifPresent(file -> fileChooser.setInitialDirectory(file.getParentFile()));
+      if (project.getFile().isPresent()) {
+        fileChooser.setInitialDirectory(project.getFile().get().getParentFile());
+      } else {
+        fileChooser.setInitialDirectory(new File(System.getProperty("user.home") + "/GRIP"));
+      }
 
       final File file = fileChooser.showOpenDialog(root.getScene().getWindow());
       if (file != null) {
@@ -250,6 +255,7 @@ public class MainWindowController {
 
     ProjectSettingsEditor projectSettingsEditor
         = new ProjectSettingsEditor(root, projectSettings, appSettings);
+    projectSettingsEditor.initOwner(root.getScene().getWindow());
     projectSettingsEditor.showAndWait().ifPresent(buttonType -> {
       if (buttonType == ButtonType.OK) {
         eventBus.post(new ProjectSettingsChangedEvent(projectSettings));
@@ -262,8 +268,11 @@ public class MainWindowController {
   protected void showProjectAboutDialog() throws IOException {
     if (aboutDialogStage == null) {
       aboutDialogStage = new Stage();
-      aboutDialogStage.setScene(new Scene(aboutPane));
-      aboutDialogStage.initStyle(StageStyle.UTILITY);
+      Scene scene = new Scene(aboutPane);
+      scene.getStylesheets().setAll(root.getStylesheets());
+      aboutDialogStage.setScene(scene);
+      aboutDialogStage.initStyle(StageStyle.UNDECORATED);
+      aboutDialogStage.initOwner(root.getScene().getWindow());
       aboutDialogStage.focusedProperty().addListener((observable, oldvalue, newvalue) -> {
         if (oldvalue) {
           aboutDialogStage.hide();
@@ -323,6 +332,8 @@ public class MainWindowController {
       return;
     }
     Dialog<CodeGenerationSettings> optionsDialog = new CodeGenerationSettingsDialog(codegenPane);
+    optionsDialog.getDialogPane().getStylesheets().setAll(root.getStylesheets());
+    optionsDialog.initOwner(root.getScene().getWindow());
     optionsDialog.showAndWait().ifPresent(settings -> {
       eventBus.post(new CodeGenerationSettingsChangedEvent(settings));
       Exporter exporter = new Exporter(pipeline.getSteps(), settings);
@@ -361,6 +372,7 @@ public class MainWindowController {
     Dialog<ButtonType> dialog = new Dialog<>();
     dialog.setTitle("Deploy");
     dialog.setHeaderText("Deploy");
+    dialog.initOwner(root.getScene().getWindow());
     dialog.setGraphic(graphic);
     dialog.getDialogPane().getButtonTypes().setAll(ButtonType.CLOSE);
     dialog.getDialogPane().styleProperty().bind(root.styleProperty());
@@ -381,6 +393,8 @@ public class MainWindowController {
 
   private void showWarningAlert(WarningEvent e) {
     Alert alert = new WarningAlert(e.getHeader(), e.getBody(), root.getScene().getWindow());
+    alert.getDialogPane().getStylesheets().setAll(root.getStylesheets());
+    alert.initOwner(root.getScene().getWindow());
     alert.showAndWait();
   }
 
@@ -405,6 +419,7 @@ public class MainWindowController {
     if (analysisStage == null) {
       analysisStage = new Stage();
       analysisStage.setScene(new Scene(analysisPane));
+      analysisPane.getStylesheets().setAll(root.getStylesheets());
       analysisStage.initOwner(root.getScene().getWindow());
       analysisStage.setTitle("Pipeline Analysis");
       analysisStage.getIcons().add(new Image("/edu/wpi/grip/ui/icons/grip.png"));
