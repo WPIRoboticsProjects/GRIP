@@ -24,7 +24,7 @@ Ref<$obj>#end
 		int ${tMeth.name($input.name())} = Imgproc.$input.value();
 #elseif ($input.type().equals("MaskSize"))
         int ${tMeth.name($input.name())} = $input.value().substring(0,1);
-#elseif ($input.type().equals("BlurType"))
+#elseif ($input.type().equals("BlurType") || $input.type().equals("Origin"))
 		$input.type() ${tMeth.name($input.name())} = ${input.type()}.get("${input.value()}");
 #elseif ($input.type().contains("Type") || $input.type().equals("Interpolation"))
 		int ${tMeth.name($input.name())} = #enum($input.value());
