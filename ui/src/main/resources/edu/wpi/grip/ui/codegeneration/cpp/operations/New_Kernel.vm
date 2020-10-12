@@ -1,0 +1,8 @@
+    /**
+     * Creates kernel of given shape and size
+     * @param shape the kernels MorphShape.
+     * @param size the size of the kernel.
+     */
+    void $className::#func($step ["shape", "size"]) {
+        return cv::getStructuringElement(shape, size));
+    }
