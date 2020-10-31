@@ -1,0 +1,29 @@
+#set($enums = [])
+#set($lines = false)
+import libjevois as jevois
+import cv2
+import numpy as np
+import $moduleName
+
+class GRIPRunner:
+
+    def __init__(self):
+        self.pipeline = $moduleName.$className()
+
+    def process(self, inframe, outframe = None):
+        # Execute the pipeline
+        img = inframe.getCvBGR()
+        self.pipeline.process(img)
+
+        # stream to USB output if current mapping is setup for that
+        if outframe is not None:
+#foreach($step in $pipeline.getSteps())#if($foreach.last)#foreach($output in $step.getOutputs())
+#set($oName = $tMeth.pyName($output.name()))
+#if($oName.contains("contour") || $oName.contains("hull"))
+            cv2.drawContours(img,self.pipeline.$tMeth.pyName($output.name()), -1, (0,255,0),2)
+#end#end#end#end
+            outframe.sendCvBGR(img)
+
+# TODO:  send contour report over USB
+# TODO:  add parameter(s) to enable/disable individual values of the report over USB
+
