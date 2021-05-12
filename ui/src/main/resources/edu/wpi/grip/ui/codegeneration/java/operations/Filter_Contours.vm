@@ -15,12 +15,13 @@ This creates the java OpenCV Filter Contours function
 	 * @param minVertexCount minimum vertex Count of the contours
 	 * @param maxVertexCount maximum vertex Count
 	 * @param minRatio minimum ratio of width to height
+	 * @param angle the minimum and maximum angle of a contour
 	 * @param maxRatio maximum ratio of width to height
 	 */
 	private void $tMeth.name($step.name())(List<MatOfPoint> inputContours, double minArea,
 		double minPerimeter, double minWidth, double maxWidth, double minHeight, double
 		maxHeight, double[] solidity, double maxVertexCount, double minVertexCount, double
-		minRatio, double maxRatio, List<MatOfPoint> output) {
+		minRatio, double maxRatio, double[] angle, List<MatOfPoint> output) {
 		final MatOfInt hull = new MatOfInt();
 		output.clear();
 		//operation
@@ -45,6 +46,10 @@ This creates the java OpenCV Filter Contours function
 			if (contour.rows() < minVertexCount || contour.rows() > maxVertexCount)	continue;
 			final double ratio = bb.width / (double)bb.height;
 			if (ratio < minRatio || ratio > maxRatio) continue;
+			final MatOfPoint2f copy = new MatOfPoint2f(contour);
+			final RotatedRect rr = Imgproc.minAreaRect(copy);
+			copy.release();
+			if (rr.angle < angle[0] || rr.angle > angle[1]) continue;
 			output.add(contour);
 		}
 	}

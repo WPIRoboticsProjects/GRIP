@@ -15,9 +15,10 @@ This creates the C++ OpenCV Filter Contours function
 	 * @param maxVertexCount maximum vertex Count.
 	 * @param minRatio minimum ratio of width to height.
 	 * @param maxRatio maximum ratio of width to height.
+	 * @param angle the minimum and maximum angle of a contour
 	 * @param output vector of filtered contours.
 	 */
-	void $className::#func($step ["inputContours", "minArea", "minPerimeter", "minWidth", "maxWidth", "minHeight", "maxHeight", "solidity", "maxVertexCount", "minVertexCount", "minRatio", "maxRatio", "output"]) {
+	void $className::#func($step ["inputContours", "minArea", "minPerimeter", "minWidth", "maxWidth", "minHeight", "maxHeight", "solidity", "maxVertexCount", "minVertexCount", "minRatio", "maxRatio", "angle", "output"]) {
 		std::vector<cv::Point> hull;
 		output.clear();
 		for (std::vector<cv::Point> contour: inputContours) {
@@ -33,6 +34,8 @@ This creates the C++ OpenCV Filter Contours function
 			if (contour.size() < minVertexCount || contour.size() > maxVertexCount)	continue;
 			double ratio = (double) bb.width / (double) bb.height;
 			if (ratio < minRatio || ratio > maxRatio) continue;
+			double contourAngle = cv::minAreaRect(contour).angle;
+			if (contourAngle < angle[0] || contourAngle > angle[1]) continue;
 			output.push_back(contour);
 		}
 	}
