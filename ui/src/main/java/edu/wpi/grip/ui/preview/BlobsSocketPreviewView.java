@@ -11,14 +11,14 @@ import javafx.scene.control.Separator;
 import javafx.scene.image.Image;
 import javafx.scene.layout.VBox;
 
-import static org.bytedeco.javacpp.opencv_core.LINE_8;
-import static org.bytedeco.javacpp.opencv_core.Mat;
-import static org.bytedeco.javacpp.opencv_core.Point;
-import static org.bytedeco.javacpp.opencv_core.Scalar;
-import static org.bytedeco.javacpp.opencv_core.bitwise_xor;
-import static org.bytedeco.javacpp.opencv_imgproc.CV_GRAY2BGR;
-import static org.bytedeco.javacpp.opencv_imgproc.circle;
-import static org.bytedeco.javacpp.opencv_imgproc.cvtColor;
+import static org.bytedeco.opencv.global.opencv_imgproc.LINE_8;
+import org.bytedeco.opencv.opencv_core.Mat;
+import org.bytedeco.opencv.opencv_core.Point;
+import org.bytedeco.opencv.opencv_core.Scalar;
+import static org.bytedeco.opencv.global.opencv_core.bitwise_xor;
+import static org.bytedeco.opencv.global.opencv_imgproc.CV_GRAY2BGR;
+import static org.bytedeco.opencv.global.opencv_imgproc.circle;
+import static org.bytedeco.opencv.global.opencv_imgproc.cvtColor;
 
 /**
  * A SocketPreviewView for BlobsReports that shows the original image with circles overlayed onto

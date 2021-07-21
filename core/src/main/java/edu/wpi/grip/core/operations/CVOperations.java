@@ -32,35 +32,8 @@ import org.bytedeco.opencv.global.opencv_cudaimgproc;
 import org.bytedeco.opencv.global.opencv_imgproc;
 
 import static org.bytedeco.opencv.global.opencv_core.*;
-//import static org.bytedeco.opencv.opencv_core.absdiff;
-//import static org.bytedeco.opencv.opencv_core.add;
-//import static org.bytedeco.opencv.opencv_core.addWeighted;
-//import static org.bytedeco.opencv.opencv_core.bitwise_and;
-//import static org.bytedeco.opencv.opencv_core.bitwise_not;
-//import static org.bytedeco.opencv.opencv_core.bitwise_or;
-//import static org.bytedeco.opencv.opencv_core.bitwise_xor;
-//import static org.bytedeco.opencv.opencv_core.compare;
-//import static org.bytedeco.opencv.opencv_core.divide;
-//import static org.bytedeco.opencv.opencv_core.extractChannel;
-//import static org.bytedeco.opencv.opencv_core.flip;
-//import static org.bytedeco.opencv.opencv_core.max;
-//import static org.bytedeco.opencv.opencv_core.min;
-//import static org.bytedeco.opencv.opencv_core.multiply;
-//import static org.bytedeco.opencv.opencv_core.scaleAdd;
-//import static org.bytedeco.opencv.opencv_core.subtract;
-//import static org.bytedeco.opencv.opencv_core.transpose;
-//import static org.bytedeco.opencv.opencv_cudafilters.createSobelFilter;
-//import static org.bytedeco.opencv.opencv_imgproc.GaussianBlur;
-//import static org.bytedeco.opencv.opencv_imgproc.Laplacian;
-//import static org.bytedeco.opencv.opencv_imgproc.Sobel;
-//import static org.bytedeco.opencv.opencv_imgproc.adaptiveThreshold;
-//import static org.bytedeco.opencv.opencv_imgproc.applyColorMap;
-//import static org.bytedeco.opencv.opencv_imgproc.cvtColor;
-//import static org.bytedeco.opencv.opencv_imgproc.dilate;
-//import static org.bytedeco.opencv.opencv_imgproc.medianBlur;
-//import static org.bytedeco.opencv.opencv_imgproc.rectangle;
-//import static org.bytedeco.opencv.opencv_imgproc.resize;
-//import static org.bytedeco.opencv.opencv_imgproc.threshold;
+import static org.bytedeco.opencv.global.opencv_imgproc.*;
+import static org.bytedeco.opencv.global.opencv_cudafilters.createSobelFilter;
 
 /**
  * A list of all of the raw opencv operations.

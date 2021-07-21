@@ -9,11 +9,11 @@ import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.layout.VBox;
 
-import static org.bytedeco.javacpp.opencv_core.CV_8UC3;
-import static org.bytedeco.javacpp.opencv_core.Mat;
-import static org.bytedeco.javacpp.opencv_core.Scalar;
-import static org.bytedeco.javacpp.opencv_core.bitwise_xor;
-import static org.bytedeco.javacpp.opencv_imgproc.drawContours;
+import static org.bytedeco.opencv.global.opencv_core.CV_8UC3;
+import org.bytedeco.opencv.opencv_core.Mat;
+import org.bytedeco.opencv.opencv_core.Scalar;
+import static org.bytedeco.opencv.global.opencv_core.bitwise_xor;
+import static org.bytedeco.opencv.global.opencv_imgproc.drawContours;
 
 /**
  * A preview view for displaying contours.  This view shows each contour as a different-colored
