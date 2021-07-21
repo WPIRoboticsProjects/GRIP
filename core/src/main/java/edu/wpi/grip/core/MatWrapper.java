@@ -1,28 +1,28 @@
 package edu.wpi.grip.core;
 
-import org.bytedeco.javacpp.opencv_core;
-import org.bytedeco.javacpp.opencv_core.GpuMat;
-import org.bytedeco.javacpp.opencv_core.Mat;
-import org.bytedeco.javacpp.opencv_core.Size;
+import org.bytedeco.opencv.opencv_core.Scalar;
+import org.bytedeco.opencv.opencv_core.GpuMat;
+import org.bytedeco.opencv.opencv_core.Mat;
+import org.bytedeco.opencv.opencv_core.Size;
 
 import java.util.Objects;
 import java.util.function.Function;
 
-import static org.bytedeco.javacpp.opencv_core.CV_16S;
-import static org.bytedeco.javacpp.opencv_core.CV_16U;
-import static org.bytedeco.javacpp.opencv_core.CV_32F;
-import static org.bytedeco.javacpp.opencv_core.CV_32S;
-import static org.bytedeco.javacpp.opencv_core.CV_64F;
-import static org.bytedeco.javacpp.opencv_core.CV_8S;
-import static org.bytedeco.javacpp.opencv_core.CV_8U;
-import static org.bytedeco.javacpp.opencv_core.IPL_DEPTH_16S;
-import static org.bytedeco.javacpp.opencv_core.IPL_DEPTH_16U;
-import static org.bytedeco.javacpp.opencv_core.IPL_DEPTH_1U;
-import static org.bytedeco.javacpp.opencv_core.IPL_DEPTH_32F;
-import static org.bytedeco.javacpp.opencv_core.IPL_DEPTH_32S;
-import static org.bytedeco.javacpp.opencv_core.IPL_DEPTH_64F;
-import static org.bytedeco.javacpp.opencv_core.IPL_DEPTH_8S;
-import static org.bytedeco.javacpp.opencv_core.IPL_DEPTH_8U;
+import static org.bytedeco.opencv.global.opencv_core.CV_16S;
+import static org.bytedeco.opencv.global.opencv_core.CV_16U;
+import static org.bytedeco.opencv.global.opencv_core.CV_32F;
+import static org.bytedeco.opencv.global.opencv_core.CV_32S;
+import static org.bytedeco.opencv.global.opencv_core.CV_64F;
+import static org.bytedeco.opencv.global.opencv_core.CV_8S;
+import static org.bytedeco.opencv.global.opencv_core.CV_8U;
+import static org.bytedeco.opencv.global.opencv_core.IPL_DEPTH_16S;
+import static org.bytedeco.opencv.global.opencv_core.IPL_DEPTH_16U;
+import static org.bytedeco.opencv.global.opencv_core.IPL_DEPTH_1U;
+import static org.bytedeco.opencv.global.opencv_core.IPL_DEPTH_32F;
+import static org.bytedeco.opencv.global.opencv_core.IPL_DEPTH_32S;
+import static org.bytedeco.opencv.global.opencv_core.IPL_DEPTH_64F;
+import static org.bytedeco.opencv.global.opencv_core.IPL_DEPTH_8S;
+import static org.bytedeco.opencv.global.opencv_core.IPL_DEPTH_8U;
 
 /**
  * Wraps a GPU mat and a CPU mat and allows device memory and host memory
@@ -370,7 +370,7 @@ public final class MatWrapper {
    *
    * @param value Assigned scalar converted to the actual array type.
    */
-  public MatWrapper put(opencv_core.Scalar value) {
+  public MatWrapper put(Scalar value) {
     if (isCpu()) {
       cpuMat.put(value);
     } else {

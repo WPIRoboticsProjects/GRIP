@@ -13,8 +13,8 @@ import com.google.inject.Inject;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
-import org.bytedeco.javacpp.BytePointer;
-import org.bytedeco.javacpp.IntPointer;
+import org.bytedeco.opencv.BytePointer;
+import org.bytedeco.opencv.IntPointer;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -25,8 +25,8 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import static org.bytedeco.javacpp.opencv_imgcodecs.CV_IMWRITE_JPEG_QUALITY;
-import static org.bytedeco.javacpp.opencv_imgcodecs.imencode;
+import static org.bytedeco.opencv.global.opencv_imgcodecs.CV_IMWRITE_JPEG_QUALITY;
+import static org.bytedeco.opencv.global.opencv_imgcodecs.imencode;
 
 /**
  * Publish an M-JPEG stream with the protocol used by SmartDashboard and the FRC Dashboard.  This

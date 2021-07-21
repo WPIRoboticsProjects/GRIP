@@ -17,11 +17,11 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import static org.bytedeco.javacpp.opencv_core.Mat;
-import static org.bytedeco.javacpp.opencv_core.Scalar;
-import static org.bytedeco.javacpp.opencv_core.inRange;
-import static org.bytedeco.javacpp.opencv_imgproc.COLOR_BGR2HLS;
-import static org.bytedeco.javacpp.opencv_imgproc.cvtColor;
+import org.bytedeco.opencv.opencv_core.Mat;
+import org.bytedeco.opencv.opencv_core.Scalar;
+import static org.bytedeco.opencv.global.opencv_core.inRange;
+import static org.bytedeco.opencv.global.opencv_imgproc.COLOR_BGR2HLS;
+import static org.bytedeco.opencv.global.opencv_imgproc.cvtColor;
 
 /**
  * An {@link Operation} that converts a color image into a binary image based on the HSL threshold

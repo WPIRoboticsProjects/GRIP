@@ -8,7 +8,7 @@ import edu.wpi.grip.core.sockets.NoSocketTypeLabel;
 
 import com.google.common.collect.ImmutableList;
 
-import org.bytedeco.javacpp.opencv_core.Rect;
+import org.bytedeco.opencv.opencv_core.Rect;
 
 import java.util.ArrayList;
 import java.util.List;

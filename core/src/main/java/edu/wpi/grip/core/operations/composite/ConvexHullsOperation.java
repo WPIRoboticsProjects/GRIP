@@ -12,8 +12,8 @@ import com.google.inject.Inject;
 
 import java.util.List;
 
-import static org.bytedeco.javacpp.opencv_core.MatVector;
-import static org.bytedeco.javacpp.opencv_imgproc.convexHull;
+import org.bytedeco.opencv.opencv_core.MatVector;
+import static org.bytedeco.opencv.global.opencv_imgproc.convexHull;
 
 /**
  * An {@link Operation} that finds the convex hull of each of a list of contours. This can help

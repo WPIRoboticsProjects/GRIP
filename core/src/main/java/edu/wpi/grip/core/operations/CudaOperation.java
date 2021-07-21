@@ -8,8 +8,8 @@ import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.core.sockets.SocketHint;
 import edu.wpi.grip.core.sockets.SocketHints;
 
-import org.bytedeco.javacpp.opencv_core.GpuMat;
-import org.bytedeco.javacpp.opencv_core.Mat;
+import org.bytedeco.opencv.opencv_core.GpuMat;
+import org.bytedeco.opencv.opencv_core.Mat;
 
 /**
  * A partial implementation of Operation that has the option to use CUDA acceleration.

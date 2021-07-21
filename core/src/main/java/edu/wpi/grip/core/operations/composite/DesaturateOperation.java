@@ -11,13 +11,13 @@ import edu.wpi.grip.core.sockets.OutputSocket;
 import com.google.common.collect.ImmutableList;
 import com.google.inject.Inject;
 
-import org.bytedeco.javacpp.opencv_cudaimgproc;
+import org.bytedeco.opencv.global.opencv_cudaimgproc;
 
 import java.util.List;
 
-import static org.bytedeco.javacpp.opencv_imgproc.COLOR_BGR2GRAY;
-import static org.bytedeco.javacpp.opencv_imgproc.COLOR_BGRA2GRAY;
-import static org.bytedeco.javacpp.opencv_imgproc.cvtColor;
+import static org.bytedeco.opencv.global.opencv_imgproc.COLOR_BGR2GRAY;
+import static org.bytedeco.opencv.global.opencv_imgproc.COLOR_BGRA2GRAY;
+import static org.bytedeco.opencv.global.opencv_imgproc.cvtColor;
 
 /**
  * An {@link Operation} that converts a color image into shades of gray.

@@ -13,7 +13,7 @@ import com.google.inject.Inject;
 
 import java.util.List;
 
-import static org.bytedeco.javacpp.opencv_core.Rect;
+import org.bytedeco.opencv.opencv_core.Rect;
 
 
 /**

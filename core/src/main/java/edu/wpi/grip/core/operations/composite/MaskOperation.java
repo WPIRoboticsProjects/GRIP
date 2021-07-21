@@ -14,8 +14,8 @@ import com.google.inject.Inject;
 
 import java.util.List;
 
-import static org.bytedeco.javacpp.opencv_core.Mat;
-import static org.bytedeco.javacpp.opencv_core.bitwise_xor;
+import org.bytedeco.opencv.opencv_core.Mat;
+import static org.bytedeco.opencv.global.opencv_core.bitwise_xor;
 
 /**
  * An {@link Operation} that masks out an area of interest from an image.

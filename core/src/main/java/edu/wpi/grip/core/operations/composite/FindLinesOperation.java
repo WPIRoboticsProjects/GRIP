@@ -17,10 +17,10 @@ import org.bytedeco.javacpp.indexer.FloatIndexer;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.bytedeco.javacpp.opencv_core.Mat;
-import static org.bytedeco.javacpp.opencv_imgproc.COLOR_BGR2GRAY;
-import static org.bytedeco.javacpp.opencv_imgproc.LineSegmentDetector;
-import static org.bytedeco.javacpp.opencv_imgproc.cvtColor;
+import org.bytedeco.opencv.opencv_core.Mat;
+import static org.bytedeco.opencv.global.opencv_imgproc.COLOR_BGR2GRAY;
+import org.bytedeco.opencv.opencv_imgproc.LineSegmentDetector;
+import static org.bytedeco.opencv.global.opencv_imgproc.cvtColor;
 
 /**
  * Find line segments in a color or grayscale image.

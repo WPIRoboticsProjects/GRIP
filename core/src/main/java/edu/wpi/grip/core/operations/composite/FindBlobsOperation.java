@@ -15,10 +15,10 @@ import com.google.inject.Inject;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.bytedeco.javacpp.opencv_core.KeyPoint;
-import static org.bytedeco.javacpp.opencv_core.KeyPointVector;
-import static org.bytedeco.javacpp.opencv_core.Mat;
-import static org.bytedeco.javacpp.opencv_features2d.SimpleBlobDetector;
+import org.bytedeco.opencv.opencv_core.KeyPoint;
+import org.bytedeco.opencv.opencv_core.KeyPointVector;
+import org.bytedeco.opencv.opencv_core.Mat;
+import org.bytedeco.opencv.opencv_features2d.SimpleBlobDetector;
 
 /**
  * Find groups of similar pixels in a color or grayscale image.

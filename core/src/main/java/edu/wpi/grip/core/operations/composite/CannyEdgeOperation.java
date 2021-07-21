@@ -13,12 +13,12 @@ import com.google.inject.Inject;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
-import org.bytedeco.javacpp.opencv_cudaimgproc.CannyEdgeDetector;
+import org.bytedeco.opencv.opencv_cudaimgproc.CannyEdgeDetector;
 
 import java.util.List;
 
-import static org.bytedeco.javacpp.opencv_cudaimgproc.createCannyEdgeDetector;
-import static org.bytedeco.javacpp.opencv_imgproc.Canny;
+import static org.bytedeco.opencv.global.opencv_cudaimgproc.createCannyEdgeDetector;
+import static org.bytedeco.opencv.global.opencv_imgproc.Canny;
 
 /**
  * An operation that performs canny edge detection on an image.

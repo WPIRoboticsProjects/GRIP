@@ -12,12 +12,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static org.bytedeco.javacpp.opencv_core.Mat;
-import static org.bytedeco.javacpp.opencv_core.MatVector;
-import static org.bytedeco.javacpp.opencv_core.Rect;
-import static org.bytedeco.javacpp.opencv_imgproc.boundingRect;
-import static org.bytedeco.javacpp.opencv_imgproc.contourArea;
-import static org.bytedeco.javacpp.opencv_imgproc.convexHull;
+import org.bytedeco.opencv.opencv_core.Mat;
+import org.bytedeco.opencv.opencv_core.MatVector;
+import org.bytedeco.opencv.opencv_core.Rect;
+import static org.bytedeco.opencv.global.opencv_imgproc.boundingRect;
+import static org.bytedeco.opencv.global.opencv_imgproc.contourArea;
+import static org.bytedeco.opencv.global.opencv_imgproc.convexHull;
 
 /**
  * The output of {@link FindContoursOperation}.  This stores a list of contours (which is basically

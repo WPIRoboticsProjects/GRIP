@@ -13,13 +13,13 @@ import com.google.inject.Inject;
 
 import java.util.List;
 
-import static org.bytedeco.javacpp.opencv_core.Mat;
-import static org.bytedeco.javacpp.opencv_core.MatVector;
-import static org.bytedeco.javacpp.opencv_core.Rect;
-import static org.bytedeco.javacpp.opencv_imgproc.arcLength;
-import static org.bytedeco.javacpp.opencv_imgproc.boundingRect;
-import static org.bytedeco.javacpp.opencv_imgproc.contourArea;
-import static org.bytedeco.javacpp.opencv_imgproc.convexHull;
+import org.bytedeco.opencv.opencv_core.Mat;
+import org.bytedeco.opencv.opencv_core.MatVector;
+import org.bytedeco.opencv.opencv_core.Rect;
+import static org.bytedeco.opencv.global.opencv_imgproc.arcLength;
+import static org.bytedeco.opencv.global.opencv_imgproc.boundingRect;
+import static org.bytedeco.opencv.global.opencv_imgproc.contourArea;
+import static org.bytedeco.opencv.global.opencv_imgproc.convexHull;
 
 /**
  * An {@link Operation} that takes in a list of contours and outputs a list of any contours in the

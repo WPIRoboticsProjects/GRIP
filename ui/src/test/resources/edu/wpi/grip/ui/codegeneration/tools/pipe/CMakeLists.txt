@@ -9,12 +9,12 @@ add_library(pipe SHARED ${CXX_SRCS})
 if(NOT ${CMAKE_SYSTEM_NAME} MATCHES "Windows")
     target_link_libraries(pipe ${LINK_OPTIONS})
     target_link_libraries(pipe 
-        opencv_core.3.1.0
-        opencv_objdetect.3.1.0
-        opencv_features2d.3.1.0
-        opencv_imgcodecs.3.1.0
-        opencv_imgproc.3.1.0
-        opencv_highgui.3.1.0
+        opencv_core.4.5.1
+        opencv_objdetect.4.5.1
+        opencv_features2d.4.5.1
+        opencv_imgcodecs.4.5.1
+        opencv_imgproc.4.5.1
+        opencv_highgui.4.5.1
     )
 endif(NOT ${CMAKE_SYSTEM_NAME} MATCHES "Windows")
 if(${CMAKE_SYSTEM_NAME} MATCHES "Windows")

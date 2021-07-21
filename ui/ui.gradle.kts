@@ -56,7 +56,7 @@ dependencies {
     testCompile(group = "org.testfx", name = "testfx-core", version = "4.0.16-alpha")
     testCompile(group = "org.testfx", name = "testfx-junit", version = "4.0.15-alpha")
     testRuntime(group = "org.testfx", name = "openjfx-monocle", version = "jdk-11+26")
-    testCompile(group = "org.opencv", name = "opencv-java", version = "3.1.0")
+    testCompile(group = "org.opencv", name = "opencv-java", version = "4.5.1")
 }
 
 tasks.named<JavaCompile>("compileTestJava") {
@@ -169,7 +169,7 @@ if (project.hasProperty("generation") || project.hasProperty("genonly")) {
 
     val installOpenCV = tasks.register("installOpenCV") {
         doFirst {
-            Installer.setOpenCvVersion("3.1.0")
+            Installer.setOpenCvVersion("4.5.1")
             Installer.installJni(jniPath)
         }
     }

@@ -10,8 +10,8 @@ import edu.wpi.grip.core.sockets.Socket;
 import java.util.Collections;
 import java.util.List;
 
-import static org.bytedeco.javacpp.opencv_imgproc.LineSegmentDetector;
-import static org.bytedeco.javacpp.opencv_imgproc.createLineSegmentDetector;
+import org.bytedeco.opencv.opencv_imgproc.LineSegmentDetector;
+import static org.bytedeco.opencv.global.opencv_imgproc.createLineSegmentDetector;
 
 /**
  * This class contains the results of a line detection algorithm.  It has an input matrix (the image
