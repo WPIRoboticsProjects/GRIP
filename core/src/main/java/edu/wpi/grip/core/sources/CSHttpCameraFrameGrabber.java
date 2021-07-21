@@ -3,7 +3,7 @@ package edu.wpi.grip.core.sources;
 import edu.wpi.cscore.CameraServerJNI;
 import edu.wpi.cscore.HttpCamera;
 import org.bytedeco.javacpp.Loader;
-import org.bytedeco.javacpp.opencv_core.Mat;
+import org.bytedeco.opencv.opencv_core.Mat;
 import org.bytedeco.javacv.Frame;
 import org.bytedeco.javacv.FrameConverter;
 import org.bytedeco.javacv.FrameGrabber;
@@ -40,7 +40,7 @@ public class CSHttpCameraFrameGrabber extends FrameGrabber {
       throw loadingException;
     } else {
       try {
-        Loader.load(org.bytedeco.javacpp.opencv_highgui.class);
+        Loader.load(org.bytedeco.opencv.global.opencv_highgui.class);
         CameraServerJNI.Helper.setExtractOnStaticLoad(false);
         CameraServerJNI.forceLoad();
       } catch (Throwable t) {

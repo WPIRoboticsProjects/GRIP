@@ -5,7 +5,7 @@ import com.google.common.base.Stopwatch;
 import com.google.common.math.IntMath;
 import com.google.common.util.concurrent.AbstractExecutionThreadService;
 
-import org.bytedeco.javacpp.opencv_core;
+import org.bytedeco.opencv.opencv_core.Mat;
 import org.bytedeco.javacv.Frame;
 import org.bytedeco.javacv.FrameGrabber;
 import org.bytedeco.javacv.OpenCVFrameConverter;
@@ -75,7 +75,7 @@ public class GrabberService extends AbstractExecutionThreadService {
       throw new GrabberServiceException("Failed to grab image", ex);
     }
 
-    final opencv_core.Mat frameMat = convertToMat.convert(videoFrame);
+    final Mat frameMat = convertToMat.convert(videoFrame);
 
     if (frameMat == null || frameMat.isNull()) {
       throw new GrabberServiceException("Returned a null frame Mat");

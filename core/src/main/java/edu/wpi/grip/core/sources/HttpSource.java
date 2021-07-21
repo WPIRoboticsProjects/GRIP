@@ -19,7 +19,7 @@ import com.google.inject.assistedinject.Assisted;
 import com.google.inject.assistedinject.AssistedInject;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 
-import org.bytedeco.javacpp.opencv_core.Mat;
+import org.bytedeco.opencv.opencv_core.Mat;
 
 import java.util.HashMap;
 import java.util.List;
@@ -27,8 +27,8 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.function.Consumer;
 
-import static org.bytedeco.javacpp.opencv_imgcodecs.CV_LOAD_IMAGE_COLOR;
-import static org.bytedeco.javacpp.opencv_imgcodecs.imdecode;
+import static org.bytedeco.opencv.global.opencv_imgcodecs.IMREAD_COLOR;
+import static org.bytedeco.opencv.global.opencv_imgcodecs.imdecode;
 
 /**
  * Provides a way to generate a {@link Mat Mat} from an image that has been POSTed to the
@@ -124,7 +124,7 @@ public class HttpSource extends Source {
       // No data, don't bother converting
       return false;
     }
-    imageOutput.getValue().get().set(imdecode(image.getCpu(), CV_LOAD_IMAGE_COLOR));
+    imageOutput.getValue().get().set(imdecode(image.getCpu(), IMREAD_COLOR));
     imageOutput.flagChanged();
     return true;
   }

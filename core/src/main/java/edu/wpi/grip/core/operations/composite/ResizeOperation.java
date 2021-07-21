@@ -13,14 +13,14 @@ import com.google.inject.Inject;
 
 import java.util.List;
 
-import static org.bytedeco.javacpp.opencv_core.Mat;
-import static org.bytedeco.javacpp.opencv_core.Size;
-import static org.bytedeco.javacpp.opencv_imgproc.INTER_AREA;
-import static org.bytedeco.javacpp.opencv_imgproc.INTER_CUBIC;
-import static org.bytedeco.javacpp.opencv_imgproc.INTER_LANCZOS4;
-import static org.bytedeco.javacpp.opencv_imgproc.INTER_LINEAR;
-import static org.bytedeco.javacpp.opencv_imgproc.INTER_NEAREST;
-import static org.bytedeco.javacpp.opencv_imgproc.resize;
+import org.bytedeco.opencv.opencv_core.Mat;
+import org.bytedeco.opencv.opencv_core.Size;
+import static org.bytedeco.opencv.global.opencv_imgproc.INTER_AREA;
+import static org.bytedeco.opencv.global.opencv_imgproc.INTER_CUBIC;
+import static org.bytedeco.opencv.global.opencv_imgproc.INTER_LANCZOS4;
+import static org.bytedeco.opencv.global.opencv_imgproc.INTER_LINEAR;
+import static org.bytedeco.opencv.global.opencv_imgproc.INTER_NEAREST;
+import static org.bytedeco.opencv.global.opencv_imgproc.resize;
 
 /**
  * Scale an image to an exact width and height using one of several interpolation modes.  Scaling

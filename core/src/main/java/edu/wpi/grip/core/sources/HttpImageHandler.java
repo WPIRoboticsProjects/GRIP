@@ -5,7 +5,7 @@ import edu.wpi.grip.core.http.GripServer;
 import edu.wpi.grip.core.http.PedanticHandler;
 
 import org.apache.commons.io.IOUtils;
-import org.bytedeco.javacpp.opencv_core.Mat;
+import org.bytedeco.opencv.opencv_core.Mat;
 import org.eclipse.jetty.server.Request;
 
 import java.io.IOException;

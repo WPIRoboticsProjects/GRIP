@@ -1,10 +1,10 @@
 package edu.wpi.grip.generated.opencv_core.enumeration;
 
-import org.bytedeco.javacpp.opencv_core;
+import org.bytedeco.opencv.opencv_core.Hamming;
 
 public enum HammingEnum {
 
-    normType(opencv_core.Hamming.normType);
+    normType(Hamming.normType);
 
     public final int value;
 

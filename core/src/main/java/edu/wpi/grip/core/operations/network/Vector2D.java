@@ -5,8 +5,8 @@ import edu.wpi.grip.annotation.operation.PublishableObject;
 
 import javax.annotation.concurrent.Immutable;
 
-import static org.bytedeco.javacpp.opencv_core.Point;
-import static org.bytedeco.javacpp.opencv_core.Size;
+import org.bytedeco.opencv.opencv_core.Point;
+import org.bytedeco.opencv.opencv_core.Size;
 
 /**
  * A type publishable to a NetworkPublisher that consists of two numbers.  JavaCV {@link Point}s and

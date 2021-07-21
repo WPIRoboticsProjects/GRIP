@@ -1,10 +1,10 @@
 package edu.wpi.grip.generated.opencv_core.enumeration;
 
-import org.bytedeco.javacpp.opencv_core;
+import org.bytedeco.opencv.opencv_core.RNG;
 
 public enum RNGEnum {
 
-    UNIFORM(opencv_core.RNG.UNIFORM), NORMAL(opencv_core.RNG.NORMAL);
+    UNIFORM(RNG.UNIFORM), NORMAL(RNG.NORMAL);
 
     public final int value;
 

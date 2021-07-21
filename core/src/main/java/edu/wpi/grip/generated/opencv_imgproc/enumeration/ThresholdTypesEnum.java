@@ -1,6 +1,6 @@
 package edu.wpi.grip.generated.opencv_imgproc.enumeration;
 
-import org.bytedeco.javacpp.opencv_imgproc;
+import org.bytedeco.opencv.global.opencv_imgproc;
 
 public enum ThresholdTypesEnum {
 

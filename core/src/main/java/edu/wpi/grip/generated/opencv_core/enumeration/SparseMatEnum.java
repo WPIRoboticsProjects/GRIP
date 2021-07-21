@@ -1,10 +1,10 @@
 package edu.wpi.grip.generated.opencv_core.enumeration;
 
-import org.bytedeco.javacpp.opencv_core;
+import org.bytedeco.opencv.opencv_core.SparseMat;
 
 public enum SparseMatEnum {
 
-    MAGIC_VAL(opencv_core.SparseMat.MAGIC_VAL), MAX_DIM(opencv_core.SparseMat.MAX_DIM), HASH_SCALE(opencv_core.SparseMat.HASH_SCALE), HASH_BIT(opencv_core.SparseMat.HASH_BIT);
+    MAGIC_VAL(SparseMat.MAGIC_VAL), MAX_DIM(SparseMat.MAX_DIM), HASH_SCALE(SparseMat.HASH_SCALE), HASH_BIT(SparseMat.HASH_BIT);
 
     public final int value;
 

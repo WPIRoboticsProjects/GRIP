@@ -10,7 +10,7 @@ import edu.wpi.grip.core.sockets.SocketHints;
 
 import com.google.inject.Inject;
 
-import org.bytedeco.javacpp.opencv_core.Size;
+import org.bytedeco.opencv.opencv_core.Size;
 import org.python.google.common.collect.ImmutableList;
 
 import java.util.List;

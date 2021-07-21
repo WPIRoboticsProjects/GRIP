@@ -13,8 +13,8 @@ import com.google.inject.Inject;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
-import org.bytedeco.opencv.BytePointer;
-import org.bytedeco.opencv.IntPointer;
+import org.bytedeco.javacpp.BytePointer;
+import org.bytedeco.javacpp.IntPointer;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -25,7 +25,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import static org.bytedeco.opencv.global.opencv_imgcodecs.CV_IMWRITE_JPEG_QUALITY;
+import static org.bytedeco.opencv.global.opencv_imgcodecs.IMWRITE_JPEG_QUALITY;
 import static org.bytedeco.opencv.global.opencv_imgcodecs.imencode;
 
 /**
@@ -179,7 +179,7 @@ public class PublishVideoOperation implements Operation {
 
     synchronized (imageLock) {
       imencode(".jpeg", inputSocket.getValue().get().getCpu(), imagePointer,
-          new IntPointer(CV_IMWRITE_JPEG_QUALITY, qualitySocket.getValue().get().intValue()));
+          new IntPointer(IMWRITE_JPEG_QUALITY, qualitySocket.getValue().get().intValue()));
       hasImage = true;
       imageLock.notifyAll();
     }

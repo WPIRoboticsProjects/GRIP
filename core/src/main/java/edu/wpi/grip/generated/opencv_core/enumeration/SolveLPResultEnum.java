@@ -1,6 +1,6 @@
 package edu.wpi.grip.generated.opencv_core.enumeration;
 
-import org.bytedeco.javacpp.opencv_core;
+import org.bytedeco.opencv.global.opencv_core;
 
 public enum SolveLPResultEnum {
 

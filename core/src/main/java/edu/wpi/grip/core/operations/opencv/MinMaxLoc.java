@@ -12,9 +12,9 @@ import com.google.common.collect.ImmutableList;
 import com.google.inject.Inject;
 
 import org.bytedeco.javacpp.DoublePointer;
-import org.bytedeco.javacpp.opencv_core;
-import org.bytedeco.javacpp.opencv_core.Mat;
-import org.bytedeco.javacpp.opencv_core.Point;
+import org.bytedeco.opencv.global.opencv_core;
+import org.bytedeco.opencv.opencv_core.Mat;
+import org.bytedeco.opencv.opencv_core.Point;
 
 import java.util.List;
 

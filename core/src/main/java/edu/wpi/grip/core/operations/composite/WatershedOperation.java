@@ -12,35 +12,35 @@ import edu.wpi.grip.core.sockets.SocketHints;
 import com.google.common.collect.ImmutableList;
 import com.google.inject.Inject;
 
-import org.bytedeco.javacpp.opencv_core;
+import org.bytedeco.opencv.global.opencv_core;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static org.bytedeco.javacpp.opencv_core.CV_32SC1;
-import static org.bytedeco.javacpp.opencv_core.CV_8UC1;
-import static org.bytedeco.javacpp.opencv_core.CV_8UC3;
-import static org.bytedeco.javacpp.opencv_core.LINE_8;
-import static org.bytedeco.javacpp.opencv_core.Mat;
-import static org.bytedeco.javacpp.opencv_core.MatVector;
-import static org.bytedeco.javacpp.opencv_core.Point;
-import static org.bytedeco.javacpp.opencv_core.Point2f;
-import static org.bytedeco.javacpp.opencv_core.Scalar;
-import static org.bytedeco.javacpp.opencv_core.bitwise_xor;
-import static org.bytedeco.javacpp.opencv_imgproc.CV_CHAIN_APPROX_TC89_KCOS;
-import static org.bytedeco.javacpp.opencv_imgproc.CV_FILLED;
-import static org.bytedeco.javacpp.opencv_imgproc.CV_RETR_EXTERNAL;
-import static org.bytedeco.javacpp.opencv_imgproc.circle;
-import static org.bytedeco.javacpp.opencv_imgproc.drawContours;
-import static org.bytedeco.javacpp.opencv_imgproc.findContours;
-import static org.bytedeco.javacpp.opencv_imgproc.pointPolygonTest;
-import static org.bytedeco.javacpp.opencv_imgproc.watershed;
+import static org.bytedeco.opencv.global.opencv_core.CV_32SC1;
+import static org.bytedeco.opencv.global.opencv_core.CV_8UC1;
+import static org.bytedeco.opencv.global.opencv_core.CV_8UC3;
+import static org.bytedeco.opencv.global.opencv_imgproc.LINE_8;
+import org.bytedeco.opencv.opencv_core.Mat;
+import org.bytedeco.opencv.opencv_core.MatVector;
+import org.bytedeco.opencv.opencv_core.Point;
+import org.bytedeco.opencv.opencv_core.Point2f;
+import org.bytedeco.opencv.opencv_core.Scalar;
+import static org.bytedeco.opencv.global.opencv_core.bitwise_xor;
+import static org.bytedeco.opencv.global.opencv_imgproc.CV_CHAIN_APPROX_TC89_KCOS;
+import static org.bytedeco.opencv.global.opencv_imgproc.CV_FILLED;
+import static org.bytedeco.opencv.global.opencv_imgproc.CV_RETR_EXTERNAL;
+import static org.bytedeco.opencv.global.opencv_imgproc.circle;
+import static org.bytedeco.opencv.global.opencv_imgproc.drawContours;
+import static org.bytedeco.opencv.global.opencv_imgproc.findContours;
+import static org.bytedeco.opencv.global.opencv_imgproc.pointPolygonTest;
+import static org.bytedeco.opencv.global.opencv_imgproc.watershed;
 
 /**
  * GRIP {@link Operation} for
- * {@link org.bytedeco.javacpp.opencv_imgproc#watershed}.
+ * {@link org.bytedeco.opencv.global.opencv_imgproc#watershed}.
  */
 @Description(name = "Watershed",
              summary = "Isolates overlapping objects from the background and each other",
