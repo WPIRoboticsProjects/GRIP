@@ -56,7 +56,7 @@ dependencies {
     testCompile(group = "org.testfx", name = "testfx-core", version = "4.0.16-alpha")
     testCompile(group = "org.testfx", name = "testfx-junit", version = "4.0.15-alpha")
     testRuntime(group = "org.testfx", name = "openjfx-monocle", version = "jdk-11+26")
-    testCompile(group = "org.opencv", name = "opencv-java", version = "4.5.1")
+    testCompile(group = "org.openpnp", name = "opencv", version = "4.5.1-2")
 }
 
 tasks.named<JavaCompile>("compileTestJava") {

@@ -10,8 +10,8 @@ import edu.wpi.grip.core.sockets.Socket;
 import java.util.Collections;
 import java.util.List;
 
-import org.bytedeco.opencv.opencv_imgproc.LineSegmentDetector;
-import static org.bytedeco.opencv.global.opencv_imgproc.createLineSegmentDetector;
+import org.bytedeco.opencv.opencv_ximgproc.FastLineDetector;
+import static org.bytedeco.opencv.global.opencv_ximgproc.createFastLineDetector;
 
 /**
  * This class contains the results of a line detection algorithm.  It has an input matrix (the image
@@ -23,7 +23,7 @@ import static org.bytedeco.opencv.global.opencv_imgproc.createLineSegmentDetecto
 @PublishableObject
 @NoSocketTypeLabel
 public class LinesReport implements Publishable {
-  private final LineSegmentDetector lsd;
+  private final FastLineDetector fld;
   private final MatWrapper input;
   private final List<Line> lines;
 
@@ -32,22 +32,22 @@ public class LinesReport implements Publishable {
    * LinesReports.
    */
   public LinesReport() {
-    this(createLineSegmentDetector(), MatWrapper.emptyWrapper(), Collections.emptyList());
+    this(createFastLineDetector(), MatWrapper.emptyWrapper(), Collections.emptyList());
   }
 
   /**
-   * @param lsd   The detector to be used.
+   * @param fld   The detector to be used.
    * @param input The input matrix.
    * @param lines The lines that have been found.
    */
-  public LinesReport(LineSegmentDetector lsd, MatWrapper input, List<Line> lines) {
-    this.lsd = lsd;
+  public LinesReport(FastLineDetector fld, MatWrapper input, List<Line> lines) {
+    this.fld = fld;
     this.input = input;
     this.lines = lines;
   }
 
-  protected LineSegmentDetector getLineSegmentDetector() {
-    return lsd;
+  protected FastLineDetector getFastLineDetector() {
+    return fld;
   }
 
   /**

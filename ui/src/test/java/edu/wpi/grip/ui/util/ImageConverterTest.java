@@ -5,7 +5,7 @@ import edu.wpi.grip.ui.UiTests;
 import edu.wpi.grip.util.Files;
 import edu.wpi.grip.util.ImageWithData;
 
-import org.bytedeco.javacpp.opencv_core.Mat;
+import org.bytedeco.opencv.opencv_core.Mat;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.testfx.framework.junit.ApplicationTest;
@@ -19,8 +19,8 @@ import javafx.scene.image.Image;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 
-import static org.bytedeco.javacpp.opencv_imgproc.COLOR_BGR2GRAY;
-import static org.bytedeco.javacpp.opencv_imgproc.cvtColor;
+import static org.bytedeco.opencv.global.opencv_imgproc.COLOR_BGR2GRAY;
+import static org.bytedeco.opencv.global.opencv_imgproc.cvtColor;
 import static org.junit.Assert.assertEquals;
 
 

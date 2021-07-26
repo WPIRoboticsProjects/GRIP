@@ -69,7 +69,7 @@ public final class HelperTools {
    * @param input the bytedeco Mat to convert
    * @return an OpenCV Mat
    */
-  public static Mat bytedecoMatToCVMat(org.bytedeco.javacpp.opencv_core.Mat input) {
+  public static Mat bytedecoMatToCVMat(org.bytedeco.opencv.opencv_core.Mat input) {
     UByteIndexer idxer = input.createIndexer();
     Mat out = new Mat((int) idxer.rows(), (int) idxer.cols(), CV_8UC((int) idxer.channels()));
     //Mat out = new Mat(idxer.rows(),idxer.cols(),input.type());

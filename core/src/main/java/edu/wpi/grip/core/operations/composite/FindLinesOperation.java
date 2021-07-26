@@ -19,7 +19,8 @@ import java.util.List;
 
 import org.bytedeco.opencv.opencv_core.Mat;
 import static org.bytedeco.opencv.global.opencv_imgproc.COLOR_BGR2GRAY;
-import org.bytedeco.opencv.opencv_imgproc.LineSegmentDetector;
+import org.bytedeco.opencv.opencv_ximgproc.FastLineDetector;
+
 import static org.bytedeco.opencv.global.opencv_imgproc.cvtColor;
 
 /**
@@ -65,7 +66,7 @@ public class FindLinesOperation implements Operation {
   @SuppressWarnings("unchecked")
   public void perform() {
     final MatWrapper input = inputSocket.getValue().get();
-    final LineSegmentDetector lsd = linesReportSocket.getValue().get().getLineSegmentDetector();
+    final FastLineDetector lsd = linesReportSocket.getValue().get().getFastLineDetector();
 
     final Mat lines = new Mat();
     if (input.channels() == 1) {

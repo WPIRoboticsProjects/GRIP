@@ -85,7 +85,7 @@ public class FilterLinesOperation implements Operation {
             || (line.angle() + 180.0 >= minAngle && line.angle() + 180.0 <= maxAngle))
         .collect(Collectors.toList());
 
-    linesOutputSocket.setValue(new LinesReport(inputLines.getLineSegmentDetector(), inputLines
+    linesOutputSocket.setValue(new LinesReport(inputLines.getFastLineDetector(), inputLines
         .getInput(), lines));
   }
 }
