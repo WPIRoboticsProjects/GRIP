@@ -53,9 +53,19 @@ To build and run, use the included Gradle wrapper script on a Unix System:
 
 On Windows:
 
-    gradlew.bat :ui:run
+    gradlew :ui:run
 
 If you don't have an internet connection you can build using the `--offline` flag if you have built GRIP once before.
+
+### Running Tests
+
+To do a complete check of functionality of GRIP, use the included Gradle wrapper script on a Unix System:
+
+    ./gradlew check
+
+On Windows:
+
+    gradlew check
 
 ## CUDA Support
 To enable CUDA acceleration, CUDA 10.0 needs to be installed on your computer. CUDA 10.1 may work on
