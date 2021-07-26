@@ -15,7 +15,7 @@ import edu.wpi.grip.ui.codegeneration.tools.HelperTools;
 import edu.wpi.grip.ui.codegeneration.tools.PipelineInterfacer;
 import edu.wpi.grip.util.Files;
 
-import org.bytedeco.javacpp.opencv_core;
+import org.bytedeco.opencv.global.opencv_core;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.opencv.core.Mat;
@@ -102,11 +102,11 @@ public class ConvexHullsGenerationTesting extends AbstractGenerationTesting {
     Optional out = pipeline.getSteps().get(2).getOutputSockets().get(0).getValue();
     assertTrue("Pipeline did not process", out.isPresent());
     ContoursReport conOut = (ContoursReport) out.get();
-    opencv_core.Mat matOut = new opencv_core.Mat();
+    org.bytedeco.opencv.opencv_core.Mat matOut = new org.bytedeco.opencv.opencv_core.Mat();
     matOut.create(conOut.getRows(), conOut.getCols(), opencv_core.CV_8UC3);
     opencv_core.bitwise_xor(matOut, matOut, matOut);
-    org.bytedeco.javacpp.opencv_imgproc.drawContours(matOut, conOut.getContours(), -1,
-        opencv_core.Scalar.WHITE);
+    org.bytedeco.opencv.global.opencv_imgproc.drawContours(matOut, conOut.getContours(), -1,
+        org.bytedeco.opencv.opencv_core.Scalar.WHITE);
 
     pip.setMatSource(0, Files.imageFile.file);
     pip.process();
