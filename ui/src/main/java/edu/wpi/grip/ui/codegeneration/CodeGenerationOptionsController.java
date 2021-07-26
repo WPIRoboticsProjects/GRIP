@@ -37,13 +37,12 @@ public class CodeGenerationOptionsController {
 
   private static final Logger logger =
       Logger.getLogger(CodeGenerationOptionsController.class.getName());
-  private static final String CLASS_NAME_REGEX = "^|([A-Z][a-z]*)+$";
-  private static final String PACKAGE_REGEX = "^|([a-z]+[a-z0-9]*\\.?)+$";
-  private static final String MODULE_REGEX = "^|([a-z]+_?)+$";
+
   @Inject
   private SettingsProvider settingsProvider;
   @Inject
   private Pipeline pipeline;
+
   @FXML
   private Pane root;
   @FXML
@@ -68,15 +67,12 @@ public class CodeGenerationOptionsController {
   private Pane pythonControls;
   @FXML
   private TextField moduleNameField;
+
   private Language language;
 
-  private static void setTextFilter(TextField f, String regex) {
-    f.textProperty().addListener((obs, oldValue, newValue) -> {
-      if (!newValue.matches(regex)) {
-        f.setText(oldValue);
-      }
-    });
-  }
+  private static final String CLASS_NAME_REGEX = "^|([A-Z][a-z]*)+$";
+  private static final String PACKAGE_REGEX = "^|([a-z]+[a-z0-9]*\\.?)+$";
+  private static final String MODULE_REGEX = "^|([a-z]+_?)+$";
 
   @FXML
   private void initialize() {
@@ -105,6 +101,14 @@ public class CodeGenerationOptionsController {
       languageSelector.getSelectionModel().select(language);
       setLanguage();
     }
+  }
+
+  private static void setTextFilter(TextField f, String regex) {
+    f.textProperty().addListener((obs, oldValue, newValue) -> {
+      if (!newValue.matches(regex)) {
+        f.setText(oldValue);
+      }
+    });
   }
 
   private void updateImplementButton() {

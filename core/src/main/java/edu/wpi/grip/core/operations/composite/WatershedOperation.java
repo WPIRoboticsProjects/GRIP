@@ -13,11 +13,6 @@ import com.google.common.collect.ImmutableList;
 import com.google.inject.Inject;
 
 import org.bytedeco.opencv.global.opencv_core;
-import org.bytedeco.opencv.opencv_core.Mat;
-import org.bytedeco.opencv.opencv_core.MatVector;
-import org.bytedeco.opencv.opencv_core.Point;
-import org.bytedeco.opencv.opencv_core.Point2f;
-import org.bytedeco.opencv.opencv_core.Scalar;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,11 +22,16 @@ import java.util.stream.Stream;
 import static org.bytedeco.opencv.global.opencv_core.CV_32SC1;
 import static org.bytedeco.opencv.global.opencv_core.CV_8UC1;
 import static org.bytedeco.opencv.global.opencv_core.CV_8UC3;
+import static org.bytedeco.opencv.global.opencv_imgproc.LINE_8;
+import org.bytedeco.opencv.opencv_core.Mat;
+import org.bytedeco.opencv.opencv_core.MatVector;
+import org.bytedeco.opencv.opencv_core.Point;
+import org.bytedeco.opencv.opencv_core.Point2f;
+import org.bytedeco.opencv.opencv_core.Scalar;
 import static org.bytedeco.opencv.global.opencv_core.bitwise_xor;
 import static org.bytedeco.opencv.global.opencv_imgproc.CV_CHAIN_APPROX_TC89_KCOS;
 import static org.bytedeco.opencv.global.opencv_imgproc.CV_FILLED;
 import static org.bytedeco.opencv.global.opencv_imgproc.CV_RETR_EXTERNAL;
-import static org.bytedeco.opencv.global.opencv_imgproc.LINE_8;
 import static org.bytedeco.opencv.global.opencv_imgproc.circle;
 import static org.bytedeco.opencv.global.opencv_imgproc.drawContours;
 import static org.bytedeco.opencv.global.opencv_imgproc.findContours;
@@ -39,29 +39,33 @@ import static org.bytedeco.opencv.global.opencv_imgproc.pointPolygonTest;
 import static org.bytedeco.opencv.global.opencv_imgproc.watershed;
 
 /**
- * GRIP {@link Operation} for {@link org.bytedeco.opencv.global.opencv_imgproc#watershed}.
+ * GRIP {@link Operation} for
+ * {@link org.bytedeco.opencv.global.opencv_imgproc#watershed}.
  */
 @Description(name = "Watershed",
-    summary = "Isolates overlapping objects from the background and each other",
-    category = OperationCategory.FEATURE_DETECTION,
-    iconName = "opencv")
+             summary = "Isolates overlapping objects from the background and each other",
+             category = OperationCategory.FEATURE_DETECTION,
+             iconName = "opencv")
 public class WatershedOperation implements Operation {
 
-  private static final int MAX_MARKERS = 253;
   private final SocketHint<MatWrapper> srcHint = SocketHints.createImageSocketHint("Input");
   private final SocketHint<ContoursReport> contoursHint =
       new SocketHint.Builder<>(ContoursReport.class)
           .identifier("Contours")
           .initialValueSupplier(ContoursReport::new)
           .build();
+
   private final SocketHint<ContoursReport> outputHint =
       new SocketHint.Builder<>(ContoursReport.class)
           .identifier("Features")
           .initialValueSupplier(ContoursReport::new)
           .build();
+
   private final InputSocket<MatWrapper> srcSocket;
   private final InputSocket<ContoursReport> contoursSocket;
   private final OutputSocket<ContoursReport> outputSocket;
+
+  private static final int MAX_MARKERS = 253;
   private final List<Mat> markerPool;
   private final MatVector contour = new MatVector(); // vector with a single element
   private final Mat markers = new Mat();

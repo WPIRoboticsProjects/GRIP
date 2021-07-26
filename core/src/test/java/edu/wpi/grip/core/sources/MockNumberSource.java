@@ -15,11 +15,11 @@ import java.util.List;
 import java.util.Properties;
 
 public class MockNumberSource extends Source {
-
+  
   private static int numberOf = 0;
   private final int id;
   private final OutputSocket<Number> outputSocket;
-  private final SocketHint<Number> outputSocketHint =
+  private final SocketHint<Number> outputSocketHint = 
       SocketHints.Outputs.createNumberSocketHint("Num", Math.PI);
 
   @SuppressFBWarnings(value = "ST_WRITE_TO_STATIC_FROM_INSTANCE_METHOD",
@@ -39,7 +39,7 @@ public class MockNumberSource extends Source {
   @Override
   protected List<OutputSocket> createOutputSockets() {
     return ImmutableList.of(
-        outputSocket
+      outputSocket
     );
   }
 

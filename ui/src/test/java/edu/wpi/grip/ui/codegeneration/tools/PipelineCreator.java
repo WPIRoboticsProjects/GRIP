@@ -19,11 +19,11 @@ import static org.junit.Assert.fail;
 public final class PipelineCreator {
   private static final Logger logger = Logger.getLogger(PipelineCreator.class.getName());
 
-  static {
-    System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
+  private PipelineCreator() {
   }
 
-  private PipelineCreator() {
+  static {
+    System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
   }
 
   private static void compile(String fileName) {

@@ -4,11 +4,11 @@ import org.bytedeco.opencv.opencv_core.RNG;
 
 public enum RNGEnum {
 
-  UNIFORM(RNG.UNIFORM), NORMAL(RNG.NORMAL);
+    UNIFORM(RNG.UNIFORM), NORMAL(RNG.NORMAL);
 
-  public final int value;
+    public final int value;
 
-  RNGEnum(int value) {
-    this.value = value;
-  }
+    RNGEnum(int value) {
+        this.value = value;
+    }
 }

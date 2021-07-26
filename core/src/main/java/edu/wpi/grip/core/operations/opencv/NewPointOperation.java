@@ -15,9 +15,9 @@ import org.bytedeco.opencv.opencv_core.Point;
 import java.util.List;
 
 @Description(name = "New Point",
-    summary = "Create a new point by (x,y) value",
-    category = OperationCategory.OPENCV,
-    iconName = "point")
+             summary = "Create a new point by (x,y) value",
+             category = OperationCategory.OPENCV,
+             iconName = "point")
 public class NewPointOperation implements CVOperation {
 
   private final SocketHint<Number> xHint = SocketHints.Inputs.createNumberSpinnerSocketHint("x", -1,

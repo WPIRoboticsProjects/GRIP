@@ -29,10 +29,6 @@ public final class GripPreloader extends Preloader {
 
   private Stage preloaderStage;
 
-  private static double clamp(double n, double min, double max) {
-    return (n < min) ? min : ((n > max) ? max : n);
-  }
-
   @Override
   public void start(Stage preloaderStage) throws IOException {
     final StackPane root = FXMLLoader.load(GripPreloader.class.getResource("Preloader.fxml"));
@@ -87,6 +83,10 @@ public final class GripPreloader extends Preloader {
         && ((StateChangeNotification) pn).getType() == StateChangeNotification.Type.BEFORE_START) {
       preloaderStage.hide();
     }
+  }
+
+  private static double clamp(double n, double min, double max) {
+    return (n < min) ? min : ((n > max) ? max : n);
   }
 
 }

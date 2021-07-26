@@ -28,7 +28,6 @@
     -fx-border-width: 1px;
     -fx-background-color: white;
 }
-
 .palette {
     -fx-min-width: 30em;
 }
@@ -266,12 +265,13 @@ VBox.sockets {
 }
 
 .socket-handle:connecting {
-    -fx-background-color: -fx-shadow-highlight-color,
-    linear-gradient(to bottom, derive(-fx-outer-border, -20%), -fx-outer-border),
-    linear-gradient(to bottom,
-            derive(-fx-color, -22%) 0%,
-            derive(-fx-color, -13%) 20%,
-            derive(-fx-color, -11%) 50%);
+    -fx-background-color:
+    -fx-shadow-highlight-color,
+        linear-gradient(to bottom, derive(-fx-outer-border, -20%), -fx-outer-border),
+        linear-gradient(to bottom,
+        derive(-fx-color, -22%) 0%,
+        derive(-fx-color, -13%) 20%,
+        derive(-fx-color, -11%) 50%);
     -fx-background-insets: 0 0 -1 0, 0, 1;
 }
 
@@ -315,7 +315,7 @@ VBox.sockets {
     -fx-background-color: transparent;
 }
 
-.error-pop-over .titled-pane > .title > .arrow-button .arrow {
+.error-pop-over .titled-pane > .title > .arrow-button .arrow  {
     -fx-background-color: grey;
 }
 
@@ -362,7 +362,6 @@ VBox.sockets {
 .about-window Label {
     -fx-font-size: 14;
 }
-
 .about-button {
     -fx-padding: 3 3 3 3;
 }

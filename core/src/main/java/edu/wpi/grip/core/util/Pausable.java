@@ -21,15 +21,6 @@ public interface Pausable {
   }
 
   /**
-   * Sets whether this is paused or not.
-   *
-   * @param paused true if execution should be paused, false if execution should run
-   */
-  default void setPaused(boolean paused) {
-    pausedProperty().set(paused);
-  }
-
-  /**
    * Pauses execution. NOP if already paused.
    */
   default void pause() {
@@ -41,6 +32,15 @@ public interface Pausable {
    */
   default void resume() {
     setPaused(false);
+  }
+
+  /**
+   * Sets whether this is paused or not.
+   *
+   * @param paused true if execution should be paused, false if execution should run
+   */
+  default void setPaused(boolean paused) {
+    pausedProperty().set(paused);
   }
 
 }

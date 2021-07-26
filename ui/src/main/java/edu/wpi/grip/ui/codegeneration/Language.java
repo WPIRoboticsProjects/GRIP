@@ -1,8 +1,8 @@
 package edu.wpi.grip.ui.codegeneration;
 
 /**
- * An enum representing code generation languages. Each language has a name as well as a directory
- * for templates.
+ * An enum representing code generation languages.
+ * Each language has a name as well as a directory for templates.
  */
 public enum Language {
 
@@ -25,6 +25,7 @@ public enum Language {
    * returns {@code null}.
    *
    * @param name the language name to get the enum for.
+   *
    * @return the Language that represents the name.
    */
   public static Language get(String name) {

@@ -23,43 +23,17 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.eventbus.EventBus;
 import com.google.inject.Inject;
 
-import org.bytedeco.opencv.global.opencv_cudaarithm;
-import org.bytedeco.opencv.global.opencv_cudaimgproc;
-import org.bytedeco.opencv.global.opencv_imgproc;
 import org.bytedeco.opencv.opencv_core.Point;
 import org.bytedeco.opencv.opencv_core.Scalar;
 import org.bytedeco.opencv.opencv_core.Size;
+import org.bytedeco.opencv.global.opencv_cudaarithm;
 import org.bytedeco.opencv.opencv_cudafilters.Filter;
+import org.bytedeco.opencv.global.opencv_cudaimgproc;
+import org.bytedeco.opencv.global.opencv_imgproc;
 
-import static org.bytedeco.opencv.global.opencv_core.absdiff;
-import static org.bytedeco.opencv.global.opencv_core.add;
-import static org.bytedeco.opencv.global.opencv_core.addWeighted;
-import static org.bytedeco.opencv.global.opencv_core.bitwise_and;
-import static org.bytedeco.opencv.global.opencv_core.bitwise_not;
-import static org.bytedeco.opencv.global.opencv_core.bitwise_or;
-import static org.bytedeco.opencv.global.opencv_core.bitwise_xor;
-import static org.bytedeco.opencv.global.opencv_core.compare;
-import static org.bytedeco.opencv.global.opencv_core.divide;
-import static org.bytedeco.opencv.global.opencv_core.extractChannel;
-import static org.bytedeco.opencv.global.opencv_core.flip;
-import static org.bytedeco.opencv.global.opencv_core.max;
-import static org.bytedeco.opencv.global.opencv_core.min;
-import static org.bytedeco.opencv.global.opencv_core.multiply;
-import static org.bytedeco.opencv.global.opencv_core.scaleAdd;
-import static org.bytedeco.opencv.global.opencv_core.subtract;
-import static org.bytedeco.opencv.global.opencv_core.transpose;
+import static org.bytedeco.opencv.global.opencv_core.*;
+import static org.bytedeco.opencv.global.opencv_imgproc.*;
 import static org.bytedeco.opencv.global.opencv_cudafilters.createSobelFilter;
-import static org.bytedeco.opencv.global.opencv_imgproc.GaussianBlur;
-import static org.bytedeco.opencv.global.opencv_imgproc.Laplacian;
-import static org.bytedeco.opencv.global.opencv_imgproc.Sobel;
-import static org.bytedeco.opencv.global.opencv_imgproc.adaptiveThreshold;
-import static org.bytedeco.opencv.global.opencv_imgproc.applyColorMap;
-import static org.bytedeco.opencv.global.opencv_imgproc.cvtColor;
-import static org.bytedeco.opencv.global.opencv_imgproc.dilate;
-import static org.bytedeco.opencv.global.opencv_imgproc.medianBlur;
-import static org.bytedeco.opencv.global.opencv_imgproc.rectangle;
-import static org.bytedeco.opencv.global.opencv_imgproc.resize;
-import static org.bytedeco.opencv.global.opencv_imgproc.threshold;
 
 /**
  * A list of all of the raw opencv operations.
@@ -486,27 +460,6 @@ public class CVOperations {
     );
   }
 
-  /**
-   * All of the operations that this list supplies.
-   */
-  @VisibleForTesting
-  ImmutableList<OperationMetaData> operations() {
-    return ImmutableList.<OperationMetaData>builder().addAll(coreOperations)
-        .addAll(imgprocOperation).build();
-  }
-
-  /**
-   * Submits all operations for addition on the {@link EventBus}.
-   */
-  public void addOperations() {
-    coreOperations.stream()
-        .map(OperationAddedEvent::new)
-        .forEach(eventBus::post);
-    imgprocOperation.stream()
-        .map(OperationAddedEvent::new)
-        .forEach(eventBus::post);
-  }
-
   public enum CVThresholdTypesEnum {
     THRESH_BINARY(ThresholdTypesEnum.THRESH_BINARY.value),
     THRESH_BINARY_INV(ThresholdTypesEnum.THRESH_BINARY_INV.value),
@@ -522,7 +475,6 @@ public class CVOperations {
       this.value = value;
     }
   }
-
 
   public enum CVAdaptThresholdTypesEnum {
     THRESH_BINARY(ThresholdTypesEnum.THRESH_BINARY.value),
@@ -550,5 +502,27 @@ public class CVOperations {
     CVBorderTypesEnum(int value) {
       this.value = value;
     }
+  }
+
+
+  /**
+   * All of the operations that this list supplies.
+   */
+  @VisibleForTesting
+  ImmutableList<OperationMetaData> operations() {
+    return ImmutableList.<OperationMetaData>builder().addAll(coreOperations)
+        .addAll(imgprocOperation).build();
+  }
+
+  /**
+   * Submits all operations for addition on the {@link EventBus}.
+   */
+  public void addOperations() {
+    coreOperations.stream()
+        .map(OperationAddedEvent::new)
+        .forEach(eventBus::post);
+    imgprocOperation.stream()
+        .map(OperationAddedEvent::new)
+        .forEach(eventBus::post);
   }
 }

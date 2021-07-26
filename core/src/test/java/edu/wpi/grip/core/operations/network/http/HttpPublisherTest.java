@@ -44,13 +44,16 @@ public class HttpPublisherTest {
   private static final String name = "foo";
   private static final String json = "{\n  \"foo\": 1.0\n}";
   private static final String unexpectedResponseMsg = "Unexpected response to data request";
-  @Rule
-  public final Timeout timeout = new Timeout(10000, TimeUnit.MILLISECONDS);
+
   private EventBus eventBus;
   private GripServer server;
   private DataHandler dataHandler;
   private HttpPublishOperation<Number, NumberPublishable> operation;
+
   private HttpClient client;
+
+  @Rule
+  public final Timeout timeout = new Timeout(10000, TimeUnit.MILLISECONDS);
 
   @Before
   public void setUp() {

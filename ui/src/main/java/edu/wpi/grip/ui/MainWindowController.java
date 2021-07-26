@@ -53,6 +53,7 @@ import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+
 import javax.inject.Inject;
 
 /**
@@ -292,8 +293,8 @@ public class MainWindowController {
   }
 
   /**
-   * Controls the export button in the main menu. Opens a filechooser with language selection. The
-   * user can select the language to export to, save location and file name.
+   * Controls the export button in the main menu. Opens a filechooser with language selection.
+   * The user can select the language to export to, save location and file name.
    */
   @FXML
   protected void generate() {

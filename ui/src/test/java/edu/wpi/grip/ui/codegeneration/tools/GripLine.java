@@ -26,15 +26,6 @@ public class GripLine extends TestLine {
     length = l.length();
   }
 
-  public static List<TestLine> convertReport(LinesReport rep) {
-    List<Line> repLine = rep.getLines();
-    ArrayList<TestLine> lines = new ArrayList<TestLine>(repLine.size());
-    for (int idx = 0; idx < repLine.size(); idx++) {
-      lines.add(idx, new GripLine(repLine.get(idx)));
-    }
-    return lines;
-  }
-
   @Override
   public double getLength() {
     return length;
@@ -53,5 +44,14 @@ public class GripLine extends TestLine {
   @Override
   public Point getPoint2() {
     return new Point(x2, y2);
+  }
+
+  public static List<TestLine> convertReport(LinesReport rep) {
+    List<Line> repLine = rep.getLines();
+    ArrayList<TestLine> lines = new ArrayList<TestLine>(repLine.size());
+    for (int idx = 0; idx < repLine.size(); idx++) {
+      lines.add(idx, new GripLine(repLine.get(idx)));
+    }
+    return lines;
   }
 }

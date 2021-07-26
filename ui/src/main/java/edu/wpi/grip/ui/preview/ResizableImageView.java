@@ -18,10 +18,10 @@ import javafx.scene.layout.Region;
  */
 public class ResizableImageView extends Region {
 
-  private static final BackgroundSize size =
-      new BackgroundSize(BackgroundSize.AUTO, BackgroundSize.AUTO, false, false, true, false);
   private final ObjectProperty<Image> image = new SimpleObjectProperty<>(this, "image");
   private final DoubleProperty ratio = new SimpleDoubleProperty(this, "ratio", 1);
+  private static final BackgroundSize size =
+      new BackgroundSize(BackgroundSize.AUTO, BackgroundSize.AUTO, false, false, true, false);
 
   /**
    * Creates a new resizable image view.
@@ -67,12 +67,12 @@ public class ResizableImageView extends Region {
     return image.get();
   }
 
-  public void setImage(Image image) {
-    this.image.set(image);
-  }
-
   public ObjectProperty<Image> imageProperty() {
     return image;
+  }
+
+  public void setImage(Image image) {
+    this.image.set(image);
   }
 
   public double getRatio() {

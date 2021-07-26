@@ -50,8 +50,9 @@ import javax.annotation.Nullable;
 @SuppressWarnings({"PMD.MoreThanOneLogger", "PMD.CouplingBetweenObjects"})
 public class GripCoreModule extends AbstractModule {
 
-  private static final Logger logger = Logger.getLogger(GripCoreModule.class.getName());
   private final EventBus eventBus;
+
+  private static final Logger logger = Logger.getLogger(GripCoreModule.class.getName());
 
   /*
    * This class should not be used in tests. Use GRIPCoreTestModule for tests.

@@ -1,41 +1,38 @@
 #**
- This creates the C++ OpenCV Filter Contours function
- *#
-/**
-* Filters through contours.
-* @param inputContours is the input vector of contours.
-* @param minArea is the minimum area of a contour that will be kept.
-* @param minPerimeter is the minimum perimeter of a contour that will be kept.
-* @param minWidth minimum width of a contour.
-* @param maxWidth maximum width.
-* @param minHeight minimum height.
-* @param maxHeight  maximimum height.
-* @param solidity the minimum and maximum solidity of a contour.
-* @param minVertexCount minimum vertex Count of the contours.
-* @param maxVertexCount maximum vertex Count.
-* @param minRatio minimum ratio of width to height.
-* @param maxRatio maximum ratio of width to height.
-* @param output vector of filtered contours.
-*/
-void $className::#func($step ["inputContours", "minArea", "minPerimeter", "minWidth", "maxWidth", "minHeight",
-    "maxHeight", "solidity", "maxVertexCount", "minVertexCount", "minRatio", "maxRatio", "output"]) {
-std::vector
-<cv::Point> hull;
-    output.clear();
-    for (std::vector
-    <cv::Point> contour: inputContours) {
-        cv::Rect bb = boundingRect(contour);
-        if (bb.width < minWidth || bb.width > maxWidth) continue;
-        if (bb.height < minHeight || bb.height > maxHeight) continue;
-        double area = cv::contourArea(contour);
-        if (area < minArea) continue;
-        if (arcLength(contour, true) < minPerimeter) continue;
-        cv::convexHull(cv::Mat(contour, true), hull);
-        double solid = 100 * area / cv::contourArea(hull);
-        if (solid < solidity[0] || solid > solidity[1]) continue;
-        if (contour.size() < minVertexCount || contour.size() > maxVertexCount) continue;
-        double ratio = (double) bb.width / (double) bb.height;
-        if (ratio < minRatio || ratio > maxRatio) continue;
-        output.push_back(contour);
-        }
-        }
+This creates the C++ OpenCV Filter Contours function
+*#
+	/**
+	 * Filters through contours.
+	 * @param inputContours is the input vector of contours.
+	 * @param minArea is the minimum area of a contour that will be kept.
+	 * @param minPerimeter is the minimum perimeter of a contour that will be kept.
+	 * @param minWidth minimum width of a contour.
+	 * @param maxWidth maximum width.
+	 * @param minHeight minimum height.
+	 * @param maxHeight  maximimum height.
+	 * @param solidity the minimum and maximum solidity of a contour.
+	 * @param minVertexCount minimum vertex Count of the contours.
+	 * @param maxVertexCount maximum vertex Count.
+	 * @param minRatio minimum ratio of width to height.
+	 * @param maxRatio maximum ratio of width to height.
+	 * @param output vector of filtered contours.
+	 */
+	void $className::#func($step ["inputContours", "minArea", "minPerimeter", "minWidth", "maxWidth", "minHeight", "maxHeight", "solidity", "maxVertexCount", "minVertexCount", "minRatio", "maxRatio", "output"]) {
+		std::vector<cv::Point> hull;
+		output.clear();
+		for (std::vector<cv::Point> contour: inputContours) {
+			cv::Rect bb = boundingRect(contour);
+			if (bb.width < minWidth || bb.width > maxWidth) continue;
+			if (bb.height < minHeight || bb.height > maxHeight) continue;
+			double area = cv::contourArea(contour);
+			if (area < minArea) continue;
+			if (arcLength(contour, true) < minPerimeter) continue;
+			cv::convexHull(cv::Mat(contour, true), hull);
+			double solid = 100 * area / cv::contourArea(hull);
+			if (solid < solidity[0] || solid > solidity[1]) continue;
+			if (contour.size() < minVertexCount || contour.size() > maxVertexCount)	continue;
+			double ratio = (double) bb.width / (double) bb.height;
+			if (ratio < minRatio || ratio > maxRatio) continue;
+			output.push_back(contour);
+		}
+	}

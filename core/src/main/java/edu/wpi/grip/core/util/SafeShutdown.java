@@ -14,6 +14,40 @@ public final class SafeShutdown {
 
   public static volatile boolean stopping = false;
 
+  /**
+   * Exit codes used by the GRIP application.
+   */
+  public enum ExitCode {
+    /**
+     * Clean shutdown.
+     */
+    SAFE_SHUTDOWN(0x00),
+    /**
+     * An unknown exception was thrown and uncaught.
+     */
+    MISC_ERROR(0x01),
+
+    /**
+     * The HTTP server cannot start (typically due to the port already being in use).
+     */
+    HTTP_SERVER_COULD_NOT_START(0x02),
+    /**
+     * CUDA is required by OpenCV but no compatible runtime is available on the system.
+     */
+    CUDA_UNAVAILABLE(0x04),
+    ;
+
+    private final int code;
+
+    ExitCode(int code) {
+      this.code = code;
+    }
+
+    public int getCode() {
+      return code;
+    }
+  }
+
   static {
     /*
      * Shutdown hook run order is non-deterministic but this increases our likelihood of
@@ -67,6 +101,7 @@ public final class SafeShutdown {
     exit(statusCode, null);
   }
 
+
   /**
    * HACK! Shutdown hooks can throw exceptions. On Windows, the static method after {@link
    * org.bytedeco.javacpp.Loader#loadLibrary} throws such an exception in a shutdown hook.
@@ -84,40 +119,6 @@ public final class SafeShutdown {
    */
   public static void flagStopping() {
     stopping = true;
-  }
-
-  /**
-   * Exit codes used by the GRIP application.
-   */
-  public enum ExitCode {
-    /**
-     * Clean shutdown.
-     */
-    SAFE_SHUTDOWN(0x00),
-    /**
-     * An unknown exception was thrown and uncaught.
-     */
-    MISC_ERROR(0x01),
-
-    /**
-     * The HTTP server cannot start (typically due to the port already being in use).
-     */
-    HTTP_SERVER_COULD_NOT_START(0x02),
-    /**
-     * CUDA is required by OpenCV but no compatible runtime is available on the system.
-     */
-    CUDA_UNAVAILABLE(0x04),
-    ;
-
-    private final int code;
-
-    ExitCode(int code) {
-      this.code = code;
-    }
-
-    public int getCode() {
-      return code;
-    }
   }
 
   @FunctionalInterface

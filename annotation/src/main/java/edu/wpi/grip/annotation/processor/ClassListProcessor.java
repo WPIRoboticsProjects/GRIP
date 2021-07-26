@@ -32,8 +32,9 @@ import javax.tools.StandardLocation;
  * Processes elements with the GRIP annotations and generates class list files for them.
  */
 @SupportedAnnotationTypes({
-    "edu.wpi.grip.annotation.*",
-    "com.thoughtworks.xstream.annotations.XStreamAlias"})
+        "edu.wpi.grip.annotation.*",
+        "com.thoughtworks.xstream.annotations.XStreamAlias"
+    })
 @SupportedSourceVersion(SourceVersion.RELEASE_8)
 @AutoService(Processor.class)
 public class ClassListProcessor extends AbstractProcessor {

@@ -1,9 +1,9 @@
-/**
-* Performs a per element min.
-* @param src1 first image to use.
-* @param src2 second image to use.
-* @param dst the per element min of two images.
-*/
-void $className::#func($step ["src1", "src2", "dst"]) {
-cv::min(src1, src2, dst);
-}
+	/**
+	 * Performs a per element min.
+	 * @param src1 first image to use.
+	 * @param src2 second image to use.
+	 * @param dst the per element min of two images.
+	 */
+	void $className::#func($step ["src1", "src2", "dst"]) {
+		cv::min(src1, src2, dst);
+	}

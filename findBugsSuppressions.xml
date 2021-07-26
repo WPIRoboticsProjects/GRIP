@@ -1,21 +1,21 @@
 <FindBugsFilter>
     <Match>
-        <Package name="~edu\.wpi\.grip\.generated.*"/>
+        <Package name="~edu\.wpi\.grip\.generated.*" />
     </Match>
     <Match>
-        <Bug pattern="RV_RETURN_VALUE_IGNORED_BAD_PRACTICE"/>
+        <Bug pattern="RV_RETURN_VALUE_IGNORED_BAD_PRACTICE" />
     </Match>
     <Match>
-        <Bug pattern="NP_METHOD_PARAMETER_TIGHTENS_ANNOTATION"/>
+        <Bug pattern="NP_METHOD_PARAMETER_TIGHTENS_ANNOTATION" />
     </Match>
     <Match>
-        <Class name="edu.wpi.grip.core.metrics.BenchmarkRunnerTest$1"/>
-        <Method name="onBenchmarkEvent"/>
-        <Bug pattern="UMAC_UNCALLABLE_METHOD_OF_ANONYMOUS_CLASS"/>
+        <Class name="edu.wpi.grip.core.metrics.BenchmarkRunnerTest$1" />
+        <Method name="onBenchmarkEvent" />
+        <Bug pattern="UMAC_UNCALLABLE_METHOD_OF_ANONYMOUS_CLASS" />
     </Match>
     <Match>
-        <Class name="edu.wpi.grip.core.ConnectionTest$MockPipeline"/>
-        <Bug pattern="SE_COMPARATOR_SHOULD_BE_SERIALIZABLE"/>
+        <Class name="edu.wpi.grip.core.ConnectionTest$MockPipeline" />
+        <Bug pattern="SE_COMPARATOR_SHOULD_BE_SERIALIZABLE" />
     </Match>
     <Match>
         <!-- False positives -->

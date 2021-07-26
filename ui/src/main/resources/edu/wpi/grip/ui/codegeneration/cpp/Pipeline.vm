@@ -4,47 +4,46 @@ namespace grip {
 
 $className::$className() {
 #foreach($step in $pipeline.getSteps())
-    #if($step.name() == "Switch" || $step.name() == "Valve")
-        #set($boolInp = $step.getInput(0))
-        #if($boolInp.hasValue())
-        this->$tMeth.name($boolInp.name()) = $boolInp.value();
-        #end
-    #end
+#if($step.name() == "Switch" || $step.name() == "Valve")
+#set($boolInp = $step.getInput(0))
+#if($boolInp.hasValue())
+	this->$tMeth.name($boolInp.name()) = $boolInp.value();
+#end
+#end
 #end
 #foreach($step in $pipeline.getSteps())
-    #foreach($output in $step.getOutputs())
-        ##	this->$tMeth.name($output.name()) = new #cType($output.type())();
-    #end
+#foreach($output in $step.getOutputs())
+##	this->$tMeth.name($output.name()) = new #cType($output.type())();
+#end
 #end
 #foreach($moving in $pipeline.getMovingThresholds())
-    ##	this->lastImage$moving.num() = new Mat();
+##	this->lastImage$moving.num() = new Mat();
 #end
 #if($testing)
-    #foreach($source in $pipeline.getSources())
-        #set($num = $velocityCount - 1)
-        #if($source.type().equalsIgnoreCase("Mat"))
-        matSources.insert(make_pair($num, (AbsPipeline::MatSource)&$className::set$source.value()));
-        #elseif($source.type().equalsIgnoreCase("Number") || $source.type().equalsIgnoreCase("double"))
-        numSources.insert(make_pair($num, (AbsPipeline::NumSource)&$className::set$source.value()));
-        #end
-    #end
-    #set($outCnt = 0)
-    #foreach($step in $pipeline.getSteps())
-        #foreach($out in $step.getOutputs())
-        outputs.insert(make_pair(std::string("$out.name().toLowerCase().replaceAll(
-            "_", "")"), (AbsPipeline::Output)&$className::get${out.name()}));
-            #set($outCnt = $outCnt + 1)
-        #end
-    #end
-    #foreach($step in $pipeline.getSteps())
-        #if($step.name() == "Switch" || $step.name() == "Valve")
-            #set($boolInp = $step.getInput(0))
-            #set($boolName = "$boolInp.name()")
-            #if($boolInp.hasValue())
-            conditions.insert(make_pair("$step.name().toLowerCase()$step.num()", (AbsPipeline::Condition)&$className::set$step.name()${step.num()}));
-            #end
-        #end
-    #end
+#foreach($source in $pipeline.getSources())
+#set($num = $velocityCount - 1)
+#if($source.type().equalsIgnoreCase("Mat"))
+	matSources.insert(make_pair($num, (AbsPipeline::MatSource)&$className::set$source.value()));
+#elseif($source.type().equalsIgnoreCase("Number") || $source.type().equalsIgnoreCase("double"))
+	numSources.insert(make_pair($num, (AbsPipeline::NumSource)&$className::set$source.value()));
+#end
+#end
+#set($outCnt = 0)
+#foreach($step in $pipeline.getSteps())
+#foreach($out in $step.getOutputs())
+	outputs.insert(make_pair(std::string("$out.name().toLowerCase().replaceAll("_", "")"), (AbsPipeline::Output)&$className::get${out.name()}));
+#set($outCnt = $outCnt + 1)
+#end
+#end
+#foreach($step in $pipeline.getSteps())
+#if($step.name() == "Switch" || $step.name() == "Valve")
+#set($boolInp = $step.getInput(0))
+#set($boolName = "$boolInp.name()")
+#if($boolInp.hasValue())
+	conditions.insert(make_pair("$step.name().toLowerCase()$step.num()", (AbsPipeline::Condition)&$className::set$step.name()${step.num()}));
+#end
+#end
+#end
 #end
 }
 /**
@@ -52,54 +51,54 @@ $className::$className() {
 */
 void $className::Process(#foreach($source in $pipeline.getSources())#cType($source.type())& $source.value()#if($pipeline.getSources().indexOf($source) lt $pipeline.getSources().size() - 1), #end#end){
 #foreach($step in $pipeline.getSteps())
-//Step $step.name()$step.num():
-    #parse("$vmLoc/Step.vm")
+	//Step $step.name()$step.num():
+#parse("$vmLoc/Step.vm")
 
 #end
 }
 
 #foreach($step in $pipeline.getSteps())
-    #if($step.name() == "Switch" || $step.name() == "Valve")
-        #set($boolInp = $step.getInput(0))
-        #set($boolName = "$boolInp.name()")
-        #if($boolInp.hasValue())
-        /**
-        * This method is a generated setter for the condition of $step.name() ${step.num()}
-        * @param the condition to set
-        */
-        void $className::set$step.name()${step.num()}(bool value){
-            $tMeth.name($boolName) = value;
-        }
-        #end
-    #end
+#if($step.name() == "Switch" || $step.name() == "Valve")
+#set($boolInp = $step.getInput(0))
+#set($boolName = "$boolInp.name()")
+#if($boolInp.hasValue())
+/**
+ * This method is a generated setter for the condition of $step.name() ${step.num()}
+ * @param the condition to set
+ */
+void $className::set$step.name()${step.num()}(bool value){
+	$tMeth.name($boolName) = value;
+}
+#end
+#end
 #end
 #foreach($step in $pipeline.getSteps())
-    #foreach($output in $step.getOutputs())
-        #set($outSym = "#funPassType($output.type())")
-        #if($outSym.equals("&") || $testing)
-            #set($ptr = true)
-        #else
-            #set($ptr = false)
-        #end
-    /**
-    * This method is a generated getter for the output of a $step.name().
-    * @return ${output.baseType()} output from $step.name().
-    */
-        #cType($output.type())#if($ptr)*#end $className::${tMeth.getterName($output.name())}(){
-    return #if($ptr)&#end(this->${tMeth.name($output.name())});
-    }
-    #end
+#foreach($output in $step.getOutputs())
+#set($outSym = "#funPassType($output.type())")
+#if($outSym.equals("&") || $testing)
+#set($ptr = true)
+#else
+#set($ptr = false)
+#end
+/**
+ * This method is a generated getter for the output of a $step.name().
+ * @return ${output.baseType()} output from $step.name().
+ */
+#cType($output.type())#if($ptr)*#end $className::${tMeth.getterName($output.name())}(){
+	return #if($ptr)&#end(this->${tMeth.name($output.name())});
+}
+#end
 #end
 #foreach($step in $pipeline.getUniqueSteps())
-    #set($toParse = "$vmLoc/operations/" + $step.name())
-    #set($toParse = $toParse + ".vm")
-    #parse($toParse)
+#set($toParse = "$vmLoc/operations/" + $step.name())
+#set($toParse = $toParse + ".vm")
+#parse($toParse)
 
 #end
 
 #if($testing)
 extern "C" AbsPipeline * makePipeline(){
-return new ${className}();
+    return new ${className}();
 }
 #end
 

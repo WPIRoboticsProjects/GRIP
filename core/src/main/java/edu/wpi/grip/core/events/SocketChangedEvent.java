@@ -32,9 +32,9 @@ public class SocketChangedEvent implements RunPipelineEvent, DirtiesSaveEvent {
   }
 
   /**
-   * This event will only dirty the save if the InputSocket does not have connections. Thus the
-   * value can only have been changed by a UI component. If the socket has connections then the
-   * value change is triggered by another socket's change.
+   * This event will only dirty the save if the InputSocket does not have connections.
+   * Thus the value can only have been changed by a UI component.
+   * If the socket has connections then the value change is triggered by another socket's change.
    *
    * @return True if this should dirty the save.
    */

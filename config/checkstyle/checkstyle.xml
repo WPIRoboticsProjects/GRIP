@@ -183,12 +183,11 @@
         </module>
         <module name="AvoidStarImport"/>
         <module name="CustomImportOrder">
-            <property name="specialImportsRegExp" value="^edu\.wpi\.grip\..*$"/>
-            <property name="thirdPartyPackageRegExp" value="^(?!edu\.wpi\.grip\.).*$"/>
-            <property name="standardPackageRegExp" value="^(java|javafx|javax)\."/>
-            <property name="sortImportsInGroupAlphabetically" value="true"/>
-            <property name="customImportOrderRules"
-                      value="SPECIAL_IMPORTS###THIRD_PARTY_PACKAGE###STANDARD_JAVA_PACKAGE###STATIC"/>
+            <property name="specialImportsRegExp" value="^edu\.wpi\.grip\..*$" />
+            <property name="thirdPartyPackageRegExp" value="^(?!edu\.wpi\.grip\.).*$" />
+            <property name="standardPackageRegExp" value="^(java|javafx|javax)\." />
+            <property name="sortImportsInGroupAlphabetically" value="true" />
+            <property name="customImportOrderRules" value="SPECIAL_IMPORTS###THIRD_PARTY_PACKAGE###STANDARD_JAVA_PACKAGE###STATIC" />
         </module>
         <module name="RedundantImport"/>
         <module name="UnusedImports"/>

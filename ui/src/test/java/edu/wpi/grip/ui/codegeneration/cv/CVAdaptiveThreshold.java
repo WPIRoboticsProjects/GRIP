@@ -27,7 +27,7 @@ import static org.junit.Assert.assertTrue;
 public class CVAdaptiveThreshold extends AbstractGenerationTesting {
 
   private boolean setup(AdaptiveThresholdTypesEnum adaptMethod,
-                        CVOperations.CVAdaptThresholdTypesEnum threshMethod) {
+                CVOperations.CVAdaptThresholdTypesEnum threshMethod) {
     Step desat = gen.addStep(new OperationMetaData(
         OperationDescription.from(DesaturateOperation.class),
         () -> new DesaturateOperation(isf, osf)));

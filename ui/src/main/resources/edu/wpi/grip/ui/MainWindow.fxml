@@ -3,118 +3,119 @@
 <?language javascript?>
 
 <?import edu.wpi.grip.ui.util.DPIUtility?>
-<?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Label?>
+<?import java.net.URL?>
 <?import javafx.scene.control.Menu?>
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.ScrollPane?>
-<?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.SeparatorMenuItem?>
 <?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.input.KeyCodeCombination?>
-<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
-<VBox xmlns:fx="http://javafx.com/fxml/1" maxHeight="-Infinity" maxWidth="-Infinity"
-      minHeight="-Infinity" minWidth="-Infinity"
-      styleClass="main-window"
-      fx:controller="edu.wpi.grip.ui.MainWindowController" fx:id="root"
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Separator?>
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"
+      minWidth="-Infinity" styleClass="main-window"
+      fx:controller="edu.wpi.grip.ui.MainWindowController"
+      fx:id="root" xmlns:fx="http://javafx.com/fxml/1"
       stylesheets="/edu/wpi/grip/ui/GRIP.css">
     <children>
         <MenuBar>
             <Menu text="File">
                 <MenuItem text="New" onAction="#newProject">
                     <accelerator>
-                        <KeyCodeCombination alt="UP" code="N" control="UP" meta="UP" shift="UP" shortcut="DOWN"/>
+                        <KeyCodeCombination alt="UP" code="N" control="UP" meta="UP" shift="UP" shortcut="DOWN" />
                     </accelerator>
                     <graphic>
                         <ImageView>
                             <fitWidth>
-                                <DPIUtility fx:constant="SMALL_ICON_SIZE"/>
+                                <DPIUtility fx:constant="SMALL_ICON_SIZE" />
                             </fitWidth>
                             <fitHeight>
-                                <DPIUtility fx:constant="SMALL_ICON_SIZE"/>
+                                <DPIUtility fx:constant="SMALL_ICON_SIZE" />
                             </fitHeight>
                             <image>
-                                <Image url="@icons/new.png"/>
+                                <Image url="@icons/new.png" />
                             </image>
                         </ImageView>
                     </graphic>
                 </MenuItem>
                 <MenuItem text="Open" onAction="#openProject">
                     <accelerator>
-                        <KeyCodeCombination alt="UP" code="O" control="UP" meta="UP" shift="UP" shortcut="DOWN"/>
+                        <KeyCodeCombination alt="UP" code="O" control="UP" meta="UP" shift="UP" shortcut="DOWN" />
                     </accelerator>
                     <graphic>
                         <ImageView>
                             <fitWidth>
-                                <DPIUtility fx:constant="SMALL_ICON_SIZE"/>
+                                <DPIUtility fx:constant="SMALL_ICON_SIZE" />
                             </fitWidth>
                             <fitHeight>
-                                <DPIUtility fx:constant="SMALL_ICON_SIZE"/>
+                                <DPIUtility fx:constant="SMALL_ICON_SIZE" />
                             </fitHeight>
                             <image>
-                                <Image url="@icons/open.png"/>
+                                <Image url="@icons/open.png" />
                             </image>
                         </ImageView>
                     </graphic>
                 </MenuItem>
                 <MenuItem text="Save" onAction="#saveProject">
                     <accelerator>
-                        <KeyCodeCombination alt="UP" code="S" control="UP" meta="UP" shift="UP" shortcut="DOWN"/>
+                        <KeyCodeCombination alt="UP" code="S" control="UP" meta="UP" shift="UP" shortcut="DOWN" />
                     </accelerator>
                     <graphic>
                         <ImageView>
                             <fitWidth>
-                                <DPIUtility fx:constant="SMALL_ICON_SIZE"/>
+                                <DPIUtility fx:constant="SMALL_ICON_SIZE" />
                             </fitWidth>
                             <fitHeight>
-                                <DPIUtility fx:constant="SMALL_ICON_SIZE"/>
+                                <DPIUtility fx:constant="SMALL_ICON_SIZE" />
                             </fitHeight>
                             <image>
-                                <Image url="@icons/save.png"/>
+                                <Image url="@icons/save.png" />
                             </image>
                         </ImageView>
                     </graphic>
                 </MenuItem>
                 <MenuItem text="Save As" onAction="#saveProjectAs">
                     <accelerator>
-                        <KeyCodeCombination alt="UP" code="S" control="UP" meta="UP" shift="DOWN" shortcut="DOWN"/>
+                        <KeyCodeCombination alt="UP" code="S" control="UP" meta="UP" shift="DOWN" shortcut="DOWN" />
                     </accelerator>
                     <graphic>
                         <ImageView>
                             <fitWidth>
-                                <DPIUtility fx:constant="SMALL_ICON_SIZE"/>
+                                <DPIUtility fx:constant="SMALL_ICON_SIZE" />
                             </fitWidth>
                             <fitHeight>
-                                <DPIUtility fx:constant="SMALL_ICON_SIZE"/>
+                                <DPIUtility fx:constant="SMALL_ICON_SIZE" />
                             </fitHeight>
                             <image>
-                                <Image url="@icons/save-as.png"/>
+                                <Image url="@icons/save-as.png" />
                             </image>
                         </ImageView>
                     </graphic>
                 </MenuItem>
-                <SeparatorMenuItem/>
-                <MenuItem text="Exit" onAction="#quit"/>
+                <SeparatorMenuItem />
+                <MenuItem text="Exit" onAction="#quit" />
             </Menu>
             <Menu text="Tools">
                 <MenuItem text="Deploy" onAction="#deploy">
                     <accelerator>
-                        <KeyCodeCombination alt="UP" code="R" control="UP" meta="UP" shift="UP" shortcut="DOWN"/>
+                        <KeyCodeCombination alt="UP" code="R" control="UP" meta="UP" shift="UP" shortcut="DOWN" />
                     </accelerator>
                     <graphic>
                         <ImageView styleClass="menu-graphic">
                             <fitWidth>
-                                <DPIUtility fx:constant="SMALL_ICON_SIZE"/>
+                                <DPIUtility fx:constant="SMALL_ICON_SIZE" />
                             </fitWidth>
                             <fitHeight>
-                                <DPIUtility fx:constant="SMALL_ICON_SIZE"/>
+                                <DPIUtility fx:constant="SMALL_ICON_SIZE" />
                             </fitHeight>
                             <image>
-                                <Image url="@icons/deploy.png"/>
+                                <Image url="@icons/deploy.png" />
                             </image>
                         </ImageView>
                     </graphic>
@@ -123,13 +124,13 @@
                     <graphic>
                         <ImageView styleClass="menu-graphic">
                             <fitWidth>
-                                <DPIUtility fx:constant="SMALL_ICON_SIZE"/>
+                                <DPIUtility fx:constant="SMALL_ICON_SIZE" />
                             </fitWidth>
                             <fitHeight>
-                                <DPIUtility fx:constant="SMALL_ICON_SIZE"/>
+                                <DPIUtility fx:constant="SMALL_ICON_SIZE" />
                             </fitHeight>
                             <image>
-                                <Image url="@icons/settings.png"/>
+                                <Image url="@icons/settings.png" />
                             </image>
                         </ImageView>
                     </graphic>
@@ -138,20 +139,20 @@
                     <graphic>
                         <ImageView styleClass="menu-graphic">
                             <fitWidth>
-                                <DPIUtility fx:constant="SMALL_ICON_SIZE"/>
+                                <DPIUtility fx:constant="SMALL_ICON_SIZE" />
                             </fitWidth>
                             <fitHeight>
-                                <DPIUtility fx:constant="SMALL_ICON_SIZE"/>
+                                <DPIUtility fx:constant="SMALL_ICON_SIZE" />
                             </fitHeight>
                             <image>
-                                <Image url="@icons/settings.png"/>
+                                <Image url="@icons/settings.png" />
                             </image>
                         </ImageView>
                     </graphic>
                 </MenuItem>
                 <MenuItem text="Generate Code" onAction="#generate">
                     <accelerator>
-                        <KeyCodeCombination alt="UP" code="G" control="UP" meta="UP" shift="UP" shortcut="DOWN"/>
+                        <KeyCodeCombination alt="UP" code="G" control="UP" meta="UP" shift="UP" shortcut="DOWN" />
                     </accelerator>
                     <graphic>
                         <ImageView styleClass="menu-graphic">
@@ -173,13 +174,13 @@
                     <graphic>
                         <ImageView styleClass="menu-graphic">
                             <fitWidth>
-                                <DPIUtility fx:constant="SMALL_ICON_SIZE"/>
+                                <DPIUtility fx:constant="SMALL_ICON_SIZE" />
                             </fitWidth>
                             <fitHeight>
-                                <DPIUtility fx:constant="SMALL_ICON_SIZE"/>
+                                <DPIUtility fx:constant="SMALL_ICON_SIZE" />
                             </fitHeight>
                             <image>
-                                <Image url="@icons/grip.png"/>
+                                <Image url="@icons/grip.png" />
                             </image>
                         </ImageView>
                     </graphic>
@@ -189,30 +190,30 @@
         <SplitPane dividerPositions="0.6" orientation="VERTICAL" VBox.vgrow="ALWAYS">
             <items>
                 <SplitPane dividerPositions="1.0" orientation="HORIZONTAL">
-                    <fx:include source="preview/Previews.fxml"/>
-                    <fx:include source="Palette.fxml"/>
+                    <fx:include source="preview/Previews.fxml" />
+                    <fx:include source="Palette.fxml" />
                 </SplitPane>
                 <ScrollPane fx:id="bottomPane" fitToHeight="true" fitToWidth="true">
-                    <fx:include source="pipeline/Pipeline.fxml" fx:id="pipelineView"/>
+                    <fx:include source="pipeline/Pipeline.fxml" fx:id="pipelineView" />
                 </ScrollPane>
             </items>
         </SplitPane>
         <HBox fx:id="statusBar" alignment="CENTER_LEFT" spacing="2">
             <padding>
-                <Insets top="2" right="2" bottom="2" left="2"/>
+                <Insets top="2" right="2" bottom="2" left="2" />
             </padding>
             <children>
                 <!-- Start/Stop button goes here (created programmatically and inserted) -->
-                <Label fx:id="statusLabel" text="Pipeline stopped"/>
-                <Separator orientation="VERTICAL"/>
-                <Label fx:id="elapsedTimeLabel" text="Did not run"/>
+                <Label fx:id="statusLabel" text="Pipeline stopped" />
+                <Separator orientation="VERTICAL" />
+                <Label fx:id="elapsedTimeLabel" text="Did not run" />
             </children>
         </HBox>
     </children>
     <fx:define>
-        <fx:include source="Deploy.fxml" fx:id="deployPane"/>
-        <fx:include source="AboutDialog.fxml" fx:id="aboutPane"/>
-        <fx:include source="analysis/Analysis.fxml" fx:id="analysisPane"/>
+        <fx:include source="Deploy.fxml" fx:id="deployPane" />
+        <fx:include source="AboutDialog.fxml" fx:id="aboutPane" />
+        <fx:include source="analysis/Analysis.fxml" fx:id="analysisPane" />
         <fx:include source="codegeneration/CodegenDialog.fxml" fx:id="codegenPane"/>
     </fx:define>
 </VBox>

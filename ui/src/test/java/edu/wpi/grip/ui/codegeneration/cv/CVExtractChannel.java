@@ -38,12 +38,12 @@ public class CVExtractChannel extends AbstractGenerationTesting {
   public void extractOneTest() {
     test(() -> setup(1), (pip) -> validate(pip), "extractOneTest");
   }
-
+  
   @Test
   public void extractTwoTest() {
     test(() -> setup(2), (pip) -> validate(pip), "extractTwoTest");
   }
-
+  
   private void validate(PipelineInterfacer pip) {
     ManualPipelineRunner runner = new ManualPipelineRunner(eventBus, pipeline);
     runner.runPipeline();

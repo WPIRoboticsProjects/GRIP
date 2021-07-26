@@ -1,66 +1,63 @@
 #macro (RefOf $obj)
-    #set($needsRefClass = true)
+#set($needsRefClass = true)
 Ref<$obj>#end
 
 #macro (newInput $input)
-    #if($input.mutable())##Is Mutable
-        #if($input.hasValue())##Has a set value
-            $input.baseType() ${tMeth.name($input.name())} = $input.value();
-        #else##Has Connected Socket
-            $input.baseType() ${tMeth.name($input.name())} = ${input.value()}.get().$input.baseType()Value();
-        #end##end Has a set value
-    #else##Not Mutable
-        #if ($input.value().toLowerCase().contains("source"))
-            #socketType($input.type()) ${tMeth.name($input.name())} = $input.value();
-        #elseif ($input.value().contains("null"))
-            #socketType($input.type()) ${tMeth.name($input.name())} = $input.value();
-        #elseif($input.value().contains("Output"))
-            #socketType($input.type()) ${tMeth.name($input.name())} = ${tMeth.name($input.value())};
-        #elseif ($input.type() == "FlipCode")
-            $input.type() ${tMeth.name($input.name())} = FlipCode.$input.value();
-        #elseif ($input.type().contains("CoreEnum"))
-        int ${tMeth.name($input.name())} = Core.$input.value();
-        #elseif ($input.type().contains("Enum"))
-        int ${tMeth.name($input.name())} = Imgproc.$input.value();
-        #elseif ($input.type().equals("MaskSize"))
+#if($input.mutable())##Is Mutable
+#if($input.hasValue())##Has a set value
+		$input.baseType() ${tMeth.name($input.name())} = $input.value();
+#else##Has Connected Socket
+		$input.baseType() ${tMeth.name($input.name())} = ${input.value()}.get().$input.baseType()Value();
+#end##end Has a set value
+#else##Not Mutable
+#if ($input.value().toLowerCase().contains("source"))
+		#socketType($input.type()) ${tMeth.name($input.name())} = $input.value();
+#elseif ($input.value().contains("null"))
+		#socketType($input.type()) ${tMeth.name($input.name())} = $input.value();
+#elseif($input.value().contains("Output"))
+		#socketType($input.type()) ${tMeth.name($input.name())} = ${tMeth.name($input.value())};
+#elseif ($input.type() == "FlipCode")
+		$input.type() ${tMeth.name($input.name())} = FlipCode.$input.value();
+#elseif ($input.type().contains("CoreEnum"))
+		int ${tMeth.name($input.name())} = Core.$input.value();
+#elseif ($input.type().contains("Enum"))
+		int ${tMeth.name($input.name())} = Imgproc.$input.value();
+#elseif ($input.type().equals("MaskSize"))
         int ${tMeth.name($input.name())} = $input.value().substring(0,1);
-        #elseif ($input.type().equals("BlurType") || $input.type().equals("Origin"))
-            $input.type() ${tMeth.name($input.name())} = ${input.type()}.get("${input.value()}");
-        #elseif ($input.type().contains("Type") || $input.type().equals("Interpolation"))
-        int ${tMeth.name($input.name())} = #enum($input.value());
-        #elseif ($input.type().equals("String"))
-            $input.type() ${tMeth.name($input.name())} = "$input.value()";
-        #elseif ($input.type().equals("Scalar") || $input.type().equals("Size") || $input.type().equals("Point"))
-            $input.type() ${tMeth.name($input.name())} = new $input.type()$input.value();
-        #elseif ($input.type().equals("List"))
-            #set($inputEndValue = $input.value().length() - 1)
-        double[] ${tMeth.name($input.name())} = {$input.value().substring(1,$inputEndValue)};
-        #elseif ($input.type().equals("Mat") && ! ($input.value().toLowerCase().contains(
-            "source") || $input.value().toLowerCase().contains("output")))
-            $input.type() ${tMeth.name($input.name())} = new ${input.type()}($input.value());
-        #else
-            #socketType($input.type()) ${tMeth.name($input.name())} = $input.value();
-        #end
-    #end#end
+#elseif ($input.type().equals("BlurType") || $input.type().equals("Origin"))
+		$input.type() ${tMeth.name($input.name())} = ${input.type()}.get("${input.value()}");
+#elseif ($input.type().contains("Type") || $input.type().equals("Interpolation"))
+		int ${tMeth.name($input.name())} = #enum($input.value());
+#elseif ($input.type().equals("String"))
+		$input.type() ${tMeth.name($input.name())} = "$input.value()";
+#elseif ($input.type().equals("Scalar") || $input.type().equals("Size") || $input.type().equals("Point"))
+		$input.type() ${tMeth.name($input.name())} = new $input.type()$input.value();
+#elseif ($input.type().equals("List"))
+#set($inputEndValue = $input.value().length() - 1)
+		double[] ${tMeth.name($input.name())} = {$input.value().substring(1,$inputEndValue)};
+#elseif ($input.type().equals("Mat") && ! ($input.value().toLowerCase().contains("source") || $input.value().toLowerCase().contains("output")))
+		$input.type() ${tMeth.name($input.name())} = new ${input.type()}($input.value());
+#else
+		#socketType($input.type()) ${tMeth.name($input.name())} = $input.value();
+#end
+#end#end
 
 
 #macro (socketType $type)#if ($type.equals("ContoursReport"))
-ArrayList
-<MatOfPoint>#elseif ($type.equals("BlobsReport"))
-    MatOfKeyPoint#elseif ($type.equals("LinesReport"))
-    ArrayList
-<Line>#elseif ($type.equals("RectsReport"))
-    MatOfRect#else
-    $type#end#end
+ArrayList<MatOfPoint>#elseif ($type.equals("BlobsReport"))
+MatOfKeyPoint#elseif ($type.equals("LinesReport"))
+ArrayList<Line>#elseif ($type.equals("RectsReport"))
+MatOfRect#else
+$type#end#end
 
 #macro (enum $val)#if($val.equals("CV_DIST_L1"))
-    Imgproc.DIST_L1#elseif($val.equals("CV_DIST_L2"))
-    Imgproc.DIST_L2#elseif($val.equals("CV_DIST_C"))
-    Imgproc.DIST_C#elseif($val.equals("None"))
-    Imgproc.INTER_NEAREST#elseif($val.equals("Linear"))
-    Imgproc.INTER_LINEAR#elseif($val.equals("Cubic"))
-    Imgproc.INTER_CUBIC#elseif($val.equals("Lanczos"))
-    Imgproc.INTER_LANCZOS4#elseif($val.equals("Area"))
-    Imgproc.INTER_AREA#elseif($val.contains("NORM"))
-    Core.$val#else
-    $val#end#end
+Imgproc.DIST_L1#elseif($val.equals("CV_DIST_L2"))
+Imgproc.DIST_L2#elseif($val.equals("CV_DIST_C"))
+Imgproc.DIST_C#elseif($val.equals("None"))
+Imgproc.INTER_NEAREST#elseif($val.equals("Linear"))
+Imgproc.INTER_LINEAR#elseif($val.equals("Cubic"))
+Imgproc.INTER_CUBIC#elseif($val.equals("Lanczos"))
+Imgproc.INTER_LANCZOS4#elseif($val.equals("Area"))
+Imgproc.INTER_AREA#elseif($val.contains("NORM"))
+Core.$val#else
+$val#end#end

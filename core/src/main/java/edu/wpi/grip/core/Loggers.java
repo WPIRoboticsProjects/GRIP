@@ -17,8 +17,8 @@ public final class Loggers {
   }
 
   /**
-   * Sets up loggers to print to stdout and to ~/GRIP/GRIP.log. This should only be called once in
-   * the application lifecycle, at startup.
+   * Sets up loggers to print to stdout and to ~/GRIP/GRIP.log. This should only be called once
+   * in the application lifecycle, at startup.
    */
   public static void setupLoggers() {
     // Set up the global level logger. This handles IO for all loggers.

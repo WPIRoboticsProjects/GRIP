@@ -20,21 +20,15 @@ import static com.google.common.base.Preconditions.checkNotNull;
 @Immutable
 public final class Statistics {
 
-  /**
-   * "null" statistics with every value set to zero.
-   */
-  public static final Statistics NIL = new Statistics(0, 0, 0, 0);
   private final int numSamples;
   private final double sum;
   private final double mean;
   private final double standardDeviation;
 
-  private Statistics(int numSamples, double sum, double mean, double standardDeviation) {
-    this.numSamples = numSamples;
-    this.sum = sum;
-    this.mean = mean;
-    this.standardDeviation = standardDeviation;
-  }
+  /**
+   * "null" statistics with every value set to zero.
+   */
+  public static final Statistics NIL = new Statistics(0, 0, 0, 0);
 
   /**
    * Calculates the statistics of the given samples.
@@ -67,6 +61,13 @@ public final class Statistics {
   public static Statistics of(Collection<? extends Number> samples) {
     checkNotNull(samples);
     return of(samples.stream().mapToDouble(Number::doubleValue).toArray());
+  }
+
+  private Statistics(int numSamples, double sum, double mean, double standardDeviation) {
+    this.numSamples = numSamples;
+    this.sum = sum;
+    this.mean = mean;
+    this.standardDeviation = standardDeviation;
   }
 
   @Override
@@ -110,8 +111,8 @@ public final class Statistics {
    * Calculates the 'hotness' of the given value based on these statistics. Using a {@code value}
    * that is not in the data set used to create these statistics will most likely have a useless
    * result. Hotness is equal to the number of standard deviations above the mean, or zero if the
-   * input value is not above the mean. Effectively, this means {@code hotness(x) == max(0, ((x -
-   * mean) / standard deviation))}.
+   * input value is not above the mean. Effectively, this means
+   * {@code hotness(x) == max(0, ((x - mean) / standard deviation))}.
    *
    * <p>If this set of statistics was calculated from less than two data points, 'hotness' doesn't
    * mean anything and this method will always return zero.

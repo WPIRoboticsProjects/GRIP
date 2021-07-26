@@ -25,9 +25,9 @@ import java.util.List;
  * Operation for identifying parts of an image with a cascade classifier.
  */
 @Description(name = "Cascade Cassifier",
-    summary = "Runs a Haar cascade classifier on an image",
-    category = OperationCategory.FEATURE_DETECTION,
-    iconName = "opencv")
+             summary = "Runs a Haar cascade classifier on an image",
+             category = OperationCategory.FEATURE_DETECTION,
+             iconName = "opencv")
 public class CascadeClassifierOperation implements Operation {
 
   private final SocketHint<MatWrapper> imageHint =

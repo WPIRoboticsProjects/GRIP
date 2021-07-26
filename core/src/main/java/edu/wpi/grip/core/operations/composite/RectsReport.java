@@ -20,10 +20,11 @@ import java.util.List;
 @NoSocketTypeLabel
 public class RectsReport implements Publishable {
 
-  public static final RectsReport NIL
-      = new RectsReport(MatWrapper.emptyWrapper(), new ArrayList<>());
   private final MatWrapper image;
   private final List<Rect> rectangles;
+
+  public static final RectsReport NIL
+      = new RectsReport(MatWrapper.emptyWrapper(), new ArrayList<>());
 
   public RectsReport(MatWrapper image, List<Rect> rectangles) {
     this.image = image;

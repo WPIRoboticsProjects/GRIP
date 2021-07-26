@@ -32,8 +32,9 @@ import static org.junit.Assume.assumeFalse;
 @Category(GenerationTesting.class)
 @SuppressWarnings("PMD.JUnitTestsShouldIncludeAssert")
 public class FilterLinesGenerationTesting extends AbstractGenerationTesting {
-  private static final int minLength = 30;
   private final List angleVal = Arrays.asList(160.0, 200.0);
+  private static final int minLength = 30;
+
   private final List<Number> hVal = new ArrayList<Number>();
   private final List<Number> sVal = new ArrayList<Number>();
   private final List<Number> lVal = new ArrayList<Number>();

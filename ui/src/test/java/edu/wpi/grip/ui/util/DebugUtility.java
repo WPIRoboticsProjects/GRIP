@@ -9,7 +9,7 @@ import javafx.scene.Parent;
  */
 public final class DebugUtility {
   private DebugUtility() {
-    /* no-op */
+        /* no-op */
   }
 
   /**

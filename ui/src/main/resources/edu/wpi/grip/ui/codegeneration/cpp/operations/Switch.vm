@@ -1,18 +1,17 @@
-/**
-* Selects an output from two inputs based on a boolean.
-*
-* @param sw The boolean that determines the output.
-* @param onTrue The output if sw is true.
-* @param onFalse The output if sw is false.
-* @param output The output which is equal to either onTrue or onFalse.
-*/
-template
-<typename T>
-    void $className::#func($step ["sw", "onTrue", "onFalse", "output"]) {
-    if (sw) {
-    output = onTrue;
-    }
-    else {
-    output = onFalse;
-    }
-    }
+	/**
+	 * Selects an output from two inputs based on a boolean.
+	 *
+	 * @param sw The boolean that determines the output.
+	 * @param onTrue The output if sw is true.
+	 * @param onFalse The output if sw is false.
+	 * @param output The output which is equal to either onTrue or onFalse.
+	 */
+	template<typename T>
+	void $className::#func($step ["sw", "onTrue", "onFalse", "output"]) {
+		if (sw) {
+			output = onTrue;
+		}
+		else {
+			output = onFalse;
+		}
+	}

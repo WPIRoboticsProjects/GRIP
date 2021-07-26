@@ -19,6 +19,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.layout.HBox;
+
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
@@ -40,6 +41,10 @@ public class PreviewsController {
   private Pipeline pipeline;
   @Inject
   private SocketPreviewViewFactory previewViewFactory;
+
+  @FXML
+  private void initialize() {
+  }
 
   /**
    * Given two sockets, determine which comes first in the pipeline.  This is used to sort the
@@ -94,10 +99,6 @@ public class PreviewsController {
     // Lastly, if one socket is from a step and the other is from a source, the source always
     // comes first
     return b.getStep().isPresent() ? -1 : 1;
-  }
-
-  @FXML
-  private void initialize() {
   }
 
   /**

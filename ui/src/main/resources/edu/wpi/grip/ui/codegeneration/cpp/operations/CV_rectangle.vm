@@ -1,15 +1,15 @@
-/**
-* Draws a rectangle on an Image.
-* @param src Image to draw rectangle on.
-* @param pt1 one corner of the rectangle.
-* @param pt2 opposite corner of the rectangle.
-* @param color Scalar indicating color to make the rectangle.
-* @param thickness Thickness of the lines of the rectangle.
-* @param lineType Type of line for the rectangle.
-* @param shift Number of decimal places in the points.
-* @param dst output image.
-*/
-void $className::#func($step ["src", "pt1", "pt2", "color", "thickness", "lineType", "shift", "dst"]) {
-src.copyTo(dst);
-cv::rectangle(dst, pt1, pt2, color, (int)thickness, lineType, (int)shift);
-}
+	/**
+	 * Draws a rectangle on an Image.
+	 * @param src Image to draw rectangle on.
+	 * @param pt1 one corner of the rectangle.
+	 * @param pt2 opposite corner of the rectangle.
+	 * @param color Scalar indicating color to make the rectangle.
+	 * @param thickness Thickness of the lines of the rectangle.
+	 * @param lineType Type of line for the rectangle.
+	 * @param shift Number of decimal places in the points.
+	 * @param dst output image.
+	 */
+	void $className::#func($step ["src", "pt1", "pt2", "color", "thickness", "lineType", "shift", "dst"]) {
+		src.copyTo(dst);
+		cv::rectangle(dst, pt1, pt2, color, (int)thickness, lineType, (int)shift);
+	}

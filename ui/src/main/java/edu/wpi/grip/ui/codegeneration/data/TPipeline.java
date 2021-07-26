@@ -16,17 +16,18 @@ import java.util.stream.Collectors;
 import static edu.wpi.grip.annotation.operation.OperationCategory.NETWORK;
 
 /**
- * TPipeline(template pipeline) is a data structure that holds the information about a pipeline
+ * TPipeline(template pipeline) is a data structure
+ * that holds the information about a pipeline
  * needed by the velocity templates to generate code.
  */
 public class TPipeline {
 
+  protected List<TStep> steps;
+  private int numSources;
   private final Map<InputSocket, TOutput> connections;
   private final Map<String, Integer> uniqueSources;
   // keep track of how many instances of each step are in the pipeline
   private final Map<String, Integer> stepInstances;
-  protected List<TStep> steps;
-  private int numSources;
 
 
   /**

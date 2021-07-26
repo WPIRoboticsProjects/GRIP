@@ -1,8 +1,8 @@
-/**
-* Computes the transpose of a Mat.
-* @param src the source Mat.
-* @param dst the transpose of src.
-*/
-void $className::#func($step ["src", "dst"]) {
-cv::transpose(src, dst);
-}
+	/**
+	 * Computes the transpose of a Mat.
+	 * @param src the source Mat.
+	 * @param dst the transpose of src.
+	 */
+	void $className::#func($step ["src", "dst"]) {
+		cv::transpose(src, dst);
+	}

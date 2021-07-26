@@ -99,12 +99,12 @@ public class Operations {
   }
 
   /**
-   * Creates an operation description for the given operation subclass. The subclass <i>must</i> be
-   * annotated with {@link Description @Description} or a {@code NullPointerException} will be
-   * thrown.
+   * Creates an operation description for the given operation subclass. The subclass <i>must</i>
+   * be annotated with {@link Description @Description} or a {@code NullPointerException} will
+   * be thrown.
    *
-   * @throws NullPointerException if {@code clazz} is null, or if it is not annotated with {@code
-   *                              @Description}
+   * @throws NullPointerException if {@code clazz} is null, or if it is not annotated with
+   *                              {@code @Description}
    */
   private OperationDescription descriptionFor(Class<? extends Operation> clazz) {
     return OperationDescription.from(clazz.getAnnotation(Description.class));

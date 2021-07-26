@@ -8,7 +8,7 @@ import com.google.inject.Singleton;
 
 /**
  * Service for dragging an {@link Operation} from the
- *     {@link edu.wpi.grip.ui.pipeline.PipelineController}
+ * {@link edu.wpi.grip.ui.pipeline.PipelineController}
  * to the {@link edu.wpi.grip.ui.pipeline.PipelineController}.
  */
 @Singleton

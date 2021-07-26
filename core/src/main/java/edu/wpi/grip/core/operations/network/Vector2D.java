@@ -3,10 +3,10 @@ package edu.wpi.grip.core.operations.network;
 
 import edu.wpi.grip.annotation.operation.PublishableObject;
 
+import javax.annotation.concurrent.Immutable;
+
 import org.bytedeco.opencv.opencv_core.Point;
 import org.bytedeco.opencv.opencv_core.Size;
-
-import javax.annotation.concurrent.Immutable;
 
 /**
  * A type publishable to a NetworkPublisher that consists of two numbers.  JavaCV {@link Point}s and

@@ -27,9 +27,9 @@ import static org.bytedeco.opencv.global.opencv_core.NORM_MINMAX;
  * GRIP {@link Operation} for {@link org.bytedeco.opencv.global.opencv_core#normalize}.
  */
 @Description(name = "Normalize",
-    summary = "Normalizes or remaps the values of pixels in an image",
-    category = OperationCategory.IMAGE_PROCESSING,
-    iconName = "opencv")
+             summary = "Normalizes or remaps the values of pixels in an image",
+             category = OperationCategory.IMAGE_PROCESSING,
+             iconName = "opencv")
 public class NormalizeOperation extends CudaOperation {
 
   private final SocketHint<Type> typeHint = SocketHints.createEnumSocketHint("Type", Type.MINMAX);

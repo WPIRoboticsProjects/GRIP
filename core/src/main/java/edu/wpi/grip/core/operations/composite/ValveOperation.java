@@ -17,8 +17,8 @@ import java.util.List;
 import java.util.Optional;
 
 @Description(name = "Valve",
-    summary = "Toggle an output socket on or off using a boolean",
-    category = OperationCategory.LOGICAL)
+             summary = "Toggle an output socket on or off using a boolean",
+             category = OperationCategory.LOGICAL)
 public class ValveOperation implements Operation {
 
   private final InputSocket<Boolean> switcherSocket;

@@ -36,7 +36,8 @@ public final class ImageConverter {
    * method involves several intermediate conversions ({@code Mat -> Frame -> BufferedImage ->
    * JavaFX Image}) and is way too slow to use for a real-time video.
    *
-   * @param mat An 8-bit OpenCV Mat containing an image with either 1 or 3 channels
+   * @param mat           An 8-bit OpenCV Mat containing an image with either 1 or 3 channels
+   *
    * @return A JavaFX image, or null for empty
    */
   public Image convert(Mat mat) {

@@ -33,20 +33,23 @@ import static org.junit.Assert.fail;
 /**
  * Many of these mock service objects are copied from Guava's test framework.
  *
- * @see <a href="https://github.com/google/guava/blob/a9f8b899c07a33c2203b4e6cf84861646952aeed/guava-tests/test/com/google/common/util/concurrent/AbstractExecutionThreadServiceTest.java">Original
- *     Guava Tests</a>
+ * @see
+ * <a href="https://github.com/google/guava/blob/a9f8b899c07a33c2203b4e6cf84861646952aeed/guava-tests/test/com/google/common/util/concurrent/AbstractExecutionThreadServiceTest.java">Original
+ * Guava Tests</a>
  */
 public class AutoRestartingServiceTest {
-  private static final Logger logger = Logger.getLogger(AutoRestartingServiceTest.class.getName());
-  @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD",
-      justification = "A JUnit rule -- used by JUnit")
-  @Rule
-  public Timeout timeout = new Timeout(10, TimeUnit.SECONDS);
   private CountDownLatch enterRun;
   private CountDownLatch exitRun;
   private Thread executionThread;
   private Throwable thrownByExecutionThread;
   private Executor exceptionCatchingExecutor;
+
+  @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD",
+      justification = "A JUnit rule -- used by JUnit")
+  @Rule
+  public Timeout timeout = new Timeout(10, TimeUnit.SECONDS);
+
+  private static final Logger logger = Logger.getLogger(AutoRestartingServiceTest.class.getName());
 
   @Before
   public void setUp() {
@@ -146,8 +149,8 @@ public class AutoRestartingServiceTest {
     final AutoRestartingService<WaitThenThrowOnRunService> restartingService =
         new AutoRestartingService<>(recordingSupplier, ServiceRestartPolicy.IMMEDIATE);
 
-    @SuppressWarnings("PMD.PrematureDeclaration") final Service initialDelegate =
-        restartingService.getDelegate();
+    @SuppressWarnings("PMD.PrematureDeclaration")
+    final Service initialDelegate = restartingService.getDelegate();
 
     try {
       // This waits for this instance of the service to be terminated
@@ -237,10 +240,10 @@ public class AutoRestartingServiceTest {
   }
 
   private class WaitOnRunService extends AbstractExecutionThreadService {
-    private final State expectedShutdownState = State.STOPPING;
     private boolean startUpCalled = false;
     private boolean runCalled = false;
     private boolean shutDownCalled = false;
+    private final State expectedShutdownState = State.STOPPING;
 
     @Override
     protected void startUp() {

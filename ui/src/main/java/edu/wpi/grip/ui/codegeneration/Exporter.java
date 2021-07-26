@@ -38,8 +38,9 @@ public class Exporter implements Runnable {
   private final boolean testing;
 
   /**
-   * Constructor for an exporter with testing option. In general for non grip testing, the version
-   * of the constructor without testing boolean should be called.
+   * Constructor for an exporter with testing option.
+   * In general for non grip testing, the version of the constructor
+   * without testing boolean should be called.
    *
    * @param steps    an Immutable List of the steps in the pipeline to generate.
    * @param settings the settings to use for this export
@@ -131,6 +132,7 @@ public class Exporter implements Runnable {
    * Checks if a step is exportable to this exporter's language.
    *
    * @param step the step to check
+   *
    * @return true if the given step can be exported to the current language; false if it can't
    */
   private boolean isExportable(Step step) {

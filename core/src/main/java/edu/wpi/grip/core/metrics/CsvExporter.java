@@ -20,14 +20,16 @@ public class CsvExporter {
    * The number of columns in the data table.
    */
   private final int numCols;
-  /**
-   * The data table.
-   */
-  private final Table<Integer, Integer, Object> dt = TreeBasedTable.create();
+
   /**
    * The number of rows of data in the table. This does not include the header row.
    */
   private int dataRows = 0;
+
+  /**
+   * The data table.
+   */
+  private final Table<Integer, Integer, Object> dt = TreeBasedTable.create();
 
   /**
    * Creates a new CSV exporter with the given number of data columns and column header.
@@ -50,6 +52,7 @@ public class CsvExporter {
    * Appends a data row to the bottom of the table.
    *
    * @param data the row to append
+   *
    * @throws NullPointerException     if {@code data} is null, or if it contains null elements
    * @throws IllegalArgumentException if the number of elements in {@code data} is not exactly equal
    *                                  to the number of columns specified in the constructor
@@ -63,6 +66,7 @@ public class CsvExporter {
    * Appends a data row to the bottom of the table.
    *
    * @param data the row to append
+   *
    * @throws NullPointerException     if {@code data} is null, or if it contains null elements
    * @throws IllegalArgumentException if the number of elements in {@code data} is not exactly equal
    *                                  to the number of columns specified in the constructor

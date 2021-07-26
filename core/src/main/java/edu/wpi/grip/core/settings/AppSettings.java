@@ -9,14 +9,14 @@ import javax.annotation.Nonnegative;
 import static com.google.common.base.Preconditions.checkArgument;
 
 /**
- * Holds settings for the GRIP app. These settings are either global settings or set via the command
- * line.
+ * Holds settings for the GRIP app. These settings are either global settings or set via the
+ * command line.
  */
 @SuppressWarnings("JavadocMethod")
 public class AppSettings implements Settings, Cloneable {
 
   @Setting(label = "Internal server port",
-      description = "The port that the internal server should run on.")
+           description = "The port that the internal server should run on.")
   private int serverPort = GripServer.DEFAULT_PORT;
 
   public int getServerPort() {

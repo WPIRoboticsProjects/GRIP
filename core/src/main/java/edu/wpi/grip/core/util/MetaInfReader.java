@@ -27,9 +27,11 @@ public final class MetaInfReader {
    * Reads all classes from the appropriate registry file.
    *
    * @param fileName the name of the file, relative to the META-INF directory
-   * @param <T>      the type of the class (eg {@code Operation} for a registry of operation
-   *                 implementations)
+   * @param <T>      the type of the class (eg
+   *                 {@code Operation} for a registry of operation implementations)
+   *
    * @return a stream of the classes in the registry file
+   *
    * @throws IOException if the file could not be read
    */
   public static <T> Stream<Class<T>> readClasses(String fileName) throws IOException {
@@ -43,8 +45,10 @@ public final class MetaInfReader {
    * Read all lines from a file located at {@code /META-INF/$fileName}.
    *
    * @param fileName the name of the file, relative to the META-INF directory
-   * @throws IOException if no file exists with the given name, or if the file exists but cannot be
-   *                     read
+   *
+   * @throws IOException if no file exists with the given name, or if the file exists but cannot
+   *                     be read
+   *
    * @see #readLines(InputStream)
    */
   public static Stream<String> readLines(String fileName) throws IOException {
@@ -58,11 +62,13 @@ public final class MetaInfReader {
 
   /**
    * Reads all lines from an input stream. Comments are supported by starting with the {@code #}
-   * character; everything after will be ignored. Empty lines and lines consisting of just a comment
-   * are ignored. Whitespace at the start and end of each line wil be removed.
+   * character; everything after will be ignored. Empty lines and lines consisting of just a
+   * comment are ignored. Whitespace at the start and end of each line wil be removed.
    *
    * @param inputStream the input stream to read lines from
+   *
    * @return a stream of the filtered lines
+   *
    * @throws IOException if the stream could not be read from or safely closed
    */
   @VisibleForTesting
@@ -90,11 +96,12 @@ public final class MetaInfReader {
   }
 
   /**
-   * Strips a comment from a line. Comments are the section of the string after and including the
-   * first '#' character in the line. Whitespace before that character will not be removed. If a
-   * line does not contain a comment, it is returned with no modification.
+   * Strips a comment from a line. Comments are the section of the string after and including
+   * the first '#' character in the line. Whitespace before that character will not be removed.
+   * If a line does not contain a comment, it is returned with no modification.
    *
    * @param line the line to strip a comment from
+   *
    * @return the stripped line
    */
   @VisibleForTesting

@@ -4,15 +4,14 @@ import edu.wpi.grip.core.operations.composite.ContoursReport;
 import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.ui.util.GripPlatform;
 
-import org.bytedeco.opencv.opencv_core.Mat;
-import org.bytedeco.opencv.opencv_core.Scalar;
-
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.layout.VBox;
 
 import static org.bytedeco.opencv.global.opencv_core.CV_8UC3;
+import org.bytedeco.opencv.opencv_core.Mat;
+import org.bytedeco.opencv.opencv_core.Scalar;
 import static org.bytedeco.opencv.global.opencv_core.bitwise_xor;
 import static org.bytedeco.opencv.global.opencv_imgproc.drawContours;
 

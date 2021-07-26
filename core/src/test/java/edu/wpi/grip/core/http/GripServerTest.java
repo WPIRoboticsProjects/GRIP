@@ -37,12 +37,14 @@ public class GripServerTest {
   private final DefaultHttpClient client;
   private final GripServer instance;
 
-  public GripServerTest() {
-    instance = new GripServer(new ContextStore(), new TestServerFactory(), new Pipeline());
-    instance.start();
+  public static class TestServerFactory implements GripServer.JettyServerFactory {
 
-    client = new DefaultHttpClient();
-    client.getParams().setParameter(CoreProtocolPNames.PROTOCOL_VERSION, HttpVersion.HTTP_1_1);
+    @Override
+    public Server create(int port) {
+      org.eclipse.jetty.util.log.Log.setLog(new NoLogger());
+      return new Server(0); // 0 -> some random open port, we don't care which
+    }
+
   }
 
   /**
@@ -52,6 +54,14 @@ public class GripServerTest {
                                       GripServer.JettyServerFactory factory,
                                       SettingsProvider settingsProvider) {
     return new GripServer(store, factory, settingsProvider);
+  }
+
+  public GripServerTest() {
+    instance = new GripServer(new ContextStore(), new TestServerFactory(), new Pipeline());
+    instance.start();
+
+    client = new DefaultHttpClient();
+    client.getParams().setParameter(CoreProtocolPNames.PROTOCOL_VERSION, HttpVersion.HTTP_1_1);
   }
 
   @Test
@@ -125,16 +135,6 @@ public class GripServerTest {
     httpEntity.setContent(new ByteArrayInputStream(bytes));
     post.setEntity(httpEntity);
     return client.execute(post);
-  }
-
-  public static class TestServerFactory implements GripServer.JettyServerFactory {
-
-    @Override
-    public Server create(int port) {
-      org.eclipse.jetty.util.log.Log.setLog(new NoLogger());
-      return new Server(0); // 0 -> some random open port, we don't care which
-    }
-
   }
 
   private static final class TestHandler extends PedanticHandler {

@@ -62,10 +62,10 @@ public class Pipeline implements ConnectionValidator, SettingsProvider, StepInde
   private final List<Source> sources = new ArrayList<>();
   private final List<Step> steps = new ArrayList<>();
   private final Set<Connection> connections = new HashSet<>();
-  private final transient ReadWriteLock stepLock = new ReentrantReadWriteLock();
   @Inject
   @XStreamOmitField
   private transient EventBus eventBus;
+  private final transient ReadWriteLock stepLock = new ReentrantReadWriteLock();
   private ProjectSettings settings = new ProjectSettings();
   @XStreamOmitField
   private transient AppSettings appSettings = new AppSettings(); // Do not serialize this field

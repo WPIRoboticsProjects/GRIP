@@ -9,10 +9,10 @@ import org.gradle.api.artifacts.dsl.DependencyHandler
  * distribution.
  */
 internal fun DependencyHandler.javafx(name: String, platform: NativePlatforms, version: String = "11") =
-        when (platform) {
-            WIN32 -> add(platform, "edu.wpi.first.openjfx:javafx-$name:$version:${javaFxClassifier(platform)}")
-            else -> add(platform, "org.openjfx:javafx-$name:$version:${javaFxClassifier(platform)}")
-        }
+    when (platform) {
+        WIN32 -> add(platform, "edu.wpi.first.openjfx:javafx-$name:$version:${javaFxClassifier(platform)}")
+        else -> add(platform, "org.openjfx:javafx-$name:$version:${javaFxClassifier(platform)}")
+    }
 
 /**
  * Generates dependencies for all platform-specific configurations on a JavaFX artifact. The artifact name is

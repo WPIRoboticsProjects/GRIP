@@ -1,62 +1,62 @@
-/**
-* An indication of which type of which point on the box is used as the origin.
-* Choices are TOP_LEFT, TOP_RIGHT, BOTTOM_LEFT, BOTTOM_RIGHT, CENTER
-*/
-enum Origin {
-TOP_LEFT("Top Left", 0, 0),
-TOP_RIGHT("Top Right", -1, 0),
-BOTTOM_LEFT("Bottom Left", 0, -1),
-BOTTOM_RIGHT("Bottom Right", -1, -1),
-CENTER("Center", -.5, -.5);
+	/**
+	 * An indication of which type of which point on the box is used as the origin.
+	 * Choices are TOP_LEFT, TOP_RIGHT, BOTTOM_LEFT, BOTTOM_RIGHT, CENTER
+	 */
+	enum Origin {
+		TOP_LEFT("Top Left", 0, 0),
+		TOP_RIGHT("Top Right", -1, 0),
+		BOTTOM_LEFT("Bottom Left", 0, -1),
+		BOTTOM_RIGHT("Bottom Right", -1, -1),
+		CENTER("Center", -.5, -.5);
 
-private final String label;
-private final double xOffsetMultiplier;
-private final double yOffsetMultiplier;
+		private final String label;
+		private final double xOffsetMultiplier;
+		private final double yOffsetMultiplier;
 
-Origin(String label, double xOffsetMultiplier, double yOffsetMultiplier) {
-this.label = label;
-this.xOffsetMultiplier = xOffsetMultiplier;
-this.yOffsetMultiplier = yOffsetMultiplier;
-}
+		Origin(String label, double xOffsetMultiplier, double yOffsetMultiplier) {
+			this.label = label;
+			this.xOffsetMultiplier = xOffsetMultiplier;
+			this.yOffsetMultiplier = yOffsetMultiplier;
+		}
 
-public static Origin get(String label){
-switch(label){
-case "Top Left":
-return TOP_LEFT;
-case "Top Right":
-return TOP_RIGHT;
-case "Bottom Left":
-return BOTTOM_LEFT;
-case "Bottom Right":
-return BOTTOM_RIGHT;
-default:
-return CENTER;
-}
-}
+        public static Origin get(String label){
+            switch(label){
+                case "Top Left":
+                    return TOP_LEFT;
+                case "Top Right":
+                    return TOP_RIGHT;
+                case "Bottom Left":
+                    return BOTTOM_LEFT;
+                case "Bottom Right":
+                    return BOTTOM_RIGHT;
+                default:
+                    return CENTER;
+            }
+        }
 
-@Override
-public String toString() {
-return label;
-}
-}
+		@Override
+		public String toString() {
+			return label;
+		}
+	}
 
-/**
-* Crops an image.
-* @param input The image on which to perform the crop.
-* @param x The x (horiontal) location of the crop.
-* @param y The y (vertical) location of the crop.
-* @param width The width(horizontal length) of the crop.
-* @param height The height(vertical length) of the crop.
-* @param origin The Origin of the crop.
-* @param output The image in which to store the output.
-*/
-private void $tMeth.name($step.name())(Mat input, double x, double y, double width, double height, Origin origin, Mat output) {
+	/**
+	 * Crops an image.
+	 * @param input The image on which to perform the crop.
+	 * @param x The x (horiontal) location of the crop.
+	 * @param y The y (vertical) location of the crop.
+	 * @param width The width(horizontal length) of the crop.
+	 * @param height The height(vertical length) of the crop.
+	 * @param origin The Origin of the crop.
+	 * @param output The image in which to store the output.
+	 */
+	private void $tMeth.name($step.name())(Mat input, double x, double y, double width, double height, Origin origin, Mat output) {
 
-Rect regionOfInterest = new Rect(
-(int) (x + origin.xOffsetMultiplier * width),
-(int) (y + origin.yOffsetMultiplier * height),
-(int) width,
-(int) height
-);
-input.submat(regionOfInterest).copyTo(output);
-}
+		Rect regionOfInterest = new Rect(
+				(int) (x + origin.xOffsetMultiplier * width),
+				(int) (y + origin.yOffsetMultiplier * height),
+				(int) width,
+				(int) height
+		);
+        input.submat(regionOfInterest).copyTo(output);
+	}

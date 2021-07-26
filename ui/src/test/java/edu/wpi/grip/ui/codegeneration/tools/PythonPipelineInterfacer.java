@@ -33,11 +33,16 @@ import static org.junit.Assert.fail;
 
 public class PythonPipelineInterfacer implements PipelineInterfacer {
 
+  private final StringBuilder str; //NOPMD
+  private BufferedWriter out;
+  private static File codeDir = null;
+  private final PythonTMethods tMeth;
+  private static String pythonCmd;
   private static final String newLine = System.lineSeparator();
   private static final String outputFile = "output.txt";
   private static final Logger logger = Logger.getLogger(PythonPipelineInterfacer.class.getName());
-  private static File codeDir = null;
-  private static String pythonCmd;
+
+  private final List<String> sourceNames = new ArrayList<>();
 
   static {
     try {
@@ -53,11 +58,6 @@ public class PythonPipelineInterfacer implements PipelineInterfacer {
       pythonCmd = "python3";
     }
   }
-
-  private final StringBuilder str; //NOPMD
-  private final PythonTMethods tMeth;
-  private final List<String> sourceNames = new ArrayList<>();
-  private BufferedWriter out;
 
   public PythonPipelineInterfacer(String className) {
     tMeth = new PythonTMethods();

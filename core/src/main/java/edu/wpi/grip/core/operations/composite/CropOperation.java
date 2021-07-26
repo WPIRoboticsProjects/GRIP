@@ -11,19 +11,19 @@ import edu.wpi.grip.core.sockets.SocketHints;
 import com.google.common.collect.ImmutableList;
 import com.google.inject.Inject;
 
-import org.bytedeco.opencv.opencv_core.Rect;
-
 import java.util.List;
+
+import org.bytedeco.opencv.opencv_core.Rect;
 
 
 /**
- * Crop an image to an exact width and height using one of several origin modes.  Cropping images
- * down can be a useful optimization.
+ * Crop an image to an exact width and height using one of several origin modes.  Cropping
+ * images down can be a useful optimization.
  */
 @Description(name = "Crop",
-    summary = "Crop an image to an exact size",
-    category = OperationCategory.IMAGE_PROCESSING,
-    iconName = "crop")
+             summary = "Crop an image to an exact size",
+             category = OperationCategory.IMAGE_PROCESSING,
+             iconName = "crop")
 public class CropOperation implements Operation {
 
   private final InputSocket<MatWrapper> inputSocket;
@@ -88,11 +88,11 @@ public class CropOperation implements Operation {
     final Origin origin = originSocket.getValue().get();
 
     final Rect regionOfInterest = new Rect(
-        x.intValue() + (int) (origin.xOffsetMultiplier * width.intValue()),
-        y.intValue() + (int) (origin.yOffsetMultiplier * height.intValue()),
-        width.intValue(),
-        height.intValue()
-    );
+            x.intValue() + (int) (origin.xOffsetMultiplier * width.intValue()),
+            y.intValue() + (int) (origin.yOffsetMultiplier * height.intValue()),
+            width.intValue(),
+            height.intValue()
+            );
 
     //apply() returns a sub-matrix; It does not modify the input Mat: https://github.com/WPIRoboticsProjects/GRIP/pull/926
     if (input.isCpu()) {

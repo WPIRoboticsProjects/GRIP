@@ -1,38 +1,38 @@
 #needs("Origin")
-@staticmethod
-def $tMeth.name($step.name())(src, x, y, width, height, origin):
-"""Crops an image.
-Args:
-src: The source mat (numpy.ndarray).
-x: The x (horiontal) location of the crop.
-y: The y (vertical) location of the crop.
-width: The width(horizontal length) of the crop.
-height: The height(vertical length) of the crop.
-origin: The Origin of the crop.
-Returns:
-A numpy.ndarray that has been cropped.
-"""
+    @staticmethod
+    def $tMeth.name($step.name())(src, x, y, width, height, origin):
+        """Crops an image.
+        Args:
+            src: The source mat (numpy.ndarray).
+            x: The x (horiontal) location of the crop.
+            y: The y (vertical) location of the crop.
+            width: The width(horizontal length) of the crop.
+            height: The height(vertical length) of the crop.
+            origin: The Origin of the crop.
+        Returns:
+            A numpy.ndarray that has been cropped.
+        """
 
-# origin is Top_Left
-x_offset_multiplier = 0
-y_offset_multiplier = 0
+        # origin is Top_Left
+        x_offset_multiplier = 0
+        y_offset_multiplier = 0
 
-if origin is Origin.Top_Right:
-x_offset_multiplier = -1
-elif origin is Origin.Bottom_Left:
-y_offset_multiplier = -1
-elif origin is Origin.Bottom_Right:
-x_offset_multiplier = -1
-y_offset_multiplier = -1
-elif origin is Origin.Center:
-x_offset_multiplier = -.5
-y_offset_multiplier = -.5
+        if origin is Origin.Top_Right:
+            x_offset_multiplier = -1
+        elif origin is Origin.Bottom_Left:
+            y_offset_multiplier = -1
+        elif origin is Origin.Bottom_Right:
+            x_offset_multiplier = -1
+            y_offset_multiplier = -1
+        elif origin is Origin.Center:
+            x_offset_multiplier = -.5
+            y_offset_multiplier = -.5
 
-# Flooring to keep consistency with Java
-x_start = int(x + x_offset_multiplier * width)
-x_end = int(x_start + width)
+        # Flooring to keep consistency with Java
+        x_start = int(x + x_offset_multiplier * width)
+        x_end = int(x_start + width)
 
-y_start = int(y + y_offset_multiplier * height)
-y_end = int(y_start + height)
+        y_start = int(y + y_offset_multiplier * height)
+        y_end = int(y_start + height)
 
-return src[y_start: y_end, x_start : x_end]
+        return src[y_start: y_end, x_start : x_end]

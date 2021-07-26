@@ -1,12 +1,12 @@
-/**
-* Computes the weighted addition of two Mats.
-* @param src1 the first Mat.
-* @param alpha the weight for the first Mat.
-* @param src2 the second Mat.
-* @param beta the weight for the second Mat.
-* @param gamma Constant to add to each sum.
-* @param dst the output Mat.
-*/
-void $className::#func($step ["src1", "alpha", "src2", "beta", "gamma", "dst"]) {
-cv::addWeighted(src1, alpha, src2, beta, gamma, dst);
-}
+	/**
+	 * Computes the weighted addition of two Mats.
+	 * @param src1 the first Mat.
+	 * @param alpha the weight for the first Mat.
+	 * @param src2 the second Mat.
+	 * @param beta the weight for the second Mat.
+	 * @param gamma Constant to add to each sum.
+	 * @param dst the output Mat.
+	 */
+	void $className::#func($step ["src1", "alpha", "src2", "beta", "gamma", "dst"]) {
+		cv::addWeighted(src1, alpha, src2, beta, gamma, dst);
+	}

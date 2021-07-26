@@ -15,10 +15,11 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 public class SocketTest {
-  private static final Double TEST_VALUE = 12345.6789;
   private final EventBus eventBus = new EventBus();
   private SocketHint<Number> sh;
   private OutputSocket<Number> socket;
+
+  private static final Double TEST_VALUE = 12345.6789;
 
   @Before
   public void initialize() {

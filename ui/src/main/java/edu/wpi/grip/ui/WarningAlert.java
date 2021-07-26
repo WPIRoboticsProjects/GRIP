@@ -17,9 +17,10 @@ public class WarningAlert extends Alert {
    * Creates a new warning alert.
    *
    * @param header the header text of the alert. This should be short and descriptive.
-   * @param body   the body text of the alert. This should go into detail about the warning and what
-   *               prompted it.
+   * @param body   the body text of the alert. This should go into detail about the warning
+   *               and what prompted it.
    * @param owner  the owner window of this alert
+   *
    * @throws NullPointerException if any of the parameters are null
    */
   public WarningAlert(String header, String body, Window owner) {

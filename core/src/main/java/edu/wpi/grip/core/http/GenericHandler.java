@@ -17,23 +17,27 @@ import static com.google.common.base.Preconditions.checkNotNull;
  */
 public abstract class GenericHandler extends AbstractHandler {
 
-  /**
-   * HTTP content type for json.
-   */
-  public static final String CONTENT_TYPE_JSON = "application/json";
-  /**
-   * HTTP content type for HTML.
-   */
-  public static final String CONTENT_TYPE_HTML = "text/html";
-  /**
-   * HTTP content type for plain text.
-   */
-  public static final String CONTENT_TYPE_PLAIN_TEXT = "text/plain";
+  private final ContextStore contextStore;
+
   /**
    * The context that this handles.
    */
   protected final String context;
-  private final ContextStore contextStore;
+
+  /**
+   * HTTP content type for json.
+   */
+  public static final String CONTENT_TYPE_JSON = "application/json";
+
+  /**
+   * HTTP content type for HTML.
+   */
+  public static final String CONTENT_TYPE_HTML = "text/html";
+
+  /**
+   * HTTP content type for plain text.
+   */
+  public static final String CONTENT_TYPE_PLAIN_TEXT = "text/plain";
 
   /**
    * Creates a generic handler for all contexts on the server.
@@ -45,8 +49,8 @@ public abstract class GenericHandler extends AbstractHandler {
   }
 
   /**
-   * Creates a generic handler that handles requests for the given context. That context will not be
-   * claimed.
+   * Creates a generic handler that handles requests for the given context.
+   * That context will not be claimed.
    *
    * <p>Note that the context <strong>is case sensitive</strong>.
    *
@@ -80,6 +84,22 @@ public abstract class GenericHandler extends AbstractHandler {
   }
 
   /**
+   * Releases the context that this handles, allowing it to be claimed by another handler.
+   */
+  protected void releaseContext() {
+    contextStore.erase(context);
+  }
+
+  /**
+   * Gets the context for this handler.
+   */
+  public String getContext() {
+    return context;
+  }
+
+  // Static helper methods
+
+  /**
    * Sends text content to the client.
    *
    * @param response    the response that will be sent to the client
@@ -101,27 +121,11 @@ public abstract class GenericHandler extends AbstractHandler {
     return request.getMethod().equals("POST");
   }
 
-  // Static helper methods
-
   /**
    * Checks if the given request is a GET.
    */
   protected static boolean isGet(HttpServletRequest request) {
     return request.getMethod().equals("GET");
-  }
-
-  /**
-   * Releases the context that this handles, allowing it to be claimed by another handler.
-   */
-  protected void releaseContext() {
-    contextStore.erase(context);
-  }
-
-  /**
-   * Gets the context for this handler.
-   */
-  public String getContext() {
-    return context;
   }
 
 }

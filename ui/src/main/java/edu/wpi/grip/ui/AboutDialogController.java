@@ -2,6 +2,7 @@ package edu.wpi.grip.ui;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
+
 import javax.inject.Inject;
 
 public class AboutDialogController {

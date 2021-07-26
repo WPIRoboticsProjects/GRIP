@@ -24,9 +24,9 @@ import static org.bytedeco.opencv.global.opencv_imgproc.Canny;
  * An operation that performs canny edge detection on an image.
  */
 @Description(name = "CV Canny",
-    summary = "Performs canny edge detection on a grayscale image",
-    category = OperationCategory.OPENCV,
-    iconName = "opencv")
+             summary = "Performs canny edge detection on a grayscale image",
+             category = OperationCategory.OPENCV,
+             iconName = "opencv")
 public class CannyEdgeOperation extends CudaOperation {
 
   private final SocketHint<Number> lowThreshHint

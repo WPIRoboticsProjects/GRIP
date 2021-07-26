@@ -27,11 +27,14 @@ import java.util.logging.Logger;
  */
 public class CoreCommandLineHelper {
 
+  private static final Logger logger = Logger.getLogger("CommandLine");
+
   public static final String FILE_OPTION = "f"; // "f" for "file"
   public static final String PORT_OPTION = "p"; // "p" for "port"
   public static final String HELP_OPTION = "h"; // "h" for "help" (this is standard)
   public static final String VERSION_OPTION = "v"; // "v" for "version" (this is standard)
-  private static final Logger logger = Logger.getLogger("CommandLine");
+
+  private final Options options = new Options();
   private static final Option saveOption =
       Option.builder(FILE_OPTION)
           .longOpt("file")
@@ -52,7 +55,6 @@ public class CoreCommandLineHelper {
       = new Option(HELP_OPTION, "help", false, "Prints the command line options");
   private static final Option versionOption
       = new Option(VERSION_OPTION, "version", false, "Prints the version of GRIP");
-  private final Options options = new Options();
 
   /**
    * Creates a new core commandline helper with the standard options.
@@ -83,6 +85,7 @@ public class CoreCommandLineHelper {
    * returning from this method. This will also occur if the help option is specified.
    *
    * @param args the command line arguments to parse
+   *
    * @return a CommandLine object that can be queried for command line options and their values
    */
   @SuppressWarnings({"checkstyle:regexp", "PMD.SystemPrintln"})
@@ -149,6 +152,7 @@ public class CoreCommandLineHelper {
    *
    * @param args    the parsed command line arguments
    * @param project the project to load the file into
+   *
    * @throws IOException if the file couldn't be loaded
    */
   public void loadFile(CommandLine args, Project project) throws IOException {

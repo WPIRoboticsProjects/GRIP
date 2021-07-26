@@ -37,20 +37,21 @@ public abstract class ImageBasedPreviewView<T> extends SocketPreviewView<T> {
   }
 
   /**
+   * Converts the input data to an image and render it in the {@link #imageView}.
+   */
+  protected abstract void convertImage();
+
+  /**
    * Checks if an image is able to be previewed.
    *
    * @param image the image to check
+   *
    * @return true if the image can be previewed, false if it can't
    */
   public static boolean isPreviewable(MatWrapper image) {
     return (image.channels() == 1) || (image.channels() == 3)
         && (image.depth() == CV_8U || image.depth() == CV_8S);
   }
-
-  /**
-   * Converts the input data to an image and render it in the {@link #imageView}.
-   */
-  protected abstract void convertImage();
 
   /**
    * Updates the image preview when the pipeline runs.

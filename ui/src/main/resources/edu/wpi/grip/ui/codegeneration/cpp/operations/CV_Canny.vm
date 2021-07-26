@@ -1,12 +1,12 @@
-/**
-* Applies a canny edge detection to the image.
-* @param image image to use.
-* @param thres1 first threshold for the canny algorithm.
-* @param thres2 second threshold for the canny algorithm.
-* @param apertureSize aperture size for the Sobel operation.
-* @param gradient if the L2 norm should be used.
-* @param edges output of the canny.
-*/
-void $className::#func($step ["image", "thres1", "thres2", "apertureSize", "gradient", "edges"]) {
-cv::Canny(image, edges, thres1, thres2, (int)apertureSize, gradient);
-}
+	/**
+	 * Applies a canny edge detection to the image.
+	 * @param image image to use.
+	 * @param thres1 first threshold for the canny algorithm.
+	 * @param thres2 second threshold for the canny algorithm.
+	 * @param apertureSize aperture size for the Sobel operation.
+	 * @param gradient if the L2 norm should be used.
+	 * @param edges output of the canny.
+	 */
+	void $className::#func($step ["image", "thres1", "thres2", "apertureSize", "gradient", "edges"]) {
+		cv::Canny(image, edges, thres1, thres2, (int)apertureSize, gradient);
+	}

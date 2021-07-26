@@ -12,11 +12,10 @@ import edu.wpi.grip.core.sockets.SocketHints;
 import com.google.common.collect.ImmutableList;
 import com.google.inject.Inject;
 
-import org.bytedeco.opencv.opencv_core.Mat;
-import org.bytedeco.opencv.opencv_core.MatVector;
-
 import java.util.List;
 
+import org.bytedeco.opencv.opencv_core.Mat;
+import org.bytedeco.opencv.opencv_core.MatVector;
 import static org.bytedeco.opencv.global.opencv_imgproc.CV_CHAIN_APPROX_TC89_KCOS;
 import static org.bytedeco.opencv.global.opencv_imgproc.CV_RETR_EXTERNAL;
 import static org.bytedeco.opencv.global.opencv_imgproc.CV_RETR_LIST;
@@ -27,9 +26,9 @@ import static org.bytedeco.opencv.global.opencv_imgproc.findContours;
  * in the image.
  */
 @Description(name = "Find Contours",
-    summary = "Detects contours in a binary image",
-    category = OperationCategory.FEATURE_DETECTION,
-    iconName = "find-contours")
+             summary = "Detects contours in a binary image",
+             category = OperationCategory.FEATURE_DETECTION,
+             iconName = "find-contours")
 public class FindContoursOperation implements Operation {
 
   private final SocketHint<MatWrapper> inputHint = SocketHints.createImageSocketHint("Input");

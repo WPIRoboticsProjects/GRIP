@@ -1,9 +1,9 @@
 package edu.wpi.grip.core.sources;
 
+import org.bytedeco.opencv.opencv_core.Mat;
 import org.bytedeco.javacv.Frame;
 import org.bytedeco.javacv.FrameGrabber;
 import org.bytedeco.javacv.OpenCVFrameConverter;
-import org.bytedeco.opencv.opencv_core.Mat;
 import org.junit.Test;
 
 import java.util.function.Supplier;
@@ -49,7 +49,7 @@ public class GrabberServiceTest {
       fail("This should have thrown an exception");
     } catch (IllegalStateException e) {
       assertThat(e).hasMessageThat()
-          .contains(ConstructorThrowingFrameGrabber.CONSTRUCTOR_EXCEPTION_MESSAGE);
+                   .contains(ConstructorThrowingFrameGrabber.CONSTRUCTOR_EXCEPTION_MESSAGE);
       throw e;
     }
     fail("This should have rethrown an exception");
@@ -202,17 +202,17 @@ public class GrabberServiceTest {
   private static class SimpleUpdater implements CameraSourceUpdater {
     @Override
     public void setFrameRate(double value) {
-      /* no-op */
+            /* no-op */
     }
 
     @Override
     public void copyNewMat(Mat matToCopy) {
-      /* no-op */
+            /* no-op */
     }
 
     @Override
     public void updatesComplete() {
-      /* no-op */
+            /* no-op */
     }
   }
 

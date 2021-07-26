@@ -44,6 +44,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.util.Callback;
+
 import javax.annotation.Nullable;
 
 /**
@@ -52,17 +53,9 @@ import javax.annotation.Nullable;
 @SuppressWarnings("PMD.TooManyFields")
 public class AnalysisController {
 
-  private static final int DEFAULT_NUM_RECENT_SAMPLES = 16;
-  private final Callback<StepStatisticsEntry, Observable[]> extractor =
-      entry -> new Observable[]{entry.stepProperty(), entry.analysisProperty()};
-  private final ObservableList<StepStatisticsEntry> tableItems
-      = FXCollections.observableArrayList(extractor);
-  private final Map<Step, TimeView> timeViewMap = new HashMap<>();
-  private final Map<Step, Collection<Long>> sampleMap = new HashMap<>();
-  private final CsvExporter csvExporter = new CsvExporter(4,
-      "Step", "% Time", "Average Time (ms)", "Standard Deviation");
   @FXML
   private Pane root;
+
   // Table
   @FXML
   private TableView<StepStatisticsEntry> table;
@@ -70,6 +63,7 @@ public class AnalysisController {
   private TableColumn<StepStatisticsEntry, String> operationColumn;
   @FXML
   private TableColumn<StepStatisticsEntry, Statistics> timeColumn;
+
   // Benchmarking
   @FXML
   private Button benchmarkButton;
@@ -77,11 +71,22 @@ public class AnalysisController {
   private TextField benchmarkRunsField;
   @Inject
   private BenchmarkRunner benchmarker;
+
+  private final Callback<StepStatisticsEntry, Observable[]> extractor =
+      entry -> new Observable[]{entry.stepProperty(), entry.analysisProperty()};
+  private final ObservableList<StepStatisticsEntry> tableItems
+      = FXCollections.observableArrayList(extractor);
+
   @Inject
   private StepIndexer stepIndexer;
   private Statistics lastStats = Statistics.NIL;
+  private final Map<Step, TimeView> timeViewMap = new HashMap<>();
+  private final Map<Step, Collection<Long>> sampleMap = new HashMap<>();
+  private static final int DEFAULT_NUM_RECENT_SAMPLES = 16;
   private int numRecentSamples = DEFAULT_NUM_RECENT_SAMPLES;
   private String csvReport = "";
+  private final CsvExporter csvExporter = new CsvExporter(4,
+      "Step", "% Time", "Average Time (ms)", "Standard Deviation");
 
   /**
    * Initializes the controller. This should only be called by the FXML loader.

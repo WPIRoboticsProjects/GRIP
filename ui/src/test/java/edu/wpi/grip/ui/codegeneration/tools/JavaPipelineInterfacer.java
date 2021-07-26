@@ -16,12 +16,13 @@ import java.util.logging.Logger;
 import static org.junit.Assert.fail;
 
 public class JavaPipelineInterfacer implements PipelineInterfacer {
-  private static final Logger logger = Logger.getLogger(JavaPipelineInterfacer.class.getName());
   private final Class<?> pipeline;
+  private Object instance;
   private final JavaTMethods tMeth;
+  private static final Logger logger = Logger.getLogger(JavaPipelineInterfacer.class.getName());
+
   private final Map<String, Class<?>> sourceTypeMap = new LinkedHashMap<>();
   private final Map<String, Object> sourceValueMap = new LinkedHashMap<>();
-  private Object instance;
 
   public JavaPipelineInterfacer(String className) {
     tMeth = new JavaTMethods();

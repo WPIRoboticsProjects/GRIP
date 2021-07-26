@@ -8,14 +8,13 @@ import edu.wpi.grip.core.sockets.Socket;
 
 import com.google.auto.value.AutoValue;
 
-import org.bytedeco.opencv.opencv_core.Mat;
-import org.bytedeco.opencv.opencv_core.MatVector;
-import org.bytedeco.opencv.opencv_core.Rect;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import org.bytedeco.opencv.opencv_core.Mat;
+import org.bytedeco.opencv.opencv_core.MatVector;
+import org.bytedeco.opencv.opencv_core.Rect;
 import static org.bytedeco.opencv.global.opencv_imgproc.boundingRect;
 import static org.bytedeco.opencv.global.opencv_imgproc.contourArea;
 import static org.bytedeco.opencv.global.opencv_imgproc.convexHull;

@@ -17,9 +17,9 @@ import org.bytedeco.opencv.opencv_core.Size;
 import java.util.List;
 
 @Description(name = "Get Mat Info",
-    summary = "Provide access to the various elements and properties of an image",
-    category = OperationCategory.OPENCV,
-    iconName = "opencv")
+             summary = "Provide access to the various elements and properties of an image",
+             category = OperationCategory.OPENCV,
+             iconName = "opencv")
 public class MatFieldAccessor implements CVOperation {
 
   private static final Mat defaultsMat = new Mat();

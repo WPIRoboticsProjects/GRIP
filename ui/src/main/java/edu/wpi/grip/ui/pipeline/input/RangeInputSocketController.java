@@ -46,7 +46,8 @@ public class RangeInputSocketController extends InputSocketController<List<Numbe
     checkArgument(domain.length == 1 && domain[0] instanceof List,
         "Sliders must have a domain with a list of two numbers (min and max)");
 
-    @SuppressWarnings("unchecked") final List<Number> extremes = (List<Number>) domain[0];
+    @SuppressWarnings("unchecked")
+    final List<Number> extremes = (List<Number>) domain[0];
     checkArgument((extremes.size() == 2) && (extremes.get(0) instanceof Number) && (extremes.get(1)
             instanceof Number),
         "Sliders must have a domain with a list of two numbers (min and max)");

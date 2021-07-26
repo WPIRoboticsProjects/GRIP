@@ -6,6 +6,7 @@ import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Dialog;
 import javafx.scene.layout.Pane;
+
 import javax.annotation.Nonnull;
 
 import static com.google.common.base.Preconditions.checkArgument;

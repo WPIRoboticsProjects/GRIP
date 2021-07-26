@@ -10,12 +10,21 @@ import static com.google.common.base.Preconditions.checkNotNull;
  */
 public class CodeGenerationSettings {
 
+  private final String language;
+  private final String className;
+  private final boolean implementWpilibPipeline;
+  private final String saveDir;
+  private final String packageName;
+  private final String moduleName;
+
   public static final String LANGUAGE = "language";
   public static final String CLASS_NAME = "className";
   public static final String IMPLEMENT_WPILIB_PIPELINE = "implementVisionPipeline";
   public static final String SAVE_DIR = "saveDir";
   public static final String PACKAGE_NAME = "packageName";
   public static final String MODULE_NAME = "moduleName";
+
+
   /**
    * The default code generation settings.
    * <br>
@@ -30,12 +39,6 @@ public class CodeGenerationSettings {
    * </table>
    */
   public static final CodeGenerationSettings DEFAULT_SETTINGS = new CodeGenerationSettings();
-  private final String language;
-  private final String className;
-  private final boolean implementWpilibPipeline;
-  private final String saveDir;
-  private final String packageName;
-  private final String moduleName;
 
   /**
    * Creates the default code generation settings.
@@ -64,8 +67,8 @@ public class CodeGenerationSettings {
    *
    * @param language                the language to generate to
    * @param className               the name of the class to generate
-   * @param implementWpilibPipeline if the generated class should implement the WPILib
-   *                                VisionPipeline interface
+   * @param implementWpilibPipeline if the generated class should implement the
+   *                                WPILib VisionPipeline interface
    * @param saveDir                 the directory to save the generated file to
    * @param packageName             the name of the Java package to place the file in
    * @param moduleName              the name of the Python module
@@ -82,26 +85,6 @@ public class CodeGenerationSettings {
     this.saveDir = saveDir;
     this.packageName = packageName;
     this.moduleName = moduleName;
-  }
-
-  public static Builder builder() {
-    return new Builder();
-  }
-
-  /**
-   * Creates a builder with defaults from the given settings.
-   *
-   * @param defaultSettings the default settings for the builder to use
-   * @return a settings builder
-   */
-  public static Builder builder(CodeGenerationSettings defaultSettings) {
-    return new Builder()
-        .language(defaultSettings.getLanguage())
-        .className(defaultSettings.getClassName())
-        .implementVisionPipeline(defaultSettings.shouldImplementWpilibPipeline())
-        .saveDir(defaultSettings.getSaveDir())
-        .packageName(defaultSettings.getPackageName())
-        .moduleName(defaultSettings.getModuleName());
   }
 
   public String getLanguage() {
@@ -126,6 +109,26 @@ public class CodeGenerationSettings {
 
   public String getModuleName() {
     return moduleName;
+  }
+
+  public static Builder builder() {
+    return new Builder();
+  }
+
+  /**
+   * Creates a builder with defaults from the given settings.
+   *
+   * @param defaultSettings the default settings for the builder to use
+   * @return a settings builder
+   */
+  public static Builder builder(CodeGenerationSettings defaultSettings) {
+    return new Builder()
+        .language(defaultSettings.getLanguage())
+        .className(defaultSettings.getClassName())
+        .implementVisionPipeline(defaultSettings.shouldImplementWpilibPipeline())
+        .saveDir(defaultSettings.getSaveDir())
+        .packageName(defaultSettings.getPackageName())
+        .moduleName(defaultSettings.getModuleName());
   }
 
   public static final class Builder {
@@ -190,8 +193,8 @@ public class CodeGenerationSettings {
     }
 
     /**
-     * Builds a new {@code CodeGenerationSettings} object. This ensures that every required option
-     * has been set.
+     * Builds a new {@code CodeGenerationSettings} object. This ensures that every required
+     * option has been set.
      */
     public CodeGenerationSettings build() {
       return new CodeGenerationSettings(

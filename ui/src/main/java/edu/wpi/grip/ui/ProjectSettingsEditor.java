@@ -23,6 +23,15 @@ import javafx.scene.layout.VBox;
  */
 public class ProjectSettingsEditor extends Dialog<ButtonType> {
 
+  private static class CustomPropertySheet extends PropertySheet {
+    public CustomPropertySheet(ObservableList<Item> items) {
+      super(items);
+      setMode(Mode.NAME);
+      setModeSwitcherVisible(false);
+      setSearchBoxVisible(false);
+    }
+  }
+
   @SuppressWarnings("JavadocMethod")
   public ProjectSettingsEditor(Parent root,
                                ProjectSettings projectSettings,
@@ -53,14 +62,5 @@ public class ProjectSettingsEditor extends Dialog<ButtonType> {
     setHeaderText("Settings");
     setGraphic(graphic);
     setResizable(true);
-  }
-
-  private static class CustomPropertySheet extends PropertySheet {
-    public CustomPropertySheet(ObservableList<Item> items) {
-      super(items);
-      setMode(Mode.NAME);
-      setModeSwitcherVisible(false);
-      setSearchBoxVisible(false);
-    }
   }
 }

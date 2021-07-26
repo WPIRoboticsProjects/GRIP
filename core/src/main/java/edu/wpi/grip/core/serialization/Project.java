@@ -38,7 +38,6 @@ import javax.inject.Singleton;
 public class Project {
 
   protected final XStream xstream = new XStream(new PureJavaReflectionProvider());
-  private final ObservableBoolean saveIsDirty = new ObservableBoolean();
   @Inject
   private EventBus eventBus;
   @Inject
@@ -46,6 +45,7 @@ public class Project {
   @Inject
   private PipelineRunner pipelineRunner;
   private Optional<File> file = Optional.empty();
+  private final ObservableBoolean saveIsDirty = new ObservableBoolean();
 
   @Inject
   public void initialize(StepConverter stepConverter,
@@ -120,8 +120,9 @@ public class Project {
    * throw an IOException and will instead post a warning event to the event bus.
    *
    * @param file the file to save to
+   *
    * @return true if the project was successfully saved to the given file, or false if the file
-   *     could not be written to
+   *              could not be written to
    */
   public boolean trySave(File file) {
     try {
@@ -174,8 +175,8 @@ public class Project {
 
   private static final class ObservableBoolean {
 
-    private final List<Consumer<Boolean>> consumers = new LinkedList<>();
     private boolean b = false;
+    private final List<Consumer<Boolean>> consumers = new LinkedList<>();
 
     public void set(boolean b) {
       this.b = b;

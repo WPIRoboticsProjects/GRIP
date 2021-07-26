@@ -7,7 +7,7 @@ public interface PipelineInterfacer {
   void setMatSource(int num, File img);
 
   void setNumSource(int num, Number val);
-
+  
   void process();
 
   Object getOutput(String name, GenType type);

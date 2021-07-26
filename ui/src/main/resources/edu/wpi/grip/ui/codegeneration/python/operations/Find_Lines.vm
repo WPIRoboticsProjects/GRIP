@@ -1,22 +1,22 @@
 #parse("$vmLoc/operations/Lines.vm")
-@staticmethod
-def $tMeth.name($step.name())(input):
-"""Finds all line segments in an image.
-Args:
-input: A numpy.ndarray.
-Returns:
-A filtered list of Lines.
-"""
-detector = cv2.createLineSegmentDetector()
-if (len(input.shape) == 2 or input.shape[2] == 1):
-lines = detector.detect(input)
-else:
-tmp = cv2.cvtColor(input, cv2.COLOR_BGR2GRAY)
-lines = detector.detect(tmp)
-output = []
-if len(lines) != 0:
-for i in range(0, len(lines[0])):
-tmp = ${className}.Line(lines[0][i, 0][0], lines[0][i, 0][1],
-lines[0][i, 0][2], lines[0][i, 0][3])
-output.append(tmp)
-return output
+    @staticmethod
+    def $tMeth.name($step.name())(input):
+        """Finds all line segments in an image.
+        Args:
+            input: A numpy.ndarray.
+        Returns:
+            A filtered list of Lines.
+        """
+        detector = cv2.createLineSegmentDetector()
+        if (len(input.shape) == 2 or input.shape[2] == 1):
+            lines = detector.detect(input)
+        else:
+            tmp = cv2.cvtColor(input, cv2.COLOR_BGR2GRAY)
+            lines = detector.detect(tmp)
+        output = []
+        if len(lines) != 0:
+            for i in range(0, len(lines[0])):
+                tmp = ${className}.Line(lines[0][i, 0][0], lines[0][i, 0][1],
+                                lines[0][i, 0][2], lines[0][i, 0][3])
+                output.append(tmp)
+        return output

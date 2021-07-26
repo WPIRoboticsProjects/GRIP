@@ -19,8 +19,7 @@ public final class MultiException extends RuntimeException {
   }
 
   /**
-   * Given a collection of exceptions, returns a {@link RuntimeException}, with the following
-   * rules:
+   * Given a collection of exceptions, returns a {@link RuntimeException}, with the following rules:
    * <ul> <li>If {@code exceptions} has a single exception and that exception is a {@link
    * RuntimeException}, return it <li>If {@code exceptions} has a single exceptions and that
    * exceptions is <em>not</em> a {@link RuntimeException}, return a simple {@code RuntimeException}

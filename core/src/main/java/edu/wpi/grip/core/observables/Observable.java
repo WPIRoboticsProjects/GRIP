@@ -8,29 +8,8 @@ package edu.wpi.grip.core.observables;
 public interface Observable<T> {
 
   /**
-   * Creates an observable initialized to the given value. This observable is <i>not</i>
-   * thread-safe; for a thread-safe observable, use {@link #synchronizedOf(Object) synchronizedOf}.
-   *
-   * @param value the initial value of the observable
-   * @param <T>   the type of value in the observable
-   */
-  static <T> Observable<T> of(T value) {
-    return new SimpleObservable<>(value);
-  }
-
-  /**
-   * Creates a thread-safe observable initialized to the given value.
-   *
-   * @param value the initial value of the observable
-   * @param <T>   the type of value in the observable
-   */
-  static <T> Observable<T> synchronizedOf(T value) {
-    return new SynchronizedObservable<>(value);
-  }
-
-  /**
-   * Add an observer to this observable. It will be notified of any future changes to the value of
-   * this observable. Listeners will be fired in the order in which they were added, and on the
+   * Add an observer to this observable. It will be notified of any future changes to the value
+   * of this observable. Listeners will be fired in the order in which they were added, and on the
    * thread that updates the observed value. Because of this, listeners should take as little time
    * as possible to run (unless submitting a long-running task to a worker thread).
    */
@@ -52,5 +31,26 @@ public interface Observable<T> {
    * current value, all observers will be notified of the change.
    */
   void set(T value);
+
+  /**
+   * Creates an observable initialized to the given value. This observable is <i>not</i>
+   * thread-safe; for a thread-safe observable, use {@link #synchronizedOf(Object) synchronizedOf}.
+   *
+   * @param value the initial value of the observable
+   * @param <T>   the type of value in the observable
+   */
+  static <T> Observable<T> of(T value) {
+    return new SimpleObservable<>(value);
+  }
+
+  /**
+   * Creates a thread-safe observable initialized to the given value.
+   *
+   * @param value the initial value of the observable
+   * @param <T>   the type of value in the observable
+   */
+  static <T> Observable<T> synchronizedOf(T value) {
+    return new SynchronizedObservable<>(value);
+  }
 
 }

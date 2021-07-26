@@ -15,8 +15,8 @@ import static org.junit.Assert.assertTrue;
 
 public class GenericHandlerTest {
 
-  private final ContextStore store = new ContextStore();
   private GenericHandler gh;
+  private final ContextStore store = new ContextStore();
 
   @Test(expected = NullPointerException.class)
   public void testNullContext() {

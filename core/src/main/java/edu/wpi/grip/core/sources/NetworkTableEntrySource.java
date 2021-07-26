@@ -38,6 +38,48 @@ public class NetworkTableEntrySource extends Source {
   private final Types type;
   private NetworkReceiver networkReceiver;
 
+  public interface Factory {
+    NetworkTableEntrySource create(Properties properties);
+
+    NetworkTableEntrySource create(String path, Types type);
+  }
+
+  public enum Types {
+    BOOLEAN {
+      @Override
+      protected SocketHint createSocketHint() {
+        return SocketHints.Outputs.createBooleanSocketHint(Types.BOOLEAN.toString(), false);
+      }
+    },
+    NUMBER {
+      @Override
+      protected SocketHint createSocketHint() {
+        return SocketHints.Outputs.createNumberSocketHint(Types.NUMBER.toString(), 0.0);
+      }
+    },
+    STRING {
+      @Override
+      protected SocketHint createSocketHint() {
+        return SocketHints.Outputs.createStringSocketHint(Types.STRING.toString(), "");
+      }
+    };
+
+    Types() {
+
+    }
+
+    protected abstract SocketHint createSocketHint();
+
+    @Override
+    public String toString() {
+      return CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, name());
+    }
+
+    public String toProperty() {
+      return toString().toUpperCase(Locale.ENGLISH);
+    }
+  }
+
   @AssistedInject
   NetworkTableEntrySource(
       EventBus eventBus,
@@ -111,47 +153,5 @@ public class NetworkTableEntrySource extends Source {
     if (event.getSource() == this) {
       networkReceiver.close();
     }
-  }
-
-  public enum Types {
-    BOOLEAN {
-      @Override
-      protected SocketHint createSocketHint() {
-        return SocketHints.Outputs.createBooleanSocketHint(Types.BOOLEAN.toString(), false);
-      }
-    },
-    NUMBER {
-      @Override
-      protected SocketHint createSocketHint() {
-        return SocketHints.Outputs.createNumberSocketHint(Types.NUMBER.toString(), 0.0);
-      }
-    },
-    STRING {
-      @Override
-      protected SocketHint createSocketHint() {
-        return SocketHints.Outputs.createStringSocketHint(Types.STRING.toString(), "");
-      }
-    };
-
-    Types() {
-
-    }
-
-    protected abstract SocketHint createSocketHint();
-
-    @Override
-    public String toString() {
-      return CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, name());
-    }
-
-    public String toProperty() {
-      return toString().toUpperCase(Locale.ENGLISH);
-    }
-  }
-
-  public interface Factory {
-    NetworkTableEntrySource create(Properties properties);
-
-    NetworkTableEntrySource create(String path, Types type);
   }
 }

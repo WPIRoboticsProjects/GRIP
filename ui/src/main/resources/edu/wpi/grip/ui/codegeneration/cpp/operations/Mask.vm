@@ -1,12 +1,12 @@
-/**
-* Filter out an area of an image using a binary mask.
-*
-* @param input The image on which the mask filters.
-* @param mask The binary image that is used to filter.
-* @param output The image in which to store the output.
-*/
-void $className::#func($step ["input", "mask", "output"]) {
-mask.convertTo(mask, CV_8UC1);
-cv::bitwise_xor(output, output, output);
-input.copyTo(output, mask);
-}
+		/**
+		 * Filter out an area of an image using a binary mask.
+		 *
+		 * @param input The image on which the mask filters.
+		 * @param mask The binary image that is used to filter.
+		 * @param output The image in which to store the output.
+		 */
+		void $className::#func($step ["input", "mask", "output"]) {
+			mask.convertTo(mask, CV_8UC1);
+			cv::bitwise_xor(output, output, output);
+			input.copyTo(output, mask);
+		}

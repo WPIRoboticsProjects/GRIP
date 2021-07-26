@@ -1,30 +1,28 @@
-/**
-* Detects groups of pixels in an image.
-*
-* @param input The image on which to perform the find blobs.
-* @param minArea The minimum size of a blob that will be found.
-* @param circularity The minimum and maximum circularity of blobs that will be found.
-* @param darkBlobs The boolean that determines if light or dark blobs are found.
-* @param blobList The output where the MatOfKeyPoint is stored.
-*/
-//void $tMeth.name($step.name())(Mat *input, double *minArea, double circularity[2],
-//bool *darkBlobs, vector
-<KeyPoint> *blobList) {
-    void $className::#func($step ["input", "minArea", "circularity", "darkBlobs", "blobList"]) {
-    blobList.clear();
-    cv::SimpleBlobDetector::Params params;
-    params.filterByColor = 1;
-    params.blobColor = (darkBlobs ? 0 : 255);
-    params.minThreshold = 10;
-    params.maxThreshold = 220;
-    params.filterByArea = true;
-    params.minArea = minArea;
-    params.filterByCircularity = true;
-    params.minCircularity = circularity[0];
-    params.maxCircularity = circularity[1];
-    params.filterByConvexity = false;
-    params.filterByInertia = false;
-    cv::Ptr
-    <cv::SimpleBlobDetector> detector = cv::SimpleBlobDetector::create(params);
-        detector->detect(input, blobList);
-        }
+	/**
+	 * Detects groups of pixels in an image.
+	 *
+	 * @param input The image on which to perform the find blobs.
+	 * @param minArea The minimum size of a blob that will be found.
+	 * @param circularity The minimum and maximum circularity of blobs that will be found.
+	 * @param darkBlobs The boolean that determines if light or dark blobs are found.
+	 * @param blobList The output where the MatOfKeyPoint is stored.
+	 */
+	//void $tMeth.name($step.name())(Mat *input, double *minArea, double circularity[2],
+		//bool *darkBlobs, vector<KeyPoint> *blobList) {
+	void $className::#func($step ["input", "minArea", "circularity", "darkBlobs", "blobList"]) {
+		blobList.clear();
+		cv::SimpleBlobDetector::Params params;
+		params.filterByColor = 1;
+		params.blobColor = (darkBlobs ? 0 : 255);
+		params.minThreshold = 10;
+		params.maxThreshold = 220;
+		params.filterByArea = true;
+		params.minArea = minArea;
+		params.filterByCircularity = true;
+		params.minCircularity = circularity[0];
+		params.maxCircularity = circularity[1];
+		params.filterByConvexity = false;
+		params.filterByInertia = false;
+		cv::Ptr<cv::SimpleBlobDetector> detector = cv::SimpleBlobDetector::create(params);
+		detector->detect(input, blobList);
+	}

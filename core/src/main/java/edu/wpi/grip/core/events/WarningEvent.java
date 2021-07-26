@@ -21,10 +21,10 @@ public class WarningEvent implements LoggableEvent {
   /**
    * Creates a new warning event.
    *
-   * @param header the header or title of the warning (e.g. "Cannot generate code"). This should be
-   *               short and descriptive.
-   * @param body   the body of the warning. This should go into detail about what the user did
-   *               wrong.
+   * @param header the header or title of the warning (e.g. "Cannot generate code").
+   *               This should be short and descriptive.
+   * @param body   the body of the warning.
+   *               This should go into detail about what the user did wrong.
    */
   public WarningEvent(String header, String body) {
     checkNotNull(header, "Header text cannot be null");

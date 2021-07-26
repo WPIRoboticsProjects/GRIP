@@ -1,9 +1,9 @@
-/**
-* Performs a median blur on the image.
-* @param src image to blur.
-* @param kSize size of blur.
-* @param dst output of blur.
-*/
-void $className::#func($step ["src", "kSize", "dst"]) {
-cv::medianBlur(src, dst, (int)kSize);
-}
+	/**
+	 * Performs a median blur on the image.
+	 * @param src image to blur.
+	 * @param kSize size of blur.
+	 * @param dst output of blur.
+	 */
+	void $className::#func($step ["src", "kSize", "dst"]) {
+		cv::medianBlur(src, dst, (int)kSize);
+	}

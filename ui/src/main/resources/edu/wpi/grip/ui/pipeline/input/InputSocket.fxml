@@ -3,19 +3,19 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.StackPane?>
-<GridPane xmlns:fx="http://javafx.com/fxml/1"
-          styleClass="socket"
+<GridPane styleClass="socket"
           fx:controller="edu.wpi.grip.ui.pipeline.input.InputSocketController"
           fx:id="root"
-          xmlns="http://javafx.com/javafx/null">
+          xmlns="http://javafx.com/javafx/null"
+          xmlns:fx="http://javafx.com/fxml/1">
     <children>
         <Label fx:id="identifier" contentDisplay="RIGHT" styleClass="socket-identifier" GridPane.rowIndex="0"
                GridPane.columnIndex="1">
             <graphic>
-                <Label fx:id="type" opacity=".5"/>
+                <Label fx:id="type" opacity=".5" />
             </graphic>
         </Label>
         <StackPane fx:id="contentPane" styleClass="socket-control" GridPane.rowIndex="1"
-                   GridPane.columnIndex="1"/>
+                   GridPane.columnIndex="1" />
     </children>
 </GridPane>
