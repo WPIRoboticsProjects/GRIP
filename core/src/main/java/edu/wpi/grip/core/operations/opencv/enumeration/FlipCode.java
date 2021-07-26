@@ -1,7 +1,7 @@
 package edu.wpi.grip.core.operations.opencv.enumeration;
 
 /**
- * FlipCode Codes from documentation in {@link org.bytedeco.javacpp.opencv_core#flip}
+ * FlipCode Codes from documentation in {@link org.bytedeco.opencv.global.opencv_core#flip}
  */
 public enum FlipCode {
   // IMPORTANT! If you change the name of these values then you must also change the FileParser
