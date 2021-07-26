@@ -22,9 +22,9 @@ import java.util.List;
  * Operation to call {@link opencv_core#minMaxLoc}.
  */
 @Description(name = "Find Min and Max",
-             summary = "Find the global minimum and maximum in a single channel grayscale image",
-             category = OperationCategory.OPENCV,
-             iconName = "opencv")
+    summary = "Find the global minimum and maximum in a single channel grayscale image",
+    category = OperationCategory.OPENCV,
+    iconName = "opencv")
 public class MinMaxLoc implements CVOperation {
 
   private final SocketHint<MatWrapper> srcInputHint = SocketHints.createImageSocketHint("Image");

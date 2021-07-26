@@ -1,4 +1,3 @@
-
 package edu.wpi.grip.ui.pipeline.source;
 
 import edu.wpi.grip.core.sources.HttpSource;
@@ -14,11 +13,6 @@ import com.google.inject.assistedinject.Assisted;
  */
 public class HttpSourceController extends SourceController<HttpSource> {
 
-  public interface Factory {
-
-    HttpSourceController create(HttpSource source);
-  }
-
   @Inject
   HttpSourceController(
       final EventBus eventBus,
@@ -26,6 +20,11 @@ public class HttpSourceController extends SourceController<HttpSource> {
       final ExceptionWitnessResponderButton.Factory exceptionWitnessResponderButtonFactory,
       @Assisted final HttpSource source) {
     super(eventBus, outputSocketControllerFactory, exceptionWitnessResponderButtonFactory, source);
+  }
+
+  public interface Factory {
+
+    HttpSourceController create(HttpSource source);
   }
 
 }

@@ -1,13 +1,13 @@
-	/**
-	 * Segment an image based on hue, saturation, and value ranges.
-	 *
-	 * @param input The image on which to perform the HSL threshold.
-	 * @param hue The min and max hue.
-	 * @param sat The min and max saturation.
-	 * @param val The min and max value.
-	 * @param output The image in which to store the output.
-	 */
-	void $className::#func($step ["input", "hue", "sat", "val", "out"]) {
-		cv::cvtColor(input, out, cv::COLOR_BGR2HSV);
-		cv::inRange(out,cv::Scalar(hue[0], sat[0], val[0]), cv::Scalar(hue[1], sat[1], val[1]), out);
-	}
+/**
+* Segment an image based on hue, saturation, and value ranges.
+*
+* @param input The image on which to perform the HSL threshold.
+* @param hue The min and max hue.
+* @param sat The min and max saturation.
+* @param val The min and max value.
+* @param output The image in which to store the output.
+*/
+void $className::#func($step ["input", "hue", "sat", "val", "out"]) {
+cv::cvtColor(input, out, cv::COLOR_BGR2HSV);
+cv::inRange(out,cv::Scalar(hue[0], sat[0], val[0]), cv::Scalar(hue[1], sat[1], val[1]), out);
+}

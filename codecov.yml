@@ -7,8 +7,8 @@ coverage:
     gitter:
       default:
         branches:
-        - master
+          - master
         url: https://webhooks.gitter.im/e/71322c5dda6c78c5ee0d
   status:
     patch:
-      default: {}
+      default: { }

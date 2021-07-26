@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import java.net.URL?>
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.stage.Screen?>
-<?import javafx.scene.layout.StackPane?>
-<?import javafx.geometry.Insets?>
-<StackPane id="root" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1">
+<StackPane xmlns:fx="http://javafx.com/fxml/1" id="root" xmlns="http://javafx.com/javafx/8.0.65">
     <children>
         <VBox alignment="CENTER">
             <ImageView fitWidth="${screen.visualBounds.width / 4}" pickOnBounds="true" preserveRatio="true">

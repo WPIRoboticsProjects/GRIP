@@ -13,7 +13,6 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
-
 import javax.inject.Singleton;
 
 /**
@@ -22,15 +21,24 @@ import javax.inject.Singleton;
 @Singleton
 public class PaletteController {
 
-  @FXML private VBox root;
-  @FXML private CustomTextField operationSearch;
-  @FXML private Tab allOperations;
-  @FXML private Tab imgprocOperations;
-  @FXML private Tab featureOperations;
-  @FXML private Tab networkOperations;
-  @FXML private Tab logicalOperations;
-  @FXML private Tab opencvOperations;
-  @FXML private Tab miscellaneousOperations;
+  @FXML
+  private VBox root;
+  @FXML
+  private CustomTextField operationSearch;
+  @FXML
+  private Tab allOperations;
+  @FXML
+  private Tab imgprocOperations;
+  @FXML
+  private Tab featureOperations;
+  @FXML
+  private Tab networkOperations;
+  @FXML
+  private Tab logicalOperations;
+  @FXML
+  private Tab opencvOperations;
+  @FXML
+  private Tab miscellaneousOperations;
 
   @FXML
   protected void initialize() {

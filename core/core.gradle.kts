@@ -68,7 +68,7 @@ dependencies {
 
 
     implementation(group = "edu.wpi.first.wpiutil", name = "wpiutil-java", version = "2020.+")
-    
+
 }
 
 tasks.withType<Jar>().configureEach {

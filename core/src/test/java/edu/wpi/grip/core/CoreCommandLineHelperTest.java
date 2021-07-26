@@ -6,13 +6,6 @@ import static org.junit.Assert.assertTrue;
 
 public class CoreCommandLineHelperTest {
 
-  private static class MockHelper extends CoreCommandLineHelper {
-    @Override
-    public void exit() {
-      // NOP
-    }
-  }
-
   @Test
   public void testHelp() {
     boolean[] printed = {false};
@@ -68,6 +61,13 @@ public class CoreCommandLineHelperTest {
     m.parse("--version");
     assertTrue("Version text was not printed", printed[0]);
     assertTrue("The application didn't exit", exited[0]);
+  }
+
+  private static class MockHelper extends CoreCommandLineHelper {
+    @Override
+    public void exit() {
+      // NOP
+    }
   }
 
 }

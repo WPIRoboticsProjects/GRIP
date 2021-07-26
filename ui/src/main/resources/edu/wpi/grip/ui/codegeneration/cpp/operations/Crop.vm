@@ -1,40 +1,40 @@
-	/**
-	* Crops an image.
-	*
-	* @param input The image on which to perform the crop.
-	* @param x The x (horiontal) location of the crop.
-	* @param y The y (vertical) location of the crop.
-	* @param width The width(horizontal length) of the crop.
-	* @param height The height(vertical length) of the crop.
-	* @param origin The Origin of the crop.
-	* @param output The image in which to store the output.
-	*/
-	void $className::#func($step, ["input", "x", "y", "width", "height", "origin", "output"]) {
-		double xOffsetMultiplier = 0;
-		double yOffsetMultiplier = 0;
-		switch(origin) {
-			case TOP_RIGHT:
-				xOffsetMultiplier = -1;
-				break;
-			case BOTTOM_LEFT:
-				yOffsetMultiplier = -1;
-				break;
-			case BOTTOM_RIGHT:
-				xOffsetMultiplier = -1;
-				yOffsetMultiplier = -1;
-				break;
-			case CENTER:
-				xOffsetMultiplier = -.5;
-				yOffsetMultiplier = -.5;
-				break;
-			default: //origin == TOP_LEFT
-				break;
-        }
-		cv::Rect regionOfInterest = cv::Rect(
-			(int) (x + xOffsetMultiplier * width),
-			(int) (y + yOffsetMultiplier * height),
-			(int) width,
-			(int) height
-		);
-		output = input(regionOfInterest);
-	}
+/**
+* Crops an image.
+*
+* @param input The image on which to perform the crop.
+* @param x The x (horiontal) location of the crop.
+* @param y The y (vertical) location of the crop.
+* @param width The width(horizontal length) of the crop.
+* @param height The height(vertical length) of the crop.
+* @param origin The Origin of the crop.
+* @param output The image in which to store the output.
+*/
+void $className::#func($step, ["input", "x", "y", "width", "height", "origin", "output"]) {
+double xOffsetMultiplier = 0;
+double yOffsetMultiplier = 0;
+switch(origin) {
+case TOP_RIGHT:
+xOffsetMultiplier = -1;
+break;
+case BOTTOM_LEFT:
+yOffsetMultiplier = -1;
+break;
+case BOTTOM_RIGHT:
+xOffsetMultiplier = -1;
+yOffsetMultiplier = -1;
+break;
+case CENTER:
+xOffsetMultiplier = -.5;
+yOffsetMultiplier = -.5;
+break;
+default: //origin == TOP_LEFT
+break;
+}
+cv::Rect regionOfInterest = cv::Rect(
+(int) (x + xOffsetMultiplier * width),
+(int) (y + yOffsetMultiplier * height),
+(int) width,
+(int) height
+);
+output = input(regionOfInterest);
+}

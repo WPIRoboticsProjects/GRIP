@@ -155,8 +155,8 @@ public class PipelineUITest extends ApplicationTest {
     verifyThatIter(".step", new BaseMatcher<Iterable<Node>>() {
       @Override
       public boolean matches(Object item) {
-        @SuppressWarnings("unchecked")
-        final List<Node> stepsNodes = Lists.newArrayList((Iterable<Node>) item);
+        @SuppressWarnings("unchecked") final List<Node> stepsNodes =
+            Lists.newArrayList((Iterable<Node>) item);
 
         assertEquals("Moving a step resulting in the number of steps changing", 3, stepsNodes
             .size());

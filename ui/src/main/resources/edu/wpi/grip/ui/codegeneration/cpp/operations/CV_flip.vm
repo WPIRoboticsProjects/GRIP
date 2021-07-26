@@ -1,9 +1,9 @@
-	/**
-	 * Flips an image along X, Y or both axes.
-	 * @param src Image to flip.
-	 * @param flipcode FlipCode of which direction to flip.
-	 * @param dst flipped version of the Image.
-	 */
-	void $className::#func($step ["src", "flipcode", "dst"]) {
-		cv::flip(src, dst, flipcode);
-	}
+/**
+* Flips an image along X, Y or both axes.
+* @param src Image to flip.
+* @param flipcode FlipCode of which direction to flip.
+* @param dst flipped version of the Image.
+*/
+void $className::#func($step ["src", "flipcode", "dst"]) {
+cv::flip(src, dst, flipcode);
+}

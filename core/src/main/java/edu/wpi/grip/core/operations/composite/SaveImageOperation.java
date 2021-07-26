@@ -29,8 +29,8 @@ import static org.bytedeco.opencv.global.opencv_imgcodecs.imencode;
  * Save JPEG files periodically to the local disk.
  */
 @Description(name = "Save Images to Disk",
-             summary = "Save image periodically to local disk",
-             iconName = "publish-video")
+    summary = "Save image periodically to local disk",
+    iconName = "publish-video")
 @SuppressWarnings("PMD.TooManyFields")
 public class SaveImageOperation implements Operation {
 
@@ -60,16 +60,6 @@ public class SaveImageOperation implements Operation {
   private final Stopwatch stopwatch = Stopwatch.createStarted();
   private final DateTimeFormatter formatter
       = DateTimeFormatter.ofPattern("yyyy-MM-dd_HH-mm-ss-SSS");
-
-  private enum FileTypes {
-    JPEG,
-    PNG;
-
-    @Override
-    public String toString() {
-      return super.toString().toLowerCase(Locale.ENGLISH);
-    }
-  }
 
   @Inject
   @SuppressWarnings("JavadocMethod")
@@ -132,5 +122,15 @@ public class SaveImageOperation implements Operation {
 
     fileManager.saveImage(buffer, LocalDateTime.now().format(formatter)
         + "." + fileTypesSocket.getValue().get());
+  }
+
+  private enum FileTypes {
+    JPEG,
+    PNG;
+
+    @Override
+    public String toString() {
+      return super.toString().toLowerCase(Locale.ENGLISH);
+    }
   }
 }

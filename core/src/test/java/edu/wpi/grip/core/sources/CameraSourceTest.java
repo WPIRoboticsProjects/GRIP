@@ -23,10 +23,10 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import net.jodah.concurrentunit.Waiter;
 
 import org.bytedeco.javacpp.indexer.Indexer;
-import org.bytedeco.opencv.opencv_core.Mat;
 import org.bytedeco.javacv.Frame;
 import org.bytedeco.javacv.FrameGrabber;
 import org.bytedeco.javacv.OpenCVFrameConverter;
+import org.bytedeco.opencv.opencv_core.Mat;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
@@ -49,6 +49,7 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 public class CameraSourceTest {
+  private static final Logger logger = Logger.getLogger(CameraSourceTest.class.getName());
   @Rule
   public final Timeout timeout = Timeout.seconds(3);
   private GripCoreTestModule testModule;
@@ -56,8 +57,6 @@ public class CameraSourceTest {
   private CameraSource cameraSourceWithMockGrabber;
   private MockFrameGrabberFactory mockFrameGrabberFactory;
   private OutputSocket.Factory osf;
-
-  private static final Logger logger = Logger.getLogger(CameraSourceTest.class.getName());
 
   @Before
   public void setUp() throws Exception {
@@ -71,7 +70,7 @@ public class CameraSourceTest {
     final EventBus eventBus = new EventBus();
     class UnhandledExceptionWitness {
       @SuppressFBWarnings(value = "UMAC_UNCALLABLE_METHOD_OF_ANONYMOUS_CLASS",
-                          justification = "This method is called by Guava's EventBus")
+          justification = "This method is called by Guava's EventBus")
       @Subscribe
       public void onUnexpectedThrowableEvent(UnexpectedThrowableEvent event) {
         event.handleSafely((throwable, message, isFatal) -> {

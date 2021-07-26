@@ -17,11 +17,10 @@ import static com.google.common.base.Preconditions.checkNotNull;
 @Singleton
 public class GripFileManager implements FileManager {
 
-  private static final Logger logger = Logger.getLogger(GripFileManager.class.getName());
-
   public static final File GRIP_DIRECTORY
       = new File(System.getProperty("user.home") + File.separator + "GRIP");
   public static final File IMAGE_DIRECTORY = new File(GRIP_DIRECTORY, "images");
+  private static final Logger logger = Logger.getLogger(GripFileManager.class.getName());
 
   @Override
   public void saveImage(byte[] image, String fileName) {

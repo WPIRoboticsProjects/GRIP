@@ -1,9 +1,9 @@
-	/**
-	 * Applies a color Map to given Image.
-	 * @param src Image to apply Color Map to.
-	 * @param colorMap the type of color map to apply.
-	 * @param dst Output after Color Map is applied.
-	 */
-	void $className::#func($step ["src", "colorMap", "dst"]) {
-		cv::applyColorMap(src, dst, colorMap);
-	}
+/**
+* Applies a color Map to given Image.
+* @param src Image to apply Color Map to.
+* @param colorMap the type of color map to apply.
+* @param dst Output after Color Map is applied.
+*/
+void $className::#func($step ["src", "colorMap", "dst"]) {
+cv::applyColorMap(src, dst, colorMap);
+}

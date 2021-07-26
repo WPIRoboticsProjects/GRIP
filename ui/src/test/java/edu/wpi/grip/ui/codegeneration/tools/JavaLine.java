@@ -10,8 +10,8 @@ import static org.junit.Assert.fail;
 
 public class JavaLine extends TestLine {
 
-  private final Object line;
   private static final Logger logger = Logger.getLogger(JavaLine.class.getName());
+  private final Object line;
 
   public JavaLine(Object line) {
     this.line = line;

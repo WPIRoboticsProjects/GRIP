@@ -1,8 +1,8 @@
 package edu.wpi.grip.core;
 
-import org.bytedeco.opencv.opencv_core.Scalar;
 import org.bytedeco.opencv.opencv_core.GpuMat;
 import org.bytedeco.opencv.opencv_core.Mat;
+import org.bytedeco.opencv.opencv_core.Scalar;
 import org.bytedeco.opencv.opencv_core.Size;
 
 import java.util.Objects;
@@ -25,10 +25,10 @@ import static org.bytedeco.opencv.global.opencv_core.IPL_DEPTH_8S;
 import static org.bytedeco.opencv.global.opencv_core.IPL_DEPTH_8U;
 
 /**
- * Wraps a GPU mat and a CPU mat and allows device memory and host memory
- * to be used semi-transparently. A wrapper may change between wrapping an image in host memory or
- * an image in GPU memory. A wrapper is used to minimize copies between host and device memory,
- * which may take longer than the time savings of using a CUDA-accelerated operation.
+ * Wraps a GPU mat and a CPU mat and allows device memory and host memory to be used
+ * semi-transparently. A wrapper may change between wrapping an image in host memory or an image in
+ * GPU memory. A wrapper is used to minimize copies between host and device memory, which may take
+ * longer than the time savings of using a CUDA-accelerated operation.
  *
  * <p>Data is lazily copied between host and device memory when needed. Wrappers that
  * are only accessed from CPU operations will never have their data stored in device memory.
@@ -50,10 +50,15 @@ public final class MatWrapper {
   private boolean isCpu = true;
 
   /**
-   * Flags whether or not the wrapped value has been modified since the most recent read. This
-   * is used so that the value is only copied between host and device when it's needed.
+   * Flags whether or not the wrapped value has been modified since the most recent read. This is
+   * used so that the value is only copied between host and device when it's needed.
    */
   private boolean changed = false;
+
+  private MatWrapper(Mat cpuMat, GpuMat gpuMat) {
+    this.cpuMat = Objects.requireNonNull(cpuMat, "cpuMat");
+    this.gpuMat = Objects.requireNonNull(gpuMat, "gpuMat");
+  }
 
   /**
    * Creates an empty wrapper. Both mats are empty and the wrapper is treated as a CPU mat.
@@ -86,9 +91,25 @@ public final class MatWrapper {
     return new MatWrapper(cpuMat, gpuMat);
   }
 
-  private MatWrapper(Mat cpuMat, GpuMat gpuMat) {
-    this.cpuMat = Objects.requireNonNull(cpuMat, "cpuMat");
-    this.gpuMat = Objects.requireNonNull(gpuMat, "gpuMat");
+  private static int arrayDepth(GpuMat m) {
+    switch (m.depth()) {
+      case CV_8U:
+        return IPL_DEPTH_8U;
+      case CV_8S:
+        return IPL_DEPTH_8S;
+      case CV_16U:
+        return IPL_DEPTH_16U;
+      case CV_16S:
+        return IPL_DEPTH_16S;
+      case CV_32S:
+        return IPL_DEPTH_32S;
+      case CV_32F:
+        return IPL_DEPTH_32F;
+      case CV_64F:
+        return IPL_DEPTH_64F;
+      default:
+        throw new UnsupportedOperationException("Unsupported depth " + m.depth());
+    }
   }
 
   /**
@@ -107,8 +128,8 @@ public final class MatWrapper {
 
   /**
    * Gets the raw CPU mat. This should only be used when this mat is used as a {@code dst} parameter
-   * to an OpenCV function. If you want to get the current value as a mat in host memory, use
-   * {@link #getCpu()}.
+   * to an OpenCV function. If you want to get the current value as a mat in host memory, use {@link
+   * #getCpu()}.
    */
   public Mat rawCpu() {
     // Assume the mat is about to be modified as a `dst` parameter to an OpenCV function
@@ -120,8 +141,8 @@ public final class MatWrapper {
 
   /**
    * Gets the raw GPU mat. This should only be used when this mat is used as a {@code dst} parameter
-   * to an OpenCV function. If you want to get the current value as a mat in GPU memory, use
-   * {@link #getGpu()}.
+   * to an OpenCV function. If you want to get the current value as a mat in GPU memory, use {@link
+   * #getGpu()}.
    */
   public GpuMat rawGpu() {
     // Assume the mat is about to be modified as a `dst` parameter to an OpenCV function
@@ -147,9 +168,9 @@ public final class MatWrapper {
 
   /**
    * Gets this mat as a mat in GPU memory. If this is {@link #isCpu() backed by host memory}, the
-   * host memory will be copied into the GPU mat before being returned. This copy only happens
-   * after {@link #set(Mat) set(Mat)} is called, and only once between successive calls;
-   * invocations of this method after the first copy will not perform another.
+   * host memory will be copied into the GPU mat before being returned. This copy only happens after
+   * {@link #set(Mat) set(Mat)} is called, and only once between successive calls; invocations of
+   * this method after the first copy will not perform another.
    */
   public GpuMat getGpu() {
     if (changed && isCpu) {
@@ -182,8 +203,8 @@ public final class MatWrapper {
   }
 
   /**
-   * Sets this as being backed by the given wrapper. This wrapper will be functionally equivalent
-   * to the one given.
+   * Sets this as being backed by the given wrapper. This wrapper will be functionally equivalent to
+   * the one given.
    */
   public void set(MatWrapper wrapper) {
     if (wrapper.isCpu()) {
@@ -326,27 +347,6 @@ public final class MatWrapper {
       }
       return highValue;
     });
-  }
-
-  private static int arrayDepth(GpuMat m) {
-    switch (m.depth()) {
-      case CV_8U:
-        return IPL_DEPTH_8U;
-      case CV_8S:
-        return IPL_DEPTH_8S;
-      case CV_16U:
-        return IPL_DEPTH_16U;
-      case CV_16S:
-        return IPL_DEPTH_16S;
-      case CV_32S:
-        return IPL_DEPTH_32S;
-      case CV_32F:
-        return IPL_DEPTH_32F;
-      case CV_64F:
-        return IPL_DEPTH_64F;
-      default:
-        throw new UnsupportedOperationException("Unsupported depth " + m.depth());
-    }
   }
 
   /**

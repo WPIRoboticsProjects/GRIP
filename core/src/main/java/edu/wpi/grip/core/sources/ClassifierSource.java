@@ -24,9 +24,8 @@ import java.util.Properties;
 @XStreamAlias("grip:Classifier")
 public class ClassifierSource extends Source {
 
-  private final String filePath;
   private static final String FILE_PATH_PROPERTY = "file_path";
-
+  private final String filePath;
   private final SocketHint<CascadeClassifier> classifierHint =
       new SocketHint.Builder<>(CascadeClassifier.class)
           .identifier("Classifier")

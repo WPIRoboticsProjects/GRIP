@@ -11,11 +11,12 @@ import edu.wpi.grip.core.sockets.SocketHints;
 import com.google.common.collect.ImmutableList;
 import com.google.inject.Inject;
 
-import java.util.List;
-
 import org.bytedeco.opencv.opencv_core.Mat;
 import org.bytedeco.opencv.opencv_core.MatVector;
 import org.bytedeco.opencv.opencv_core.Rect;
+
+import java.util.List;
+
 import static org.bytedeco.opencv.global.opencv_imgproc.arcLength;
 import static org.bytedeco.opencv.global.opencv_imgproc.boundingRect;
 import static org.bytedeco.opencv.global.opencv_imgproc.contourArea;
@@ -30,9 +31,9 @@ import static org.bytedeco.opencv.global.opencv_imgproc.convexHull;
  * we're actually looking for.  So, this operation can help narrow them down.
  */
 @Description(name = "Filter Contours",
-             summary = "Find contours matching certain criteria",
-             category = OperationCategory.FEATURE_DETECTION,
-             iconName = "find-contours")
+    summary = "Find contours matching certain criteria",
+    category = OperationCategory.FEATURE_DETECTION,
+    iconName = "find-contours")
 @SuppressWarnings("PMD.TooManyFields")
 public class FilterContoursOperation implements Operation {
 

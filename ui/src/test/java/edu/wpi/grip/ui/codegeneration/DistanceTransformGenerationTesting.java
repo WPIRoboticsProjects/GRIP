@@ -26,8 +26,6 @@ import static org.junit.Assert.assertTrue;
 @Category(GenerationTesting.class)
 @SuppressWarnings("PMD.JUnitTestsShouldIncludeAssert")
 public class DistanceTransformGenerationTesting extends AbstractGenerationTesting {
-  private String distType;
-  private String maskSize;
   private static String[][] params = new String[9][2];
 
   static {
@@ -41,6 +39,9 @@ public class DistanceTransformGenerationTesting extends AbstractGenerationTestin
       }
     }
   }
+
+  private String distType;
+  private String maskSize;
 
   public boolean init() {
     ArrayList<Number> lVal = new ArrayList<Number>();

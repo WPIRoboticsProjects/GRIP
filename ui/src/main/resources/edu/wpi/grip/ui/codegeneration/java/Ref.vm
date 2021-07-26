@@ -1,46 +1,52 @@
-	/**
-	 * Enables C-style output parameters in Java to avoid creating custom data classes for each
-	 * operation.
-	 *
-	 * <p>Syntax is {@code Ref<T> varName = new Ref<T>(initValue)}.
-	 * Where varName is the name of the variable and initValue is of type T and contains initial value.
-	 * </p>
-	 * @param <T> The type of object being referenced
-	 */
-	private static class Ref<T> {
-		private T value;
+/**
+* Enables C-style output parameters in Java to avoid creating custom data classes for each
+* operation.
+*
+*
+<p>Syntax is {@code Ref
+    <T> varName = new Ref
+        <T>(initValue)}.
+            * Where varName is the name of the variable and initValue is of type T and contains initial value.
+            *
+</p>
+* @param
+<T> The type of object being referenced
+    */
+    private static class Ref
+    <T> {
+        private T value;
 
-		/**
-		 * Constructor for a Ref object.
-		 * @param initValue Type T initial value for the object.
-		 */
-		public Ref(T initValue) {
-			value = initValue;
-		}
+        /**
+        * Constructor for a Ref object.
+        * @param initValue Type T initial value for the object.
+        */
+        public Ref(T initValue) {
+        value = initValue;
+        }
 
-		/**
-		 * Constructor for a Ref object without an initial value.
-		 * Equivalent to calling Ref(null)
-		 */
-		public Ref() {
-			this(null);
-		}
+        /**
+        * Constructor for a Ref object without an initial value.
+        * Equivalent to calling Ref(null)
+        */
+        public Ref() {
+        this(null);
+        }
 
-		/**
-		 * Sets the object to contain a new value.
-		 *
-		 * @param newValue the new value being referenced
-		 */
-		public void set(T newValue) {
-			value = newValue;
-		}
+        /**
+        * Sets the object to contain a new value.
+        *
+        * @param newValue the new value being referenced
+        */
+        public void set(T newValue) {
+        value = newValue;
+        }
 
-		/**
-		 * Gets the current referenced value
-		 *
-		 * @return the current referenced value
-		 */
-		public T get() {
-			return value;
-		}
-	}
+        /**
+        * Gets the current referenced value
+        *
+        * @return the current referenced value
+        */
+        public T get() {
+        return value;
+        }
+        }

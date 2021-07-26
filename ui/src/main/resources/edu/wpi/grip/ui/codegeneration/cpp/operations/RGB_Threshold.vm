@@ -1,13 +1,13 @@
-	/**
-	 * Segment an image based on color ranges.
-	 *
-	 * @param input The image on which to perform the RGB threshold.
-	 * @param red The min and max red.
-	 * @param green The min and max green.
-	 * @param blue The min and max blue.
-	 * @param output The image in which to store the output.
-	 */
-	void $className::#func($step ["input", "red", "green", "blue", "output"]) {
-		cv::cvtColor(input, output, cv::COLOR_BGR2RGB);
-		cv::inRange(output, cv::Scalar(red[0], green[0], blue[0]), cv::Scalar(red[1], green[1], blue[1]), output);
-	}
+/**
+* Segment an image based on color ranges.
+*
+* @param input The image on which to perform the RGB threshold.
+* @param red The min and max red.
+* @param green The min and max green.
+* @param blue The min and max blue.
+* @param output The image in which to store the output.
+*/
+void $className::#func($step ["input", "red", "green", "blue", "output"]) {
+cv::cvtColor(input, output, cv::COLOR_BGR2RGB);
+cv::inRange(output, cv::Scalar(red[0], green[0], blue[0]), cv::Scalar(red[1], green[1], blue[1]), output);
+}

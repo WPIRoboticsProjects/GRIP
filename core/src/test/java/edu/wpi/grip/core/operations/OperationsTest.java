@@ -31,9 +31,6 @@ import java.util.List;
 @SuppressWarnings("all")
 public class OperationsTest {
 
-  @Parameter
-  public OperationMetaData operationMetaData;
-
   private static GripCoreTestModule testModule;
   private static Injector injector;
 
@@ -41,6 +38,9 @@ public class OperationsTest {
     // Only because @Parameters runs before @BeforeClass... for some weird reason
     setUpClass();
   }
+
+  @Parameter
+  public OperationMetaData operationMetaData;
 
   // @Parameters is called before @BeforeClass, so we call it manually in a static initializer block
   //  @BeforeClass

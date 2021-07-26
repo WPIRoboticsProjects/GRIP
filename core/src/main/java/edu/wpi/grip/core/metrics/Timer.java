@@ -55,11 +55,11 @@ public class Timer {
   }
 
   /**
-   * Stops the timer. This will post a {@link TimerEvent} containing the elapsed time
-   * and analysis to the event bus.
+   * Stops the timer. This will post a {@link TimerEvent} containing the elapsed time and analysis
+   * to the event bus.
    *
-   * @throws IllegalStateException if this a call to this method is not preceded by a call to
-   *                               {@link #started()}.
+   * @throws IllegalStateException if this a call to this method is not preceded by a call to {@link
+   *                               #started()}.
    */
   public synchronized void stop() {
     if (!stopwatch.isRunning()) {
@@ -105,8 +105,8 @@ public class Timer {
   }
 
   /**
-   * Gets the time elapsed between a call to {@link #started()} and a call to {@link #stop()},
-   * in microseconds.
+   * Gets the time elapsed between a call to {@link #started()} and a call to {@link #stop()}, in
+   * microseconds.
    */
   public long getElapsedTime() {
     return elapsedTime;

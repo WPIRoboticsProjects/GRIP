@@ -20,8 +20,8 @@ import java.util.List;
  * Finds the absolute difference between the current image and the previous image.
  */
 @Description(name = "Threshold Moving",
-             summary = "Thresholds off parts of the image that have moved or changed between the"
-                 + " previous and next image.")
+    summary = "Thresholds off parts of the image that have moved or changed between the"
+        + " previous and next image.")
 public class ThresholdMoving implements Operation {
 
   private final InputSocket<MatWrapper> imageSocket;

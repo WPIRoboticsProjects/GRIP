@@ -1,10 +1,10 @@
-	/**
-	 * Mutiplies one image by another with given scale.
-	 * @param src1 first image.
-	 * @param src2 second image.
-	 * @param scale Scale for multiplication.
-	 * @param dst Result image.
-	 */
-	void $className::#func($step ["src1", "src2", "scale", "dst"]) {
-		cv::multiply(src1, src2, dst, scale);
-	}
+/**
+* Mutiplies one image by another with given scale.
+* @param src1 first image.
+* @param src2 second image.
+* @param scale Scale for multiplication.
+* @param dst Result image.
+*/
+void $className::#func($step ["src1", "src2", "scale", "dst"]) {
+cv::multiply(src1, src2, dst, scale);
+}

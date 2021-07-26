@@ -1,12 +1,12 @@
-	/**
-	 * Resizes an Image.
-	 * @param src The image to resize.
-	 * @param dSize size to set the image.
-	 * @param fx scale factor along X axis.
-	 * @param fy scale factor along Y axis.
-	 * @param interpolation type of interpolation to use.
-	 * @param dst output image.
-	 */
-	void $className::#func($step ["src", "dSize", "fx", "fy", "interpolation", "dst"]) {
-		cv::resize(src, dst, dSize, fx, fy, interpolation);
-	}
+/**
+* Resizes an Image.
+* @param src The image to resize.
+* @param dSize size to set the image.
+* @param fx scale factor along X axis.
+* @param fy scale factor along Y axis.
+* @param interpolation type of interpolation to use.
+* @param dst output image.
+*/
+void $className::#func($step ["src", "dSize", "fx", "fy", "interpolation", "dst"]) {
+cv::resize(src, dst, dSize, fx, fy, interpolation);
+}

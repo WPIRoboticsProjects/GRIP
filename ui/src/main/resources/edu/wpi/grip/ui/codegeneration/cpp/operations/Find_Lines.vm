@@ -1,26 +1,28 @@
-	/**
-	 * Finds all line segments in an image.
-	 *
-	 * @param input The image on which to perform the find lines.
-	 * @param lineList The output where the lines are stored.
-	 */
-	void $className::#func($step ["input", "lineList"]) {
-		cv::Ptr<cv::LineSegmentDetector> lsd = cv::createLineSegmentDetector(LSD_REFINE_STD);
-		std::vector<cv::Vec4i> lines;
-		lineList.clear();
-		if (input.channels() == 1) {
-			lsd->detect(input, lines);
-		} else {
-			// The line detector works on a single channel.
-			cv::Mat tmp;
-			cv::cvtColor(input, tmp, cv::COLOR_BGR2GRAY);
-			lsd->detect(tmp, lines);
-		}
-		// Store the lines in the LinesReport object
-		if (!lines.empty()) {
-			for (int i = 0; i < lines.size(); i++) {
-				cv::Vec4i line = lines[i];
-				lineList.push_back(Line(line[0], line[1], line[2], line[3]));
-			}
-		}
-	}
+/**
+* Finds all line segments in an image.
+*
+* @param input The image on which to perform the find lines.
+* @param lineList The output where the lines are stored.
+*/
+void $className::#func($step ["input", "lineList"]) {
+cv::Ptr
+<cv::LineSegmentDetector> lsd = cv::createLineSegmentDetector(LSD_REFINE_STD);
+    std::vector
+    <cv::Vec4i> lines;
+        lineList.clear();
+        if (input.channels() == 1) {
+        lsd->detect(input, lines);
+        } else {
+        // The line detector works on a single channel.
+        cv::Mat tmp;
+        cv::cvtColor(input, tmp, cv::COLOR_BGR2GRAY);
+        lsd->detect(tmp, lines);
+        }
+        // Store the lines in the LinesReport object
+        if (!lines.empty()) {
+        for (int i = 0; i < lines.size(); i++) {
+        cv::Vec4i line = lines[i];
+        lineList.push_back(Line(line[0], line[1], line[2], line[3]));
+        }
+        }
+        }

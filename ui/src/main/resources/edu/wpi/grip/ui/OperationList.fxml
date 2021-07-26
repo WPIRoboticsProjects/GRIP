@@ -5,7 +5,7 @@
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.layout.VBox?>
-<Tab fx:controller="edu.wpi.grip.ui.OperationListController" xmlns:fx="http://javafx.com/fxml/1" fx:id="root"
+<Tab xmlns:fx="http://javafx.com/fxml/1" fx:controller="edu.wpi.grip.ui.OperationListController" fx:id="root"
      closable="false">
     <ScrollPane fitToHeight="true" fitToWidth="true" hbarPolicy="NEVER" vbarPolicy="AS_NEEDED"
                 VBox.vgrow="ALWAYS">

@@ -14,7 +14,6 @@ import org.opencv.core.Point;
 
 import java.util.Optional;
 
-import static junit.framework.TestCase.assertSame;
 import static org.junit.Assert.assertTrue;
 
 @SuppressWarnings("PMD.JUnitTestsShouldIncludeAssert")

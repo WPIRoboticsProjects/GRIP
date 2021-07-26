@@ -158,7 +158,7 @@ public class SocketHandleView extends Button {
 
   /**
    * The boolean property that indicates if this socket is currently in the middle of being
-   * connected to another socket.  In other words, the user has clicked it, but has not clicked
+   * connected to another socket. In other words, the user has clicked it, but has not clicked
    * another socket yet.
    */
   public BooleanProperty connectingProperty() {

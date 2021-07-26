@@ -1,12 +1,12 @@
-	/**
-	 * Scales and image to an exact size.
-	 *
-	 * @param input The image on which to perform the Resize.
-	 * @param width The width of the output in pixels.
-	 * @param height The height of the output in pixels.
-	 * @param interpolation The type of interpolation.
-	 * @param output The image in which to store the output.
-	 */
-	void $className::#func($step, ["input", "width", "height", "interpolation", "output"]) {
-		cv::resize(input, output, cv::Size(width, height), 0.0, 0.0, interpolation);
-	}
+/**
+* Scales and image to an exact size.
+*
+* @param input The image on which to perform the Resize.
+* @param width The width of the output in pixels.
+* @param height The height of the output in pixels.
+* @param interpolation The type of interpolation.
+* @param output The image in which to store the output.
+*/
+void $className::#func($step, ["input", "width", "height", "interpolation", "output"]) {
+cv::resize(input, output, cv::Size(width, height), 0.0, 0.0, interpolation);
+}

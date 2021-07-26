@@ -21,9 +21,8 @@ import static org.junit.Assert.fail;
 
 @SuppressWarnings({"PMD.UseLocaleWithCaseConversions", "PMD.AvoidUsingNativeCode"})
 public class CppPipelineInterfacer implements PipelineInterfacer {
-  private static File codeDir;
-  private final CppTMethods tMeth;
   private static final Logger logger = Logger.getLogger(CppPipelineInterfacer.class.getName());
+  private static File codeDir;
 
   static {
     if (System.getProperty("os.name").toLowerCase().contains("windows")) {
@@ -32,6 +31,10 @@ public class CppPipelineInterfacer implements PipelineInterfacer {
     System.loadLibrary("genJNI");
     codeDir = PipelineGenerator.getCodeDir().getAbsoluteFile();
   }
+
+  private final CppTMethods tMeth;
+  private long nativeHandle; //NOPMD
+
 
   public CppPipelineInterfacer(String libName) {
     tMeth = new CppTMethods();
@@ -71,7 +74,6 @@ public class CppPipelineInterfacer implements PipelineInterfacer {
     String platformLibName = System.mapLibraryName(libName);
     init(codeDir.getAbsolutePath() + File.separator + platformLibName);
   }
-
 
   @Override
   public Object getOutput(String name, GenType type) {
@@ -205,8 +207,6 @@ public class CppPipelineInterfacer implements PipelineInterfacer {
    */
   @SuppressWarnings("PMD.LinguisticNaming")
   private native void getContours(String name, long[] addrs);
-
-  private long nativeHandle; //NOPMD
 
 
 }

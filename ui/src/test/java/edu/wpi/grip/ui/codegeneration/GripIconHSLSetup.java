@@ -16,13 +16,13 @@ public final class GripIconHSLSetup {
   private static final List<Number> defaultSVal;
   private static final List<Number> defaultLVal;
 
-  private GripIconHSLSetup() {
-  }
-
   static {
     defaultHVal = Arrays.asList(0.0d, 49.0d);
     defaultSVal = Arrays.asList(0.0d, 41.0d);
     defaultLVal = Arrays.asList(0.0d, 67.0d);
+  }
+
+  private GripIconHSLSetup() {
   }
 
   public static void setup(AbstractGenerationTesting caller) {

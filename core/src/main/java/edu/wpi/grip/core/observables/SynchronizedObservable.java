@@ -2,8 +2,10 @@ package edu.wpi.grip.core.observables;
 
 /**
  * A thread-safe implementation of {@link Observable}. This should only be used in situations where
- * observers are <i>very likely</i> to run in multiple threads. Otherwise, {@link SimpleObservable}
- * should be used to avoid the penalties of {@code synchronized} and lock contention.
+ * observers are
+ * <i>very likely</i> to run in multiple threads. Otherwise, {@link SimpleObservable} should be used
+ * to avoid the
+ * penalties of {@code synchronized} and lock contention.
  *
  * @param <T> the type of the values to observe
  */

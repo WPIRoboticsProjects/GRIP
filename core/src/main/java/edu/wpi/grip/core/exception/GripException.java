@@ -1,10 +1,8 @@
-
 package edu.wpi.grip.core.exception;
 
 /**
- * An exception thrown when something goes wrong with an internal GRIP
- * operation. This class is {@code abstract} to encourage making subclasses
- * for specific cases.
+ * An exception thrown when something goes wrong with an internal GRIP operation. This class is
+ * {@code abstract} to encourage making subclasses for specific cases.
  */
 public abstract class GripException extends RuntimeException {
 

@@ -12,7 +12,8 @@ public class TStep {
 
   /**
    * This is a constructor for a Template step.
-   * @param name The name of the step.
+   *
+   * @param name    The name of the step.
    * @param stepNum The number of the step in the pipeline.
    */
   public TStep(String name, int stepNum) {
@@ -24,6 +25,7 @@ public class TStep {
 
   /**
    * Adds an already created TInput to a step.
+   *
    * @param input a TInput to be added
    */
   public void addInput(TInput input) {
@@ -32,6 +34,7 @@ public class TStep {
 
   /**
    * Adds an already created TOutput to a step.
+   *
    * @param output a TOutput to be added
    */
   public void addOutput(TOutput output) {
@@ -40,6 +43,7 @@ public class TStep {
 
   /**
    * gets the name of the step
+   *
    * @return the GRIP name of the step with underscores instead of spaces.
    */
   public String name() {
@@ -48,6 +52,7 @@ public class TStep {
 
   /**
    * returns all of the inputs of a step.
+   *
    * @return all of the inputs of the step.
    */
   public List<TInput> getInputs() {
@@ -56,6 +61,7 @@ public class TStep {
 
   /**
    * returns all of the Outputs of a step.
+   *
    * @return all of the Outputs of the step.
    */
   public List<TOutput> getOutputs() {
@@ -64,6 +70,7 @@ public class TStep {
 
   /**
    * gets a specific Input for use in templates.
+   *
    * @param idx the index of the input.
    * @return the TOutput at the index.
    */
@@ -73,6 +80,7 @@ public class TStep {
 
   /**
    * gets a specific Output for use in templates.
+   *
    * @param idx the index of the Output.
    * @return the TOutput at the index.
    */
@@ -82,6 +90,7 @@ public class TStep {
 
   /**
    * The number of the step. Each different type of step is numbered separately.
+   *
    * @return the number of the step.
    */
   public int num() {

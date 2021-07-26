@@ -10,84 +10,84 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.VBox?>
-<VBox fx:controller="edu.wpi.grip.ui.pipeline.StepController" fx:id="root" xmlns:fx="http://javafx.com/fxml/1"
+<VBox xmlns:fx="http://javafx.com/fxml/1" fx:controller="edu.wpi.grip.ui.pipeline.StepController" fx:id="root"
       styleClass="step">
     <HBox styleClass="controls">
         <Button fx:id="deleteButton" onMouseClicked="#deleteStep" styleClass="delete" HBox.hgrow="NEVER">
             <graphic>
                 <ImageView>
-                    <Image url="/edu/wpi/grip/ui/icons/delete.png" />
+                    <Image url="/edu/wpi/grip/ui/icons/delete.png"/>
                     <fitWidth>
-                        <DPIUtility fx:constant="SMALL_ICON_SIZE" />
+                        <DPIUtility fx:constant="SMALL_ICON_SIZE"/>
                     </fitWidth>
                     <fitHeight>
-                        <DPIUtility fx:constant="SMALL_ICON_SIZE" />
+                        <DPIUtility fx:constant="SMALL_ICON_SIZE"/>
                     </fitHeight>
                 </ImageView>
             </graphic>
             <tooltip>
-                <Tooltip text="Delete Step" />
+                <Tooltip text="Delete Step"/>
             </tooltip>
         </Button>
-        <Pane HBox.hgrow="ALWAYS" />
+        <Pane HBox.hgrow="ALWAYS"/>
         <HBox fx:id="buttons">
             <Button fx:id="moveLeftButton" onMouseClicked="#moveStepLeft" styleClass="move-left" HBox.hgrow="NEVER">
                 <graphic>
                     <ImageView>
-                        <Image url="/edu/wpi/grip/ui/icons/left.png" />
+                        <Image url="/edu/wpi/grip/ui/icons/left.png"/>
                         <fitWidth>
-                            <DPIUtility fx:constant="SMALL_ICON_SIZE" />
+                            <DPIUtility fx:constant="SMALL_ICON_SIZE"/>
                         </fitWidth>
                         <fitHeight>
-                            <DPIUtility fx:constant="SMALL_ICON_SIZE" />
+                            <DPIUtility fx:constant="SMALL_ICON_SIZE"/>
                         </fitHeight>
                     </ImageView>
                 </graphic>
                 <tooltip>
-                    <Tooltip text="Move Step Left" />
+                    <Tooltip text="Move Step Left"/>
                 </tooltip>
             </Button>
             <Button fx:id="moveRightButton" onMouseClicked="#moveStepRight" styleClass="move-right" HBox.hgrow="NEVER">
                 <graphic>
                     <ImageView>
-                        <Image url="/edu/wpi/grip/ui/icons/right.png" />
+                        <Image url="/edu/wpi/grip/ui/icons/right.png"/>
                         <fitWidth>
-                            <DPIUtility fx:constant="SMALL_ICON_SIZE" />
+                            <DPIUtility fx:constant="SMALL_ICON_SIZE"/>
                         </fitWidth>
                         <fitHeight>
-                            <DPIUtility fx:constant="SMALL_ICON_SIZE" />
+                            <DPIUtility fx:constant="SMALL_ICON_SIZE"/>
                         </fitHeight>
                     </ImageView>
                 </graphic>
                 <tooltip>
-                    <Tooltip text="Move Step Right" />
+                    <Tooltip text="Move Step Right"/>
                 </tooltip>
             </Button>
         </HBox>
     </HBox>
-    <Separator orientation="HORIZONTAL" />
+    <Separator orientation="HORIZONTAL"/>
     <VBox>
         <Label fx:id="title" maxWidth="Infinity" styleClass="title">
             <graphic>
                 <ImageView fx:id="icon">
                     <fitWidth>
-                        <DPIUtility fx:constant="SMALL_ICON_SIZE" />
+                        <DPIUtility fx:constant="SMALL_ICON_SIZE"/>
                     </fitWidth>
                     <fitHeight>
-                        <DPIUtility fx:constant="SMALL_ICON_SIZE" />
+                        <DPIUtility fx:constant="SMALL_ICON_SIZE"/>
                     </fitHeight>
                 </ImageView>
             </graphic>
         </Label>
-        <Label fx:id="elapsedTime" maxWidth="Infinity" text="Did not run" />
+        <Label fx:id="elapsedTime" maxWidth="Infinity" text="Did not run"/>
     </VBox>
-    <Separator orientation="HORIZONTAL" />
+    <Separator orientation="HORIZONTAL"/>
     <Button fx:id="expand" onMouseClicked="#toggleExpand" styleClass="expand"
             maxWidth="Infinity" prefHeight="0" HBox.hgrow="ALWAYS">
         <graphic>
             <ImageView fx:id="expandIcon">
                 <fitHeight>
-                    <DPIUtility fx:constant="SMALL_ICON_SIZE" />
+                    <DPIUtility fx:constant="SMALL_ICON_SIZE"/>
                 </fitHeight>
             </ImageView>
         </graphic>
@@ -95,8 +95,8 @@
             <Tooltip text="Minimizes/Maximizes the inputs in the step"/>
         </tooltip>
     </Button>
-    <VBox fx:id="inputs" styleClass="sockets" />
-    <Separator orientation="HORIZONTAL" />
-    <VBox fx:id="outputs" styleClass="sockets" />
+    <VBox fx:id="inputs" styleClass="sockets"/>
+    <Separator orientation="HORIZONTAL"/>
+    <VBox fx:id="outputs" styleClass="sockets"/>
 </VBox>
 

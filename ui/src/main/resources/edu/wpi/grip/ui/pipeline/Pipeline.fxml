@@ -7,21 +7,24 @@
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.shape.Rectangle?>
-<StackPane fx:id="root" maxHeight="Infinity" maxWidth="Infinity" styleClass="pipeline" xmlns="http://javafx.com/javafx/8.0.40" xmlns:fx="http://javafx.com/fxml/1" fx:controller="edu.wpi.grip.ui.pipeline.PipelineController">
+<StackPane xmlns:fx="http://javafx.com/fxml/1" fx:id="root" maxHeight="Infinity" maxWidth="Infinity"
+           styleClass="pipeline" xmlns="http://javafx.com/javafx/8.0.40"
+           fx:controller="edu.wpi.grip.ui.pipeline.PipelineController">
     <children>
         <HBox maxWidth="Infinity" styleClass="bottom">
             <VBox minWidth="-Infinity" maxWidth="-Infinity" maxHeight="Infinity" styleClass="sources-pane">
-                <Label maxWidth="Infinity" styleClass="pane-title" text="Sources" />
-                <Separator orientation="HORIZONTAL" />
-                <VBox fx:id="addSourceBox" styleClass="addSource" />
-                <VBox fx:id="sourcesBox" styleClass="sources" />
+                <Label maxWidth="Infinity" styleClass="pane-title" text="Sources"/>
+                <Separator orientation="HORIZONTAL"/>
+                <VBox fx:id="addSourceBox" styleClass="addSource"/>
+                <VBox fx:id="sourcesBox" styleClass="sources"/>
             </VBox>
-            <Separator orientation="VERTICAL" />
-            <HBox fx:id="stepBox" fillHeight="false" maxWidth="1.7976931348623157E308" styleClass="steps" HBox.hgrow="ALWAYS" />
+            <Separator orientation="VERTICAL"/>
+            <HBox fx:id="stepBox" fillHeight="false" maxWidth="1.7976931348623157E308" styleClass="steps"
+                  HBox.hgrow="ALWAYS"/>
         </HBox>
         <Group fx:id="connections" mouseTransparent="true">
             <StackPane.alignment>TOP_LEFT</StackPane.alignment>
-            <Rectangle height="1" opacity="0" width="1" x="0" y="0" />
+            <Rectangle height="1" opacity="0" width="1" x="0" y="0"/>
         </Group>
     </children>
 </StackPane>

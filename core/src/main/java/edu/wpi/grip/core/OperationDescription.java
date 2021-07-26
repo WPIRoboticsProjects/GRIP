@@ -30,33 +30,6 @@ public class OperationDescription {
   private final ImmutableSet<String> aliases;
 
   /**
-   * Creates an operation description from a {@link Description @Description} annotation on
-   * an operation subclass.
-   */
-  public static OperationDescription from(Description description) {
-    checkNotNull(description, "The description annotation cannot be null");
-    String iconName = description.iconName();
-    return builder()
-        .name(description.name())
-        .summary(description.summary())
-        .category(description.category())
-        .aliases(description.aliases())
-        .icon(iconName.isEmpty() ? null : Icon.iconStream(iconName))
-        .build();
-  }
-
-  /**
-   * Creates an operation description from a {@link Description @Description} annotation on
-   * an operation subclass. The class is assumed to have the annotation; be careful when using this
-   * method.
-   *
-   * @param clazz the class to generate a description for
-   */
-  public static OperationDescription from(Class<? extends Operation> clazz) {
-    return from(clazz.getAnnotation(Description.class));
-  }
-
-  /**
    * Private constructor - use {@link #builder} to instantiate this class.
    */
   private OperationDescription(String name,
@@ -72,11 +45,37 @@ public class OperationDescription {
   }
 
   /**
+   * Creates an operation description from a {@link Description @Description} annotation on an
+   * operation subclass.
+   */
+  public static OperationDescription from(Description description) {
+    checkNotNull(description, "The description annotation cannot be null");
+    String iconName = description.iconName();
+    return builder()
+        .name(description.name())
+        .summary(description.summary())
+        .category(description.category())
+        .aliases(description.aliases())
+        .icon(iconName.isEmpty() ? null : Icon.iconStream(iconName))
+        .build();
+  }
+
+  /**
+   * Creates an operation description from a {@link Description @Description} annotation on an
+   * operation subclass. The class is assumed to have the annotation; be careful when using this
+   * method.
+   *
+   * @param clazz the class to generate a description for
+   */
+  public static OperationDescription from(Class<? extends Operation> clazz) {
+    return from(clazz.getAnnotation(Description.class));
+  }
+
+  /**
    * Creates a new {@link Builder} instance to create a new {@code OperationDescription} object. The
-   * created descriptor has a default category of
-   * {@link OperationCategory#MISCELLANEOUS MISCELLANEOUS} and no icon; use the
-   * {@link Builder#category(OperationCategory) .category()} and {@link Builder#icon(Icon) .icon()}
-   * methods to override the default values.
+   * created descriptor has a default category of {@link OperationCategory#MISCELLANEOUS
+   * MISCELLANEOUS} and no icon; use the {@link Builder#category(OperationCategory) .category()} and
+   * {@link Builder#icon(Icon) .icon()} methods to override the default values.
    */
   public static Builder builder() {
     return new Builder()

@@ -23,18 +23,16 @@ import static org.junit.Assert.assertTrue;
 
 public class NetworkTableEntrySourceTest {
 
-  private final EventBus eventBus;
-  private final MockOutputSocketFactory osf;
-  private NetworkTableInstance ntInstance;
-
-  private NetworkTableEntrySource source;
-  private MapNetworkReceiverFactory testingNtManager;
-
   private static final double TEST_NUMBER = 13.13;
   private static final String TEST_STRING = "Some test string";
   private static final String BOOLEAN_PATH = "boolean";
   private static final String NUMBER_PATH = "number";
   private static final String STRING_PATH = "string";
+  private final EventBus eventBus;
+  private final MockOutputSocketFactory osf;
+  private NetworkTableInstance ntInstance;
+  private NetworkTableEntrySource source;
+  private MapNetworkReceiverFactory testingNtManager;
 
   public NetworkTableEntrySourceTest() {
     eventBus = new EventBus();

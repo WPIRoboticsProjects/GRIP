@@ -44,7 +44,6 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.util.Duration;
-
 import javax.inject.Inject;
 
 /**
@@ -55,6 +54,10 @@ import javax.inject.Inject;
 @ParametrizedController(url = "Step.fxml")
 public class StepController implements Controller {
 
+  private static final Image UP_ARROW = new Image("/edu/wpi/grip/ui/icons/up.png");
+  private static final Image DOWN_ARROW = new Image("/edu/wpi/grip/ui/icons/down.png");
+  private static final Predicate<InputSocketController> interactiveInputSocketFilter
+      = i -> !i.getSocket().getSocketHint().getView().equals(SocketHint.View.NONE);
   private final Pipeline pipeline;
   private final InputSocketControllerFactory inputSocketControllerFactory;
   private final OutputSocketController.Factory outputSocketControllerFactory;
@@ -89,11 +92,6 @@ public class StepController implements Controller {
   private Button expand;
   private ControllerMap<InputSocketController, Node> inputSocketMapManager;
   private ControllerMap<OutputSocketController, Node> outputSocketMapManager;
-
-  private static final Image UP_ARROW = new Image("/edu/wpi/grip/ui/icons/up.png");
-  private static final Image DOWN_ARROW = new Image("/edu/wpi/grip/ui/icons/down.png");
-  private static final Predicate<InputSocketController> interactiveInputSocketFilter
-      = i -> !i.getSocket().getSocketHint().getView().equals(SocketHint.View.NONE);
 
   @Inject
   StepController(Pipeline pipeline,

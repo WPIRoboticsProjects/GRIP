@@ -17,7 +17,7 @@ import javafx.util.StringConverter;
 public final class Spinners {
 
   private Spinners() {
-        /* no-op */
+    /* no-op */
   }
 
   /**

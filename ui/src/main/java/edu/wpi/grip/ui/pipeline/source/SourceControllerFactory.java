@@ -35,7 +35,6 @@ public class SourceControllerFactory {
    *
    * @param source The source to create the view for
    * @param <S>    The type of the source
-   *
    * @return The appropriate SourceController.
    */
   @SuppressWarnings("unchecked")

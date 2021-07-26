@@ -35,6 +35,12 @@ public class PedanticHandlerTest {
   private Server server;
   private HttpClient client;
 
+  @SafeVarargs
+  private static <T> T[] arr(T... a) {
+    // Convert varargs to array because the Jetty API isn't great
+    return a;
+  }
+
   @Before
   public void setUp() throws Exception {
     client = HttpClients.createDefault();
@@ -90,12 +96,6 @@ public class PedanticHandlerTest {
     handler2.releaseContext();
     handler3.releaseContext();
     server.stop();
-  }
-
-  @SafeVarargs
-  private static <T> T[] arr(T... a) {
-    // Convert varargs to array because the Jetty API isn't great
-    return a;
   }
 
   private void sendHttpRequest(String path) throws IOException {

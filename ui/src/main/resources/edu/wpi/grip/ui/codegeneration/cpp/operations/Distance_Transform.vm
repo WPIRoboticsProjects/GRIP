@@ -1,20 +1,20 @@
-	/**
-	 * Sets the values of pixels in a binary image to their distance to the nearest black pixel.
-	 *
-	 * @param input The image on which to perform the Distance Transform.
-	 * @param type The Transform.
-	 * @param maskSize the size of the mask.
-	 * @param output The image in which to store the output.
-	 */
-	void $className::#func($step ["input", "type", "maskSize", "output"]) {
-		int mask;
-		if (maskSize.compare("0x0") == 0) {
-			mask = 0;
-		} else if (maskSize.compare("3x3") == 0) {
-			mask = 3;
-		} else {
-			mask = 5;
-		}
-		cv::distanceTransform(input, output, type, mask);
-		output.convertTo(output, -1);
-	}
+/**
+* Sets the values of pixels in a binary image to their distance to the nearest black pixel.
+*
+* @param input The image on which to perform the Distance Transform.
+* @param type The Transform.
+* @param maskSize the size of the mask.
+* @param output The image in which to store the output.
+*/
+void $className::#func($step ["input", "type", "maskSize", "output"]) {
+int mask;
+if (maskSize.compare("0x0") == 0) {
+mask = 0;
+} else if (maskSize.compare("3x3") == 0) {
+mask = 3;
+} else {
+mask = 5;
+}
+cv::distanceTransform(input, output, type, mask);
+output.convertTo(output, -1);
+}

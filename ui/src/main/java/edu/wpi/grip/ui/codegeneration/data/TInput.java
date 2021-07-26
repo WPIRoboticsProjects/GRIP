@@ -7,8 +7,9 @@ public class TInput extends TSocket {
 
   /**
    * creates a new TInput with an output
-   * @param type the type of the TInput.
-   * @param name the GRIP name of the TInput.
+   *
+   * @param type   the type of the TInput.
+   * @param name   the GRIP name of the TInput.
    * @param output the output the the TInput is connected to.
    */
   public TInput(String type, String name, TOutput output) {
@@ -18,8 +19,9 @@ public class TInput extends TSocket {
 
   /**
    * creates a new TInput with a preset value
-   * @param type the type of the TInput.
-   * @param name the GRIP name of the TInput.
+   *
+   * @param type  the type of the TInput.
+   * @param name  the GRIP name of the TInput.
    * @param value the preset value of the TInput represented as a string.
    */
   public TInput(String type, String name, String value) {
@@ -29,6 +31,7 @@ public class TInput extends TSocket {
 
   /**
    * Gets the value of the output.
+   *
    * @return returns the value of the output in the form of a string.
    */
   public String value() {
@@ -58,6 +61,7 @@ public class TInput extends TSocket {
 
   /**
    * Checks to see if the input has a value
+   *
    * @return true if there is a value. false if it is null.
    */
   public boolean hasValue() {

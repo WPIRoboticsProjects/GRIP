@@ -65,14 +65,12 @@ public class NTManager implements Manager, MapNetworkPublisherFactory, MapNetwor
       .build();
 
   private static final Logger logger = Logger.getLogger(NTManager.class.getName());
-
+  private static final Object ntLock = new Object();
+  private final NetworkTableInstance ntInstance;
   @Inject
   private PipelineRunner pipelineRunner;
   @Inject
   private GripMode gripMode;
-  private final NetworkTableInstance ntInstance;
-
-  private static final Object ntLock = new Object();
 
   @Inject
   @VisibleForTesting
@@ -163,9 +161,9 @@ public class NTManager implements Manager, MapNetworkPublisherFactory, MapNetwor
   private static final class NTReceiver extends NetworkReceiver {
 
     private final NetworkTableInstance ntInstance;
+    private final List<Consumer<Object>> listeners = new LinkedList<>();
     private int entryListenerFunctionUid;
     private Object object = false;
-    private final List<Consumer<Object>> listeners = new LinkedList<>();
 
     protected NTReceiver(NetworkTableInstance ntInstance, String path) {
       super(path);

@@ -4,11 +4,11 @@
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
-<VBox fx:controller="edu.wpi.grip.ui.preview.PreviewsController" xmlns:fx="http://javafx.com/fxml/1"
+<VBox xmlns:fx="http://javafx.com/fxml/1" fx:controller="edu.wpi.grip.ui.preview.PreviewsController"
       fillWidth="true" maxHeight="Infinity" styleClass="previews">
-    <Label styleClass="pane-title" text="Preview" VBox.Vgrow="NEVER" maxWidth="Infinity" />
+    <Label styleClass="pane-title" text="Preview" VBox.Vgrow="NEVER" maxWidth="Infinity"/>
     <ScrollPane hbarPolicy="AS_NEEDED" vbarPolicy="AS_NEEDED" fitToWidth="false" fitToHeight="true"
                 maxHeight="Infinity" VBox.Vgrow="ALWAYS" minHeight="150">
-        <HBox fx:id="previewBox" />
+        <HBox fx:id="previewBox"/>
     </ScrollPane>
 </VBox>

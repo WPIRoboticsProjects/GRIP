@@ -56,7 +56,7 @@ public final class ExceptionWitnessResponderButton extends Button {
 
   /**
    * @param origin The same origin that is passed to the
-   * {@link edu.wpi.grip.core.util.ExceptionWitness}
+   *     {@link edu.wpi.grip.core.util.ExceptionWitness}
    */
   @Inject
   ExceptionWitnessResponderButton(@Assisted Object origin, @Assisted String popOverTitle) {

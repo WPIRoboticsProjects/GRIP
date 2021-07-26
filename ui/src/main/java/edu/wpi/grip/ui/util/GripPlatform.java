@@ -22,9 +22,8 @@ import static com.google.common.base.Preconditions.checkNotNull;
 @Singleton
 public class GripPlatform {
 
-  private final EventBus eventBus;
-
   private static final Logger logger = Logger.getLogger(GripPlatform.class.getName());
+  private final EventBus eventBus;
 
   @Inject
   GripPlatform(EventBus eventBus) {

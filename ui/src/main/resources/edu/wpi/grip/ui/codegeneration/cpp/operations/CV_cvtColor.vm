@@ -1,9 +1,9 @@
-	/**
-	 * Converts an image from one color space to another.
-	 * @param src Image to convert.
-	 * @param code conversion code.
-	 * @param dst converted Image.
-	 */
-	void $className::#func($step ["src", "code", "dst"]) {
-		cv::cvtColor(src, dst, code);
-	}
+/**
+* Converts an image from one color space to another.
+* @param src Image to convert.
+* @param code conversion code.
+* @param dst converted Image.
+*/
+void $className::#func($step ["src", "code", "dst"]) {
+cv::cvtColor(src, dst, code);
+}

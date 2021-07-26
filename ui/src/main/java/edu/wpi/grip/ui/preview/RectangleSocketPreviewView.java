@@ -4,6 +4,10 @@ import edu.wpi.grip.core.operations.composite.RectsReport;
 import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.ui.util.GripPlatform;
 
+import org.bytedeco.opencv.opencv_core.Mat;
+import org.bytedeco.opencv.opencv_core.Rect;
+import org.bytedeco.opencv.opencv_core.Scalar;
+
 import java.util.List;
 
 import javafx.geometry.Orientation;
@@ -13,12 +17,9 @@ import javafx.scene.control.Separator;
 import javafx.scene.image.Image;
 import javafx.scene.layout.VBox;
 
-import static org.bytedeco.opencv.global.opencv_imgproc.LINE_8;
-import org.bytedeco.opencv.opencv_core.Mat;
-import org.bytedeco.opencv.opencv_core.Rect;
-import org.bytedeco.opencv.opencv_core.Scalar;
 import static org.bytedeco.opencv.global.opencv_core.bitwise_xor;
 import static org.bytedeco.opencv.global.opencv_imgproc.CV_GRAY2BGR;
+import static org.bytedeco.opencv.global.opencv_imgproc.LINE_8;
 import static org.bytedeco.opencv.global.opencv_imgproc.cvtColor;
 import static org.bytedeco.opencv.global.opencv_imgproc.rectangle;
 

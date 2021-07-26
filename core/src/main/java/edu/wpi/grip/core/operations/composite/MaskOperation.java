@@ -12,18 +12,19 @@ import edu.wpi.grip.core.sockets.SocketHints;
 import com.google.common.collect.ImmutableList;
 import com.google.inject.Inject;
 
+import org.bytedeco.opencv.opencv_core.Mat;
+
 import java.util.List;
 
-import org.bytedeco.opencv.opencv_core.Mat;
 import static org.bytedeco.opencv.global.opencv_core.bitwise_xor;
 
 /**
  * An {@link Operation} that masks out an area of interest from an image.
  */
 @Description(name = "Mask",
-             summary = "Filter out an area of interest in an image using a binary mask",
-             category = OperationCategory.IMAGE_PROCESSING,
-             iconName = "mask")
+    summary = "Filter out an area of interest in an image using a binary mask",
+    category = OperationCategory.IMAGE_PROCESSING,
+    iconName = "mask")
 public class MaskOperation implements Operation {
 
   private final SocketHint<MatWrapper> inputHint = SocketHints.createImageSocketHint("Input");

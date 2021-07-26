@@ -1,59 +1,65 @@
 #if($lines == false)
-#set($lines = true)
+    #set($lines = true)
 /**
 * Contains details of a line.
 *
 */
 class Line {
-	public:
-	double x1, y1, x2, y2;
-	/**
-	* Creates a line with given (x, y) points 1 and 2.
-	*
-	* @param x1 x coordinate of one point of the line.
-	* @param y1 y coordinate of the same point of line as above.
-	* @param x2 x coordinate of other point of the line.
-	* @param y2 y coordinate of other point of line. 
-	*/
-	Line(double x1, double y1, double x2, double y2) {
-		this->x1 = x1;
-		this->y1 = y1;
-		this->x2 = x2;
-		this->y2 = y2;
-		}
+public:
+double x1, y1, x2, y2;
+/**
+* Creates a line with given (x, y) points 1 and 2.
+*
+* @param x1 x coordinate of one point of the line.
+* @param y1 y coordinate of the same point of line as above.
+* @param x2 x coordinate of other point of the line.
+* @param y2 y coordinate of other point of line.
+*/
+Line(double x1, double y1, double x2, double y2) {
+this->x1 = x1;
+this->y1 = y1;
+this->x2 = x2;
+this->y2 = y2;
+}
 
-	/**
-	* Calculates the length of the line.
-	*
-	* @return The point to point length of the line. 
-	*/
-	double length() {
-		return sqrt(pow(x2 - x1, 2) + pow(y2 - y1, 2));
-	}
-	
-	/**
-	* Calculates the angle between the two points. 
-	*
-	* @return the angle (in degrees between -180 and 180) between the two points.
-	*/
-	double angle() {
-		return (180*atan2(y2 - y1, x2 - x1)/CV_PI);
-	}
+/**
+* Calculates the length of the line.
+*
+* @return The point to point length of the line.
+*/
+double length() {
+return sqrt(pow(x2 - x1, 2) + pow(y2 - y1, 2));
+}
+
+/**
+* Calculates the angle between the two points.
+*
+* @return the angle (in degrees between -180 and 180) between the two points.
+*/
+double angle() {
+return (180*atan2(y2 - y1, x2 - x1)/CV_PI);
+}
 };
 
-#if($testing)
-std::vector<cv::Vec6d> getLinesHelper(std::string name, cv::AbsPipeline* obj) {
-	std::vector<Line> *lines = (std::vector<Line> *) (obj->*(obj->getOutputs()[name]))();
-	std::vector<cv::Vec6d> out;
-	for (int idx = 0; idx<lines->size(); idx++) {
-		Line l = (*lines)[idx];
-		out.push_back(cv::Vec6d(l.x1, l.y1, l.x2, l.y2, l.length(), l.angle()));
-	}
-	return out;
-}
-extern "C" DLL_TYPE std::vector<Vec6d> getLines(std::string name, cv::AbsPipeline* obj){
-    return getLinesHelper(name, obj);
-}
+    #if($testing)
+    std::vector
+    <cv::Vec6d> getLinesHelper(std::string name, cv::AbsPipeline* obj) {
+        std::vector
+    <Line> *lines = (std::vector
+    <Line> *) (obj->*(obj->getOutputs()[name]))();
+        std::vector
+    <cv::Vec6d> out;
+        for (int idx = 0; idx
+    <lines->size(); idx++) {
+        Line l = (*lines)[idx];
+        out.push_back(cv::Vec6d(l.x1, l.y1, l.x2, l.y2, l.length(), l.angle()));
+        }
+        return out;
+        }
+        extern "C" DLL_TYPE std::vector
+    <Vec6d> getLines(std::string name, cv::AbsPipeline* obj){
+        return getLinesHelper(name, obj);
+        }
 
-#end
+    #end
 #end

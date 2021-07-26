@@ -1,143 +1,151 @@
 #macro(cType $type)#if($type.equals("Double") || $type.equals("Number"))
 double#elseif($type.equals("Object"))
 void#elseif ($type.equals("ContoursReport"))
-std::vector<std::vector<cv::Point> >#elseif ($type.equals("BlobsReport"))
-std::vector<cv::KeyPoint>#elseif ($type.equals("LinesReport"))
-std::vector<Line>#elseif ($type.equals("RectsReport"))
-std::vector<cv::Rect>#elseif($type == "Integer" )
-int#elseif($type == "Boolean" || "boolean")
-bool#elseif($type.equals("String"))
-std::string#elseif($type.contains("Enum"))
-int#elseif($type.equalsIgnoreCase("BlurType"))
-BlurType#elseif($type.contains("Type"))
-int#elseif($type.equalsIgnoreCase("MaskSize"))
-std::string#elseif($type.equalsIgnoreCase("Interpolation"))
-int#elseif($type.equalsIgnoreCase("FlipCode"))
-FlipCode#elseif($type.equalsIgnoreCase("List"))
-List#elseif($type.equalsIgnoreCase("Origin"))
-Origin#else
-cv::$type#end#end
+std::vector
+<std::vector
+<cv::Point> >#elseif ($type.equals("BlobsReport"))
+    std::vector
+<cv::KeyPoint>#elseif ($type.equals("LinesReport"))
+    std::vector
+<Line>#elseif ($type.equals("RectsReport"))
+    std::vector
+<cv::Rect>#elseif($type == "Integer" )
+    int#elseif($type == "Boolean" || "boolean")
+    bool#elseif($type.equals("String"))
+    std::string#elseif($type.contains("Enum"))
+    int#elseif($type.equalsIgnoreCase("BlurType"))
+    BlurType#elseif($type.contains("Type"))
+    int#elseif($type.equalsIgnoreCase("MaskSize"))
+    std::string#elseif($type.equalsIgnoreCase("Interpolation"))
+    int#elseif($type.equalsIgnoreCase("FlipCode"))
+    FlipCode#elseif($type.equalsIgnoreCase("List"))
+    List#elseif($type.equalsIgnoreCase("Origin"))
+    Origin#else
+    cv::$type#end#end
 
 #macro(funPassType $baseType)
-#set($type = "#cType($baseType)")
-#if($type.equals("double") || $type.equals("int") || $type.equals("bool") || $type.equals("std::string"))
-#else
-&#end#end
+    #set($type = "#cType($baseType)")
+    #if($type.equals("double") || $type.equals("int") || $type.equals("bool") || $type.equals("std::string"))
+    #else
+        &#end#end
 
 #macro(setter $source)
-set$source.value()(#cType($source.type()) #funPassType($source.type())$source.value())#end
+    set$source.value()(#cType($source.type()) #funPassType($source.type())$source.value())#end
 
 #macro(param $inp $name)
-#set($type = "#cType($inp.type())")
-#if($type.equalsIgnoreCase("list"))
-double ${name}[]#else
-$type #funPassType($inp.type())$name#end#end
+    #set($type = "#cType($inp.type())")
+    #if($type.equalsIgnoreCase("list"))
+        double ${name}[]#else
+        $type #funPassType($inp.type())$name#end#end
 
 #macro(func $step $names)
-#set($name = $tMeth.name($step.name()))
-#set($count = 0)
-#if($name.toLowerCase().contains("switch"))
-pipeline$name(bool sw, T &onTrue, T &onFalse, T &output)#elseif($name.toLowerCase().contains("valve"))
-pipeline$name(bool sw, T &input, T &output)#else
-$name(#foreach($inp in $step.getInputs())#param($inp $names[$count])#set($count = $count + 1), #end#if($name.equalsIgnoreCase("ThresholdMoving"))cv::Mat &lastImage, #end#foreach($out in $step.getOutputs())#cType($out.type()) &$names[$count]#set($count = $count + 1)#if($velocityCount <$step.getOutputs().size()), #end#end)#end#end
+    #set($name = $tMeth.name($step.name()))
+    #set($count = 0)
+    #if($name.toLowerCase().contains("switch"))
+        pipeline$name(bool sw, T &onTrue, T &onFalse, T &output)#elseif($name.toLowerCase().contains("valve"))
+        pipeline$name(bool sw, T &input, T &output)#else
+        $name(#foreach($inp in $step.getInputs())#param($inp $names[$count])#set($count = $count + 1)
+            , #end#if($name.equalsIgnoreCase("ThresholdMoving"))cv::Mat
+            &lastImage, #end#foreach($out in $step.getOutputs())#cType($out.type())
+            &$names[$count]#set($count = $count + 1)#if($velocityCount <$step.getOutputs().size()), #end#end)#end#end
 
 #macro(headerFunc $step)
-#set($numVars = $step.getInputs().size() + $step.getOutputs().size())
-#set($varArray = [])
-#foreach($i in [0 .. $numVars])
-#set($randomBoolWeDoNotCareAbout = $varArray.add(""))
-#end
-#func($step $varArray)
+    #set($numVars = $step.getInputs().size() + $step.getOutputs().size())
+    #set($varArray = [])
+    #foreach($i in [0 .. $numVars])
+        #set($randomBoolWeDoNotCareAbout = $varArray.add(""))
+    #end
+    #func($step $varArray)
 #end
 
 #macro (newInput $input)
-#if ($input.value().toLowerCase().contains("source") || $input.value().toLowerCase().contains("output"))
-	#cType($input.type()) ${tMeth.name($input.name())} = $tMeth.name($input.value());
-#elseif ($input.type().contains("BorderTypesEnumCoreEnum"))
-    int ${tMeth.name($input.name())} = cv::$input.value();
-#elseif ($input.type().contains("CoreEnum"))
-	int ${tMeth.name($input.name())} = $input.value();
-#elseif ($input.type().equals("ColorConversionCodesEnum"))
-    int ${tMeth.name($input.name())} = cv::$input.value();
-#elseif ($input.type().equals("ColormapTypesEnum"))
-    int ${tMeth.name($input.name())} = cv::$input.value();
-#elseif ($input.type().equals("InterpolationFlagsEnum"))
-    int ${tMeth.name($input.name())} = cv::$input.value();
-#elseif ($input.type().equals("CVThresholdTypesEnum"))
-    int ${tMeth.name($input.name())} = cv::$input.value();
-#elseif ($input.type().contains("Enum"))
-	int ${tMeth.name($input.name())} = $input.value();  // ENUM $input.type()
-#elseif ($input.type().equals("MaskSize") )
-    std::string ${tMeth.name($input.name())} = "$input.value()";
-#elseif ($input.type().equals("FlipCode") || $input.type().equals("BlurType") || $input.type().equals("Origin"))
-	$input.type() ${tMeth.name($input.name())} = $input.type()::#cvVal($input.value());
-#elseif ($input.type().contains("Type") || $input.type().equals("Interpolation"))
-	int ${tMeth.name($input.name())} = #cvVal($input.value());
-#elseif ($input.type().equals("String"))
-	std::string ${tMeth.name($input.name())} = "$input.value()";
-#elseif ($input.type().equals("List"))
-#set($inputEndValue = $input.value().length() - 1)
-	double ${tMeth.name($input.name())}[] = {$input.value().substring(1,$inputEndValue)};
-#elseif ($input.type().equals("Point") || $input.type().equals("Size") || $input.type().equalsIgnoreCase("Scalar"))
-	#cType($input.type()) ${tMeth.name($input.name())}$input.value();
-#elseif ($input.value().equals("null"))
-	#cType($input.type()) ${tMeth.name($input.name())};
-#elseif ($input.type().equals("Mat"))
-	#cType($input.type()) ${tMeth.name($input.name())}$input.value();
-#else
-	#cType($input.type()) ${tMeth.name($input.name())} = $input.value();  // default $input.type()
-#end#end
+    #if ($input.value().toLowerCase().contains("source") || $input.value().toLowerCase().contains("output"))
+        #cType($input.type()) ${tMeth.name($input.name())} = $tMeth.name($input.value());
+    #elseif ($input.type().contains("BorderTypesEnumCoreEnum"))
+        int ${tMeth.name($input.name())} = cv::$input.value();
+    #elseif ($input.type().contains("CoreEnum"))
+        int ${tMeth.name($input.name())} = $input.value();
+    #elseif ($input.type().equals("ColorConversionCodesEnum"))
+        int ${tMeth.name($input.name())} = cv::$input.value();
+    #elseif ($input.type().equals("ColormapTypesEnum"))
+        int ${tMeth.name($input.name())} = cv::$input.value();
+    #elseif ($input.type().equals("InterpolationFlagsEnum"))
+        int ${tMeth.name($input.name())} = cv::$input.value();
+    #elseif ($input.type().equals("CVThresholdTypesEnum"))
+        int ${tMeth.name($input.name())} = cv::$input.value();
+    #elseif ($input.type().contains("Enum"))
+        int ${tMeth.name($input.name())} = $input.value();  // ENUM $input.type()
+    #elseif ($input.type().equals("MaskSize") )
+        std::string ${tMeth.name($input.name())} = "$input.value()";
+    #elseif ($input.type().equals("FlipCode") || $input.type().equals("BlurType") || $input.type().equals("Origin"))
+        $input.type() ${tMeth.name($input.name())} = $input.type()::#cvVal($input.value());
+    #elseif ($input.type().contains("Type") || $input.type().equals("Interpolation"))
+        int ${tMeth.name($input.name())} = #cvVal($input.value());
+    #elseif ($input.type().equals("String"))
+        std::string ${tMeth.name($input.name())} = "$input.value()";
+    #elseif ($input.type().equals("List"))
+        #set($inputEndValue = $input.value().length() - 1)
+        double ${tMeth.name($input.name())}[] = {$input.value().substring(1,$inputEndValue)};
+    #elseif ($input.type().equals("Point") || $input.type().equals("Size") || $input.type().equalsIgnoreCase("Scalar"))
+        #cType($input.type()) ${tMeth.name($input.name())}$input.value();
+    #elseif ($input.value().equals("null"))
+        #cType($input.type()) ${tMeth.name($input.name())};
+    #elseif ($input.type().equals("Mat"))
+        #cType($input.type()) ${tMeth.name($input.name())}$input.value();
+    #else
+        #cType($input.type()) ${tMeth.name($input.name())} = $input.value();  // default $input.type()
+    #end#end
 
 #macro (cvVal $value)#if($value.equals("INF"))
-cv::NORM_INF#elseif($value.equals("L1"))
-cv::NORM_L1#elseif($value.equals("L2"))
-cv::NORM_L2#elseif($value.equals("MINMAX"))
-cv::NORM_MINMAX#elseif($value.equals("None"))
-cv::INTER_NEAREST#elseif($value.equals("Linear"))
-cv::INTER_LINEAR#elseif($value.equals("Cubic"))
-cv::INTER_CUBIC#elseif($value.equals("Lanczos"))
-cv::INTER_LANCZOS4#elseif($value.equals("Area"))
-cv::INTER_AREA#elseif($value.equals("Box Blur"))
-BOX#elseif($value.equals("Gaussian Blur"))
-GAUSSIAN#elseif($value.equals("Median Filter"))
-MEDIAN#elseif($value.equals("Bilateral Filter"))
-BILATERAL#elseif($value.equals("Top Left"))
-TOP_LEFT#elseif($value.equals("Top Right"))
-TOP_RIGHT#elseif($value.equals("Bottom Left"))
-BOTTOM_LEFT#elseif($value.equals("Bottom Right"))
-BOTTOM_RIGHT#elseif($value.equals("Center"))
-CENTER#else
-$value#end#end
+    cv::NORM_INF#elseif($value.equals("L1"))
+    cv::NORM_L1#elseif($value.equals("L2"))
+    cv::NORM_L2#elseif($value.equals("MINMAX"))
+    cv::NORM_MINMAX#elseif($value.equals("None"))
+    cv::INTER_NEAREST#elseif($value.equals("Linear"))
+    cv::INTER_LINEAR#elseif($value.equals("Cubic"))
+    cv::INTER_CUBIC#elseif($value.equals("Lanczos"))
+    cv::INTER_LANCZOS4#elseif($value.equals("Area"))
+    cv::INTER_AREA#elseif($value.equals("Box Blur"))
+    BOX#elseif($value.equals("Gaussian Blur"))
+    GAUSSIAN#elseif($value.equals("Median Filter"))
+    MEDIAN#elseif($value.equals("Bilateral Filter"))
+    BILATERAL#elseif($value.equals("Top Left"))
+    TOP_LEFT#elseif($value.equals("Top Right"))
+    TOP_RIGHT#elseif($value.equals("Bottom Left"))
+    BOTTOM_LEFT#elseif($value.equals("Bottom Right"))
+    BOTTOM_RIGHT#elseif($value.equals("Center"))
+    CENTER#else
+    $value#end#end
 
 #macro(enumType $uniStep)
-#set($name = $tMeth.name($uniStep.name()))
-#if($uniStep.name().equalsIgnoreCase("Blur"))
-/**
-* A representation of the different types of blurs that can be used.
-*
-*/
-enum BlurType {
-	BOX, GAUSSIAN, MEDIAN, BILATERAL
-};
-#elseif($uniStep.name().equalsIgnoreCase("Crop"))
-/**
-* A representation of the different origins that can be used.
-*
-*/
-enum Origin {
-	TOP_LEFT, TOP_RIGHT, BOTTOM_LEFT, BOTTOM_RIGHT, CENTER
-};
-#elseif($name.contains("Flip"))
-/**
- * Code used for CV_flip. 
- * Per OpenCV spec 0 -> flip on X axis.
- * >0 -> flip on Y axis.
- * <0 -> flip on both axes.
- */
-enum FlipCode {
-	X_AXIS = 0,
-	Y_AXIS = 1,
-	BOTH_AXES = -1,
-};
-#end
+    #set($name = $tMeth.name($uniStep.name()))
+    #if($uniStep.name().equalsIgnoreCase("Blur"))
+        /**
+        * A representation of the different types of blurs that can be used.
+        *
+        */
+        enum BlurType {
+        BOX, GAUSSIAN, MEDIAN, BILATERAL
+        };
+    #elseif($uniStep.name().equalsIgnoreCase("Crop"))
+        /**
+        * A representation of the different origins that can be used.
+        *
+        */
+        enum Origin {
+        TOP_LEFT, TOP_RIGHT, BOTTOM_LEFT, BOTTOM_RIGHT, CENTER
+        };
+    #elseif($name.contains("Flip"))
+        /**
+        * Code used for CV_flip.
+        * Per OpenCV spec 0 -> flip on X axis.
+        * >0 -> flip on Y axis.
+        * <0 -> flip on both axes.
+        */
+        enum FlipCode {
+        X_AXIS = 0,
+        Y_AXIS = 1,
+        BOTH_AXES = -1,
+        };
+    #end
 #end

@@ -17,7 +17,7 @@ public abstract class NetworkPublisher<T> implements AutoCloseable {
   private Optional<String> name = Optional.empty();
 
   protected NetworkPublisher() {
-        /* empty */
+    /* empty */
   }
 
   /**

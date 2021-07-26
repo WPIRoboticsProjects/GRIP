@@ -21,8 +21,8 @@ import java.util.List;
  * InputSocket}.
  */
 @Description(name = "Switch",
-             summary = "Switch between two possible input sockets using a boolean",
-             category = OperationCategory.LOGICAL)
+    summary = "Switch between two possible input sockets using a boolean",
+    category = OperationCategory.LOGICAL)
 public class SwitchOperation implements Operation {
 
   private final InputSocket<Boolean> switcherSocket;

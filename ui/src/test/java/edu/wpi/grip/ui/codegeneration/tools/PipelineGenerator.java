@@ -25,11 +25,8 @@ import javax.inject.Inject;
 import static org.junit.Assert.fail;
 
 public class PipelineGenerator {
-  private final Pipeline pipeline;
-  private final EventBus eventBus;
-  private final Connection.Factory<Object> factory;
-  private static File codeDir = null;
   private static final Logger logger = Logger.getLogger(PipelineGenerator.class.getName());
+  private static File codeDir = null;
 
   static {
     try {
@@ -41,12 +38,20 @@ public class PipelineGenerator {
     }
   }
 
+  private final Pipeline pipeline;
+  private final EventBus eventBus;
+  private final Connection.Factory<Object> factory;
+
   @Inject
   PipelineGenerator(Connection.Factory<Object> factory, EventBus eventBus,
                     Pipeline pipeline) {
     this.factory = factory;
     this.eventBus = eventBus;
     this.pipeline = pipeline;
+  }
+
+  public static File getCodeDir() {
+    return codeDir;
   }
 
   public Step addStep(OperationMetaData data) {
@@ -91,10 +96,6 @@ public class PipelineGenerator {
             .moduleName("")
             .build(),
         true).run();
-  }
-
-  public static File getCodeDir() {
-    return codeDir;
   }
 
 }

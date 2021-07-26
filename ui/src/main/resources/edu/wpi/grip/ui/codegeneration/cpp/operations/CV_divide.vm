@@ -1,10 +1,10 @@
-	/**
-	 * Divides one image by another with given scale.
-	 * @param src1 Numerator image.
-	 * @param src2 Denominator image.
-	 * @param scale Scale for division.
-	 * @param dst Result image.
-	 */
-	void $className::#func($step ["src1", "src2", "scale", "dst"]) {
-		cv::divide(src1, src2, dst, scale);
-	}
+/**
+* Divides one image by another with given scale.
+* @param src1 Numerator image.
+* @param src2 Denominator image.
+* @param scale Scale for division.
+* @param dst Result image.
+*/
+void $className::#func($step ["src1", "src2", "scale", "dst"]) {
+cv::divide(src1, src2, dst, scale);
+}

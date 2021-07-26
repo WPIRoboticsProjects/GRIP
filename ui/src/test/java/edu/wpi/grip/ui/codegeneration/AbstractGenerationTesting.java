@@ -45,7 +45,11 @@ import static org.junit.Assert.fail;
 @SuppressWarnings({"PMD.JUnit4TestShouldUseTestAnnotation", "PMD.AvoidUsingNativeCode"})
 public class AbstractGenerationTesting {
   private static final Logger logger = Logger.getLogger(AbstractGenerationTesting.class.getName());
-  private GripCoreTestModule testModule;
+
+  static {
+    System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
+  }
+
   @Inject
   protected EventBus eventBus;
   @Inject
@@ -60,9 +64,36 @@ public class AbstractGenerationTesting {
   protected OperationsUtil opUtil;
   @Inject
   protected PipelineGenerator gen;
+  private GripCoreTestModule testModule;
 
-  static {
-    System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
+  /**
+   * Cleans up generated test java and class files.
+   */
+  @AfterClass
+  public static void tearDownClass() {
+    PipelineCreator.cleanClasses();
+    File img = new File("img.png");
+    File testing = new File("testing.py");
+    File output = new File("output.txt");
+    File dir = PipelineGenerator.getCodeDir().getAbsoluteFile();
+    try {
+      File[] toDelete = dir.listFiles((File file) -> {
+        String name = file.getName();
+        return name.contains(".cpp") || name.contains(".py") || name.contains(".h")
+            || name.contains(".dylib") || name.contains(".so") || name.contains(".dll")
+            || name.contains(".lib") || name.contains(".vcxproj") || name.contains(".exp");
+      });
+      if (toDelete != null) {
+        for (File file : toDelete) {
+          Files.deleteIfExists(file.toPath());
+        }
+      }
+      Files.deleteIfExists(img.toPath());
+      Files.deleteIfExists(testing.toPath());
+      Files.deleteIfExists(output.toPath());
+    } catch (IOException e) {
+      logger.log(Level.WARNING, e.getMessage(), e);
+    }
   }
 
   @Before
@@ -70,7 +101,7 @@ public class AbstractGenerationTesting {
     testModule = new GripCoreTestModule();
     testModule.setUp();
     final Injector injector = Guice.createInjector(Modules.override(testModule)
-            .with(new MockGripNetworkModule()));
+        .with(new MockGripNetworkModule()));
     injector.injectMembers(this);
     injector.injectMembers(gen);
   }
@@ -114,36 +145,6 @@ public class AbstractGenerationTesting {
   @After
   public void tearDown() {
     testModule.tearDown();
-  }
-
-  /**
-   * Cleans up generated test java and class files.
-   */
-  @AfterClass
-  public static void tearDownClass() {
-    PipelineCreator.cleanClasses();
-    File img = new File("img.png");
-    File testing = new File("testing.py");
-    File output = new File("output.txt");
-    File dir = PipelineGenerator.getCodeDir().getAbsoluteFile();
-    try {
-      File[] toDelete = dir.listFiles((File file) -> {
-        String name = file.getName();
-        return name.contains(".cpp") || name.contains(".py") || name.contains(".h")
-            || name.contains(".dylib") || name.contains(".so") || name.contains(".dll")
-            || name.contains(".lib") || name.contains(".vcxproj") || name.contains(".exp");
-      });
-      if (toDelete != null) {
-        for (File file : toDelete) {
-          Files.deleteIfExists(file.toPath());
-        }
-      }
-      Files.deleteIfExists(img.toPath());
-      Files.deleteIfExists(testing.toPath());
-      Files.deleteIfExists(output.toPath());
-    } catch (IOException e) {
-      logger.log(Level.WARNING, e.getMessage(), e);
-    }
   }
 
   protected ImageFileSource loadImage(ImageWithData img) {

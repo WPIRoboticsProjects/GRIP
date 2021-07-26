@@ -48,7 +48,6 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleButton;
-
 import javax.inject.Inject;
 
 /**
@@ -64,6 +63,16 @@ public class DeployController {
       .getLocation();
   private static final String LOCAL_GRIP_PATH;
   private static final Logger logger = Logger.getLogger(DeployController.class.getName());
+
+  static {
+    String path = "";
+    try {
+      path = URLDecoder.decode(LOCAL_GRIP_URL.getPath(), StandardCharsets.UTF_8.name());
+    } catch (UnsupportedEncodingException e) {
+      Throwables.propagate(e);
+    }
+    LOCAL_GRIP_PATH = path;
+  }
 
   @FXML
   private TextField address;
@@ -91,25 +100,13 @@ public class DeployController {
   private StringProperty command;
   @FXML
   private ToggleButton scrollPauseButton;
-
   @Inject
   private EventBus eventBus;
   @Inject
   private Project project;
   @Inject
   private SettingsProvider settingsProvider;
-
   private Optional<Thread> deployThread = Optional.empty();
-
-  static {
-    String path = "";
-    try {
-      path = URLDecoder.decode(LOCAL_GRIP_URL.getPath(), StandardCharsets.UTF_8.name());
-    } catch (UnsupportedEncodingException e) {
-      Throwables.propagate(e);
-    }
-    LOCAL_GRIP_PATH = path;
-  }
 
   @FXML
   protected void initialize() {
