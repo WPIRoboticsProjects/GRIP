@@ -59,23 +59,13 @@ If you don't have an internet connection you can build using the `--offline` fla
 
 ### Running Tests
 
-To run tests on grip, use the included Gradle wrapper script on a Unix System:
+To do a complete check of functionality of GRIP, use the included Gradle wrapper script on a Unix System:
 
-    ./gradlew test
-
-On Windows:
-
-    gradlew test
-
-### Checking Style
-
-To check to see if code meets GRIP's style guides, use the included Gradle wrapper script on a Unix System:
-
-    ./gradlew checkstyleMain checkstyleTest
+    ./gradlew check
 
 On Windows:
 
-    gradlew test checkstyleMain checkstyleTest
+    gradlew check
 
 ## CUDA Support
 To enable CUDA acceleration, CUDA 10.0 needs to be installed on your computer. CUDA 10.1 may work on
