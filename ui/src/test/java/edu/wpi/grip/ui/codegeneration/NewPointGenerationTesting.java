@@ -14,6 +14,7 @@ import org.opencv.core.Point;
 
 import java.util.Optional;
 
+import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
 @SuppressWarnings("PMD.JUnitTestsShouldIncludeAssert")
@@ -44,8 +45,8 @@ public class NewPointGenerationTesting extends AbstractGenerationTesting {
     new ManualPipelineRunner(eventBus, pipeline).runPipeline();
     Optional out = pipeline.getSteps().get(0).getOutputSockets().get(0).getValue();
     assertTrue("Output is not present", out.isPresent());
-    org.bytedeco.javacpp.opencv_core.Point gripSize =
-        (org.bytedeco.javacpp.opencv_core.Point) out.get();
+    org.bytedeco.opencv.opencv_core.Point gripSize =
+        (org.bytedeco.opencv.opencv_core.Point) out.get();
     pip.process();
     Point genSize = (Point) pip.getOutput("New_Point_Output", GenType.POINT);
     assertSame("The grip x: " + gripSize.x() + "does not equals the generated x: " + genSize.x,

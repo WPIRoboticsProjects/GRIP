@@ -152,7 +152,7 @@ public class ThresholdMovingTesting extends AbstractGenerationTesting {
     public Mat getOutput() {
       Optional out = thresh.getOutputSockets().get(0).getValue();
       assertTrue("Pipeline did not process", out.isPresent());
-      return HelperTools.bytedecoMatToCVMat((org.bytedeco.javacpp.opencv_core.Mat) out.get());
+      return HelperTools.bytedecoMatToCVMat((org.bytedeco.opencv.opencv_core.Mat) out.get());
     }
   }
 }
