@@ -67,6 +67,16 @@ On Windows:
 
     gradlew test
 
+### Checking Style
+
+To check to see if code meets GRIP's style guides, use the included Gradle wrapper script on a Unix System:
+
+    ./gradlew checkstyleMain checkstyleTest
+
+On Windows:
+
+    gradlew test checkstyleMain checkstyleTest
+
 ## CUDA Support
 To enable CUDA acceleration, CUDA 10.0 needs to be installed on your computer. CUDA 10.1 may work on
 Linux systems, but Windows _must_ use 10.0.
