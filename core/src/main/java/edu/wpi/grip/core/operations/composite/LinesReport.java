@@ -7,10 +7,11 @@ import edu.wpi.grip.core.operations.network.Publishable;
 import edu.wpi.grip.core.sockets.NoSocketTypeLabel;
 import edu.wpi.grip.core.sockets.Socket;
 
+import org.bytedeco.opencv.opencv_ximgproc.FastLineDetector;
+
 import java.util.Collections;
 import java.util.List;
 
-import org.bytedeco.opencv.opencv_ximgproc.FastLineDetector;
 import static org.bytedeco.opencv.global.opencv_ximgproc.createFastLineDetector;
 
 /**

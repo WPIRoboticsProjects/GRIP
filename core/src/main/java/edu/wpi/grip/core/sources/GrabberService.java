@@ -5,10 +5,10 @@ import com.google.common.base.Stopwatch;
 import com.google.common.math.IntMath;
 import com.google.common.util.concurrent.AbstractExecutionThreadService;
 
-import org.bytedeco.opencv.opencv_core.Mat;
 import org.bytedeco.javacv.Frame;
 import org.bytedeco.javacv.FrameGrabber;
 import org.bytedeco.javacv.OpenCVFrameConverter;
+import org.bytedeco.opencv.opencv_core.Mat;
 
 import java.io.IOException;
 import java.math.RoundingMode;

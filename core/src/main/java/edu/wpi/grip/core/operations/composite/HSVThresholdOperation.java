@@ -28,9 +28,9 @@ import static org.bytedeco.opencv.global.opencv_imgproc.cvtColor;
  * ranges for each channel.
  */
 @Description(name = "HSV Threshold",
-             summary = "Segment an image based on hue, saturation, and value ranges",
-             category = OperationCategory.IMAGE_PROCESSING,
-             iconName = "threshold")
+    summary = "Segment an image based on hue, saturation, and value ranges",
+    category = OperationCategory.IMAGE_PROCESSING,
+    iconName = "threshold")
 public class HSVThresholdOperation extends ThresholdOperation {
 
   private static final Logger logger = Logger.getLogger(HSVThresholdOperation.class.getName());

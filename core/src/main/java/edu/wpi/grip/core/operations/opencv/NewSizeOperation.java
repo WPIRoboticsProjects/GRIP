@@ -16,9 +16,9 @@ import org.python.google.common.collect.ImmutableList;
 import java.util.List;
 
 @Description(name = "New Size",
-             summary = "Create a size by width and height values",
-             category = OperationCategory.OPENCV,
-             iconName = "size")
+    summary = "Create a size by width and height values",
+    category = OperationCategory.OPENCV,
+    iconName = "size")
 public class NewSizeOperation implements CVOperation {
 
   private final SocketHint<Number> widthHint = SocketHints.Inputs

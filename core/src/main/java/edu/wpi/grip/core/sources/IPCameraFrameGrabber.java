@@ -29,6 +29,8 @@ import org.bytedeco.javacv.Frame;
 import org.bytedeco.javacv.FrameConverter;
 import org.bytedeco.javacv.FrameGrabber;
 import org.bytedeco.javacv.OpenCVFrameConverter;
+import org.bytedeco.opencv.opencv_core.IplImage;
+import org.bytedeco.opencv.opencv_core.Mat;
 
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
@@ -43,13 +45,7 @@ import java.util.concurrent.TimeUnit;
 import javax.imageio.ImageIO;
 
 import static org.bytedeco.opencv.global.opencv_core.CV_8UC1;
-import org.bytedeco.opencv.opencv_core.CvMat;
-import org.bytedeco.opencv.opencv_core.IplImage;
-import org.bytedeco.opencv.opencv_core.Mat;
-
-import static org.bytedeco.opencv.global.opencv_core.cvMat;
 import static org.bytedeco.opencv.global.opencv_core.cvReleaseImage;
-import static org.bytedeco.opencv.global.opencv_imgcodecs.imdecode;
 
 // This is here because FrameGrabber has an exception called Exception which triggers PMD
 @SuppressWarnings({"PMD.AvoidThrowingRawExceptionTypes", "all"})
@@ -70,6 +66,7 @@ public class IPCameraFrameGrabber extends FrameGrabber {
   private byte[] pixelBuffer = new byte[1024];
   private IplImage decoded = null;
   private FrameConverter<Mat> converter = new OpenCVFrameConverter.ToMat();
+
   public IPCameraFrameGrabber(String urlstr, int connectionTimeout, int readTimeout, TimeUnit
       unit) throws MalformedURLException {
     super();

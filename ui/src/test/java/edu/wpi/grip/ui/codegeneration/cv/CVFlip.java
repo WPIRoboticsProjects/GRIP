@@ -45,7 +45,7 @@ public class CVFlip extends AbstractGenerationTesting {
     test(() -> setup(FlipCode.BOTH_AXES), (pip) -> validate(pip), "FlipBothAxesTest");
   }
 
-  
+
   private void validate(PipelineInterfacer pip) {
     ManualPipelineRunner runner = new ManualPipelineRunner(eventBus, pipeline);
     runner.runPipeline();

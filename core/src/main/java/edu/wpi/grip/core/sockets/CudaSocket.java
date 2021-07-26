@@ -11,8 +11,8 @@ import javax.annotation.Nullable;
 
 /**
  * A type of input socket that lets an operation know that it should prefer to use a
- * CUDA-accelerated code path. If no compatible CUDA runtime is available, sockets of this type
- * will <i>always</i> have a value of {@code false} and cannot be changed.
+ * CUDA-accelerated code path. If no compatible CUDA runtime is available, sockets of this type will
+ * <i>always</i> have a value of {@code false} and cannot be changed.
  */
 public class CudaSocket extends InputSocketImpl<Boolean> {
 

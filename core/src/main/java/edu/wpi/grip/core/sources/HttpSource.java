@@ -1,4 +1,3 @@
-
 package edu.wpi.grip.core.sources;
 
 import edu.wpi.grip.core.MatWrapper;
@@ -31,11 +30,11 @@ import static org.bytedeco.opencv.global.opencv_imgcodecs.IMREAD_COLOR;
 import static org.bytedeco.opencv.global.opencv_imgcodecs.imdecode;
 
 /**
- * Provides a way to generate a {@link Mat Mat} from an image that has been POSTed to the
- * internal HTTP server.
+ * Provides a way to generate a {@link Mat Mat} from an image that has been POSTed to the internal
+ * HTTP server.
  * <p>
- * Note that multiple {@link HttpSource HttpSources} will all supply the same image
- * (or, more precisely, the same <i>reference</i> to a single image).
+ * Note that multiple {@link HttpSource HttpSources} will all supply the same image (or, more
+ * precisely, the same <i>reference</i> to a single image).
  * </p>
  */
 @XStreamAlias("grip:HttpImage")

@@ -13,15 +13,15 @@ import edu.wpi.grip.core.sockets.SocketHints;
 import com.google.common.collect.ImmutableList;
 import com.google.inject.Inject;
 
-import org.bytedeco.opencv.opencv_core.GpuMat;
 import org.bytedeco.opencv.global.opencv_cudaimgproc;
+import org.bytedeco.opencv.opencv_core.GpuMat;
+import org.bytedeco.opencv.opencv_core.Size;
+import org.bytedeco.opencv.opencv_cudafilters.Filter;
 
 import java.util.List;
 
 import static org.bytedeco.opencv.global.opencv_core.CV_8UC3;
 import static org.bytedeco.opencv.global.opencv_core.CV_8UC4;
-import org.bytedeco.opencv.opencv_core.Size;
-import org.bytedeco.opencv.opencv_cudafilters.Filter;
 import static org.bytedeco.opencv.global.opencv_cudafilters.createGaussianFilter;
 import static org.bytedeco.opencv.global.opencv_imgproc.CV_BGR2BGRA;
 import static org.bytedeco.opencv.global.opencv_imgproc.CV_BGRA2BGR;
@@ -34,9 +34,9 @@ import static org.bytedeco.opencv.global.opencv_imgproc.medianBlur;
  * An {@link Operation} that softens an image using one of several different filters.
  */
 @Description(name = "Blur",
-             summary = "Blurs an image to remove noise",
-             category = OperationCategory.IMAGE_PROCESSING,
-             iconName = "blur")
+    summary = "Blurs an image to remove noise",
+    category = OperationCategory.IMAGE_PROCESSING,
+    iconName = "blur")
 public class BlurOperation extends CudaOperation {
 
   private final SocketHint<Type> typeHint = SocketHints.createEnumSocketHint("Type", Type.BOX);

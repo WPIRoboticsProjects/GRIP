@@ -13,12 +13,13 @@ import edu.wpi.grip.core.sockets.SocketHints;
 import com.google.common.collect.ImmutableList;
 import com.google.inject.Inject;
 
+import org.bytedeco.opencv.opencv_core.Mat;
+import org.bytedeco.opencv.opencv_core.Scalar;
+
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.bytedeco.opencv.opencv_core.Mat;
-import org.bytedeco.opencv.opencv_core.Scalar;
 import static org.bytedeco.opencv.global.opencv_core.inRange;
 import static org.bytedeco.opencv.global.opencv_imgproc.COLOR_BGR2HLS;
 import static org.bytedeco.opencv.global.opencv_imgproc.cvtColor;
@@ -28,9 +29,9 @@ import static org.bytedeco.opencv.global.opencv_imgproc.cvtColor;
  * ranges.
  */
 @Description(name = "HSL Threshold",
-             summary = "Segment an image based on hue, saturation, and luminance ranges",
-             category = OperationCategory.IMAGE_PROCESSING,
-             iconName = "threshold")
+    summary = "Segment an image based on hue, saturation, and luminance ranges",
+    category = OperationCategory.IMAGE_PROCESSING,
+    iconName = "threshold")
 public class HSLThresholdOperation extends ThresholdOperation {
 
   private static final Logger logger = Logger.getLogger(HSLThresholdOperation.class.getName());

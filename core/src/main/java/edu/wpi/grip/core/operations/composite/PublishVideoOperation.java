@@ -37,9 +37,9 @@ import static org.bytedeco.opencv.global.opencv_imgcodecs.imencode;
  * /CameraServer.java
  */
 @Description(name = "Publish Video",
-             summary = "Publish an MJPEG stream",
-             category = OperationCategory.NETWORK,
-             iconName = "publish-video")
+    summary = "Publish an MJPEG stream",
+    category = OperationCategory.NETWORK,
+    iconName = "publish-video")
 public class PublishVideoOperation implements Operation {
 
   private static final Logger logger = Logger.getLogger(PublishVideoOperation.class.getName());
@@ -139,7 +139,7 @@ public class PublishVideoOperation implements Operation {
   @Inject
   @SuppressWarnings("JavadocMethod")
   @SuppressFBWarnings(value = "ST_WRITE_TO_STATIC_FROM_INSTANCE_METHOD",
-                      justification = "Do not need to synchronize inside of a constructor")
+      justification = "Do not need to synchronize inside of a constructor")
   public PublishVideoOperation(InputSocket.Factory inputSocketFactory) {
     if (numSteps != 0) {
       throw new IllegalStateException("Only one instance of PublishVideoOperation may exist");

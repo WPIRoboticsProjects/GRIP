@@ -30,8 +30,8 @@ public class OperationDescription {
   private final ImmutableSet<String> aliases;
 
   /**
-   * Creates an operation description from a {@link Description @Description} annotation on
-   * an operation subclass.
+   * Creates an operation description from a {@link Description @Description} annotation on an
+   * operation subclass.
    */
   public static OperationDescription from(Description description) {
     checkNotNull(description, "The description annotation cannot be null");
@@ -46,8 +46,8 @@ public class OperationDescription {
   }
 
   /**
-   * Creates an operation description from a {@link Description @Description} annotation on
-   * an operation subclass. The class is assumed to have the annotation; be careful when using this
+   * Creates an operation description from a {@link Description @Description} annotation on an
+   * operation subclass. The class is assumed to have the annotation; be careful when using this
    * method.
    *
    * @param clazz the class to generate a description for
@@ -73,10 +73,9 @@ public class OperationDescription {
 
   /**
    * Creates a new {@link Builder} instance to create a new {@code OperationDescription} object. The
-   * created descriptor has a default category of
-   * {@link OperationCategory#MISCELLANEOUS MISCELLANEOUS} and no icon; use the
-   * {@link Builder#category(OperationCategory) .category()} and {@link Builder#icon(Icon) .icon()}
-   * methods to override the default values.
+   * created descriptor has a default category of {@link OperationCategory#MISCELLANEOUS
+   * MISCELLANEOUS} and no icon; use the {@link Builder#category(OperationCategory) .category()} and
+   * {@link Builder#icon(Icon) .icon()} methods to override the default values.
    */
   public static Builder builder() {
     return new Builder()

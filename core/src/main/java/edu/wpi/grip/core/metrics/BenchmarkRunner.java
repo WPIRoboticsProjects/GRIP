@@ -22,8 +22,8 @@ import javax.annotation.Nullable;
 import static com.google.common.base.Preconditions.checkArgument;
 
 /**
- * Benchmark runner. This runs the pipeline multiple times to collect data about how long each
- * step takes to run.
+ * Benchmark runner. This runs the pipeline multiple times to collect data about how long each step
+ * takes to run.
  */
 @Singleton
 public class BenchmarkRunner {

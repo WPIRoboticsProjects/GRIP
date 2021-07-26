@@ -27,7 +27,7 @@ public class CVApplyColorMap extends AbstractGenerationTesting {
     OutputSocket imgOut = pipeline.getSources().get(0).getOutputSockets().get(0);
     gen.connect(imgOut, step.getInputSockets().get(0));
     step.getInputSockets().get(1).setValue(map);
-    
+
     return true;
   }
 
@@ -35,67 +35,67 @@ public class CVApplyColorMap extends AbstractGenerationTesting {
   public void testAutumn() {
     helpTest(ColormapTypesEnum.COLORMAP_AUTUMN, "AutumnTest");
   }
-  
+
   @Test
   public void testBone() {
     helpTest(ColormapTypesEnum.COLORMAP_BONE, "BoneTest");
   }
-  
+
   @Test
   public void testJet() {
     helpTest(ColormapTypesEnum.COLORMAP_JET, "JetTest");
   }
-  
+
   @Test
   public void testWinter() {
     helpTest(ColormapTypesEnum.COLORMAP_WINTER, "WinterTest");
   }
-  
+
   @Test
   public void testRainbow() {
     helpTest(ColormapTypesEnum.COLORMAP_RAINBOW, "RainbowTest");
   }
-  
+
   @Test
   public void testOcean() {
     helpTest(ColormapTypesEnum.COLORMAP_OCEAN, "OceanTest");
   }
-  
+
   @Test
   public void testSummer() {
     helpTest(ColormapTypesEnum.COLORMAP_SUMMER, "SummerTest");
   }
-  
+
   @Test
   public void testSpring() {
     helpTest(ColormapTypesEnum.COLORMAP_SPRING, "SpringTest");
   }
-  
+
   @Test
   public void testCool() {
     helpTest(ColormapTypesEnum.COLORMAP_COOL, "CoolTest");
   }
-  
+
   @Test
   public void testHSV() {
     helpTest(ColormapTypesEnum.COLORMAP_HSV, "HSVTest");
   }
-  
+
   @Test
   public void testPink() {
     helpTest(ColormapTypesEnum.COLORMAP_PINK, "PinkTest");
   }
-  
+
   @Test
   public void testHot() {
     helpTest(ColormapTypesEnum.COLORMAP_HOT, "HotTest");
   }
-  
+
   @Test
   public void testParula() {
     helpTest(ColormapTypesEnum.COLORMAP_PARULA, "ParulaTest");
   }
-  
+
   private void helpTest(ColormapTypesEnum map, String testName) {
     test(() -> set(map), (pip) -> validate(pip), "cvColorMap" + testName);
   }

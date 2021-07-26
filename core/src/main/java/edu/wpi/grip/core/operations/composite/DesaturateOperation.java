@@ -23,9 +23,9 @@ import static org.bytedeco.opencv.global.opencv_imgproc.cvtColor;
  * An {@link Operation} that converts a color image into shades of gray.
  */
 @Description(name = "Desaturate",
-             summary = "Convert a color image into shades of gray",
-             category = OperationCategory.IMAGE_PROCESSING,
-             iconName = "desaturate")
+    summary = "Convert a color image into shades of gray",
+    category = OperationCategory.IMAGE_PROCESSING,
+    iconName = "desaturate")
 public class DesaturateOperation extends CudaOperation {
 
   @Inject

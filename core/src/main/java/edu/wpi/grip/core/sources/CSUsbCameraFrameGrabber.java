@@ -2,12 +2,13 @@ package edu.wpi.grip.core.sources;
 
 import edu.wpi.cscore.CameraServerJNI;
 import edu.wpi.cscore.UsbCamera;
+
 import org.bytedeco.javacpp.Loader;
-import org.bytedeco.opencv.opencv_core.Mat;
 import org.bytedeco.javacv.Frame;
 import org.bytedeco.javacv.FrameConverter;
 import org.bytedeco.javacv.FrameGrabber;
 import org.bytedeco.javacv.OpenCVFrameConverter;
+import org.bytedeco.opencv.opencv_core.Mat;
 
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;

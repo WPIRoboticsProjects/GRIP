@@ -8,8 +8,8 @@ package edu.wpi.grip.core.observables;
 public interface Observable<T> {
 
   /**
-   * Add an observer to this observable. It will be notified of any future changes to the value
-   * of this observable. Listeners will be fired in the order in which they were added, and on the
+   * Add an observer to this observable. It will be notified of any future changes to the value of
+   * this observable. Listeners will be fired in the order in which they were added, and on the
    * thread that updates the observed value. Because of this, listeners should take as little time
    * as possible to run (unless submitting a long-running task to a worker thread).
    */

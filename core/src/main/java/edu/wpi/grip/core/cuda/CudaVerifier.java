@@ -30,8 +30,8 @@ public class CudaVerifier {
   }
 
   /**
-   * Verifies the presence of a CUDA runtime, if required by the GRIP runtime, and exits the
-   * app if no compatible CUDA runtime is available.
+   * Verifies the presence of a CUDA runtime, if required by the GRIP runtime, and exits the app if
+   * no compatible CUDA runtime is available.
    */
   public void verifyCuda() {
     if (!verify()) {
@@ -51,7 +51,7 @@ public class CudaVerifier {
    * GRIP is not using CUDA acceleration, this will always return {@code true}.
    *
    * @return false if GRIP is using CUDA acceleration but no compatible CUDA runtime is available,
-   *         true otherwise
+   *     true otherwise
    */
   public boolean verify() {
     if (accelerationMode.isUsingCuda()) {

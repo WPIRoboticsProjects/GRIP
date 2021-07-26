@@ -40,7 +40,6 @@ public class HttpPublishOperation<D, P extends Publishable>
    *
    * @param dataType the type of the data published by the {@code HttpPublishOperation} for the data
    *                 type described
-   *
    * @return a description for an {@code HttpPublishOperation} that publishes the given data type
    */
   public static OperationDescription descriptionFor(Class<?> dataType) {

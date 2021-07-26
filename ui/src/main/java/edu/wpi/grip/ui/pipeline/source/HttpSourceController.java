@@ -1,4 +1,3 @@
-
 package edu.wpi.grip.ui.pipeline.source;
 
 import edu.wpi.grip.core.sources.HttpSource;

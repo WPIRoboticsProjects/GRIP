@@ -111,8 +111,8 @@ public final class Statistics {
    * Calculates the 'hotness' of the given value based on these statistics. Using a {@code value}
    * that is not in the data set used to create these statistics will most likely have a useless
    * result. Hotness is equal to the number of standard deviations above the mean, or zero if the
-   * input value is not above the mean. Effectively, this means
-   * {@code hotness(x) == max(0, ((x - mean) / standard deviation))}.
+   * input value is not above the mean. Effectively, this means {@code hotness(x) == max(0, ((x -
+   * mean) / standard deviation))}.
    *
    * <p>If this set of statistics was calculated from less than two data points, 'hotness' doesn't
    * mean anything and this method will always return zero.

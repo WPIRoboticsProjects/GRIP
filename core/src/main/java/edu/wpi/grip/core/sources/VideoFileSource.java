@@ -19,11 +19,11 @@ import com.google.inject.assistedinject.Assisted;
 import com.google.inject.assistedinject.AssistedInject;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 
-import org.bytedeco.opencv.opencv_core.Mat;
 import org.bytedeco.javacv.FFmpegFrameGrabber;
 import org.bytedeco.javacv.Frame;
 import org.bytedeco.javacv.FrameGrabber;
 import org.bytedeco.javacv.OpenCVFrameConverter;
+import org.bytedeco.opencv.opencv_core.Mat;
 
 import java.io.File;
 import java.io.IOException;
@@ -152,8 +152,8 @@ public class VideoFileSource extends Source implements Pausable {
   }
 
   /**
-   * Grabs the next frame from the video, or the first frame
-   * if the end of the file has been reached.
+   * Grabs the next frame from the video, or the first frame if the end of the file has been
+   * reached.
    */
   private void grabNextFrame() {
     try {
@@ -191,8 +191,8 @@ public class VideoFileSource extends Source implements Pausable {
   }
 
   /**
-   * Gets the number of frames in the video file. This is a <i>best guess</i> and may not
-   * always be accurate.
+   * Gets the number of frames in the video file. This is a <i>best guess</i> and may not always be
+   * accurate.
    */
   public int getFrameCount() {
     return frameCount;
@@ -200,11 +200,10 @@ public class VideoFileSource extends Source implements Pausable {
 
   /**
    * Sets the frame grabber to the given frame number. This will pause frame grabber from reading
-   * successive frames; it can be resumed with {@link #resume()}. This runs asynchronously and
-   * will complete at some point in the future after this method is called.
+   * successive frames; it can be resumed with {@link #resume()}. This runs asynchronously and will
+   * complete at some point in the future after this method is called.
    *
    * @param frameNumber the number of the frame to grab
-   *
    * @throws IllegalArgumentException if {@code frameNumber} is negative or exceeds the number of
    *                                  frames in the video file
    */

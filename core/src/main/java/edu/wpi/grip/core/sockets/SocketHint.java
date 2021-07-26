@@ -4,6 +4,7 @@ import edu.wpi.grip.core.MatWrapper;
 
 import com.google.common.base.MoreObjects;
 
+import org.bytedeco.opencv.opencv_core.Mat;
 import org.bytedeco.opencv.opencv_objdetect.CascadeClassifier;
 
 import java.util.Arrays;
@@ -15,7 +16,6 @@ import java.util.function.Supplier;
 import javax.annotation.Nullable;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import org.bytedeco.opencv.opencv_core.Mat;
 
 /**
  * A <code>SocketHint</code> is a descriptor that gives some information about one of the inputs or

@@ -45,7 +45,6 @@ public abstract class ImageBasedPreviewView<T> extends SocketPreviewView<T> {
    * Checks if an image is able to be previewed.
    *
    * @param image the image to check
-   *
    * @return true if the image can be previewed, false if it can't
    */
   public static boolean isPreviewable(MatWrapper image) {

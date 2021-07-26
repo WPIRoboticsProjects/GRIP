@@ -10,8 +10,8 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 
 /**
- * Custom implementation of a titled pane. The JavaFX implementation has a tendency to add a gap
- * on the sides of image content when resized.
+ * Custom implementation of a titled pane. The JavaFX implementation has a tendency to add a gap on
+ * the sides of image content when resized.
  */
 public class TitledPane extends BorderPane {
 

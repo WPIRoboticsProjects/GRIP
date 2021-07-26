@@ -4,11 +4,11 @@ import org.bytedeco.opencv.opencv_core.Hamming;
 
 public enum HammingEnum {
 
-    normType(Hamming.normType);
+  normType(Hamming.normType);
 
-    public final int value;
+  public final int value;
 
-    HammingEnum(int value) {
-        this.value = value;
-    }
+  HammingEnum(int value) {
+    this.value = value;
+  }
 }

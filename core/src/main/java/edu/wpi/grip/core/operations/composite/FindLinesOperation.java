@@ -13,23 +13,22 @@ import com.google.common.collect.ImmutableList;
 import com.google.inject.Inject;
 
 import org.bytedeco.javacpp.indexer.FloatIndexer;
+import org.bytedeco.opencv.opencv_core.Mat;
+import org.bytedeco.opencv.opencv_ximgproc.FastLineDetector;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import org.bytedeco.opencv.opencv_core.Mat;
 import static org.bytedeco.opencv.global.opencv_imgproc.COLOR_BGR2GRAY;
-import org.bytedeco.opencv.opencv_ximgproc.FastLineDetector;
-
 import static org.bytedeco.opencv.global.opencv_imgproc.cvtColor;
 
 /**
  * Find line segments in a color or grayscale image.
  */
 @Description(name = "Find Lines",
-             summary = "Detects line segments in an image",
-             category = OperationCategory.FEATURE_DETECTION,
-             iconName = "find-lines")
+    summary = "Detects line segments in an image",
+    category = OperationCategory.FEATURE_DETECTION,
+    iconName = "find-lines")
 public class FindLinesOperation implements Operation {
 
   private final SocketHint<MatWrapper> inputHint = SocketHints.createImageSocketHint("Input");

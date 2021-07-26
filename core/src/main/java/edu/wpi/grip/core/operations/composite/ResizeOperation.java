@@ -11,10 +11,11 @@ import edu.wpi.grip.core.sockets.SocketHints;
 import com.google.common.collect.ImmutableList;
 import com.google.inject.Inject;
 
-import java.util.List;
-
 import org.bytedeco.opencv.opencv_core.Mat;
 import org.bytedeco.opencv.opencv_core.Size;
+
+import java.util.List;
+
 import static org.bytedeco.opencv.global.opencv_imgproc.INTER_AREA;
 import static org.bytedeco.opencv.global.opencv_imgproc.INTER_CUBIC;
 import static org.bytedeco.opencv.global.opencv_imgproc.INTER_LANCZOS4;
@@ -28,9 +29,9 @@ import static org.bytedeco.opencv.global.opencv_imgproc.resize;
  * multiple images that are different sizes.
  */
 @Description(name = "Resize Image",
-             summary = "Scale an image to an exact size",
-             category = OperationCategory.IMAGE_PROCESSING,
-             iconName = "resize")
+    summary = "Scale an image to an exact size",
+    category = OperationCategory.IMAGE_PROCESSING,
+    iconName = "resize")
 public class ResizeOperation implements Operation {
 
   private final InputSocket<MatWrapper> inputSocket;

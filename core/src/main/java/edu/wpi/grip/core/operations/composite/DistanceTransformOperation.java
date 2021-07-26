@@ -26,10 +26,10 @@ import static org.bytedeco.opencv.global.opencv_imgproc.distanceTransform;
  * GRIP {@link Operation} for {@link org.bytedeco.opencv.global.opencv_imgproc#distanceTransform}.
  */
 @Description(name = "Distance Transform",
-             summary = "Sets the values of pixels in a binary image to their distance to"
-                 + " the nearest black pixel",
-             category = OperationCategory.IMAGE_PROCESSING,
-             iconName = "opencv")
+    summary = "Sets the values of pixels in a binary image to their distance to"
+        + " the nearest black pixel",
+    category = OperationCategory.IMAGE_PROCESSING,
+    iconName = "opencv")
 public class DistanceTransformOperation implements Operation {
 
   private final SocketHint<MatWrapper> srcHint = SocketHints.createImageSocketHint("Input");

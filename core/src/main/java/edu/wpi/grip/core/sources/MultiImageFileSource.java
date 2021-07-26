@@ -116,9 +116,7 @@ public final class MultiImageFileSource extends Source implements PreviousNext {
    * paths.
    *
    * @param paths The paths of all of the images.
-   *
    * @return The list of Mats loaded from the file system.
-   *
    * @throws IOException if one of the images fails to load
    */
   private static Mat[] createImagesArray(List<String> paths) throws IOException {
@@ -198,7 +196,6 @@ public final class MultiImageFileSource extends Source implements PreviousNext {
    * remain within the bounds of the image array.
    *
    * @param delta the value to add to the index when getting the image
-   *
    * @return The matrix at the given index in the array.
    */
   private Mat addIndexAndGetImageByOffset(final int delta) {

@@ -16,8 +16,7 @@ import java.util.stream.Collectors;
 import static edu.wpi.grip.annotation.operation.OperationCategory.NETWORK;
 
 /**
- * TPipeline(template pipeline) is a data structure
- * that holds the information about a pipeline
+ * TPipeline(template pipeline) is a data structure that holds the information about a pipeline
  * needed by the velocity templates to generate code.
  */
 public class TPipeline {
