@@ -48,7 +48,8 @@ public class Project {
   private final ObservableBoolean saveIsDirty = new ObservableBoolean();
 
   @Inject
-  public void initialize(StepConverter stepConverter,
+  public void initialize(PipelineConverter pipelineConverter,
+                         StepConverter stepConverter,
                          SourceConverter sourceConverter,
                          SocketConverter socketConverter,
                          ConnectionConverter connectionConverter,
@@ -56,6 +57,7 @@ public class Project {
                          CodeGenerationSettingsConverter codeGenerationSettingsConverter) {
     xstream.setMode(XStream.NO_REFERENCES);
     xstream.ignoreUnknownElements(); // ignores all unknown tags
+    xstream.registerConverter(pipelineConverter);
     xstream.registerConverter(stepConverter);
     xstream.registerConverter(sourceConverter);
     xstream.registerConverter(socketConverter);
