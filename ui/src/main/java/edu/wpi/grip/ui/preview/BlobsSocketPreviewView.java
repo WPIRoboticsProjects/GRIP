@@ -64,6 +64,7 @@ public final class BlobsSocketPreviewView extends ImageBasedPreviewView<BlobsRep
       if (input.channels() == 3) {
         input.copyTo(tmp);
       } else {
+        System.out.println(input.size());
         cvtColor(input, tmp, CV_GRAY2BGR);
       }
       // If we don't want to see the background image, set it to black
