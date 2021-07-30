@@ -156,7 +156,7 @@ javaSubprojects {
     }
 
     tasks.withType<JavaCompile>().configureEach {
-        sourceCompatibility = "8"
+        sourceCompatibility = "11"
     }
 
 }
