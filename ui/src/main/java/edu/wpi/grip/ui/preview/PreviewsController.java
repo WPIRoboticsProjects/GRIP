@@ -19,7 +19,6 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.layout.HBox;
-
 import javax.inject.Inject;
 import javax.inject.Singleton;
 

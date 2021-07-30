@@ -44,7 +44,6 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.image.Image;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
-
 import javax.inject.Inject;
 
 public class Main extends Application {
@@ -60,14 +59,22 @@ public class Main extends Application {
    */
   @VisibleForTesting
   protected Injector injector;
-  @Inject private EventBus eventBus;
-  @Inject private PipelineRunner pipelineRunner;
-  @Inject private Project project;
-  @Inject private SettingsProvider settingsProvider;
-  @Inject private Operations operations;
-  @Inject private CVOperations cvOperations;
-  @Inject private GripServer server;
-  @Inject private HttpPipelineSwitcher pipelineSwitcher;
+  @Inject
+  private EventBus eventBus;
+  @Inject
+  private PipelineRunner pipelineRunner;
+  @Inject
+  private Project project;
+  @Inject
+  private SettingsProvider settingsProvider;
+  @Inject
+  private Operations operations;
+  @Inject
+  private CVOperations cvOperations;
+  @Inject
+  private GripServer server;
+  @Inject
+  private HttpPipelineSwitcher pipelineSwitcher;
   private Parent root;
   private boolean headless;
   private final UICommandLineHelper commandLineHelper = new UICommandLineHelper();

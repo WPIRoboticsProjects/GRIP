@@ -31,12 +31,12 @@ ELSE(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
     set(LINK_OPTIONS -O2)
     target_link_libraries(${NAME} ${LINK_OPTIONS})
     target_link_libraries(${NAME} 
-        opencv_core.3.1.0
-        opencv_objdetect.3.1.0
-        opencv_features2d.3.1.0
-        opencv_imgcodecs.3.1.0
-        opencv_imgproc.3.1.0
-        opencv_highgui.3.1.0
+        opencv_core.4.5.1
+        opencv_objdetect.4.5.1
+        opencv_features2d.4.5.1
+        opencv_imgcodecs.4.5.1
+        opencv_imgproc.4.5.1
+        opencv_highgui.4.5.1
         pipe
     )
 ENDIF(${CMAKE_SYSTEM_NAME} MATCHES "Windows")

@@ -49,8 +49,8 @@ public abstract class GenericHandler extends AbstractHandler {
   }
 
   /**
-   * Creates a generic handler that handles requests for the given context.
-   * That context will not be claimed.
+   * Creates a generic handler that handles requests for the given context. That context will not be
+   * claimed.
    *
    * <p>Note that the context <strong>is case sensitive</strong>.
    *

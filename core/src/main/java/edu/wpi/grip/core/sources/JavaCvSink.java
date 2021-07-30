@@ -6,15 +6,16 @@ import edu.wpi.cscore.ImageSink;
 import edu.wpi.cscore.VideoMode;
 import edu.wpi.cscore.VideoMode.PixelFormat;
 import edu.wpi.cscore.raw.RawFrame;
+
 import org.bytedeco.javacpp.BytePointer;
-import org.bytedeco.javacpp.opencv_core.Mat;
+import org.bytedeco.opencv.opencv_core.Mat;
 
 import java.nio.ByteBuffer;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static org.bytedeco.javacpp.opencv_core.CV_8UC1;
-import static org.bytedeco.javacpp.opencv_core.CV_8UC2;
-import static org.bytedeco.javacpp.opencv_core.CV_8UC3;
+import static org.bytedeco.opencv.global.opencv_core.CV_8UC1;
+import static org.bytedeco.opencv.global.opencv_core.CV_8UC2;
+import static org.bytedeco.opencv.global.opencv_core.CV_8UC3;
 
 @SuppressFBWarnings("EQ_DOESNT_OVERRIDE_EQUALS")
 public class JavaCvSink extends ImageSink {
@@ -52,9 +53,8 @@ public class JavaCvSink extends ImageSink {
   }
 
   /**
-   * Create a sink for accepting OpenCV images.
-   * WaitForFrame() must be called on the created sink to get each new
-   * image.
+   * Create a sink for accepting OpenCV images. WaitForFrame() must be called on the created sink to
+   * get each new image.
    *
    * @param name Source name (arbitrary unique identifier)
    */
@@ -63,24 +63,21 @@ public class JavaCvSink extends ImageSink {
   }
 
   /**
-   * Wait for the next frame and get the image.
-   * Times out (returning 0) after 0.225 seconds.
-   * The provided image will have three 3-bit channels stored in BGR order.
+   * Wait for the next frame and get the image. Times out (returning 0) after 0.225 seconds. The
+   * provided image will have three 3-bit channels stored in BGR order.
    *
-   * @return Frame time, or 0 on error (call GetError() to obtain the error
-   *         message)
+   * @return Frame time, or 0 on error (call GetError() to obtain the error message)
    */
   public long grabFrame(Mat image) {
     return grabFrame(image, 0.225);
   }
 
   /**
-   * Wait for the next frame and get the image.
-   * Times out (returning 0) after timeout seconds.
-   * The provided image will have three 3-bit channels stored in BGR order.
+   * Wait for the next frame and get the image. Times out (returning 0) after timeout seconds. The
+   * provided image will have three 3-bit channels stored in BGR order.
    *
-   * @return Frame time, or 0 on error (call GetError() to obtain the error
-   *         message); the frame time is in 1 us increments.
+   * @return Frame time, or 0 on error (call GetError() to obtain the error message); the frame time
+   *     is in 1 us increments.
    */
   public long grabFrame(Mat image, double timeout) {
     checkNotNull(image, "Image cannot be null");
@@ -99,8 +96,8 @@ public class JavaCvSink extends ImageSink {
       width = frame.getWidth();
       pixelFormat = frame.getPixelFormat();
       tmpMat = new Mat(frame.getHeight(), frame.getWidth(),
-                       getCVFormat(VideoMode.getPixelFormatFromInt(pixelFormat)),
-                       new BytePointer(origByteBuffer));
+          getCVFormat(VideoMode.getPixelFormatFromInt(pixelFormat)),
+          new BytePointer(origByteBuffer));
     }
     tmpMat.copyTo(image);
     return rv;

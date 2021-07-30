@@ -4,7 +4,7 @@ import edu.wpi.grip.core.MatWrapper;
 
 import com.google.common.primitives.UnsignedBytes;
 
-import org.bytedeco.javacpp.opencv_core.Mat;
+import org.bytedeco.opencv.opencv_core.Mat;
 
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
@@ -14,8 +14,8 @@ import javafx.scene.image.Image;
 import javafx.scene.image.PixelFormat;
 import javafx.scene.image.WritableImage;
 
-import static org.bytedeco.javacpp.opencv_core.CV_8S;
-import static org.bytedeco.javacpp.opencv_core.CV_8U;
+import static org.bytedeco.opencv.global.opencv_core.CV_8S;
+import static org.bytedeco.opencv.global.opencv_core.CV_8U;
 
 /**
  * Utility class for creating a JavaFX image from an OpenCV image.  This used by the preview views
@@ -36,8 +36,7 @@ public final class ImageConverter {
    * method involves several intermediate conversions ({@code Mat -> Frame -> BufferedImage ->
    * JavaFX Image}) and is way too slow to use for a real-time video.
    *
-   * @param mat           An 8-bit OpenCV Mat containing an image with either 1 or 3 channels
-   *
+   * @param mat An 8-bit OpenCV Mat containing an image with either 1 or 3 channels
    * @return A JavaFX image, or null for empty
    */
   public Image convert(Mat mat) {

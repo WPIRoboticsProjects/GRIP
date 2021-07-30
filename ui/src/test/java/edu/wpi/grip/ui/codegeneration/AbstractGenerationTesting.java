@@ -70,7 +70,7 @@ public class AbstractGenerationTesting {
     testModule = new GripCoreTestModule();
     testModule.setUp();
     final Injector injector = Guice.createInjector(Modules.override(testModule)
-            .with(new MockGripNetworkModule()));
+        .with(new MockGripNetworkModule()));
     injector.injectMembers(this);
     injector.injectMembers(gen);
   }

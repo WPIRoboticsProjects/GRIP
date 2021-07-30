@@ -67,8 +67,8 @@ public class CodeGenerationSettings {
    *
    * @param language                the language to generate to
    * @param className               the name of the class to generate
-   * @param implementWpilibPipeline if the generated class should implement the
-   *                                WPILib VisionPipeline interface
+   * @param implementWpilibPipeline if the generated class should implement the WPILib
+   *                                VisionPipeline interface
    * @param saveDir                 the directory to save the generated file to
    * @param packageName             the name of the Java package to place the file in
    * @param moduleName              the name of the Python module
@@ -193,8 +193,8 @@ public class CodeGenerationSettings {
     }
 
     /**
-     * Builds a new {@code CodeGenerationSettings} object. This ensures that every required
-     * option has been set.
+     * Builds a new {@code CodeGenerationSettings} object. This ensures that every required option
+     * has been set.
      */
     public CodeGenerationSettings build() {
       return new CodeGenerationSettings(

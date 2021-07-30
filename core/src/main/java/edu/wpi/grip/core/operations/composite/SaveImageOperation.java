@@ -22,15 +22,15 @@ import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
-import static org.bytedeco.javacpp.opencv_imgcodecs.CV_IMWRITE_JPEG_QUALITY;
-import static org.bytedeco.javacpp.opencv_imgcodecs.imencode;
+import static org.bytedeco.opencv.global.opencv_imgcodecs.IMWRITE_JPEG_QUALITY;
+import static org.bytedeco.opencv.global.opencv_imgcodecs.imencode;
 
 /**
  * Save JPEG files periodically to the local disk.
  */
 @Description(name = "Save Images to Disk",
-             summary = "Save image periodically to local disk",
-             iconName = "publish-video")
+    summary = "Save image periodically to local disk",
+    iconName = "publish-video")
 @SuppressWarnings("PMD.TooManyFields")
 public class SaveImageOperation implements Operation {
 
@@ -122,7 +122,7 @@ public class SaveImageOperation implements Operation {
     imencode("." + fileTypesSocket.getValue().get(),
         inputSocket.getValue().get().getCpu(),
         imagePointer,
-        new IntPointer(CV_IMWRITE_JPEG_QUALITY, qualitySocket.getValue().get().intValue()));
+        new IntPointer(IMWRITE_JPEG_QUALITY, qualitySocket.getValue().get().intValue()));
     byte[] buffer = new byte[128 * 1024];
     int bufferSize = (int) imagePointer.limit();
     if (bufferSize > buffer.length) {

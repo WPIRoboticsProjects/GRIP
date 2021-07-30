@@ -13,22 +13,22 @@ import com.google.common.collect.ImmutableList;
 import com.google.inject.Inject;
 
 import org.bytedeco.javacpp.indexer.FloatIndexer;
+import org.bytedeco.opencv.opencv_core.Mat;
+import org.bytedeco.opencv.opencv_ximgproc.FastLineDetector;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.bytedeco.javacpp.opencv_core.Mat;
-import static org.bytedeco.javacpp.opencv_imgproc.COLOR_BGR2GRAY;
-import static org.bytedeco.javacpp.opencv_imgproc.LineSegmentDetector;
-import static org.bytedeco.javacpp.opencv_imgproc.cvtColor;
+import static org.bytedeco.opencv.global.opencv_imgproc.COLOR_BGR2GRAY;
+import static org.bytedeco.opencv.global.opencv_imgproc.cvtColor;
 
 /**
  * Find line segments in a color or grayscale image.
  */
 @Description(name = "Find Lines",
-             summary = "Detects line segments in an image",
-             category = OperationCategory.FEATURE_DETECTION,
-             iconName = "find-lines")
+    summary = "Detects line segments in an image",
+    category = OperationCategory.FEATURE_DETECTION,
+    iconName = "find-lines")
 public class FindLinesOperation implements Operation {
 
   private final SocketHint<MatWrapper> inputHint = SocketHints.createImageSocketHint("Input");
@@ -65,7 +65,7 @@ public class FindLinesOperation implements Operation {
   @SuppressWarnings("unchecked")
   public void perform() {
     final MatWrapper input = inputSocket.getValue().get();
-    final LineSegmentDetector lsd = linesReportSocket.getValue().get().getLineSegmentDetector();
+    final FastLineDetector lsd = linesReportSocket.getValue().get().getFastLineDetector();
 
     final Mat lines = new Mat();
     if (input.channels() == 1) {

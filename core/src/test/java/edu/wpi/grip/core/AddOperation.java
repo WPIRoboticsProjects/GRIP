@@ -10,7 +10,7 @@ import edu.wpi.grip.core.sockets.SocketHints;
 import com.google.common.collect.ImmutableList;
 import com.google.common.eventbus.EventBus;
 
-import org.bytedeco.javacpp.opencv_core;
+import org.bytedeco.opencv.global.opencv_core;
 
 import java.util.List;
 

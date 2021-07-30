@@ -29,6 +29,8 @@ import org.bytedeco.javacv.Frame;
 import org.bytedeco.javacv.FrameConverter;
 import org.bytedeco.javacv.FrameGrabber;
 import org.bytedeco.javacv.OpenCVFrameConverter;
+import org.bytedeco.opencv.opencv_core.IplImage;
+import org.bytedeco.opencv.opencv_core.Mat;
 
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
@@ -42,12 +44,8 @@ import java.util.concurrent.TimeUnit;
 
 import javax.imageio.ImageIO;
 
-import static org.bytedeco.javacpp.opencv_core.CV_8UC1;
-import static org.bytedeco.javacpp.opencv_core.CvMat;
-import static org.bytedeco.javacpp.opencv_core.IplImage;
-import static org.bytedeco.javacpp.opencv_core.cvMat;
-import static org.bytedeco.javacpp.opencv_core.cvReleaseImage;
-import static org.bytedeco.javacpp.opencv_imgcodecs.cvDecodeImage;
+import static org.bytedeco.opencv.global.opencv_core.CV_8UC1;
+import static org.bytedeco.opencv.global.opencv_core.cvReleaseImage;
 
 // This is here because FrameGrabber has an exception called Exception which triggers PMD
 @SuppressWarnings({"PMD.AvoidThrowingRawExceptionTypes", "all"})
@@ -67,7 +65,8 @@ public class IPCameraFrameGrabber extends FrameGrabber {
   private DataInputStream input;
   private byte[] pixelBuffer = new byte[1024];
   private IplImage decoded = null;
-  private FrameConverter<IplImage> converter = new OpenCVFrameConverter.ToIplImage();
+  private FrameConverter<Mat> converter = new OpenCVFrameConverter.ToMat();
+
   public IPCameraFrameGrabber(String urlstr, int connectionTimeout, int readTimeout, TimeUnit
       unit) throws MalformedURLException {
     super();
@@ -82,7 +81,7 @@ public class IPCameraFrameGrabber extends FrameGrabber {
       throw loadingException;
     } else {
       try {
-        Loader.load(org.bytedeco.javacpp.opencv_highgui.class);
+        Loader.load(org.bytedeco.opencv.global.opencv_highgui.class);
       } catch (Throwable t) {
         throw loadingException = new Exception("Failed to load " + IPCameraFrameGrabber.class, t);
       }
@@ -129,15 +128,17 @@ public class IPCameraFrameGrabber extends FrameGrabber {
 
   @Override
   public Frame grab() throws Exception {
+    Mat mat = new Mat();
     try {
       byte[] b = readImage();
-      CvMat mat = cvMat(1, b.length, CV_8UC1, new BytePointer(b));
-      if (decoded != null) {
-        cvReleaseImage(decoded);
-      }
-      return converter.convert(decoded = cvDecodeImage(mat));
+      mat = new Mat(1, b.length, CV_8UC1);
+      mat.put(new BytePointer(b));
+      Frame frame = converter.convert(mat);
+      return frame;
     } catch (IOException e) {
       throw new Exception(e.getMessage(), e);
+    } finally {
+      mat.release();
     }
   }
 
@@ -161,7 +162,6 @@ public class IPCameraFrameGrabber extends FrameGrabber {
             sb.append((char) input.read()); // '10'
             break; // done with subheader
           }
-
         }
       }
     }

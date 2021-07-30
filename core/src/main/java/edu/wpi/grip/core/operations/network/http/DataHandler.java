@@ -33,8 +33,8 @@ import static javax.servlet.http.HttpServletResponse.SC_METHOD_NOT_ALLOWED;
 import static javax.servlet.http.HttpServletResponse.SC_OK;
 
 /**
- * Jetty handler for sending HTTP publishing data to a client.
- * Only one instance of this class should exist at a time.
+ * Jetty handler for sending HTTP publishing data to a client. Only one instance of this class
+ * should exist at a time.
  */
 @Singleton
 public final class DataHandler extends PedanticHandler {
@@ -104,8 +104,8 @@ public final class DataHandler extends PedanticHandler {
   }
 
   /**
-   * Adds a supplier for data with the given name.
-   * The data will be published to {@code /GRIP/data} on the internal HTTP server.
+   * Adds a supplier for data with the given name. The data will be published to {@code /GRIP/data}
+   * on the internal HTTP server.
    *
    * @param name     the name of the data
    * @param supplier a supplier for the data
@@ -117,8 +117,8 @@ public final class DataHandler extends PedanticHandler {
   }
 
   /**
-   * Removes the supplier for data with the given name. Will do nothing if no such data exists,
-   * or if {@code name} is null.
+   * Removes the supplier for data with the given name. Will do nothing if no such data exists, or
+   * if {@code name} is null.
    *
    * @param name the name of the data to remove
    */

@@ -10,15 +10,15 @@ import edu.wpi.grip.core.sockets.SocketHints;
 
 import com.google.inject.Inject;
 
-import org.bytedeco.javacpp.opencv_core.Size;
+import org.bytedeco.opencv.opencv_core.Size;
 import org.python.google.common.collect.ImmutableList;
 
 import java.util.List;
 
 @Description(name = "New Size",
-             summary = "Create a size by width and height values",
-             category = OperationCategory.OPENCV,
-             iconName = "size")
+    summary = "Create a size by width and height values",
+    category = OperationCategory.OPENCV,
+    iconName = "size")
 public class NewSizeOperation implements CVOperation {
 
   private final SocketHint<Number> widthHint = SocketHints.Inputs

@@ -8,7 +8,7 @@ public interface SettingsProvider {
   /**
    * This object may become out of date if the settings are edited by the user, so objects requiring
    * a preference value should also subscribe to
-   * {@link edu.wpi.grip.core.events.ProjectSettingsChangedEvent}
+   *     {@link edu.wpi.grip.core.events.ProjectSettingsChangedEvent}
    * to get updates.
    *
    * @return The current per-project settings.
@@ -17,8 +17,8 @@ public interface SettingsProvider {
 
   /**
    * Gets the current global app settings. This object may become out of date if the settings are
-   * edited by the user, so objects requiring a preference value should also subscribe to
-   * {@link edu.wpi.grip.core.events.AppSettingsChangedEvent} to get updates.
+   * edited by the user, so objects requiring a preference value should also subscribe to {@link
+   * edu.wpi.grip.core.events.AppSettingsChangedEvent} to get updates.
    *
    * @return the current global app settings
    */
@@ -26,8 +26,8 @@ public interface SettingsProvider {
 
   /**
    * Gets the current code generation settings. This object may become out of date if the settings
-   * are edited by the user, so objects requiring a preference value should also subscribe to
-   * {@link edu.wpi.grip.core.events.AppSettingsChangedEvent} to get updates.
+   * are edited by the user, so objects requiring a preference value should also subscribe to {@link
+   * edu.wpi.grip.core.events.AppSettingsChangedEvent} to get updates.
    *
    * @return the current code generation settings
    */

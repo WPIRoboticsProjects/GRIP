@@ -33,9 +33,8 @@ import static org.junit.Assert.fail;
 /**
  * Many of these mock service objects are copied from Guava's test framework.
  *
- * @see
- * <a href="https://github.com/google/guava/blob/a9f8b899c07a33c2203b4e6cf84861646952aeed/guava-tests/test/com/google/common/util/concurrent/AbstractExecutionThreadServiceTest.java">Original
- * Guava Tests</a>
+ * @see <a href="https://github.com/google/guava/blob/a9f8b899c07a33c2203b4e6cf84861646952aeed/guava-tests/test/com/google/common/util/concurrent/AbstractExecutionThreadServiceTest.java">Original
+ *     Guava Tests</a>
  */
 public class AutoRestartingServiceTest {
   private CountDownLatch enterRun;
@@ -149,8 +148,8 @@ public class AutoRestartingServiceTest {
     final AutoRestartingService<WaitThenThrowOnRunService> restartingService =
         new AutoRestartingService<>(recordingSupplier, ServiceRestartPolicy.IMMEDIATE);
 
-    @SuppressWarnings("PMD.PrematureDeclaration")
-    final Service initialDelegate = restartingService.getDelegate();
+    @SuppressWarnings("PMD.PrematureDeclaration") final Service initialDelegate
+        = restartingService.getDelegate();
 
     try {
       // This waits for this instance of the service to be terminated

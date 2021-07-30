@@ -12,9 +12,9 @@ import com.google.common.collect.ImmutableList;
 import com.google.inject.Inject;
 
 import org.bytedeco.javacpp.DoublePointer;
-import org.bytedeco.javacpp.opencv_core;
-import org.bytedeco.javacpp.opencv_core.Mat;
-import org.bytedeco.javacpp.opencv_core.Point;
+import org.bytedeco.opencv.global.opencv_core;
+import org.bytedeco.opencv.opencv_core.Mat;
+import org.bytedeco.opencv.opencv_core.Point;
 
 import java.util.List;
 
@@ -22,9 +22,9 @@ import java.util.List;
  * Operation to call {@link opencv_core#minMaxLoc}.
  */
 @Description(name = "Find Min and Max",
-             summary = "Find the global minimum and maximum in a single channel grayscale image",
-             category = OperationCategory.OPENCV,
-             iconName = "opencv")
+    summary = "Find the global minimum and maximum in a single channel grayscale image",
+    category = OperationCategory.OPENCV,
+    iconName = "opencv")
 public class MinMaxLoc implements CVOperation {
 
   private final SocketHint<MatWrapper> srcInputHint = SocketHints.createImageSocketHint("Image");

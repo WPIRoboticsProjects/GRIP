@@ -7,9 +7,9 @@ import edu.wpi.grip.core.sockets.OutputSocket;
 
 import com.google.common.eventbus.EventBus;
 
-import org.bytedeco.javacpp.opencv_core;
-import org.bytedeco.javacpp.opencv_core.Mat;
-import org.bytedeco.javacpp.opencv_core.Scalar;
+import org.bytedeco.opencv.global.opencv_core;
+import org.bytedeco.opencv.opencv_core.Mat;
+import org.bytedeco.opencv.opencv_core.Scalar;
 import org.junit.Before;
 import org.junit.Test;
 

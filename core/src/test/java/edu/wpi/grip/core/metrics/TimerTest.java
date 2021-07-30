@@ -83,7 +83,8 @@ public class TimerTest {
   public void testTimeThrowsException() {
     Timer timer = new Timer(eventBus, this);
     timer.started();
-    timer.time(() -> { });
+    timer.time(() -> {
+    });
     fail("An exception should have been thrown");
   }
 

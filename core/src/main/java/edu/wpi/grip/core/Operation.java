@@ -32,6 +32,6 @@ public interface Operation {
    * by {@link Step#setRemoved()} to ensure correct synchronization.
    */
   default void cleanUp() {
-        /* no-op */
+    /* no-op */
   }
 }

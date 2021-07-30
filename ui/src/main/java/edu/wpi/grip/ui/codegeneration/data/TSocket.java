@@ -9,6 +9,7 @@ public class TSocket {
 
   /**
    * The default constructor for a Socket. Assigns member variable to values.
+   *
    * @param type the type of the socket. eg: (String, Mat).
    * @param name the GRIP name of the socket.
    */
@@ -19,6 +20,7 @@ public class TSocket {
 
   /**
    * Sets the type of the socket to a value.
+   *
    * @param type The new type of the socket
    */
   public void setType(String type) {
@@ -27,6 +29,7 @@ public class TSocket {
 
   /**
    * gets the type of the socket.
+   *
    * @return the type of the socket.
    */
   public String type() {
@@ -35,6 +38,7 @@ public class TSocket {
 
   /**
    * the String that represents the socket.
+   *
    * @return the name of the socket.
    */
   public String name() {
@@ -43,6 +47,7 @@ public class TSocket {
 
   /**
    * This checks if a step is mutable and returns the type. Used in Templates.
+   *
    * @return The type of the socket.
    */
   public String baseType() {
@@ -55,6 +60,7 @@ public class TSocket {
 
   /**
    * Can be overridden by a subclass. is overridden by TInput.
+   *
    * @param type the original type
    * @return the baseType
    */
@@ -64,6 +70,7 @@ public class TSocket {
 
   /**
    * Checks to see if the socket is mutable.
+   *
    * @return true if mutable. false if not mutable.
    */
   public boolean mutable() {
@@ -73,6 +80,7 @@ public class TSocket {
 
   /**
    * checks to see if the socket is a number type.
+   *
    * @return true if it is a number.
    */
   public boolean number() {

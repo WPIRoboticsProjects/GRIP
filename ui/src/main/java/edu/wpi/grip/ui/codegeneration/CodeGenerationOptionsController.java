@@ -10,7 +10,7 @@ import edu.wpi.grip.core.settings.SettingsProvider;
 import com.google.common.eventbus.Subscribe;
 import com.google.inject.Inject;
 
-import org.bytedeco.javacpp.opencv_core.Mat;
+import org.bytedeco.opencv.opencv_core.Mat;
 
 import java.io.File;
 import java.nio.file.Files;

@@ -25,8 +25,8 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import static org.bytedeco.javacpp.opencv_imgcodecs.CV_IMWRITE_JPEG_QUALITY;
-import static org.bytedeco.javacpp.opencv_imgcodecs.imencode;
+import static org.bytedeco.opencv.global.opencv_imgcodecs.IMWRITE_JPEG_QUALITY;
+import static org.bytedeco.opencv.global.opencv_imgcodecs.imencode;
 
 /**
  * Publish an M-JPEG stream with the protocol used by SmartDashboard and the FRC Dashboard.  This
@@ -37,9 +37,9 @@ import static org.bytedeco.javacpp.opencv_imgcodecs.imencode;
  * /CameraServer.java
  */
 @Description(name = "Publish Video",
-             summary = "Publish an MJPEG stream",
-             category = OperationCategory.NETWORK,
-             iconName = "publish-video")
+    summary = "Publish an MJPEG stream",
+    category = OperationCategory.NETWORK,
+    iconName = "publish-video")
 public class PublishVideoOperation implements Operation {
 
   private static final Logger logger = Logger.getLogger(PublishVideoOperation.class.getName());
@@ -139,7 +139,7 @@ public class PublishVideoOperation implements Operation {
   @Inject
   @SuppressWarnings("JavadocMethod")
   @SuppressFBWarnings(value = "ST_WRITE_TO_STATIC_FROM_INSTANCE_METHOD",
-                      justification = "Do not need to synchronize inside of a constructor")
+      justification = "Do not need to synchronize inside of a constructor")
   public PublishVideoOperation(InputSocket.Factory inputSocketFactory) {
     if (numSteps != 0) {
       throw new IllegalStateException("Only one instance of PublishVideoOperation may exist");
@@ -179,7 +179,7 @@ public class PublishVideoOperation implements Operation {
 
     synchronized (imageLock) {
       imencode(".jpeg", inputSocket.getValue().get().getCpu(), imagePointer,
-          new IntPointer(CV_IMWRITE_JPEG_QUALITY, qualitySocket.getValue().get().intValue()));
+          new IntPointer(IMWRITE_JPEG_QUALITY, qualitySocket.getValue().get().intValue()));
       hasImage = true;
       imageLock.notifyAll();
     }

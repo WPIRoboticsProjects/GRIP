@@ -5,7 +5,7 @@ import edu.wpi.grip.core.http.GripServer;
 import edu.wpi.grip.core.http.PedanticHandler;
 
 import org.apache.commons.io.IOUtils;
-import org.bytedeco.javacpp.opencv_core.Mat;
+import org.bytedeco.opencv.opencv_core.Mat;
 import org.eclipse.jetty.server.Request;
 
 import java.io.IOException;
@@ -26,8 +26,8 @@ import static javax.servlet.http.HttpServletResponse.SC_CREATED;
 import static javax.servlet.http.HttpServletResponse.SC_METHOD_NOT_ALLOWED;
 
 /**
- * Jetty handler for incoming images to be used by {@link HttpSource}.
- * Only one instance of this class can exist for a context.
+ * Jetty handler for incoming images to be used by {@link HttpSource}. Only one instance of this
+ * class can exist for a context.
  *
  * <p>This handler will return one of the following status codes to a request on
  * {@code /GRIP/upload/image}:
@@ -115,8 +115,8 @@ public final class HttpImageHandler extends PedanticHandler {
 
   /**
    * Removes the given callback from this handler. The callback will no longer be called when a new
-   * image is POSTed to {@code /GRIP/upload/image}, unless it is re-added with
-   * {@link #addCallback(Consumer)}. Does nothing if {@code callback} is {@code null}.
+   * image is POSTed to {@code /GRIP/upload/image}, unless it is re-added with {@link
+   * #addCallback(Consumer)}. Does nothing if {@code callback} is {@code null}.
    *
    * @param callback the callback to remove
    * @see #addCallback(Consumer)

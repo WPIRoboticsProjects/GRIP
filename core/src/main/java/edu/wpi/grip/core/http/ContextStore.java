@@ -36,16 +36,16 @@ public class ContextStore {
    * this will do nothing and return {@code false}.
    *
    * @param context the context to erase
-   * @return true if the context was erased, false if it wasn't erased
-   *         or if it wasn't present to begin with.
+   * @return true if the context was erased, false if it wasn't erased or if it wasn't present to
+   *     begin with.
    */
   public boolean erase(@Nullable String context) {
     return store.remove(context);
   }
 
   /**
-   * Checks if the given context has been recorded in this store.
-   * If {@code context} is {@code null}, this will return {@code false}.
+   * Checks if the given context has been recorded in this store. If {@code context} is {@code
+   * null}, this will return {@code false}.
    *
    * @param context the context to check
    * @return true if the given context has been recorded in this store

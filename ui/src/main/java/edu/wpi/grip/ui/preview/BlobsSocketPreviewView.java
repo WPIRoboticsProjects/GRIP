@@ -4,6 +4,10 @@ import edu.wpi.grip.core.operations.composite.BlobsReport;
 import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.ui.util.GripPlatform;
 
+import org.bytedeco.opencv.opencv_core.Mat;
+import org.bytedeco.opencv.opencv_core.Point;
+import org.bytedeco.opencv.opencv_core.Scalar;
+
 import javafx.geometry.Orientation;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
@@ -11,14 +15,11 @@ import javafx.scene.control.Separator;
 import javafx.scene.image.Image;
 import javafx.scene.layout.VBox;
 
-import static org.bytedeco.javacpp.opencv_core.LINE_8;
-import static org.bytedeco.javacpp.opencv_core.Mat;
-import static org.bytedeco.javacpp.opencv_core.Point;
-import static org.bytedeco.javacpp.opencv_core.Scalar;
-import static org.bytedeco.javacpp.opencv_core.bitwise_xor;
-import static org.bytedeco.javacpp.opencv_imgproc.CV_GRAY2BGR;
-import static org.bytedeco.javacpp.opencv_imgproc.circle;
-import static org.bytedeco.javacpp.opencv_imgproc.cvtColor;
+import static org.bytedeco.opencv.global.opencv_core.bitwise_xor;
+import static org.bytedeco.opencv.global.opencv_imgproc.CV_GRAY2BGR;
+import static org.bytedeco.opencv.global.opencv_imgproc.LINE_8;
+import static org.bytedeco.opencv.global.opencv_imgproc.circle;
+import static org.bytedeco.opencv.global.opencv_imgproc.cvtColor;
 
 /**
  * A SocketPreviewView for BlobsReports that shows the original image with circles overlayed onto
@@ -62,6 +63,8 @@ public final class BlobsSocketPreviewView extends ImageBasedPreviewView<BlobsRep
 
       if (input.channels() == 3) {
         input.copyTo(tmp);
+      } else if (input.channels() == 0) {
+        System.exit(input.size().height());
       } else {
         cvtColor(input, tmp, CV_GRAY2BGR);
       }

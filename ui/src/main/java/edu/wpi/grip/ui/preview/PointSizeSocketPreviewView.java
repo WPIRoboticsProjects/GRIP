@@ -7,14 +7,13 @@ import edu.wpi.grip.ui.util.GripPlatform;
 import com.google.common.eventbus.Subscribe;
 
 import org.bytedeco.javacpp.IntPointer;
+import org.bytedeco.opencv.opencv_core.Point;
+import org.bytedeco.opencv.opencv_core.Size;
 
 import javafx.application.Platform;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
-
-import static org.bytedeco.javacpp.opencv_core.Point;
-import static org.bytedeco.javacpp.opencv_core.Size;
 
 /**
  * A {@link SocketPreviewView} for OpenCV points and sizes.

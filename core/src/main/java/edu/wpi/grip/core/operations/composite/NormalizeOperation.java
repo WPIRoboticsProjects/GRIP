@@ -13,23 +13,23 @@ import edu.wpi.grip.core.sockets.SocketHints;
 import com.google.common.collect.ImmutableList;
 import com.google.inject.Inject;
 
-import org.bytedeco.javacpp.opencv_core;
-import org.bytedeco.javacpp.opencv_cudaarithm;
+import org.bytedeco.opencv.global.opencv_core;
+import org.bytedeco.opencv.global.opencv_cudaarithm;
 
 import java.util.List;
 
-import static org.bytedeco.javacpp.opencv_core.NORM_INF;
-import static org.bytedeco.javacpp.opencv_core.NORM_L1;
-import static org.bytedeco.javacpp.opencv_core.NORM_L2;
-import static org.bytedeco.javacpp.opencv_core.NORM_MINMAX;
+import static org.bytedeco.opencv.global.opencv_core.NORM_INF;
+import static org.bytedeco.opencv.global.opencv_core.NORM_L1;
+import static org.bytedeco.opencv.global.opencv_core.NORM_L2;
+import static org.bytedeco.opencv.global.opencv_core.NORM_MINMAX;
 
 /**
- * GRIP {@link Operation} for {@link org.bytedeco.javacpp.opencv_core#normalize}.
+ * GRIP {@link Operation} for {@link org.bytedeco.opencv.global.opencv_core#normalize}.
  */
 @Description(name = "Normalize",
-             summary = "Normalizes or remaps the values of pixels in an image",
-             category = OperationCategory.IMAGE_PROCESSING,
-             iconName = "opencv")
+    summary = "Normalizes or remaps the values of pixels in an image",
+    category = OperationCategory.IMAGE_PROCESSING,
+    iconName = "opencv")
 public class NormalizeOperation extends CudaOperation {
 
   private final SocketHint<Type> typeHint = SocketHints.createEnumSocketHint("Type", Type.MINMAX);

@@ -89,11 +89,11 @@ public class ResizeTesting extends AbstractGenerationTesting {
     Optional out = pipeline.getSteps().get(0).getOutputSockets().get(0).getValue();
     assertTrue("Pipeline did not process", out.isPresent());
     assertFalse("Pipeline output is empty",
-        ((org.bytedeco.javacpp.opencv_core.Mat) out.get()).empty());
+        ((org.bytedeco.opencv.opencv_core.Mat) out.get()).empty());
     pip.setMatSource(0, Files.gompeiJpegFile.file);
     pip.process();
     Mat genMat = (Mat) pip.getOutput("Resize_Image_Output", GenType.IMAGE);
-    Mat gripMat = HelperTools.bytedecoMatToCVMat((org.bytedeco.javacpp.opencv_core.Mat) out.get());
+    Mat gripMat = HelperTools.bytedecoMatToCVMat((org.bytedeco.opencv.opencv_core.Mat) out.get());
     assertMatWithin(genMat, gripMat, 16.0);
   }
 }

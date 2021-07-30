@@ -10,18 +10,19 @@ import edu.wpi.grip.core.sockets.SocketHint;
 import com.google.common.collect.ImmutableList;
 import com.google.inject.Inject;
 
+import org.bytedeco.opencv.opencv_core.MatVector;
+
 import java.util.List;
 
-import static org.bytedeco.javacpp.opencv_core.MatVector;
-import static org.bytedeco.javacpp.opencv_imgproc.convexHull;
+import static org.bytedeco.opencv.global.opencv_imgproc.convexHull;
 
 /**
  * An {@link Operation} that finds the convex hull of each of a list of contours. This can help
  * remove holes in detected shapes, making them easier to analyze.
  */
 @Description(name = "Convex Hulls",
-             summary = "Compute the convex hulls of contours",
-             category = OperationCategory.FEATURE_DETECTION)
+    summary = "Compute the convex hulls of contours",
+    category = OperationCategory.FEATURE_DETECTION)
 public class ConvexHullsOperation implements Operation {
 
   private final SocketHint<ContoursReport> contoursHint = new SocketHint.Builder<>(ContoursReport

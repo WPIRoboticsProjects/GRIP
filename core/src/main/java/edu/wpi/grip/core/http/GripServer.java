@@ -73,21 +73,20 @@ public class GripServer {
   public static final String UPLOAD_PATH = ROOT_PATH + "/upload";
 
   /**
-   * The path for uploading images. To upload an image, post an HTTP event to
-   * {@code /GRIP/upload/image}, with the image bytes as the data.
+   * The path for uploading images. To upload an image, post an HTTP event to {@code
+   * /GRIP/upload/image}, with the image bytes as the data.
    */
   public static final String IMAGE_UPLOAD_PATH = UPLOAD_PATH + "/image";
 
   /**
-   * The path for setting which pipeline to run. To set the pipeline, post an
-   * HTTP event to {@code /GRIP/upload/pipeline},
-   * with the content of the pipeline save file as the data.
+   * The path for setting which pipeline to run. To set the pipeline, post an HTTP event to {@code
+   * /GRIP/upload/pipeline}, with the content of the pipeline save file as the data.
    */
   public static final String PIPELINE_UPLOAD_PATH = UPLOAD_PATH + "/pipeline";
 
   /**
-   * The path for requesting data. Data will be returned as a json-formatted
-   * map of the outputs of all requested data sets.
+   * The path for requesting data. Data will be returned as a json-formatted map of the outputs of
+   * all requested data sets.
    *
    * <p>For example, performing a {@code GET} request on the path
    * {@code /GRIP/data?foo&bar} will return a map such as
@@ -125,7 +124,6 @@ public class GripServer {
    * Checks if the given TCP port is valid for a server to run on. This doesn't check availability.
    *
    * @param port the port to check
-   *
    * @return true if the port is valid, false if not
    */
   public static boolean isPortValid(int port) {
@@ -169,8 +167,8 @@ public class GripServer {
   }
 
   /**
-   * Removes the given handler from the server.
-   * Does nothing if the server does not have that handler.
+   * Removes the given handler from the server. Does nothing if the server does not have that
+   * handler.
    *
    * @param handler the handler to remove
    */
@@ -179,8 +177,8 @@ public class GripServer {
   }
 
   /**
-   * Starts this server.
-   * Has no effect if the server has already been started or if it's been stopped.
+   * Starts this server. Has no effect if the server has already been started or if it's been
+   * stopped.
    */
   public void start() {
     if (state == State.PRE_RUN) {
@@ -194,10 +192,10 @@ public class GripServer {
   }
 
   /**
-   * Stops this server. Note that a shutdown hook has been registered to call
-   * this method, so it's unlikely that this should need to be called. If you
-   * need to restart the server, use {@link #restart()} as this method will kill the
-   * internal HTTP server, which cannot be restarted by {@link #start()}.
+   * Stops this server. Note that a shutdown hook has been registered to call this method, so it's
+   * unlikely that this should need to be called. If you need to restart the server, use {@link
+   * #restart()} as this method will kill the internal HTTP server, which cannot be restarted by
+   * {@link #start()}.
    */
   public void stop() {
     if (state == State.RUNNING) {

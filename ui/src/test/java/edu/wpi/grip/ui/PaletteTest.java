@@ -27,6 +27,7 @@ import org.testfx.util.WaitForAsyncUtils;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
+
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;

@@ -1,7 +1,7 @@
 package edu.wpi.grip.core.cuda;
 
 import org.bytedeco.javacpp.Loader;
-import org.bytedeco.javacpp.opencv_cudaarithm;
+import org.bytedeco.opencv.global.opencv_cudaarithm;
 
 /**
  * Checks if CUDA is available by attempting to load one of the OpenCV CUDA class' JNI. If the JNI

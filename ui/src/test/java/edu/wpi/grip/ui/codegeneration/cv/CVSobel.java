@@ -92,10 +92,10 @@ public class CVSobel extends AbstractGenerationTesting {
     pip.process();
     Optional out = pipeline.getSteps().get(0).getOutputSockets().get(0).getValue();
     assertTrue("Pipeline did not process", out.isPresent());
-    assertFalse("Pipeline output is empty", ((org.bytedeco.javacpp.opencv_core.Mat) out.get())
+    assertFalse("Pipeline output is empty", ((org.bytedeco.opencv.opencv_core.Mat) out.get())
         .empty());
     Mat genMat = (Mat) pip.getOutput("CV_Sobel_Output", GenType.IMAGE);
-    Mat gripMat = HelperTools.bytedecoMatToCVMat((org.bytedeco.javacpp.opencv_core.Mat) out.get());
+    Mat gripMat = HelperTools.bytedecoMatToCVMat((org.bytedeco.opencv.opencv_core.Mat) out.get());
     assertMatWithin(genMat, gripMat, 1.0);
   }
 }

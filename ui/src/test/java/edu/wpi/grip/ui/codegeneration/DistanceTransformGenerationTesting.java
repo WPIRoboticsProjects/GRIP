@@ -76,12 +76,12 @@ public class DistanceTransformGenerationTesting extends AbstractGenerationTestin
     Optional out = pipeline.getSteps().get(1).getOutputSockets().get(0).getValue();
     assertTrue("Pipeline did not process", out.isPresent());
     assertFalse("Pipeline output is empty",
-        ((org.bytedeco.javacpp.opencv_core.Mat) out.get()).empty());
+        ((org.bytedeco.opencv.opencv_core.Mat) out.get()).empty());
     pip.setMatSource(0, Files.imageFile.file);
     pip.process();
     Mat genMat = (Mat) pip.getOutput("Distance_Transform_Output", GenType.IMAGE);
     Mat gripMat = new Mat();
-    (HelperTools.bytedecoMatToCVMat((org.bytedeco.javacpp.opencv_core.Mat) out.get()))
+    (HelperTools.bytedecoMatToCVMat((org.bytedeco.opencv.opencv_core.Mat) out.get()))
         .convertTo(gripMat, CvType.CV_32F); // distance transform outputs a 1 channel 32F Mat but
     // grip outputs a 1 channel 8U Mat
     // HelperTools.displayMats(genMat, gripMat);

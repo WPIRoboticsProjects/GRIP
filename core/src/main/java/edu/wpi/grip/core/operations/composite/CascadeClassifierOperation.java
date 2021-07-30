@@ -12,11 +12,11 @@ import edu.wpi.grip.core.sockets.SocketHints;
 import com.google.common.collect.ImmutableList;
 import com.google.inject.Inject;
 
-import org.bytedeco.javacpp.opencv_core.Mat;
-import org.bytedeco.javacpp.opencv_core.Rect;
-import org.bytedeco.javacpp.opencv_core.RectVector;
-import org.bytedeco.javacpp.opencv_core.Size;
-import org.bytedeco.javacpp.opencv_objdetect.CascadeClassifier;
+import org.bytedeco.opencv.opencv_core.Mat;
+import org.bytedeco.opencv.opencv_core.Rect;
+import org.bytedeco.opencv.opencv_core.RectVector;
+import org.bytedeco.opencv.opencv_core.Size;
+import org.bytedeco.opencv.opencv_objdetect.CascadeClassifier;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,9 +25,9 @@ import java.util.List;
  * Operation for identifying parts of an image with a cascade classifier.
  */
 @Description(name = "Cascade Cassifier",
-             summary = "Runs a Haar cascade classifier on an image",
-             category = OperationCategory.FEATURE_DETECTION,
-             iconName = "opencv")
+    summary = "Runs a Haar cascade classifier on an image",
+    category = OperationCategory.FEATURE_DETECTION,
+    iconName = "opencv")
 public class CascadeClassifierOperation implements Operation {
 
   private final SocketHint<MatWrapper> imageHint =

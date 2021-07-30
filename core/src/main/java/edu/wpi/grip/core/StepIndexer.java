@@ -16,7 +16,8 @@ public interface StepIndexer extends Comparator<Step> {
   int indexOf(Step step);
 
   /**
-   * Compares two steps based on their indexes. <i>This is not consistent with {@code equals()}</i>.
+   * Compares two steps based on their indexes. <i>This is not consistent with {@code
+   * equals()}</i>.
    *
    * @param o1 the first step to compare
    * @param o2 the second step to compare

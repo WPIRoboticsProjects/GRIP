@@ -46,11 +46,11 @@ public class HSLThresholdGenerationTesting extends AbstractGenerationTesting {
     new ManualPipelineRunner(eventBus, pipeline).runPipeline();
     Optional out = pipeline.getSteps().get(0).getOutputSockets().get(0).getValue();
     assertTrue("Output is not present", out.isPresent());
-    assertFalse("Output Mat is empty", ((org.bytedeco.javacpp.opencv_core.Mat) out.get()).empty());
+    assertFalse("Output Mat is empty", ((org.bytedeco.opencv.opencv_core.Mat) out.get()).empty());
     pip.setMatSource(0, Files.imageFile.file);
     pip.process();
     Mat genMat = (Mat) pip.getOutput("HSL_Threshold_Output", GenType.IMAGE);
-    Mat gripMat = HelperTools.bytedecoMatToCVMat((org.bytedeco.javacpp.opencv_core.Mat) out.get());
+    Mat gripMat = HelperTools.bytedecoMatToCVMat((org.bytedeco.opencv.opencv_core.Mat) out.get());
     assertMatWithin(genMat, gripMat, 10.0);
   }
 

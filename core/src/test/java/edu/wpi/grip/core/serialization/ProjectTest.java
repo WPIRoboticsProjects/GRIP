@@ -29,6 +29,8 @@ import com.google.inject.Key;
 import com.google.inject.TypeLiteral;
 import com.google.inject.util.Modules;
 
+import org.bytedeco.opencv.opencv_core.Mat;
+import org.bytedeco.opencv.opencv_core.Scalar;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -40,12 +42,10 @@ import java.io.Writer;
 
 import static junit.framework.Assert.assertNotNull;
 import static junit.framework.TestCase.assertEquals;
-import static org.bytedeco.javacpp.opencv_core.CMP_NE;
-import static org.bytedeco.javacpp.opencv_core.CV_32F;
-import static org.bytedeco.javacpp.opencv_core.Mat;
-import static org.bytedeco.javacpp.opencv_core.Scalar;
-import static org.bytedeco.javacpp.opencv_core.compare;
-import static org.bytedeco.javacpp.opencv_core.countNonZero;
+import static org.bytedeco.opencv.global.opencv_core.CMP_NE;
+import static org.bytedeco.opencv.global.opencv_core.CV_32F;
+import static org.bytedeco.opencv.global.opencv_core.compare;
+import static org.bytedeco.opencv.global.opencv_core.countNonZero;
 
 public class ProjectTest {
 

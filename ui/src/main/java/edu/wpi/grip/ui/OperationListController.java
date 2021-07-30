@@ -29,10 +29,14 @@ public class OperationListController {
 
   protected static final String FILTER_TEXT = "filterText";
   private final StringProperty filterText = new SimpleStringProperty(this, FILTER_TEXT, "");
-  @FXML private Tab root;
-  @FXML private VBox operations;
-  @Inject private OperationController.Factory operationControllerFactory;
-  @SuppressWarnings("PMD.SingularField") private String baseText = null;
+  @FXML
+  private Tab root;
+  @FXML
+  private VBox operations;
+  @Inject
+  private OperationController.Factory operationControllerFactory;
+  @SuppressWarnings("PMD.SingularField")
+  private String baseText = null;
   private ControllerMap<OperationController, Node> operationsMapManager;
 
   @FXML

@@ -12,24 +12,24 @@ import edu.wpi.grip.core.sockets.SocketHints;
 import com.google.common.collect.ImmutableList;
 import com.google.inject.Inject;
 
-import org.bytedeco.javacpp.opencv_core.Mat;
+import org.bytedeco.opencv.opencv_core.Mat;
 
 import java.util.List;
 
-import static org.bytedeco.javacpp.opencv_core.CV_8U;
-import static org.bytedeco.javacpp.opencv_imgproc.CV_DIST_C;
-import static org.bytedeco.javacpp.opencv_imgproc.CV_DIST_L1;
-import static org.bytedeco.javacpp.opencv_imgproc.CV_DIST_L2;
-import static org.bytedeco.javacpp.opencv_imgproc.distanceTransform;
+import static org.bytedeco.opencv.global.opencv_core.CV_8U;
+import static org.bytedeco.opencv.global.opencv_imgproc.CV_DIST_C;
+import static org.bytedeco.opencv.global.opencv_imgproc.CV_DIST_L1;
+import static org.bytedeco.opencv.global.opencv_imgproc.CV_DIST_L2;
+import static org.bytedeco.opencv.global.opencv_imgproc.distanceTransform;
 
 /**
- * GRIP {@link Operation} for {@link org.bytedeco.javacpp.opencv_imgproc#distanceTransform}.
+ * GRIP {@link Operation} for {@link org.bytedeco.opencv.global.opencv_imgproc#distanceTransform}.
  */
 @Description(name = "Distance Transform",
-             summary = "Sets the values of pixels in a binary image to their distance to"
-                 + " the nearest black pixel",
-             category = OperationCategory.IMAGE_PROCESSING,
-             iconName = "opencv")
+    summary = "Sets the values of pixels in a binary image to their distance to"
+        + " the nearest black pixel",
+    category = OperationCategory.IMAGE_PROCESSING,
+    iconName = "opencv")
 public class DistanceTransformOperation implements Operation {
 
   private final SocketHint<MatWrapper> srcHint = SocketHints.createImageSocketHint("Input");

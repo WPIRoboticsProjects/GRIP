@@ -8,7 +8,7 @@ import org.opencv.core.Mat;
 import org.opencv.core.MatOfByte;
 import org.opencv.imgcodecs.Imgcodecs;
 
-import java.awt.BorderLayout;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -16,9 +16,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.imageio.ImageIO;
-import javax.swing.ImageIcon;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
+import javax.swing.*;
+//import javax.swing.*;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -69,7 +68,7 @@ public final class HelperTools {
    * @param input the bytedeco Mat to convert
    * @return an OpenCV Mat
    */
-  public static Mat bytedecoMatToCVMat(org.bytedeco.javacpp.opencv_core.Mat input) {
+  public static Mat bytedecoMatToCVMat(org.bytedeco.opencv.opencv_core.Mat input) {
     UByteIndexer idxer = input.createIndexer();
     Mat out = new Mat((int) idxer.rows(), (int) idxer.cols(), CV_8UC((int) idxer.channels()));
     //Mat out = new Mat(idxer.rows(),idxer.cols(),input.type());

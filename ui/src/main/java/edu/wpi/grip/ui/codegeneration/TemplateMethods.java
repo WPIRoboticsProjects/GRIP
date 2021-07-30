@@ -8,9 +8,9 @@ import edu.wpi.grip.generated.opencv_core.enumeration.LineTypesEnum;
 import edu.wpi.grip.ui.codegeneration.data.TStep;
 
 import org.apache.commons.lang3.text.WordUtils;
-import org.bytedeco.javacpp.opencv_core.Point;
-import org.bytedeco.javacpp.opencv_core.Scalar;
-import org.bytedeco.javacpp.opencv_core.Size;
+import org.bytedeco.opencv.opencv_core.Point;
+import org.bytedeco.opencv.opencv_core.Scalar;
+import org.bytedeco.opencv.opencv_core.Size;
 
 import java.nio.DoubleBuffer;
 import java.util.Optional;

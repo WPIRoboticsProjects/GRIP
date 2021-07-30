@@ -10,7 +10,7 @@ import com.google.inject.assistedinject.Assisted;
 import com.google.inject.assistedinject.AssistedInject;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 
-import org.bytedeco.javacpp.opencv_objdetect.CascadeClassifier;
+import org.bytedeco.opencv.opencv_objdetect.CascadeClassifier;
 
 import java.io.IOException;
 import java.nio.file.Files;

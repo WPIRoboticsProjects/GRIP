@@ -25,16 +25,16 @@ public @interface Description {
   String name();
 
   /**
-   * A brief summary of the operation. In-depth descriptions, usage guides, and examples
-   * should be on the wiki, not here.
+   * A brief summary of the operation. In-depth descriptions, usage guides, and examples should be
+   * on the wiki, not here.
    *
    * @return a summary of the operation
    */
   String summary();
 
   /**
-   * The category the operation belongs to. Defaults to
-   * {@link OperationCategory#MISCELLANEOUS MISCELLANEOUS}.
+   * The category the operation belongs to. Defaults to {@link OperationCategory#MISCELLANEOUS
+   * MISCELLANEOUS}.
    *
    * @return the category to which the operation belongs
    */

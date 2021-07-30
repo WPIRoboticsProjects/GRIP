@@ -2,8 +2,8 @@ package edu.wpi.grip.core.operations.composite;
 
 import edu.wpi.grip.core.Operation;
 
-import org.bytedeco.javacpp.opencv_core.Mat;
-import org.bytedeco.javacpp.opencv_core.Scalar;
+import org.bytedeco.opencv.opencv_core.Mat;
+import org.bytedeco.opencv.opencv_core.Scalar;
 
 public abstract class ThresholdOperation<O extends ThresholdOperation<O>> implements Operation {
 

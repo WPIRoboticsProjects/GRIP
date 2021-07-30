@@ -85,7 +85,6 @@ public class CoreCommandLineHelper {
    * returning from this method. This will also occur if the help option is specified.
    *
    * @param args the command line arguments to parse
-   *
    * @return a CommandLine object that can be queried for command line options and their values
    */
   @SuppressWarnings({"checkstyle:regexp", "PMD.SystemPrintln"})
@@ -152,7 +151,6 @@ public class CoreCommandLineHelper {
    *
    * @param args    the parsed command line arguments
    * @param project the project to load the file into
-   *
    * @throws IOException if the file couldn't be loaded
    */
   public void loadFile(CommandLine args, Project project) throws IOException {

@@ -38,13 +38,13 @@ public interface Socket<T> {
    * change behaviour when the value is changed.
    */
   default void onValueChanged() {
-        /* no-op */
+    /* no-op */
   }
 
   /**
    * Notifies this socket that the value changed. This is usually only needed for sockets that
-   * contain mutable data such as images or other native classes (Point, Size, etc) that are
-   * written to by OpenCV operations.
+   * contain mutable data such as images or other native classes (Point, Size, etc) that are written
+   * to by OpenCV operations.
    */
   default void flagChanged() {
     setValueOptional(getValue());
@@ -57,7 +57,7 @@ public interface Socket<T> {
 
   /**
    * Set the value of the socket, and fire off a
-   * {@link edu.wpi.grip.core.events.SocketChangedEvent}.
+   *     {@link edu.wpi.grip.core.events.SocketChangedEvent}.
    *
    * @param value The value to store in this socket. Nullable.
    */
@@ -92,7 +92,8 @@ public interface Socket<T> {
   void setSource(Optional<Source> source);
 
   /**
-   * <code>INPUT</code> if this is the input to a step, <code>OUTPUT</code> if this is the output of
+   * <code>INPUT</code> if this is the input to a step, <code>OUTPUT</code> if this is the output
+   * of
    * a step or source.
    *
    * @return The direction of the socket.
@@ -119,9 +120,8 @@ public interface Socket<T> {
   void removeConnection(Connection connection);
 
   /**
-   * Creates a simple text representation of this socket in the format
-   * {@code {owner type}/{owner name}/{identifier}}, e.g. {@code Step/Blur/Input} or
-   * {@code Source/Webcam 0/Image}.
+   * Creates a simple text representation of this socket in the format {@code {owner type}/{owner
+   * name}/{identifier}}, e.g. {@code Step/Blur/Input} or {@code Source/Webcam 0/Image}.
    *
    * @return a simple string representation of this socket.
    */

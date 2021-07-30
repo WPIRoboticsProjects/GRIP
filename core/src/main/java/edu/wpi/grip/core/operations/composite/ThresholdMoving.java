@@ -10,9 +10,9 @@ import edu.wpi.grip.core.sockets.SocketHints;
 import com.google.common.collect.ImmutableList;
 import com.google.inject.Inject;
 
-import org.bytedeco.javacpp.opencv_core;
-import org.bytedeco.javacpp.opencv_core.Mat;
-import org.bytedeco.javacpp.opencv_core.Size;
+import org.bytedeco.opencv.global.opencv_core;
+import org.bytedeco.opencv.opencv_core.Mat;
+import org.bytedeco.opencv.opencv_core.Size;
 
 import java.util.List;
 
@@ -20,8 +20,8 @@ import java.util.List;
  * Finds the absolute difference between the current image and the previous image.
  */
 @Description(name = "Threshold Moving",
-             summary = "Thresholds off parts of the image that have moved or changed between the"
-                 + " previous and next image.")
+    summary = "Thresholds off parts of the image that have moved or changed between the"
+        + " previous and next image.")
 public class ThresholdMoving implements Operation {
 
   private final InputSocket<MatWrapper> imageSocket;

@@ -12,21 +12,21 @@ import edu.wpi.grip.core.sockets.SocketHints;
 import com.google.common.collect.ImmutableList;
 import com.google.inject.Inject;
 
+import org.bytedeco.opencv.opencv_core.KeyPoint;
+import org.bytedeco.opencv.opencv_core.KeyPointVector;
+import org.bytedeco.opencv.opencv_core.Mat;
+import org.bytedeco.opencv.opencv_features2d.SimpleBlobDetector;
+
 import java.util.ArrayList;
 import java.util.List;
-
-import static org.bytedeco.javacpp.opencv_core.KeyPoint;
-import static org.bytedeco.javacpp.opencv_core.KeyPointVector;
-import static org.bytedeco.javacpp.opencv_core.Mat;
-import static org.bytedeco.javacpp.opencv_features2d.SimpleBlobDetector;
 
 /**
  * Find groups of similar pixels in a color or grayscale image.
  */
 @Description(name = "Find Blobs",
-             summary = "Detects groups of pixels in an image",
-             category = OperationCategory.FEATURE_DETECTION,
-             iconName = "find-blobs")
+    summary = "Detects groups of pixels in an image",
+    category = OperationCategory.FEATURE_DETECTION,
+    iconName = "find-blobs")
 public class FindBlobsOperation implements Operation {
 
   private final SocketHint<MatWrapper> inputHint = SocketHints.createImageSocketHint("Input");

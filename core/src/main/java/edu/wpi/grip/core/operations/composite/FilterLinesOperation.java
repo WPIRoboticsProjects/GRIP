@@ -19,9 +19,9 @@ import java.util.stream.Collectors;
  * to narrow down detected lines to only relevant ones.
  */
 @Description(name = "Filter Lines",
-             summary = "Filter only lines from a Find Lines operation that fit certain criteria",
-             category = OperationCategory.FEATURE_DETECTION,
-             iconName = "filter-lines")
+    summary = "Filter only lines from a Find Lines operation that fit certain criteria",
+    category = OperationCategory.FEATURE_DETECTION,
+    iconName = "filter-lines")
 public class FilterLinesOperation implements Operation {
 
   private final SocketHint<LinesReport> inputHint =
@@ -85,7 +85,7 @@ public class FilterLinesOperation implements Operation {
             || (line.angle() + 180.0 >= minAngle && line.angle() + 180.0 <= maxAngle))
         .collect(Collectors.toList());
 
-    linesOutputSocket.setValue(new LinesReport(inputLines.getLineSegmentDetector(), inputLines
+    linesOutputSocket.setValue(new LinesReport(inputLines.getFastLineDetector(), inputLines
         .getInput(), lines));
   }
 }

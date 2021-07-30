@@ -8,17 +8,17 @@ class SimpleMockFrameGrabber extends FrameGrabber {
 
   @Override
   public void start() throws Exception {
-        /* no-op */
+    /* no-op */
   }
 
   @Override
   public void stop() throws Exception {
-        /* no-op */
+    /* no-op */
   }
 
   @Override
   public void trigger() throws Exception {
-        /* no-op */
+    /* no-op */
   }
 
   @Override
@@ -28,6 +28,6 @@ class SimpleMockFrameGrabber extends FrameGrabber {
 
   @Override
   public void release() throws Exception {
-        /* no-op */
+    /* no-op */
   }
 }

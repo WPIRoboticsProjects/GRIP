@@ -29,7 +29,6 @@ public class ThresholdMovingTesting extends AbstractGenerationTesting {
    * Sets up the pipeline with given number of moving thresholds.
    *
    * @param num number of moving thresholds to put in pipeline, 1 indexed.
-   *
    * @return an array of the switch steps used to trigger the moving thresholds.
    */
   public ThresholdSwitch[] setupThreshold(int num) {
@@ -153,7 +152,7 @@ public class ThresholdMovingTesting extends AbstractGenerationTesting {
     public Mat getOutput() {
       Optional out = thresh.getOutputSockets().get(0).getValue();
       assertTrue("Pipeline did not process", out.isPresent());
-      return HelperTools.bytedecoMatToCVMat((org.bytedeco.javacpp.opencv_core.Mat) out.get());
+      return HelperTools.bytedecoMatToCVMat((org.bytedeco.opencv.opencv_core.Mat) out.get());
     }
   }
 }

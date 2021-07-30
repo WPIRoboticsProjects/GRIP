@@ -35,8 +35,8 @@ public class HexagonGrid extends Group {
   }
 
   /**
-   * Gets the hexagons in the grid. Do not apply any transforms to the hexagons; they are already
-   * in the correct locations and orientations.
+   * Gets the hexagons in the grid. Do not apply any transforms to the hexagons; they are already in
+   * the correct locations and orientations.
    */
   public Collection<Polygon> hexagons() {
     return getChildren().stream()
