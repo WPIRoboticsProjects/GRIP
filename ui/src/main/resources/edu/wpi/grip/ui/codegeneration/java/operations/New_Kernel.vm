@@ -1,0 +1,8 @@
+    /**
+     * Creates a kernel of given shape and size.
+     * @param shape the kernels MorphShape.
+     * @param size the size of the kernel.
+    */
+    private void $tMeth.name($step.name())(Mat shape, Size size) {
+        Imgproc.getStructuringElement(shape, size);
+    }

@@ -1,0 +1,10 @@
+    @staticmethod
+    def $tMeth.name($step.name())(shape, width, height):
+        """Creates kernel of given shape and size.
+        Args:
+           shape: The kernel MorphShape
+           size: Size of kernel as a tuple
+        Returns:
+            A numpy.ndarray representing the kernel.
+        """
+        return cv2.getStructuringElement(shape, (int(width), int(height)))
