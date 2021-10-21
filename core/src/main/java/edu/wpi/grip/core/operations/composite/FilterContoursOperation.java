@@ -15,9 +15,7 @@ import java.util.List;
 
 import static org.bytedeco.javacpp.opencv_core.Mat;
 import static org.bytedeco.javacpp.opencv_core.MatVector;
-import static org.bytedeco.javacpp.opencv_core.Rect;
 import static org.bytedeco.javacpp.opencv_imgproc.arcLength;
-import static org.bytedeco.javacpp.opencv_imgproc.boundingRect;
 import static org.bytedeco.javacpp.opencv_imgproc.contourArea;
 import static org.bytedeco.javacpp.opencv_imgproc.convexHull;
 
@@ -74,6 +72,8 @@ public class FilterContoursOperation implements Operation {
   private final SocketHint<Number> maxRatioHint =
       SocketHints.Inputs.createNumberSpinnerSocketHint("Max Ratio", 1000, 0, Integer.MAX_VALUE);
 
+  private final SocketHint<List<Number>> angleHint =
+      SocketHints.Inputs.createNumberListRangeSocketHint("Angle", -90, 0);
 
   private final InputSocket<ContoursReport> contoursSocket;
   private final InputSocket<Number> minAreaSocket;
@@ -87,6 +87,7 @@ public class FilterContoursOperation implements Operation {
   private final InputSocket<Number> maxVertexSocket;
   private final InputSocket<Number> minRatioSocket;
   private final InputSocket<Number> maxRatioSocket;
+  private final InputSocket<List<Number>> angleSocket;
 
   private final OutputSocket<ContoursReport> outputSocket;
 
@@ -106,6 +107,7 @@ public class FilterContoursOperation implements Operation {
     this.maxVertexSocket = inputSocketFactory.create(maxVertexHint);
     this.minRatioSocket = inputSocketFactory.create(minRatioHint);
     this.maxRatioSocket = inputSocketFactory.create(maxRatioHint);
+    this.angleSocket = inputSocketFactory.create(angleHint);
 
     this.outputSocket = outputSocketFactory.create(contoursHint);
   }
@@ -124,7 +126,8 @@ public class FilterContoursOperation implements Operation {
         maxVertexSocket,
         minVertexSocket,
         minRatioSocket,
-        maxRatioSocket
+        maxRatioSocket,
+        angleSocket
     );
   }
 
@@ -139,6 +142,7 @@ public class FilterContoursOperation implements Operation {
   @SuppressWarnings("unchecked")
   public void perform() {
     final InputSocket<ContoursReport> inputSocket = contoursSocket;
+    final ContoursReport report = inputSocket.getValue().get();
     final double minArea = minAreaSocket.getValue().get().doubleValue();
     final double minPerimeter = minPerimeterSocket.getValue().get().doubleValue();
     final double minWidth = minWidthSocket.getValue().get().doubleValue();
@@ -151,9 +155,10 @@ public class FilterContoursOperation implements Operation {
     final double maxVertexCount = maxVertexSocket.getValue().get().doubleValue();
     final double minRatio = minRatioSocket.getValue().get().doubleValue();
     final double maxRatio = maxRatioSocket.getValue().get().doubleValue();
+    final double minAngle = angleSocket.getValue().get().get(0).doubleValue();
+    final double maxAngle = angleSocket.getValue().get().get(1).doubleValue();
 
-
-    final MatVector inputContours = inputSocket.getValue().get().getContours();
+    final MatVector inputContours = report.getContours();
     final MatVector outputContours = new MatVector(inputContours.size());
     final Mat hull = new Mat();
 
@@ -164,15 +169,14 @@ public class FilterContoursOperation implements Operation {
     for (int i = 0; i < inputContours.size(); i++) {
       final Mat contour = inputContours.get(i);
 
-      final Rect bb = boundingRect(contour);
-      if (bb.width() < minWidth || bb.width() > maxWidth) {
+      if (report.getWidth()[i] < minWidth || report.getWidth()[i] > maxWidth) {
         continue;
       }
-      if (bb.height() < minHeight || bb.height() > maxHeight) {
+      if (report.getHeights()[i] < minHeight || report.getHeights()[i] > maxHeight) {
         continue;
       }
 
-      final double area = contourArea(contour);
+      final double area = report.getArea()[i];
       if (area < minArea) {
         continue;
       }
@@ -191,8 +195,13 @@ public class FilterContoursOperation implements Operation {
         continue;
       }
 
-      final double ratio = (double) bb.width() / (double) bb.height();
+      final double ratio = report.getWidth()[i] / report.getHeights()[i];
       if (ratio < minRatio || ratio > maxRatio) {
+        continue;
+      }
+
+      final double angle = report.getAngles()[i];
+      if (angle < minAngle || angle > maxAngle) {
         continue;
       }
 
